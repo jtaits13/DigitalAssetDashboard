@@ -21,6 +21,23 @@ from price_ticker import fetch_top_crypto_tickers, show_price_ticker
 
 HOME_HEADLINE_COUNT = 5
 
+# Home page only: compact heading + left-aligned “widget” width (CoinDesk-style column).
+HOME_PAGE_EXTRA_CSS = """
+<style>
+h2.home-main-heading {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 0.15rem 0;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+}
+.home-widget-tag {
+    margin-top: 0 !important;
+}
+</style>
+"""
+
 
 def main() -> None:
     st.set_page_config(
@@ -35,6 +52,7 @@ def main() -> None:
 
     render_home_top_bar("landing")
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
+    st.markdown(HOME_PAGE_EXTRA_CSS, unsafe_allow_html=True)
     show_price_ticker()
 
     with st.sidebar:
@@ -50,12 +68,6 @@ def main() -> None:
         news_feeds.fetch_feed.clear()
         fetch_top_crypto_tickers.clear()
         st.rerun()
-
-    col_title, col_tag = st.columns([3, 1])
-    with col_title:
-        st.title("Digital asset & crypto news")
-    with col_tag:
-        st.caption("Aggregated headlines · RSS")
 
     articles, feed_errors = load_all_feeds(DEFAULT_FEEDS)
 
@@ -75,14 +87,33 @@ def main() -> None:
     unique = dedupe_articles(articles, max_items=None)
     top = unique[:HOME_HEADLINE_COUNT]
 
-    for item in top:
-        st.markdown(render_article_card_html(item), unsafe_allow_html=True)
+    # Narrow left column (~CoinDesk sidebar widget); empty space on the right.
+    col_news, _col_rest = st.columns([1, 2.35])
+    with col_news:
+        if len(unique) > HOME_HEADLINE_COUNT:
+            if st.button(
+                "See more news",
+                key="see_more_news_top",
+                use_container_width=True,
+                type="primary",
+            ):
+                st.switch_page("pages/All_Articles.py")
 
-    if len(unique) > HOME_HEADLINE_COUNT:
-        if st.button("See more", use_container_width=False, type="primary"):
-            st.switch_page("pages/All_Articles.py")
-    else:
-        st.caption("No additional articles beyond this list.")
+        st.markdown(
+            '<h2 class="home-main-heading">Digital asset & crypto news</h2>',
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            '<p class="home-widget-tag" style="font-size:0.8rem;color:#64748b;margin:0 0 0.75rem 0;">'
+            "Aggregated headlines · RSS</p>",
+            unsafe_allow_html=True,
+        )
+
+        for item in top:
+            st.markdown(render_article_card_html(item), unsafe_allow_html=True)
+
+        if len(unique) <= HOME_HEADLINE_COUNT:
+            st.caption("No additional articles beyond this list.")
 
     st.divider()
     st.caption(
