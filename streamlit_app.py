@@ -32,9 +32,6 @@ h2.home-main-heading {
     letter-spacing: -0.02em;
     line-height: 1.25;
 }
-.home-widget-tag {
-    margin-top: 0 !important;
-}
 </style>
 """
 
@@ -103,12 +100,6 @@ def main() -> None:
                 type="primary",
             ):
                 st.switch_page("pages/All_Articles.py")
-
-        st.markdown(
-            '<p class="home-widget-tag" style="font-size:0.8rem;color:#64748b;margin:0 0 0.75rem 0;">'
-            "Aggregated headlines · RSS</p>",
-            unsafe_allow_html=True,
-        )
 
         for item in top:
             st.markdown(render_article_card_html(item), unsafe_allow_html=True)
