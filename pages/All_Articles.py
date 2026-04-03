@@ -17,6 +17,7 @@ from news_feeds import (
     render_article_card_html,
     render_home_top_bar,
 )
+from price_ticker import show_price_ticker
 
 PER_PAGE = 20
 
@@ -31,6 +32,7 @@ def main() -> None:
 
     render_home_top_bar("all_articles")
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
+    show_price_ticker()
 
     with st.sidebar:
         st.header("Navigation")

@@ -157,6 +157,8 @@ def render_home_top_bar(key_suffix: str = "page") -> None:
     c1, _ = st.columns([1, 12])
     with c1:
         if st.button("Home", key=f"home_top_{key_suffix}", help="Back to landing page"):
+            # Landing page will also set this; set here so state updates before navigation.
+            st.session_state.all_news_page = 1
             st.switch_page("streamlit_app.py")
 
 
