@@ -90,6 +90,11 @@ def main() -> None:
     # Narrow left column (~CoinDesk sidebar widget); empty space on the right.
     col_news, _col_rest = st.columns([1, 2.35])
     with col_news:
+        st.markdown(
+            '<h2 class="home-main-heading">Latest Digital Asset News</h2>',
+            unsafe_allow_html=True,
+        )
+
         if len(unique) > HOME_HEADLINE_COUNT:
             if st.button(
                 "See more news",
@@ -99,10 +104,6 @@ def main() -> None:
             ):
                 st.switch_page("pages/All_Articles.py")
 
-        st.markdown(
-            '<h2 class="home-main-heading">Digital asset & crypto news</h2>',
-            unsafe_allow_html=True,
-        )
         st.markdown(
             '<p class="home-widget-tag" style="font-size:0.8rem;color:#64748b;margin:0 0 0.75rem 0;">'
             "Aggregated headlines · RSS</p>",
