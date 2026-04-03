@@ -1,0 +1,127 @@
+"""Full article list with pagination and day grouping."""
+
+from __future__ import annotations
+
+from datetime import datetime, timezone
+from html import escape
+
+import streamlit as st
+
+from news_feeds import (
+    DEFAULT_FEEDS,
+    article_day_key,
+    article_styles_markdown,
+    dedupe_articles,
+    format_article_day_label,
+    load_all_feeds,
+    render_article_card_html,
+)
+
+PER_PAGE = 20
+
+
+def main() -> None:
+    st.set_page_config(
+        page_title="All articles — JPM Digital",
+        page_icon="◆",
+        layout="wide",
+        initial_sidebar_state="expanded",
+    )
+
+    st.markdown(article_styles_markdown(), unsafe_allow_html=True)
+
+    with st.sidebar:
+        st.header("Navigation")
+        if st.button("← Back to home", use_container_width=True):
+            st.switch_page("streamlit_app.py")
+        st.caption("All stories from aggregated RSS feeds.")
+
+    st.title("All news articles")
+
+    articles, feed_errors = load_all_feeds(DEFAULT_FEEDS)
+    if feed_errors:
+        with st.expander("Some feeds could not be loaded", expanded=False):
+            for err in feed_errors:
+                st.warning(err)
+
+    unique = dedupe_articles(articles, max_items=None)
+    n = len(unique)
+    if n == 0:
+        st.info("No articles loaded yet.")
+        return
+
+    total_pages = max(1, (n + PER_PAGE - 1) // PER_PAGE)
+
+    if "all_news_page" not in st.session_state:
+        st.session_state.all_news_page = 1
+    if st.session_state.all_news_page > total_pages:
+        st.session_state.all_news_page = total_pages
+    if st.session_state.all_news_page < 1:
+        st.session_state.all_news_page = 1
+
+    page = int(st.session_state.all_news_page)
+    start = (page - 1) * PER_PAGE
+    page_items = unique[start : start + PER_PAGE]
+
+    st.caption(f"Showing {start + 1}–{min(start + PER_PAGE, n)} of {n} articles")
+
+    prev_day_key = None
+    for item in page_items:
+        pub = item.get("published")
+        dk = article_day_key(pub if isinstance(pub, datetime) else None)
+        if dk != prev_day_key:
+            if prev_day_key is not None:
+                st.markdown('<div class="day-sep"></div>', unsafe_allow_html=True)
+            label = format_article_day_label(pub if isinstance(pub, datetime) else None)
+            st.markdown(f'<p class="day-label">{escape(label)}</p>', unsafe_allow_html=True)
+            prev_day_key = dk
+
+        st.markdown(render_article_card_html(item), unsafe_allow_html=True)
+
+    st.divider()
+    st.markdown("**Pages**")
+    c_prev, c_mid, c_next = st.columns([1, 4, 1])
+    with c_prev:
+        go_prev = st.button("← Prev", disabled=page <= 1, key="all_prev")
+    with c_next:
+        go_next = st.button("Next →", disabled=page >= total_pages, key="all_next")
+
+    if go_prev:
+        st.session_state.all_news_page = page - 1
+        st.rerun()
+    if go_next:
+        st.session_state.all_news_page = page + 1
+        st.rerun()
+
+    if total_pages <= 18:
+        num_cols = st.columns(total_pages)
+        for p in range(1, total_pages + 1):
+            with num_cols[p - 1]:
+                if st.button(
+                    str(p),
+                    key=f"pgnum_{p}",
+                    use_container_width=True,
+                    type="primary" if p == page else "secondary",
+                ):
+                    st.session_state.all_news_page = p
+                    st.rerun()
+    else:
+        new_pg = st.number_input(
+            "Go to page",
+            min_value=1,
+            max_value=total_pages,
+            value=page,
+            step=1,
+            key="all_page_input",
+        )
+        if new_pg != page:
+            st.session_state.all_news_page = new_pg
+            st.rerun()
+
+    st.caption(
+        f"Last built at {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
+        f"Page {page} of {total_pages}"
+    )
+
+
+main()

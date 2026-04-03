@@ -6,26 +6,26 @@ Deploy on Streamlit Community Cloud with this file as the main entrypoint.
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from email.utils import parsedate_to_datetime
 from html import escape
 from typing import Any
 
-import feedparser
 import requests
 import streamlit as st
+
+from news_feeds import (
+    DEFAULT_FEEDS,
+    article_styles_markdown,
+    dedupe_articles,
+    load_all_feeds,
+    render_article_card_html,
+)
 
 # Price ticker: CoinGecko first, then CoinCap (both public, no API key for this usage).
 COINGECKO_MARKETS_URL = "https://api.coingecko.com/api/v3/coins/markets"
 COINCAP_ASSETS_URL = "https://api.coincap.io/v2/assets"
 TICKER_COUNT = 25
 
-# Public RSS feeds (no API keys). Replace or extend as needed.
-DEFAULT_FEEDS: list[tuple[str, str]] = [
-    ("CoinTelegraph", "https://cointelegraph.com/rss"),
-    ("Decrypt", "https://decrypt.co/feed"),
-    ("CoinDesk", "https://www.coindesk.com/arc/outboundfeeds/rss/"),
-    ("The Block", "https://www.theblockcrypto.com/rss.xml"),
-]
+HOME_HEADLINE_COUNT = 5
 
 
 def _to_float(v: Any) -> float | None:
@@ -219,63 +219,6 @@ def render_price_ticker_html(
     )
 
 
-def _parse_entry_date(entry: Any) -> datetime | None:
-    if getattr(entry, "published_parsed", None):
-        t = entry.published_parsed
-        try:
-            return datetime(*t[:6], tzinfo=timezone.utc)
-        except (TypeError, ValueError):
-            pass
-    if getattr(entry, "updated_parsed", None):
-        t = entry.updated_parsed
-        try:
-            return datetime(*t[:6], tzinfo=timezone.utc)
-        except (TypeError, ValueError):
-            pass
-    raw = getattr(entry, "published", None) or getattr(entry, "updated", None)
-    if raw:
-        try:
-            dt = parsedate_to_datetime(raw)
-            if dt.tzinfo is None:
-                dt = dt.replace(tzinfo=timezone.utc)
-            return dt.astimezone(timezone.utc)
-        except (TypeError, ValueError):
-            pass
-    return None
-
-
-@st.cache_data(ttl=300, show_spinner=False)
-def fetch_feed(source_name: str, url: str) -> list[dict[str, Any]]:
-    parsed = feedparser.parse(url)
-    out: list[dict[str, Any]] = []
-    for entry in getattr(parsed, "entries", []) or []:
-        link = getattr(entry, "link", "") or ""
-        title = (getattr(entry, "title", "") or "Untitled").strip()
-        if not link and not title:
-            continue
-        out.append(
-            {
-                "title": title,
-                "link": link,
-                "source": source_name,
-                "published": _parse_entry_date(entry),
-            }
-        )
-    return out
-
-
-def load_all_feeds(feeds: list[tuple[str, str]]) -> tuple[list[dict[str, Any]], list[str]]:
-    combined: list[dict[str, Any]] = []
-    errors: list[str] = []
-    for name, url in feeds:
-        try:
-            combined.extend(fetch_feed(name, url))
-        except Exception as e:  # noqa: BLE001 — show feed errors in UI
-            errors.append(f"{name}: {e!s}")
-    combined.sort(key=lambda x: x["published"] or datetime.min.replace(tzinfo=timezone.utc), reverse=True)
-    return combined, errors
-
-
 def main() -> None:
     st.set_page_config(
         page_title="JPM Digital — Crypto News",
@@ -285,32 +228,9 @@ def main() -> None:
     )
 
     st.markdown(
-        """
+        article_styles_markdown()
+        + """
         <style>
-        div[data-testid="stVerticalBlock"] > div:has(div.news-card) {
-            gap: 0.75rem;
-        }
-        .news-card {
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 1rem 1.1rem;
-            background: #ffffff;
-            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
-        }
-        .news-meta {
-            font-size: 0.85rem;
-            color: #64748b;
-            margin-bottom: 0.35rem;
-        }
-        .news-title a {
-            color: #0f172a;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.05rem;
-        }
-        .news-title a:hover {
-            color: #059669;
-        }
         .cd-ticker-shell {
             background: linear-gradient(90deg, #ffffff 0%, #f1f5f9 50%, #ffffff 100%);
             border: 1px solid #e2e8f0;
@@ -404,11 +324,14 @@ def main() -> None:
     with st.sidebar:
         st.header("Sources")
         st.caption("RSS feeds aggregated on refresh. Add your own in the repo.")
-        max_items = st.slider("Articles to show", min_value=10, max_value=80, value=30, step=5)
+        if st.button("All articles →", use_container_width=True):
+            st.switch_page("pages/All_Articles.py")
         refresh = st.button("Refresh feeds", use_container_width=True)
 
     if refresh:
-        fetch_feed.clear()
+        import news_feeds
+
+        news_feeds.fetch_feed.clear()
         fetch_top_crypto_tickers.clear()
         st.rerun()
 
@@ -426,48 +349,24 @@ def main() -> None:
                 st.warning(err)
 
     if not articles:
-        st.info("No articles loaded. Check your network or RSS URLs in `streamlit_app.py`.")
+        st.info("No articles loaded. Check your network or RSS URLs in `news_feeds.py`.")
         st.caption(
             f"Last built at {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
             "Prices: CoinGecko or CoinCap · Headlines: original publishers."
         )
         return
 
-    seen: set[str] = set()
-    unique: list[dict[str, Any]] = []
-    for a in articles:
-        key = a["link"] or a["title"]
-        if key in seen:
-            continue
-        seen.add(key)
-        unique.append(a)
-        if len(unique) >= max_items:
-            break
+    unique = dedupe_articles(articles, max_items=None)
+    top = unique[:HOME_HEADLINE_COUNT]
 
-    n_cols = 2
-    rows = [unique[i : i + n_cols] for i in range(0, len(unique), n_cols)]
-    for row in rows:
-        cols = st.columns(n_cols)
-        for col, item in zip(cols, row):
-            with col:
-                pub = item["published"]
-                pub_s = pub.strftime("%b %d, %Y · %H:%M UTC") if pub else "Date unknown"
-                title_esc = (
-                    item["title"]
-                    .replace("&", "&amp;")
-                    .replace("<", "&lt;")
-                    .replace(">", "&gt;")
-                )
-                link = item["link"] or "#"
-                st.markdown(
-                    f"""
-                    <div class="news-card">
-                      <div class="news-meta">{item["source"]} · {pub_s}</div>
-                      <div class="news-title"><a href="{link}" target="_blank" rel="noopener noreferrer">{title_esc}</a></div>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
+    for item in top:
+        st.markdown(render_article_card_html(item), unsafe_allow_html=True)
+
+    if len(unique) > HOME_HEADLINE_COUNT:
+        if st.button("See more", use_container_width=False, type="primary"):
+            st.switch_page("pages/All_Articles.py")
+    else:
+        st.caption("No additional articles beyond this list.")
 
     st.divider()
     st.caption(
