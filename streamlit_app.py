@@ -14,8 +14,9 @@ import feedparser
 import requests
 import streamlit as st
 
-# CoinDesk production API (powers coindesk.com/price). No API key for public list usage.
-COINDESK_CURRENCIES_URL = "https://production.api.coindesk.com/v2/currencies"
+# Price ticker: CoinGecko first, then CoinCap (both public, no API key for this usage).
+COINGECKO_MARKETS_URL = "https://api.coingecko.com/api/v3/coins/markets"
+COINCAP_ASSETS_URL = "https://api.coincap.io/v2/assets"
 TICKER_COUNT = 25
 
 # Public RSS feeds (no API keys). Replace or extend as needed.
@@ -41,131 +42,105 @@ def _to_float(v: Any) -> float | None:
     return None
 
 
-def _metrics_dict(coin: dict[str, Any]) -> dict[str, Any]:
-    m = coin.get("metrics")
-    if isinstance(m, dict):
-        return m
-    inner = coin.get("currency")
-    if isinstance(inner, dict):
-        im = inner.get("metrics")
-        if isinstance(im, dict):
-            return im
-    return coin
+def _parse_coingecko_markets(data: Any, limit: int) -> list[dict[str, Any]]:
+    if not isinstance(data, list):
+        return []
+    out: list[dict[str, Any]] = []
+    for c in data:
+        if not isinstance(c, dict):
+            continue
+        sym = str(c.get("symbol", "?")).strip().upper()[:14]
+        price = _to_float(c.get("current_price"))
+        pct = _to_float(c.get("price_change_percentage_24h"))
+        if price is None:
+            continue
+        out.append(
+            {
+                "symbol": sym,
+                "name": str(c.get("name", sym))[:48],
+                "price_usd": price,
+                "pct_24h": pct,
+            }
+        )
+        if len(out) >= limit:
+            break
+    return out
 
 
-def _parse_price_usd(metrics: dict[str, Any]) -> float | None:
-    for key in ("last_price_usd", "price_usd", "last", "PRICE", "price", "usd_price"):
-        p = _to_float(metrics.get(key))
-        if p is not None:
-            return p
-    usd = metrics.get("usd")
-    if isinstance(usd, dict):
-        p = _to_float(usd.get("price") or usd.get("last"))
-        if p is not None:
-            return p
-    return None
-
-
-def _parse_pct_24h(metrics: dict[str, Any]) -> float | None:
-    for key in (
-        "percent_change_usd_last_24_hours",
-        "percent_change_24h",
-        "price_change_percentage_24h",
-        "change_percent_24h",
-        "CHANGEPCT24HOUR",
-    ):
-        p = _to_float(metrics.get(key))
-        if p is not None:
-            return p
-    usd = metrics.get("usd")
-    if isinstance(usd, dict):
-        p = _to_float(usd.get("percent_change_24h") or usd.get("change_percent_24h"))
-        if p is not None:
-            return p
-    return None
-
-
-def _symbol_from_coin(coin: dict[str, Any]) -> str:
-    s = coin.get("symbol") or coin.get("ticker") or coin.get("base_symbol") or coin.get("code")
-    if s is None and isinstance(coin.get("currency"), dict):
-        s = coin["currency"].get("symbol")
-    return str(s or "?").strip().upper()[:14]
-
-
-def _extract_currency_list(payload: Any) -> list[dict[str, Any]]:
-    if isinstance(payload, list):
-        return [x for x in payload if isinstance(x, dict)]
+def _parse_coincap_assets(payload: Any, limit: int) -> list[dict[str, Any]]:
     if not isinstance(payload, dict):
         return []
-    for key in ("data", "currencies", "items", "Data", "result"):
-        block = payload.get(key)
-        if isinstance(block, list):
-            return [x for x in block if isinstance(x, dict)]
-        if isinstance(block, dict):
-            inner = block.get("currencies") or block.get("items") or block.get("data")
-            if isinstance(inner, list):
-                return [x for x in inner if isinstance(x, dict)]
-    return []
+    data = payload.get("data")
+    if not isinstance(data, list):
+        return []
+    out: list[dict[str, Any]] = []
+    for c in data:
+        if not isinstance(c, dict):
+            continue
+        sym = str(c.get("symbol", "?")).strip().upper()[:14]
+        price = _to_float(c.get("priceUsd"))
+        pct = _to_float(c.get("changePercent24Hr"))
+        if price is None:
+            continue
+        out.append(
+            {
+                "symbol": sym,
+                "name": str(c.get("name", sym))[:48],
+                "price_usd": price,
+                "pct_24h": pct,
+            }
+        )
+        if len(out) >= limit:
+            break
+    return out
 
 
 @st.cache_data(ttl=120, show_spinner=False)
-def fetch_coindesk_top_tickers(limit: int = TICKER_COUNT) -> tuple[list[dict[str, Any]], str | None]:
-    """Top cryptocurrencies by market cap from CoinDesk; includes ~24h % change when present."""
-    params: dict[str, str | int] = {
-        "limit": max(limit, 5),
-        "sort_by": "MARKET_CAP",
-    }
+def fetch_top_crypto_tickers(limit: int = TICKER_COUNT) -> tuple[list[dict[str, Any]], str | None, str]:
+    """Top ~25 by market cap: CoinGecko, then CoinCap. Returns (rows, error, attribution label)."""
+    lim = max(min(limit, 250), 1)
     headers = {
-        "User-Agent": "Mozilla/5.0 (compatible; JPM-Digital-News/1.0; +https://www.coindesk.com/price)",
+        "User-Agent": "Mozilla/5.0 (compatible; JPM-Digital-News/1.0)",
         "Accept": "application/json",
     }
-    payloads: list[Any] = []
+    cg_err: str | None = None
     try:
-        r = requests.get(COINDESK_CURRENCIES_URL, params=params, headers=headers, timeout=25)
+        r = requests.get(
+            COINGECKO_MARKETS_URL,
+            params={
+                "vs_currency": "usd",
+                "order": "market_cap_desc",
+                "per_page": lim,
+                "page": 1,
+                "sparkline": "false",
+            },
+            headers=headers,
+            timeout=25,
+        )
         r.raise_for_status()
-        payloads.append(r.json())
-    except (requests.RequestException, ValueError) as e:
-        return [], f"CoinDesk request failed: {e!s}"
+        rows = _parse_coingecko_markets(r.json(), limit)
+        if rows:
+            return rows[:limit], None, "CoinGecko"
+    except (requests.RequestException, ValueError, TypeError) as e:
+        cg_err = f"{type(e).__name__}: {e}"
 
-    def build_rows(p: Any) -> list[dict[str, Any]]:
-        out: list[dict[str, Any]] = []
-        for coin in _extract_currency_list(p):
-            metrics = _metrics_dict(coin)
-            sym = _symbol_from_coin(coin)
-            price = _parse_price_usd(metrics)
-            pct = _parse_pct_24h(metrics)
-            if price is None:
-                continue
-            name = str(coin.get("name") or coin.get("long_name") or sym)[:48]
-            out.append(
-                {
-                    "symbol": sym,
-                    "name": name,
-                    "price_usd": price,
-                    "pct_24h": pct,
-                }
-            )
-            if len(out) >= limit:
-                break
-        return out
+    cc_err: str | None = None
+    try:
+        r = requests.get(COINCAP_ASSETS_URL, params={"limit": lim}, headers=headers, timeout=25)
+        r.raise_for_status()
+        rows = _parse_coincap_assets(r.json(), limit)
+        if rows:
+            return rows[:limit], None, "CoinCap"
+    except (requests.RequestException, ValueError, TypeError) as e:
+        cc_err = f"{type(e).__name__}: {e}"
 
-    rows = build_rows(payloads[0])
-    if not rows:
-        try:
-            r2 = requests.get(
-                COINDESK_CURRENCIES_URL,
-                params={"limit": max(limit, 5)},
-                headers=headers,
-                timeout=25,
-            )
-            r2.raise_for_status()
-            rows = build_rows(r2.json())
-        except (requests.RequestException, ValueError):
-            pass
-
-    if not rows:
-        return [], "CoinDesk returned no parseable tickers (response shape may have changed)."
-    return rows[:limit], None
+    parts = []
+    if cg_err:
+        parts.append(f"CoinGecko ({cg_err})")
+    if cc_err:
+        parts.append(f"CoinCap ({cc_err})")
+    msg = " · ".join(parts) if parts else "No price data returned."
+    return [], msg, ""
 
 
 def _format_usd(price: float) -> str:
@@ -176,17 +151,22 @@ def _format_usd(price: float) -> str:
     return f"${price:.6g}"
 
 
-def render_price_ticker_html(rows: list[dict[str, Any]], error: str | None) -> str:
+def render_price_ticker_html(
+    rows: list[dict[str, Any]],
+    error: str | None,
+    source_label: str = "",
+) -> str:
+    label = escape(source_label) if source_label else "Live"
     if error:
         esc = escape(error)
         return (
             f'<div class="cd-ticker-shell cd-ticker-error">'
-            f'<span class="cd-ticker-label">CoinDesk</span> {esc}</div>'
+            f'<span class="cd-ticker-label">{label}</span> {esc}</div>'
         )
     if not rows:
         return (
-            '<div class="cd-ticker-shell cd-ticker-error">'
-            '<span class="cd-ticker-label">CoinDesk</span> No price data.</div>'
+            f'<div class="cd-ticker-shell cd-ticker-error">'
+            f'<span class="cd-ticker-label">{label}</span> No price data.</div>'
         )
 
     def one_item(r: dict[str, Any]) -> str:
@@ -210,9 +190,10 @@ def render_price_ticker_html(rows: list[dict[str, Any]], error: str | None) -> s
     joined = "".join(parts)
     # Duplicate for seamless marquee loop
     inner = f'<div class="cd-ticker-track">{joined}</div><div class="cd-ticker-track" aria-hidden="true">{joined}</div>'
+    src = escape(source_label) if source_label else "Live"
     return (
         f'<div class="cd-ticker-shell">'
-        f'<span class="cd-ticker-label">CoinDesk · Top {len(rows)}</span>'
+        f'<span class="cd-ticker-label">{src} · Top {len(rows)}</span>'
         f'<div class="cd-ticker-viewport"><div class="cd-ticker-move">{inner}</div></div></div>'
     )
 
@@ -378,8 +359,8 @@ def main() -> None:
         unsafe_allow_html=True,
     )
 
-    price_rows, price_err = fetch_coindesk_top_tickers(TICKER_COUNT)
-    st.markdown(render_price_ticker_html(price_rows, price_err), unsafe_allow_html=True)
+    price_rows, price_err, price_src = fetch_top_crypto_tickers(TICKER_COUNT)
+    st.markdown(render_price_ticker_html(price_rows, price_err, price_src), unsafe_allow_html=True)
 
     with st.sidebar:
         st.header("Sources")
@@ -389,7 +370,7 @@ def main() -> None:
 
     if refresh:
         fetch_feed.clear()
-        fetch_coindesk_top_tickers.clear()
+        fetch_top_crypto_tickers.clear()
         st.rerun()
 
     col_title, col_tag = st.columns([3, 1])
@@ -409,7 +390,7 @@ def main() -> None:
         st.info("No articles loaded. Check your network or RSS URLs in `streamlit_app.py`.")
         st.caption(
             f"Last built at {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
-            "Prices: CoinDesk · Headlines: original publishers."
+            "Prices: CoinGecko or CoinCap · Headlines: original publishers."
         )
         return
 
@@ -452,7 +433,7 @@ def main() -> None:
     st.divider()
     st.caption(
         f"Last built at {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
-        "Prices & 24h % from CoinDesk · Headlines link to original publishers."
+        "Prices & 24h % from CoinGecko (fallback: CoinCap) · Headlines link to original publishers."
     )
 
 
