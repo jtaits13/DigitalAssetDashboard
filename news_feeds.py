@@ -152,6 +152,14 @@ def dedupe_articles(articles: list[dict[str, Any]], max_items: int | None = None
     return unique
 
 
+def render_home_top_bar(key_suffix: str = "page") -> None:
+    """Home control at top of every page; returns to main landing (`streamlit_app.py`)."""
+    c1, _ = st.columns([1, 12])
+    with c1:
+        if st.button("Home", key=f"home_top_{key_suffix}", help="Back to landing page"):
+            st.switch_page("streamlit_app.py")
+
+
 def article_styles_markdown() -> str:
     """Inject once per page that renders news cards."""
     return """

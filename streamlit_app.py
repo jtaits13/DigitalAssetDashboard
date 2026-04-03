@@ -18,6 +18,7 @@ from news_feeds import (
     dedupe_articles,
     load_all_feeds,
     render_article_card_html,
+    render_home_top_bar,
 )
 
 # Price ticker: CoinGecko first, then CoinCap (both public, no API key for this usage).
@@ -26,6 +27,94 @@ COINCAP_ASSETS_URL = "https://api.coincap.io/v2/assets"
 TICKER_COUNT = 25
 
 HOME_HEADLINE_COUNT = 5
+
+# Ticker-only styles (separate from news CSS so the marquee layout stays reliable).
+TICKER_STYLES_MARKDOWN = """
+<style>
+.cd-ticker-shell {
+    background: linear-gradient(90deg, #ffffff 0%, #f1f5f9 50%, #ffffff 100%);
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0.45rem 0;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+.cd-ticker-error {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    color: #b91c1c;
+}
+.cd-ticker-label {
+    display: inline-block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #059669;
+    font-weight: 700;
+    padding: 0 1rem 0.25rem 1rem;
+}
+.cd-ticker-viewport {
+    overflow: hidden;
+    width: 100%;
+}
+.cd-ticker-move {
+    display: flex;
+    width: max-content;
+    animation: cd-marquee 120s linear infinite;
+}
+.cd-ticker-move:hover {
+    animation-play-state: paused;
+}
+.cd-ticker-track {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 0.75rem 2.25rem;
+    padding: 0.15rem 0.5rem 0.35rem 0.5rem;
+    white-space: nowrap;
+}
+@keyframes cd-marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+.cd-chip {
+    font-size: 0.92rem;
+    color: #334155;
+}
+.cd-chip strong {
+    color: #0f172a;
+    margin-right: 0.35rem;
+}
+.cd-usd {
+    color: #64748b;
+    margin-right: 0.35rem;
+}
+.cd-pct {
+    font-weight: 600;
+    font-size: 0.88rem;
+}
+.cd-pct-up { color: #059669; }
+.cd-pct-down { color: #dc2626; }
+.cd-pct-na { color: #94a3b8; }
+a.cd-chip-link {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    border-radius: 6px;
+    outline-offset: 2px;
+}
+a.cd-chip-link:hover .cd-chip {
+    background: rgba(5, 150, 105, 0.08);
+}
+a.cd-chip-link .cd-chip {
+    padding: 0.15rem 0.35rem;
+    margin: 0 -0.15rem;
+    border-radius: 6px;
+    transition: background 0.15s ease;
+}
+</style>
+"""
 
 
 def _to_float(v: Any) -> float | None:
@@ -227,96 +316,9 @@ def main() -> None:
         initial_sidebar_state="expanded",
     )
 
-    st.markdown(
-        article_styles_markdown()
-        + """
-        <style>
-        .cd-ticker-shell {
-            background: linear-gradient(90deg, #ffffff 0%, #f1f5f9 50%, #ffffff 100%);
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 0.45rem 0;
-            margin-bottom: 1rem;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
-        }
-        .cd-ticker-error {
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
-            color: #b91c1c;
-        }
-        .cd-ticker-label {
-            display: inline-block;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: #059669;
-            font-weight: 700;
-            padding: 0 1rem 0.25rem 1rem;
-        }
-        .cd-ticker-viewport {
-            overflow: hidden;
-            width: 100%;
-        }
-        .cd-ticker-move {
-            display: flex;
-            width: max-content;
-            animation: cd-marquee 120s linear infinite;
-        }
-        .cd-ticker-move:hover {
-            animation-play-state: paused;
-        }
-        .cd-ticker-track {
-            display: flex;
-            flex-shrink: 0;
-            align-items: center;
-            gap: 0.75rem 2.25rem;
-            padding: 0.15rem 0.5rem 0.35rem 0.5rem;
-            white-space: nowrap;
-        }
-        @keyframes cd-marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        .cd-chip {
-            font-size: 0.92rem;
-            color: #334155;
-        }
-        .cd-chip strong {
-            color: #0f172a;
-            margin-right: 0.35rem;
-        }
-        .cd-usd {
-            color: #64748b;
-            margin-right: 0.35rem;
-        }
-        .cd-pct {
-            font-weight: 600;
-            font-size: 0.88rem;
-        }
-        .cd-pct-up { color: #059669; }
-        .cd-pct-down { color: #dc2626; }
-        .cd-pct-na { color: #94a3b8; }
-        a.cd-chip-link {
-            text-decoration: none;
-            color: inherit;
-            cursor: pointer;
-            border-radius: 6px;
-            outline-offset: 2px;
-        }
-        a.cd-chip-link:hover .cd-chip {
-            background: rgba(5, 150, 105, 0.08);
-        }
-        a.cd-chip-link .cd-chip {
-            padding: 0.15rem 0.35rem;
-            margin: 0 -0.15rem;
-            border-radius: 6px;
-            transition: background 0.15s ease;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
+    render_home_top_bar("landing")
+    st.markdown(article_styles_markdown(), unsafe_allow_html=True)
+    st.markdown(TICKER_STYLES_MARKDOWN, unsafe_allow_html=True)
 
     price_rows, price_err, price_src = fetch_top_crypto_tickers(TICKER_COUNT)
     st.markdown(render_price_ticker_html(price_rows, price_err, price_src), unsafe_allow_html=True)

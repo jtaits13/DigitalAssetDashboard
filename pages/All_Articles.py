@@ -15,6 +15,7 @@ from news_feeds import (
     format_article_day_label,
     load_all_feeds,
     render_article_card_html,
+    render_home_top_bar,
 )
 
 PER_PAGE = 20
@@ -28,12 +29,11 @@ def main() -> None:
         initial_sidebar_state="expanded",
     )
 
+    render_home_top_bar("all_articles")
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
 
     with st.sidebar:
         st.header("Navigation")
-        if st.button("← Back to home", use_container_width=True):
-            st.switch_page("streamlit_app.py")
         st.caption("All stories from aggregated RSS feeds.")
 
     st.title("All news articles")
