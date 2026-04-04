@@ -18,6 +18,11 @@ from news_feeds import (
     render_home_top_bar,
 )
 from price_ticker import fetch_top_crypto_tickers, show_price_ticker
+from crypto_etps.widgets import (
+    clear_crypto_etp_cache,
+    get_etp_user_agent_from_secrets,
+    show_us_crypto_etps_widget,
+)
 from sec_filings.widgets import (
     clear_fund_filings_cache,
     get_user_agent_from_secrets,
@@ -70,6 +75,7 @@ def main() -> None:
         news_feeds.fetch_feed.clear()
         fetch_top_crypto_tickers.clear()
         clear_fund_filings_cache()
+        clear_crypto_etp_cache()
         st.rerun()
 
     articles, feed_errors = load_all_feeds(DEFAULT_FEEDS)
@@ -86,9 +92,10 @@ def main() -> None:
             st.caption("Headlines will appear here when feeds load.")
         with col_sec:
             show_sec_fund_filings_widget(get_user_agent_from_secrets())
+        show_us_crypto_etps_widget(get_etp_user_agent_from_secrets())
         st.caption(
             f"Last built at {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
-            "Prices: CoinGecko or CoinCap · SEC widget: EDGAR full-text search · "
+            "Prices: CoinGecko or CoinCap · SEC: EDGAR · Crypto ETPs: StockAnalysis.com list · "
             "Headlines: original publishers."
         )
         return
@@ -122,11 +129,14 @@ def main() -> None:
     with col_sec:
         show_sec_fund_filings_widget(get_user_agent_from_secrets())
 
+    show_us_crypto_etps_widget(get_etp_user_agent_from_secrets())
+
     st.divider()
     st.caption(
         f"Last built at {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
         "Prices & 24h % from CoinGecko (fallback: CoinCap) · "
-        "SEC fund filings via EDGAR full-text search (set SEC_EDGAR_USER_AGENT per SEC guidance) · "
+        "SEC fund filings via EDGAR (set SEC_EDGAR_USER_AGENT) · "
+        "Crypto ETP list via StockAnalysis.com (optional STOCKANALYSIS_USER_AGENT) · "
         "Headlines link to original publishers."
     )
 
