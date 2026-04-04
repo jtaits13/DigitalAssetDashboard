@@ -43,36 +43,19 @@ DEFAULT_SEARCH_Q = (
 )
 
 # Human-readable list for UI (same order as product spec).
-FORM_TYPES_LABEL = (
-    "N-1A, N-2, N-3, N-4, N-6, 485APOS, 485BPOS, 485BXT, 497, S-6, "
-    "N-8B-2, S-1, S-3, 424B2, 424B3, 424I, FWP, 10-K, 10-Q, 8-K"
-)
+FORM_TYPES_LABEL = "N-1A, 485APOS, 485BPOS, S-1, 424B2, 424B3, 424I"
 
-# Exact match on base form (before /) — avoids S-11 vs S-1, S-31 vs S-3, S-60 vs S-6, etc.
-_EXACT_BASE_FORMS: frozenset[str] = frozenset({"S-1", "S-3", "S-6"})
+# Exact match on base form (before /) — avoids S-11 vs S-1, etc.
+_EXACT_BASE_FORMS: frozenset[str] = frozenset({"S-1"})
 
-# N-2..N-6: prefix match but not N-20, N-30, … (digit immediately after the series code).
-_N_SERIES_SHORT: frozenset[str] = frozenset({"N-2", "N-3", "N-4", "N-6"})
-
-# Longer / unambiguous prefixes first (N-8B-2 before any hypothetical N-8… overlap).
+# Longer prefixes first where relevant (485* before accidental substrings).
 _FORM_PREFIXES_ORDERED: tuple[str, ...] = (
-    "N-8B-2",
-    "N-1A",
     "485BPOS",
     "485APOS",
-    "485BXT",
+    "N-1A",
     "424B2",
     "424B3",
     "424I",
-    "10-K",
-    "10-Q",
-    "8-K",
-    "FWP",
-    "497",
-    "N-2",
-    "N-3",
-    "N-4",
-    "N-6",
 )
 
 
@@ -96,13 +79,8 @@ def _is_allowed_form(primary: str) -> bool:
     if base in _EXACT_BASE_FORMS:
         return True
     for ap in _FORM_PREFIXES_ORDERED:
-        if not (base.startswith(ap) or primary.startswith(ap)):
-            continue
-        if ap in _N_SERIES_SHORT:
-            tail = base[len(ap) :]
-            if tail and tail[0].isdigit():
-                continue
-        return True
+        if base.startswith(ap) or primary.startswith(ap):
+            return True
     return False
 
 
