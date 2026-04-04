@@ -17,7 +17,7 @@ sec_filings/                 # SEC EDGAR fund-filing widget (home page, right co
 
 ## SEC fund filings widget
 
-The home page lists **EDGAR filings** that match a **full-text OR search** over crypto / digital-asset / blockchain / tokenization keywords, then **keeps only** these form types: **N-1A**, **N-2**, **485BPOS**, **485APOS**, **497**, **S-1**, **424B2** (including common variants by prefix, e.g. 497K, N-1A/A). Data comes from the same index as [EDGAR search](https://www.sec.gov/edgar/search/) (`efts.sec.gov`, no API key).
+The home page lists **EDGAR filings** that match a **full-text OR search** over crypto / digital-asset / blockchain / tokenization keywords, then **keeps only** the form types listed in `FORM_TYPES_LABEL` in `sec_filings/client.py` (e.g. N-1A, N-2–N-6 series, 485/497 registration statements, S-1/S-3/S-6, 424B/424I, FWP, 8-K, 10-K, 10-Q, and related variants by prefix). Data comes from the same index as [EDGAR search](https://www.sec.gov/edgar/search/) (`efts.sec.gov`, no API key).
 
 **Important — User-Agent:** SEC requires automated requests to identify the caller and include **contact information**. Set in `.streamlit/secrets.toml` (local) or Streamlit Cloud **Secrets**:
 

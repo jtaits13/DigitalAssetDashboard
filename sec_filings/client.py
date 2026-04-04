@@ -42,15 +42,37 @@ DEFAULT_SEARCH_Q = (
     '"digital asset custody" OR "crypto custody" OR "custody of digital assets"'
 )
 
-# Post-filter: only these form types (amendments e.g. N-1A/A match by prefix).
-_ALLOWED_FORM_PREFIXES: tuple[str, ...] = (
+# Human-readable list for UI (same order as product spec).
+FORM_TYPES_LABEL = (
+    "N-1A, N-2, N-3, N-4, N-6, 485APOS, 485BPOS, 485BXT, 497, S-6, "
+    "N-8B-2, S-1, S-3, 424B2, 424B3, 424I, FWP, 10-K, 10-Q, 8-K"
+)
+
+# Exact match on base form (before /) — avoids S-11 vs S-1, S-31 vs S-3, S-60 vs S-6, etc.
+_EXACT_BASE_FORMS: frozenset[str] = frozenset({"S-1", "S-3", "S-6"})
+
+# N-2..N-6: prefix match but not N-20, N-30, … (digit immediately after the series code).
+_N_SERIES_SHORT: frozenset[str] = frozenset({"N-2", "N-3", "N-4", "N-6"})
+
+# Longer / unambiguous prefixes first (N-8B-2 before any hypothetical N-8… overlap).
+_FORM_PREFIXES_ORDERED: tuple[str, ...] = (
+    "N-8B-2",
     "N-1A",
-    "N-2",
     "485BPOS",
     "485APOS",
-    "497",
-    "S-1",
+    "485BXT",
     "424B2",
+    "424B3",
+    "424I",
+    "10-K",
+    "10-Q",
+    "8-K",
+    "FWP",
+    "497",
+    "N-2",
+    "N-3",
+    "N-4",
+    "N-6",
 )
 
 
@@ -67,18 +89,20 @@ def _primary_form_fields(src: dict[str, Any]) -> tuple[str, str]:
 
 
 def _is_allowed_form(primary: str) -> bool:
-    """True only for N-1A, N-2, 485BPOS, 485APOS, 497*, S-1 (not S-11), 424B2*."""
+    """True only for forms listed in FORM_TYPES_LABEL (variants by prefix where applicable)."""
     if not primary or primary == "—":
         return False
     base = primary.split("/")[0].strip()
-    for ap in _ALLOWED_FORM_PREFIXES:
-        if ap == "S-1":
-            # Avoid matching S-11, S-12, S-10, etc.
-            if base == "S-1":
-                return True
+    if base in _EXACT_BASE_FORMS:
+        return True
+    for ap in _FORM_PREFIXES_ORDERED:
+        if not (base.startswith(ap) or primary.startswith(ap)):
             continue
-        if base.startswith(ap) or primary.startswith(ap):
-            return True
+        if ap in _N_SERIES_SHORT:
+            tail = base[len(ap) :]
+            if tail and tail[0].isdigit():
+                continue
+        return True
     return False
 
 
@@ -151,7 +175,7 @@ def fetch_crypto_fund_filings(
     max_list: int = 22,
 ) -> FundFilingsResult:
     """
-    Query EDGAR full-text search; keep only N-1A, N-2, 485BPOS, 485APOS, 497*, S-1*, 424B2*.
+    Query EDGAR full-text search; keep only forms in FORM_TYPES_LABEL.
 
     user_agent must identify your app and include contact per https://www.sec.gov/os/accessing-edgar-data
     """
@@ -216,7 +240,7 @@ def fetch_crypto_fund_filings(
     out.filings = rows[:max_list]
     if not out.filings:
         out.error = (
-            "No filings with the allowed form types (N-1A, N-2, 485BPOS, 485APOS, 497, S-1, 424B2) "
+            f"No filings with the allowed form types ({FORM_TYPES_LABEL}) "
             "appeared in this search batch. Try again later or broaden keywords in sec_filings/client.py."
         )
     return out
