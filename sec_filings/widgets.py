@@ -18,14 +18,6 @@ WIDGET_CSS = """
     margin-bottom: 0.5rem;
     box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
 }
-.sec-widget-title {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: #0f766e;
-    font-weight: 700;
-    margin: 0 0 0.35rem 0;
-}
 .sec-filing-list {
     max-height: 28rem;
     overflow-y: auto;
@@ -74,7 +66,7 @@ def show_sec_fund_filings_widget(user_agent: str | None) -> None:
     if data.error and not data.filings:
         st.markdown(
             '<div class="sec-widget-shell">'
-            '<p class="sec-widget-title">SEC fund filings · digital assets</p>'
+            '<h2 class="home-main-heading">SEC fund filings · digital assets</h2>'
             "</div>",
             unsafe_allow_html=True,
         )
@@ -83,7 +75,7 @@ def show_sec_fund_filings_widget(user_agent: str | None) -> None:
 
     st.markdown(
         '<div class="sec-widget-shell">'
-        '<p class="sec-widget-title">SEC fund filings · digital assets</p>'
+        '<h2 class="home-main-heading">SEC fund filings · digital assets</h2>'
         "<p style=\"font-size:0.78rem;color:#64748b;margin:0 0 0.5rem 0;\">"
         f"Form types: {escape(FORM_TYPES_LABEL)}. Sourced via EDGAR.</p>"
         "</div>",

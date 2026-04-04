@@ -12,6 +12,21 @@ from typing import Any
 import feedparser
 import streamlit as st
 
+# Match `h2.home-main-heading` on the home page (Latest Digital Asset News).
+HOME_MAIN_HEADING_CSS = """
+<style>
+h2.home-main-heading {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 0.15rem 0;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+}
+</style>
+"""
+
+
 DEFAULT_FEEDS: list[tuple[str, str]] = [
     ("CoinTelegraph", "https://cointelegraph.com/rss"),
     ("Decrypt", "https://decrypt.co/feed"),

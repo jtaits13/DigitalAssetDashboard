@@ -13,11 +13,13 @@ from crypto_etps.client import (
     total_aum_usd,
 )
 from crypto_etps.widgets import (
+    WIDGET_CSS,
     get_etp_user_agent_from_secrets,
     load_crypto_etps_cached,
+    render_etp_table_html,
     resolve_etp_user_agent,
 )
-from news_feeds import article_styles_markdown, render_home_top_bar
+from news_feeds import HOME_MAIN_HEADING_CSS, article_styles_markdown, render_home_top_bar
 from price_ticker import show_price_ticker
 
 
@@ -31,15 +33,21 @@ def main() -> None:
 
     render_home_top_bar("crypto_etps_full")
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
+    st.markdown(HOME_MAIN_HEADING_CSS, unsafe_allow_html=True)
+    st.markdown(WIDGET_CSS, unsafe_allow_html=True)
     show_price_ticker()
 
-    st.title("U.S. Crypto ETPs — full list")
+    st.markdown(
+        '<h2 class="home-main-heading">U.S. Crypto ETPs — full list</h2>',
+        unsafe_allow_html=True,
+    )
     st.caption(
         "Data from [StockAnalysis.com](https://stockanalysis.com/list/crypto-etfs/) "
-        "(public list page; scraped for display only)."
+        "and each fund’s detail page (issuer, inception, past-year return as 52W %). Scraped for display only."
     )
 
-    data = load_crypto_etps_cached(resolve_etp_user_agent(get_etp_user_agent_from_secrets()))
+    with st.spinner("Loading U.S. crypto ETPs (list + profile pages)…"):
+        data = load_crypto_etps_cached(resolve_etp_user_agent(get_etp_user_agent_from_secrets()))
 
     if data.error and not data.rows:
         st.warning(escape(data.error))
@@ -51,21 +59,7 @@ def main() -> None:
         st.subheader(f"Total AUM (known assets): {format_usd_compact(total)}")
     st.caption(f"{len(rows)} ETPs · sorted by assets (unknown last)")
 
-    st.dataframe(
-        [
-            {
-                "Symbol": r.symbol,
-                "Fund name": r.name,
-                "Price": r.price,
-                "% Chg": r.pct_change,
-                "Assets": r.assets_display,
-            }
-            for r in rows
-        ],
-        use_container_width=True,
-        hide_index=True,
-        height=min(900, 120 + 28 * len(rows)),
-    )
+    st.markdown(render_etp_table_html(rows), unsafe_allow_html=True)
 
     st.caption(
         f"Last loaded at {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "

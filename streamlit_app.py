@@ -11,6 +11,7 @@ import streamlit as st
 
 from news_feeds import (
     DEFAULT_FEEDS,
+    HOME_MAIN_HEADING_CSS,
     article_styles_markdown,
     dedupe_articles,
     load_all_feeds,
@@ -31,19 +32,8 @@ from sec_filings.widgets import (
 
 HOME_HEADLINE_COUNT = 5
 
-# Home page only: compact heading + left-aligned “widget” width (CoinDesk-style column).
-HOME_PAGE_EXTRA_CSS = """
-<style>
-h2.home-main-heading {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #0f172a;
-    margin: 0 0 0.15rem 0;
-    letter-spacing: -0.02em;
-    line-height: 1.25;
-}
-</style>
-"""
+# Home page: shared heading style is HOME_MAIN_HEADING_CSS (news_feeds.py).
+HOME_PAGE_EXTRA_CSS = ""
 
 
 def main() -> None:
@@ -59,7 +49,7 @@ def main() -> None:
 
     render_home_top_bar("landing")
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
-    st.markdown(HOME_PAGE_EXTRA_CSS, unsafe_allow_html=True)
+    st.markdown(HOME_MAIN_HEADING_CSS + HOME_PAGE_EXTRA_CSS, unsafe_allow_html=True)
     show_price_ticker()
 
     with st.sidebar:
