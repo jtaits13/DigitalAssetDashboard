@@ -42,54 +42,15 @@ DEFAULT_SEARCH_Q = (
     '"digital asset custody" OR "crypto custody" OR "custody of digital assets"'
 )
 
-# Post-filter: only show traditional registered-fund / investment-company style forms
-# (NPORT, N-CEN, 485/497, 40-*, etc.). Excludes 8-K, 10-Q, S-1, and other operating-co filings.
+# Post-filter: only these form types (amendments e.g. N-1A/A match by prefix).
 _ALLOWED_FORM_PREFIXES: tuple[str, ...] = (
-    "NPORT",
-    "N-CEN",
-    "N-CSR",
-    "N-CSRS",
     "N-1A",
     "N-2",
-    "N-14",
-    "N-8A",
-    "N-8F",
-    "N-54A",
-    "N-23C",
-    "N-5",
-    "N-6",
-    "N-LIQUID",
-    "N-MFP",
-    "485",
+    "485BPOS",
+    "485APOS",
     "497",
-    "40-17",
-    "40-APP",
-    "40-6C",
-    "40-33",
-    "40-6B",
-    "24F-2",
-    "424B",
-    "FWP",
-    "S-6",  # UIT / unit investment trust registration
-)
-
-_EXCLUDED_FORM_PREFIXES: tuple[str, ...] = (
-    "8-K",
-    "10-K",
-    "10-Q",
-    "6-K",
-    "20-F",
     "S-1",
-    "S-3",
-    "S-4",
-    "S-11",
-    "CORRESP",
-    "UPLOAD",
-    "DRSLTR",
-    "DEF 14A",
-    "PRE 14A",
-    "SC 13D",
-    "SC 13G",
+    "424B2",
 )
 
 
@@ -105,43 +66,19 @@ def _primary_form_fields(src: dict[str, Any]) -> tuple[str, str]:
     return primary, ft
 
 
-def _fund_like_display_names(blob: str) -> bool:
-    """424B/FWP appear for stocks too; require IC- or ETF-style naming."""
-    b = blob.lower()
-    return any(
-        x in b
-        for x in (
-            "trust",
-            "etf",
-            "fund",
-            "series",
-            "investment company",
-            "unit investment",
-            "closed-end",
-            "advisers act",
-            "1940 act",
-        )
-    )
-
-
-def _is_traditional_fund_form(primary: str, display_names_blob: str) -> bool:
+def _is_allowed_form(primary: str) -> bool:
+    """True only for N-1A, N-2, 485BPOS, 485APOS, 497*, S-1 (not S-11), 424B2*."""
     if not primary or primary == "—":
         return False
     base = primary.split("/")[0].strip()
-    for ex in _EXCLUDED_FORM_PREFIXES:
-        if base.startswith(ex) or primary.startswith(ex):
-            return False
-    # Reject other S-* except S-6 (handled in allowlist)
-    if primary.startswith("S-") and not primary.startswith("S-6"):
-        return False
     for ap in _ALLOWED_FORM_PREFIXES:
-        if not (base.startswith(ap) or primary.startswith(ap)):
+        if ap == "S-1":
+            # Avoid matching S-11, S-12, S-10, etc.
+            if base == "S-1":
+                return True
             continue
-        # Prospectus / FWP: must look like a fund product name, not a corporate equity deal
-        if ap in ("424B", "FWP") or base.startswith("424") or primary.startswith("FWP"):
-            if not _fund_like_display_names(display_names_blob):
-                return False
-        return True
+        if base.startswith(ap) or primary.startswith(ap):
+            return True
     return False
 
 
@@ -176,13 +113,12 @@ def _parse_hit(hit: dict[str, Any]) -> FundFilingRow | None:
     if not isinstance(src, dict):
         return None
     primary, _ft = _primary_form_fields(src)
+    if not _is_allowed_form(primary):
+        return None
     names = src.get("display_names")
     if not isinstance(names, list):
         names = []
     str_names = [str(n) for n in names if n]
-    display_blob = " ".join(str_names)
-    if not _is_traditional_fund_form(primary, display_blob):
-        return None
     form = str(src.get("form") or src.get("file_type") or "").strip() or primary or "—"
     adsh = str(src.get("adsh") or "").strip()
     if not adsh:
@@ -215,7 +151,7 @@ def fetch_crypto_fund_filings(
     max_list: int = 22,
 ) -> FundFilingsResult:
     """
-    Query EDGAR full-text search, keep only traditional fund/IC form types, dedupe by accession.
+    Query EDGAR full-text search; keep only N-1A, N-2, 485BPOS, 485APOS, 497*, S-1*, 424B2*.
 
     user_agent must identify your app and include contact per https://www.sec.gov/os/accessing-edgar-data
     """
@@ -280,7 +216,7 @@ def fetch_crypto_fund_filings(
     out.filings = rows[:max_list]
     if not out.filings:
         out.error = (
-            "No traditional fund forms (NPORT, N-CEN, 497, 485, etc.) appeared in the search results. "
-            "Try again later or broaden keywords in sec_filings/client.py."
+            "No filings with the allowed form types (N-1A, N-2, 485BPOS, 485APOS, 497, S-1, 424B2) "
+            "appeared in this search batch. Try again later or broaden keywords in sec_filings/client.py."
         )
     return out

@@ -85,7 +85,8 @@ def show_sec_fund_filings_widget(user_agent: str | None) -> None:
         '<div class="sec-widget-shell">'
         '<p class="sec-widget-title">SEC fund filings · digital assets</p>'
         "<p style=\"font-size:0.78rem;color:#64748b;margin:0 0 0.5rem 0;\">"
-        "Same keyword search as before, but only **traditional fund / investment-company forms** (e.g. NPORT, N-CEN, 485/497, 40-*, 424B prospectuses and FWP where the filer name looks like a fund or ETF). "
+        "Same keyword search as before, but only these **form types**: "
+        "**N-1A**, **N-2**, **485BPOS**, **485APOS**, **497** (incl. 497K/J), **S-1**, **424B2** (amendments match by prefix, e.g. N-1A/A). "
         "Sourced via EDGAR full-text search.</p>"
         "</div>",
         unsafe_allow_html=True,
