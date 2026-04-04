@@ -85,7 +85,7 @@ def show_sec_fund_filings_widget(user_agent: str | None) -> None:
         '<div class="sec-widget-shell">'
         '<p class="sec-widget-title">SEC fund filings · digital assets</p>'
         "<p style=\"font-size:0.78rem;color:#64748b;margin:0 0 0.5rem 0;\">"
-        "Fund-style registrations (NPORT, 497, registration statements, etc.) whose filings match the expanded digital-asset / blockchain / tokenization keyword search. "
+        "EDGAR filings whose full text matches a broad crypto / digital-asset / blockchain / tokenization search (same index as sec.gov EDGAR search). "
         "Sourced via EDGAR full-text search.</p>"
         "</div>",
         unsafe_allow_html=True,

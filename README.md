@@ -17,7 +17,7 @@ sec_filings/                 # SEC EDGAR fund-filing widget (home page, right co
 
 ## SEC fund filings widget
 
-The home page lists **recent EDGAR filings** that match a **full-text search** for digital-asset / blockchain / crypto-related terms, **filtered** to **fund-style** forms (e.g. investment company, ETF, NPORT, 485/497 family, registration statements). Data comes from the same **full-text search index** SEC exposes at `efts.sec.gov` (no API key).
+The home page lists **recent EDGAR filings** that match a **full-text OR search** over crypto / digital-asset / blockchain / tokenization keywords. Results are **not** limited to fund-only forms—8-K, 10-Q, S-1, etc. can appear if the filing text matches. Data comes from the same index as [EDGAR search](https://www.sec.gov/edgar/search/) (`efts.sec.gov`, no API key).
 
 **Important — User-Agent:** SEC requires automated requests to identify the caller and include **contact information**. Set in `.streamlit/secrets.toml` (local) or Streamlit Cloud **Secrets**:
 

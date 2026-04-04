@@ -19,84 +19,28 @@ logger = logging.getLogger(__name__)
 
 EFTS_URL = "https://efts.sec.gov/LATEST/search-index"
 
-# Full-text OR query (EDGAR search syntax). Results are post-filtered to fund-style forms.
-# Does not include ETF or investment-company phrasing in the search string (per product request).
+# Broad OR query: high recall for crypto / digital assets / blockchain / tokenization.
+# Do NOT wrap the whole expression in parentheses — SEC's parser treats a trailing ")" as a
+# required match on the character ")", which returns zero results.
 DEFAULT_SEARCH_Q = (
-    "(crypto OR cryptocurrency OR "
-    '"digital asset" OR "digital assets" OR '
-    "blockchain OR "
-    '"distributed ledger" OR DLT OR '
-    "token OR tokens OR tokenized OR tokenization OR "
-    "Bitcoin OR BTC OR Ethereum OR ETH OR Ether OR "
-    "stablecoin OR stablecoins OR USDC OR USDT OR "
-    '"tokenized treasury" OR "tokenized treasuries" OR '
-    '"digital asset strategy" OR "blockchain strategy" OR "crypto strategy" OR '
-    '"digital asset fund" OR "blockchain fund" OR "crypto fund" OR '
-    '"tokenized fund" OR "tokenized assets" OR '
+    "crypto OR cryptocurrency OR blockchain OR bitcoin OR ethereum OR "
+    '"digital asset" OR "digital assets" OR "virtual currency" OR "digital currency" OR '
+    "tokenized OR tokenization OR token OR tokens OR "
+    "stablecoin OR stablecoins OR USDC OR USDT OR BTC OR ETH OR Ether OR "
+    "defi OR web3 OR NFT OR NFTs OR altcoin OR "
+    '"distributed ledger" OR DLT OR "smart contract" OR '
+    "satoshi OR hashrate OR mining OR validator OR staking OR "
+    "RWA OR rwa OR "
+    '"real-world asset" OR "real world asset" OR "real-world assets" OR '
+    '"tokenized asset" OR "tokenized assets" OR "tokenized security" OR "tokenized securities" OR '
+    '"tokenized treasury" OR "tokenized treasuries" OR "tokenized bond" OR "tokenized bonds" OR '
+    '"tokenized credit" OR "tokenized real estate" OR '
     '"digital commodity" OR "digital securities" OR "digital shares" OR '
-    '"tokenized real estate" OR "tokenized credit" OR "tokenized bonds" OR "tokenized securities" OR '
-    "RWA OR "
-    '"real-world asset" OR "real-world assets" OR '
-    '"exposure to digital assets" OR "exposure to crypto" OR "exposure to blockchain" OR '
-    '"custody of digital assets" OR "digital asset custody" OR "crypto custody"'
-    ")"
+    '"digital asset strategy" OR "blockchain strategy" OR "crypto strategy" OR '
+    '"digital asset fund" OR "blockchain fund" OR "crypto fund" OR "tokenized fund" OR '
+    '"exposure to crypto" OR "exposure to blockchain" OR "exposure to digital assets" OR '
+    '"digital asset custody" OR "crypto custody" OR "custody of digital assets"'
 )
-
-# Form types commonly used by registered funds and similar fund-style registrants.
-_FORM_PREFIXES = (
-    "NPORT",
-    "N-CEN",
-    "N-CSR",
-    "N-CSRS",
-    "N-1A",
-    "N-2",
-    "N-14",
-    "N-8A",
-    "N-54A",
-    "N-23C",
-    "485",
-    "497",
-    "40-17",
-    "40-APP",
-    "40-6C",
-    "S-1",
-    "S-3",
-    "S-6",
-    "S-11",
-    "424B",
-    "FWP",
-    "NPORT-EX",
-)
-
-
-def _looks_like_fund_filing(form: str, display_names: list[str]) -> bool:
-    fu = (form or "").upper().replace(" ", "")
-    for p in _FORM_PREFIXES:
-        if fu.startswith(p.replace(" ", "")) or p.replace(" ", "") in fu:
-            return True
-    blob = " ".join(display_names or []).lower()
-    if any(
-        w in blob
-        for w in (
-            " etf",
-            "etf ",
-            "trust",
-            "fund",
-            "series",
-            "investment company",
-            "unit investment",
-            "closed-end",
-        )
-    ):
-        # Exclude obvious non-fund junk unless name ties to funds/ETFs
-        if fu in ("CORRESP", "UPLOAD", "DRSLTR"):
-            return any(x in blob for x in ("etf", "trust", "fund", "crypto", "bitcoin", "index"))
-        if fu in ("8-K", "10-K", "10-Q", "6-K") and not any(
-            x in blob for x in ("etf", "trust", "fund", "series trust", "index fund")
-        ):
-            return False
-        return True
-    return False
 
 
 @dataclass
@@ -129,13 +73,11 @@ def _parse_hit(hit: dict[str, Any]) -> FundFilingRow | None:
     src = hit.get("_source") if isinstance(hit, dict) else None
     if not isinstance(src, dict):
         return None
-    form = str(src.get("form") or src.get("file_type") or "").strip()
+    form = str(src.get("form") or src.get("file_type") or "").strip() or "—"
     names = src.get("display_names")
     if not isinstance(names, list):
         names = []
     str_names = [str(n) for n in names if n]
-    if not _looks_like_fund_filing(form, str_names):
-        return None
     adsh = str(src.get("adsh") or "").strip()
     if not adsh:
         return None
@@ -163,10 +105,10 @@ def fetch_crypto_fund_filings(
     *,
     search_q: str | None = None,
     max_fetch: int = 100,
-    max_list: int = 18,
+    max_list: int = 22,
 ) -> FundFilingsResult:
     """
-    Query EDGAR full-text search and return fund-related rows (deduped by accession).
+    Query EDGAR full-text search; return crypto/digital-asset-related hits (deduped by accession).
 
     user_agent must identify your app and include contact per https://www.sec.gov/os/accessing-edgar-data
     """
@@ -199,6 +141,13 @@ def fetch_crypto_fund_filings(
         return out
 
     out.raw_hits_considered = len(hits)
+    if not hits:
+        out.error = (
+            "SEC search returned no hits for this query. "
+            "The index may be busy or the query may need adjustment."
+        )
+        return out
+
     seen: set[str] = set()
     rows: list[FundFilingRow] = []
     for h in hits:
@@ -216,7 +165,7 @@ def fetch_crypto_fund_filings(
     out.filings = rows
     if not rows:
         out.error = (
-            "No fund-style filings matched the filters in this batch. "
-            "Try again later or adjust search keywords in sec_filings/client.py."
+            "Could not parse filing rows from SEC results. "
+            "Try again later."
         )
     return out
