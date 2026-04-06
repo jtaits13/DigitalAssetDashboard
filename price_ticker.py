@@ -33,7 +33,7 @@ TICKER_STYLES_MARKDOWN = """
     font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: #059669;
+    color: #000000;
     font-weight: 700;
     padding: 0 1rem 0.25rem 1rem;
 }
