@@ -155,13 +155,10 @@ def show_rwa_league_widget() -> None:
         '<div class="rwa-league-shell">'
         '<h2 class="home-main-heading">RWA League Table · Networks (All)</h2>'
         '<p style="font-size:0.78rem;color:#64748b;margin:0 0 0.65rem 0;">'
-        "Columns mirror the "
+        "From "
         '<a href="https://app.rwa.xyz/" target="_blank" rel="noopener noreferrer">RWA.xyz</a> '
-        "dashboard (embedded page data, not the official API). "
-        "The percentage column uses <strong>change in total value over 7 days</strong> from the embedded field "
-        "<strong>value_7d_change</strong> (fraction). Multiply by 100 for the percent you see on RWA.xyz "
-        "(e.g. top networks: ~63%, ~5.3%, ~9.6%, ~25.7%, ~−0.35%). "
-        "There is <strong>no</strong> separate 30-day total-value change field in the public page JSON.</p>"
+        "embedded data (not the API). "
+        "The <strong>7D Δ value</strong> column is <strong>change in total value over 7 days</strong>.</p>"
         '<div class="rwa-league-scroll">'
         + _rows_to_html(rows)
         + "</div></div>"
