@@ -24,11 +24,8 @@ from crypto_etps.widgets import (
     get_etp_user_agent_from_secrets,
     show_us_crypto_etps_widget,
 )
-from sec_filings.widgets import (
-    clear_fund_filings_cache,
-    get_user_agent_from_secrets,
-    show_sec_fund_filings_widget,
-)
+from regulatory_news.client import load_regulatory_articles
+from regulatory_news.widgets import clear_regulatory_cache, show_regulatory_headlines_widget
 
 HOME_HEADLINE_COUNT = 5
 
@@ -44,8 +41,9 @@ def main() -> None:
         initial_sidebar_state="expanded",
     )
 
-    # Returning to home resets All Articles pagination so the next visit starts at page 1.
+    # Returning to home resets All Articles / All Regulatory pagination.
     st.session_state.all_news_page = 1
+    st.session_state.all_regulatory_page = 1
 
     render_home_top_bar("landing")
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
@@ -57,6 +55,8 @@ def main() -> None:
         st.caption("RSS feeds aggregated on refresh. Add your own in the repo.")
         if st.button("All articles →", use_container_width=True):
             st.switch_page("pages/All_Articles.py")
+        if st.button("All regulatory headlines →", use_container_width=True):
+            st.switch_page("pages/All_Regulatory.py")
         refresh = st.button("Refresh feeds", use_container_width=True)
 
     if refresh:
@@ -64,15 +64,21 @@ def main() -> None:
 
         news_feeds.fetch_feed.clear()
         fetch_top_crypto_tickers.clear()
-        clear_fund_filings_cache()
+        clear_regulatory_cache()
         clear_crypto_etp_cache()
         st.rerun()
 
     articles, feed_errors = load_all_feeds(DEFAULT_FEEDS)
+    regulatory_articles, regulatory_errors = load_regulatory_articles()
 
     if feed_errors:
         with st.expander("Some feeds could not be loaded", expanded=False):
             for err in feed_errors:
+                st.warning(err)
+
+    if regulatory_errors:
+        with st.expander("Some regulatory feeds could not be loaded", expanded=False):
+            for err in regulatory_errors:
                 st.warning(err)
 
     if not articles:
@@ -81,11 +87,12 @@ def main() -> None:
         with col_news:
             st.caption("Headlines will appear here when feeds load.")
         with col_sec:
-            show_sec_fund_filings_widget(get_user_agent_from_secrets())
+            show_regulatory_headlines_widget(regulatory_articles)
         show_us_crypto_etps_widget(get_etp_user_agent_from_secrets())
         st.caption(
             f"Last built at {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
-            "Prices: CoinGecko or CoinCap · SEC: EDGAR · Crypto ETPs: StockAnalysis.com list · "
+            "Prices: CoinGecko or CoinCap · Regulatory headlines: official & secondary RSS · "
+            "Crypto ETPs: StockAnalysis.com list · "
             "Headlines: original publishers."
         )
         return
@@ -93,7 +100,7 @@ def main() -> None:
     unique = dedupe_articles(articles, max_items=None)
     top = unique[:HOME_HEADLINE_COUNT]
 
-    # News (left) and SEC fund filings widget (right).
+    # News (left) and regulatory headlines (right).
     col_news, col_sec = st.columns([1.15, 1], gap="large")
     with col_news:
         st.markdown(
@@ -117,7 +124,7 @@ def main() -> None:
             st.caption("No additional articles beyond this list.")
 
     with col_sec:
-        show_sec_fund_filings_widget(get_user_agent_from_secrets())
+        show_regulatory_headlines_widget(regulatory_articles)
 
     show_us_crypto_etps_widget(get_etp_user_agent_from_secrets())
 
@@ -125,7 +132,7 @@ def main() -> None:
     st.caption(
         f"Last built at {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
         "Prices & 24h % from CoinGecko (fallback: CoinCap) · "
-        "SEC fund filings via EDGAR (set SEC_EDGAR_USER_AGENT) · "
+        "Regulatory headlines: SEC, FCA, ECB, Federal Reserve, CoinDesk, Decrypt (filtered) · "
         "Crypto ETP list via StockAnalysis.com (optional STOCKANALYSIS_USER_AGENT) · "
         "Headlines link to original publishers."
     )

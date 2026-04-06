@@ -35,7 +35,8 @@ DEFAULT_FEEDS: list[tuple[str, str]] = [
 ]
 
 
-def _parse_entry_date(entry: Any) -> datetime | None:
+def parse_entry_date(entry: Any) -> datetime | None:
+    """Parse published/updated date from a feedparser entry (UTC)."""
     if getattr(entry, "published_parsed", None):
         t = entry.published_parsed
         try:
@@ -131,7 +132,7 @@ def fetch_feed(source_name: str, url: str) -> list[dict[str, Any]]:
                 "title": title,
                 "link": link,
                 "source": source_name,
-                "published": _parse_entry_date(entry),
+                "published": parse_entry_date(entry),
                 "summary": summary,
             }
         )
@@ -211,6 +212,12 @@ def article_styles_markdown() -> str:
         color: #475569;
         line-height: 1.45;
         margin-top: 0.45rem;
+    }
+    .news-country {
+        font-size: 0.78rem;
+        color: #64748b;
+        margin-top: 0.35rem;
+        line-height: 1.35;
     }
     .day-sep {
         margin: 1.25rem 0 0.75rem 0;
