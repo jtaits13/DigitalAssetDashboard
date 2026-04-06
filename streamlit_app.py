@@ -26,6 +26,7 @@ from crypto_etps.widgets import (
 )
 from regulatory_news.client import load_regulatory_articles
 from regulatory_news.widgets import clear_regulatory_cache, show_regulatory_headlines_widget
+from rwa_league.widgets import clear_rwa_league_cache, show_rwa_league_widget
 
 HOME_HEADLINE_COUNT = 5
 
@@ -66,6 +67,7 @@ def main() -> None:
         fetch_top_crypto_tickers.clear()
         clear_regulatory_cache()
         clear_crypto_etp_cache()
+        clear_rwa_league_cache()
         st.rerun()
 
     articles, feed_errors = load_all_feeds(DEFAULT_FEEDS)
@@ -89,6 +91,7 @@ def main() -> None:
         with col_sec:
             show_regulatory_headlines_widget(regulatory_articles)
         show_us_crypto_etps_widget(get_etp_user_agent_from_secrets())
+        show_rwa_league_widget()
         st.caption(
             f"Last built at {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
             "Prices: CoinGecko or CoinCap · Regulatory headlines: official & secondary RSS · "
@@ -127,6 +130,7 @@ def main() -> None:
         show_regulatory_headlines_widget(regulatory_articles)
 
     show_us_crypto_etps_widget(get_etp_user_agent_from_secrets())
+    show_rwa_league_widget()
 
     st.divider()
     st.caption(
