@@ -2,7 +2,8 @@
 Resolve S-1 filing links via SEC EDGAR (data.sec.gov submissions + company_tickers).
 
 Direct link: newest S-1 / S-1/A (etc.) primary document in recent filings when present.
-Fallback: EDGAR browse for type=S-1 for that CIK, then EDGAR search (ticker + S-1 hint).
+Fallback: EDGAR browse for type=S-1 for that CIK, then EDGAR search (ticker + S-1 hint,
+with Filing Category preset to registration statements and prospectuses).
 
 Requires a descriptive User-Agent with contact info per https://www.sec.gov/os/accessing-edgar-data
 """
@@ -24,21 +25,34 @@ SEC_SUBMISSIONS_TMPL = "https://data.sec.gov/submissions/CIK{cik10}.json"
 # S-1, S-1/A, S-1M, etc. — not S-11, S-12, …
 _S1_FORM_RE = re.compile(r"^S-1(?:/[A-Z0-9]+)?$", re.IGNORECASE)
 
+# SEC full-text search hash param `category` (see www.sec.gov/edgar/search/js/edgar_full_text_search.js
+# `formCategories`). Index 5 = "Registration statements and prospectuses" (includes S-1, F-1, 424B*, …).
+_EDGAR_SEARCH_CATEGORY_REGISTRATION = "form-cat5"
+
 
 def _is_s1_form(form: str) -> bool:
     return bool(form and _S1_FORM_RE.match(form.strip()))
 
 
+def _edgar_fulltext_search_url(encoded_q: str) -> str:
+    """EDGAR search URL with Filing Category = registration statements & prospectuses."""
+    cat = _EDGAR_SEARCH_CATEGORY_REGISTRATION
+    return (
+        "https://www.sec.gov/edgar/search/#/"
+        f"q={encoded_q}&category={cat}"
+    )
+
+
 def _edgar_search_ticker_only(symbol: str) -> str:
     sym = re.sub(r"\s+", "", symbol).upper()
-    return f"https://www.sec.gov/edgar/search/#/q={quote(sym, safe='')}"
+    return _edgar_fulltext_search_url(quote(sym, safe=""))
 
 
 def _edgar_search_s1_hint(symbol: str) -> str:
     """When CIK is unknown: search pre-filled with ticker and S-1."""
     sym = re.sub(r"\s+", "", symbol).upper()
     q = quote(f"{sym} S-1", safe="")
-    return f"https://www.sec.gov/edgar/search/#/q={q}"
+    return _edgar_fulltext_search_url(q)
 
 
 def edgar_s1_fallback_url(symbol: str) -> str:
