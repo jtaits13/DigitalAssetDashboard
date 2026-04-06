@@ -77,8 +77,9 @@ def show_etp_dataframe(df, *, height: int) -> None:
             "Symbol": st.column_config.TextColumn("Symbol", width="small"),
             "Fund Name": st.column_config.TextColumn("Fund Name", width="large"),
             "Issuer": st.column_config.TextColumn("Issuer", width="medium"),
-            "Fund Prospectus": st.column_config.LinkColumn(
-                "Fund Prospectus",
+            "S-1": st.column_config.LinkColumn(
+                "S-1",
+                help="Newest S-1 filing document when available; otherwise EDGAR S-1 list or search.",
                 display_text="Open",
                 validate=r"^https://",
             ),

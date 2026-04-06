@@ -1,5 +1,8 @@
 """
-Resolve fund prospectus links via SEC EDGAR (public data.sec.gov + company_tickers).
+Resolve S-1 filing links via SEC EDGAR (data.sec.gov submissions + company_tickers).
+
+Direct link: newest S-1 / S-1/A (etc.) primary document in recent filings when present.
+Fallback: EDGAR browse for type=S-1 for that CIK, then EDGAR search (ticker + S-1 hint).
 
 Requires a descriptive User-Agent with contact info per https://www.sec.gov/os/accessing-edgar-data
 """
@@ -18,29 +21,29 @@ logger = logging.getLogger(__name__)
 SEC_TICKERS_JSON = "https://www.sec.gov/files/company_tickers.json"
 SEC_SUBMISSIONS_TMPL = "https://data.sec.gov/submissions/CIK{cik10}.json"
 
-# Newest filing wins within each form type (outer order = preference).
-_PROSPECTUS_FORMS: tuple[str, ...] = (
-    "424B3",
-    "424B2",
-    "424I",
-    "N-1A",
-    "N-2",
-    "S-1",
-    "N-8B-2",
-    "485BPOS",
-    "485APOS",
-    "497",
-)
+# S-1, S-1/A, S-1M, etc. — not S-11, S-12, …
+_S1_FORM_RE = re.compile(r"^S-1(?:/[A-Z0-9]+)?$", re.IGNORECASE)
 
 
-def _edgar_search_url(symbol: str) -> str:
+def _is_s1_form(form: str) -> bool:
+    return bool(form and _S1_FORM_RE.match(form.strip()))
+
+
+def _edgar_search_ticker_only(symbol: str) -> str:
     sym = re.sub(r"\s+", "", symbol).upper()
     return f"https://www.sec.gov/edgar/search/#/q={quote(sym, safe='')}"
 
 
-def edgar_search_fallback_url(symbol: str) -> str:
-    """SEC EDGAR search URL for a ticker (when no direct filing link)."""
-    return _edgar_search_url(symbol)
+def _edgar_search_s1_hint(symbol: str) -> str:
+    """When CIK is unknown: search pre-filled with ticker and S-1."""
+    sym = re.sub(r"\s+", "", symbol).upper()
+    q = quote(f"{sym} S-1", safe="")
+    return f"https://www.sec.gov/edgar/search/#/q={q}"
+
+
+def edgar_s1_fallback_url(symbol: str) -> str:
+    """Fallback when row has no resolved URL (should be rare)."""
+    return _edgar_search_s1_hint(symbol)
 
 
 def _build_archive_url(cik: int, accession: str, primary: str) -> str:
@@ -49,7 +52,16 @@ def _build_archive_url(cik: int, accession: str, primary: str) -> str:
     return f"https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/{doc}"
 
 
-def _pick_prospectus_filing(submissions: dict, cik: int) -> str | None:
+def _browse_s1_url(cik: int) -> str:
+    """List of S-1 filings for this registrant (newest at top in SEC UI)."""
+    return (
+        "https://www.sec.gov/cgi-bin/browse-edgar"
+        f"?action=getcompany&CIK={cik}&type=S-1&owner=exclude&count=40"
+    )
+
+
+def _pick_s1_document_url(submissions: dict, cik: int) -> str | None:
+    """Newest S-1 family filing in `filings.recent` with a primary document."""
     rec = submissions.get("filings", {}).get("recent", {})
     forms = rec.get("form") or []
     accs = rec.get("accessionNumber") or []
@@ -57,10 +69,9 @@ def _pick_prospectus_filing(submissions: dict, cik: int) -> str | None:
     if not forms or not accs:
         return None
     n = min(len(forms), len(accs), len(docs))
-    for form_wanted in _PROSPECTUS_FORMS:
-        for i in range(n):
-            if forms[i] == form_wanted and docs[i]:
-                return _build_archive_url(cik, accs[i], docs[i])
+    for i in range(n):
+        if _is_s1_form(forms[i]) and docs[i]:
+            return _build_archive_url(cik, accs[i], docs[i])
     return None
 
 
@@ -95,28 +106,32 @@ def load_sec_submissions(cik: int, user_agent: str) -> dict | None:
         return None
 
 
-def resolve_fund_prospectus_url(symbol: str, user_agent: str) -> str:
+def resolve_s1_filing_url(symbol: str, user_agent: str) -> str:
     """
-    Prefer a direct EDGAR document link (latest matching prospectus-related form);
-    fall back to EDGAR full-text search for the ticker.
+    Prefer the primary document URL for the newest S-1 / S-1/A filing in recent history.
+
+    If none appear in the submissions `recent` slice, link to EDGAR browse filtered to S-1
+    for that CIK. If CIK is unknown, link to EDGAR search (ticker + S-1).
     """
     ua = user_agent.strip()
     sym = re.sub(r"\s+", "", symbol).upper()
     if not sym:
-        return _edgar_search_url(symbol)
+        return _edgar_search_s1_hint(symbol)
     try:
         tmap = load_sec_ticker_to_cik(ua)
     except (requests.RequestException, ValueError, TypeError, KeyError) as e:
         logger.debug("SEC ticker map: %s", e)
-        return _edgar_search_url(symbol)
+        return _edgar_search_s1_hint(symbol)
     cik = tmap.get(sym)
     if not cik:
-        return _edgar_search_url(symbol)
+        return _edgar_search_s1_hint(symbol)
     sub = load_sec_submissions(cik, ua)
     if not sub:
-        return _edgar_search_url(symbol)
-    url = _pick_prospectus_filing(sub, cik)
-    return url if url else _edgar_search_url(symbol)
+        return _browse_s1_url(cik)
+    direct = _pick_s1_document_url(sub, cik)
+    if direct:
+        return direct
+    return _browse_s1_url(cik)
 
 
 def clear_sec_prospectus_caches() -> None:
