@@ -78,8 +78,8 @@ WIDGET_CSS = """
 """
 
 
-def _fmt_value_30d(change_fraction: float | None) -> str:
-    """▲/▼ total-value change over 30d (from aggregated asset pct_change_30d)."""
+def _fmt_value_delta(change_fraction: float | None) -> str:
+    """▲/▼ change in total value — from embedded `value_7d_change` (7 days)."""
     if change_fraction is None:
         return '<span style="color:#94a3b8;">—</span>'
     pct = change_fraction * 100.0
@@ -94,7 +94,7 @@ def _rows_to_html(rows: list[RwaNetworkLeagueRow]) -> str:
     thead = (
         "<thead><tr>"
         "<th>#</th><th>Network</th><th>RWA Count</th>"
-        "<th>Total Value</th><th>30D%</th><th>Market Share</th>"
+        "<th>Total Value</th><th>7D Δ value</th><th>Market Share</th>"
         "</tr></thead>"
     )
     body_parts: list[str] = ["<tbody>"]
@@ -117,7 +117,7 @@ def _rows_to_html(rows: list[RwaNetworkLeagueRow]) -> str:
             f"{name_cell}"
             f'<td class="rwa-num">{row.rwa_count:,}</td>'
             f'<td class="rwa-num">{escape(tv)}</td>'
-            f'<td class="rwa-num">{_fmt_value_30d(row.value_change_30d_raw)}</td>'
+            f'<td class="rwa-num">{_fmt_value_delta(row.value_change_7d_raw)}</td>'
             f'<td class="rwa-num">{escape(ms_s)}</td>'
             "</tr>"
         )
@@ -158,10 +158,10 @@ def show_rwa_league_widget() -> None:
         "Columns mirror the "
         '<a href="https://app.rwa.xyz/" target="_blank" rel="noopener noreferrer">RWA.xyz</a> '
         "dashboard (embedded page data, not the official API). "
-        "<strong>30D%</strong> is the estimated <em>30-day change in total value</em> for that network, "
-        "computed from underlying asset values and 30-day changes in the embedded asset table "
-        "(value split pro-rata when an asset lists multiple networks). "
-        "This can differ from RWA’s parent-network rollup; networks with no matching assets show —.</p>"
+        "The percentage column uses <strong>change in total value over 7 days</strong> from the embedded field "
+        "<strong>value_7d_change</strong> (fraction). Multiply by 100 for the percent you see on RWA.xyz "
+        "(e.g. top networks: ~63%, ~5.3%, ~9.6%, ~25.7%, ~−0.35%). "
+        "There is <strong>no</strong> separate 30-day total-value change field in the public page JSON.</p>"
         '<div class="rwa-league-scroll">'
         + _rows_to_html(rows)
         + "</div></div>"
