@@ -7,13 +7,18 @@ from html import escape
 import streamlit as st
 
 from crypto_etps.client import (
-    CryptoEtpRow,
     CryptoEtpsResult,
     fetch_crypto_etps_enriched,
     format_usd_compact,
     sorted_by_assets,
     total_aum_usd,
 )
+from crypto_etps.dataframe_table import (
+    build_etp_dataframe,
+    filter_rows_by_fund_name,
+    style_etp_dataframe,
+)
+
 WIDGET_CSS = """
 <style>
 .etp-widget-shell {
@@ -30,45 +35,14 @@ WIDGET_CSS = """
     color: #0f172a;
     margin: 0 0 0.75rem 0;
 }
-.etp-table-wrap {
-    overflow-x: auto;
-    margin-bottom: 0.5rem;
-}
-table.etp-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.82rem;
-    line-height: 1.35;
-}
-table.etp-table thead th {
-    font-weight: 700;
-    text-align: left;
-    padding: 0.45rem 0.5rem;
-    border-bottom: 2px solid #cbd5e1;
-    color: #0f172a;
-    background: #f8fafc;
-}
-table.etp-table tbody td {
-    padding: 0.4rem 0.5rem;
-    border-bottom: 1px solid #e2e8f0;
-    vertical-align: top;
-}
-.etp-pct-up {
-    color: #059669;
-    font-weight: 600;
-    white-space: nowrap;
-}
-.etp-pct-down {
-    color: #dc2626;
-    font-weight: 600;
-    white-space: nowrap;
-}
-.etp-pct-na {
-    color: #94a3b8;
-    font-weight: 500;
-}
 </style>
 """
+
+
+def etp_table_height(num_rows: int, *, max_h: int = 520) -> int:
+    header = 38
+    row_h = 35
+    return min(max_h, header + row_h * max(1, num_rows))
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
@@ -90,45 +64,18 @@ def resolve_etp_user_agent(user_agent: str | None) -> str:
     return (user_agent or "").strip() or _default_ua()
 
 
-def _format_52w_cell(pct: float | None) -> str:
-    """HTML cell for past-year / 52W % (green ▲ / red ▼ like price ticker)."""
-    if pct is None:
-        return '<span class="etp-pct-na">—</span>'
-    arrow = "▲" if pct >= 0 else "▼"
-    sign = "+" if pct > 0 else ""
-    cls = "etp-pct-up" if pct >= 0 else "etp-pct-down"
-    return f'<span class="{cls}">{arrow} {sign}{pct:.2f}%</span>'
-
-
-def render_etp_table_html(rows: list[CryptoEtpRow], *, max_rows: int | None = None) -> str:
-    """Scrollable HTML table with bold header row; 52W uses ticker-style colors."""
-    use = rows if max_rows is None else rows[:max_rows]
-    thead = (
-        "<thead><tr>"
-        "<th>Symbol</th>"
-        "<th>Fund name</th>"
-        "<th>Price</th>"
-        "<th>52W %</th>"
-        "<th>Assets</th>"
-        "<th>Issuer</th>"
-        "<th>Inception</th>"
-        "</tr></thead>"
-    )
-    body_parts: list[str] = []
-    for r in use:
-        body_parts.append(
-            "<tr>"
-            f"<td>{escape(r.symbol)}</td>"
-            f"<td>{escape(r.name)}</td>"
-            f"<td>{escape(r.price)}</td>"
-            f"<td>{_format_52w_cell(r.pct_52w)}</td>"
-            f"<td>{escape(r.assets_display)}</td>"
-            f"<td>{escape(r.issuer or '—')}</td>"
-            f"<td>{escape(r.inception or '—')}</td>"
-            "</tr>"
-        )
-    return (
-        f'<div class="etp-table-wrap"><table class="etp-table">{thead}<tbody>{"".join(body_parts)}</tbody></table></div>'
+def show_etp_dataframe(df, *, height: int) -> None:
+    """Sortable columns (Streamlit dataframe); 52W colors + display via Pandas Styler."""
+    st.dataframe(
+        style_etp_dataframe(df),
+        use_container_width=True,
+        height=height,
+        hide_index=True,
+        column_config={
+            "Symbol": st.column_config.TextColumn("Symbol", width="small"),
+            "Fund name": st.column_config.TextColumn("Fund name", width="large"),
+            "Issuer": st.column_config.TextColumn("Issuer", width="medium"),
+        },
     )
 
 
@@ -160,9 +107,22 @@ def show_us_crypto_etps_widget(user_agent: str | None) -> None:
         unsafe_allow_html=True,
     )
 
-    st.caption("Top 10 by assets · 52W % from past-year total return on each fund’s StockAnalysis profile")
-    top10 = sorted_by_assets(rows)[:10]
-    st.markdown(render_etp_table_html(top10), unsafe_allow_html=True)
+    st.caption(
+        "Top 10 by assets (or matches when searching) · 52W % from past-year total return on each fund’s StockAnalysis profile · "
+        "Click column headers to sort."
+    )
+    q = st.text_input(
+        "Search fund name",
+        "",
+        key="etf_search_home",
+        placeholder="Filter by fund name…",
+    )
+
+    ranked = sorted_by_assets(rows)
+    filtered = filter_rows_by_fund_name(ranked, q)
+    display_rows = filtered[:10]
+    df = build_etp_dataframe(display_rows)
+    show_etp_dataframe(df, height=etp_table_height(len(df)))
 
     if st.button("See full ETF list", key="see_full_etf_list", use_container_width=True, type="primary"):
         st.switch_page("pages/US_Crypto_ETPs.py")
