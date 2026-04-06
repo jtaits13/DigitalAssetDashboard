@@ -13,6 +13,7 @@ from crypto_etps.client import (
     sorted_by_assets,
     total_aum_usd,
 )
+from crypto_etps.etf_flows import CombinedEtfFlows, fetch_combined_etf_flows, format_flow_millions
 from crypto_etps.sec_prospectus import clear_sec_prospectus_caches
 from crypto_etps.dataframe_table import (
     build_etp_dataframe,
@@ -30,10 +31,25 @@ WIDGET_CSS = """
     margin-bottom: 0.5rem;
     box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
 }
-.etp-aum-line {
+.etp-heading-line {
     font-size: 0.95rem;
     font-weight: 700;
-    color: #0f172a;
+    color: #1E7C99;
+    margin: 0 0 0.35rem 0;
+}
+.etp-widget-shell .etp-heading-line + .etp-heading-line {
+    margin-top: 0.65rem;
+}
+.etp-flow-detail {
+    font-size: 0.88rem;
+    color: #334155;
+    line-height: 1.45;
+    margin: 0 0 0.5rem 0;
+}
+.etp-flow-footnote {
+    font-size: 0.72rem;
+    color: #64748b;
+    line-height: 1.4;
     margin: 0 0 0.75rem 0;
 }
 </style>
@@ -51,8 +67,14 @@ def load_crypto_etps_cached(user_agent: str) -> CryptoEtpsResult:
     return fetch_crypto_etps_enriched(user_agent)
 
 
+@st.cache_data(ttl=3600, show_spinner=False)
+def load_etf_flows_cached(user_agent: str) -> CombinedEtfFlows:
+    return fetch_combined_etf_flows(user_agent)
+
+
 def clear_crypto_etp_cache() -> None:
     load_crypto_etps_cached.clear()
+    load_etf_flows_cached.clear()
     clear_sec_prospectus_caches()
 
 
@@ -64,6 +86,58 @@ def _default_ua() -> str:
 
 def resolve_etp_user_agent(user_agent: str | None) -> str:
     return (user_agent or "").strip() or _default_ua()
+
+
+def _format_flows_html(flows: CombinedEtfFlows) -> str:
+    """HTML for daily net flows block + fund list footnote."""
+    if flows.btc is None and flows.eth is None:
+        esc = escape(flows.error or "Could not load flow data.")
+        return (
+            f'<p class="etp-heading-line">Daily inflows</p>'
+            f'<p class="etp-flow-detail">Data temporarily unavailable ({esc}).</p>'
+        )
+
+    parts: list[str] = [
+        '<p class="etp-heading-line">Daily inflows</p>',
+        '<p class="etp-flow-detail">',
+    ]
+    c = flows.combined_usd_millions
+    parts.append(f"Combined net (US$m): <strong>{escape(format_flow_millions(c))}</strong>")
+    if flows.btc and flows.btc.net_flow_usd_millions is not None:
+        parts.append(
+            f" · Bitcoin spot: {escape(format_flow_millions(flows.btc.net_flow_usd_millions))} "
+            f"({escape(flows.btc.as_of_date)})"
+        )
+    if flows.eth and flows.eth.net_flow_usd_millions is not None:
+        parts.append(
+            f" · Ethereum spot: {escape(format_flow_millions(flows.eth.net_flow_usd_millions))} "
+            f"({escape(flows.eth.as_of_date)})"
+        )
+    parts.append(".</p>")
+
+    fn: list[str] = []
+    if flows.btc and flows.btc.tickers:
+        fn.append(
+            "US spot Bitcoin ETFs (tickers): "
+            + escape(", ".join(flows.btc.tickers))
+        )
+    if flows.eth and flows.eth.tickers:
+        fn.append(
+            "US spot Ethereum ETFs (tickers): "
+            + escape(", ".join(flows.eth.tickers))
+        )
+    foot = (
+        '<p class="etp-flow-footnote">'
+        + (" · ".join(fn) + " · " if fn else "")
+        + 'Net flows from <a href="https://farside.co.uk/btc/" target="_blank" rel="noopener noreferrer">Farside Investors</a> '
+        "(US$m; positive = inflow, negative = outflow), retrieved with Jina Reader; not affiliated."
+    )
+    if flows.error:
+        foot += f" Note: {escape(flows.error)}"
+    foot += "</p>"
+    parts.append(foot)
+
+    return "".join(parts)
 
 
 def show_etp_dataframe(df, *, height: int) -> None:
@@ -91,13 +165,16 @@ def show_us_crypto_etps_widget(user_agent: str | None) -> None:
     st.markdown(WIDGET_CSS, unsafe_allow_html=True)
 
     ua = resolve_etp_user_agent(user_agent)
-    with st.spinner("Loading U.S. crypto ETPs (list + profile pages)…"):
+    with st.spinner("Loading U.S. crypto ETPs (list + profile pages) and ETF flows…"):
         data = load_crypto_etps_cached(ua)
+        flows = load_etf_flows_cached(ua)
 
     if data.error and not data.rows:
         st.markdown(
             '<div class="etp-widget-shell">'
             '<h2 class="home-main-heading">U.S. Crypto ETPs</h2>'
+            '<p class="etp-heading-line">Total AUM (listed, known assets): —</p>'
+            f"{_format_flows_html(flows)}"
             "</div>",
             unsafe_allow_html=True,
         )
@@ -110,7 +187,8 @@ def show_us_crypto_etps_widget(user_agent: str | None) -> None:
     st.markdown(
         '<div class="etp-widget-shell">'
         '<h2 class="home-main-heading">U.S. Crypto ETPs</h2>'
-        f'<p class="etp-aum-line">Total AUM (listed, known assets): {escape(aum_s)}</p>'
+        f'<p class="etp-heading-line">Total AUM (listed, known assets): {escape(aum_s)}</p>'
+        f"{_format_flows_html(flows)}"
         "</div>",
         unsafe_allow_html=True,
     )
