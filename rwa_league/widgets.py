@@ -78,11 +78,13 @@ WIDGET_CSS = """
 """
 
 
-def _fmt_30d(pct_change_fraction: float) -> str:
-    """Match RWA-style ▲/▼ with two decimal places (share change over 30d)."""
-    pct = pct_change_fraction * 100.0
-    arrow = "▲" if pct_change_fraction >= 0 else "▼"
-    cls = "rwa-pct-up" if pct_change_fraction >= 0 else "rwa-pct-down"
+def _fmt_value_30d(change_fraction: float | None) -> str:
+    """▲/▼ total-value change over 30d (from aggregated asset pct_change_30d)."""
+    if change_fraction is None:
+        return '<span style="color:#94a3b8;">—</span>'
+    pct = change_fraction * 100.0
+    arrow = "▲" if change_fraction >= 0 else "▼"
+    cls = "rwa-pct-up" if change_fraction >= 0 else "rwa-pct-down"
     body = f"{arrow} {abs(pct):.2f}%"
     return f'<span class="{cls}">{escape(body)}</span>'
 
@@ -115,7 +117,7 @@ def _rows_to_html(rows: list[RwaNetworkLeagueRow]) -> str:
             f"{name_cell}"
             f'<td class="rwa-num">{row.rwa_count:,}</td>'
             f'<td class="rwa-num">{escape(tv)}</td>'
-            f'<td class="rwa-num">{_fmt_30d(row.pct_30d_raw)}</td>'
+            f'<td class="rwa-num">{_fmt_value_30d(row.value_change_30d_raw)}</td>'
             f'<td class="rwa-num">{escape(ms_s)}</td>'
             "</tr>"
         )
@@ -156,7 +158,10 @@ def show_rwa_league_widget() -> None:
         "Columns mirror the "
         '<a href="https://app.rwa.xyz/" target="_blank" rel="noopener noreferrer">RWA.xyz</a> '
         "dashboard (embedded page data, not the official API). "
-        "<strong>30D%</strong> is the 30-day change in <em>market share</em> (same metric as the site).</p>"
+        "<strong>30D%</strong> is the estimated <em>30-day change in total value</em> for that network, "
+        "computed from underlying asset values and 30-day changes in the embedded asset table "
+        "(value split pro-rata when an asset lists multiple networks). "
+        "This can differ from RWA’s parent-network rollup; networks with no matching assets show —.</p>"
         '<div class="rwa-league-scroll">'
         + _rows_to_html(rows)
         + "</div></div>"
