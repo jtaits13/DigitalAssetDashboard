@@ -32,7 +32,7 @@ def render_regulatory_card_html(item: dict[str, Any]) -> str:
         f'<div class="news-card">'
         f'<div class="news-meta">{escape(str(item.get("source", "")))} · {escape(pub_s)}</div>'
         f'<div class="news-title"><a href="{href}" target="_blank" rel="noopener noreferrer">{title_esc}</a></div>'
-        f'<div class="news-country">Applies to: {country}</div>'
+        f'<div class="news-country">{country}</div>'
         f"{sum_html}"
         f"</div>"
     )
