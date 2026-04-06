@@ -13,6 +13,7 @@ from crypto_etps.client import (
     sorted_by_assets,
     total_aum_usd,
 )
+from crypto_etps.sec_prospectus import clear_sec_prospectus_caches
 from crypto_etps.dataframe_table import (
     build_etp_dataframe,
     filter_rows_by_fund_name,
@@ -52,6 +53,7 @@ def load_crypto_etps_cached(user_agent: str) -> CryptoEtpsResult:
 
 def clear_crypto_etp_cache() -> None:
     load_crypto_etps_cached.clear()
+    clear_sec_prospectus_caches()
 
 
 def _default_ua() -> str:
@@ -73,8 +75,13 @@ def show_etp_dataframe(df, *, height: int) -> None:
         hide_index=True,
         column_config={
             "Symbol": st.column_config.TextColumn("Symbol", width="small"),
-            "Fund name": st.column_config.TextColumn("Fund name", width="large"),
+            "Fund Name": st.column_config.TextColumn("Fund Name", width="large"),
             "Issuer": st.column_config.TextColumn("Issuer", width="medium"),
+            "Fund Prospectus": st.column_config.LinkColumn(
+                "Fund Prospectus",
+                display_text="Open",
+                validate=r"^https://",
+            ),
         },
     )
 

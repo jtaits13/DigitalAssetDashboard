@@ -16,6 +16,8 @@ from dataclasses import dataclass
 import requests
 from bs4 import BeautifulSoup
 
+from crypto_etps.sec_prospectus import resolve_fund_prospectus_url
+
 logger = logging.getLogger(__name__)
 
 LIST_URL = "https://stockanalysis.com/list/crypto-etfs/"
@@ -44,6 +46,7 @@ class CryptoEtpRow:
     issuer: str
     inception: str
     pct_52w: float | None  # from "past year" narrative on detail page
+    prospectus_url: str  # SEC EDGAR document or search fallback
 
 
 @dataclass
@@ -180,6 +183,7 @@ def fetch_crypto_etps_list(
                 issuer="",
                 inception="",
                 pct_52w=None,
+                prospectus_url="",
             )
         )
 
@@ -215,10 +219,10 @@ def enrich_crypto_etps_rows(
             except Exception as e:
                 logger.debug("enrich row: %s", e)
 
-    out: list[CryptoEtpRow] = []
+    enriched: list[CryptoEtpRow] = []
     for r in rows:
         iss, inc, p52 = results.get(r.symbol, ("", "", None))
-        out.append(
+        enriched.append(
             CryptoEtpRow(
                 symbol=r.symbol,
                 name=r.name,
@@ -229,6 +233,25 @@ def enrich_crypto_etps_rows(
                 issuer=iss,
                 inception=inc,
                 pct_52w=p52,
+                prospectus_url="",
+            )
+        )
+
+    out: list[CryptoEtpRow] = []
+    for r in enriched:
+        pu = resolve_fund_prospectus_url(r.symbol, ua)
+        out.append(
+            CryptoEtpRow(
+                symbol=r.symbol,
+                name=r.name,
+                price=r.price,
+                pct_change=r.pct_change,
+                assets_display=r.assets_display,
+                assets_usd=r.assets_usd,
+                issuer=r.issuer,
+                inception=r.inception,
+                pct_52w=r.pct_52w,
+                prospectus_url=pu,
             )
         )
     return out

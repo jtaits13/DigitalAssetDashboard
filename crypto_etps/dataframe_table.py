@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 
 from crypto_etps.client import CryptoEtpRow
+from crypto_etps.sec_prospectus import edgar_search_fallback_url
 
 
 def _parse_price(s: str) -> float:
@@ -59,15 +60,17 @@ def build_etp_dataframe(rows: list[CryptoEtpRow]) -> pd.DataFrame:
     for r in rows:
         inc = pd.to_datetime(r.inception, errors="coerce") if (r.inception or "").strip() else pd.NaT
         issuer = (r.issuer or "").strip()
+        purl = (r.prospectus_url or "").strip() or edgar_search_fallback_url(r.symbol)
         records.append(
             {
                 "Symbol": r.symbol,
-                "Fund name": r.name,
+                "Fund Name": r.name,
                 "Price": _parse_price(r.price),
                 "52W %": r.pct_52w if r.pct_52w is not None else np.nan,
                 "Assets (B)": (r.assets_usd / 1e9) if r.assets_usd is not None else np.nan,
                 "Issuer": issuer if issuer else np.nan,
                 "Inception": inc,
+                "Fund Prospectus": purl,
             }
         )
     return pd.DataFrame(records)
