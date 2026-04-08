@@ -7,6 +7,7 @@ from typing import Any
 
 import requests
 import streamlit as st
+import streamlit.components.v1 as components
 
 COINGECKO_MARKETS_URL = "https://api.coingecko.com/api/v3/coins/markets"
 COINCAP_ASSETS_URL = "https://api.coincap.io/v2/assets"
@@ -290,8 +291,32 @@ def render_price_ticker_html(
     )
 
 
+NAV_TICKER_ALIGN_SCRIPT = """
+<script>
+(function () {
+  const p = window.parent;
+  function align() {
+    const ticker = p.document.querySelector(".cd-ticker-shell");
+    const nav =
+      p.document.querySelector(".jd-site-nav-fixed-wrap") ||
+      p.document.querySelector("div.st-key-jdnavstrip");
+    if (!ticker || !nav) return;
+    const r = ticker.getBoundingClientRect();
+    nav.style.paddingLeft = Math.max(0, Math.round(r.left)) + "px";
+    nav.style.paddingRight = Math.max(0, Math.round(p.innerWidth - r.right)) + "px";
+  }
+  align();
+  p.addEventListener("resize", align);
+  p.setTimeout(align, 100);
+  p.setTimeout(align, 400);
+})();
+</script>
+"""
+
+
 def show_price_ticker() -> None:
     """Inject ticker CSS and HTML. Call once per page that should show the ticker."""
     st.markdown(TICKER_STYLES_MARKDOWN, unsafe_allow_html=True)
     rows, err, src = fetch_top_crypto_tickers(TICKER_COUNT)
     st.markdown(render_price_ticker_html(rows, err, src), unsafe_allow_html=True)
+    components.html(NAV_TICKER_ALIGN_SCRIPT, height=0, width=0)

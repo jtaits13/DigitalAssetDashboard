@@ -8,6 +8,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 
 import streamlit as st
+import streamlit.components.v1 as components
 
 from home_layout import HOME_PAGE_LAYOUT_CSS, section_label_teal
 from news_feeds import (
@@ -32,6 +33,58 @@ from rwa_league.widgets import clear_rwa_league_cache, show_rwa_league_widget
 HOME_HEADLINE_COUNT = 5
 
 HOME_PAGE_EXTRA_CSS = ""
+
+_JD_SCROLL_MAP = {"news": "jd-section-news", "market": "jd-section-market"}
+
+
+def _jd_consume_scroll_query() -> None:
+    """Map ?jd_scroll=news|market from st.page_link into session state; strip param from URL."""
+    if "jd_scroll" not in st.query_params:
+        return
+    raw = st.query_params["jd_scroll"]
+    if isinstance(raw, list):
+        raw = raw[0] if raw else ""
+    key = str(raw).strip().lower()
+    if key in _JD_SCROLL_MAP:
+        st.session_state["jd_scroll_to"] = _JD_SCROLL_MAP[key]
+    try:
+        del st.query_params["jd_scroll"]
+    except KeyError:
+        pass
+
+
+def _jd_inject_scroll_to_section() -> None:
+    """Scroll to anchor after home body renders (SPA navigation from subpages)."""
+    target = st.session_state.pop("jd_scroll_to", None)
+    if not target:
+        return
+    safe = "".join(c for c in target if c.isalnum() or c in "-_")
+    if safe != target:
+        return
+    components.html(
+        f"""
+<script>
+(function() {{
+  const p = window.parent;
+  const id = "{safe}";
+  function go() {{
+    const el = p.document.getElementById(id);
+    if (el) {{
+      el.scrollIntoView({{ block: "start", behavior: "auto" }});
+      return true;
+    }}
+    return false;
+  }}
+  let n = 0;
+  const t = p.setInterval(function () {{
+    if (go() || n++ > 50) p.clearInterval(t);
+  }}, 40);
+}})();
+</script>
+""",
+        height=0,
+        width=0,
+    )
 
 
 def _feed_status_expanders(feed_errors: list[str], regulatory_errors: list[str]) -> None:
@@ -82,6 +135,8 @@ def main() -> None:
 
     st.session_state.all_news_page = 1
     st.session_state.all_regulatory_page = 1
+
+    _jd_consume_scroll_query()
 
     render_home_top_bar("landing", is_landing=True)
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
@@ -134,6 +189,7 @@ def main() -> None:
 
         st.divider()
         _footer_line()
+        _jd_inject_scroll_to_section()
         return
 
     unique = dedupe_articles(articles, max_items=None)
@@ -183,6 +239,7 @@ def main() -> None:
 
     st.divider()
     _footer_line()
+    _jd_inject_scroll_to_section()
 
 
 if __name__ == "__main__":
