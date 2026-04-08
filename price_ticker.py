@@ -295,20 +295,51 @@ NAV_TICKER_ALIGN_SCRIPT = """
 <script>
 (function () {
   const p = window.parent;
-  function align() {
-    const ticker = p.document.querySelector(".cd-ticker-shell");
-    const nav =
-      p.document.querySelector(".jd-site-nav-fixed-wrap") ||
-      p.document.querySelector("div.st-key-jdnavstrip");
-    if (!ticker || !nav) return;
-    const r = ticker.getBoundingClientRect();
-    nav.style.paddingLeft = Math.max(0, Math.round(r.left)) + "px";
-    nav.style.paddingRight = Math.max(0, Math.round(p.innerWidth - r.right)) + "px";
+  const doc = p.document;
+  const root = doc.documentElement;
+
+  function clearStripVars() {
+    root.style.removeProperty("--jd-strip-pl");
+    root.style.removeProperty("--jd-strip-pr");
   }
-  align();
-  p.addEventListener("resize", align);
-  p.setTimeout(align, 100);
-  p.setTimeout(align, 400);
+
+  function align() {
+    const ticker = doc.querySelector(".cd-ticker-shell");
+    if (!ticker) {
+      clearStripVars();
+      return;
+    }
+    const r = ticker.getBoundingClientRect();
+    if (r.width < 4) return;
+    const pl = Math.max(0, Math.round(r.left));
+    const pr = Math.max(0, Math.round(p.innerWidth - r.right));
+    root.style.setProperty("--jd-strip-pl", pl + "px");
+    root.style.setProperty("--jd-strip-pr", pr + "px");
+  }
+
+  function alignRaf() {
+    p.requestAnimationFrame(function () {
+      p.requestAnimationFrame(align);
+    });
+  }
+
+  alignRaf();
+  p.addEventListener("resize", alignRaf);
+  [0, 80, 200, 450, 900].forEach(function (ms) {
+    p.setTimeout(alignRaf, ms);
+  });
+
+  (function observeTickerWhenReady() {
+    const el = doc.querySelector(".cd-ticker-shell");
+    if (!el) {
+      p.setTimeout(observeTickerWhenReady, 50);
+      return;
+    }
+    if (typeof p.ResizeObserver !== "undefined") {
+      var ro = new p.ResizeObserver(alignRaf);
+      ro.observe(el);
+    }
+  })();
 })();
 </script>
 """

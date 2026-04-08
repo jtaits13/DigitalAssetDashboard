@@ -33,6 +33,7 @@ MAIN_APP_PAGE = "streamlit_app.py"
 # Subpages use st.container(key="jdnavstrip") → .st-key-jdnavstrip for fixed bar + st.page_link (SPA nav).
 SITE_NAV_CSS = """
 <style>
+/* Horizontal inset matches CoinGecko ticker via --jd-strip-pl/pr (set in price_ticker.py). */
 .jd-site-nav-fixed-wrap,
 div.st-key-jdnavstrip {
     position: fixed;
@@ -42,7 +43,11 @@ div.st-key-jdnavstrip {
     width: 100%;
     z-index: 999999;
     box-sizing: border-box;
-    padding: 0.45rem 1rem 0.55rem 1rem;
+    margin: 0;
+    padding-top: 0.45rem;
+    padding-bottom: 0.55rem;
+    padding-left: var(--jd-strip-pl, 1rem);
+    padding-right: var(--jd-strip-pr, 1rem);
     background: #f4f6f9;
     border-bottom: 1px solid #e2e8f0;
     box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
@@ -51,24 +56,37 @@ div.st-key-jdnavstrip {
     max-width: min(1200px, 100%);
     margin: 0 auto;
 }
-/* Subpage: Streamlit columns row styled like the landing white pill */
+/* Subpage: one Streamlit row = same flex + padding as .jd-site-nav on landing */
 div.st-key-jdnavstrip [data-testid="stHorizontalBlock"] {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 0.35rem 0.15rem !important;
     background: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 10px;
-    padding: 0.45rem 0.65rem 0.5rem 0.65rem;
+    padding: 0.5rem 0.85rem 0.55rem 0.85rem;
     margin: 0 auto;
     max-width: min(1200px, 100%);
     box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
-    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+div.st-key-jdnavstrip [data-testid="column"] {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    min-width: 0;
 }
 div.st-key-jdnavstrip .jd-site-brand-inline {
     font-size: 0.95rem;
     font-weight: 800;
     color: #0f172a;
     letter-spacing: -0.03em;
-    margin-right: 0.75rem;
-    padding-right: 0.85rem;
+    margin-right: 1rem;
+    padding-right: 1rem;
     border-right: 1px solid #e2e8f0;
     line-height: 1.35;
     display: inline-block;
@@ -79,7 +97,7 @@ div.st-key-jdnavstrip [data-testid="stPageLink-NavLink"] {
     font-weight: 600;
     color: #475569 !important;
     text-decoration: none !important;
-    padding: 0.35rem 0.65rem;
+    padding: 0.4rem 0.75rem !important;
     border-radius: 8px;
     transition: color 0.15s ease, background 0.15s ease;
 }
@@ -87,6 +105,10 @@ div.st-key-jdnavstrip a[data-testid="stPageLink-NavLink"]:hover,
 div.st-key-jdnavstrip [data-testid="stPageLink-NavLink"]:hover {
     color: #1E7C99 !important;
     background: rgba(30, 124, 153, 0.09);
+}
+div.st-key-jdnavstrip div.stPageLink {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
 }
 .jd-site-nav-spacer {
     height: 5.25rem;
