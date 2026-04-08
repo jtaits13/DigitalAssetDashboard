@@ -6,11 +6,8 @@ from html import escape
 
 import streamlit as st
 
-from home_layout import (
-    STREAMLIT_DATAFRAME_TEAL_HEADER_CSS,
-    STREAMLIT_TABLE_UNIFY_CSS,
-    inject_dataframe_teal_header_fix,
-)
+from home_layout import STREAMLIT_TABLE_UNIFY_CSS
+from jd_teal_html_table import write_teal_styled_dataframe
 from rwa_league.client import RwaNetworkLeagueRow, fetch_rwa_network_league
 from rwa_league.dataframe_table import (
     build_rwa_dataframe,
@@ -35,8 +32,6 @@ WIDGET_CSS = """
 </style>
 """
 
-_SORT = "\u2195"
-
 RWA_DATA_SOURCE_CAPTION = (
     "Source: [RWA.xyz](https://app.rwa.xyz/) homepage embedded data "
     "(Networks · All view; not the public API)."
@@ -50,62 +45,8 @@ def rwa_table_height(num_rows: int, *, max_h: int = 520) -> int:
 
 
 def _show_rwa_dataframe(df, *, height: int) -> None:
-    st.dataframe(
-        style_rwa_dataframe(df),
-        use_container_width=True,
-        height=height,
-        hide_index=True,
-        column_order=[
-            "#",
-            "Network",
-            "Link",
-            "RWA Count",
-            "Total Value",
-            "7D Δ value",
-            "Market Share",
-        ],
-        column_config={
-            "#": st.column_config.NumberColumn(
-                f"# {_SORT}",
-                format="%.0f",
-                help="Ascending: lowest rank first · Descending: highest rank first",
-            ),
-            "Network": st.column_config.TextColumn(
-                f"Network {_SORT}",
-                width="medium",
-                help="Ascending: A→Z · Descending: Z→A",
-            ),
-            "Link": st.column_config.LinkColumn(
-                f"RWA Page {_SORT}",
-                display_text="↗",
-                validate=r"^https://",
-                width="small",
-                help="Open this network on RWA.xyz",
-            ),
-            "RWA Count": st.column_config.NumberColumn(
-                f"RWA Count {_SORT}",
-                format="%.0f",
-                help="Ascending: lowest first · Descending: highest first",
-            ),
-            "Total Value": st.column_config.NumberColumn(
-                f"Total Value {_SORT}",
-                format=None,
-                width=140,
-                help="Ascending: smallest USD first",
-            ),
-            "7D Δ value": st.column_config.NumberColumn(
-                f"7D Δ value {_SORT}",
-                format=None,
-                width=100,
-                help="7-day change in total value (%) · Ascending: lowest first",
-            ),
-            "Market Share": st.column_config.NumberColumn(
-                f"Market Share {_SORT}",
-                format="%.2f%%",
-                help="Ascending: lowest first · Descending: highest first",
-            ),
-        },
-    )
+    """HTML table + Styler (teal thead); same formatting as before (no Glide column sort)."""
+    write_teal_styled_dataframe(style_rwa_dataframe(df), height=height)
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
@@ -118,10 +59,7 @@ def clear_rwa_league_cache() -> None:
 
 
 def show_rwa_league_widget() -> None:
-    st.markdown(
-        WIDGET_CSS + STREAMLIT_TABLE_UNIFY_CSS + STREAMLIT_DATAFRAME_TEAL_HEADER_CSS,
-        unsafe_allow_html=True,
-    )
+    st.markdown(WIDGET_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
     rows, err = load_rwa_league_cached()
 
     if err and not rows:
@@ -160,5 +98,4 @@ def show_rwa_league_widget() -> None:
 
     df = build_rwa_dataframe(filtered)
     _show_rwa_dataframe(df, height=rwa_table_height(len(df)))
-    inject_dataframe_teal_header_fix()
     st.caption(RWA_DATA_SOURCE_CAPTION)

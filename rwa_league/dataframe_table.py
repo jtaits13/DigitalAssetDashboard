@@ -23,7 +23,7 @@ def build_rwa_dataframe(rows: list[RwaNetworkLeagueRow]) -> pd.DataFrame:
     recs: list[dict[str, object]] = []
     for r in rows:
         href = (r.network_href or "").strip()
-        url = (_APP_BASE + href) if href.startswith("/") else f"{_APP_BASE}/"
+        url = f"{_APP_BASE}{href}" if href.startswith("/") else f"{_APP_BASE}/"
         v7 = r.value_change_7d_raw
         if v7 is None:
             pct7 = np.nan
