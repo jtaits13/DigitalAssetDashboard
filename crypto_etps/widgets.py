@@ -14,11 +14,7 @@ from crypto_etps.client import (
     total_aum_usd,
 )
 from crypto_etps.sec_prospectus import clear_sec_prospectus_caches
-from crypto_etps.dataframe_table import (
-    build_etp_dataframe,
-    filter_rows_by_fund_name,
-    style_etp_dataframe,
-)
+from crypto_etps.dataframe_table import build_etp_dataframe, filter_rows_by_fund_name
 from home_layout import STREAMLIT_TABLE_UNIFY_CSS
 
 WIDGET_CSS = """
@@ -71,23 +67,52 @@ _SORT = "\u2195"  # ↕ sort hint in column headers
 
 
 def show_etp_dataframe(df, *, height: int) -> None:
-    """Sortable columns (Streamlit dataframe); 52W colors + display via Pandas Styler."""
+    """Sortable st.dataframe: plain dtypes + column_config (Styler breaks client-side sort)."""
     st.dataframe(
-        style_etp_dataframe(df),
+        df,
         use_container_width=True,
         height=height,
         hide_index=True,
         column_config={
-            "Symbol": st.column_config.TextColumn(f"Symbol {_SORT}", width="small"),
-            "Fund Name": st.column_config.TextColumn(f"Fund Name {_SORT}", width="large"),
-            "Price": st.column_config.TextColumn(f"Price {_SORT}", width="small"),
-            "52W %": st.column_config.TextColumn(f"52W % {_SORT}", width="small"),
-            "Assets (B)": st.column_config.TextColumn(f"Assets (B) {_SORT}", width="small"),
-            "Issuer": st.column_config.TextColumn(f"Issuer {_SORT}", width="medium"),
-            "Inception": st.column_config.TextColumn(f"Inception {_SORT}", width="medium"),
+            "Symbol": st.column_config.TextColumn(
+                f"Symbol {_SORT}",
+                width="small",
+                help="Ascending: A→Z · Descending: Z→A",
+            ),
+            "Fund Name": st.column_config.TextColumn(
+                f"Fund Name {_SORT}",
+                width="large",
+                help="Ascending: A→Z · Descending: Z→A",
+            ),
+            "Price": st.column_config.NumberColumn(
+                f"Price {_SORT}",
+                format="$%.2f",
+                help="Ascending: lowest first · Descending: highest first",
+            ),
+            "52W %": st.column_config.NumberColumn(
+                f"52W % {_SORT}",
+                format="%.2f%%",
+                help="Past-year total return (%) · Ascending: lowest first",
+            ),
+            "Assets (B)": st.column_config.NumberColumn(
+                f"Assets (B) {_SORT}",
+                format="%.2f",
+                help="Billions USD · Ascending: smallest first",
+            ),
+            "Issuer": st.column_config.TextColumn(
+                f"Issuer {_SORT}",
+                width="medium",
+                help="Ascending: A→Z · Descending: Z→A",
+            ),
+            "Inception": st.column_config.DatetimeColumn(
+                f"Inception {_SORT}",
+                format="MMM DD, YYYY",
+                help="Ascending: oldest first · Descending: newest first",
+            ),
             "S-1": st.column_config.LinkColumn(
                 f"S-1 {_SORT}",
-                help="Newest S-1 filing document when available; otherwise EDGAR S-1 list or search.",
+                help="Newest S-1 filing document when available; otherwise EDGAR S-1 list or search. "
+                "Sort order follows the filing URL.",
                 display_text="Open",
                 validate=r"^https://",
             ),

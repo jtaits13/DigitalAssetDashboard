@@ -8,7 +8,7 @@ import streamlit as st
 
 from home_layout import STREAMLIT_TABLE_UNIFY_CSS
 from rwa_league.client import RwaNetworkLeagueRow, fetch_rwa_network_league
-from rwa_league.dataframe_table import build_rwa_dataframe, style_rwa_dataframe
+from rwa_league.dataframe_table import build_rwa_dataframe
 
 WIDGET_CSS = """
 <style>
@@ -38,22 +38,49 @@ def rwa_table_height(num_rows: int, *, max_h: int = 520) -> int:
 
 def _show_rwa_dataframe(df, *, height: int) -> None:
     st.dataframe(
-        style_rwa_dataframe(df),
+        df,
         use_container_width=True,
         height=height,
         hide_index=True,
-        column_order=["#", "Network", "RWA Count", "Total Value", "7D Δ value", "Market Share"],
+        column_order=["#", "Network", "Link", "RWA Count", "Total Value ($M)", "7D Δ value", "Market Share"],
         column_config={
-            "#": st.column_config.TextColumn(f"# {_SORT}", width="small"),
-            "Network": st.column_config.LinkColumn(
-                f"Network {_SORT}",
-                display_text="network_name",
-                validate=r"^https://",
+            "#": st.column_config.NumberColumn(
+                f"# {_SORT}",
+                format="%.0f",
+                help="Ascending: lowest rank first · Descending: highest rank first",
             ),
-            "RWA Count": st.column_config.TextColumn(f"RWA Count {_SORT}", width="small"),
-            "Total Value": st.column_config.TextColumn(f"Total Value {_SORT}", width="medium"),
-            "7D Δ value": st.column_config.TextColumn(f"7D Δ value {_SORT}", width="small"),
-            "Market Share": st.column_config.TextColumn(f"Market Share {_SORT}", width="small"),
+            "Network": st.column_config.TextColumn(
+                f"Network {_SORT}",
+                width="medium",
+                help="Ascending: A→Z · Descending: Z→A",
+            ),
+            "Link": st.column_config.LinkColumn(
+                f"Link {_SORT}",
+                display_text="↗",
+                validate=r"^https://",
+                width="small",
+                help="Open network on RWA.xyz",
+            ),
+            "RWA Count": st.column_config.NumberColumn(
+                f"RWA Count {_SORT}",
+                format="%.0f",
+                help="Ascending: lowest first · Descending: highest first",
+            ),
+            "Total Value ($M)": st.column_config.NumberColumn(
+                f"Total Value ($M) {_SORT}",
+                format="%.2f",
+                help="USD millions · Ascending: smallest first",
+            ),
+            "7D Δ value": st.column_config.NumberColumn(
+                f"7D Δ value {_SORT}",
+                format="%.2f%%",
+                help="7-day change in total value (%) · Ascending: lowest first",
+            ),
+            "Market Share": st.column_config.NumberColumn(
+                f"Market Share {_SORT}",
+                format="%.2f%%",
+                help="Ascending: lowest first · Descending: highest first",
+            ),
         },
     )
 
