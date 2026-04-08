@@ -29,6 +29,14 @@ h2.home-main-heading {
 # Coinbase-style strip: white bar on gray app background, teal hover (primaryColor).
 SITE_NAV_CSS = """
 <style>
+.jd-site-nav-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    margin: 0 0 1rem 0;
+    padding: 0.35rem 0 0.5rem 0;
+    background: #f4f6f9;
+}
 .jd-site-nav {
     display: flex;
     align-items: center;
@@ -38,7 +46,7 @@ SITE_NAV_CSS = """
     border: 1px solid #e2e8f0;
     border-radius: 10px;
     padding: 0.5rem 0.85rem 0.55rem 0.85rem;
-    margin: 0 0 1rem 0;
+    margin: 0;
     box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
 }
 .jd-site-nav .jd-site-brand {
@@ -227,12 +235,14 @@ def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -
     st.markdown(SITE_NAV_CSS, unsafe_allow_html=True)
     st.markdown(
         f"""
+<div class="jd-site-nav-sticky">
 <nav class="jd-site-nav" aria-label="Page sections">
   <span class="jd-site-brand">JPM Digital</span>
   <a class="jd-site-link" href="{home_href}">Home</a>
   <a class="jd-site-link" href="{news_href}">News</a>
   <a class="jd-site-link" href="{market_href}">Market Data</a>
 </nav>
+</div>
 """,
         unsafe_allow_html=True,
     )

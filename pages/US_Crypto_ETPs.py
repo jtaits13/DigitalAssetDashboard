@@ -44,7 +44,7 @@ def main() -> None:
     show_price_ticker()
 
     st.markdown(
-        '<h2 class="home-main-heading">U.S. Crypto ETPs — full list</h2>',
+        '<h2 class="home-main-heading">U.S. Crypto ETPs — Full List</h2>',
         unsafe_allow_html=True,
     )
     st.caption(

@@ -41,7 +41,7 @@ def render_regulatory_card_html(item: dict[str, Any]) -> str:
 def show_regulatory_headlines_widget(articles: list[dict[str, Any]]) -> None:
     """Right-column widget matching Latest Digital Asset News layout (heading + See more + cards)."""
     st.markdown(
-        '<h2 class="home-main-heading">Regulatory headlines · digital assets</h2>',
+        '<h2 class="home-main-heading">Regulatory Headlines · Digital Assets</h2>',
         unsafe_allow_html=True,
     )
 

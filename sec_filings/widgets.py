@@ -66,7 +66,7 @@ def show_sec_fund_filings_widget(user_agent: str | None) -> None:
     if data.error and not data.filings:
         st.markdown(
             '<div class="sec-widget-shell">'
-            '<h2 class="home-main-heading">SEC fund filings · digital assets</h2>'
+            '<h2 class="home-main-heading">SEC Fund Filings · Digital Assets</h2>'
             "</div>",
             unsafe_allow_html=True,
         )
@@ -75,7 +75,7 @@ def show_sec_fund_filings_widget(user_agent: str | None) -> None:
 
     st.markdown(
         '<div class="sec-widget-shell">'
-        '<h2 class="home-main-heading">SEC fund filings · digital assets</h2>'
+        '<h2 class="home-main-heading">SEC Fund Filings · Digital Assets</h2>'
         "<p style=\"font-size:0.78rem;color:#64748b;margin:0 0 0.5rem 0;\">"
         f"Form types: {escape(FORM_TYPES_LABEL)}. Sourced via EDGAR.</p>"
         "</div>",

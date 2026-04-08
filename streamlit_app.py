@@ -110,10 +110,10 @@ def main() -> None:
     if not articles:
         st.info("No articles loaded. Check your network or RSS URLs in `news_feeds.py`.")
         st.markdown(
-            '<div id="jd-section-news" style="scroll-margin-top: 1.25rem;"></div>',
+            '<div id="jd-section-news" style="scroll-margin-top: 5.5rem;"></div>',
             unsafe_allow_html=True,
         )
-        st.markdown(section_label_teal("News & regulatory"), unsafe_allow_html=True)
+        st.markdown(section_label_teal("News & Regulatory"), unsafe_allow_html=True)
         col_news, col_sec = st.columns([1.2, 1], gap="large")
         with col_news:
             st.caption("Headlines will appear here when feeds load.")
@@ -122,10 +122,10 @@ def main() -> None:
 
         st.divider()
         st.markdown(
-            '<div id="jd-section-market" style="scroll-margin-top: 1.25rem;"></div>',
+            '<div id="jd-section-market" style="scroll-margin-top: 5.5rem;"></div>',
             unsafe_allow_html=True,
         )
-        st.markdown(section_label_teal("Market data"), unsafe_allow_html=True)
+        st.markdown(section_label_teal("Market Data"), unsafe_allow_html=True)
         col_etp, col_rwa = st.columns([1.2, 1], gap="large")
         with col_etp:
             show_us_crypto_etps_widget(get_etp_user_agent_from_secrets())
@@ -140,10 +140,10 @@ def main() -> None:
     top = unique[:HOME_HEADLINE_COUNT]
 
     st.markdown(
-        '<div id="jd-section-news" style="scroll-margin-top: 1.25rem;"></div>',
+        '<div id="jd-section-news" style="scroll-margin-top: 5.5rem;"></div>',
         unsafe_allow_html=True,
     )
-    st.markdown(section_label_teal("News & regulatory"), unsafe_allow_html=True)
+    st.markdown(section_label_teal("News & Regulatory"), unsafe_allow_html=True)
     col_news, col_sec = st.columns([1.2, 1], gap="large")
     with col_news:
         st.markdown(
@@ -171,10 +171,10 @@ def main() -> None:
 
     st.divider()
     st.markdown(
-        '<div id="jd-section-market" style="scroll-margin-top: 1.25rem;"></div>',
+        '<div id="jd-section-market" style="scroll-margin-top: 5.5rem;"></div>',
         unsafe_allow_html=True,
     )
-    st.markdown(section_label_teal("Market data"), unsafe_allow_html=True)
+    st.markdown(section_label_teal("Market Data"), unsafe_allow_html=True)
     col_etp, col_rwa = st.columns([1.2, 1], gap="large")
     with col_etp:
         show_us_crypto_etps_widget(get_etp_user_agent_from_secrets())

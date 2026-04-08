@@ -36,7 +36,7 @@ def main() -> None:
         st.header("Navigation")
         st.caption("Digital-asset regulatory stories from aggregated RSS feeds.")
 
-    st.title("Regulatory headlines · digital assets")
+    st.title("Regulatory Headlines · Digital Assets")
 
     articles, feed_errors = load_regulatory_articles()
     if feed_errors:

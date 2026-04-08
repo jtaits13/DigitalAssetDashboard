@@ -29,10 +29,11 @@ HOME_PAGE_LAYOUT_CSS = """
     margin-bottom: 1.35rem !important;
 }
 .home-band-label {
-    font-size: 0.72rem;
+    font-size: 0.85rem;
     font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    line-height: 1.3;
+    text-transform: none;
     color: #64748b;
     margin: 0 0 0.85rem 0;
     padding-bottom: 0.4rem;
@@ -47,7 +48,7 @@ HOME_PAGE_LAYOUT_CSS = """
 
 
 def section_label_teal(text: str) -> str:
-    """HTML for a small uppercase section title."""
+    """HTML for a section band title (title case, same scale as ``h2.home-main-heading``)."""
     return f'<p class="home-band-label teal">{text}</p>'
 
 

@@ -38,7 +38,7 @@ def main() -> None:
         st.header("Navigation")
         st.caption("All stories from aggregated RSS feeds.")
 
-    st.title("All news articles")
+    st.title("All News Articles")
 
     articles, feed_errors = load_all_feeds(DEFAULT_FEEDS)
     if feed_errors:
