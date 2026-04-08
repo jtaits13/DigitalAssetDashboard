@@ -297,9 +297,7 @@ NAV_TICKER_ALIGN_SCRIPT = """
   const p = window.parent;
   function align() {
     const ticker = p.document.querySelector(".cd-ticker-shell");
-    const nav =
-      p.document.querySelector(".jd-site-nav-fixed-wrap") ||
-      p.document.querySelector("div.st-key-jdnavstrip");
+    const nav = p.document.querySelector(".jd-site-nav-fixed-wrap");
     if (!ticker || !nav) return;
     const r = ticker.getBoundingClientRect();
     nav.style.paddingLeft = Math.max(0, Math.round(r.left)) + "px";
