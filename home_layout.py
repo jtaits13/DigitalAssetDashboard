@@ -23,27 +23,55 @@ div[data-testid="stDataFrame"] [role="gridcell"] {
 </style>
 """
 
-# Site teal (#1E7C99); use after STREAMLIT_TABLE_UNIFY_CSS for ETP dataframes.
+# Glide Data Grid (st.dataframe) reads --gdg-* variables; headers are canvas-drawn (DOM CSS alone is not enough).
+# Pair with ``inject_dataframe_teal_header_fix()`` after each styled dataframe mounts.
 STREAMLIT_DATAFRAME_TEAL_HEADER_CSS = """
 <style>
-div[data-testid="stDataFrame"] [data-testid="stHeaderCell"],
-div[data-testid="stDataFrame"] [data-testid="stHeaderCell"] > div,
-div[data-testid="stDataFrame"] [role="columnheader"],
-div[data-testid="stDataFrame"] thead th {
-  background-color: #1E7C99 !important;
-  background: #1E7C99 !important;
-  color: #ffffff !important;
-  font-weight: 700 !important;
-  font-size: 0.875rem !important;
-}
-div[data-testid="stDataFrame"] [data-testid="stHeaderCell"] p,
-div[data-testid="stDataFrame"] [data-testid="stHeaderCell"] span,
-div[data-testid="stDataFrame"] [role="columnheader"] *,
-div[data-testid="stDataFrame"] thead th * {
-  color: #ffffff !important;
+div[data-testid="stDataFrame"],
+div[data-testid="stDataFrame"] .gdg-wmyidgi {
+  --gdg-bg-header: #1E7C99;
+  --gdg-bg-header-has-focus: #196f87;
+  --gdg-text-group-header: #ffffff;
+  --gdg-border-color: rgba(255, 255, 255, 0.22);
 }
 </style>
 """
+
+_DATAFRAME_TEAL_HEADER_FIX_HTML = """
+<script>
+(function () {
+  var doc = window.parent.document;
+  var TEAL = "#1E7C99";
+  var TEAL_FOCUS = "#196f87";
+  var FG = "#ffffff";
+  var BORDER = "rgba(255, 255, 255, 0.22)";
+  function paint() {
+    doc.querySelectorAll('div[data-testid="stDataFrame"] .gdg-wmyidgi').forEach(function (el) {
+      el.style.setProperty("--gdg-bg-header", TEAL, "important");
+      el.style.setProperty("--gdg-bg-header-has-focus", TEAL_FOCUS, "important");
+      el.style.setProperty("--gdg-text-group-header", FG, "important");
+      el.style.setProperty("--gdg-border-color", BORDER, "important");
+    });
+    try {
+      window.parent.dispatchEvent(new Event("resize"));
+    } catch (e) {}
+  }
+  paint();
+  var n = 0;
+  var t = window.parent.setInterval(function () {
+    paint();
+    if (++n > 25) window.parent.clearInterval(t);
+  }, 120);
+})();
+</script>
+"""
+
+
+def inject_dataframe_teal_header_fix() -> None:
+    """Apply teal header colors to Glide-based ``st.dataframe`` (run once after the table is rendered)."""
+    import streamlit.components.v1 as components
+
+    components.html(_DATAFRAME_TEAL_HEADER_FIX_HTML, height=0, width=0)
 
 ETP_FULLPAGE_AUM_LINE_CSS = """
 <style>

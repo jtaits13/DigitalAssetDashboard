@@ -6,9 +6,17 @@ from html import escape
 
 import streamlit as st
 
-from home_layout import STREAMLIT_TABLE_UNIFY_CSS
+from home_layout import (
+    STREAMLIT_DATAFRAME_TEAL_HEADER_CSS,
+    STREAMLIT_TABLE_UNIFY_CSS,
+    inject_dataframe_teal_header_fix,
+)
 from rwa_league.client import RwaNetworkLeagueRow, fetch_rwa_network_league
-from rwa_league.dataframe_table import build_rwa_dataframe, style_rwa_dataframe
+from rwa_league.dataframe_table import (
+    build_rwa_dataframe,
+    filter_rows_by_network,
+    style_rwa_dataframe,
+)
 
 WIDGET_CSS = """
 <style>
@@ -110,7 +118,10 @@ def clear_rwa_league_cache() -> None:
 
 
 def show_rwa_league_widget() -> None:
-    st.markdown(WIDGET_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
+    st.markdown(
+        WIDGET_CSS + STREAMLIT_TABLE_UNIFY_CSS + STREAMLIT_DATAFRAME_TEAL_HEADER_CSS,
+        unsafe_allow_html=True,
+    )
     rows, err = load_rwa_league_cached()
 
     if err and not rows:
@@ -133,6 +144,21 @@ def show_rwa_league_widget() -> None:
         unsafe_allow_html=True,
     )
 
-    df = build_rwa_dataframe(rows)
+    q = st.text_input(
+        "Search network",
+        "",
+        key="rwa_search_home",
+        placeholder="Filter by network name…",
+    )
+    filtered = filter_rows_by_network(rows, q)
+    if q.strip():
+        st.caption(
+            f"Showing {len(filtered)} of {len(rows)} networks matching “{escape(q.strip())}”."
+        )
+    else:
+        st.caption(f"Showing all {len(filtered)} networks.")
+
+    df = build_rwa_dataframe(filtered)
     _show_rwa_dataframe(df, height=rwa_table_height(len(df)))
+    inject_dataframe_teal_header_fix()
     st.caption(RWA_DATA_SOURCE_CAPTION)

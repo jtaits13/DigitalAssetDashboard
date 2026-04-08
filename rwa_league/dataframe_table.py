@@ -44,6 +44,13 @@ def build_rwa_dataframe(rows: list[RwaNetworkLeagueRow]) -> pd.DataFrame:
     return pd.DataFrame(recs)
 
 
+def filter_rows_by_network(rows: list[RwaNetworkLeagueRow], query: str) -> list[RwaNetworkLeagueRow]:
+    q = (query or "").strip().lower()
+    if not q:
+        return list(rows)
+    return [r for r in rows if q in (r.network or "").lower()]
+
+
 def _fmt_7d_cell(v: object) -> str:
     if pd.isna(v):
         return "—"

@@ -19,7 +19,11 @@ from crypto_etps.dataframe_table import (
     filter_rows_by_fund_name,
     style_etp_dataframe,
 )
-from home_layout import STREAMLIT_DATAFRAME_TEAL_HEADER_CSS, STREAMLIT_TABLE_UNIFY_CSS
+from home_layout import (
+    STREAMLIT_DATAFRAME_TEAL_HEADER_CSS,
+    STREAMLIT_TABLE_UNIFY_CSS,
+    inject_dataframe_teal_header_fix,
+)
 
 WIDGET_CSS = """
 <style>
@@ -178,6 +182,7 @@ def show_us_crypto_etps_widget(user_agent: str | None) -> None:
     display_rows = filtered[:10]
     df = build_etp_dataframe(display_rows)
     show_etp_dataframe(df, height=etp_table_height(len(df)))
+    inject_dataframe_teal_header_fix()
     st.caption(ETP_DATA_SOURCE_CAPTION)
 
     if st.button("See full ETF list", key="see_full_etf_list", use_container_width=True, type="primary"):
