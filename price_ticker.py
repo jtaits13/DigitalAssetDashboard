@@ -304,27 +304,6 @@ NAV_TICKER_ALIGN_SCRIPT = """
   }
 
   function align() {
-    const vw = p.innerWidth;
-    const nav =
-      doc.querySelector(".jd-site-nav-fixed-wrap") ||
-      doc.querySelector("div.st-key-jdnavstrip");
-    const subpageStrip = nav && nav.matches && nav.matches("div.st-key-jdnavstrip");
-
-    /* Multipage pages wrap the nav in st.container(); fixed + nested layout can inset the
-       strip vs the home page (raw markdown). Pull the keyed strip to true viewport width. */
-    if (subpageStrip && nav) {
-      nav.style.removeProperty("margin-left");
-      nav.style.removeProperty("width");
-      nav.style.removeProperty("max-width");
-      const before = nav.getBoundingClientRect();
-      if (before.left > 0.5 || Math.abs(vw - before.width) > 2) {
-        nav.style.setProperty("margin-left", -Math.round(before.left) + "px");
-        nav.style.setProperty("width", vw + "px");
-        nav.style.setProperty("max-width", vw + "px");
-        nav.style.setProperty("box-sizing", "border-box");
-      }
-    }
-
     const ticker = doc.querySelector(".cd-ticker-shell");
     if (!ticker) {
       clearStripVars();
@@ -333,7 +312,7 @@ NAV_TICKER_ALIGN_SCRIPT = """
     const r = ticker.getBoundingClientRect();
     if (r.width < 4) return;
     const pl = Math.max(0, Math.round(r.left));
-    const pr = Math.max(0, Math.round(vw - r.right));
+    const pr = Math.max(0, Math.round(p.innerWidth - r.right));
     root.style.setProperty("--jd-strip-pl", pl + "px");
     root.style.setProperty("--jd-strip-pr", pr + "px");
   }

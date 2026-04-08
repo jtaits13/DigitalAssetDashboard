@@ -34,31 +34,13 @@ MAIN_APP_PAGE = "streamlit_app.py"
 SITE_NAV_CSS = """
 <style>
 /* Horizontal inset matches CoinGecko ticker via --jd-strip-pl/pr (set in price_ticker.py). */
-.jd-site-nav-fixed-wrap {
+.jd-site-nav-fixed-wrap,
+div.st-key-jdnavstrip {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     width: 100%;
-    z-index: 999999;
-    box-sizing: border-box;
-    margin: 0;
-    padding-top: 0.45rem;
-    padding-bottom: 0.55rem;
-    padding-left: var(--jd-strip-pl, 1rem);
-    padding-right: var(--jd-strip-pr, 1rem);
-    background: #f4f6f9;
-    border-bottom: 1px solid #e2e8f0;
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
-}
-/* Multipage: st.container adds wrappers inside the padded block — use viewport width so fixed
-   matches the home page (markdown) strip. price_ticker.py also nudges margin if still inset. */
-div.st-key-jdnavstrip {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    max-width: 100vw;
     z-index: 999999;
     box-sizing: border-box;
     margin: 0;
