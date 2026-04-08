@@ -14,7 +14,11 @@ from crypto_etps.client import (
     total_aum_usd,
 )
 from crypto_etps.sec_prospectus import clear_sec_prospectus_caches
-from crypto_etps.dataframe_table import build_etp_dataframe, filter_rows_by_fund_name
+from crypto_etps.dataframe_table import (
+    build_etp_dataframe,
+    filter_rows_by_fund_name,
+    style_etp_dataframe,
+)
 from home_layout import STREAMLIT_TABLE_UNIFY_CSS
 
 WIDGET_CSS = """
@@ -67,9 +71,9 @@ _SORT = "\u2195"  # ↕ sort hint in column headers
 
 
 def show_etp_dataframe(df, *, height: int) -> None:
-    """Sortable st.dataframe: plain dtypes + column_config (Styler breaks client-side sort)."""
+    """Sortable table: ``column_config`` formats values; Styler adds 52W % colors only (no ``.format()``)."""
     st.dataframe(
-        df,
+        style_etp_dataframe(df),
         use_container_width=True,
         height=height,
         hide_index=True,

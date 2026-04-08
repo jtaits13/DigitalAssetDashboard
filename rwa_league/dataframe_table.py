@@ -1,4 +1,8 @@
-"""Pandas DataFrame for sortable RWA league table in Streamlit (no Styler — preserves sort)."""
+"""Pandas DataFrame for the RWA league table in Streamlit.
+
+Use ``style_rwa_dataframe`` for green/red **7D Δ value** only (``apply``, no ``format``);
+number formatting comes from ``column_config`` so sorting stays numeric.
+"""
 
 from __future__ import annotations
 
@@ -32,3 +36,19 @@ def build_rwa_dataframe(rows: list[RwaNetworkLeagueRow]) -> pd.DataFrame:
             }
         )
     return pd.DataFrame(recs)
+
+
+def style_rwa_dataframe(df: pd.DataFrame) -> pd.io.formats.style.Styler:
+    """Green/red font on 7D Δ value — do not use ``.format()`` here."""
+
+    def highlight_7d(s: pd.Series) -> list[str]:
+        return [
+            "color: #059669; font-weight: 600"
+            if pd.notna(v) and float(v) >= 0
+            else "color: #dc2626; font-weight: 600"
+            if pd.notna(v) and float(v) < 0
+            else ""
+            for v in s
+        ]
+
+    return df.style.apply(highlight_7d, subset=["7D Δ value"])

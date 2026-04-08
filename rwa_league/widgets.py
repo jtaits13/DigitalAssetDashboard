@@ -8,7 +8,7 @@ import streamlit as st
 
 from home_layout import STREAMLIT_TABLE_UNIFY_CSS
 from rwa_league.client import RwaNetworkLeagueRow, fetch_rwa_network_league
-from rwa_league.dataframe_table import build_rwa_dataframe
+from rwa_league.dataframe_table import build_rwa_dataframe, style_rwa_dataframe
 
 WIDGET_CSS = """
 <style>
@@ -38,7 +38,7 @@ def rwa_table_height(num_rows: int, *, max_h: int = 520) -> int:
 
 def _show_rwa_dataframe(df, *, height: int) -> None:
     st.dataframe(
-        df,
+        style_rwa_dataframe(df),
         use_container_width=True,
         height=height,
         hide_index=True,
