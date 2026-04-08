@@ -19,7 +19,7 @@ from crypto_etps.dataframe_table import (
     filter_rows_by_fund_name,
     style_etp_dataframe,
 )
-from home_layout import STREAMLIT_TABLE_UNIFY_CSS
+from home_layout import STREAMLIT_DATAFRAME_TEAL_HEADER_CSS, STREAMLIT_TABLE_UNIFY_CSS
 
 WIDGET_CSS = """
 <style>
@@ -35,7 +35,7 @@ WIDGET_CSS = """
     font-size: 0.95rem;
     font-weight: 700;
     color: #0f172a;
-    margin: 0 0 0.75rem 0;
+    margin: 0.5rem 0 0.75rem 0;
 }
 </style>
 """
@@ -132,7 +132,10 @@ def show_etp_dataframe(df, *, height: int) -> None:
 
 
 def show_us_crypto_etps_widget(user_agent: str | None) -> None:
-    st.markdown(WIDGET_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
+    st.markdown(
+        WIDGET_CSS + STREAMLIT_TABLE_UNIFY_CSS + STREAMLIT_DATAFRAME_TEAL_HEADER_CSS,
+        unsafe_allow_html=True,
+    )
 
     ua = resolve_etp_user_agent(user_agent)
     with st.spinner("Loading U.S. crypto ETPs (list + profile pages)…"):
@@ -154,7 +157,6 @@ def show_us_crypto_etps_widget(user_agent: str | None) -> None:
     st.markdown(
         '<div class="etp-widget-shell">'
         '<h2 class="home-main-heading">U.S. Crypto ETPs</h2>'
-        f'<p class="etp-aum-line">Total AUM (listed, known assets): {escape(aum_s)}</p>'
         "</div>",
         unsafe_allow_html=True,
     )
@@ -164,6 +166,11 @@ def show_us_crypto_etps_widget(user_agent: str | None) -> None:
         "",
         key="etf_search_home",
         placeholder="Filter by fund name…",
+    )
+
+    st.markdown(
+        f'<p class="etp-aum-line">Total AUM (listed, known assets): {escape(aum_s)}</p>',
+        unsafe_allow_html=True,
     )
 
     ranked = sorted_by_assets(rows)

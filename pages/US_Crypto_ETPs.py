@@ -24,7 +24,11 @@ from crypto_etps.widgets import (
     resolve_etp_user_agent,
     show_etp_dataframe,
 )
-from home_layout import STREAMLIT_TABLE_UNIFY_CSS
+from home_layout import (
+    ETP_FULLPAGE_AUM_LINE_CSS,
+    STREAMLIT_DATAFRAME_TEAL_HEADER_CSS,
+    STREAMLIT_TABLE_UNIFY_CSS,
+)
 from news_feeds import (
     HOME_MAIN_HEADING_CSS,
     article_styles_markdown,
@@ -44,7 +48,12 @@ def main() -> None:
     render_subpage_top_bar()
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
     st.markdown(HOME_MAIN_HEADING_CSS, unsafe_allow_html=True)
-    st.markdown(STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
+    st.markdown(
+        STREAMLIT_TABLE_UNIFY_CSS
+        + STREAMLIT_DATAFRAME_TEAL_HEADER_CSS
+        + ETP_FULLPAGE_AUM_LINE_CSS,
+        unsafe_allow_html=True,
+    )
     show_price_ticker()
 
     st.markdown(
@@ -65,8 +74,6 @@ def main() -> None:
 
     rows = data.rows
     total = total_aum_usd(rows)
-    if total > 0:
-        st.subheader(f"Total AUM (known assets): {format_usd_compact(total)}")
 
     q = st.text_input(
         "Search fund name",
@@ -74,6 +81,12 @@ def main() -> None:
         key="etf_search_full",
         placeholder="Filter by fund name…",
     )
+
+    if total > 0:
+        st.markdown(
+            f'<p class="etp-fullpage-aum-line">Total AUM (known assets): {escape(format_usd_compact(total))}</p>',
+            unsafe_allow_html=True,
+        )
 
     filtered = filter_rows_by_fund_name(rows, q)
     sorted_rows = sorted_by_assets(filtered)

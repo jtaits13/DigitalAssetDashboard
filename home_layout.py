@@ -23,6 +23,39 @@ div[data-testid="stDataFrame"] [role="gridcell"] {
 </style>
 """
 
+# Site teal (#1E7C99); use after STREAMLIT_TABLE_UNIFY_CSS for ETP dataframes.
+STREAMLIT_DATAFRAME_TEAL_HEADER_CSS = """
+<style>
+div[data-testid="stDataFrame"] [data-testid="stHeaderCell"],
+div[data-testid="stDataFrame"] [data-testid="stHeaderCell"] > div,
+div[data-testid="stDataFrame"] [role="columnheader"],
+div[data-testid="stDataFrame"] thead th {
+  background-color: #1E7C99 !important;
+  background: #1E7C99 !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 0.875rem !important;
+}
+div[data-testid="stDataFrame"] [data-testid="stHeaderCell"] p,
+div[data-testid="stDataFrame"] [data-testid="stHeaderCell"] span,
+div[data-testid="stDataFrame"] [role="columnheader"] *,
+div[data-testid="stDataFrame"] thead th * {
+  color: #ffffff !important;
+}
+</style>
+"""
+
+ETP_FULLPAGE_AUM_LINE_CSS = """
+<style>
+.etp-fullpage-aum-line {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0.35rem 0 0.85rem 0;
+}
+</style>
+"""
+
 HOME_PAGE_LAYOUT_CSS = """
 <style>
 .cd-ticker-shell {
