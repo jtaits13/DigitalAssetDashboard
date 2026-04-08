@@ -83,7 +83,7 @@ def main() -> None:
     st.session_state.all_news_page = 1
     st.session_state.all_regulatory_page = 1
 
-    render_home_top_bar("landing")
+    render_home_top_bar("landing", is_landing=True)
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
     st.markdown(
         HOME_MAIN_HEADING_CSS + HOME_PAGE_LAYOUT_CSS + HOME_PAGE_EXTRA_CSS,
@@ -109,6 +109,10 @@ def main() -> None:
 
     if not articles:
         st.info("No articles loaded. Check your network or RSS URLs in `news_feeds.py`.")
+        st.markdown(
+            '<div id="jd-section-news" style="scroll-margin-top: 1.25rem;"></div>',
+            unsafe_allow_html=True,
+        )
         st.markdown(section_label_teal("News & regulatory"), unsafe_allow_html=True)
         col_news, col_sec = st.columns([1.2, 1], gap="large")
         with col_news:
@@ -117,6 +121,10 @@ def main() -> None:
             show_regulatory_headlines_widget(regulatory_articles)
 
         st.divider()
+        st.markdown(
+            '<div id="jd-section-market" style="scroll-margin-top: 1.25rem;"></div>',
+            unsafe_allow_html=True,
+        )
         st.markdown(section_label_teal("Market data"), unsafe_allow_html=True)
         col_etp, col_rwa = st.columns([1.2, 1], gap="large")
         with col_etp:
@@ -131,6 +139,10 @@ def main() -> None:
     unique = dedupe_articles(articles, max_items=None)
     top = unique[:HOME_HEADLINE_COUNT]
 
+    st.markdown(
+        '<div id="jd-section-news" style="scroll-margin-top: 1.25rem;"></div>',
+        unsafe_allow_html=True,
+    )
     st.markdown(section_label_teal("News & regulatory"), unsafe_allow_html=True)
     col_news, col_sec = st.columns([1.2, 1], gap="large")
     with col_news:
@@ -158,6 +170,10 @@ def main() -> None:
         show_regulatory_headlines_widget(regulatory_articles)
 
     st.divider()
+    st.markdown(
+        '<div id="jd-section-market" style="scroll-margin-top: 1.25rem;"></div>',
+        unsafe_allow_html=True,
+    )
     st.markdown(section_label_teal("Market data"), unsafe_allow_html=True)
     col_etp, col_rwa = st.columns([1.2, 1], gap="large")
     with col_etp:

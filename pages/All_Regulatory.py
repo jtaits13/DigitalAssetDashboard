@@ -28,7 +28,7 @@ def main() -> None:
         initial_sidebar_state="expanded",
     )
 
-    render_home_top_bar("all_regulatory")
+    render_home_top_bar("all_regulatory", is_landing=False)
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
     show_price_ticker()
 

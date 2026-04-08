@@ -37,7 +37,7 @@ def main() -> None:
         initial_sidebar_state="expanded",
     )
 
-    render_home_top_bar("crypto_etps_full")
+    render_home_top_bar("crypto_etps_full", is_landing=False)
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
     st.markdown(HOME_MAIN_HEADING_CSS, unsafe_allow_html=True)
     st.markdown(STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)

@@ -30,7 +30,7 @@ def main() -> None:
         initial_sidebar_state="expanded",
     )
 
-    render_home_top_bar("all_articles")
+    render_home_top_bar("all_articles", is_landing=False)
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
     show_price_ticker()
 

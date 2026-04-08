@@ -26,6 +26,49 @@ h2.home-main-heading {
 </style>
 """
 
+# Coinbase-style strip: white bar on gray app background, teal hover (primaryColor).
+SITE_NAV_CSS = """
+<style>
+.jd-site-nav {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.15rem;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 0.5rem 0.85rem 0.55rem 0.85rem;
+    margin: 0 0 1rem 0;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+.jd-site-nav .jd-site-brand {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.03em;
+    margin-right: 1rem;
+    padding-right: 1rem;
+    border-right: 1px solid #e2e8f0;
+}
+.jd-site-nav a.jd-site-link {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #475569;
+    text-decoration: none;
+    padding: 0.4rem 0.75rem;
+    border-radius: 8px;
+    transition: color 0.15s ease, background 0.15s ease;
+}
+.jd-site-nav a.jd-site-link:hover {
+    color: #1E7C99;
+    background: rgba(30, 124, 153, 0.09);
+}
+.jd-site-nav a.jd-site-link:active {
+    color: #155e75;
+}
+</style>
+"""
+
 
 DEFAULT_FEEDS: list[tuple[str, str]] = [
     ("CoinTelegraph", "https://cointelegraph.com/rss"),
@@ -168,14 +211,31 @@ def dedupe_articles(articles: list[dict[str, Any]], max_items: int | None = None
     return unique
 
 
-def render_home_top_bar(key_suffix: str = "page") -> None:
-    """Home control at top of every page; returns to main landing (`streamlit_app.py`)."""
-    c1, _ = st.columns([1, 12])
-    with c1:
-        if st.button("Home", key=f"home_top_{key_suffix}", help="Back to landing page"):
-            # Landing page will also set this; set here so state updates before navigation.
-            st.session_state.all_news_page = 1
-            st.switch_page("streamlit_app.py")
+def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -> None:
+    """
+    Top strip: brand + section links (News / Market Data scroll on landing, or go home + hash off-landing).
+    """
+    if is_landing:
+        home_href = "#"
+        news_href = "#jd-section-news"
+        market_href = "#jd-section-market"
+    else:
+        home_href = "/"
+        news_href = "/#jd-section-news"
+        market_href = "/#jd-section-market"
+
+    st.markdown(SITE_NAV_CSS, unsafe_allow_html=True)
+    st.markdown(
+        f"""
+<nav class="jd-site-nav" aria-label="Page sections">
+  <span class="jd-site-brand">JPM Digital</span>
+  <a class="jd-site-link" href="{home_href}">Home</a>
+  <a class="jd-site-link" href="{news_href}">News</a>
+  <a class="jd-site-link" href="{market_href}">Market Data</a>
+</nav>
+""",
+        unsafe_allow_html=True,
+    )
 
 
 def article_styles_markdown() -> str:
