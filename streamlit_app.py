@@ -18,7 +18,7 @@ from news_feeds import (
     dedupe_articles,
     load_all_feeds,
     render_article_card_html,
-    render_site_nav_bar,
+    render_home_top_bar,
 )
 from price_ticker import fetch_top_crypto_tickers, show_price_ticker
 from crypto_etps.widgets import (
@@ -87,23 +87,6 @@ def _jd_inject_scroll_to_section() -> None:
     )
 
 
-def _jd_inject_scroll_to_top() -> None:
-    if not st.session_state.pop("jd_scroll_top", False):
-        return
-    components.html(
-        """
-<script>
-(function () {
-  const p = window.parent;
-  p.scrollTo(0, 0);
-})();
-</script>
-""",
-        height=0,
-        width=0,
-    )
-
-
 def _feed_status_expanders(feed_errors: list[str], regulatory_errors: list[str]) -> None:
     if not feed_errors and not regulatory_errors:
         return
@@ -155,7 +138,7 @@ def main() -> None:
 
     _jd_consume_scroll_query()
 
-    render_site_nav_bar(key="site_nav_home", is_landing=True)
+    render_home_top_bar("landing", is_landing=True)
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
     st.markdown(
         HOME_MAIN_HEADING_CSS + HOME_PAGE_LAYOUT_CSS + HOME_PAGE_EXTRA_CSS,
@@ -206,7 +189,6 @@ def main() -> None:
 
         st.divider()
         _footer_line()
-        _jd_inject_scroll_to_top()
         _jd_inject_scroll_to_section()
         return
 
@@ -257,7 +239,6 @@ def main() -> None:
 
     st.divider()
     _footer_line()
-    _jd_inject_scroll_to_top()
     _jd_inject_scroll_to_section()
 
 

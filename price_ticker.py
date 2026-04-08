@@ -298,7 +298,7 @@ NAV_TICKER_ALIGN_SCRIPT = """
   const doc = p.document;
   function align() {
     const ticker = doc.querySelector(".cd-ticker-shell");
-    const nav = doc.querySelector('iframe[title="jpm_site_nav"]');
+    const nav = doc.querySelector(".jd-site-nav-fixed-wrap");
     if (!ticker || !nav) return;
     const r = ticker.getBoundingClientRect();
     if (r.width < 4) return;
