@@ -69,9 +69,14 @@ def resolve_etp_user_agent(user_agent: str | None) -> str:
 
 _SORT = "\u2195"  # ↕ sort hint in column headers
 
+ETP_DATA_SOURCE_CAPTION = (
+    "Source: [StockAnalysis.com crypto ETF list](https://stockanalysis.com/list/crypto-etfs/) "
+    "and ETF detail pages (scraped; not affiliated)."
+)
+
 
 def show_etp_dataframe(df, *, height: int) -> None:
-    """Styler formats 52W % (arrow + %) and Assets (B) (x.xxB); ``format=None`` avoids overriding."""
+    """Styler formats 52W % (arrow + %) and Assets (B) (compact USD); ``format=None`` avoids overriding."""
     st.dataframe(
         style_etp_dataframe(df),
         use_container_width=True,
@@ -96,12 +101,14 @@ def show_etp_dataframe(df, *, height: int) -> None:
             "52W %": st.column_config.NumberColumn(
                 f"52W % {_SORT}",
                 format=None,
+                width=200,
                 help="Past-year total return — Ascending: lowest first",
             ),
             "Assets (B)": st.column_config.NumberColumn(
                 f"Assets (B) {_SORT}",
                 format=None,
-                help="Billions USD — Ascending: smallest first",
+                width=140,
+                help="AUM (compact USD) — Ascending: smallest first",
             ),
             "Issuer": st.column_config.TextColumn(
                 f"Issuer {_SORT}",
@@ -164,6 +171,7 @@ def show_us_crypto_etps_widget(user_agent: str | None) -> None:
     display_rows = filtered[:10]
     df = build_etp_dataframe(display_rows)
     show_etp_dataframe(df, height=etp_table_height(len(df)))
+    st.caption(ETP_DATA_SOURCE_CAPTION)
 
     if st.button("See full ETF list", key="see_full_etf_list", use_container_width=True, type="primary"):
         st.switch_page("pages/US_Crypto_ETPs.py")

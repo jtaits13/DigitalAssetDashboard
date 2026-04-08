@@ -17,6 +17,7 @@ from crypto_etps.dataframe_table import (
     filter_rows_by_fund_name,
 )
 from crypto_etps.widgets import (
+    ETP_DATA_SOURCE_CAPTION,
     etp_table_height,
     get_etp_user_agent_from_secrets,
     load_crypto_etps_cached,
@@ -82,7 +83,7 @@ def main() -> None:
         st.caption(f"Showing all {len(sorted_rows)} funds.")
 
     show_etp_dataframe(df, height=etp_table_height(len(df), max_h=900))
-
+    st.caption(ETP_DATA_SOURCE_CAPTION)
     st.caption(
         f"Last loaded at {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
         "Cached up to one hour; use **Refresh feeds** on the home page to reload."

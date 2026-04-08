@@ -29,6 +29,11 @@ WIDGET_CSS = """
 
 _SORT = "\u2195"
 
+RWA_DATA_SOURCE_CAPTION = (
+    "Source: [RWA.xyz](https://app.rwa.xyz/) homepage embedded data "
+    "(Networks · All view; not the public API)."
+)
+
 
 def rwa_table_height(num_rows: int, *, max_h: int = 520) -> int:
     header = 38
@@ -77,11 +82,13 @@ def _show_rwa_dataframe(df, *, height: int) -> None:
             "Total Value": st.column_config.NumberColumn(
                 f"Total Value {_SORT}",
                 format=None,
+                width=140,
                 help="Ascending: smallest USD first",
             ),
             "7D Δ value": st.column_config.NumberColumn(
                 f"7D Δ value {_SORT}",
                 format=None,
+                width=200,
                 help="7-day change in total value (%) · Ascending: lowest first",
             ),
             "Market Share": st.column_config.NumberColumn(
@@ -128,3 +135,4 @@ def show_rwa_league_widget() -> None:
 
     df = build_rwa_dataframe(rows)
     _show_rwa_dataframe(df, height=rwa_table_height(len(df)))
+    st.caption(RWA_DATA_SOURCE_CAPTION)

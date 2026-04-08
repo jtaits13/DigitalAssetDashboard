@@ -2,7 +2,7 @@
 
 Numeric columns stay typed for sorting. ``style_etp_dataframe`` uses ``Styler.apply`` for
 green/red 52W % text and ``Styler.format`` only on ``52W %`` / ``Assets (B)`` so arrows
-and ``1.23B``-style assets appear in-cell. In ``show_etp_dataframe``, those columns use
+and compact **$** assets (``format_usd_compact`` on AUM in USD) appear in-cell. In ``show_etp_dataframe``, those columns use
 ``NumberColumn(..., format=None)`` so Streamlit does not override Styler formatting.
 """
 
@@ -11,7 +11,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from crypto_etps.client import CryptoEtpRow
+from crypto_etps.client import CryptoEtpRow, format_usd_compact
 from crypto_etps.sec_prospectus import edgar_s1_fallback_url
 
 
@@ -64,9 +64,10 @@ def _fmt_52w_cell(v: object) -> str:
 
 
 def _fmt_assets_b_cell(v: object) -> str:
+    """Billions in data → USD; same compact $ style as RWA Total Value."""
     if pd.isna(v):
         return "—"
-    return f"{float(v):.2f}B"
+    return format_usd_compact(float(v) * 1e9)
 
 
 def style_etp_dataframe(df: pd.DataFrame) -> pd.io.formats.style.Styler:
