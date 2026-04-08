@@ -88,7 +88,7 @@ def _show_rwa_dataframe(df, *, height: int) -> None:
             "7D Δ value": st.column_config.NumberColumn(
                 f"7D Δ value {_SORT}",
                 format=None,
-                width=200,
+                width=100,
                 help="7-day change in total value (%) · Ascending: lowest first",
             ),
             "Market Share": st.column_config.NumberColumn(

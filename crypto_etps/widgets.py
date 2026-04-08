@@ -101,7 +101,7 @@ def show_etp_dataframe(df, *, height: int) -> None:
             "52W %": st.column_config.NumberColumn(
                 f"52W % {_SORT}",
                 format=None,
-                width=200,
+                width=100,
                 help="Past-year total return — Ascending: lowest first",
             ),
             "Assets (B)": st.column_config.NumberColumn(
