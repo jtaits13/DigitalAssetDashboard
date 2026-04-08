@@ -26,28 +26,24 @@ h2.home-main-heading {
 </style>
 """
 
-# Multipage entry for st.page_link in sidebar on non-landing pages.
+# Multipage entry for st.switch_page from subpages.
 MAIN_APP_PAGE = "streamlit_app.py"
 
-# Fixed top strip (home only). price_ticker.py aligns padding with .cd-ticker-shell.
+# Pins the jpm_site_nav iframe to the viewport; inner markup lives in jpm_site_nav/build/.
+# price_ticker.py aligns horizontal padding with .cd-ticker-shell.
 SITE_NAV_CSS = """
 <style>
-.jd-site-nav-fixed-wrap {
+iframe[title="jpm_site_nav"] {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    width: 100%;
+    width: 100% !important;
+    height: 5.25rem !important;
+    max-height: 5.25rem !important;
     z-index: 999999;
+    border: none !important;
     box-sizing: border-box;
-    padding: 0.45rem 1rem 0.55rem 1rem;
-    background: #f4f6f9;
-    border-bottom: 1px solid #e2e8f0;
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
-}
-.jd-site-nav-inner {
-    max-width: min(1200px, 100%);
-    margin: 0 auto;
 }
 .jd-site-nav-spacer {
     height: 5.25rem;
@@ -56,45 +52,49 @@ SITE_NAV_CSS = """
 html {
     scroll-padding-top: 5.5rem;
 }
-.jd-site-nav {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.35rem 0.15rem;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
-    padding: 0.5rem 0.85rem 0.55rem 0.85rem;
-    margin: 0;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
-}
-.jd-site-nav .jd-site-brand {
-    font-size: 0.95rem;
-    font-weight: 800;
-    color: #0f172a;
-    letter-spacing: -0.03em;
-    margin-right: 1rem;
-    padding-right: 1rem;
-    border-right: 1px solid #e2e8f0;
-}
-.jd-site-nav a.jd-site-link {
-    font-size: 0.88rem;
-    font-weight: 600;
-    color: #475569;
-    text-decoration: none;
-    padding: 0.4rem 0.75rem;
-    border-radius: 8px;
-    transition: color 0.15s ease, background 0.15s ease;
-}
-.jd-site-nav a.jd-site-link:hover {
-    color: #1E7C99;
-    background: rgba(30, 124, 153, 0.09);
-}
-.jd-site-nav a.jd-site-link:active {
-    color: #155e75;
-}
 </style>
 """
+
+
+def apply_site_nav_value(val: object, *, is_landing: bool) -> None:
+    """React to jpm_site_nav component return value (next rerun after a click)."""
+    if not val or not isinstance(val, dict):
+        return
+    raw = val.get("action")
+    if not isinstance(raw, str):
+        return
+    action = raw.strip().lower()
+    if action not in ("home", "news", "market"):
+        return
+    if is_landing:
+        if action == "home":
+            st.session_state["jd_scroll_top"] = True
+        elif action == "news":
+            st.session_state["jd_scroll_to"] = "jd-section-news"
+        elif action == "market":
+            st.session_state["jd_scroll_to"] = "jd-section-market"
+        return
+    if action == "home":
+        st.switch_page(MAIN_APP_PAGE)
+    elif action == "news":
+        st.query_params["jd_scroll"] = "news"
+        st.switch_page(MAIN_APP_PAGE)
+    elif action == "market":
+        st.query_params["jd_scroll"] = "market"
+        st.switch_page(MAIN_APP_PAGE)
+
+
+def render_site_nav_bar(*, key: str, is_landing: bool) -> None:
+    """Fixed top site nav (custom component) + spacer. Call near the top of each page."""
+    st.markdown(SITE_NAV_CSS, unsafe_allow_html=True)
+    from jpm_site_nav import jpm_site_nav
+
+    val = jpm_site_nav(page_mode="landing" if is_landing else "subpage", key=key, default=None)
+    apply_site_nav_value(val, is_landing=is_landing)
+    st.markdown(
+        '<div class="jd-site-nav-spacer" aria-hidden="true"></div>',
+        unsafe_allow_html=True,
+    )
 
 
 DEFAULT_FEEDS: list[tuple[str, str]] = [
@@ -236,52 +236,6 @@ def dedupe_articles(articles: list[dict[str, Any]], max_items: int | None = None
         if max_items is not None and len(unique) >= max_items:
             break
     return unique
-
-
-def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -> None:
-    """
-    Fixed top bar + spacer (home page only). Subpages use render_subpage_sidebar_navigation()
-    instead—no fixed strip so the layout matches the ticker without extra wrappers.
-    """
-    if not is_landing:
-        return
-
-    st.markdown(SITE_NAV_CSS, unsafe_allow_html=True)
-    st.markdown(
-        """
-<div class="jd-site-nav-fixed-wrap">
-  <div class="jd-site-nav-inner">
-    <nav class="jd-site-nav" aria-label="Page sections">
-      <span class="jd-site-brand">JPM Digital</span>
-      <a class="jd-site-link" href="#">Home</a>
-      <a class="jd-site-link" href="#jd-section-news">News</a>
-      <a class="jd-site-link" href="#jd-section-market">Market Data</a>
-    </nav>
-  </div>
-</div>
-<div class="jd-site-nav-spacer" aria-hidden="true"></div>
-""",
-        unsafe_allow_html=True,
-    )
-
-
-def render_subpage_sidebar_navigation() -> None:
-    """Home / News / Market links for multipage views. Call at the top of ``with st.sidebar:``."""
-    st.markdown("**JPM Digital**")
-    st.page_link(MAIN_APP_PAGE, label="Home", use_container_width=True)
-    st.page_link(
-        MAIN_APP_PAGE,
-        label="News",
-        query_params={"jd_scroll": "news"},
-        use_container_width=True,
-    )
-    st.page_link(
-        MAIN_APP_PAGE,
-        label="Market Data",
-        query_params={"jd_scroll": "market"},
-        use_container_width=True,
-    )
-    st.divider()
 
 
 def article_styles_markdown() -> str:

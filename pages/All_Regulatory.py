@@ -11,7 +11,7 @@ from news_feeds import (
     article_day_key,
     article_styles_markdown,
     format_article_day_label,
-    render_subpage_sidebar_navigation,
+    render_site_nav_bar,
 )
 from price_ticker import show_price_ticker
 from regulatory_news.client import load_regulatory_articles
@@ -28,11 +28,11 @@ def main() -> None:
         initial_sidebar_state="expanded",
     )
 
+    render_site_nav_bar(key="site_nav_all_regulatory", is_landing=False)
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
     show_price_ticker()
 
     with st.sidebar:
-        render_subpage_sidebar_navigation()
         st.header("Navigation")
         st.caption("Digital-asset regulatory stories from aggregated RSS feeds.")
 

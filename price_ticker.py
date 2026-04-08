@@ -295,11 +295,13 @@ NAV_TICKER_ALIGN_SCRIPT = """
 <script>
 (function () {
   const p = window.parent;
+  const doc = p.document;
   function align() {
-    const ticker = p.document.querySelector(".cd-ticker-shell");
-    const nav = p.document.querySelector(".jd-site-nav-fixed-wrap");
+    const ticker = doc.querySelector(".cd-ticker-shell");
+    const nav = doc.querySelector('iframe[title="jpm_site_nav"]');
     if (!ticker || !nav) return;
     const r = ticker.getBoundingClientRect();
+    if (r.width < 4) return;
     nav.style.paddingLeft = Math.max(0, Math.round(r.left)) + "px";
     nav.style.paddingRight = Math.max(0, Math.round(p.innerWidth - r.right)) + "px";
   }

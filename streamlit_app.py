@@ -18,7 +18,7 @@ from news_feeds import (
     dedupe_articles,
     load_all_feeds,
     render_article_card_html,
-    render_home_top_bar,
+    render_site_nav_bar,
 )
 from price_ticker import fetch_top_crypto_tickers, show_price_ticker
 from crypto_etps.widgets import (
@@ -38,7 +38,7 @@ _JD_SCROLL_MAP = {"news": "jd-section-news", "market": "jd-section-market"}
 
 
 def _jd_consume_scroll_query() -> None:
-    """Map ?jd_scroll=news|market from st.page_link into session state; strip param from URL."""
+    """Map ?jd_scroll=news|market from top-nav HTML links into session state; strip param from URL."""
     if "jd_scroll" not in st.query_params:
         return
     raw = st.query_params["jd_scroll"]
@@ -54,7 +54,7 @@ def _jd_consume_scroll_query() -> None:
 
 
 def _jd_inject_scroll_to_section() -> None:
-    """Scroll to anchor after home body renders (SPA navigation from subpages)."""
+    """Scroll to anchor after home body renders (?jd_scroll= from top nav links)."""
     target = st.session_state.pop("jd_scroll_to", None)
     if not target:
         return
@@ -80,6 +80,23 @@ def _jd_inject_scroll_to_section() -> None:
     if (go() || n++ > 50) p.clearInterval(t);
   }}, 40);
 }})();
+</script>
+""",
+        height=0,
+        width=0,
+    )
+
+
+def _jd_inject_scroll_to_top() -> None:
+    if not st.session_state.pop("jd_scroll_top", False):
+        return
+    components.html(
+        """
+<script>
+(function () {
+  const p = window.parent;
+  p.scrollTo(0, 0);
+})();
 </script>
 """,
         height=0,
@@ -138,7 +155,7 @@ def main() -> None:
 
     _jd_consume_scroll_query()
 
-    render_home_top_bar("landing", is_landing=True)
+    render_site_nav_bar(key="site_nav_home", is_landing=True)
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
     st.markdown(
         HOME_MAIN_HEADING_CSS + HOME_PAGE_LAYOUT_CSS + HOME_PAGE_EXTRA_CSS,
@@ -189,6 +206,7 @@ def main() -> None:
 
         st.divider()
         _footer_line()
+        _jd_inject_scroll_to_top()
         _jd_inject_scroll_to_section()
         return
 
@@ -239,6 +257,7 @@ def main() -> None:
 
     st.divider()
     _footer_line()
+    _jd_inject_scroll_to_top()
     _jd_inject_scroll_to_section()
 
 

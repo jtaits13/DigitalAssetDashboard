@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background: #f4f6f9;
+        font-family: "Source Sans Pro", sans-serif;
+      }
+      .jd-site-nav-inner {
+        max-width: min(1200px, 100%);
+        margin: 0 auto;
+      }
+      .jd-site-nav {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.35rem 0.15rem;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 0.5rem 0.85rem 0.55rem 0.85rem;
+        margin: 0;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+      }
+      .jd-site-nav .jd-site-brand {
+        font-size: 0.95rem;
+        font-weight: 800;
+        color: #0f172a;
+        letter-spacing: -0.03em;
+        margin-right: 1rem;
+        padding-right: 1rem;
+        border-right: 1px solid #e2e8f0;
+      }
+      .jd-site-nav button.jd-site-link {
+        font-family: inherit;
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: #475569;
+        text-decoration: none;
+        padding: 0.4rem 0.75rem;
+        border-radius: 8px;
+        transition: color 0.15s ease, background 0.15s ease;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+      }
+      .jd-site-nav button.jd-site-link:hover {
+        color: #1e7c99;
+        background: rgba(30, 124, 153, 0.09);
+      }
+      .jd-site-nav button.jd-site-link:active {
+        color: #155e75;
+      }
+      .jd-wrap {
+        box-sizing: border-box;
+        padding: 0.45rem 1rem 0.55rem 1rem;
+        background: #f4f6f9;
+        border-bottom: 1px solid #e2e8f0;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="jd-wrap">
+      <div class="jd-site-nav-inner">
+        <nav class="jd-site-nav" aria-label="Site">
+          <span class="jd-site-brand">JPM Digital</span>
+          <button type="button" class="jd-site-link" data-action="home">Home</button>
+          <button type="button" class="jd-site-link" data-action="news">News</button>
+          <button type="button" class="jd-site-link" data-action="market">Market Data</button>
+        </nav>
+      </div>
+    </div>
+    <script>
+      function sendToStreamlit(type, payload) {
+        window.parent.postMessage(
+          Object.assign({ isStreamlitMessage: true, type: type }, payload),
+          "*"
+        );
+      }
+
+      function setValue(action) {
+        sendToStreamlit("streamlit:setComponentValue", { value: { action: action } });
+      }
+
+      function onReady() {
+        sendToStreamlit("streamlit:componentReady", { apiVersion: 1 });
+      }
+
+      document.querySelectorAll("button[data-action]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var action = btn.getAttribute("data-action");
+          if (action) setValue(action);
+        });
+      });
+
+      onReady();
+    </script>
+  </body>
+</html>
