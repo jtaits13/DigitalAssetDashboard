@@ -33,8 +33,8 @@ def build_rwa_dataframe(rows: list[RwaNetworkLeagueRow]) -> pd.DataFrame:
         recs.append(
             {
                 "#": int(r.rank),
-                "Network": r.network,
-                "Link": url,
+                "Network": url,
+                "network_display": f"{r.network} ↗",
                 "RWA Count": int(r.rwa_count),
                 "Total Value": float(r.total_value_usd),
                 "7D Δ value": pct7,
