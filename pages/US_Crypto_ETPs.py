@@ -23,6 +23,7 @@ from crypto_etps.widgets import (
     resolve_etp_user_agent,
     show_etp_dataframe,
 )
+from home_layout import STREAMLIT_TABLE_UNIFY_CSS
 from news_feeds import HOME_MAIN_HEADING_CSS, article_styles_markdown, render_home_top_bar
 from price_ticker import show_price_ticker
 
@@ -38,6 +39,7 @@ def main() -> None:
     render_home_top_bar("crypto_etps_full")
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
     st.markdown(HOME_MAIN_HEADING_CSS, unsafe_allow_html=True)
+    st.markdown(STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
     show_price_ticker()
 
     st.markdown(
@@ -46,8 +48,7 @@ def main() -> None:
     )
     st.caption(
         "Data from [StockAnalysis.com](https://stockanalysis.com/list/crypto-etfs/) "
-        "and each fund’s detail page (issuer, inception, past-year return as 52W %). "
-        "Click column headers to sort."
+        "and each fund’s detail page (issuer, inception, past-year return as 52W %)."
     )
 
     with st.spinner("Loading U.S. crypto ETPs (list + profile pages)…"):
@@ -75,11 +76,10 @@ def main() -> None:
 
     if q.strip():
         st.caption(
-            f"Showing {len(sorted_rows)} of {len(rows)} funds matching “{escape(q.strip())}”. "
-            "Click column headers to sort."
+            f"Showing {len(sorted_rows)} of {len(rows)} funds matching “{escape(q.strip())}”."
         )
     else:
-        st.caption(f"Showing all {len(sorted_rows)} funds. Click column headers to sort.")
+        st.caption(f"Showing all {len(sorted_rows)} funds.")
 
     show_etp_dataframe(df, height=etp_table_height(len(df), max_h=900))
 

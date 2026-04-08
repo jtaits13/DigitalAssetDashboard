@@ -3,6 +3,26 @@
 from __future__ import annotations
 
 # Section rhythm: soft labels, ticker spacing, teal accent aligned with primaryColor.
+# Streamlit st.dataframe: unify header/body font + color (sortable tables on home).
+STREAMLIT_TABLE_UNIFY_CSS = """
+<style>
+div[data-testid="stDataFrame"] {
+  font-size: 0.875rem;
+  color: #0f172a;
+}
+div[data-testid="stDataFrame"] [data-testid="stHeaderCell"],
+div[data-testid="stDataFrame"] [role="columnheader"] {
+  color: #0f172a !important;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+div[data-testid="stDataFrame"] [role="gridcell"] {
+  color: #0f172a;
+  font-size: 0.875rem;
+}
+</style>
+"""
+
 HOME_PAGE_LAYOUT_CSS = """
 <style>
 .cd-ticker-shell {

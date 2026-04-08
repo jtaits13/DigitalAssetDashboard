@@ -19,6 +19,7 @@ from crypto_etps.dataframe_table import (
     filter_rows_by_fund_name,
     style_etp_dataframe,
 )
+from home_layout import STREAMLIT_TABLE_UNIFY_CSS
 
 WIDGET_CSS = """
 <style>
@@ -66,6 +67,9 @@ def resolve_etp_user_agent(user_agent: str | None) -> str:
     return (user_agent or "").strip() or _default_ua()
 
 
+_SORT = "\u2195"  # ↕ sort hint in column headers
+
+
 def show_etp_dataframe(df, *, height: int) -> None:
     """Sortable columns (Streamlit dataframe); 52W colors + display via Pandas Styler."""
     st.dataframe(
@@ -74,11 +78,15 @@ def show_etp_dataframe(df, *, height: int) -> None:
         height=height,
         hide_index=True,
         column_config={
-            "Symbol": st.column_config.TextColumn("Symbol", width="small"),
-            "Fund Name": st.column_config.TextColumn("Fund Name", width="large"),
-            "Issuer": st.column_config.TextColumn("Issuer", width="medium"),
+            "Symbol": st.column_config.TextColumn(f"Symbol {_SORT}", width="small"),
+            "Fund Name": st.column_config.TextColumn(f"Fund Name {_SORT}", width="large"),
+            "Price": st.column_config.TextColumn(f"Price {_SORT}", width="small"),
+            "52W %": st.column_config.TextColumn(f"52W % {_SORT}", width="small"),
+            "Assets (B)": st.column_config.TextColumn(f"Assets (B) {_SORT}", width="small"),
+            "Issuer": st.column_config.TextColumn(f"Issuer {_SORT}", width="medium"),
+            "Inception": st.column_config.TextColumn(f"Inception {_SORT}", width="medium"),
             "S-1": st.column_config.LinkColumn(
-                "S-1",
+                f"S-1 {_SORT}",
                 help="Newest S-1 filing document when available; otherwise EDGAR S-1 list or search.",
                 display_text="Open",
                 validate=r"^https://",
@@ -88,7 +96,7 @@ def show_etp_dataframe(df, *, height: int) -> None:
 
 
 def show_us_crypto_etps_widget(user_agent: str | None) -> None:
-    st.markdown(WIDGET_CSS, unsafe_allow_html=True)
+    st.markdown(WIDGET_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
 
     ua = resolve_etp_user_agent(user_agent)
     with st.spinner("Loading U.S. crypto ETPs (list + profile pages)…"):
@@ -115,10 +123,6 @@ def show_us_crypto_etps_widget(user_agent: str | None) -> None:
         unsafe_allow_html=True,
     )
 
-    st.caption(
-        "Top 10 by assets (or matches when searching) · 52W % from past-year total return on each fund’s StockAnalysis profile · "
-        "Click column headers to sort."
-    )
     q = st.text_input(
         "Search fund name",
         "",
@@ -134,11 +138,6 @@ def show_us_crypto_etps_widget(user_agent: str | None) -> None:
 
     if st.button("See full ETF list", key="see_full_etf_list", use_container_width=True, type="primary"):
         st.switch_page("pages/US_Crypto_ETPs.py")
-
-    st.caption(
-        "Source: [StockAnalysis.com crypto ETF list](https://stockanalysis.com/list/crypto-etfs/) "
-        "and ETF detail pages (scraped; not affiliated)."
-    )
 
 
 def get_etp_user_agent_from_secrets() -> str | None:

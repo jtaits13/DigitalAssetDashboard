@@ -6,8 +6,9 @@ from html import escape
 
 import streamlit as st
 
-from crypto_etps.client import format_usd_compact
+from home_layout import STREAMLIT_TABLE_UNIFY_CSS
 from rwa_league.client import RwaNetworkLeagueRow, fetch_rwa_network_league
+from rwa_league.dataframe_table import build_rwa_dataframe, style_rwa_dataframe
 
 WIDGET_CSS = """
 <style>
@@ -23,106 +24,38 @@ WIDGET_CSS = """
 .rwa-league-shell h2.home-main-heading {
     margin-bottom: 0.35rem;
 }
-.rwa-league-scroll {
-    max-height: 28rem;
-    overflow: auto;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    background: #ffffff;
-}
-.rwa-league-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.82rem;
-    line-height: 1.35;
-}
-.rwa-league-table thead th {
-    position: sticky;
-    top: 0;
-    background: #f8fafc;
-    border-bottom: 1px solid #e2e8f0;
-    padding: 0.5rem 0.45rem;
-    text-align: left;
-    font-weight: 700;
-    color: #475569;
-    white-space: nowrap;
-}
-.rwa-league-table td {
-    padding: 0.45rem 0.45rem;
-    border-bottom: 1px solid #f1f5f9;
-    vertical-align: middle;
-}
-.rwa-league-table tbody tr:hover td {
-    background: #f8fafc;
-}
-.rwa-league-table td.rwa-num {
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-}
-.rwa-league-table td.rwa-rank {
-    text-align: center;
-    width: 2.25rem;
-    color: #64748b;
-    font-weight: 600;
-}
-.rwa-pct-up { color: #059669; font-weight: 600; }
-.rwa-pct-down { color: #dc2626; font-weight: 600; }
-.rwa-net-link a {
-    color: #0f172a;
-    font-weight: 600;
-    text-decoration: none;
-}
-.rwa-net-link a:hover { text-decoration: underline; color: #1E7C99; }
 </style>
 """
 
-
-def _fmt_value_delta(change_fraction: float | None) -> str:
-    """▲/▼ change in total value — from embedded `value_7d_change` (7 days)."""
-    if change_fraction is None:
-        return '<span style="color:#94a3b8;">—</span>'
-    pct = change_fraction * 100.0
-    arrow = "▲" if change_fraction >= 0 else "▼"
-    cls = "rwa-pct-up" if change_fraction >= 0 else "rwa-pct-down"
-    body = f"{arrow} {abs(pct):.2f}%"
-    return f'<span class="{cls}">{escape(body)}</span>'
+_SORT = "\u2195"
 
 
-def _rows_to_html(rows: list[RwaNetworkLeagueRow]) -> str:
-    base = "https://app.rwa.xyz"
-    thead = (
-        "<thead><tr>"
-        "<th>#</th><th>Network</th><th>RWA Count</th>"
-        "<th>Total Value</th><th>7D Δ value</th><th>Market Share</th>"
-        "</tr></thead>"
+def rwa_table_height(num_rows: int, *, max_h: int = 520) -> int:
+    header = 38
+    row_h = 35
+    return min(max_h, header + row_h * max(1, num_rows))
+
+
+def _show_rwa_dataframe(df, *, height: int) -> None:
+    st.dataframe(
+        style_rwa_dataframe(df),
+        use_container_width=True,
+        height=height,
+        hide_index=True,
+        column_order=["#", "Network", "RWA Count", "Total Value", "7D Δ value", "Market Share"],
+        column_config={
+            "#": st.column_config.TextColumn(f"# {_SORT}", width="small"),
+            "Network": st.column_config.LinkColumn(
+                f"Network {_SORT}",
+                display_text="network_name",
+                validate=r"^https://",
+            ),
+            "RWA Count": st.column_config.TextColumn(f"RWA Count {_SORT}", width="small"),
+            "Total Value": st.column_config.TextColumn(f"Total Value {_SORT}", width="medium"),
+            "7D Δ value": st.column_config.TextColumn(f"7D Δ value {_SORT}", width="small"),
+            "Market Share": st.column_config.TextColumn(f"Market Share {_SORT}", width="small"),
+        },
     )
-    body_parts: list[str] = ["<tbody>"]
-    for row in rows:
-        tv = format_usd_compact(row.total_value_usd)
-        ms = row.market_share_raw * 100.0
-        ms_s = f"{ms:.2f}%"
-        name_cell: str
-        if row.network_href:
-            url = base + row.network_href
-            name_cell = (
-                f'<td class="rwa-net-link"><a href="{escape(url, quote=True)}" '
-                f'target="_blank" rel="noopener noreferrer">{escape(row.network)}</a></td>'
-            )
-        else:
-            name_cell = f'<td>{escape(row.network)}</td>'
-        body_parts.append(
-            "<tr>"
-            f'<td class="rwa-rank">{row.rank}</td>'
-            f"{name_cell}"
-            f'<td class="rwa-num">{row.rwa_count:,}</td>'
-            f'<td class="rwa-num">{escape(tv)}</td>'
-            f'<td class="rwa-num">{_fmt_value_delta(row.value_change_7d_raw)}</td>'
-            f'<td class="rwa-num">{escape(ms_s)}</td>'
-            "</tr>"
-        )
-    body_parts.append("</tbody>")
-    return f'<table class="rwa-league-table">{thead}{"".join(body_parts)}</table>'
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
@@ -135,7 +68,7 @@ def clear_rwa_league_cache() -> None:
 
 
 def show_rwa_league_widget() -> None:
-    st.markdown(WIDGET_CSS, unsafe_allow_html=True)
+    st.markdown(WIDGET_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
     rows, err = load_rwa_league_cached()
 
     if err and not rows:
@@ -151,24 +84,12 @@ def show_rwa_league_widget() -> None:
         st.info("No network rows returned.")
         return
 
-    intro = (
+    st.markdown(
         '<div class="rwa-league-shell">'
         '<h2 class="home-main-heading">RWA League Table · Networks (All)</h2>'
-        '<p style="font-size:0.78rem;color:#64748b;margin:0 0 0.65rem 0;">'
-        "From "
-        '<a href="https://app.rwa.xyz/" target="_blank" rel="noopener noreferrer">RWA.xyz</a> '
-        "embedded data (not the API). "
-        "The <strong>7D Δ value</strong> column is <strong>change in total value over 7 days</strong>.</p>"
-        '<div class="rwa-league-scroll">'
-        + _rows_to_html(rows)
-        + "</div></div>"
+        "</div>",
+        unsafe_allow_html=True,
     )
-    st.markdown(intro, unsafe_allow_html=True)
 
-    if err:
-        st.caption(escape(f"Note: {err}"))
-    st.caption(
-        "Source: RWA.xyz app homepage (`app.rwa.xyz`) · "
-        "“All” asset view, Networks grouping · "
-        "Data may change without notice."
-    )
+    df = build_rwa_dataframe(rows)
+    _show_rwa_dataframe(df, height=rwa_table_height(len(df)))
