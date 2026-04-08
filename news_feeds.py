@@ -26,16 +26,32 @@ h2.home-main-heading {
 </style>
 """
 
-# Coinbase-style strip: white bar on gray app background, teal hover (primaryColor).
+# Coinbase-style strip: fixed to viewport (sticky fails inside Streamlit scroll parents).
 SITE_NAV_CSS = """
 <style>
-.jd-site-nav-sticky {
-    position: sticky;
+.jd-site-nav-fixed-wrap {
+    position: fixed;
     top: 0;
-    z-index: 1000;
-    margin: 0 0 1rem 0;
-    padding: 0.35rem 0 0.5rem 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 999999;
+    box-sizing: border-box;
+    padding: 0.45rem 1rem 0.55rem 1rem;
     background: #f4f6f9;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+.jd-site-nav-inner {
+    max-width: min(1200px, 100%);
+    margin: 0 auto;
+}
+.jd-site-nav-spacer {
+    height: 5.25rem;
+    flex-shrink: 0;
+}
+html {
+    scroll-padding-top: 5.5rem;
 }
 .jd-site-nav {
     display: flex;
@@ -235,14 +251,17 @@ def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -
     st.markdown(SITE_NAV_CSS, unsafe_allow_html=True)
     st.markdown(
         f"""
-<div class="jd-site-nav-sticky">
-<nav class="jd-site-nav" aria-label="Page sections">
-  <span class="jd-site-brand">JPM Digital</span>
-  <a class="jd-site-link" href="{home_href}">Home</a>
-  <a class="jd-site-link" href="{news_href}">News</a>
-  <a class="jd-site-link" href="{market_href}">Market Data</a>
-</nav>
+<div class="jd-site-nav-fixed-wrap">
+  <div class="jd-site-nav-inner">
+    <nav class="jd-site-nav" aria-label="Page sections">
+      <span class="jd-site-brand">JPM Digital</span>
+      <a class="jd-site-link" href="{home_href}">Home</a>
+      <a class="jd-site-link" href="{news_href}">News</a>
+      <a class="jd-site-link" href="{market_href}">Market Data</a>
+    </nav>
+  </div>
 </div>
+<div class="jd-site-nav-spacer" aria-hidden="true"></div>
 """,
         unsafe_allow_html=True,
     )
