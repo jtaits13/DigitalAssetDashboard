@@ -1,9 +1,9 @@
 """Pandas DataFrame builders for Streamlit ETF tables.
 
 Numeric columns stay typed for sorting. ``style_etp_dataframe`` uses ``Styler.apply`` for
-green/red 52W % text and ``Styler.format`` on ``52W %`` / ``Assets (B)`` so arrows
-and compact **$** assets appear in-cell. Tables are rendered as HTML (``jd_teal_html_table``)
-so header styling is reliable (Glide ``st.dataframe`` does not allow CSS theming).
+green/red 52W % text and ``Styler.format`` only on ``52W %`` / ``Assets (B)`` so arrows
+and compact **$** assets (``format_usd_compact`` on AUM in USD) appear in-cell. In ``show_etp_dataframe``, those columns use
+``NumberColumn(..., format=None)`` so Streamlit does not override Styler formatting.
 """
 
 from __future__ import annotations
