@@ -71,7 +71,7 @@ _SORT = "\u2195"  # ↕ sort hint in column headers
 
 
 def show_etp_dataframe(df, *, height: int) -> None:
-    """Sortable table: ``column_config`` formats values; Styler adds 52W % colors only (no ``.format()``)."""
+    """Styler formats 52W % (arrow + %) and Assets (B) (x.xxB); ``format=None`` avoids overriding."""
     st.dataframe(
         style_etp_dataframe(df),
         use_container_width=True,
@@ -93,20 +93,15 @@ def show_etp_dataframe(df, *, height: int) -> None:
                 format="$%.2f",
                 help="Ascending: lowest first · Descending: highest first",
             ),
-            "52W dir": st.column_config.TextColumn(
-                " ",
-                width="small",
-                help="▲ up / ▼ down — sort by **52W %** for correct order.",
-            ),
             "52W %": st.column_config.NumberColumn(
                 f"52W % {_SORT}",
-                format="%.2f%%",
-                help="Past-year total return (%) · Ascending: lowest first",
+                format=None,
+                help="Past-year total return — Ascending: lowest first",
             ),
             "Assets (B)": st.column_config.NumberColumn(
                 f"Assets (B) {_SORT}",
-                format="%.2f",
-                help="Billions USD · Ascending: smallest first",
+                format=None,
+                help="Billions USD — Ascending: smallest first",
             ),
             "Issuer": st.column_config.TextColumn(
                 f"Issuer {_SORT}",

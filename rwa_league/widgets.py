@@ -47,8 +47,7 @@ def _show_rwa_dataframe(df, *, height: int) -> None:
             "Network",
             "Link",
             "RWA Count",
-            "Total Value ($M)",
-            "7D dir",
+            "Total Value",
             "7D Δ value",
             "Market Share",
         ],
@@ -75,19 +74,14 @@ def _show_rwa_dataframe(df, *, height: int) -> None:
                 format="%.0f",
                 help="Ascending: lowest first · Descending: highest first",
             ),
-            "Total Value ($M)": st.column_config.NumberColumn(
-                f"Total Value ($M) {_SORT}",
-                format="%.2f",
-                help="USD millions · Ascending: smallest first",
-            ),
-            "7D dir": st.column_config.TextColumn(
-                " ",
-                width="small",
-                help="▲ up / ▼ down — sort by **7D Δ value** for correct order.",
+            "Total Value": st.column_config.NumberColumn(
+                f"Total Value {_SORT}",
+                format=None,
+                help="Ascending: smallest USD first",
             ),
             "7D Δ value": st.column_config.NumberColumn(
                 f"7D Δ value {_SORT}",
-                format="%.2f%%",
+                format=None,
                 help="7-day change in total value (%) · Ascending: lowest first",
             ),
             "Market Share": st.column_config.NumberColumn(
