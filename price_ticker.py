@@ -8,19 +8,14 @@ from typing import Any
 import requests
 import streamlit as st
 
-from home_layout import TICKER_BAR_GRADIENT
-
 COINGECKO_MARKETS_URL = "https://api.coingecko.com/api/v3/coins/markets"
 COINCAP_ASSETS_URL = "https://api.coincap.io/v2/assets"
 TICKER_COUNT = 25
 
-TICKER_STYLES_MARKDOWN = (
-    """
+TICKER_STYLES_MARKDOWN = """
 <style>
 .cd-ticker-shell {
-    background: """
-    + TICKER_BAR_GRADIENT
-    + """;
+    background: linear-gradient(90deg, #ffffff 0%, #f1f5f9 50%, #ffffff 100%);
     border: 1px solid #e2e8f0;
     border-radius: 8px;
     padding: 0.45rem 0;
@@ -103,7 +98,6 @@ a.cd-chip-link .cd-chip {
 }
 </style>
 """
-)
 
 
 def _to_float(v: Any) -> float | None:

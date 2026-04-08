@@ -6,41 +6,40 @@ from html import escape
 
 import streamlit as st
 
-from home_layout import WIDGET_GRAY_GRADIENT
 from sec_filings.client import FORM_TYPES_LABEL, FundFilingsResult, fetch_crypto_fund_filings
 
-WIDGET_CSS = f"""
+WIDGET_CSS = """
 <style>
-.sec-widget-shell {{
-    background: {WIDGET_GRAY_GRADIENT};
+.sec-widget-shell {
+    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
     border: 1px solid #e2e8f0;
     border-radius: 8px;
     padding: 0.75rem 1rem 1rem 1rem;
     margin-bottom: 0.5rem;
     box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
-}}
-.sec-filing-list {{
+}
+.sec-filing-list {
     max-height: 28rem;
     overflow-y: auto;
     font-size: 0.82rem;
     line-height: 1.35;
-}}
-.sec-filing-item {{
+}
+.sec-filing-item {
     border-bottom: 1px solid #e2e8f0;
     padding: 0.5rem 0;
-}}
-.sec-filing-item:last-child {{ border-bottom: none; }}
-.sec-filing-meta {{
+}
+.sec-filing-item:last-child { border-bottom: none; }
+.sec-filing-meta {
     font-size: 0.72rem;
     color: #64748b;
     margin-top: 0.2rem;
-}}
-a.sec-filing-link {{
+}
+a.sec-filing-link {
     color: #0f172a;
     font-weight: 600;
     text-decoration: none;
-}}
-a.sec-filing-link:hover {{ text-decoration: underline; color: #0d9488; }}
+}
+a.sec-filing-link:hover { text-decoration: underline; color: #0d9488; }
 </style>
 """
 

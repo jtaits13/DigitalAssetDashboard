@@ -6,24 +6,24 @@ from html import escape
 
 import streamlit as st
 
-from home_layout import STREAMLIT_TABLE_UNIFY_CSS, WIDGET_GRAY_GRADIENT
+from home_layout import STREAMLIT_TABLE_UNIFY_CSS
 from rwa_league.client import RwaNetworkLeagueRow, fetch_rwa_network_league
 from rwa_league.dataframe_table import build_rwa_dataframe, style_rwa_dataframe
 
-WIDGET_CSS = f"""
+WIDGET_CSS = """
 <style>
-.rwa-league-shell {{
-    background: {WIDGET_GRAY_GRADIENT};
+.rwa-league-shell {
+    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
     border: 1px solid #e2e8f0;
     border-radius: 8px;
     padding: 0.75rem 1rem 1rem 1rem;
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
     box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
-}}
-.rwa-league-shell h2.home-main-heading {{
+}
+.rwa-league-shell h2.home-main-heading {
     margin-bottom: 0.35rem;
-}}
+}
 </style>
 """
 
