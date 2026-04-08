@@ -50,6 +50,7 @@ def _show_rwa_dataframe(df, *, height: int) -> None:
         column_order=[
             "#",
             "Network",
+            "Link",
             "RWA Count",
             "Total Value",
             "7D Δ value",
@@ -61,14 +62,18 @@ def _show_rwa_dataframe(df, *, height: int) -> None:
                 format="%.0f",
                 help="Ascending: lowest rank first · Descending: highest rank first",
             ),
-            "Network": st.column_config.LinkColumn(
+            "Network": st.column_config.TextColumn(
                 f"Network {_SORT}",
-                display_text="network_display",
-                validate=r"^https://",
-                width="large",
-                help="Network name with link to RWA.xyz · Sort follows URL",
+                width="medium",
+                help="Ascending: A→Z · Descending: Z→A",
             ),
-            "network_display": None,
+            "Link": st.column_config.LinkColumn(
+                f"RWA Page {_SORT}",
+                display_text="↗",
+                validate=r"^https://",
+                width="small",
+                help="Open this network on RWA.xyz",
+            ),
             "RWA Count": st.column_config.NumberColumn(
                 f"RWA Count {_SORT}",
                 format="%.0f",
