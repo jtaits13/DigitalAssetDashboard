@@ -15,7 +15,7 @@ from news_feeds import (
     format_article_day_label,
     load_all_feeds,
     render_article_card_html,
-    render_home_top_bar,
+    render_subpage_sidebar_navigation,
 )
 from price_ticker import show_price_ticker
 
@@ -30,11 +30,11 @@ def main() -> None:
         initial_sidebar_state="expanded",
     )
 
-    render_home_top_bar("all_articles", is_landing=False)
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
     show_price_ticker()
 
     with st.sidebar:
+        render_subpage_sidebar_navigation()
         st.header("Navigation")
         st.caption("All stories from aggregated RSS feeds.")
 

@@ -26,15 +26,13 @@ h2.home-main-heading {
 </style>
 """
 
-# Main entry script for st.page_link from subpages (multipage app root).
+# Multipage entry for st.page_link in sidebar on non-landing pages.
 MAIN_APP_PAGE = "streamlit_app.py"
 
-# Coinbase-style strip: fixed to viewport (sticky fails inside Streamlit scroll parents).
-# Subpages use st.container(key="jdnavstrip") → .st-key-jdnavstrip for fixed bar + st.page_link (SPA nav).
+# Fixed top strip (home only). price_ticker.py aligns padding with .cd-ticker-shell.
 SITE_NAV_CSS = """
 <style>
-.jd-site-nav-fixed-wrap,
-div.st-key-jdnavstrip {
+.jd-site-nav-fixed-wrap {
     position: fixed;
     top: 0;
     left: 0;
@@ -50,43 +48,6 @@ div.st-key-jdnavstrip {
 .jd-site-nav-inner {
     max-width: min(1200px, 100%);
     margin: 0 auto;
-}
-/* Subpage: Streamlit columns row styled like the landing white pill */
-div.st-key-jdnavstrip [data-testid="stHorizontalBlock"] {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
-    padding: 0.45rem 0.65rem 0.5rem 0.65rem;
-    margin: 0 auto;
-    max-width: min(1200px, 100%);
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
-    align-items: center;
-}
-div.st-key-jdnavstrip .jd-site-brand-inline {
-    font-size: 0.95rem;
-    font-weight: 800;
-    color: #0f172a;
-    letter-spacing: -0.03em;
-    margin-right: 0.75rem;
-    padding-right: 0.85rem;
-    border-right: 1px solid #e2e8f0;
-    line-height: 1.35;
-    display: inline-block;
-}
-div.st-key-jdnavstrip a[data-testid="stPageLink-NavLink"],
-div.st-key-jdnavstrip [data-testid="stPageLink-NavLink"] {
-    font-size: 0.88rem;
-    font-weight: 600;
-    color: #475569 !important;
-    text-decoration: none !important;
-    padding: 0.35rem 0.65rem;
-    border-radius: 8px;
-    transition: color 0.15s ease, background 0.15s ease;
-}
-div.st-key-jdnavstrip a[data-testid="stPageLink-NavLink"]:hover,
-div.st-key-jdnavstrip [data-testid="stPageLink-NavLink"]:hover {
-    color: #1E7C99 !important;
-    background: rgba(30, 124, 153, 0.09);
 }
 .jd-site-nav-spacer {
     height: 5.25rem;
@@ -279,16 +240,15 @@ def dedupe_articles(articles: list[dict[str, Any]], max_items: int | None = None
 
 def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -> None:
     """
-    Top strip: brand + section links.
-
-    Landing: in-page hash links. Other pages: st.page_link to home with ?jd_scroll=…
-    (avoids full-page / new-tab navigation from raw <a href=\"/\"> in embedded HTML).
+    Fixed top bar + spacer (home page only). Subpages use render_subpage_sidebar_navigation()
+    instead—no fixed strip so the layout matches the ticker without extra wrappers.
     """
-    st.markdown(SITE_NAV_CSS, unsafe_allow_html=True)
+    if not is_landing:
+        return
 
-    if is_landing:
-        st.markdown(
-            """
+    st.markdown(SITE_NAV_CSS, unsafe_allow_html=True)
+    st.markdown(
+        """
 <div class="jd-site-nav-fixed-wrap">
   <div class="jd-site-nav-inner">
     <nav class="jd-site-nav" aria-label="Page sections">
@@ -301,38 +261,27 @@ def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -
 </div>
 <div class="jd-site-nav-spacer" aria-hidden="true"></div>
 """,
-            unsafe_allow_html=True,
-        )
-        return
-
-    with st.container(key="jdnavstrip"):
-        c_brand, c_home, c_news, c_mkt = st.columns([2.4, 1, 1, 1.2], gap="small")
-        with c_brand:
-            st.markdown(
-                '<span class="jd-site-brand-inline">JPM Digital</span>',
-                unsafe_allow_html=True,
-            )
-        with c_home:
-            st.page_link(MAIN_APP_PAGE, label="Home", use_container_width=True)
-        with c_news:
-            st.page_link(
-                MAIN_APP_PAGE,
-                label="News",
-                query_params={"jd_scroll": "news"},
-                use_container_width=True,
-            )
-        with c_mkt:
-            st.page_link(
-                MAIN_APP_PAGE,
-                label="Market Data",
-                query_params={"jd_scroll": "market"},
-                use_container_width=True,
-            )
-
-    st.markdown(
-        '<div class="jd-site-nav-spacer" aria-hidden="true"></div>',
         unsafe_allow_html=True,
     )
+
+
+def render_subpage_sidebar_navigation() -> None:
+    """Home / News / Market links for multipage views. Call at the top of ``with st.sidebar:``."""
+    st.markdown("**JPM Digital**")
+    st.page_link(MAIN_APP_PAGE, label="Home", use_container_width=True)
+    st.page_link(
+        MAIN_APP_PAGE,
+        label="News",
+        query_params={"jd_scroll": "news"},
+        use_container_width=True,
+    )
+    st.page_link(
+        MAIN_APP_PAGE,
+        label="Market Data",
+        query_params={"jd_scroll": "market"},
+        use_container_width=True,
+    )
+    st.divider()
 
 
 def article_styles_markdown() -> str:
