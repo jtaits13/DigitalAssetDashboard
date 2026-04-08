@@ -189,7 +189,7 @@ def article_styles_markdown() -> str:
         border: 1px solid #e2e8f0;
         border-radius: 10px;
         padding: 1rem 1.1rem;
-        background: #ffffff;
+        background: #f4f6f9;
         box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
     }
     .news-meta {

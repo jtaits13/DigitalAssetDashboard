@@ -19,24 +19,24 @@ from crypto_etps.dataframe_table import (
     filter_rows_by_fund_name,
     style_etp_dataframe,
 )
-from home_layout import STREAMLIT_TABLE_UNIFY_CSS
+from home_layout import STREAMLIT_TABLE_UNIFY_CSS, WIDGET_GRAY_GRADIENT
 
-WIDGET_CSS = """
+WIDGET_CSS = f"""
 <style>
-.etp-widget-shell {
-    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+.etp-widget-shell {{
+    background: {WIDGET_GRAY_GRADIENT};
     border: 1px solid #e2e8f0;
     border-radius: 8px;
     padding: 0.75rem 1rem 1rem 1rem;
     margin-bottom: 0.5rem;
     box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
-}
-.etp-aum-line {
+}}
+.etp-aum-line {{
     font-size: 0.95rem;
     font-weight: 700;
     color: #0f172a;
     margin: 0 0 0.75rem 0;
-}
+}}
 </style>
 """
 

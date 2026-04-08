@@ -23,6 +23,11 @@ div[data-testid="stDataFrame"] [role="gridcell"] {
 </style>
 """
 
+# Surfaces that sit on the white app canvas (cards, ETP/RWA/SEC shells, etc.).
+WIDGET_GRAY_GRADIENT = "linear-gradient(180deg, #f4f6f9 0%, #e8ecf1 100%)"
+# Price ticker strip (horizontal) — gray band on white page.
+TICKER_BAR_GRADIENT = "linear-gradient(90deg, #f4f6f9 0%, #e8ecf1 50%, #f4f6f9 100%)"
+
 HOME_PAGE_LAYOUT_CSS = """
 <style>
 .cd-ticker-shell {
