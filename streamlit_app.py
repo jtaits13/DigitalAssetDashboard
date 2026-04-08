@@ -38,7 +38,7 @@ _JD_SCROLL_MAP = {"news": "jd-section-news", "market": "jd-section-market"}
 
 
 def _jd_consume_scroll_query() -> None:
-    """Map ?jd_scroll=news|market from st.page_link into session state; strip param from URL."""
+    """Map ?jd_scroll=news|market from top-nav HTML links into session state; strip param from URL."""
     if "jd_scroll" not in st.query_params:
         return
     raw = st.query_params["jd_scroll"]
@@ -54,7 +54,7 @@ def _jd_consume_scroll_query() -> None:
 
 
 def _jd_inject_scroll_to_section() -> None:
-    """Scroll to anchor after home body renders (SPA navigation from subpages)."""
+    """Scroll to anchor after home body renders (?jd_scroll= from top nav links)."""
     target = st.session_state.pop("jd_scroll_to", None)
     if not target:
         return
