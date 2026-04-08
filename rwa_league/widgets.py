@@ -42,7 +42,16 @@ def _show_rwa_dataframe(df, *, height: int) -> None:
         use_container_width=True,
         height=height,
         hide_index=True,
-        column_order=["#", "Network", "Link", "RWA Count", "Total Value ($M)", "7D Δ value", "Market Share"],
+        column_order=[
+            "#",
+            "Network",
+            "Link",
+            "RWA Count",
+            "Total Value ($M)",
+            "7D dir",
+            "7D Δ value",
+            "Market Share",
+        ],
         column_config={
             "#": st.column_config.NumberColumn(
                 f"# {_SORT}",
@@ -70,6 +79,11 @@ def _show_rwa_dataframe(df, *, height: int) -> None:
                 f"Total Value ($M) {_SORT}",
                 format="%.2f",
                 help="USD millions · Ascending: smallest first",
+            ),
+            "7D dir": st.column_config.TextColumn(
+                " ",
+                width="small",
+                help="▲ up / ▼ down — sort by **7D Δ value** for correct order.",
             ),
             "7D Δ value": st.column_config.NumberColumn(
                 f"7D Δ value {_SORT}",

@@ -93,6 +93,11 @@ def show_etp_dataframe(df, *, height: int) -> None:
                 format="$%.2f",
                 help="Ascending: lowest first · Descending: highest first",
             ),
+            "52W dir": st.column_config.TextColumn(
+                " ",
+                width="small",
+                help="▲ up / ▼ down — sort by **52W %** for correct order.",
+            ),
             "52W %": st.column_config.NumberColumn(
                 f"52W % {_SORT}",
                 format="%.2f%%",
