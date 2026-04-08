@@ -26,10 +26,7 @@ h2.home-main-heading {
 </style>
 """
 
-# Multipage entry for st.page_link in sidebar on non-landing pages.
-MAIN_APP_PAGE = "streamlit_app.py"
-
-# Fixed top strip (home only). price_ticker.py aligns padding with .cd-ticker-shell.
+# Fixed top strip (home + subpage top bar). price_ticker.py aligns padding with .cd-ticker-shell.
 SITE_NAV_CSS = """
 <style>
 .jd-site-nav-fixed-wrap {
@@ -99,8 +96,8 @@ html {
 
 def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -> None:
     """
-    Fixed top bar + spacer (home page only). Subpages use render_subpage_sidebar_navigation()
-    instead—no fixed strip so the layout matches the ticker without extra wrappers.
+    Fixed top bar + spacer on the landing page (in-page anchors).
+    Subpages use ``render_subpage_top_bar()`` instead.
     """
     if not is_landing:
         return
@@ -124,23 +121,28 @@ def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -
     )
 
 
-def render_subpage_sidebar_navigation() -> None:
-    """Home / News / Market links for multipage views. Call at the top of ``with st.sidebar:``."""
-    st.markdown("**JPM Digital**")
-    st.page_link(MAIN_APP_PAGE, label="Home", use_container_width=True)
-    st.page_link(
-        MAIN_APP_PAGE,
-        label="News",
-        query_params={"jd_scroll": "news"},
-        use_container_width=True,
+def render_subpage_top_bar() -> None:
+    """
+    Same fixed banner as the home page. Links go to the main app; News/Market add ``?jd_scroll=``
+    so the home page scrolls to those sections after load.
+    """
+    st.markdown(SITE_NAV_CSS, unsafe_allow_html=True)
+    st.markdown(
+        """
+<div class="jd-site-nav-fixed-wrap">
+  <div class="jd-site-nav-inner">
+    <nav class="jd-site-nav" aria-label="Page sections">
+      <span class="jd-site-brand">JPM Digital</span>
+      <a class="jd-site-link" href="/">Home</a>
+      <a class="jd-site-link" href="/?jd_scroll=news">News</a>
+      <a class="jd-site-link" href="/?jd_scroll=market">Market Data</a>
+    </nav>
+  </div>
+</div>
+<div class="jd-site-nav-spacer" aria-hidden="true"></div>
+""",
+        unsafe_allow_html=True,
     )
-    st.page_link(
-        MAIN_APP_PAGE,
-        label="Market Data",
-        query_params={"jd_scroll": "market"},
-        use_container_width=True,
-    )
-    st.divider()
 
 
 DEFAULT_FEEDS: list[tuple[str, str]] = [

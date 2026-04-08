@@ -28,7 +28,7 @@ from home_layout import STREAMLIT_TABLE_UNIFY_CSS
 from news_feeds import (
     HOME_MAIN_HEADING_CSS,
     article_styles_markdown,
-    render_subpage_sidebar_navigation,
+    render_subpage_top_bar,
 )
 from price_ticker import show_price_ticker
 
@@ -41,9 +41,7 @@ def main() -> None:
         initial_sidebar_state="expanded",
     )
 
-    with st.sidebar:
-        render_subpage_sidebar_navigation()
-
+    render_subpage_top_bar()
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
     st.markdown(HOME_MAIN_HEADING_CSS, unsafe_allow_html=True)
     st.markdown(STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
