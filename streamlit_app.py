@@ -180,12 +180,12 @@ def main() -> None:
             '<div id="jd-section-market" style="scroll-margin-top: 5.5rem;"></div>',
             unsafe_allow_html=True,
         )
-        st.markdown(section_label_teal("Market Data"), unsafe_allow_html=True)
-        col_etp, col_rwa = st.columns([1.2, 1], gap="large")
-        with col_etp:
-            show_us_crypto_etps_widget(get_etp_user_agent_from_secrets())
-        with col_rwa:
-            show_rwa_league_widget()
+        st.markdown(section_label_teal("Crypto ETPs (U.S.)"), unsafe_allow_html=True)
+        show_us_crypto_etps_widget(get_etp_user_agent_from_secrets())
+
+        st.divider()
+        st.markdown(section_label_teal("RWA League Table"), unsafe_allow_html=True)
+        show_rwa_league_widget()
 
         st.divider()
         _footer_line()
@@ -230,12 +230,12 @@ def main() -> None:
         '<div id="jd-section-market" style="scroll-margin-top: 5.5rem;"></div>',
         unsafe_allow_html=True,
     )
-    st.markdown(section_label_teal("Market Data"), unsafe_allow_html=True)
-    col_etp, col_rwa = st.columns([1.2, 1], gap="large")
-    with col_etp:
-        show_us_crypto_etps_widget(get_etp_user_agent_from_secrets())
-    with col_rwa:
-        show_rwa_league_widget()
+    st.markdown(section_label_teal("Crypto ETPs (U.S.)"), unsafe_allow_html=True)
+    show_us_crypto_etps_widget(get_etp_user_agent_from_secrets())
+
+    st.divider()
+    st.markdown(section_label_teal("RWA League Table"), unsafe_allow_html=True)
+    show_rwa_league_widget()
 
     st.divider()
     _footer_line()
