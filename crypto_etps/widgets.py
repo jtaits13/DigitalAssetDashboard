@@ -19,11 +19,7 @@ from crypto_etps.dataframe_table import (
     filter_rows_by_fund_name,
     style_etp_dataframe,
 )
-from home_layout import (
-    STREAMLIT_DATAFRAME_TEAL_HEADER_CSS,
-    STREAMLIT_TABLE_UNIFY_CSS,
-    inject_dataframe_teal_header_fix,
-)
+from home_layout import STREAMLIT_TABLE_UNIFY_CSS
 
 WIDGET_CSS = """
 <style>
@@ -71,8 +67,6 @@ def resolve_etp_user_agent(user_agent: str | None) -> str:
     return (user_agent or "").strip() or _default_ua()
 
 
-_SORT = "\u2195"  # ↕ sort hint in column headers
-
 ETP_DATA_SOURCE_CAPTION = (
     "Source: [StockAnalysis.com crypto ETF list](https://stockanalysis.com/list/crypto-etfs/) "
     "and ETF detail pages (scraped; not affiliated)."
@@ -80,66 +74,17 @@ ETP_DATA_SOURCE_CAPTION = (
 
 
 def show_etp_dataframe(df, *, height: int) -> None:
-    """Styler formats 52W % (arrow + %) and Assets (B) (compact USD); ``format=None`` avoids overriding."""
+    """Render styled dataframe (sortable Glide table)."""
     st.dataframe(
         style_etp_dataframe(df),
         use_container_width=True,
         height=height,
         hide_index=True,
-        column_config={
-            "Symbol": st.column_config.TextColumn(
-                f"Symbol {_SORT}",
-                width="small",
-                help="Ascending: A→Z · Descending: Z→A",
-            ),
-            "Fund Name": st.column_config.TextColumn(
-                f"Fund Name {_SORT}",
-                width="large",
-                help="Ascending: A→Z · Descending: Z→A",
-            ),
-            "Price": st.column_config.NumberColumn(
-                f"Price {_SORT}",
-                format="$%.2f",
-                help="Ascending: lowest first · Descending: highest first",
-            ),
-            "52W %": st.column_config.NumberColumn(
-                f"52W % {_SORT}",
-                format=None,
-                width=100,
-                help="Past-year total return — Ascending: lowest first",
-            ),
-            "Assets (B)": st.column_config.NumberColumn(
-                f"Assets (B) {_SORT}",
-                format=None,
-                width=140,
-                help="AUM (compact USD) — Ascending: smallest first",
-            ),
-            "Issuer": st.column_config.TextColumn(
-                f"Issuer {_SORT}",
-                width="medium",
-                help="Ascending: A→Z · Descending: Z→A",
-            ),
-            "Inception": st.column_config.DatetimeColumn(
-                f"Inception {_SORT}",
-                format="MMM DD, YYYY",
-                help="Ascending: oldest first · Descending: newest first",
-            ),
-            "S-1": st.column_config.LinkColumn(
-                f"S-1 {_SORT}",
-                help="Newest S-1 filing document when available; otherwise EDGAR S-1 list or search. "
-                "Sort order follows the filing URL.",
-                display_text="Open",
-                validate=r"^https://",
-            ),
-        },
     )
 
 
 def show_us_crypto_etps_widget(user_agent: str | None) -> None:
-    st.markdown(
-        WIDGET_CSS + STREAMLIT_TABLE_UNIFY_CSS + STREAMLIT_DATAFRAME_TEAL_HEADER_CSS,
-        unsafe_allow_html=True,
-    )
+    st.markdown(WIDGET_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
 
     ua = resolve_etp_user_agent(user_agent)
     with st.spinner("Loading U.S. crypto ETPs (list + profile pages)…"):
@@ -182,7 +127,6 @@ def show_us_crypto_etps_widget(user_agent: str | None) -> None:
     display_rows = filtered[:10]
     df = build_etp_dataframe(display_rows)
     show_etp_dataframe(df, height=etp_table_height(len(df)))
-    inject_dataframe_teal_header_fix()
     st.caption(ETP_DATA_SOURCE_CAPTION)
 
     if st.button("See full ETF list", key="see_full_etf_list", use_container_width=True, type="primary"):
