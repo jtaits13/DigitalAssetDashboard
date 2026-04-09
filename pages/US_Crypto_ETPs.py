@@ -24,12 +24,7 @@ from crypto_etps.widgets import (
     resolve_etp_user_agent,
     show_etp_dataframe,
 )
-from home_layout import (
-    ETP_FULLPAGE_AUM_LINE_CSS,
-    STREAMLIT_DATAFRAME_TEAL_HEADER_CSS,
-    STREAMLIT_TABLE_UNIFY_CSS,
-    inject_dataframe_teal_header_fix,
-)
+from home_layout import ETP_FULLPAGE_AUM_LINE_CSS, STREAMLIT_TABLE_UNIFY_CSS
 from news_feeds import (
     HOME_MAIN_HEADING_CSS,
     article_styles_markdown,
@@ -47,14 +42,11 @@ def main() -> None:
     )
 
     render_subpage_top_bar()
+    if st.button("← Home", key="top_home_etps"):
+        st.switch_page("streamlit_app.py")
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
     st.markdown(HOME_MAIN_HEADING_CSS, unsafe_allow_html=True)
-    st.markdown(
-        STREAMLIT_TABLE_UNIFY_CSS
-        + STREAMLIT_DATAFRAME_TEAL_HEADER_CSS
-        + ETP_FULLPAGE_AUM_LINE_CSS,
-        unsafe_allow_html=True,
-    )
+    st.markdown(STREAMLIT_TABLE_UNIFY_CSS + ETP_FULLPAGE_AUM_LINE_CSS, unsafe_allow_html=True)
     show_price_ticker()
 
     st.markdown(
@@ -101,7 +93,6 @@ def main() -> None:
         st.caption(f"Showing all {len(sorted_rows)} funds.")
 
     show_etp_dataframe(df, height=etp_table_height(len(df), max_h=900))
-    inject_dataframe_teal_header_fix()
     st.caption(ETP_DATA_SOURCE_CAPTION)
     st.caption(
         f"Last loaded at {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
