@@ -45,7 +45,9 @@ def _jd_consume_scroll_query() -> None:
     if isinstance(raw, list):
         raw = raw[0] if raw else ""
     key = str(raw).strip().lower()
-    if key in _JD_SCROLL_MAP:
+    if key == "home":
+        st.session_state["jd_scroll_top"] = True
+    elif key in _JD_SCROLL_MAP:
         st.session_state["jd_scroll_to"] = _JD_SCROLL_MAP[key]
     try:
         del st.query_params["jd_scroll"]
@@ -80,6 +82,24 @@ def _jd_inject_scroll_to_section() -> None:
     if (go() || n++ > 50) p.clearInterval(t);
   }}, 40);
 }})();
+</script>
+""",
+        height=0,
+        width=0,
+    )
+
+
+def _jd_inject_scroll_to_top() -> None:
+    """Scroll to top after rerun when ?jd_scroll=home is used."""
+    if not st.session_state.pop("jd_scroll_top", False):
+        return
+    components.html(
+        """
+<script>
+(function () {
+  const p = window.parent;
+  p.scrollTo({ top: 0, behavior: "auto" });
+})();
 </script>
 """,
         height=0,
@@ -189,6 +209,7 @@ def main() -> None:
 
         st.divider()
         _footer_line()
+        _jd_inject_scroll_to_top()
         _jd_inject_scroll_to_section()
         return
 
@@ -239,6 +260,7 @@ def main() -> None:
 
     st.divider()
     _footer_line()
+    _jd_inject_scroll_to_top()
     _jd_inject_scroll_to_section()
 
 

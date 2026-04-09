@@ -109,7 +109,7 @@ def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -
   <div class="jd-site-nav-inner">
     <nav class="jd-site-nav" aria-label="Page sections">
       <span class="jd-site-brand">JPM Digital</span>
-      <a class="jd-site-link" href="#">Home</a>
+      <a class="jd-site-link" href="/?jd_scroll=home">Home</a>
       <a class="jd-site-link" href="#jd-section-news">News</a>
       <a class="jd-site-link" href="#jd-section-market">Market Data</a>
     </nav>
