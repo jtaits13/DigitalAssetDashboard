@@ -37,7 +37,7 @@ SITE_NAV_CSS = """
     width: 100%;
     z-index: 999999;
     box-sizing: border-box;
-    padding: 0.45rem 1rem 0.55rem 1rem;
+    padding: 0.3rem 1rem 0.4rem 1rem;
     background: #f4f6f9;
     border-bottom: 1px solid #e2e8f0;
     box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
@@ -47,11 +47,11 @@ SITE_NAV_CSS = """
     margin: 0 auto;
 }
 .jd-site-nav-spacer {
-    height: 5.25rem;
+    height: 4.4rem;
     flex-shrink: 0;
 }
 html {
-    scroll-padding-top: 5.5rem;
+    scroll-padding-top: 4.7rem;
 }
 .jd-site-nav {
     display: flex;
