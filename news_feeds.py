@@ -16,12 +16,12 @@ import streamlit as st
 HOME_MAIN_HEADING_CSS = """
 <style>
 h2.home-main-heading {
-    font-size: 1.2rem;
-    font-weight: 700;
+    font-size: 1.06rem;
+    font-weight: 650;
     color: #0f172a;
-    margin: 0 0 0.15rem 0;
+    margin: 0 0 0.25rem 0;
     letter-spacing: -0.02em;
-    line-height: 1.25;
+    line-height: 1.3;
 }
 </style>
 """
