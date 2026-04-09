@@ -35,6 +35,7 @@ RWA_DATA_SOURCE_CAPTION = (
     "Source: [RWA.xyz](https://app.rwa.xyz/) homepage embedded data "
     "(Networks · All view; not the public API)."
 )
+_SORT = "\u2195"
 
 
 def rwa_table_height(num_rows: int, *, max_h: int = 520) -> int:
@@ -50,6 +51,56 @@ def _show_rwa_dataframe(df, *, height: int) -> None:
         use_container_width=True,
         height=height,
         hide_index=True,
+        column_order=[
+            "#",
+            "Network",
+            "Link",
+            "RWA Count",
+            "Total Value",
+            "7D Δ value",
+            "Market Share",
+        ],
+        column_config={
+            "#": st.column_config.NumberColumn(
+                f"# {_SORT}",
+                format="%.0f",
+                help="Ascending: lowest rank first · Descending: highest rank first",
+            ),
+            "Network": st.column_config.TextColumn(
+                f"Network {_SORT}",
+                width="medium",
+                help="Ascending: A→Z · Descending: Z→A",
+            ),
+            "Link": st.column_config.LinkColumn(
+                f"RWA Page {_SORT}",
+                display_text="↗",
+                validate=r"^https://",
+                width="small",
+                help="Open this network on RWA.xyz",
+            ),
+            "RWA Count": st.column_config.NumberColumn(
+                f"RWA Count {_SORT}",
+                format="%.0f",
+                help="Ascending: lowest first · Descending: highest first",
+            ),
+            "Total Value": st.column_config.NumberColumn(
+                f"Total Value {_SORT}",
+                format=None,
+                width=140,
+                help="Ascending: smallest USD first",
+            ),
+            "7D Δ value": st.column_config.NumberColumn(
+                f"7D Δ value {_SORT}",
+                format=None,
+                width=100,
+                help="7-day change in total value (%) · Ascending: lowest first",
+            ),
+            "Market Share": st.column_config.NumberColumn(
+                f"Market Share {_SORT}",
+                format=None,
+                help="Current network share (%)",
+            ),
+        },
     )
 
 
