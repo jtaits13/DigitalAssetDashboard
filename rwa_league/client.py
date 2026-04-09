@@ -31,6 +31,8 @@ class RwaNetworkLeagueRow:
     # There is no value_30d_change in the public __NEXT_DATA__ payload.
     value_change_7d_raw: float | None
     market_share_raw: float  # fraction 0–1
+    # Optional fractional 7D change in market share (if present in embedded payload).
+    market_share_change_7d_raw: float | None
 
 
 def _extract_next_data(html: str) -> dict[str, Any] | None:
@@ -110,6 +112,18 @@ def fetch_rwa_network_league() -> tuple[list[RwaNetworkLeagueRow], str | None]:
         ms = row.get("market_share_pct")
         msf = float(ms) if isinstance(ms, (int, float)) else 0.0
 
+        ms7 = None
+        for k in (
+            "market_share_7d_change",
+            "market_share_pct_7d_change",
+            "market_share_change_7d",
+            "market_share_change",
+        ):
+            raw = row.get(k)
+            if isinstance(raw, (int, float)):
+                ms7 = float(raw)
+                break
+
         v7 = row.get("value_7d_change")
         v7f = float(v7) if isinstance(v7, (int, float)) else None
 
@@ -122,6 +136,7 @@ def fetch_rwa_network_league() -> tuple[list[RwaNetworkLeagueRow], str | None]:
                 total_value_usd=total,
                 value_change_7d_raw=v7f,
                 market_share_raw=msf,
+                market_share_change_7d_raw=ms7,
             )
         )
 
