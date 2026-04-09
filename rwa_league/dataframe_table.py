@@ -31,6 +31,7 @@ def build_rwa_dataframe(rows: list[RwaNetworkLeagueRow]) -> pd.DataFrame:
         else:
             f7 = float(v7)
             pct7 = np.nan if np.isnan(f7) else f7 * 100.0
+        ms_change_7d = getattr(r, "market_share_change_7d_raw", None)
         recs.append(
             {
                 "#": int(r.rank),
@@ -39,7 +40,7 @@ def build_rwa_dataframe(rows: list[RwaNetworkLeagueRow]) -> pd.DataFrame:
                 "RWA Count": int(r.rwa_count),
                 "Total Value": float(r.total_value_usd),
                 "7D Δ value": pct7,
-                "Market Share": (float(r.market_share_raw * 100.0), r.market_share_change_7d_raw),
+                "Market Share": (float(r.market_share_raw * 100.0), ms_change_7d),
             }
         )
     return pd.DataFrame(recs)
