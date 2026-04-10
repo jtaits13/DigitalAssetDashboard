@@ -72,14 +72,68 @@ ETP_DATA_SOURCE_CAPTION = (
     "and ETF detail pages (scraped; not affiliated)."
 )
 
+_SORT = "\u2195"
+
 
 def show_etp_dataframe(df, *, height: int) -> None:
-    """Render styled dataframe (sortable Glide table)."""
+    """Render styled dataframe (sortable Glide table). Fund Filing uses a link arrow like RWA Page."""
     st.dataframe(
         style_etp_dataframe(df),
         use_container_width=True,
         height=height,
         hide_index=True,
+        column_order=[
+            "Symbol",
+            "Fund Name",
+            "Price",
+            "52W %",
+            "Assets (B)",
+            "Issuer",
+            "Inception",
+            "Fund Filing",
+        ],
+        column_config={
+            "Symbol": st.column_config.TextColumn(
+                f"Symbol {_SORT}",
+                width="small",
+            ),
+            "Fund Name": st.column_config.TextColumn(
+                f"Fund Name {_SORT}",
+                width="large",
+            ),
+            "Price": st.column_config.NumberColumn(
+                f"Price {_SORT}",
+                format="$%.2f",
+                width="small",
+            ),
+            "52W %": st.column_config.NumberColumn(
+                f"52W % {_SORT}",
+                format=None,
+                width="small",
+                help="Past-year return from fund narrative (proxy for 52-week %)",
+            ),
+            "Assets (B)": st.column_config.NumberColumn(
+                f"Assets (B) {_SORT}",
+                format=None,
+                width="small",
+            ),
+            "Issuer": st.column_config.TextColumn(
+                f"Issuer {_SORT}",
+                width="medium",
+            ),
+            "Inception": st.column_config.DatetimeColumn(
+                f"Inception {_SORT}",
+                format="YYYY-MM-DD",
+                width="small",
+            ),
+            "Fund Filing": st.column_config.LinkColumn(
+                f"Fund Filing {_SORT}",
+                display_text="↗",
+                validate=r"^https://",
+                width="small",
+                help="SEC EDGAR filing index or S-1 / search fallback",
+            ),
+        },
     )
 
 
