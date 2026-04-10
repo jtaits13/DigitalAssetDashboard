@@ -38,27 +38,21 @@ def render_regulatory_card_html(item: dict[str, Any]) -> str:
     )
 
 
-def show_regulatory_headlines_widget(
+def render_regulatory_headlines_column(
     articles: list[dict[str, Any]],
     *,
     max_items: int | None = None,
 ) -> None:
-    """Regulatory cards + link to full list. ``max_items`` defaults to ``REGULATORY_HEADLINE_COUNT``."""
+    """
+    Heading + cards only (matches Latest Digital Asset News). Place **Explore all headlines →**
+    in a second ``st.columns`` row next to **Explore all articles →** so the primary buttons align.
+    """
     limit = REGULATORY_HEADLINE_COUNT if max_items is None else max(1, max_items)
 
     st.markdown(
         '<h2 class="home-main-heading">Regulatory & Legal Headlines</h2>',
         unsafe_allow_html=True,
     )
-
-    if len(articles) > limit:
-        if st.button(
-            "See more regulatory headlines",
-            key="see_more_regulatory_top",
-            use_container_width=True,
-            type="primary",
-        ):
-            st.switch_page("pages/All_Regulatory.py")
 
     if not articles:
         st.caption("No regulatory headlines matched the filters yet. Try **Refresh feeds** in the sidebar.")
@@ -69,4 +63,4 @@ def show_regulatory_headlines_widget(
         st.markdown(render_regulatory_card_html(item), unsafe_allow_html=True)
 
     if len(articles) <= limit:
-        st.caption("No additional headlines beyond this list.")
+        st.caption("Showing the most recent regulatory headlines from the combined RSS list.")

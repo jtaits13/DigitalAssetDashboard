@@ -27,7 +27,7 @@ from crypto_etps.widgets import (
     show_us_crypto_etps_widget,
 )
 from regulatory_news.client import load_regulatory_articles
-from regulatory_news.widgets import clear_regulatory_cache, show_regulatory_headlines_widget
+from regulatory_news.widgets import clear_regulatory_cache, render_regulatory_headlines_column
 from rwa_league.widgets import clear_rwa_league_cache, show_rwa_league_widget
 
 HOME_HEADLINE_COUNT = 3
@@ -187,10 +187,26 @@ def main() -> None:
         with col_news:
             st.caption("Headlines will appear here when feeds load.")
         with col_sec:
-            show_regulatory_headlines_widget(
+            render_regulatory_headlines_column(
                 regulatory_articles,
                 max_items=HOME_REGULATORY_PREVIEW,
             )
+        if len(regulatory_articles) > HOME_REGULATORY_PREVIEW:
+            b_news, b_reg = st.columns([1.2, 1], gap="large")
+            with b_news:
+                st.empty()
+            with b_reg:
+                if st.button(
+                    "Explore all headlines →",
+                    key="see_more_regulatory_bottom_empty_feed",
+                    use_container_width=True,
+                    type="primary",
+                ):
+                    st.switch_page("pages/All_Regulatory.py")
+                st.markdown(
+                    '<p class="jd-hub-cta-note">Full regulatory feed on the next page.</p>',
+                    unsafe_allow_html=True,
+                )
 
         st.divider()
         st.markdown(
@@ -246,26 +262,45 @@ def main() -> None:
         for item in top:
             st.markdown(render_article_card_html(item), unsafe_allow_html=True)
 
-        if len(unique) > HOME_HEADLINE_COUNT:
-            if st.button(
-                "Explore all articles →",
-                key="see_more_news_bottom",
-                use_container_width=True,
-                type="primary",
-            ):
-                st.switch_page("pages/All_Articles.py")
-            st.markdown(
-                '<p class="jd-hub-cta-note">Full feed with filters and pagination on the next page.</p>',
-                unsafe_allow_html=True,
-            )
-        else:
+        if len(unique) <= HOME_HEADLINE_COUNT:
             st.caption("Showing the most recent headlines from the combined RSS list.")
 
     with col_sec:
-        show_regulatory_headlines_widget(
+        render_regulatory_headlines_column(
             regulatory_articles,
             max_items=HOME_REGULATORY_PREVIEW,
         )
+
+    needs_news_btn = len(unique) > HOME_HEADLINE_COUNT
+    needs_reg_btn = len(regulatory_articles) > HOME_REGULATORY_PREVIEW
+    if needs_news_btn or needs_reg_btn:
+        b_news, b_reg = st.columns([1.2, 1], gap="large")
+        with b_news:
+            if needs_news_btn:
+                if st.button(
+                    "Explore all articles →",
+                    key="see_more_news_bottom",
+                    use_container_width=True,
+                    type="primary",
+                ):
+                    st.switch_page("pages/All_Articles.py")
+                st.markdown(
+                    '<p class="jd-hub-cta-note">Full feed with filters and pagination on the next page.</p>',
+                    unsafe_allow_html=True,
+                )
+        with b_reg:
+            if needs_reg_btn:
+                if st.button(
+                    "Explore all headlines →",
+                    key="see_more_regulatory_bottom",
+                    use_container_width=True,
+                    type="primary",
+                ):
+                    st.switch_page("pages/All_Regulatory.py")
+                st.markdown(
+                    '<p class="jd-hub-cta-note">Full regulatory feed on the next page.</p>',
+                    unsafe_allow_html=True,
+                )
 
     st.divider()
     st.markdown(
