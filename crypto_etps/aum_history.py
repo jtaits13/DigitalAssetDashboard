@@ -11,6 +11,8 @@ from __future__ import annotations
 import logging
 import re
 import time
+from typing import Any
+
 import pandas as pd
 import streamlit as st
 
@@ -110,3 +112,59 @@ def load_aggregate_aum_history_cached(
 ) -> tuple[pd.DataFrame | None, str | None]:
     """Cache Yahoo price pulls (keyed by symbol + scraped AUM snapshot)."""
     return build_aggregate_aum_history_12m(list(funds_key))
+
+
+def build_aggregate_aum_plotly_figure(
+    plot_df: pd.DataFrame,
+    *,
+    height: int = 640,
+    line_color: str = "#1E7C99",
+) -> Any:
+    """
+    Line chart of aggregate AUM (billions USD) vs time.
+
+    Default x-axis view is the **last 12 months** with month ticks (e.g. January 2025).
+    The trace still contains the full loaded history so users can zoom/pan/scroll to other ranges.
+    """
+    import plotly.graph_objects as go
+
+    df = plot_df.copy()
+    df["date"] = pd.to_datetime(df["date"])
+    df = df.sort_values("date")
+    end = df["date"].max()
+    start_12m = end - pd.DateOffset(months=12)
+
+    fig = go.Figure(
+        data=[
+            go.Scatter(
+                x=df["date"],
+                y=df["aum_billions_usd"],
+                mode="lines",
+                line=dict(color=line_color, width=2),
+                hovertemplate="%{x|%Y-%m-%d}<br>%{y:.2f} B USD<extra></extra>",
+                name="",
+                showlegend=False,
+            )
+        ]
+    )
+    fig.update_layout(
+        height=height,
+        margin=dict(l=8, r=8, t=8, b=48),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        yaxis=dict(
+            title=dict(text="Billions USD"),
+            gridcolor="rgba(148,163,184,0.35)",
+            zeroline=False,
+        ),
+        xaxis=dict(
+            title=dict(text=""),
+            range=[start_12m, end],
+            tickformat="%B %Y",
+            dtick="M1",
+            gridcolor="rgba(148,163,184,0.25)",
+            # Initial window is 12 months; full series remains in the trace for zoom/scroll.
+        ),
+        hovermode="x unified",
+    )
+    return fig

@@ -7,7 +7,11 @@ from html import escape
 
 import streamlit as st
 
-from crypto_etps.aum_history import etp_rows_to_fund_pairs, load_aggregate_aum_history_cached
+from crypto_etps.aum_history import (
+    build_aggregate_aum_plotly_figure,
+    etp_rows_to_fund_pairs,
+    load_aggregate_aum_history_cached,
+)
 from crypto_etps.client import (
     format_usd_compact,
     sorted_by_assets,
@@ -90,8 +94,20 @@ def main() -> None:
     if chart_df is not None and not chart_df.empty:
         plot_df = chart_df.copy()
         plot_df["aum_billions_usd"] = plot_df["total_aum_usd"] / 1e9
-        st.line_chart(plot_df, x="date", y="aum_billions_usd", height=320)
-        st.caption("Vertical axis: total estimated AUM, **billions USD** (weekly points).")
+        fig = build_aggregate_aum_plotly_figure(plot_df, height=640)
+        st.plotly_chart(
+            fig,
+            use_container_width=True,
+            config={
+                "scrollZoom": True,
+                "displayModeBar": True,
+            },
+        )
+        st.caption(
+            "Vertical axis: total estimated AUM, **billions USD** (weekly points). "
+            "Default view is the last **12 months** (month labels on the x-axis); scroll or use the "
+            "mode bar to zoom and pan the full history."
+        )
     elif chart_err:
         st.info(chart_err)
 
