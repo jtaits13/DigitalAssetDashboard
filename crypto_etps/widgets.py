@@ -13,6 +13,7 @@ from crypto_etps.client import (
     sorted_by_assets,
     total_aum_usd,
 )
+from crypto_etps.aum_history import load_aggregate_aum_history_cached
 from crypto_etps.sec_prospectus import clear_sec_prospectus_caches
 from crypto_etps.dataframe_table import (
     build_etp_dataframe,
@@ -55,6 +56,7 @@ def load_crypto_etps_cached(user_agent: str) -> CryptoEtpsResult:
 def clear_crypto_etp_cache() -> None:
     load_crypto_etps_cached.clear()
     clear_sec_prospectus_caches()
+    load_aggregate_aum_history_cached.clear()
 
 
 def _default_ua() -> str:

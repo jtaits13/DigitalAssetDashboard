@@ -7,6 +7,7 @@ from html import escape
 
 import streamlit as st
 
+from crypto_etps.aum_history import etp_rows_to_fund_pairs, load_aggregate_aum_history_cached
 from crypto_etps.client import (
     format_usd_compact,
     sorted_by_assets,
@@ -68,18 +69,38 @@ def main() -> None:
     rows = data.rows
     total = total_aum_usd(rows)
 
+    if total > 0:
+        st.markdown(
+            f'<p class="etp-fullpage-aum-line">Total AUM (known assets): {escape(format_usd_compact(total))}</p>',
+            unsafe_allow_html=True,
+        )
+
+    st.markdown(
+        '<h3 class="home-main-heading" style="margin-top:1rem;font-size:1rem;">Aggregate AUM trend (12 months)</h3>',
+        unsafe_allow_html=True,
+    )
+    st.caption(
+        "Estimated from **Yahoo Finance** weekly closes: each fund’s latest reported AUM from StockAnalysis "
+        "is scaled by its price path (constant-shares approximation), then summed. Covers the full list below — "
+        "not official fund AUM filings."
+    )
+    with st.spinner("Loading 12-month price history for aggregate AUM estimate…"):
+        pairs = etp_rows_to_fund_pairs(rows)
+        chart_df, chart_err = load_aggregate_aum_history_cached(pairs)
+    if chart_df is not None and not chart_df.empty:
+        plot_df = chart_df.copy()
+        plot_df["aum_billions_usd"] = plot_df["total_aum_usd"] / 1e9
+        st.line_chart(plot_df, x="date", y="aum_billions_usd", height=320)
+        st.caption("Vertical axis: total estimated AUM, **billions USD** (weekly points).")
+    elif chart_err:
+        st.info(chart_err)
+
     q = st.text_input(
         "Search fund name",
         "",
         key="etf_search_full",
         placeholder="Filter by fund name…",
     )
-
-    if total > 0:
-        st.markdown(
-            f'<p class="etp-fullpage-aum-line">Total AUM (known assets): {escape(format_usd_compact(total))}</p>',
-            unsafe_allow_html=True,
-        )
 
     filtered = filter_rows_by_fund_name(rows, q)
     sorted_rows = sorted_by_assets(filtered)
