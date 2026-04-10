@@ -16,7 +16,7 @@ from dataclasses import dataclass
 import requests
 from bs4 import BeautifulSoup
 
-from crypto_etps.sec_prospectus import resolve_s1_filing_url
+from crypto_etps.sec_prospectus import resolve_fund_filing_url
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +46,7 @@ class CryptoEtpRow:
     issuer: str
     inception: str
     pct_52w: float | None  # from "past year" narrative on detail page
-    s1_filing_url: str  # newest S-1 primary doc, S-1 browse, or EDGAR search
+    fund_filing_url: str  # filing index (ticker-matched) or S-1 fallback / browse / search
 
 
 @dataclass
@@ -183,7 +183,7 @@ def fetch_crypto_etps_list(
                 issuer="",
                 inception="",
                 pct_52w=None,
-                s1_filing_url="",
+                fund_filing_url="",
             )
         )
 
@@ -233,13 +233,13 @@ def enrich_crypto_etps_rows(
                 issuer=iss,
                 inception=inc,
                 pct_52w=p52,
-                s1_filing_url="",
+                fund_filing_url="",
             )
         )
 
     out: list[CryptoEtpRow] = []
     for r in enriched:
-        s1 = resolve_s1_filing_url(r.symbol, ua)
+        fund = resolve_fund_filing_url(r.symbol, ua)
         out.append(
             CryptoEtpRow(
                 symbol=r.symbol,
@@ -251,7 +251,7 @@ def enrich_crypto_etps_rows(
                 issuer=r.issuer,
                 inception=r.inception,
                 pct_52w=r.pct_52w,
-                s1_filing_url=s1,
+                fund_filing_url=fund,
             )
         )
     return out

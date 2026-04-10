@@ -1,8 +1,11 @@
 """
-Resolve S-1 filing links via SEC EDGAR (data.sec.gov submissions + company_tickers).
+SEC EDGAR helpers (data.sec.gov submissions + company_tickers).
 
-Direct link: newest S-1 / S-1/A (etc.) primary document in recent filings when present.
-Fallback: EDGAR browse for type=S-1 for that CIK, then EDGAR search (ticker + S-1 hint).
+``resolve_fund_filing_url`` prefers the ETF-Dashboard-style filing *index* URL when the
+registration statement matches the fund ticker (S-1 / N-1A / 485BPOS / 485APOS family).
+
+``resolve_s1_filing_url`` returns the newest S-1 primary document, browse, or search — used as
+fallback when no ticker-matched filing index is found.
 
 Requires a descriptive User-Agent with contact info per https://www.sec.gov/os/accessing-edgar-data
 """
@@ -134,6 +137,21 @@ def resolve_s1_filing_url(symbol: str, user_agent: str) -> str:
     return _browse_s1_url(cik)
 
 
+@st.cache_data(ttl=3600, show_spinner=False)
+def resolve_fund_filing_url(symbol: str, user_agent: str) -> str:
+    """
+    Prefer the EDGAR filing index page (``-index.htm``) for a registration whose body matches
+    ``symbol``. Falls back to ``resolve_s1_filing_url`` (primary S-1 doc or browse/search).
+    """
+    from crypto_etps.fund_filing import find_fund_filing_index_url
+
+    idx = find_fund_filing_index_url(symbol, user_agent)
+    if idx:
+        return idx
+    return resolve_s1_filing_url(symbol, user_agent)
+
+
 def clear_sec_prospectus_caches() -> None:
     load_sec_ticker_to_cik.clear()
     load_sec_submissions.clear()
+    resolve_fund_filing_url.clear()

@@ -31,7 +31,7 @@ def build_etp_dataframe(rows: list[CryptoEtpRow]) -> pd.DataFrame:
     for r in rows:
         inc = pd.to_datetime(r.inception, errors="coerce") if (r.inception or "").strip() else pd.NaT
         issuer = (r.issuer or "").strip()
-        s1 = (r.s1_filing_url or "").strip() or edgar_s1_fallback_url(r.symbol)
+        fund_filing = (r.fund_filing_url or "").strip() or edgar_s1_fallback_url(r.symbol)
         records.append(
             {
                 "Symbol": r.symbol,
@@ -42,7 +42,7 @@ def build_etp_dataframe(rows: list[CryptoEtpRow]) -> pd.DataFrame:
                 # Empty string so client-side sort is A–Z / Z–A (NaN sorts oddly as text).
                 "Issuer": issuer,
                 "Inception": inc,
-                "S-1": s1,
+                "Fund Filing": fund_filing,
             }
         )
     return pd.DataFrame(records)
