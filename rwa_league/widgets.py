@@ -113,7 +113,15 @@ def clear_rwa_league_cache() -> None:
     load_rwa_league_cached.clear()
 
 
-def show_rwa_league_widget() -> None:
+def show_rwa_league_widget(
+    *,
+    home_preview: bool = False,
+    preview_rows: int = 8,
+) -> None:
+    """
+    RWA.xyz networks league table. ``home_preview=True`` shows only the top N rows (no search)
+    with a link to the full page — similar to a CoinDesk section teaser.
+    """
     st.markdown(WIDGET_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
     rows, err = load_rwa_league_cached()
 
@@ -137,20 +145,37 @@ def show_rwa_league_widget() -> None:
         unsafe_allow_html=True,
     )
 
-    q = st.text_input(
-        "Search network",
-        "",
-        key="rwa_search_home",
-        placeholder="Filter by network name…",
-    )
-    filtered = filter_rows_by_network(rows, q)
-    if q.strip():
+    working = list(rows)
+    if home_preview:
+        n = max(1, min(preview_rows, len(working)))
+        working = working[:n]
         st.caption(
-            f"Showing {len(filtered)} of {len(rows)} networks matching “{escape(q.strip())}”."
+            f"Preview: top **{n}** networks from the league embed. "
+            "Open the full page to search and see every network."
         )
     else:
-        st.caption(f"Showing all {len(filtered)} networks.")
+        q = st.text_input(
+            "Search network",
+            "",
+            key="rwa_search_home",
+            placeholder="Filter by network name…",
+        )
+        working = filter_rows_by_network(rows, q)
+        if q.strip():
+            st.caption(
+                f"Showing {len(working)} of {len(rows)} networks matching “{escape(q.strip())}”."
+            )
+        else:
+            st.caption(f"Showing all {len(working)} networks.")
 
-    df = build_rwa_dataframe(filtered)
+    df = build_rwa_dataframe(working)
     _show_rwa_dataframe(df, height=rwa_table_height(len(df)))
     st.caption(RWA_DATA_SOURCE_CAPTION)
+
+    if home_preview and st.button(
+        "Open full RWA league table",
+        key="see_full_rwa_league",
+        use_container_width=True,
+        type="primary",
+    ):
+        st.switch_page("pages/RWA_League.py")

@@ -4,13 +4,18 @@
 
 ## Layout
 
+The **home page** is a hub (CoinDesk-style): each block shows a **short preview** (fewer headlines, smaller tables) with buttons or nav links to **full pages** under `pages/` (all articles, regulatory, U.S. crypto ETPs, RWA league).
+
 ```
 streamlit_app.py
 requirements.txt
 .gitignore
 .streamlit/config.toml
 
-sec_filings/                 # SEC EDGAR fund-filing widget (home page, right column)
+pages/
+  All_Articles.py, All_Regulatory.py, US_Crypto_ETPs.py, RWA_League.py
+
+sec_filings/                 # SEC EDGAR fund-filing widget (optional / elsewhere)
   client.py
   widgets.py
 ```

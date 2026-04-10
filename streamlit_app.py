@@ -30,11 +30,17 @@ from regulatory_news.client import load_regulatory_articles
 from regulatory_news.widgets import clear_regulatory_cache, show_regulatory_headlines_widget
 from rwa_league.widgets import clear_rwa_league_cache, show_rwa_league_widget
 
-HOME_HEADLINE_COUNT = 5
+HOME_HEADLINE_COUNT = 3
+HOME_REGULATORY_PREVIEW = 3
 
 HOME_PAGE_EXTRA_CSS = ""
 
-_JD_SCROLL_MAP = {"news": "jd-section-news", "market": "jd-section-market"}
+_JD_SCROLL_MAP = {
+    "news": "jd-section-news",
+    "market": "jd-section-market",
+    "etps": "jd-section-etps",
+    "rwa": "jd-section-rwa",
+}
 
 
 def _jd_consume_scroll_query() -> None:
@@ -112,6 +118,10 @@ def _sidebar() -> bool:
             st.switch_page("pages/All_Articles.py")
         if st.button("Regulatory headlines", use_container_width=True, key="sb_reg"):
             st.switch_page("pages/All_Regulatory.py")
+        if st.button("U.S. Crypto ETPs", use_container_width=True, key="sb_etp"):
+            st.switch_page("pages/US_Crypto_ETPs.py")
+        if st.button("RWA league table", use_container_width=True, key="sb_rwa"):
+            st.switch_page("pages/RWA_League.py")
         st.divider()
         st.caption("Refresh reloads RSS, prices, ETPs, regulatory feeds, and RWA tables.")
         refresh = st.button("Refresh all data", use_container_width=True, key="sb_refresh")
@@ -169,23 +179,44 @@ def main() -> None:
             unsafe_allow_html=True,
         )
         st.markdown(section_label_teal("News & Regulatory"), unsafe_allow_html=True)
+        st.markdown(
+            '<p class="jd-hub-dek">A quick read of headlines and policy wires — each section links to a full page.</p>',
+            unsafe_allow_html=True,
+        )
         col_news, col_sec = st.columns([1.2, 1], gap="large")
         with col_news:
             st.caption("Headlines will appear here when feeds load.")
         with col_sec:
-            show_regulatory_headlines_widget(regulatory_articles)
+            show_regulatory_headlines_widget(
+                regulatory_articles,
+                max_items=HOME_REGULATORY_PREVIEW,
+            )
 
         st.divider()
         st.markdown(
             '<div id="jd-section-market" style="scroll-margin-top: 5.5rem;"></div>',
             unsafe_allow_html=True,
         )
-        st.markdown(section_label_teal("Crypto ETPs (U.S.)"), unsafe_allow_html=True)
-        show_us_crypto_etps_widget(get_etp_user_agent_from_secrets())
+        st.markdown(section_label_teal("Markets & On-chain"), unsafe_allow_html=True)
+        st.markdown(
+            '<p class="jd-hub-dek">Spot ETPs and tokenized network league data — previews below; open each page for search and full tables.</p>',
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            '<div id="jd-section-etps" style="scroll-margin-top: 5.5rem;"></div>',
+            unsafe_allow_html=True,
+        )
+        show_us_crypto_etps_widget(
+            get_etp_user_agent_from_secrets(),
+            home_preview=True,
+        )
 
         st.divider()
-        st.markdown(section_label_teal("RWA League Table"), unsafe_allow_html=True)
-        show_rwa_league_widget()
+        st.markdown(
+            '<div id="jd-section-rwa" style="scroll-margin-top: 5.5rem;"></div>',
+            unsafe_allow_html=True,
+        )
+        show_rwa_league_widget(home_preview=True)
 
         st.divider()
         _footer_line()
@@ -200,6 +231,11 @@ def main() -> None:
         unsafe_allow_html=True,
     )
     st.markdown(section_label_teal("News & Regulatory"), unsafe_allow_html=True)
+    st.markdown(
+        '<p class="jd-hub-dek">Headlines from major crypto RSS feeds and global regulatory wires — '
+        "open a lane below for the full feed.</p>",
+        unsafe_allow_html=True,
+    )
     col_news, col_sec = st.columns([1.2, 1], gap="large")
     with col_news:
         st.markdown(
@@ -207,35 +243,56 @@ def main() -> None:
             unsafe_allow_html=True,
         )
 
+        for item in top:
+            st.markdown(render_article_card_html(item), unsafe_allow_html=True)
+
         if len(unique) > HOME_HEADLINE_COUNT:
             if st.button(
-                "See more news",
-                key="see_more_news_top",
+                "Explore all articles →",
+                key="see_more_news_bottom",
                 use_container_width=True,
                 type="primary",
             ):
                 st.switch_page("pages/All_Articles.py")
-
-        for item in top:
-            st.markdown(render_article_card_html(item), unsafe_allow_html=True)
-
-        if len(unique) <= HOME_HEADLINE_COUNT:
-            st.caption("No additional articles beyond this list.")
+            st.markdown(
+                '<p class="jd-hub-cta-note">Full feed with filters and pagination on the next page.</p>',
+                unsafe_allow_html=True,
+            )
+        else:
+            st.caption("Showing the most recent headlines from the combined RSS list.")
 
     with col_sec:
-        show_regulatory_headlines_widget(regulatory_articles)
+        show_regulatory_headlines_widget(
+            regulatory_articles,
+            max_items=HOME_REGULATORY_PREVIEW,
+        )
 
     st.divider()
     st.markdown(
         '<div id="jd-section-market" style="scroll-margin-top: 5.5rem;"></div>',
         unsafe_allow_html=True,
     )
-    st.markdown(section_label_teal("Crypto ETPs (U.S.)"), unsafe_allow_html=True)
-    show_us_crypto_etps_widget(get_etp_user_agent_from_secrets())
+    st.markdown(section_label_teal("Markets & On-chain"), unsafe_allow_html=True)
+    st.markdown(
+        '<p class="jd-hub-dek">Spot crypto ETPs and the RWA.xyz network league — '
+        "teasers here; use each page for the complete table.</p>",
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        '<div id="jd-section-etps" style="scroll-margin-top: 5.5rem;"></div>',
+        unsafe_allow_html=True,
+    )
+    show_us_crypto_etps_widget(
+        get_etp_user_agent_from_secrets(),
+        home_preview=True,
+    )
 
     st.divider()
-    st.markdown(section_label_teal("RWA League Table"), unsafe_allow_html=True)
-    show_rwa_league_widget()
+    st.markdown(
+        '<div id="jd-section-rwa" style="scroll-margin-top: 5.5rem;"></div>',
+        unsafe_allow_html=True,
+    )
+    show_rwa_league_widget(home_preview=True)
 
     st.divider()
     _footer_line()

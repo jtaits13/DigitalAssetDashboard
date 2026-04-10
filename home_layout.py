@@ -36,6 +36,23 @@ ETP_FULLPAGE_AUM_LINE_CSS = """
 
 HOME_PAGE_LAYOUT_CSS = """
 <style>
+/* CoinDesk-style hub: section band + short dek + teaser content */
+.jd-hub-band {
+    margin-top: 0.25rem;
+    margin-bottom: 0.35rem;
+}
+.jd-hub-dek {
+    font-size: 0.88rem;
+    color: #64748b;
+    line-height: 1.45;
+    margin: 0.15rem 0 0.85rem 0;
+    max-width: 48rem;
+}
+.jd-hub-cta-note {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin: 0.5rem 0 0.15rem 0;
+}
 .cd-ticker-shell {
     margin-bottom: 1.35rem !important;
 }

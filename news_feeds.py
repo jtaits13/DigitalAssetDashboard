@@ -111,7 +111,9 @@ def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -
       <span class="jd-site-brand">JPM Digital</span>
       <a class="jd-site-link" href="#">Home</a>
       <a class="jd-site-link" href="#jd-section-news">News</a>
-      <a class="jd-site-link" href="#jd-section-market">Market Data</a>
+      <a class="jd-site-link" href="#jd-section-market">Markets</a>
+      <a class="jd-site-link" href="#jd-section-etps">Crypto ETPs</a>
+      <a class="jd-site-link" href="#jd-section-rwa">RWA</a>
     </nav>
   </div>
 </div>
@@ -135,7 +137,9 @@ def render_subpage_top_bar() -> None:
       <span class="jd-site-brand">JPM Digital</span>
       <a class="jd-site-link" href="/">Home</a>
       <a class="jd-site-link" href="/?jd_scroll=news">News</a>
-      <a class="jd-site-link" href="/?jd_scroll=market">Market Data</a>
+      <a class="jd-site-link" href="/?jd_scroll=market">Markets</a>
+      <a class="jd-site-link" href="/?jd_scroll=etps">Crypto ETPs</a>
+      <a class="jd-site-link" href="/?jd_scroll=rwa">RWA</a>
     </nav>
   </div>
 </div>

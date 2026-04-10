@@ -137,7 +137,16 @@ def show_etp_dataframe(df, *, height: int) -> None:
     )
 
 
-def show_us_crypto_etps_widget(user_agent: str | None) -> None:
+def show_us_crypto_etps_widget(
+    user_agent: str | None,
+    *,
+    home_preview: bool = False,
+    preview_row_limit: int = 5,
+) -> None:
+    """
+    U.S. crypto ETP table. On the home page, pass ``home_preview=True`` for a short slice
+    without search (CoinDesk-style teaser); full sort/filter lives on ``US_Crypto_ETPs``.
+    """
     st.markdown(WIDGET_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
 
     ua = resolve_etp_user_agent(user_agent)
@@ -164,12 +173,14 @@ def show_us_crypto_etps_widget(user_agent: str | None) -> None:
         unsafe_allow_html=True,
     )
 
-    q = st.text_input(
-        "Search fund name",
-        "",
-        key="etf_search_home",
-        placeholder="Filter by fund name…",
-    )
+    q = ""
+    if not home_preview:
+        q = st.text_input(
+            "Search fund name",
+            "",
+            key="etf_search_home",
+            placeholder="Filter by fund name…",
+        )
 
     st.markdown(
         f'<p class="etp-aum-line">Total AUM (listed, known assets): {escape(aum_s)}</p>',
@@ -178,10 +189,17 @@ def show_us_crypto_etps_widget(user_agent: str | None) -> None:
 
     ranked = sorted_by_assets(rows)
     filtered = filter_rows_by_fund_name(ranked, q)
-    display_rows = filtered[:10]
+    cap = preview_row_limit if home_preview else 10
+    display_rows = filtered[:cap]
     df = build_etp_dataframe(display_rows)
     show_etp_dataframe(df, height=etp_table_height(len(df)))
     st.caption(ETP_DATA_SOURCE_CAPTION)
+
+    if home_preview:
+        st.caption(
+            f"Preview: top **{min(cap, len(filtered))}** funds by assets. "
+            "Open the full list for search, every fund, and fund filing links."
+        )
 
     if st.button("See full ETF list", key="see_full_etf_list", use_container_width=True, type="primary"):
         st.switch_page("pages/US_Crypto_ETPs.py")
