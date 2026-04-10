@@ -15,7 +15,7 @@ from news_feeds import (
     DEFAULT_FEEDS,
     HOME_MAIN_HEADING_CSS,
     article_styles_markdown,
-    build_home_news_lane_body_html,
+    build_home_news_column_html,
     dedupe_articles,
     load_all_feeds,
     render_home_top_bar,
@@ -27,7 +27,7 @@ from crypto_etps.widgets import (
     show_us_crypto_etps_widget,
 )
 from regulatory_news.client import load_regulatory_articles
-from regulatory_news.widgets import build_home_regulatory_lane_body_html, clear_regulatory_cache
+from regulatory_news.widgets import build_home_regulatory_column_html, clear_regulatory_cache
 from rwa_league.widgets import clear_rwa_league_cache, show_rwa_league_widget
 
 HOME_HEADLINE_COUNT = 3
@@ -183,37 +183,38 @@ def main() -> None:
             '<p class="jd-hub-dek">A quick read of headlines and policy wires — each section links to a full page.</p>',
             unsafe_allow_html=True,
         )
-        _needs_reg_btn_empty = len(regulatory_articles) > HOME_REGULATORY_PREVIEW
         col_news, col_sec = st.columns([1.2, 1], gap="large")
         with col_news:
-            with st.container(border=True):
-                st.markdown(
-                    '<div class="jd-home-lane-body">'
-                    '<p class="jd-news-column-footnote">Headlines will appear here when feeds load.</p>'
-                    "</div>",
-                    unsafe_allow_html=True,
-                )
+            st.markdown(
+                '<div class="jd-news-column-shell"><div class="jd-news-column-inner">'
+                '<p class="jd-news-column-footnote">Headlines will appear here when feeds load.</p>'
+                "</div></div>",
+                unsafe_allow_html=True,
+            )
         with col_sec:
-            with st.container(border=True):
+            st.markdown(
+                build_home_regulatory_column_html(
+                    regulatory_articles,
+                    max_items=HOME_REGULATORY_PREVIEW,
+                ),
+                unsafe_allow_html=True,
+            )
+        if len(regulatory_articles) > HOME_REGULATORY_PREVIEW:
+            b_news, b_reg = st.columns([1.2, 1], gap="large")
+            with b_news:
+                st.empty()
+            with b_reg:
+                if st.button(
+                    "Explore all headlines →",
+                    key="see_more_regulatory_bottom_empty_feed",
+                    use_container_width=True,
+                    type="primary",
+                ):
+                    st.switch_page("pages/All_Regulatory.py")
                 st.markdown(
-                    build_home_regulatory_lane_body_html(
-                        regulatory_articles,
-                        max_items=HOME_REGULATORY_PREVIEW,
-                    ),
+                    '<p class="jd-hub-cta-note">Full regulatory feed on the next page.</p>',
                     unsafe_allow_html=True,
                 )
-                if _needs_reg_btn_empty:
-                    if st.button(
-                        "Explore all headlines →",
-                        key="see_more_regulatory_bottom_empty_feed",
-                        use_container_width=True,
-                        type="primary",
-                    ):
-                        st.switch_page("pages/All_Regulatory.py")
-                    st.markdown(
-                        '<p class="jd-hub-cta-note">Full regulatory feed on the next page.</p>',
-                        unsafe_allow_html=True,
-                    )
 
         st.divider()
         st.markdown(
@@ -248,8 +249,6 @@ def main() -> None:
 
     unique = dedupe_articles(articles, max_items=None)
     top = unique[:HOME_HEADLINE_COUNT]
-    needs_news_btn = len(unique) > HOME_HEADLINE_COUNT
-    needs_reg_btn = len(regulatory_articles) > HOME_REGULATORY_PREVIEW
 
     st.markdown(
         '<div id="jd-section-news" style="scroll-margin-top: 5.5rem;"></div>',
@@ -263,14 +262,28 @@ def main() -> None:
     )
     col_news, col_sec = st.columns([1.2, 1], gap="large")
     with col_news:
-        with st.container(border=True):
-            st.markdown(
-                build_home_news_lane_body_html(
-                    top,
-                    show_footnote=len(unique) <= HOME_HEADLINE_COUNT,
-                ),
-                unsafe_allow_html=True,
-            )
+        st.markdown(
+            build_home_news_column_html(
+                top,
+                show_footnote=len(unique) <= HOME_HEADLINE_COUNT,
+            ),
+            unsafe_allow_html=True,
+        )
+
+    with col_sec:
+        st.markdown(
+            build_home_regulatory_column_html(
+                regulatory_articles,
+                max_items=HOME_REGULATORY_PREVIEW,
+            ),
+            unsafe_allow_html=True,
+        )
+
+    needs_news_btn = len(unique) > HOME_HEADLINE_COUNT
+    needs_reg_btn = len(regulatory_articles) > HOME_REGULATORY_PREVIEW
+    if needs_news_btn or needs_reg_btn:
+        b_news, b_reg = st.columns([1.2, 1], gap="large")
+        with b_news:
             if needs_news_btn:
                 if st.button(
                     "Explore all articles →",
@@ -283,16 +296,7 @@ def main() -> None:
                     '<p class="jd-hub-cta-note">Full feed with filters and pagination on the next page.</p>',
                     unsafe_allow_html=True,
                 )
-
-    with col_sec:
-        with st.container(border=True):
-            st.markdown(
-                build_home_regulatory_lane_body_html(
-                    regulatory_articles,
-                    max_items=HOME_REGULATORY_PREVIEW,
-                ),
-                unsafe_allow_html=True,
-            )
+        with b_reg:
             if needs_reg_btn:
                 if st.button(
                     "Explore all headlines →",

@@ -36,15 +36,16 @@ def render_regulatory_card_html(item: dict[str, Any]) -> str:
     )
 
 
-def build_home_regulatory_lane_body_html(
+def build_home_regulatory_column_html(
     articles: list[dict[str, Any]],
     *,
     max_items: int | None = None,
 ) -> str:
-    """Heading + cards (+ optional footnote) for inside ``st.container(border=True)`` — no outer shell."""
+    """Single HTML block for the home regulatory column (equal-height lane shell)."""
     limit = REGULATORY_HEADLINE_COUNT if max_items is None else max(1, max_items)
     parts = [
-        '<div class="jd-home-lane-body">',
+        '<div class="jd-news-column-shell">',
+        '<div class="jd-news-column-inner">',
         '<h2 class="home-main-heading">Regulatory & Legal Headlines</h2>',
     ]
     if not articles:
@@ -60,5 +61,5 @@ def build_home_regulatory_lane_body_html(
                 '<p class="jd-news-column-footnote">Showing the most recent regulatory headlines '
                 "from the combined RSS list.</p>"
             )
-    parts.append("</div>")
+    parts.append("</div></div>")
     return "".join(parts)
