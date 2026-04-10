@@ -344,6 +344,48 @@ def article_styles_markdown() -> str:
         color: #64748b;
         margin-bottom: 0.5rem;
     }
+    /* Home: News & Regulatory side-by-side — equal height white lanes */
+    div[data-testid="stHorizontalBlock"]:has(div.jd-news-column-shell) {
+        align-items: stretch !important;
+    }
+    div[data-testid="column"]:has(div.jd-news-column-shell) {
+        display: flex !important;
+        flex-direction: column !important;
+    }
+    .jd-news-column-shell {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        min-height: 100%;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        background: #ffffff;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+        padding: 0.75rem 1rem 1rem 1rem;
+        box-sizing: border-box;
+    }
+    .jd-news-column-inner {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        min-height: 0;
+    }
+    .jd-news-column-shell h2.home-main-heading {
+        margin-top: 0;
+        margin-bottom: 0.15rem;
+    }
+    .jd-news-column-footnote {
+        font-size: 0.8rem;
+        color: #64748b;
+        margin: 0.15rem 0 0 0;
+        line-height: 1.45;
+    }
+    .jd-news-column-shell .news-card {
+        box-shadow: none;
+        border-color: #eef2f7;
+    }
     </style>
     """
 
@@ -358,6 +400,27 @@ def article_day_key(published: datetime | None) -> date | None:
     if not published:
         return None
     return published.astimezone(timezone.utc).date()
+
+
+def build_home_news_column_html(
+    top: list[dict[str, Any]],
+    *,
+    show_footnote: bool,
+) -> str:
+    """Single HTML block for the home news column (equal-height lane shell)."""
+    parts = [
+        '<div class="jd-news-column-shell">',
+        '<div class="jd-news-column-inner">',
+        '<h2 class="home-main-heading">Latest Digital Asset News</h2>',
+    ]
+    for item in top:
+        parts.append(render_article_card_html(item))
+    if show_footnote:
+        parts.append(
+            '<p class="jd-news-column-footnote">Showing the most recent headlines from the combined RSS list.</p>'
+        )
+    parts.append("</div></div>")
+    return "".join(parts)
 
 
 def render_article_card_html(item: dict[str, Any]) -> str:

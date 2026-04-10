@@ -15,9 +15,9 @@ from news_feeds import (
     DEFAULT_FEEDS,
     HOME_MAIN_HEADING_CSS,
     article_styles_markdown,
+    build_home_news_column_html,
     dedupe_articles,
     load_all_feeds,
-    render_article_card_html,
     render_home_top_bar,
 )
 from price_ticker import fetch_top_crypto_tickers, show_price_ticker
@@ -27,7 +27,7 @@ from crypto_etps.widgets import (
     show_us_crypto_etps_widget,
 )
 from regulatory_news.client import load_regulatory_articles
-from regulatory_news.widgets import clear_regulatory_cache, render_regulatory_headlines_column
+from regulatory_news.widgets import build_home_regulatory_column_html, clear_regulatory_cache
 from rwa_league.widgets import clear_rwa_league_cache, show_rwa_league_widget
 
 HOME_HEADLINE_COUNT = 3
@@ -185,11 +185,19 @@ def main() -> None:
         )
         col_news, col_sec = st.columns([1.2, 1], gap="large")
         with col_news:
-            st.caption("Headlines will appear here when feeds load.")
+            st.markdown(
+                '<div class="jd-news-column-shell"><div class="jd-news-column-inner">'
+                '<p class="jd-news-column-footnote">Headlines will appear here when feeds load.</p>'
+                "</div></div>",
+                unsafe_allow_html=True,
+            )
         with col_sec:
-            render_regulatory_headlines_column(
-                regulatory_articles,
-                max_items=HOME_REGULATORY_PREVIEW,
+            st.markdown(
+                build_home_regulatory_column_html(
+                    regulatory_articles,
+                    max_items=HOME_REGULATORY_PREVIEW,
+                ),
+                unsafe_allow_html=True,
             )
         if len(regulatory_articles) > HOME_REGULATORY_PREVIEW:
             b_news, b_reg = st.columns([1.2, 1], gap="large")
@@ -255,20 +263,20 @@ def main() -> None:
     col_news, col_sec = st.columns([1.2, 1], gap="large")
     with col_news:
         st.markdown(
-            '<h2 class="home-main-heading">Latest Digital Asset News</h2>',
+            build_home_news_column_html(
+                top,
+                show_footnote=len(unique) <= HOME_HEADLINE_COUNT,
+            ),
             unsafe_allow_html=True,
         )
 
-        for item in top:
-            st.markdown(render_article_card_html(item), unsafe_allow_html=True)
-
-        if len(unique) <= HOME_HEADLINE_COUNT:
-            st.caption("Showing the most recent headlines from the combined RSS list.")
-
     with col_sec:
-        render_regulatory_headlines_column(
-            regulatory_articles,
-            max_items=HOME_REGULATORY_PREVIEW,
+        st.markdown(
+            build_home_regulatory_column_html(
+                regulatory_articles,
+                max_items=HOME_REGULATORY_PREVIEW,
+            ),
+            unsafe_allow_html=True,
         )
 
     needs_news_btn = len(unique) > HOME_HEADLINE_COUNT

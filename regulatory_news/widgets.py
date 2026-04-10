@@ -6,8 +6,6 @@ from datetime import datetime
 from html import escape
 from typing import Any
 
-import streamlit as st
-
 REGULATORY_HEADLINE_COUNT = 5
 
 
@@ -38,29 +36,30 @@ def render_regulatory_card_html(item: dict[str, Any]) -> str:
     )
 
 
-def render_regulatory_headlines_column(
+def build_home_regulatory_column_html(
     articles: list[dict[str, Any]],
     *,
     max_items: int | None = None,
-) -> None:
-    """
-    Heading + cards only (matches Latest Digital Asset News). Place **Explore all headlines →**
-    in a second ``st.columns`` row next to **Explore all articles →** so the primary buttons align.
-    """
+) -> str:
+    """Single HTML block for the home regulatory column (equal-height lane shell)."""
     limit = REGULATORY_HEADLINE_COUNT if max_items is None else max(1, max_items)
-
-    st.markdown(
+    parts = [
+        '<div class="jd-news-column-shell">',
+        '<div class="jd-news-column-inner">',
         '<h2 class="home-main-heading">Regulatory & Legal Headlines</h2>',
-        unsafe_allow_html=True,
-    )
-
+    ]
     if not articles:
-        st.caption("No regulatory headlines matched the filters yet. Try **Refresh feeds** in the sidebar.")
-        return
-
-    top = articles[:limit]
-    for item in top:
-        st.markdown(render_regulatory_card_html(item), unsafe_allow_html=True)
-
-    if len(articles) <= limit:
-        st.caption("Showing the most recent regulatory headlines from the combined RSS list.")
+        parts.append(
+            '<p class="jd-news-column-footnote">No regulatory headlines matched the filters yet. '
+            "Try <strong>Refresh feeds</strong> in the sidebar.</p>"
+        )
+    else:
+        for item in articles[:limit]:
+            parts.append(render_regulatory_card_html(item))
+        if len(articles) <= limit:
+            parts.append(
+                '<p class="jd-news-column-footnote">Showing the most recent regulatory headlines '
+                "from the combined RSS list.</p>"
+            )
+    parts.append("</div></div>")
+    return "".join(parts)
