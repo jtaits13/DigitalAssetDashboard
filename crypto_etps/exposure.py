@@ -1,4 +1,4 @@
-"""Infer exposure from issuer, fund name, and ticker rules (spot vs futures vs options vs basket)."""
+"""Infer exposure from issuer, fund name, and ticker rules (Spot vs Futures for the table)."""
 
 from __future__ import annotations
 
@@ -14,7 +14,9 @@ _SPOT_ISSUERS: tuple[str, ...] = (
     "21shares",
     "vaneck",
     "invesco galaxy",
+    "invesco",
     "franklin templeton",
+    "franklin",
     "wisdomtree",
     "coinshares",
     "volatility shares",
@@ -23,17 +25,16 @@ _SPOT_ISSUERS: tuple[str, ...] = (
 
 _FUTURES_ISSUERS: tuple[str, ...] = ("proshares",)
 
+# Leveraged / inverse / futures-structure (avoid bare "strategy" — too many false positives).
 _FUTURES_NAME_TERMS: tuple[str, ...] = (
-    "strategy",
     "futures",
     "ultra",
     "ultrashort",
     "leveraged",
-    "short",
     "inverse",
 )
 
-# Covered calls, options overlays, etc. — not spot single-asset funds.
+# Covered calls, options overlays, premium — not single-asset spot.
 _OPTIONS_NAME_PHRASES: tuple[str, ...] = (
     "covered call",
     "covered calls",
@@ -52,9 +53,28 @@ _OPTIONS_NAME_PHRASES: tuple[str, ...] = (
     "put spread",
     "call spread",
     "synthetic",
+    "premium income",
+    "yield enhancement",
+    "write strategy",
 )
 
-# If the fund name includes any of these (substring), we treat it as naming a specific crypto asset.
+# Multi-asset / broad index — not a single-coin spot product (name-only; works if issuer is missing).
+_BASKET_INDEX_PHRASES: tuple[str, ...] = (
+    "basket",
+    "crypto index",
+    "digital asset index",
+    "digital assets index",
+    "multi-asset",
+    "multi asset",
+    "multi-crypto",
+    "multi crypto",
+    "fund of funds",
+    "top 10",
+    "top 5",
+    "broad crypto",
+    "broad digital",
+)
+
 _NAMED_CRYPTO_SUBSTRINGS: tuple[str, ...] = (
     "bitcoin",
     "btc",
@@ -98,11 +118,27 @@ def _norm(s: str) -> str:
     return " ".join((s or "").lower().split())
 
 
+def _name_implies_basket_or_broad_index(name: str) -> bool:
+    """Multi-coin / index / basket products (issuer-independent)."""
+    n = _norm(name)
+    if any(p in n for p in _BASKET_INDEX_PHRASES):
+        return True
+    # e.g. "Bitwise 10 Crypto Index ETF"
+    if re.search(r"\b\d{1,2}\s+crypto\b", n):
+        return True
+    # "Franklin Crypto Index" / "… Crypto Index …"
+    if "crypto" in n and "index" in n:
+        return True
+    return False
+
+
 def _name_has_options_term(name: str) -> bool:
     n = _norm(name)
     if any(p in n for p in _OPTIONS_NAME_PHRASES):
         return True
-    # Standalone "options" / "option" as a product type (avoid matching "optional").
+    # Typo-tolerant covered call
+    if re.search(r"cover[ea]?d\s+calls?", n):
+        return True
     if re.search(r"\boptions\b", n):
         return True
     if re.search(r"\boption\b", n) and "optional" not in n:
@@ -110,11 +146,20 @@ def _name_has_options_term(name: str) -> bool:
     return False
 
 
-def _name_has_futures_term(name: str) -> bool:
+def _name_has_futures_or_leverage_term(name: str) -> bool:
     n = _norm(name)
     if any(term in n for term in _FUTURES_NAME_TERMS):
         return True
-    return bool(re.search(r"(^|\s)(?:2x|-2x)(\s|$)", n))
+    if re.search(r"(^|\s)(?:2x|-2x)(\s|$)", n):
+        return True
+    if re.search(r"\bshort\s+bitcoin\b", n) or re.search(r"\bshort\s+ether", n):
+        return True
+    if re.search(r"\bshort\s+btc\b", n):
+        return True
+    # "Inverse Bitcoin", etc.
+    if re.search(r"\binverse\s+(bitcoin|btc|ether|ethereum|crypto)\b", n):
+        return True
+    return False
 
 
 def _ticker_looks_futures(ticker: str) -> bool:
@@ -123,21 +168,18 @@ def _ticker_looks_futures(ticker: str) -> bool:
         return False
     if t in _FUTURES_TICKERS:
         return True
-    # Avoid single-letter symbols matching the suffix class (e.g. "X").
     if len(t) < 2:
         return False
     return bool(re.search(r"(?:U|D|X|S|I|2X|-2X)$", t))
 
 
 def _name_mentions_named_crypto(name: str) -> bool:
-    """True if the fund name appears to reference a specific digital asset (not generic 'crypto')."""
+    """True if the fund name references a specific digital asset (not generic 'crypto')."""
     n = _norm(name)
     if any(s in n for s in _NAMED_CRYPTO_SUBSTRINGS):
         return True
-    # Standalone "ether" (e.g. staked ether) but not "whether" / "ethereum" already covered.
     if re.search(r"\bether\b", n):
         return True
-    # Ticker-like token mentions occasionally appear in names.
     if re.search(r"\bxrp\b", n):
         return True
     if re.search(r"\bsol\b", n):
@@ -146,7 +188,10 @@ def _name_mentions_named_crypto(name: str) -> bool:
 
 
 def infer_spot_futures_exposure(symbol: str, name: str, issuer: str) -> str:
-    """Return ``Spot``, ``Futures``, ``Options``, or ``Basket``."""
+    """Return ``Spot`` or ``Futures`` only (table column).
+
+    Multi-asset index, basket, and options-overlay names are **Futures**, not Spot.
+    """
     sym = (symbol or "").strip().upper()
     nm = name or ""
     iss = _norm(issuer)
@@ -156,18 +201,19 @@ def infer_spot_futures_exposure(symbol: str, name: str, issuer: str) -> str:
         return "Futures"
     if any(x in iss for x in _FUTURES_ISSUERS):
         return "Futures"
+    # Broad index / basket — not single-asset spot; show as Futures in Exposure.
+    if _name_implies_basket_or_broad_index(nm):
+        return "Futures"
     if _name_has_options_term(nm):
-        return "Options"
-    if _name_has_futures_term(nm):
+        return "Futures"
+    if _name_has_futures_or_leverage_term(nm):
         return "Futures"
     if _ticker_looks_futures(sym):
         return "Futures"
     if sym in _SPOT_TICKERS:
         return "Spot"
-    if "basket" in n:
-        return "Basket"
     if any(x in iss for x in _SPOT_ISSUERS):
         if not _name_mentions_named_crypto(nm):
-            return "Basket"
+            return "Futures"
         return "Spot"
     return "Futures"
