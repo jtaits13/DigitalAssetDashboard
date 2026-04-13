@@ -78,7 +78,7 @@ WIDGET_CSS = """
 
 RWA_DATA_SOURCE_CAPTION = (
     "Source: [RWA.xyz](https://app.rwa.xyz/) homepage embedded data "
-    "(Global Market Overview + Networks · All; not the public API)."
+    "(Global Market Overview + Networks league **Distributed** tab; not the public API)."
 )
 
 
@@ -174,7 +174,7 @@ def _show_rwa_dataframe(df, *, height: int) -> None:
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
-def load_rwa_league_cached(*, _rwa_schema: int = 2) -> tuple[list[RwaNetworkLeagueRow], list[RwaGlobalKpi], str | None]:
+def load_rwa_league_cached(*, _rwa_schema: int = 3) -> tuple[list[RwaNetworkLeagueRow], list[RwaGlobalKpi], str | None]:
     """Bump ``_rwa_schema`` when homepage payload shape changes."""
     _ = _rwa_schema
     return fetch_rwa_home_data()
@@ -199,7 +199,7 @@ def show_rwa_league_widget(
     if err and not rows:
         st.markdown(
             '<div class="rwa-league-shell">'
-            '<h2 class="home-main-heading">RWA League Table · Networks (All)</h2></div>',
+            '<h2 class="home-main-heading">RWA League Table · Networks (Distributed)</h2></div>',
             unsafe_allow_html=True,
         )
         st.warning(escape(err))
@@ -212,7 +212,7 @@ def show_rwa_league_widget(
 
     st.markdown(
         '<div class="rwa-league-shell">'
-        '<h2 class="home-main-heading">RWA League Table · Networks (All)</h2>'
+        '<h2 class="home-main-heading">RWA League Table · Networks (Distributed)</h2>'
         "</div>",
         unsafe_allow_html=True,
     )

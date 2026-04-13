@@ -62,11 +62,12 @@ def _extract_next_data(html: str) -> dict[str, Any] | None:
 
 
 def _network_rows_from_props(props: dict[str, Any]) -> list[dict[str, Any]] | None:
+    """Networks league rows for the **Distributed** tab (not All / Represented)."""
     lt = props.get("pageProps", {}).get("leagueTableTabs", {})
-    all_tabs = lt.get("all")
-    if not isinstance(all_tabs, list):
+    bucket = lt.get("distributed")
+    if not isinstance(bucket, list):
         return None
-    for tab in all_tabs:
+    for tab in bucket:
         if isinstance(tab, dict) and tab.get("key") == "parent_networks":
             data = tab.get("data") or {}
             rows = data.get("rows")
@@ -187,7 +188,7 @@ def _fetch_props_payload() -> tuple[dict[str, Any] | None, str | None]:
 
 def fetch_rwa_home_data() -> tuple[list[RwaNetworkLeagueRow], list[RwaGlobalKpi], str | None]:
     """
-    Homepage Networks league (All) plus Global Market Overview aggregates.
+    Homepage Networks league (**Distributed** tab) plus Global Market Overview aggregates.
 
     Percentage change in total value comes from **`value_7d_change`** on each league row.
     Overview metrics use **30d** ``percentChange`` when present.
@@ -207,6 +208,6 @@ def fetch_rwa_home_data() -> tuple[list[RwaNetworkLeagueRow], list[RwaGlobalKpi]
 
 
 def fetch_rwa_network_league() -> tuple[list[RwaNetworkLeagueRow], str | None]:
-    """Return Networks league table only (same as homepage default)."""
+    """Return Networks league table for the **Distributed** view only."""
     rows, _, err = fetch_rwa_home_data()
     return rows, err

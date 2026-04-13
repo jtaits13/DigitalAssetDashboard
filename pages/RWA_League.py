@@ -33,7 +33,7 @@ def main() -> None:
     show_price_ticker()
 
     st.caption(
-        "Full table with search. Data from the RWA.xyz homepage embed (Networks · All)."
+        "Full table with search. Data from the RWA.xyz homepage embed (Networks · Distributed)."
     )
 
     show_rwa_league_widget(home_preview=False)
