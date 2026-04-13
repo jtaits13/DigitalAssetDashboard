@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import html as html_module
 import re
 from datetime import datetime, timezone
 from typing import Any
@@ -16,7 +17,7 @@ ETP_NEWS_FEEDS: list[tuple[str, str]] = [
     ("Decrypt", "https://decrypt.co/feed"),
 ]
 
-# Must look like a digital-asset / crypto context (not generic equity ETFs).
+# Must look like a digital-asset / crypto context (title or summary).
 _CRYPTO = re.compile(
     r"(?is)\b(?:"
     r"crypto(?:currency|currencies)?|bitcoin|\bbtc\b|ethereum|\beth\b|digital\s+assets?|"
@@ -25,13 +26,36 @@ _CRYPTO = re.compile(
     r")\b",
 )
 
-# ETF, ETP, or spelled-out exchange-traded fund / product.
-_ETF_ETP = re.compile(
-    r"(?is)\b(?:"
-    r"etfs?\b|etps?\b|"
-    r"exchange[\s-]traded(?:\s+funds?|\s+products?)"
-    r")\b",
+# ETF / ETP tokens and spelled-out forms — applied only to the **normalized headline** (not summary).
+_RE_ETF_TOKENS = re.compile(
+    r"(?is)(?<![a-z0-9])(?:etf|etfs|etp|etps)(?![a-z0-9])",
 )
+_RE_EXCHANGE_TRADED = re.compile(
+    r"(?is)exchange\s*[-]?\s*traded\s+(?:fund|funds|product|products)\b",
+)
+
+
+def _normalize_headline(raw: str) -> str:
+    """Strip tags / entities so we only inspect visible headline text (matches what users see)."""
+    t = html_module.unescape(raw or "")
+    t = re.sub(r"(?s)<[^>]+>", " ", t)
+    t = re.sub(r"\s+", " ", t).strip()
+    return t
+
+
+def title_mentions_etf_or_etp_vehicle(title: str) -> bool:
+    """
+    True only if the visible headline (after stripping HTML) contains ETF/ETP tokens or
+    “exchange-traded fund(s)/product(s)”. Summary text is **not** considered.
+    """
+    t = _normalize_headline(title).lower()
+    if not t:
+        return False
+    if _RE_ETF_TOKENS.search(t):
+        return True
+    if _RE_EXCHANGE_TRADED.search(t):
+        return True
+    return False
 
 
 def _title_and_blob(a: dict[str, Any]) -> tuple[str, str]:
@@ -43,12 +67,12 @@ def _title_and_blob(a: dict[str, Any]) -> tuple[str, str]:
 def is_crypto_etf_or_etp_article(a: dict[str, Any]) -> bool:
     """
     Include only if **ETF / ETP** (or spelled-out exchange-traded fund/product) appears in the
-    **headline title**, and the piece still looks crypto-related (title or summary).
+    **headline title** (not the RSS summary alone), and the piece still looks crypto-related.
     """
     title, blob = _title_and_blob(a)
     if not title:
         return False
-    if not _ETF_ETP.search(title):
+    if not title_mentions_etf_or_etp_vehicle(title):
         return False
     if not _CRYPTO.search(blob):
         return False
@@ -71,7 +95,9 @@ def pick_crypto_etf_headlines(
 
 
 @st.cache_data(ttl=1800, show_spinner=False)
-def load_etp_market_news_cached() -> list[dict[str, Any]]:
+def load_etp_market_news_cached(_filter_rev: int = 5) -> list[dict[str, Any]]:
+    """Bump ``_filter_rev`` default when headline-matching rules change (invalidates Streamlit cache)."""
+    _ = _filter_rev
     combined, _errors = load_all_feeds(ETP_NEWS_FEEDS)
     combined = dedupe_articles(combined, max_items=None)
     combined.sort(
