@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from html import escape
-from typing import Any
 
 import streamlit as st
 
@@ -20,10 +19,6 @@ from crypto_etps.dataframe_table import (
     build_etp_dataframe,
     filter_rows_by_fund_name,
     style_etp_dataframe,
-)
-from crypto_etps.etp_market_news import (
-    build_etp_market_news_box_html,
-    load_etp_market_news_cached,
 )
 from home_layout import STREAMLIT_TABLE_UNIFY_CSS
 
@@ -62,7 +57,6 @@ def clear_crypto_etp_cache() -> None:
     load_crypto_etps_cached.clear()
     clear_sec_prospectus_caches()
     load_aggregate_aum_history_cached.clear()
-    load_etp_market_news_cached.clear()
 
 
 def _default_ua() -> str:
@@ -82,69 +76,15 @@ ETP_DATA_SOURCE_CAPTION = (
 
 _SORT = "\u2195"
 
-_HOME_PREVIEW_COLUMNS: tuple[str, ...] = ("Symbol", "Fund Name", "52W %", "Assets (B)")
 
-
-def _etp_column_config() -> dict[str, Any]:
-    return {
-        "Symbol": st.column_config.TextColumn(
-            f"Symbol {_SORT}",
-            width="small",
-        ),
-        "Fund Name": st.column_config.TextColumn(
-            f"Fund Name {_SORT}",
-            width="large",
-        ),
-        "Price": st.column_config.NumberColumn(
-            f"Price {_SORT}",
-            format="$%.2f",
-            width="small",
-        ),
-        "52W %": st.column_config.NumberColumn(
-            f"52W % {_SORT}",
-            format=None,
-            width="small",
-            help="Past-year return from fund narrative (proxy for 52-week %)",
-        ),
-        "Assets (B)": st.column_config.NumberColumn(
-            f"Assets (B) {_SORT}",
-            format=None,
-            width="small",
-        ),
-        "Issuer": st.column_config.TextColumn(
-            f"Issuer {_SORT}",
-            width="medium",
-        ),
-        "Inception": st.column_config.DatetimeColumn(
-            f"Inception {_SORT}",
-            format="YYYY-MM-DD",
-            width="small",
-        ),
-        "Fund Filing": st.column_config.LinkColumn(
-            f"Fund Filing {_SORT}",
-            display_text="↗",
-            validate=r"^https://",
-            width="small",
-            help="SEC EDGAR filing index or S-1 / search fallback",
-        ),
-    }
-
-
-def show_etp_dataframe(
-    df,
-    *,
-    height: int,
-    columns: tuple[str, ...] | list[str] | None = None,
-) -> None:
-    """Render styled dataframe. Pass ``columns`` to show a subset (e.g. home preview)."""
-    if columns is not None:
-        cols = tuple(columns)
-        df = df.loc[:, list(cols)].copy()
-        full_cfg = _etp_column_config()
-        cfg = {k: full_cfg[k] for k in cols if k in full_cfg}
-        order = list(cols)
-    else:
-        order = [
+def show_etp_dataframe(df, *, height: int) -> None:
+    """Render styled dataframe (sortable Glide table). Fund Filing uses a link arrow like RWA Page."""
+    st.dataframe(
+        style_etp_dataframe(df),
+        use_container_width=True,
+        height=height,
+        hide_index=True,
+        column_order=[
             "Symbol",
             "Fund Name",
             "Price",
@@ -153,16 +93,49 @@ def show_etp_dataframe(
             "Issuer",
             "Inception",
             "Fund Filing",
-        ]
-        cfg = _etp_column_config()
-
-    st.dataframe(
-        style_etp_dataframe(df),
-        use_container_width=True,
-        height=height,
-        hide_index=True,
-        column_order=order,
-        column_config=cfg,
+        ],
+        column_config={
+            "Symbol": st.column_config.TextColumn(
+                f"Symbol {_SORT}",
+                width="small",
+            ),
+            "Fund Name": st.column_config.TextColumn(
+                f"Fund Name {_SORT}",
+                width="large",
+            ),
+            "Price": st.column_config.NumberColumn(
+                f"Price {_SORT}",
+                format="$%.2f",
+                width="small",
+            ),
+            "52W %": st.column_config.NumberColumn(
+                f"52W % {_SORT}",
+                format=None,
+                width="small",
+                help="Past-year return from fund narrative (proxy for 52-week %)",
+            ),
+            "Assets (B)": st.column_config.NumberColumn(
+                f"Assets (B) {_SORT}",
+                format=None,
+                width="small",
+            ),
+            "Issuer": st.column_config.TextColumn(
+                f"Issuer {_SORT}",
+                width="medium",
+            ),
+            "Inception": st.column_config.DatetimeColumn(
+                f"Inception {_SORT}",
+                format="YYYY-MM-DD",
+                width="small",
+            ),
+            "Fund Filing": st.column_config.LinkColumn(
+                f"Fund Filing {_SORT}",
+                display_text="↗",
+                validate=r"^https://",
+                width="small",
+                help="SEC EDGAR filing index or S-1 / search fallback",
+            ),
+        },
     )
 
 
@@ -221,27 +194,12 @@ def show_us_crypto_etps_widget(
     cap = preview_row_limit if home_preview else 10
     display_rows = filtered[:cap]
     df = build_etp_dataframe(display_rows)
-    if home_preview:
-        etp_news = load_etp_market_news_cached()
-        col_tbl, col_news = st.columns([1.08, 1], gap="large")
-        with col_tbl:
-            show_etp_dataframe(
-                df,
-                height=etp_table_height(len(df)),
-                columns=_HOME_PREVIEW_COLUMNS,
-            )
-        with col_news:
-            st.markdown(
-                build_etp_market_news_box_html(etp_news),
-                unsafe_allow_html=True,
-            )
-    else:
-        show_etp_dataframe(df, height=etp_table_height(len(df)))
+    show_etp_dataframe(df, height=etp_table_height(len(df)))
     st.caption(ETP_DATA_SOURCE_CAPTION)
 
     if home_preview:
         st.caption(
-            f"Preview: top **{min(cap, len(filtered))}** funds by assets (key columns). "
+            f"Preview: top **{min(cap, len(filtered))}** funds by assets. "
             "Open the full list for search, every fund, and fund filing links."
         )
 
