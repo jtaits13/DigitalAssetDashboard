@@ -61,7 +61,7 @@ def build_etp_dataframe(rows: list[CryptoEtpRow], *, include_strategy: bool = Fa
             "Fund Filing": fund_filing,
         }
         if include_strategy:
-            rec["Exposure"] = infer_spot_futures_exposure(r.etf_about, r.index_tracked)
+            rec["Exposure"] = infer_spot_futures_exposure(r.symbol, r.name, issuer)
             rec["Strategy"] = format_strategy_cell(r.etf_about, r.index_tracked)
         records.append(rec)
     return pd.DataFrame(records)

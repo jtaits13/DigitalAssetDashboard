@@ -1,77 +1,88 @@
-"""Infer spot vs. futures exposure from StockAnalysis ETF About + Index Tracked text.
-
-Heuristics only (not legal advice). Tuned on live copy: e.g. IBIT ``track the spot price``,
-BITO ``front-month CME bitcoin futures``. Index names like ``CME CF Bitcoin Reference Rate``
-do **not** imply futures exposure.
-"""
+"""Infer spot vs. futures exposure from issuer, fund name, and ticker rules."""
 
 from __future__ import annotations
 
-# Substrings in About / Index Tracked (lowercased).
-_FUTURES_NEEDLES: tuple[str, ...] = (
-    "bitcoin futures",
-    "ethereum futures",
-    "ether futures",
-    "micro bitcoin futures",
-    "micro ether futures",
-    "micro ethereum futures",
-    "cme bitcoin futures",
-    "cme ether futures",
-    "cme ethereum futures",
-    "futures contracts",
-    "front-month cme",
-    "portfolio of front-month",
-    "invests primarily in futures",
-    "invests in bitcoin futures",
-    "invests in ether futures",
-    "invests in ethereum futures",
-    "managed portfolio of futures",
-    "basket of bitcoin futures",
-    "basket of ether futures",
-    "bitcoin futures subindex",
-    "ether futures subindex",
+import re
+
+_SPOT_ISSUERS: tuple[str, ...] = (
+    "blackrock",
+    "ishares",
+    "fidelity",
+    "grayscale",
+    "bitwise",
+    "ark",
+    "21shares",
+    "vaneck",
+    "invesco galaxy",
+    "franklin templeton",
+    "wisdomtree",
+    "coinshares",
+    "volatility shares",
+    "canary",
 )
 
-_SPOT_NEEDLES: tuple[str, ...] = (
-    "track the spot price",
-    "tracks the spot price",
-    "spot price of bitcoin",
-    "spot price of ether",
-    "spot price of ethereum",
-    "physically backed",
-    "physical bitcoin",
-    "physical ether",
-    "holds bitcoin",
-    "holds ether",
-    "custody of bitcoin",
-    "custody of ether",
+_FUTURES_ISSUERS: tuple[str, ...] = ("proshares",)
+
+_FUTURES_NAME_TERMS: tuple[str, ...] = (
+    "strategy",
+    "futures",
+    "ultra",
+    "ultrashort",
+    "leveraged",
+    "short",
+    "inverse",
 )
 
+_SPOT_TICKERS: set[str] = {
+    "BTC", "IBIT", "FBTC", "BITB", "ARKB", "HODL", "BTCO", "BRRR", "EZBC", "BTCW",
+    "ETHA", "ETH", "ETHE", "FETH", "ETHV", "QETH", "EZET", "ETHB", "TETH",
+    "BSOL", "GSOL", "FSOL", "VSOL", "SOEZ", "SOLC", "TSOL",
+    "XRP", "XRPC", "XRPZ", "XRPI", "TOXR", "XRPR",
+    "GLNK", "CLNK",
+    "GSUI", "TSUI",
+    "GAVA",
+    "GDOG", "TDOG", "BWOW",
+}
 
-def infer_spot_futures_exposure(about: str, index_tracked: str) -> str:
-    """Return ``Spot``, ``Futures``, or ``—``."""
-    blob = f"{about or ''} {index_tracked or ''}".lower()
-    if not blob.strip():
-        return "—"
+_FUTURES_TICKERS: set[str] = {"BITO", "BITX", "BITI", "SBIT", "ETHU", "ETHT", "ETHD", "EETH"}
 
-    f_hit = any(n in blob for n in _FUTURES_NEEDLES)
-    s_hit = any(n in blob for n in _SPOT_NEEDLES)
 
-    if f_hit and not s_hit:
+def _norm(s: str) -> str:
+    return " ".join((s or "").lower().split())
+
+
+def _name_has_futures_term(name: str) -> bool:
+    n = _norm(name)
+    if any(term in n for term in _FUTURES_NAME_TERMS):
+        return True
+    return bool(re.search(r"(^|\s)(?:2x|-2x)(\s|$)", n))
+
+
+def _ticker_looks_futures(ticker: str) -> bool:
+    t = (ticker or "").strip().upper()
+    if not t:
+        return False
+    if t in _FUTURES_TICKERS:
+        return True
+    return bool(re.search(r"(?:U|D|X|S|I|2X|-2X)$", t))
+
+
+def infer_spot_futures_exposure(symbol: str, name: str, issuer: str) -> str:
+    """Return ``Spot`` or ``Futures`` using issuer/name/ticker rules."""
+    sym = (symbol or "").strip().upper()
+    nm = name or ""
+    iss = _norm(issuer)
+
+    if sym == "EETH":
         return "Futures"
-    if s_hit and not f_hit:
+    if any(x in iss for x in _FUTURES_ISSUERS):
+        return "Futures"
+    if _name_has_futures_term(nm):
+        return "Futures"
+    if _ticker_looks_futures(sym):
+        return "Futures"
+    if sym in _SPOT_TICKERS:
         return "Spot"
-    if f_hit and s_hit:
-        # Rare mixed wording; prefer explicit futures contract language.
-        strong_f = any(
-            n in blob
-            for n in (
-                "bitcoin futures",
-                "ethereum futures",
-                "ether futures",
-                "futures contracts",
-                "front-month cme",
-            )
-        )
-        return "Futures" if strong_f else "Spot"
-    return "—"
+    if any(x in iss for x in _SPOT_ISSUERS):
+        return "Spot"
+    return "Futures"
