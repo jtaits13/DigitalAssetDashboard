@@ -21,6 +21,10 @@ from crypto_etps.dataframe_table import (
     build_etp_dataframe,
     filter_rows_by_fund_name,
 )
+from crypto_etps.etp_market_news import (
+    build_etp_market_news_box_html,
+    load_etp_market_news_cached,
+)
 from crypto_etps.widgets import (
     ETP_DATA_SOURCE_CAPTION,
     etp_table_height,
@@ -62,6 +66,15 @@ def main() -> None:
         "Data from [StockAnalysis.com](https://stockanalysis.com/list/crypto-etfs/) "
         "and each fund’s detail page (issuer, inception, past-year return as 52W %)."
     )
+
+    with st.spinner("Loading crypto ETF / ETP headlines (RSS)…"):
+        etp_pulse = load_etp_market_news_cached()
+    st.markdown(
+        build_etp_market_news_box_html(etp_pulse),
+        unsafe_allow_html=True,
+    )
+
+    st.divider()
 
     with st.spinner("Loading U.S. digital asset ETPs (list + profile pages)…"):
         data = load_crypto_etps_cached(resolve_etp_user_agent(get_etp_user_agent_from_secrets()))

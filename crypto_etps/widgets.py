@@ -20,6 +20,7 @@ from crypto_etps.dataframe_table import (
     filter_rows_by_fund_name,
     style_etp_dataframe,
 )
+from crypto_etps.etp_market_news import load_etp_market_news_cached
 from home_layout import STREAMLIT_TABLE_UNIFY_CSS
 
 WIDGET_CSS = """
@@ -57,6 +58,7 @@ def clear_crypto_etp_cache() -> None:
     load_crypto_etps_cached.clear()
     clear_sec_prospectus_caches()
     load_aggregate_aum_history_cached.clear()
+    load_etp_market_news_cached.clear()
 
 
 def _default_ua() -> str:
