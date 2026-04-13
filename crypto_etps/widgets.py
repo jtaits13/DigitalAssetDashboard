@@ -118,7 +118,7 @@ def show_etp_dataframe(df, *, height: int, include_strategy_column: bool = False
         "Exposure": st.column_config.TextColumn(
             f"Exposure {_SORT}",
             width="small",
-            help="Spot vs. futures inferred from StockAnalysis About + Index Tracked (heuristic).",
+            help="Spot, Futures, Options (e.g. covered calls), or Basket — from issuer, name, and ticker rules.",
         ),
         "Strategy": st.column_config.TextColumn(
             f"Strategy {_SORT}",
