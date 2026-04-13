@@ -133,7 +133,7 @@ def main() -> None:
 
     filtered = filter_rows_by_fund_name(rows, q)
     sorted_rows = sorted_by_assets(filtered)
-    df = build_etp_dataframe(sorted_rows)
+    df = build_etp_dataframe(sorted_rows, include_strategy=True)
 
     if q.strip():
         st.caption(
@@ -142,7 +142,11 @@ def main() -> None:
     else:
         st.caption(f"Showing all {len(sorted_rows)} funds.")
 
-    show_etp_dataframe(df, height=etp_table_height(len(df), max_h=900))
+    show_etp_dataframe(
+        df,
+        height=etp_table_height(len(df), max_h=900),
+        include_strategy_column=True,
+    )
     st.caption(ETP_DATA_SOURCE_CAPTION)
     st.caption(
         f"Last loaded at {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "

@@ -15,6 +15,22 @@ from crypto_etps.client import CryptoEtpRow, format_usd_compact
 from crypto_etps.sec_prospectus import edgar_s1_fallback_url
 
 
+def format_strategy_cell(about: str, index_tracked: str) -> str:
+    """One table cell: Index Tracked line (if any) + About narrative from StockAnalysis."""
+    parts: list[str] = []
+    idx = (index_tracked or "").strip()
+    ab = (about or "").strip()
+    if idx:
+        parts.append(f"Index: {idx}")
+    if ab:
+        if len(ab) > 320:
+            ab = ab[:317] + "…"
+        parts.append(ab)
+    if not parts:
+        return "—"
+    return "\n".join(parts)
+
+
 def _parse_price(s: str) -> float:
     s = (s or "").strip().replace(",", "").replace("$", "")
     if not s:
@@ -25,26 +41,27 @@ def _parse_price(s: str) -> float:
         return np.nan
 
 
-def build_etp_dataframe(rows: list[CryptoEtpRow]) -> pd.DataFrame:
+def build_etp_dataframe(rows: list[CryptoEtpRow], *, include_strategy: bool = False) -> pd.DataFrame:
     """Numeric / datetime columns for correct sorting in st.dataframe."""
     records: list[dict[str, object]] = []
     for r in rows:
         inc = pd.to_datetime(r.inception, errors="coerce") if (r.inception or "").strip() else pd.NaT
         issuer = (r.issuer or "").strip()
         fund_filing = (r.fund_filing_url or "").strip() or edgar_s1_fallback_url(r.symbol)
-        records.append(
-            {
-                "Symbol": r.symbol,
-                "Fund Name": r.name,
-                "Price": _parse_price(r.price),
-                "52W %": r.pct_52w if r.pct_52w is not None else np.nan,
-                "Assets (B)": (r.assets_usd / 1e9) if r.assets_usd is not None else np.nan,
-                # Empty string so client-side sort is A–Z / Z–A (NaN sorts oddly as text).
-                "Issuer": issuer,
-                "Inception": inc,
-                "Fund Filing": fund_filing,
-            }
-        )
+        rec: dict[str, object] = {
+            "Symbol": r.symbol,
+            "Fund Name": r.name,
+            "Price": _parse_price(r.price),
+            "52W %": r.pct_52w if r.pct_52w is not None else np.nan,
+            "Assets (B)": (r.assets_usd / 1e9) if r.assets_usd is not None else np.nan,
+            # Empty string so client-side sort is A–Z / Z–A (NaN sorts oddly as text).
+            "Issuer": issuer,
+            "Inception": inc,
+            "Fund Filing": fund_filing,
+        }
+        if include_strategy:
+            rec["Strategy"] = format_strategy_cell(r.etf_about, r.index_tracked)
+        records.append(rec)
     return pd.DataFrame(records)
 
 
