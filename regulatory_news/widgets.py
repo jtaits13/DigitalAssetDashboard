@@ -63,3 +63,7 @@ def build_home_regulatory_column_html(
             )
     parts.append("</div></div>")
     return "".join(parts)
+
+
+# `streamlit_app` imports this name (same builder as `build_home_regulatory_column_html`).
+build_home_regulatory_lane_body_html = build_home_regulatory_column_html
