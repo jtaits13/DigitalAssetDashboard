@@ -1,5 +1,5 @@
 """
-Fetch RWA.xyz homepage embedded league table (Networks) from Next.js __NEXT_DATA__.
+Fetch RWA.xyz homepage data from Next.js __NEXT_DATA__: Networks league + Global Market Overview.
 
 Not an official API; structure may change. For production use RWA.xyz's data products.
 """
@@ -13,6 +13,8 @@ from dataclasses import dataclass
 from typing import Any
 
 import requests
+
+from crypto_etps.client import format_usd_compact
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +35,15 @@ class RwaNetworkLeagueRow:
     market_share_raw: float  # fraction 0–1
     # Optional fractional 7D change in market share (if present in embedded payload).
     market_share_change_7d_raw: float | None
+
+
+@dataclass(frozen=True)
+class RwaGlobalKpi:
+    """One card from the homepage “Global Market Overview” (``pageProps.aggregates``)."""
+
+    label: str
+    value_display: str
+    delta_30d_pct: float | None  # fractional change e.g. 0.075 for +7.5%
 
 
 def _extract_next_data(html: str) -> dict[str, Any] | None:
@@ -64,29 +75,43 @@ def _network_rows_from_props(props: dict[str, Any]) -> list[dict[str, Any]] | No
     return None
 
 
-def fetch_rwa_network_league() -> tuple[list[RwaNetworkLeagueRow], str | None]:
-    """
-    Return Networks league table for the 'All' view (same as homepage default).
+def _format_aggregate_value(raw: dict[str, Any]) -> str:
+    typ = str(raw.get("type") or "")
+    val = raw.get("value")
+    if typ in ("dollar_compact",):
+        if isinstance(val, (int, float)):
+            return format_usd_compact(float(val))
+        return "—"
+    if typ in ("count", "count_compact"):
+        if isinstance(val, (int, float)):
+            return f"{int(round(float(val))):,}"
+        return "—"
+    if isinstance(val, (int, float)):
+        return f"{val:,.4g}" if isinstance(val, float) and val != int(val) else f"{int(val):,}"
+    return str(val) if val is not None else "—"
 
-    Percentage change in total value comes from **`value_7d_change`** on each row.
-    The embed does **not** include a 30-day total-value change field.
-    """
-    headers = {"User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml"}
-    try:
-        r = requests.get(APP_HOME, headers=headers, timeout=60)
-        r.raise_for_status()
-    except (requests.RequestException, OSError) as e:
-        logger.debug("RWA fetch: %s", e)
-        return [], str(e)
 
-    payload = _extract_next_data(r.text)
-    if not payload:
-        return [], "Could not parse __NEXT_DATA__ from app.rwa.xyz (layout may have changed)."
+def _parse_aggregates(props: dict[str, Any]) -> list[RwaGlobalKpi]:
+    ag = props.get("pageProps", {}).get("aggregates")
+    if not isinstance(ag, list):
+        return []
+    out: list[RwaGlobalKpi] = []
+    for item in ag:
+        if not isinstance(item, dict):
+            continue
+        label = str(item.get("label") or "").strip() or "—"
+        disp = _format_aggregate_value(item)
+        pc = item.get("percentChange")
+        delta: float | None = None
+        if isinstance(pc, dict):
+            v = pc.get("value")
+            if isinstance(v, (int, float)):
+                delta = float(v)
+        out.append(RwaGlobalKpi(label=label, value_display=disp, delta_30d_pct=delta))
+    return out
 
-    raw_rows = _network_rows_from_props(payload.get("props", {}))
-    if not raw_rows:
-        return [], "Networks league table not found in page data."
 
+def _rows_from_raw(raw_rows: list[dict[str, Any]]) -> list[RwaNetworkLeagueRow]:
     out: list[RwaNetworkLeagueRow] = []
     for row in raw_rows:
         if not isinstance(row, dict):
@@ -139,5 +164,49 @@ def fetch_rwa_network_league() -> tuple[list[RwaNetworkLeagueRow], str | None]:
                 market_share_change_7d_raw=ms7,
             )
         )
+    return out
 
-    return out, None
+
+def _fetch_props_payload() -> tuple[dict[str, Any] | None, str | None]:
+    headers = {"User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml"}
+    try:
+        r = requests.get(APP_HOME, headers=headers, timeout=60)
+        r.raise_for_status()
+    except (requests.RequestException, OSError) as e:
+        logger.debug("RWA fetch: %s", e)
+        return None, str(e)
+
+    payload = _extract_next_data(r.text)
+    if not payload:
+        return None, "Could not parse __NEXT_DATA__ from app.rwa.xyz (layout may have changed)."
+    props = payload.get("props")
+    if not isinstance(props, dict):
+        return None, "Invalid __NEXT_DATA__ structure."
+    return props, None
+
+
+def fetch_rwa_home_data() -> tuple[list[RwaNetworkLeagueRow], list[RwaGlobalKpi], str | None]:
+    """
+    Homepage Networks league (All) plus Global Market Overview aggregates.
+
+    Percentage change in total value comes from **`value_7d_change`** on each league row.
+    Overview metrics use **30d** ``percentChange`` when present.
+    """
+    props, err = _fetch_props_payload()
+    if err:
+        return [], [], err
+    assert props is not None
+
+    raw_rows = _network_rows_from_props(props)
+    if not raw_rows:
+        kpis = _parse_aggregates(props)
+        return [], kpis, "Networks league table not found in page data."
+
+    kpis = _parse_aggregates(props)
+    return _rows_from_raw(raw_rows), kpis, None
+
+
+def fetch_rwa_network_league() -> tuple[list[RwaNetworkLeagueRow], str | None]:
+    """Return Networks league table only (same as homepage default)."""
+    rows, _, err = fetch_rwa_home_data()
+    return rows, err

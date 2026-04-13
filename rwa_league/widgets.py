@@ -7,7 +7,11 @@ from html import escape
 import streamlit as st
 
 from home_layout import STREAMLIT_TABLE_UNIFY_CSS
-from rwa_league.client import RwaNetworkLeagueRow, fetch_rwa_network_league
+from rwa_league.client import (
+    RwaGlobalKpi,
+    RwaNetworkLeagueRow,
+    fetch_rwa_home_data,
+)
 from rwa_league.dataframe_table import (
     build_rwa_dataframe,
     filter_rows_by_network,
@@ -28,13 +32,50 @@ WIDGET_CSS = """
 .rwa-league-shell h2.home-main-heading {
     margin-bottom: 0.35rem;
 }
+.rwa-kpi-line {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #0f172a;
+    margin: 0.35rem 0 0.65rem 0;
+    line-height: 1.45;
+}
+.rwa-kpi-line .rwa-kpi-item {
+    display: inline-block;
+    margin-right: 0.35rem;
+}
 </style>
 """
 
 RWA_DATA_SOURCE_CAPTION = (
     "Source: [RWA.xyz](https://app.rwa.xyz/) homepage embedded data "
-    "(Networks · All view; not the public API)."
+    "(Global Market Overview + Networks · All; not the public API)."
 )
+
+
+def _format_kpi_delta(pct: float | None) -> str | None:
+    if pct is None:
+        return None
+    # payload is fractional change (e.g. 0.075 → +7.50%)
+    return f"{pct * 100:+.2f}% (30d)"
+
+
+def _render_rwa_global_overview(kpis: list[RwaGlobalKpi]) -> None:
+    """One block under the heading, similar weight to the ETP total AUM line."""
+    if not kpis:
+        return
+    parts: list[str] = []
+    for k in kpis:
+        delta = _format_kpi_delta(k.delta_30d_pct)
+        extra = f" <span class='rwa-kpi-delta'>({escape(delta)})</span>" if delta else ""
+        parts.append(
+            f"<span class='rwa-kpi-item'><strong>{escape(k.label)}:</strong> "
+            f"{escape(k.value_display)}{extra}</span>"
+        )
+    inner = " <span style='color:#94a3b8'>·</span> ".join(parts)
+    st.markdown(
+        f'<p class="rwa-kpi-line">{inner}</p>',
+        unsafe_allow_html=True,
+    )
 _SORT = "\u2195"
 
 
@@ -105,8 +146,10 @@ def _show_rwa_dataframe(df, *, height: int) -> None:
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
-def load_rwa_league_cached() -> tuple[list[RwaNetworkLeagueRow], str | None]:
-    return fetch_rwa_network_league()
+def load_rwa_league_cached(*, _rwa_schema: int = 2) -> tuple[list[RwaNetworkLeagueRow], list[RwaGlobalKpi], str | None]:
+    """Bump ``_rwa_schema`` when homepage payload shape changes."""
+    _ = _rwa_schema
+    return fetch_rwa_home_data()
 
 
 def clear_rwa_league_cache() -> None:
@@ -123,7 +166,7 @@ def show_rwa_league_widget(
     with a link to the full page — similar to a CoinDesk section teaser.
     """
     st.markdown(WIDGET_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
-    rows, err = load_rwa_league_cached()
+    rows, kpis, err = load_rwa_league_cached()
 
     if err and not rows:
         st.markdown(
@@ -132,6 +175,7 @@ def show_rwa_league_widget(
             unsafe_allow_html=True,
         )
         st.warning(escape(err))
+        _render_rwa_global_overview(kpis)
         return
 
     if not rows:
@@ -144,6 +188,8 @@ def show_rwa_league_widget(
         "</div>",
         unsafe_allow_html=True,
     )
+
+    _render_rwa_global_overview(kpis)
 
     working = list(rows)
     if home_preview:
