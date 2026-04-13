@@ -40,7 +40,7 @@ from price_ticker import show_price_ticker
 
 def main() -> None:
     st.set_page_config(
-        page_title="U.S. Crypto ETPs — JPM Digital",
+        page_title="U.S. Digital Asset ETPs — JPM Digital",
         page_icon="◆",
         layout="wide",
         initial_sidebar_state="expanded",
@@ -55,7 +55,7 @@ def main() -> None:
     show_price_ticker()
 
     st.markdown(
-        '<h2 class="home-main-heading">U.S. Crypto ETPs — Full List</h2>',
+        '<h2 class="home-main-heading">U.S. Digital Asset ETPs — Full List</h2>',
         unsafe_allow_html=True,
     )
     st.caption(
@@ -63,7 +63,7 @@ def main() -> None:
         "and each fund’s detail page (issuer, inception, past-year return as 52W %)."
     )
 
-    with st.spinner("Loading U.S. crypto ETPs (list + profile pages)…"):
+    with st.spinner("Loading U.S. digital asset ETPs (list + profile pages)…"):
         data = load_crypto_etps_cached(resolve_etp_user_agent(get_etp_user_agent_from_secrets()))
 
     if data.error and not data.rows:

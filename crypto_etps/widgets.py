@@ -152,13 +152,13 @@ def show_us_crypto_etps_widget(
     st.markdown(WIDGET_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
 
     ua = resolve_etp_user_agent(user_agent)
-    with st.spinner("Loading U.S. crypto ETPs (list + profile pages)…"):
+    with st.spinner("Loading U.S. digital asset ETPs (list + profile pages)…"):
         data = load_crypto_etps_cached(ua)
 
     if data.error and not data.rows:
         st.markdown(
             '<div class="etp-widget-shell">'
-            '<h2 class="home-main-heading">U.S. Crypto ETPs</h2>'
+            '<h2 class="home-main-heading">U.S. Digital Asset ETPs</h2>'
             "</div>",
             unsafe_allow_html=True,
         )
@@ -170,7 +170,7 @@ def show_us_crypto_etps_widget(
     aum_s = format_usd_compact(total) if total > 0 else "—"
     st.markdown(
         '<div class="etp-widget-shell">'
-        '<h2 class="home-main-heading">U.S. Crypto ETPs</h2>'
+        '<h2 class="home-main-heading">U.S. Digital Asset ETPs</h2>'
         "</div>",
         unsafe_allow_html=True,
     )

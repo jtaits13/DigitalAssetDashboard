@@ -111,8 +111,7 @@ def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -
       <span class="jd-site-brand">JPM Digital</span>
       <a class="jd-site-link" href="#">Home</a>
       <a class="jd-site-link" href="#jd-section-news">News</a>
-      <a class="jd-site-link" href="#jd-section-market">Markets</a>
-      <a class="jd-site-link" href="#jd-section-etps">Crypto ETPs</a>
+      <a class="jd-site-link" href="#jd-section-etps">Digital Asset ETPs</a>
       <a class="jd-site-link" href="#jd-section-rwa">RWA</a>
     </nav>
   </div>
@@ -125,8 +124,8 @@ def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -
 
 def render_subpage_top_bar() -> None:
     """
-    Same fixed banner as the home page. Links go to the main app; News/Market add ``?jd_scroll=``
-    so the home page scrolls to those sections after load.
+    Same fixed banner as the home page. Links go to the main app; News adds ``?jd_scroll=``
+    so the home page scrolls to that section after load.
     """
     st.markdown(SITE_NAV_CSS, unsafe_allow_html=True)
     st.markdown(
@@ -137,8 +136,7 @@ def render_subpage_top_bar() -> None:
       <span class="jd-site-brand">JPM Digital</span>
       <a class="jd-site-link" href="/">Home</a>
       <a class="jd-site-link" href="/?jd_scroll=news">News</a>
-      <a class="jd-site-link" href="/?jd_scroll=market">Markets</a>
-      <a class="jd-site-link" href="/?jd_scroll=etps">Crypto ETPs</a>
+      <a class="jd-site-link" href="/?jd_scroll=etps">Digital Asset ETPs</a>
       <a class="jd-site-link" href="/?jd_scroll=rwa">RWA</a>
     </nav>
   </div>
@@ -344,47 +342,55 @@ def article_styles_markdown() -> str:
         color: #64748b;
         margin-bottom: 0.5rem;
     }
-    /* Home: News & Regulatory side-by-side — equal height white lanes */
-    div[data-testid="stHorizontalBlock"]:has(div.jd-news-column-shell) {
+    /* Home: News & Regulatory — bordered st.container(border=True) lanes, equal height */
+    div[data-testid="stHorizontalBlock"]:has([data-testid="stVerticalBlockBorderWrapper"]) {
         align-items: stretch !important;
     }
-    div[data-testid="column"]:has(div.jd-news-column-shell) {
+    div[data-testid="column"]:has([data-testid="stVerticalBlockBorderWrapper"]) {
         display: flex !important;
         flex-direction: column !important;
+        align-self: stretch !important;
     }
-    .jd-news-column-shell {
-        flex: 1 1 auto;
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        min-height: 100%;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        background: #ffffff;
-        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
-        padding: 0.75rem 1rem 1rem 1rem;
-        box-sizing: border-box;
+    div[data-testid="column"]:has([data-testid="stVerticalBlockBorderWrapper"])
+        > div[data-testid="stVerticalBlockBorderWrapper"] {
+        flex: 1 1 auto !important;
+        width: 100% !important;
+        min-height: 100% !important;
+        border-radius: 12px !important;
+        background: #ffffff !important;
+        border-color: #e2e8f0 !important;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06) !important;
+        padding: 0.65rem 0.85rem 0.85rem 0.85rem !important;
     }
-    .jd-news-column-inner {
-        flex: 1 1 auto;
+    .jd-home-lane-body {
         display: flex;
         flex-direction: column;
         gap: 0.75rem;
-        min-height: 0;
     }
-    .jd-news-column-shell h2.home-main-heading {
-        margin-top: 0;
-        margin-bottom: 0.15rem;
+    .jd-home-lane-body h2.home-main-heading {
+        margin: 0 0 0.15rem 0;
     }
     .jd-news-column-footnote {
         font-size: 0.8rem;
         color: #64748b;
-        margin: 0.15rem 0 0 0;
+        margin: 0;
         line-height: 1.45;
     }
-    .jd-news-column-shell .news-card {
+    [data-testid="stVerticalBlockBorderWrapper"] .news-card {
         box-shadow: none;
         border-color: #eef2f7;
+    }
+    /* Bordered lane: avoid dead air between HTML lane + primary button when column height stretches */
+    [data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stVerticalBlock"] {
+        justify-content: flex-start !important;
+        align-content: flex-start !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"]
+        .stElementContainer:has([data-testid="stMarkdownContainer"]) {
+        margin-bottom: 0 !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] .stElementContainer:has(.stButton) {
+        margin-top: 0 !important;
     }
     </style>
     """
@@ -402,15 +408,14 @@ def article_day_key(published: datetime | None) -> date | None:
     return published.astimezone(timezone.utc).date()
 
 
-def build_home_news_column_html(
+def build_home_news_lane_body_html(
     top: list[dict[str, Any]],
     *,
     show_footnote: bool,
 ) -> str:
-    """Single HTML block for the home news column (equal-height lane shell)."""
+    """Heading + cards (+ optional footnote) for inside ``st.container(border=True)`` — no outer shell."""
     parts = [
-        '<div class="jd-news-column-shell">',
-        '<div class="jd-news-column-inner">',
+        '<div class="jd-home-lane-body">',
         '<h2 class="home-main-heading">Latest Digital Asset News</h2>',
     ]
     for item in top:
@@ -419,7 +424,7 @@ def build_home_news_column_html(
         parts.append(
             '<p class="jd-news-column-footnote">Showing the most recent headlines from the combined RSS list.</p>'
         )
-    parts.append("</div></div>")
+    parts.append("</div>")
     return "".join(parts)
 
 
