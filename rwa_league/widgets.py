@@ -36,7 +36,7 @@ WIDGET_CSS = """
     margin: 0.45rem 0 0.85rem 0;
 }
 .rwa-kpi-window-note {
-    font-size: 0.65rem;
+    font-size: 6px;
     font-weight: 400;
     color: #94a3b8;
     margin: 0 0 0.5rem 0;
