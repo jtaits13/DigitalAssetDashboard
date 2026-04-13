@@ -16,6 +16,7 @@ from dataclasses import dataclass
 import requests
 from bs4 import BeautifulSoup
 
+from crypto_etps.custodian import resolve_custodian
 from crypto_etps.sec_prospectus import resolve_fund_filing_url
 
 logger = logging.getLogger(__name__)
@@ -47,6 +48,7 @@ class CryptoEtpRow:
     inception: str
     pct_52w: float | None  # from "past year" narrative on detail page
     fund_filing_url: str  # filing index (ticker-matched) or S-1 fallback / browse / search
+    custodian: str  # from ``custodian_by_ticker.json`` when known; else ""
 
 
 @dataclass
@@ -185,6 +187,7 @@ def fetch_crypto_etps_list(
                 inception="",
                 pct_52w=None,
                 fund_filing_url="",
+                custodian="",
             )
         )
 
@@ -235,6 +238,7 @@ def enrich_crypto_etps_rows(
                 inception=inc,
                 pct_52w=p52,
                 fund_filing_url="",
+                custodian="",
             )
         )
 
@@ -253,6 +257,7 @@ def enrich_crypto_etps_rows(
                 inception=r.inception,
                 pct_52w=r.pct_52w,
                 fund_filing_url=fund,
+                custodian=resolve_custodian(r.symbol),
             )
         )
     return out

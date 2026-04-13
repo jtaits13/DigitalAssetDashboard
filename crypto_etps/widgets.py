@@ -88,6 +88,7 @@ def show_etp_dataframe(df, *, height: int) -> None:
         "52W %",
         "Assets (B)",
         "Issuer",
+        "Custodian",
         "Inception",
         "Fund Filing",
     ]
@@ -121,6 +122,13 @@ def show_etp_dataframe(df, *, height: int) -> None:
         "Issuer": st.column_config.TextColumn(
             f"Issuer {_SORT}",
             width="medium",
+        ),
+        "Custodian": st.column_config.TextColumn(
+            f"Custodian {_SORT}",
+            width="large",
+            help="Bitcoin / digital-asset custody (and futures collateral where applicable). "
+            "Sourced from a curated ticker map (``crypto_etps/data/custodian_by_ticker.json``); "
+            "extend with issuer or prospectus data where missing.",
         ),
         "Inception": st.column_config.DatetimeColumn(
             f"Inception {_SORT}",

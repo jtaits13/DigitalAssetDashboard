@@ -32,6 +32,7 @@ def build_etp_dataframe(rows: list[CryptoEtpRow]) -> pd.DataFrame:
         inc = pd.to_datetime(r.inception, errors="coerce") if (r.inception or "").strip() else pd.NaT
         issuer = (r.issuer or "").strip()
         fund_filing = (r.fund_filing_url or "").strip() or edgar_s1_fallback_url(r.symbol)
+        cust = (r.custodian or "").strip() or "—"
         records.append(
             {
                 "Symbol": r.symbol,
@@ -40,6 +41,7 @@ def build_etp_dataframe(rows: list[CryptoEtpRow]) -> pd.DataFrame:
                 "52W %": r.pct_52w if r.pct_52w is not None else np.nan,
                 "Assets (B)": (r.assets_usd / 1e9) if r.assets_usd is not None else np.nan,
                 "Issuer": issuer,
+                "Custodian": cust,
                 "Inception": inc,
                 "Fund Filing": fund_filing,
             }
