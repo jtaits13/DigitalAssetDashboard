@@ -34,17 +34,23 @@ _ETF_ETP = re.compile(
 )
 
 
-def _blob(a: dict[str, Any]) -> str:
-    return f"{a.get('title') or ''} {a.get('summary') or ''}"
+def _title_and_blob(a: dict[str, Any]) -> tuple[str, str]:
+    title = (a.get("title") or "").strip()
+    blob = f"{title} {a.get('summary') or ''}".strip()
+    return title, blob
 
 
-def is_crypto_etf_or_etp_headline(text: str) -> bool:
-    """True only if the text mentions crypto/digital assets and an ETF/ETP (or spelled-out form)."""
-    if not text or not text.strip():
+def is_crypto_etf_or_etp_article(a: dict[str, Any]) -> bool:
+    """
+    Include only if **ETF / ETP** (or spelled-out exchange-traded fund/product) appears in the
+    **headline title**, and the piece still looks crypto-related (title or summary).
+    """
+    title, blob = _title_and_blob(a)
+    if not title:
         return False
-    if not _ETF_ETP.search(text):
+    if not _ETF_ETP.search(title):
         return False
-    if not _CRYPTO.search(text):
+    if not _CRYPTO.search(blob):
         return False
     return True
 
@@ -57,7 +63,7 @@ def pick_crypto_etf_headlines(
 ) -> list[dict[str, Any]]:
     out: list[dict[str, Any]] = []
     for a in articles[:scan_cap]:
-        if is_crypto_etf_or_etp_headline(_blob(a)):
+        if is_crypto_etf_or_etp_article(a):
             out.append(a)
             if len(out) >= limit:
                 break
@@ -81,9 +87,9 @@ def build_etp_market_news_box_html(articles: list[dict[str, Any]]) -> str:
         '<h3 class="home-main-heading" style="font-size:1.05rem;margin:0 0 0.35rem 0;">'
         "ETF &amp; ETP pulse</h3>",
         '<p class="jd-news-column-footnote" style="margin:0 0 0.75rem 0;">'
-        "Crypto and digital-asset ETF / ETP headlines from major RSS (title + summary must mention "
-        "both a <strong>crypto</strong> angle and <strong>ETF</strong>, <strong>ETP</strong>, or "
-        "<strong>exchange-traded fund</strong> / <strong>exchange-traded product</strong>).</p>",
+        "Crypto and digital-asset stories from major RSS where the <strong>headline</strong> includes "
+        "<strong>ETF</strong>, <strong>ETP</strong>, or an <strong>exchange-traded</strong> fund/product phrase; "
+        "summary-only mentions are excluded.</p>",
     ]
     if not articles:
         parts.append(
