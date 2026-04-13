@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 
 from crypto_etps.client import CryptoEtpRow, format_usd_compact
+from crypto_etps.exposure import infer_spot_futures_exposure
 from crypto_etps.sec_prospectus import edgar_s1_fallback_url
 
 
@@ -60,6 +61,7 @@ def build_etp_dataframe(rows: list[CryptoEtpRow], *, include_strategy: bool = Fa
             "Fund Filing": fund_filing,
         }
         if include_strategy:
+            rec["Exposure"] = infer_spot_futures_exposure(r.etf_about, r.index_tracked)
             rec["Strategy"] = format_strategy_cell(r.etf_about, r.index_tracked)
         records.append(rec)
     return pd.DataFrame(records)

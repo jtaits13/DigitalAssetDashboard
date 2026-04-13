@@ -94,6 +94,7 @@ def show_etp_dataframe(df, *, height: int, include_strategy_column: bool = False
     full_order = [
         "Symbol",
         "Fund Name",
+        "Exposure",
         "Strategy",
         "Price",
         "52W %",
@@ -113,6 +114,11 @@ def show_etp_dataframe(df, *, height: int, include_strategy_column: bool = False
         "Fund Name": st.column_config.TextColumn(
             f"Fund Name {_SORT}",
             width="large",
+        ),
+        "Exposure": st.column_config.TextColumn(
+            f"Exposure {_SORT}",
+            width="small",
+            help="Spot vs. futures inferred from StockAnalysis About + Index Tracked (heuristic).",
         ),
         "Strategy": st.column_config.TextColumn(
             f"Strategy {_SORT}",
