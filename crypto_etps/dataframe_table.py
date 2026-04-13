@@ -12,7 +12,17 @@ import numpy as np
 import pandas as pd
 
 from crypto_etps.client import CryptoEtpRow, format_usd_compact
+from crypto_etps.custodian import resolve_custodian
 from crypto_etps.sec_prospectus import edgar_s1_fallback_url
+
+
+def _custodian_cell(r: CryptoEtpRow) -> str:
+    """Support rows from older Streamlit cache pickles that lack ``custodian``."""
+    raw = getattr(r, "custodian", None)
+    s = (raw if isinstance(raw, str) else "") or ""
+    if not s.strip():
+        s = resolve_custodian(r.symbol)
+    return s.strip() or "—"
 
 
 def _parse_price(s: str) -> float:
@@ -32,7 +42,7 @@ def build_etp_dataframe(rows: list[CryptoEtpRow]) -> pd.DataFrame:
         inc = pd.to_datetime(r.inception, errors="coerce") if (r.inception or "").strip() else pd.NaT
         issuer = (r.issuer or "").strip()
         fund_filing = (r.fund_filing_url or "").strip() or edgar_s1_fallback_url(r.symbol)
-        cust = (r.custodian or "").strip() or "—"
+        cust = _custodian_cell(r)
         records.append(
             {
                 "Symbol": r.symbol,
