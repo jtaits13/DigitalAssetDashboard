@@ -79,9 +79,9 @@ ETP_DATA_SOURCE_CAPTION = (
 _SORT = "\u2195"
 
 
-def show_etp_dataframe(df, *, height: int, include_strategy_column: bool = False) -> None:
-    """Render styled dataframe. ``Strategy`` is shown only on the full ETP page (flag True)."""
-    base_order = [
+def show_etp_dataframe(df, *, height: int) -> None:
+    """Render styled dataframe."""
+    order = [
         "Symbol",
         "Fund Name",
         "Price",
@@ -91,20 +91,7 @@ def show_etp_dataframe(df, *, height: int, include_strategy_column: bool = False
         "Inception",
         "Fund Filing",
     ]
-    full_order = [
-        "Symbol",
-        "Fund Name",
-        "Exposure",
-        "Strategy",
-        "Price",
-        "52W %",
-        "Assets (B)",
-        "Issuer",
-        "Inception",
-        "Fund Filing",
-    ]
-    desired = full_order if include_strategy_column else base_order
-    order = [c for c in desired if c in df.columns]
+    order = [c for c in order if c in df.columns]
 
     cfg = {
         "Symbol": st.column_config.TextColumn(
@@ -114,16 +101,6 @@ def show_etp_dataframe(df, *, height: int, include_strategy_column: bool = False
         "Fund Name": st.column_config.TextColumn(
             f"Fund Name {_SORT}",
             width="large",
-        ),
-        "Exposure": st.column_config.TextColumn(
-            f"Exposure {_SORT}",
-            width="small",
-            help="Spot vs. Futures from issuer, name, and ticker rules (index/basket/options-style names count as Futures).",
-        ),
-        "Strategy": st.column_config.TextColumn(
-            f"Strategy {_SORT}",
-            width="large",
-            help="StockAnalysis detail page: Index Tracked (if listed) + About narrative.",
         ),
         "Price": st.column_config.NumberColumn(
             f"Price {_SORT}",

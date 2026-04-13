@@ -47,8 +47,6 @@ class CryptoEtpRow:
     inception: str
     pct_52w: float | None  # from "past year" narrative on detail page
     fund_filing_url: str  # filing index (ticker-matched) or S-1 fallback / browse / search
-    etf_about: str  # "About {SYM}" narrative on StockAnalysis detail page
-    index_tracked: str  # "Index Tracked" line when present
 
 
 @dataclass
@@ -83,31 +81,6 @@ def _parse_past_year_return(html: str) -> float | None:
         return None
 
 
-def _parse_about_paragraph(soup: BeautifulSoup) -> str:
-    """First paragraph under the ``About {TICKER}`` heading on StockAnalysis ETF pages."""
-    for h in soup.find_all(["h2", "h3"]):
-        if h.get_text(strip=True).lower().startswith("about"):
-            p = h.find_next("p")
-            if p:
-                return p.get_text(" ", strip=True)
-            return ""
-    return ""
-
-
-def _parse_index_tracked(soup: BeautifulSoup) -> str:
-    """Value next to the ``Index Tracked`` label (not all funds have one)."""
-    for span in soup.find_all("span"):
-        if span.get_text(strip=True) == "Index Tracked":
-            parent = span.parent
-            if not parent:
-                continue
-            full = parent.get_text(" ", strip=True)
-            if full.lower().startswith("index tracked"):
-                return full[len("Index Tracked") :].strip()
-            return full
-    return ""
-
-
 def _parse_issuer_inception(soup: BeautifulSoup) -> tuple[str, str]:
     issuer = ""
     for span in soup.find_all("span"):
@@ -133,11 +106,11 @@ def fetch_etf_profile_fields(
     user_agent: str,
     *,
     timeout: int = 22,
-) -> tuple[str, str, float | None, str, str]:
-    """Issuer, inception, past-year %, About paragraph, Index Tracked (StockAnalysis detail page)."""
+) -> tuple[str, str, float | None]:
+    """Issuer, inception, past-year % (StockAnalysis detail page)."""
     sym = re.sub(r"\s+", "", symbol).lower()
     if not sym:
-        return "", "", None, "", ""
+        return "", "", None
     url = ETF_PAGE_TMPL.format(symbol=sym)
     headers = {
         "User-Agent": user_agent,
@@ -149,13 +122,11 @@ def fetch_etf_profile_fields(
         r.raise_for_status()
     except requests.RequestException as e:
         logger.debug("ETF profile %s: %s", sym, e)
-        return "", "", None, "", ""
+        return "", "", None
     soup = BeautifulSoup(r.text, "html.parser")
     issuer, inception = _parse_issuer_inception(soup)
     pct = _parse_past_year_return(r.text)
-    about = _parse_about_paragraph(soup)
-    index_tracked = _parse_index_tracked(soup)
-    return issuer, inception, pct, about, index_tracked
+    return issuer, inception, pct
 
 
 def fetch_crypto_etps_list(
@@ -214,8 +185,6 @@ def fetch_crypto_etps_list(
                 inception="",
                 pct_52w=None,
                 fund_filing_url="",
-                etf_about="",
-                index_tracked="",
             )
         )
 
@@ -233,27 +202,27 @@ def enrich_crypto_etps_rows(
     *,
     max_workers: int = 14,
 ) -> list[CryptoEtpRow]:
-    """Parallel fetch of issuer, inception, past-year %, About, Index Tracked for each symbol."""
+    """Parallel fetch of issuer, inception, past-year % for each symbol."""
     ua = (user_agent or DEFAULT_USER_AGENT).strip()
     symbols = [r.symbol for r in rows]
-    results: dict[str, tuple[str, str, float | None, str, str]] = {}
+    results: dict[str, tuple[str, str, float | None]] = {}
 
-    def one(sym: str) -> tuple[str, str, str, float | None, str, str]:
-        iss, inc, p52, about, idx = fetch_etf_profile_fields(sym, ua)
-        return sym, iss, inc, p52, about, idx
+    def one(sym: str) -> tuple[str, str, str, float | None]:
+        iss, inc, p52 = fetch_etf_profile_fields(sym, ua)
+        return sym, iss, inc, p52
 
     with ThreadPoolExecutor(max_workers=max_workers) as ex:
         futures = {ex.submit(one, sym): sym for sym in symbols}
         for fut in as_completed(futures):
             try:
-                sym, iss, inc, p52, about, idx = fut.result()
-                results[sym] = (iss, inc, p52, about, idx)
+                sym, iss, inc, p52 = fut.result()
+                results[sym] = (iss, inc, p52)
             except Exception as e:
                 logger.debug("enrich row: %s", e)
 
     enriched: list[CryptoEtpRow] = []
     for r in rows:
-        iss, inc, p52, about, idx = results.get(r.symbol, ("", "", None, "", ""))
+        iss, inc, p52 = results.get(r.symbol, ("", "", None))
         enriched.append(
             CryptoEtpRow(
                 symbol=r.symbol,
@@ -266,8 +235,6 @@ def enrich_crypto_etps_rows(
                 inception=inc,
                 pct_52w=p52,
                 fund_filing_url="",
-                etf_about=about,
-                index_tracked=idx,
             )
         )
 
@@ -286,8 +253,6 @@ def enrich_crypto_etps_rows(
                 inception=r.inception,
                 pct_52w=r.pct_52w,
                 fund_filing_url=fund,
-                etf_about=r.etf_about,
-                index_tracked=r.index_tracked,
             )
         )
     return out
