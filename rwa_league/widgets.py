@@ -32,16 +32,46 @@ WIDGET_CSS = """
 .rwa-league-shell h2.home-main-heading {
     margin-bottom: 0.35rem;
 }
-.rwa-kpi-line {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #0f172a;
-    margin: 0.35rem 0 0.65rem 0;
-    line-height: 1.45;
+.rwa-kpi-wrap {
+    margin: 0.45rem 0 0.85rem 0;
 }
-.rwa-kpi-line .rwa-kpi-item {
-    display: inline-block;
-    margin-right: 0.35rem;
+.rwa-kpi-window-note {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: #64748b;
+    margin: 0 0 0.55rem 0;
+    line-height: 1.35;
+}
+.rwa-kpi-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.65rem 0.5rem;
+    padding: 0.5rem 0 0.85rem 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+.rwa-kpi-cell {
+    flex: 1 1 0;
+    min-width: 8.5rem;
+    max-width: 100%;
+    text-align: center;
+}
+.rwa-kpi-label {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #1E7C99;
+    margin-bottom: 0.3rem;
+    line-height: 1.25;
+    letter-spacing: 0.01em;
+}
+.rwa-kpi-val {
+    display: block;
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: #1E7C99;
+    line-height: 1.2;
 }
 </style>
 """
@@ -52,28 +82,26 @@ RWA_DATA_SOURCE_CAPTION = (
 )
 
 
-def _format_kpi_delta(pct: float | None) -> str | None:
-    if pct is None:
-        return None
-    # payload is fractional change (e.g. 0.075 → +7.50%)
-    return f"{pct * 100:+.2f}% (30d)"
-
-
 def _render_rwa_global_overview(kpis: list[RwaGlobalKpi]) -> None:
-    """One block under the heading, similar weight to the ETP total AUM line."""
+    """Global Market Overview: five columns, teal accent; all values are 30D series from RWA.xyz."""
     if not kpis:
         return
-    parts: list[str] = []
+    cells = []
     for k in kpis:
-        delta = _format_kpi_delta(k.delta_30d_pct)
-        extra = f" <span class='rwa-kpi-delta'>({escape(delta)})</span>" if delta else ""
-        parts.append(
-            f"<span class='rwa-kpi-item'><strong>{escape(k.label)}:</strong> "
-            f"{escape(k.value_display)}{extra}</span>"
+        cells.append(
+            "<div class='rwa-kpi-cell'>"
+            f"<span class='rwa-kpi-label'>{escape(k.label)}</span>"
+            f"<span class='rwa-kpi-val'>{escape(k.value_display)}</span>"
+            "</div>"
         )
-    inner = " <span style='color:#94a3b8'>·</span> ".join(parts)
+    row = "<div class='rwa-kpi-row'>" + "".join(cells) + "</div>"
     st.markdown(
-        f'<p class="rwa-kpi-line">{inner}</p>',
+        '<div class="rwa-kpi-wrap">'
+        "<p class='rwa-kpi-window-note'>"
+        "All values in this row are <strong>30-day (30D)</strong> data points from RWA.xyz."
+        "</p>"
+        f"{row}"
+        "</div>",
         unsafe_allow_html=True,
     )
 _SORT = "\u2195"
