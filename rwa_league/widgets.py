@@ -36,10 +36,10 @@ WIDGET_CSS = """
     margin: 0.45rem 0 0.85rem 0;
 }
 .rwa-kpi-window-note {
-    font-size: 0.78rem;
-    font-weight: 500;
-    color: #64748b;
-    margin: 0 0 0.55rem 0;
+    font-size: 0.65rem;
+    font-weight: 400;
+    color: #94a3b8;
+    margin: 0 0 0.5rem 0;
     line-height: 1.35;
 }
 .rwa-kpi-row {
@@ -59,16 +59,16 @@ WIDGET_CSS = """
 }
 .rwa-kpi-label {
     display: block;
-    font-size: 0.72rem;
+    font-size: 0.88rem;
     font-weight: 600;
-    color: #1E7C99;
-    margin-bottom: 0.3rem;
-    line-height: 1.25;
+    color: #334155;
+    margin-bottom: 0.35rem;
+    line-height: 1.3;
     letter-spacing: 0.01em;
 }
 .rwa-kpi-val {
     display: block;
-    font-size: 0.98rem;
+    font-size: 1.05rem;
     font-weight: 700;
     color: #1E7C99;
     line-height: 1.2;
@@ -83,7 +83,7 @@ RWA_DATA_SOURCE_CAPTION = (
 
 
 def _render_rwa_global_overview(kpis: list[RwaGlobalKpi]) -> None:
-    """Global Market Overview: five columns, teal accent; all values are 30D series from RWA.xyz."""
+    """Global Market Overview: five columns; slate metric titles, teal values; 30D series from RWA.xyz."""
     if not kpis:
         return
     cells = []
