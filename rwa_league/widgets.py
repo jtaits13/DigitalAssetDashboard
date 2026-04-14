@@ -135,7 +135,7 @@ def _render_rwa_global_overview(kpis: list[RwaGlobalKpi]) -> None:
     st.markdown(
         '<div class="rwa-kpi-wrap">'
         "<p class='rwa-kpi-window-note'>"
-        "All values in this row are <strong>30-day (30D)</strong> data points from RWA.xyz."
+        "All values in this row are <strong>30-day (30D)</strong> Global Market data points from RWA.xyz."
         "</p>"
         f"{row}"
         "</div>",
@@ -236,7 +236,7 @@ def show_rwa_league_widget(
     if err and not rows:
         st.markdown(
             '<div class="rwa-league-shell">'
-            '<h2 class="home-main-heading">RWA League Table · Networks (Distributed)</h2></div>',
+            '<h2 class="home-main-heading">RWA Data</h2></div>',
             unsafe_allow_html=True,
         )
         st.warning(escape(err))
@@ -249,7 +249,7 @@ def show_rwa_league_widget(
 
     st.markdown(
         '<div class="rwa-league-shell">'
-        '<h2 class="home-main-heading">RWA League Table · Networks (Distributed)</h2>'
+        '<h2 class="home-main-heading">RWA Data</h2>'
         "</div>",
         unsafe_allow_html=True,
     )
@@ -261,7 +261,7 @@ def show_rwa_league_widget(
         n = max(1, min(preview_rows, len(working)))
         working = working[:n]
         st.caption(
-            f"Preview: top **{n}** networks from the league embed. "
+            f"Preview: top **{n}** networks by Distributed Value from the league embed. "
             "Open the full page to search and see every network."
         )
     else:
@@ -277,7 +277,7 @@ def show_rwa_league_widget(
                 f"Showing {len(working)} of {len(rows)} networks matching “{escape(q.strip())}”."
             )
         else:
-            st.caption(f"Showing all {len(working)} networks.")
+            st.caption(f"Showing all {len(working)} networks (Distributed Value only).")
 
     df = build_rwa_dataframe(working)
     _show_rwa_dataframe(df, height=rwa_table_height(len(df)))

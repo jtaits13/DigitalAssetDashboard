@@ -18,7 +18,7 @@ from rwa_league.widgets import RWA_DATA_SOURCE_CAPTION, show_rwa_league_widget
 
 def main() -> None:
     st.set_page_config(
-        page_title="RWA League — JPM Digital",
+        page_title="RWA Data — JPM Digital",
         page_icon="◆",
         layout="wide",
         initial_sidebar_state="expanded",
@@ -33,7 +33,7 @@ def main() -> None:
     show_price_ticker()
 
     st.caption(
-        "Full table with search. Data from the RWA.xyz homepage embed (Networks · Distributed)."
+        "Full table with search. Data from the RWA.xyz homepage embed (Networks · Distributed Value only)."
     )
 
     show_rwa_league_widget(home_preview=False)
