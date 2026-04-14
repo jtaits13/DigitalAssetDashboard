@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 
 APP_HOME = "https://app.rwa.xyz/"
 APP_STABLECOINS = "https://app.rwa.xyz/stablecoins"
+APP_TREASURIES = "https://app.rwa.xyz/treasuries"
 USER_AGENT = "JPM-Digital/1.0 (RWA league widget; contact via app maintainer)"
 
 
@@ -86,6 +87,21 @@ def _network_rows_from_props(props: dict[str, Any]) -> list[dict[str, Any]] | No
         return None
     for tab in bucket:
         if isinstance(tab, dict) and tab.get("key") == "parent_networks":
+            data = tab.get("data") or {}
+            rows = data.get("rows")
+            if isinstance(rows, list):
+                return rows
+    return None
+
+
+def _treasury_network_rows_from_props(props: dict[str, Any]) -> list[dict[str, Any]] | None:
+    """US Treasuries page: **Distributed** bucket, **networks** tab (Distributed Value by network)."""
+    lt = props.get("pageProps", {}).get("leagueTableTabs", {})
+    bucket = lt.get("distributed")
+    if not isinstance(bucket, list):
+        return None
+    for tab in bucket:
+        if isinstance(tab, dict) and tab.get("key") == "networks":
             data = tab.get("data") or {}
             rows = data.get("rows")
             if isinstance(rows, list):
@@ -319,6 +335,42 @@ def _fetch_stablecoins_props_payload() -> tuple[dict[str, Any] | None, str | Non
     if not isinstance(props, dict):
         return None, "Invalid __NEXT_DATA__ structure."
     return props, None
+
+
+def _fetch_treasuries_props_payload() -> tuple[dict[str, Any] | None, str | None]:
+    headers = {"User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml"}
+    try:
+        r = requests.get(APP_TREASURIES, headers=headers, timeout=60)
+        r.raise_for_status()
+    except (requests.RequestException, OSError) as e:
+        logger.debug("RWA treasuries fetch: %s", e)
+        return None, str(e)
+
+    payload = _extract_next_data(r.text)
+    if not payload:
+        return None, "Could not parse __NEXT_DATA__ from app.rwa.xyz/treasuries (layout may have changed)."
+    props = payload.get("props")
+    if not isinstance(props, dict):
+        return None, "Invalid __NEXT_DATA__ structure."
+    return props, None
+
+
+def fetch_rwa_treasuries_data() -> tuple[list[RwaNetworkLeagueRow], list[RwaGlobalKpi], str | None]:
+    """
+    US Treasuries dashboard: overview aggregates + **Distributed** tab **networks** league.
+
+    Row ``value`` is **Distributed Value** (USD) for tokenized Treasuries on that network.
+    """
+    props, err = _fetch_treasuries_props_payload()
+    if err:
+        return [], [], err
+    assert props is not None
+
+    raw_rows = _treasury_network_rows_from_props(props)
+    kpis = _parse_aggregates(props)
+    if not raw_rows:
+        return [], kpis, "US Treasuries Distributed · Networks league table not found in page data."
+    return _rows_from_raw(raw_rows), kpis, None
 
 
 def fetch_rwa_stablecoins_data() -> tuple[list[RwaStablecoinPlatformRow], list[RwaGlobalKpi], str | None]:

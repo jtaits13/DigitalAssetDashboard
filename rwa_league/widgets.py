@@ -8,19 +8,23 @@ import streamlit as st
 
 from home_layout import STREAMLIT_TABLE_UNIFY_CSS
 from rwa_league.client import (
+    APP_TREASURIES,
     RwaGlobalKpi,
     RwaNetworkLeagueRow,
     RwaStablecoinPlatformRow,
     fetch_rwa_home_data,
     fetch_rwa_stablecoins_data,
+    fetch_rwa_treasuries_data,
 )
 from rwa_league.dataframe_table import (
     build_rwa_dataframe,
     build_stablecoin_platform_dataframe,
+    build_us_treasury_network_dataframe,
     filter_rows_by_network,
     filter_stablecoin_platform_rows,
     style_rwa_dataframe,
     style_stablecoin_platform_dataframe,
+    style_us_treasury_network_dataframe,
 )
 
 WIDGET_CSS = """
@@ -107,6 +111,13 @@ STABLECOIN_RWA_CAPTION = (
     "**Platforms** league tab (market cap by issuer platform; not the public API)."
 )
 
+TREASURY_RWA_CAPTION = (
+    "Source: [RWA.xyz US Treasuries](https://app.rwa.xyz/treasuries) embedded overview + "
+    "**Distributed** · **Networks** league (Distributed Value; not the public API)."
+)
+
+TREASURIES_RWA_LINK_LABEL = "See US Treasuries on RWA.xyz"
+
 
 def _format_pct_change_30d(pct: float | None) -> tuple[str, str] | None:
     """Return (escaped_html_fragment, css_class) or None if unknown."""
@@ -182,6 +193,39 @@ def _render_rwa_global_overview(kpis: list[RwaGlobalKpi]) -> None:
         "</div>",
         unsafe_allow_html=True,
     )
+
+
+def _render_rwa_treasuries_overview(kpis: list[RwaGlobalKpi]) -> None:
+    """US Treasuries dashboard overview KPI row (same tile layout as Global Market)."""
+    if not kpis:
+        return
+    cells = []
+    for k in kpis:
+        delta_html = ""
+        fd = _format_pct_change_30d(k.delta_30d_pct)
+        if fd is not None:
+            txt, cls = fd
+            delta_html = f"<span class='rwa-kpi-delta {cls}'>{txt}</span>"
+        cells.append(
+            "<div class='rwa-kpi-cell'>"
+            f"<span class='rwa-kpi-label'>{escape(k.label)}</span>"
+            f"<span class='rwa-kpi-val'>{escape(k.value_display)}</span>"
+            f"{delta_html}"
+            "</div>"
+        )
+    row = "<div class='rwa-kpi-row'>" + "".join(cells) + "</div>"
+    st.markdown(
+        '<div class="rwa-kpi-wrap">'
+        "<p class='rwa-kpi-window-note'>"
+        "All values in this row match the <strong>US Treasuries</strong> overview on RWA.xyz "
+        "(typically <strong>30D</strong> change where shown)."
+        "</p>"
+        f"{row}"
+        "</div>",
+        unsafe_allow_html=True,
+    )
+
+
 _SORT = "\u2195"
 _LINK_ARROW = "\u2197"  # Northeast arrow for RWA.xyz LinkColumn (Unicode U+2197)
 STABLECOINS_RWA_LINK_LABEL = "See Stablecoins on RWA.xyz"
@@ -291,7 +335,7 @@ def _show_rwa_dataframe(df, *, height: int) -> None:
             ),
             "Link": st.column_config.LinkColumn(
                 f"RWA Page {_SORT}",
-                display_text="↗",
+                display_text=_LINK_ARROW,
                 validate=r"^https://",
                 width="small",
                 help="Open this network on RWA.xyz",
@@ -328,6 +372,73 @@ def _show_rwa_dataframe(df, *, height: int) -> None:
     )
 
 
+def _show_us_treasury_network_dataframe(df, *, height: int) -> None:
+    """US Treasuries **Distributed** · **Networks** table; value column is **Distributed Value**."""
+    st.dataframe(
+        style_us_treasury_network_dataframe(df),
+        use_container_width=True,
+        height=height,
+        hide_index=True,
+        column_order=[
+            "#",
+            "Network",
+            "Link",
+            "RWA Count",
+            "Distributed Value",
+            "7D Δ value",
+            "Market Share",
+            "30D Δ share",
+        ],
+        column_config={
+            "#": st.column_config.NumberColumn(
+                f"# {_SORT}",
+                format="%.0f",
+                help="Ascending: lowest rank first · Descending: highest rank first",
+            ),
+            "Network": st.column_config.TextColumn(
+                f"Network {_SORT}",
+                width="medium",
+                help="Ascending: A→Z · Descending: Z→A",
+            ),
+            "Link": st.column_config.LinkColumn(
+                f"RWA Page {_SORT}",
+                display_text=_LINK_ARROW,
+                validate=r"^https://",
+                width="small",
+                help="Open this network on RWA.xyz",
+            ),
+            "RWA Count": st.column_config.NumberColumn(
+                f"RWA Count {_SORT}",
+                format="%.0f",
+                help="Ascending: lowest first · Descending: highest first",
+            ),
+            "Distributed Value": st.column_config.NumberColumn(
+                f"Distributed Value {_SORT}",
+                format=None,
+                width=150,
+                help="Tokenized US Treasuries Distributed Value (USD) on this network",
+            ),
+            "7D Δ value": st.column_config.NumberColumn(
+                f"7D Δ value {_SORT}",
+                format=None,
+                width=100,
+                help="7-day change in Distributed Value (%) · Ascending: lowest first",
+            ),
+            "Market Share": st.column_config.NumberColumn(
+                f"Market Share {_SORT}",
+                format=None,
+                help="Current network share (%)",
+            ),
+            "30D Δ share": st.column_config.NumberColumn(
+                f"30D Δ share {_SORT}",
+                format=None,
+                width=100,
+                help="Change in market share vs 30 days ago (percentage points)",
+            ),
+        },
+    )
+
+
 @st.cache_data(ttl=3600, show_spinner=False)
 def load_rwa_league_cached(*, _rwa_schema: int = 4) -> tuple[list[RwaNetworkLeagueRow], list[RwaGlobalKpi], str | None]:
     """Bump ``_rwa_schema`` when homepage payload shape changes."""
@@ -344,9 +455,19 @@ def load_rwa_stablecoins_cached(
     return fetch_rwa_stablecoins_data()
 
 
+@st.cache_data(ttl=3600, show_spinner=False)
+def load_rwa_treasuries_cached(
+    *, _treasury_schema: int = 1
+) -> tuple[list[RwaNetworkLeagueRow], list[RwaGlobalKpi], str | None]:
+    """Bump ``_treasury_schema`` when ``/treasuries`` embed shape changes."""
+    _ = _treasury_schema
+    return fetch_rwa_treasuries_data()
+
+
 def clear_rwa_league_cache() -> None:
     load_rwa_league_cached.clear()
     load_rwa_stablecoins_cached.clear()
+    load_rwa_treasuries_cached.clear()
 
 
 def show_rwa_stablecoins_widget(
@@ -462,6 +583,120 @@ def show_rwa_stablecoins_widget(
         )
 
 
+def show_rwa_treasuries_widget(
+    *,
+    home_preview: bool = True,
+    preview_rows: int = 8,
+) -> None:
+    """
+    RWA.xyz US Treasuries embed: overview KPIs + **Distributed** · **Networks** league (Distributed Value).
+
+    ``home_preview=True``: teaser under RWA Data on the hub. ``home_preview=False``: full searchable table
+    (``pages/RWA_US_Treasuries.py``).
+    """
+    if home_preview:
+        st.divider()
+        st.markdown(
+            '<h3 class="home-main-heading" style="margin-top:0.35rem;font-size:1.05rem;">'
+            "US Treasuries (RWA.xyz)</h3>",
+            unsafe_allow_html=True,
+        )
+        st.caption(
+            "Overview and **Networks** league (**Distributed** tab) from "
+            f"[app.rwa.xyz/treasuries]({APP_TREASURIES}) — **Distributed Value** per network."
+        )
+    else:
+        st.markdown(WIDGET_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
+        st.markdown(
+            '<div class="rwa-league-shell">'
+            '<h2 class="home-main-heading">US Treasuries</h2>'
+            "</div>",
+            unsafe_allow_html=True,
+        )
+        st.caption(
+            "Full **Distributed** · **Networks** league with search. Data from the "
+            f"[RWA.xyz US Treasuries]({APP_TREASURIES}) page embed (**Distributed Value**)."
+        )
+
+    rows_tr, kpis_tr, err_tr = load_rwa_treasuries_cached()
+
+    if err_tr and not rows_tr:
+        st.warning(escape(err_tr))
+        _render_rwa_treasuries_overview(kpis_tr)
+        st.link_button(
+            TREASURIES_RWA_LINK_LABEL,
+            APP_TREASURIES,
+            use_container_width=True,
+            key="rwa_tr_rwa_link_err_home" if home_preview else "rwa_tr_rwa_link_err_full",
+        )
+        return
+
+    if not rows_tr:
+        st.info("No network rows returned for US Treasuries.")
+        _render_rwa_treasuries_overview(kpis_tr)
+        st.link_button(
+            TREASURIES_RWA_LINK_LABEL,
+            APP_TREASURIES,
+            use_container_width=True,
+            key="rwa_tr_rwa_link_empty_home" if home_preview else "rwa_tr_rwa_link_empty_full",
+        )
+        return
+
+    _render_rwa_treasuries_overview(kpis_tr)
+
+    if home_preview:
+        n = max(1, min(preview_rows, len(rows_tr)))
+        working = rows_tr[:n]
+        st.caption(
+            f"Preview: top **{n}** networks by Distributed Value (**Distributed** · **Networks** tab). "
+            "Other tabs on RWA.xyz: Platforms, Managers, Jurisdiction."
+        )
+        table_h = rwa_table_height(len(working))
+    else:
+        q = st.text_input(
+            "Search network",
+            "",
+            key="rwa_treasury_search_full",
+            placeholder="Filter by network name…",
+        )
+        working = filter_rows_by_network(rows_tr, q)
+        if q.strip():
+            st.caption(
+                f"Showing {len(working)} of {len(rows_tr)} networks matching “{escape(q.strip())}”."
+            )
+        else:
+            st.caption(
+                f"Showing all {len(working)} networks (US Treasuries · Distributed · Networks)."
+            )
+        table_h = rwa_table_height(len(working), max_h=900)
+
+    df_tr = build_us_treasury_network_dataframe(working)
+    _show_us_treasury_network_dataframe(df_tr, height=table_h)
+    st.caption(TREASURY_RWA_CAPTION)
+
+    if home_preview:
+        if st.button(
+            "Open full US Treasuries table",
+            key="see_full_rwa_treasuries",
+            use_container_width=True,
+            type="primary",
+        ):
+            st.switch_page("pages/RWA_US_Treasuries.py")
+        st.link_button(
+            TREASURIES_RWA_LINK_LABEL,
+            APP_TREASURIES,
+            use_container_width=True,
+            key="rwa_tr_rwa_link_home",
+        )
+    else:
+        st.link_button(
+            TREASURIES_RWA_LINK_LABEL,
+            APP_TREASURIES,
+            use_container_width=True,
+            key="rwa_tr_rwa_link_full",
+        )
+
+
 def show_rwa_league_widget(
     *,
     home_preview: bool = False,
@@ -490,6 +725,7 @@ def show_rwa_league_widget(
         )
         if home_preview:
             show_rwa_stablecoins_widget(home_preview=True, preview_rows=preview_rows)
+            show_rwa_treasuries_widget(home_preview=True, preview_rows=preview_rows)
         return
 
     if not rows:
@@ -549,3 +785,4 @@ def show_rwa_league_widget(
 
     if home_preview:
         show_rwa_stablecoins_widget(home_preview=True, preview_rows=preview_rows)
+        show_rwa_treasuries_widget(home_preview=True, preview_rows=preview_rows)

@@ -51,6 +51,40 @@ def build_rwa_dataframe(rows: list[RwaNetworkLeagueRow]) -> pd.DataFrame:
     return pd.DataFrame(recs)
 
 
+def build_us_treasury_network_dataframe(rows: list[RwaNetworkLeagueRow]) -> pd.DataFrame:
+    """Same as ``build_rwa_dataframe`` but the value column is labeled **Distributed Value** (US Treasuries embed)."""
+
+    recs: list[dict[str, object]] = []
+    for r in rows:
+        href = (r.network_href or "").strip()
+        url = f"{_APP_BASE}{href}" if href.startswith("/") else f"{_APP_BASE}/"
+        v7 = r.value_change_7d_raw
+        if v7 is None:
+            pct7 = np.nan
+        else:
+            f7 = float(v7)
+            pct7 = np.nan if np.isnan(f7) else f7 * 100.0
+        ms30 = r.market_share_change_30d_raw
+        if ms30 is None:
+            pct_ms30 = np.nan
+        else:
+            fm = float(ms30)
+            pct_ms30 = np.nan if np.isnan(fm) else fm * 100.0
+        recs.append(
+            {
+                "#": int(r.rank),
+                "Network": r.network,
+                "Link": url,
+                "RWA Count": int(r.rwa_count),
+                "Distributed Value": float(r.total_value_usd),
+                "7D Δ value": pct7,
+                "Market Share": float(r.market_share_raw * 100.0),
+                "30D Δ share": pct_ms30,
+            }
+        )
+    return pd.DataFrame(recs)
+
+
 def build_stablecoin_platform_dataframe(rows: list[RwaStablecoinPlatformRow]) -> pd.DataFrame:
     """Platform market cap in USD; 7D / 30D deltas as percentage points (fraction × 100)."""
     recs: list[dict[str, object]] = []
@@ -141,6 +175,32 @@ def style_stablecoin_platform_dataframe(df: pd.DataFrame) -> pd.io.formats.style
             "7D Δ value": _fmt_7d_cell,
             "30D Δ share": _fmt_7d_cell,
             "Total Value": _fmt_total_value_cell,
+            "Market Share": _fmt_market_share_cell,
+        },
+        na_rep="—",
+    )
+
+
+def style_us_treasury_network_dataframe(df: pd.DataFrame) -> pd.io.formats.style.Styler:
+    """Same styling as ``style_rwa_dataframe`` for the **Distributed Value** column name."""
+
+    def highlight_delta(s: pd.Series) -> list[str]:
+        return [
+            "color: #059669; font-weight: 600"
+            if pd.notna(v) and float(v) >= 0
+            else "color: #dc2626; font-weight: 600"
+            if pd.notna(v) and float(v) < 0
+            else ""
+            for v in s
+        ]
+
+    return df.style.apply(highlight_delta, subset=["7D Δ value"]).apply(
+        highlight_delta, subset=["30D Δ share"]
+    ).format(
+        {
+            "7D Δ value": _fmt_7d_cell,
+            "30D Δ share": _fmt_7d_cell,
+            "Distributed Value": _fmt_total_value_cell,
             "Market Share": _fmt_market_share_cell,
         },
         na_rep="—",
