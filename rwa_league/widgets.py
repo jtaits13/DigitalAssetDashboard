@@ -73,6 +73,22 @@ WIDGET_CSS = """
     color: #1E7C99;
     line-height: 1.2;
 }
+.rwa-kpi-delta {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-top: 0.2rem;
+    line-height: 1.2;
+}
+.rwa-kpi-delta.up {
+    color: #059669;
+}
+.rwa-kpi-delta.down {
+    color: #dc2626;
+}
+.rwa-kpi-delta.neutral {
+    color: #64748b;
+}
 </style>
 """
 
@@ -82,16 +98,37 @@ RWA_DATA_SOURCE_CAPTION = (
 )
 
 
+def _format_pct_change_30d(pct: float | None) -> tuple[str, str] | None:
+    """Return (escaped_html_fragment, css_class) or None if unknown."""
+    if pct is None:
+        return None
+    # payload: fractional change e.g. 0.075 → +7.50%
+    s = f"{float(pct) * 100:+.2f}%"
+    if float(pct) > 0:
+        cls = "up"
+    elif float(pct) < 0:
+        cls = "down"
+    else:
+        cls = "neutral"
+    return escape(s), cls
+
+
 def _render_rwa_global_overview(kpis: list[RwaGlobalKpi]) -> None:
-    """Global Market Overview: five columns; slate metric titles, teal values; 30D series from RWA.xyz."""
+    """Global Market Overview: five columns; slate titles, teal values, 30D % change (no “30D” suffix)."""
     if not kpis:
         return
     cells = []
     for k in kpis:
+        delta_html = ""
+        fd = _format_pct_change_30d(k.delta_30d_pct)
+        if fd is not None:
+            txt, cls = fd
+            delta_html = f"<span class='rwa-kpi-delta {cls}'>{txt}</span>"
         cells.append(
             "<div class='rwa-kpi-cell'>"
             f"<span class='rwa-kpi-label'>{escape(k.label)}</span>"
             f"<span class='rwa-kpi-val'>{escape(k.value_display)}</span>"
+            f"{delta_html}"
             "</div>"
         )
     row = "<div class='rwa-kpi-row'>" + "".join(cells) + "</div>"
