@@ -185,6 +185,8 @@ def _render_rwa_global_overview(kpis: list[RwaGlobalKpi]) -> None:
 _SORT = "\u2195"
 _LINK_ARROW = "\u2197"  # Northeast arrow for RWA.xyz LinkColumn (Unicode U+2197)
 STABLECOINS_RWA_LINK_LABEL = "See Stablecoins on RWA.xyz"
+GLOBAL_MARKET_RWA_LINK_LABEL = "See Global Market Overview on RWA.xyz"
+GLOBAL_MARKET_RWA_URL = "https://app.rwa.xyz/"
 
 
 def rwa_table_height(num_rows: int, *, max_h: int = 520) -> int:
@@ -481,10 +483,10 @@ def show_rwa_league_widget(
         st.warning(escape(err))
         _render_rwa_global_overview(kpis)
         st.link_button(
-            STABLECOINS_RWA_LINK_LABEL,
-            "https://app.rwa.xyz/stablecoins",
+            GLOBAL_MARKET_RWA_LINK_LABEL,
+            GLOBAL_MARKET_RWA_URL,
             use_container_width=True,
-            key="rwa_global_see_sc_err_home" if home_preview else "rwa_global_see_sc_err_full",
+            key="rwa_global_market_err_home" if home_preview else "rwa_global_market_err_full",
         )
         if home_preview:
             show_rwa_stablecoins_widget(home_preview=True, preview_rows=preview_rows)
@@ -502,12 +504,6 @@ def show_rwa_league_widget(
     )
 
     _render_rwa_global_overview(kpis)
-    st.link_button(
-        STABLECOINS_RWA_LINK_LABEL,
-        "https://app.rwa.xyz/stablecoins",
-        use_container_width=True,
-        key="rwa_global_see_sc_home" if home_preview else "rwa_global_see_sc_full",
-    )
 
     working = list(rows)
     if home_preview:
@@ -543,6 +539,13 @@ def show_rwa_league_widget(
         type="primary",
     ):
         st.switch_page("pages/RWA_League.py")
+
+    st.link_button(
+        GLOBAL_MARKET_RWA_LINK_LABEL,
+        GLOBAL_MARKET_RWA_URL,
+        use_container_width=True,
+        key="rwa_global_market_home" if home_preview else "rwa_global_market_full",
+    )
 
     if home_preview:
         show_rwa_stablecoins_widget(home_preview=True, preview_rows=preview_rows)
