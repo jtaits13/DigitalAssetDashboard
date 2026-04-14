@@ -183,6 +183,8 @@ def _render_rwa_global_overview(kpis: list[RwaGlobalKpi]) -> None:
         unsafe_allow_html=True,
     )
 _SORT = "\u2195"
+_LINK_ARROW = "\u2197"  # Northeast arrow for RWA.xyz LinkColumn (Unicode U+2197)
+STABLECOINS_RWA_LINK_LABEL = "See Stablecoins on RWA.xyz"
 
 
 def rwa_table_height(num_rows: int, *, max_h: int = 520) -> int:
@@ -220,7 +222,7 @@ def _show_stablecoin_platform_dataframe(df, *, height: int) -> None:
             ),
             "Link": st.column_config.LinkColumn(
                 f"RWA Page {_SORT}",
-                display_text="��",
+                display_text=_LINK_ARROW,
                 validate=r"^https://",
                 width="small",
                 help="Open this platform on RWA.xyz",
@@ -387,7 +389,7 @@ def show_rwa_stablecoins_widget(
         st.warning(escape(err_sc))
         _render_rwa_stablecoin_overview(kpis_sc)
         st.link_button(
-            "Open Stablecoins on RWA.xyz",
+            STABLECOINS_RWA_LINK_LABEL,
             "https://app.rwa.xyz/stablecoins",
             use_container_width=True,
             key="rwa_sc_rwa_link_err_home" if home_preview else "rwa_sc_rwa_link_err_full",
@@ -398,7 +400,7 @@ def show_rwa_stablecoins_widget(
         st.info("No platform rows returned for Stablecoins.")
         _render_rwa_stablecoin_overview(kpis_sc)
         st.link_button(
-            "Open Stablecoins on RWA.xyz",
+            STABLECOINS_RWA_LINK_LABEL,
             "https://app.rwa.xyz/stablecoins",
             use_container_width=True,
             key="rwa_sc_rwa_link_empty_home" if home_preview else "rwa_sc_rwa_link_empty_full",
@@ -444,14 +446,14 @@ def show_rwa_stablecoins_widget(
         ):
             st.switch_page("pages/RWA_Stablecoins.py")
         st.link_button(
-            "Open Stablecoins on RWA.xyz",
+            STABLECOINS_RWA_LINK_LABEL,
             "https://app.rwa.xyz/stablecoins",
             use_container_width=True,
             key="rwa_sc_rwa_link_home",
         )
     else:
         st.link_button(
-            "Open Stablecoins on RWA.xyz",
+            STABLECOINS_RWA_LINK_LABEL,
             "https://app.rwa.xyz/stablecoins",
             use_container_width=True,
             key="rwa_sc_rwa_link_full",
@@ -478,6 +480,12 @@ def show_rwa_league_widget(
         )
         st.warning(escape(err))
         _render_rwa_global_overview(kpis)
+        st.link_button(
+            STABLECOINS_RWA_LINK_LABEL,
+            "https://app.rwa.xyz/stablecoins",
+            use_container_width=True,
+            key="rwa_global_see_sc_err_home" if home_preview else "rwa_global_see_sc_err_full",
+        )
         if home_preview:
             show_rwa_stablecoins_widget(home_preview=True, preview_rows=preview_rows)
         return
@@ -494,6 +502,12 @@ def show_rwa_league_widget(
     )
 
     _render_rwa_global_overview(kpis)
+    st.link_button(
+        STABLECOINS_RWA_LINK_LABEL,
+        "https://app.rwa.xyz/stablecoins",
+        use_container_width=True,
+        key="rwa_global_see_sc_home" if home_preview else "rwa_global_see_sc_full",
+    )
 
     working = list(rows)
     if home_preview:
