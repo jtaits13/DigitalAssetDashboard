@@ -20,8 +20,8 @@ from crypto_etps.dataframe_table import (
     filter_rows_by_fund_name,
     style_etp_dataframe,
 )
-from crypto_etps.etp_market_news import load_etp_market_news_cached
 from home_layout import STREAMLIT_TABLE_UNIFY_CSS
+from news_feeds import load_etp_market_news_cached
 
 WIDGET_CSS = """
 <style>

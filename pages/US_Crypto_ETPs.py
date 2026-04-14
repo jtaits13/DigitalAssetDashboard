@@ -21,10 +21,6 @@ from crypto_etps.dataframe_table import (
     build_etp_dataframe,
     filter_rows_by_fund_name,
 )
-from crypto_etps.etp_market_news import (
-    build_etp_market_news_box_html,
-    load_etp_market_news_cached,
-)
 from crypto_etps.widgets import (
     ETP_DATA_SOURCE_CAPTION,
     etp_table_height,
@@ -37,6 +33,8 @@ from home_layout import ETP_FULLPAGE_AUM_LINE_CSS, STREAMLIT_TABLE_UNIFY_CSS
 from news_feeds import (
     HOME_MAIN_HEADING_CSS,
     article_styles_markdown,
+    build_etp_market_news_box_html,
+    load_etp_market_news_cached,
     render_subpage_top_bar,
 )
 from price_ticker import show_price_ticker

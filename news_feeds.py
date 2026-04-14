@@ -445,3 +445,112 @@ def render_article_card_html(item: dict[str, Any]) -> str:
         f"{sum_html}"
         f"</div>"
     )
+
+
+# --- ETF / ETP pulse (RSS headlines: crypto context + ETF/ETP in title only) -----------------
+
+ETP_NEWS_FEEDS: list[tuple[str, str]] = [
+    ("CoinDesk", "https://www.coindesk.com/arc/outboundfeeds/rss/"),
+    ("The Block", "https://www.theblockcrypto.com/rss.xml"),
+    ("Decrypt", "https://decrypt.co/feed"),
+]
+
+_CRYPTO_ETF = re.compile(
+    r"(?is)\b(?:"
+    r"crypto(?:currency|currencies)?|bitcoin|\bbtc\b|ethereum|\beth\b|digital\s+assets?|"
+    r"blockchain|defi|altcoin|stablecoin|solana|xrp|dogecoin|pepe|meme\s+coin|"
+    r"spot\s+(?:bitcoin|ether|ethereum)|web3|\bcbdc\b|altcoins?|tokeni[sz]e"
+    r")\b",
+)
+
+_RE_ETF_TOKENS = re.compile(
+    r"(?is)(?<![a-z0-9])(?:etf|etfs|etp|etps)(?![a-z0-9])",
+)
+_RE_EXCHANGE_TRADED = re.compile(
+    r"(?is)exchange\s*[-]?\s*traded\s+(?:fund|funds|product|products)\b",
+)
+
+
+def _normalize_headline_for_etp(raw: str) -> str:
+    t = html_module.unescape(raw or "")
+    t = re.sub(r"(?s)<[^>]+>", " ", t)
+    t = re.sub(r"\s+", " ", t).strip()
+    return t
+
+
+def title_mentions_etf_or_etp_vehicle(title: str) -> bool:
+    t = _normalize_headline_for_etp(title).lower()
+    if not t:
+        return False
+    if _RE_ETF_TOKENS.search(t):
+        return True
+    if _RE_EXCHANGE_TRADED.search(t):
+        return True
+    return False
+
+
+def _title_and_blob_etp(a: dict[str, Any]) -> tuple[str, str]:
+    title = (a.get("title") or "").strip()
+    blob = f"{title} {a.get('summary') or ''}".strip()
+    return title, blob
+
+
+def is_crypto_etf_or_etp_article(a: dict[str, Any]) -> bool:
+    title, blob = _title_and_blob_etp(a)
+    if not title:
+        return False
+    if not title_mentions_etf_or_etp_vehicle(title):
+        return False
+    if not _CRYPTO_ETF.search(blob):
+        return False
+    return True
+
+
+def pick_crypto_etf_headlines(
+    articles: list[dict[str, Any]],
+    *,
+    limit: int = 8,
+    scan_cap: int = 200,
+) -> list[dict[str, Any]]:
+    out: list[dict[str, Any]] = []
+    for a in articles[:scan_cap]:
+        if is_crypto_etf_or_etp_article(a):
+            out.append(a)
+            if len(out) >= limit:
+                break
+    return out
+
+
+@st.cache_data(ttl=1800, show_spinner=False)
+def load_etp_market_news_cached(_filter_rev: int = 5) -> list[dict[str, Any]]:
+    """Bump ``_filter_rev`` default when headline-matching rules change (invalidates Streamlit cache)."""
+    _ = _filter_rev
+    combined, _errors = load_all_feeds(ETP_NEWS_FEEDS)
+    combined = dedupe_articles(combined, max_items=None)
+    combined.sort(
+        key=lambda x: x["published"] or datetime.min.replace(tzinfo=timezone.utc),
+        reverse=True,
+    )
+    return pick_crypto_etf_headlines(combined, limit=8)
+
+
+def build_etp_market_news_box_html(articles: list[dict[str, Any]]) -> str:
+    parts = [
+        '<div class="jd-home-lane-body etp-news-pulse">',
+        '<h3 class="home-main-heading" style="font-size:1.05rem;margin:0 0 0.35rem 0;">'
+        "ETF &amp; ETP pulse</h3>",
+        '<p class="jd-news-column-footnote" style="margin:0 0 0.75rem 0;">'
+        "Crypto and digital-asset stories from major RSS where the <strong>headline</strong> includes "
+        "<strong>ETF</strong>, <strong>ETP</strong>, or an <strong>exchange-traded</strong> fund/product phrase; "
+        "summary-only mentions are excluded.</p>",
+    ]
+    if not articles:
+        parts.append(
+            '<p class="jd-news-column-footnote">No matching headlines right now. '
+            "Try <strong>Refresh feeds</strong> on the home page.</p>"
+        )
+    else:
+        for item in articles:
+            parts.append(render_article_card_html(item))
+    parts.append("</div>")
+    return "".join(parts)
