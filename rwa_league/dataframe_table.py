@@ -30,6 +30,12 @@ def build_rwa_dataframe(rows: list[RwaNetworkLeagueRow]) -> pd.DataFrame:
         else:
             f7 = float(v7)
             pct7 = np.nan if np.isnan(f7) else f7 * 100.0
+        ms30 = r.market_share_change_30d_raw
+        if ms30 is None:
+            pct_ms30 = np.nan
+        else:
+            fm = float(ms30)
+            pct_ms30 = np.nan if np.isnan(fm) else fm * 100.0
         recs.append(
             {
                 "#": int(r.rank),
@@ -39,6 +45,7 @@ def build_rwa_dataframe(rows: list[RwaNetworkLeagueRow]) -> pd.DataFrame:
                 "Total Value": float(r.total_value_usd),
                 "7D Δ value": pct7,
                 "Market Share": float(r.market_share_raw * 100.0),
+                "30D Δ share": pct_ms30,
             }
         )
     return pd.DataFrame(recs)
@@ -141,9 +148,9 @@ def style_stablecoin_platform_dataframe(df: pd.DataFrame) -> pd.io.formats.style
 
 
 def style_rwa_dataframe(df: pd.DataFrame) -> pd.io.formats.style.Styler:
-    """Green/red 7D; arrow + % and compact USD via ``format`` (numeric dtypes unchanged)."""
+    """Green/red for 7D value and 30D share; arrow + % and compact USD via ``format``."""
 
-    def highlight_7d(s: pd.Series) -> list[str]:
+    def highlight_delta(s: pd.Series) -> list[str]:
         return [
             "color: #059669; font-weight: 600"
             if pd.notna(v) and float(v) >= 0
@@ -153,9 +160,12 @@ def style_rwa_dataframe(df: pd.DataFrame) -> pd.io.formats.style.Styler:
             for v in s
         ]
 
-    return df.style.apply(highlight_7d, subset=["7D Δ value"]).format(
+    return df.style.apply(highlight_delta, subset=["7D Δ value"]).apply(
+        highlight_delta, subset=["30D Δ share"]
+    ).format(
         {
             "7D Δ value": _fmt_7d_cell,
+            "30D Δ share": _fmt_7d_cell,
             "Total Value": _fmt_total_value_cell,
             "Market Share": _fmt_market_share_cell,
         },

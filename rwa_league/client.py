@@ -36,6 +36,8 @@ class RwaNetworkLeagueRow:
     market_share_raw: float  # fraction 0–1
     # Optional fractional 7D change in market share (if present in embedded payload).
     market_share_change_7d_raw: float | None
+    # Optional fractional 30D change in market share (e.g. ``market_share_pct_30d_change``).
+    market_share_change_30d_raw: float | None
 
 
 @dataclass(frozen=True)
@@ -229,6 +231,17 @@ def _rows_from_raw(raw_rows: list[dict[str, Any]]) -> list[RwaNetworkLeagueRow]:
         v7 = row.get("value_7d_change")
         v7f = float(v7) if isinstance(v7, (int, float)) else None
 
+        ms30f: float | None = None
+        for k in (
+            "market_share_pct_30d_change",
+            "market_share_30d_change",
+            "market_share_change_30d",
+        ):
+            raw30 = row.get(k)
+            if isinstance(raw30, (int, float)):
+                ms30f = float(raw30)
+                break
+
         out.append(
             RwaNetworkLeagueRow(
                 rank=rank,
@@ -239,6 +252,7 @@ def _rows_from_raw(raw_rows: list[dict[str, Any]]) -> list[RwaNetworkLeagueRow]:
                 value_change_7d_raw=v7f,
                 market_share_raw=msf,
                 market_share_change_7d_raw=ms7,
+                market_share_change_30d_raw=ms30f,
             )
         )
     return out

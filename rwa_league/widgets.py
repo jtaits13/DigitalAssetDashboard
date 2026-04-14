@@ -219,7 +219,7 @@ def _show_stablecoin_platform_dataframe(df, *, height: int) -> None:
             ),
             "Link": st.column_config.LinkColumn(
                 f"RWA Page {_SORT}",
-                display_text="↗",
+                display_text="��",
                 validate=r"^https://",
                 width="small",
                 help="Open this platform on RWA.xyz",
@@ -271,6 +271,7 @@ def _show_rwa_dataframe(df, *, height: int) -> None:
             "Total Value",
             "7D Δ value",
             "Market Share",
+            "30D Δ share",
         ],
         column_config={
             "#": st.column_config.NumberColumn(
@@ -312,12 +313,18 @@ def _show_rwa_dataframe(df, *, height: int) -> None:
                 format=None,
                 help="Current network share (%)",
             ),
+            "30D Δ share": st.column_config.NumberColumn(
+                f"30D Δ share {_SORT}",
+                format=None,
+                width=100,
+                help="Change in market share vs 30 days ago (percentage points; same as Stablecoins table)",
+            ),
         },
     )
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
-def load_rwa_league_cached(*, _rwa_schema: int = 3) -> tuple[list[RwaNetworkLeagueRow], list[RwaGlobalKpi], str | None]:
+def load_rwa_league_cached(*, _rwa_schema: int = 4) -> tuple[list[RwaNetworkLeagueRow], list[RwaGlobalKpi], str | None]:
     """Bump ``_rwa_schema`` when homepage payload shape changes."""
     _ = _rwa_schema
     return fetch_rwa_home_data()
