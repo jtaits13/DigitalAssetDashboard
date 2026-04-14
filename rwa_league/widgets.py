@@ -13,6 +13,7 @@ from rwa_league.client import (
     RwaNetworkLeagueRow,
     RwaStablecoinPlatformRow,
     RwaTreasuryDistributedNetworkRow,
+    RwaTreasuryPlatformRow,
     fetch_rwa_home_data,
     fetch_rwa_stablecoins_data,
     fetch_rwa_treasuries_data,
@@ -21,12 +22,15 @@ from rwa_league.dataframe_table import (
     build_rwa_dataframe,
     build_stablecoin_platform_dataframe,
     build_us_treasury_network_dataframe,
+    build_us_treasury_platform_dataframe,
     filter_rows_by_network,
     filter_stablecoin_platform_rows,
     filter_treasury_network_rows,
+    filter_treasury_platform_rows,
     style_rwa_dataframe,
     style_stablecoin_platform_dataframe,
     style_us_treasury_network_dataframe,
+    style_us_treasury_platform_dataframe,
 )
 
 WIDGET_CSS = """
@@ -116,6 +120,10 @@ STABLECOIN_RWA_CAPTION = (
 TREASURY_RWA_CAPTION = (
     "Source: [RWA.xyz US Treasuries](https://app.rwa.xyz/treasuries) embedded overview + "
     "**Distributed** · **Networks** league (Distributed Value; not the public API)."
+)
+
+TREASURY_PLATFORM_CAPTION = (
+    "Tokenized Treasury league — **Distributed** · **Platforms** tab (issuer / platform totals; same embed as RWA.xyz)."
 )
 
 TREASURIES_RWA_LINK_LABEL = "See US Treasuries on RWA.xyz"
@@ -374,6 +382,73 @@ def _show_rwa_dataframe(df, *, height: int) -> None:
     )
 
 
+def _show_us_treasury_platform_dataframe(df, *, height: int) -> None:
+    """Tokenized Treasury league: **Distributed** → **Platforms** (RWA.xyz table layout)."""
+    st.dataframe(
+        style_us_treasury_platform_dataframe(df),
+        use_container_width=True,
+        height=height,
+        hide_index=True,
+        column_order=[
+            "#",
+            "Platform",
+            "Link",
+            "RWA Count",
+            "Total Value",
+            "7D Δ value",
+            "Market Share",
+            "30D Δ share",
+        ],
+        column_config={
+            "#": st.column_config.NumberColumn(
+                f"# {_SORT}",
+                format="%.0f",
+                help="Rank on RWA.xyz Distributed · Platforms tab",
+            ),
+            "Platform": st.column_config.TextColumn(
+                f"Platform {_SORT}",
+                width="medium",
+                help="Issuance platform (e.g. Circle, Ondo)",
+            ),
+            "Link": st.column_config.LinkColumn(
+                f"RWA Page {_SORT}",
+                display_text=_LINK_ARROW,
+                validate=r"^https://",
+                width="small",
+                help="Open this platform on RWA.xyz",
+            ),
+            "RWA Count": st.column_config.NumberColumn(
+                f"RWA Count {_SORT}",
+                format="%.0f",
+                help="Number of tokenized Treasury / RWA assets for this platform",
+            ),
+            "Total Value": st.column_config.NumberColumn(
+                f"Total Value {_SORT}",
+                format=None,
+                width=140,
+                help="Aggregate value (USD) for this platform’s tokenized Treasuries",
+            ),
+            "7D Δ value": st.column_config.NumberColumn(
+                f"7D Δ value {_SORT}",
+                format=None,
+                width=100,
+                help="7-day change in total value (%) — RWA.xyz embed uses 7D; site UI may label % columns differently",
+            ),
+            "Market Share": st.column_config.NumberColumn(
+                f"Market Share {_SORT}",
+                format=None,
+                help="Share of tokenized Treasury market (%)",
+            ),
+            "30D Δ share": st.column_config.NumberColumn(
+                f"30D Δ share {_SORT}",
+                format=None,
+                width=100,
+                help="Change in market share vs 30 days ago (percentage points)",
+            ),
+        },
+    )
+
+
 def _show_us_treasury_network_dataframe(df, *, height: int) -> None:
     """US Treasuries **Distributed** · **Networks** table; value column is **Distributed Value**."""
     st.dataframe(
@@ -459,8 +534,13 @@ def load_rwa_stablecoins_cached(
 
 @st.cache_data(ttl=3600, show_spinner=False)
 def load_rwa_treasuries_cached(
-    *, _treasury_schema: int = 2
-) -> tuple[list[RwaTreasuryDistributedNetworkRow], list[RwaGlobalKpi], str | None]:
+    *, _treasury_schema: int = 4
+) -> tuple[
+    list[RwaTreasuryDistributedNetworkRow],
+    list[RwaTreasuryPlatformRow],
+    list[RwaGlobalKpi],
+    str | None,
+]:
     """Bump ``_treasury_schema`` when ``/treasuries`` embed shape changes."""
     _ = _treasury_schema
     return fetch_rwa_treasuries_data()
@@ -616,13 +696,13 @@ def show_rwa_treasuries_widget(
             unsafe_allow_html=True,
         )
         st.caption(
-            "Full **Distributed** · **Networks** league with search. Data from the "
-            f"[RWA.xyz US Treasuries]({APP_TREASURIES}) page embed (**Distributed Value**)."
+            "Full **Distributed** leagues with search: **Networks** (by chain) then **Platforms** "
+            f"(Tokenized Treasury league by issuer). Data from [RWA.xyz US Treasuries]({APP_TREASURIES})."
         )
 
-    rows_tr, kpis_tr, err_tr = load_rwa_treasuries_cached()
+    rows_tr, plat_tr, kpis_tr, err_tr = load_rwa_treasuries_cached()
 
-    if err_tr and not rows_tr:
+    if err_tr and not rows_tr and not plat_tr:
         st.warning(escape(err_tr))
         _render_rwa_treasuries_overview(kpis_tr)
         st.link_button(
@@ -633,8 +713,8 @@ def show_rwa_treasuries_widget(
         )
         return
 
-    if not rows_tr:
-        st.info("No network rows returned for US Treasuries.")
+    if not rows_tr and not plat_tr:
+        st.info("No US Treasuries league rows returned.")
         _render_rwa_treasuries_overview(kpis_tr)
         st.link_button(
             TREASURIES_RWA_LINK_LABEL,
@@ -646,35 +726,80 @@ def show_rwa_treasuries_widget(
 
     _render_rwa_treasuries_overview(kpis_tr)
 
-    if home_preview:
-        n = max(1, min(preview_rows, len(rows_tr)))
-        working = rows_tr[:n]
-        st.caption(
-            f"Preview: top **{n}** networks by Distributed Value (**Distributed** · **Networks** tab). "
-            "Other tabs on RWA.xyz: Platforms, Managers, Jurisdiction."
-        )
-        table_h = rwa_table_height(len(working))
-    else:
-        q = st.text_input(
-            "Search network",
-            "",
-            key="rwa_treasury_search_full",
-            placeholder="Filter by network name…",
-        )
-        working = filter_treasury_network_rows(rows_tr, q)
-        if q.strip():
+    if rows_tr:
+        if home_preview:
+            n = max(1, min(preview_rows, len(rows_tr)))
+            working = rows_tr[:n]
             st.caption(
-                f"Showing {len(working)} of {len(rows_tr)} networks matching “{escape(q.strip())}”."
+                f"Preview: top **{n}** networks by Distributed Value (**Distributed** · **Networks** tab). "
+                "Open the full page for the complete Networks table and the **Platforms** league."
+            )
+            table_h = rwa_table_height(len(working))
+        else:
+            q = st.text_input(
+                "Search network",
+                "",
+                key="rwa_treasury_search_full",
+                placeholder="Filter by network name…",
+            )
+            working = filter_treasury_network_rows(rows_tr, q)
+            if q.strip():
+                st.caption(
+                    f"Showing {len(working)} of {len(rows_tr)} networks matching “{escape(q.strip())}”."
+                )
+            else:
+                st.caption(
+                    f"Showing all {len(working)} networks (US Treasuries · Distributed · Networks)."
+                )
+            table_h = rwa_table_height(len(working), max_h=900)
+
+        st.markdown(
+            '<h3 class="home-main-heading" style="margin-top:0.5rem;font-size:1.05rem;">'
+            "By network (Distributed · Networks)</h3>",
+            unsafe_allow_html=True,
+        )
+        df_tr = build_us_treasury_network_dataframe(working)
+        _show_us_treasury_network_dataframe(df_tr, height=table_h)
+        st.caption(TREASURY_RWA_CAPTION)
+    elif not home_preview:
+        st.info(
+            "The **Networks** league was not present in the embed; the **Platforms** table below may still load."
+        )
+
+    if not home_preview and plat_tr:
+        st.divider()
+        st.markdown(
+            '<h3 class="home-main-heading" style="margin-top:0.35rem;font-size:1.05rem;">'
+            "By platform (Tokenized Treasury league)</h3>",
+            unsafe_allow_html=True,
+        )
+        st.caption(
+            "**Distributed** tab · **Platforms** — RWA totals by issuer (e.g. Circle, Ondo). "
+            "Percent change on RWA.xyz may be labeled **30D** in the UI; the embed exposes **7-day** "
+            "value change (`value_7d_change`) for each row."
+        )
+        qp = st.text_input(
+            "Search platform",
+            "",
+            key="rwa_treasury_platform_search_full",
+            placeholder="Filter by platform name…",
+        )
+        working_p = filter_treasury_platform_rows(plat_tr, qp)
+        if qp.strip():
+            st.caption(
+                f"Showing {len(working_p)} of {len(plat_tr)} platforms matching “{escape(qp.strip())}”."
             )
         else:
             st.caption(
-                f"Showing all {len(working)} networks (US Treasuries · Distributed · Networks)."
+                f"Showing all {len(working_p)} platforms (US Treasuries · Distributed · Platforms)."
             )
-        table_h = rwa_table_height(len(working), max_h=900)
-
-    df_tr = build_us_treasury_network_dataframe(working)
-    _show_us_treasury_network_dataframe(df_tr, height=table_h)
-    st.caption(TREASURY_RWA_CAPTION)
+        table_ph = rwa_table_height(len(working_p), max_h=900)
+        df_p = build_us_treasury_platform_dataframe(working_p)
+        _show_us_treasury_platform_dataframe(df_p, height=table_ph)
+        st.caption(TREASURY_PLATFORM_CAPTION)
+    elif not home_preview and not plat_tr:
+        st.divider()
+        st.info("No **Platforms** league rows were returned for US Treasuries in this embed.")
 
     if home_preview:
         if st.button(

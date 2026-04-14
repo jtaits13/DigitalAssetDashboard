@@ -47,6 +47,20 @@ class RwaTreasuryDistributedNetworkRow(RwaNetworkLeagueRow):
 
 
 @dataclass(frozen=True)
+class RwaTreasuryPlatformRow:
+    """One row from ``/treasuries`` **Distributed** → **Platforms** (Tokenized Treasury league by issuer)."""
+
+    rank: int
+    platform: str
+    platform_href: str | None
+    rwa_count: int
+    total_value_usd: float
+    value_change_7d_raw: float | None
+    market_share_raw: float  # fraction 0–1
+    market_share_change_30d_raw: float | None
+
+
+@dataclass(frozen=True)
 class RwaStablecoinPlatformRow:
     """One row from the Stablecoins page league table **Platforms** tab."""
 
@@ -112,6 +126,68 @@ def _treasury_network_rows_from_props(props: dict[str, Any]) -> list[dict[str, A
             if isinstance(rows, list):
                 return rows
     return None
+
+
+def _treasury_platform_rows_from_props(props: dict[str, Any]) -> list[dict[str, Any]] | None:
+    """US Treasuries page: **Distributed** bucket, **platforms** tab (Tokenized Treasury league by platform)."""
+    lt = props.get("pageProps", {}).get("leagueTableTabs", {})
+    bucket = lt.get("distributed")
+    if not isinstance(bucket, list):
+        return None
+    for tab in bucket:
+        if isinstance(tab, dict) and tab.get("key") == "platforms":
+            data = tab.get("data") or {}
+            rows = data.get("rows")
+            if isinstance(rows, list):
+                return rows
+    return None
+
+
+def _treasury_platform_rows_from_raw(raw_rows: list[dict[str, Any]]) -> list[RwaTreasuryPlatformRow]:
+    out: list[RwaTreasuryPlatformRow] = []
+    for row in raw_rows:
+        if not isinstance(row, dict):
+            continue
+        group = row.get("group") or {}
+        name = str(group.get("name") or "").strip() or "—"
+        link = group.get("linkTo") or {}
+        href = link.get("href") if isinstance(link, dict) else None
+        if isinstance(href, str) and href.strip():
+            platform_href = href.strip()
+        else:
+            platform_href = None
+
+        ri = row.get("rowIndex")
+        rank = int(ri) + 1 if isinstance(ri, int) else len(out) + 1
+
+        ac = row.get("asset_count")
+        n_assets = int(ac) if isinstance(ac, (int, float)) else 0
+
+        val = row.get("value")
+        total = float(val) if isinstance(val, (int, float)) else 0.0
+
+        ms = row.get("market_share_pct")
+        msf = float(ms) if isinstance(ms, (int, float)) else 0.0
+
+        ms30 = row.get("market_share_pct_30d_change")
+        ms30f = float(ms30) if isinstance(ms30, (int, float)) else None
+
+        v7 = row.get("value_7d_change")
+        v7f = float(v7) if isinstance(v7, (int, float)) else None
+
+        out.append(
+            RwaTreasuryPlatformRow(
+                rank=rank,
+                platform=name,
+                platform_href=platform_href,
+                rwa_count=n_assets,
+                total_value_usd=total,
+                value_change_7d_raw=v7f,
+                market_share_raw=msf,
+                market_share_change_30d_raw=ms30f,
+            )
+        )
+    return out
 
 
 def _format_aggregate_value(raw: dict[str, Any]) -> str:
@@ -372,30 +448,43 @@ def _fetch_treasuries_props_payload() -> tuple[dict[str, Any] | None, str | None
     return props, None
 
 
-def fetch_rwa_treasuries_data() -> tuple[list[RwaTreasuryDistributedNetworkRow], list[RwaGlobalKpi], str | None]:
+def fetch_rwa_treasuries_data() -> tuple[
+    list[RwaTreasuryDistributedNetworkRow],
+    list[RwaTreasuryPlatformRow],
+    list[RwaGlobalKpi],
+    str | None,
+]:
     """
-    US Treasuries dashboard: overview aggregates + **Distributed** tab **networks** league.
+    US Treasuries dashboard: overview aggregates + **Distributed** tab **networks** and **platforms** leagues.
 
-    Row ``value`` is **Distributed Value** (USD) for tokenized Treasuries on that network.
+    Network row ``value`` is **Distributed Value** (USD) per chain; platform row ``value`` is total value
+    for that issuer on the Tokenized Treasury league table.
     """
     props, err = _fetch_treasuries_props_payload()
     if err:
-        return [], [], err
+        return [], [], [], err
     assert props is not None
 
     kpis = _parse_aggregates(props)
     if kpis and not _aggregates_look_like_us_treasuries_page(kpis):
-        return [], kpis, (
+        return [], [], kpis, (
             "Overview metrics do not match the US Treasuries page (expected first KPI label “Distributed Value”). "
             "Aborting so the table is not populated from the global homepage embed."
         )
 
-    raw_rows = _treasury_network_rows_from_props(props)
-    if not raw_rows:
-        return [], kpis, "US Treasuries Distributed · Networks league table not found in page data."
-    league = _rows_from_raw(raw_rows)
-    treasury_rows = [RwaTreasuryDistributedNetworkRow(**asdict(r)) for r in league]
-    return treasury_rows, kpis, None
+    raw_net = _treasury_network_rows_from_props(props)
+    raw_plat = _treasury_platform_rows_from_props(props)
+    if not raw_net and not raw_plat:
+        return [], [], kpis, "US Treasuries Distributed · Networks / Platforms league data not found in page data."
+
+    net_out: list[RwaTreasuryDistributedNetworkRow] = []
+    if raw_net:
+        league = _rows_from_raw(raw_net)
+        net_out = [RwaTreasuryDistributedNetworkRow(**asdict(r)) for r in league]
+
+    plat_out: list[RwaTreasuryPlatformRow] = _treasury_platform_rows_from_raw(raw_plat or [])
+
+    return net_out, plat_out, kpis, None
 
 
 def fetch_rwa_stablecoins_data() -> tuple[list[RwaStablecoinPlatformRow], list[RwaGlobalKpi], str | None]:
