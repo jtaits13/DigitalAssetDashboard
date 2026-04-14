@@ -12,6 +12,7 @@ from rwa_league.client import (
     RwaGlobalKpi,
     RwaNetworkLeagueRow,
     RwaStablecoinPlatformRow,
+    RwaTreasuryDistributedNetworkRow,
     fetch_rwa_home_data,
     fetch_rwa_stablecoins_data,
     fetch_rwa_treasuries_data,
@@ -22,6 +23,7 @@ from rwa_league.dataframe_table import (
     build_us_treasury_network_dataframe,
     filter_rows_by_network,
     filter_stablecoin_platform_rows,
+    filter_treasury_network_rows,
     style_rwa_dataframe,
     style_stablecoin_platform_dataframe,
     style_us_treasury_network_dataframe,
@@ -457,8 +459,8 @@ def load_rwa_stablecoins_cached(
 
 @st.cache_data(ttl=3600, show_spinner=False)
 def load_rwa_treasuries_cached(
-    *, _treasury_schema: int = 1
-) -> tuple[list[RwaNetworkLeagueRow], list[RwaGlobalKpi], str | None]:
+    *, _treasury_schema: int = 2
+) -> tuple[list[RwaTreasuryDistributedNetworkRow], list[RwaGlobalKpi], str | None]:
     """Bump ``_treasury_schema`` when ``/treasuries`` embed shape changes."""
     _ = _treasury_schema
     return fetch_rwa_treasuries_data()
@@ -659,7 +661,7 @@ def show_rwa_treasuries_widget(
             key="rwa_treasury_search_full",
             placeholder="Filter by network name…",
         )
-        working = filter_rows_by_network(rows_tr, q)
+        working = filter_treasury_network_rows(rows_tr, q)
         if q.strip():
             st.caption(
                 f"Showing {len(working)} of {len(rows_tr)} networks matching “{escape(q.strip())}”."

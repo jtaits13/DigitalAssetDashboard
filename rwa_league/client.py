@@ -9,7 +9,7 @@ from __future__ import annotations
 import json
 import logging
 import re
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from typing import Any
 
 import requests
@@ -39,6 +39,11 @@ class RwaNetworkLeagueRow:
     market_share_change_7d_raw: float | None
     # Optional fractional 30D change in market share (e.g. ``market_share_pct_30d_change``).
     market_share_change_30d_raw: float | None
+
+
+@dataclass(frozen=True)
+class RwaTreasuryDistributedNetworkRow(RwaNetworkLeagueRow):
+    """One row from ``/treasuries`` **Distributed** → **Networks** (not the homepage league)."""
 
 
 @dataclass(frozen=True)
@@ -123,6 +128,13 @@ def _format_aggregate_value(raw: dict[str, Any]) -> str:
     if isinstance(val, (int, float)):
         return f"{val:,.4g}" if isinstance(val, float) and val != int(val) else f"{int(val):,}"
     return str(val) if val is not None else "—"
+
+
+def _aggregates_look_like_us_treasuries_page(kpis: list[RwaGlobalKpi]) -> bool:
+    """Homepage overview starts with **Distributed Asset Value**; US Treasuries starts with **Distributed Value**."""
+    if not kpis:
+        return False
+    return kpis[0].label.strip() == "Distributed Value"
 
 
 def _parse_aggregates(props: dict[str, Any]) -> list[RwaGlobalKpi]:
@@ -349,13 +361,18 @@ def _fetch_treasuries_props_payload() -> tuple[dict[str, Any] | None, str | None
     payload = _extract_next_data(r.text)
     if not payload:
         return None, "Could not parse __NEXT_DATA__ from app.rwa.xyz/treasuries (layout may have changed)."
+    if payload.get("page") != "/treasuries":
+        return None, (
+            f"Expected Next.js page route /treasuries in __NEXT_DATA__, got {payload.get('page')!r}. "
+            "Refusing to parse a different route so league rows are not mixed with the global homepage table."
+        )
     props = payload.get("props")
     if not isinstance(props, dict):
         return None, "Invalid __NEXT_DATA__ structure."
     return props, None
 
 
-def fetch_rwa_treasuries_data() -> tuple[list[RwaNetworkLeagueRow], list[RwaGlobalKpi], str | None]:
+def fetch_rwa_treasuries_data() -> tuple[list[RwaTreasuryDistributedNetworkRow], list[RwaGlobalKpi], str | None]:
     """
     US Treasuries dashboard: overview aggregates + **Distributed** tab **networks** league.
 
@@ -366,11 +383,19 @@ def fetch_rwa_treasuries_data() -> tuple[list[RwaNetworkLeagueRow], list[RwaGlob
         return [], [], err
     assert props is not None
 
-    raw_rows = _treasury_network_rows_from_props(props)
     kpis = _parse_aggregates(props)
+    if kpis and not _aggregates_look_like_us_treasuries_page(kpis):
+        return [], kpis, (
+            "Overview metrics do not match the US Treasuries page (expected first KPI label “Distributed Value”). "
+            "Aborting so the table is not populated from the global homepage embed."
+        )
+
+    raw_rows = _treasury_network_rows_from_props(props)
     if not raw_rows:
         return [], kpis, "US Treasuries Distributed · Networks league table not found in page data."
-    return _rows_from_raw(raw_rows), kpis, None
+    league = _rows_from_raw(raw_rows)
+    treasury_rows = [RwaTreasuryDistributedNetworkRow(**asdict(r)) for r in league]
+    return treasury_rows, kpis, None
 
 
 def fetch_rwa_stablecoins_data() -> tuple[list[RwaStablecoinPlatformRow], list[RwaGlobalKpi], str | None]:

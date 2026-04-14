@@ -11,7 +11,11 @@ import numpy as np
 import pandas as pd
 
 from crypto_etps.client import format_usd_compact
-from rwa_league.client import RwaNetworkLeagueRow, RwaStablecoinPlatformRow
+from rwa_league.client import (
+    RwaNetworkLeagueRow,
+    RwaStablecoinPlatformRow,
+    RwaTreasuryDistributedNetworkRow,
+)
 
 _APP_BASE = "https://app.rwa.xyz"
 
@@ -51,7 +55,7 @@ def build_rwa_dataframe(rows: list[RwaNetworkLeagueRow]) -> pd.DataFrame:
     return pd.DataFrame(recs)
 
 
-def build_us_treasury_network_dataframe(rows: list[RwaNetworkLeagueRow]) -> pd.DataFrame:
+def build_us_treasury_network_dataframe(rows: list[RwaTreasuryDistributedNetworkRow]) -> pd.DataFrame:
     """Same as ``build_rwa_dataframe`` but the value column is labeled **Distributed Value** (US Treasuries embed)."""
 
     recs: list[dict[str, object]] = []
@@ -128,6 +132,15 @@ def filter_stablecoin_platform_rows(
 
 
 def filter_rows_by_network(rows: list[RwaNetworkLeagueRow], query: str) -> list[RwaNetworkLeagueRow]:
+    q = (query or "").strip().lower()
+    if not q:
+        return list(rows)
+    return [r for r in rows if q in (r.network or "").lower()]
+
+
+def filter_treasury_network_rows(
+    rows: list[RwaTreasuryDistributedNetworkRow], query: str
+) -> list[RwaTreasuryDistributedNetworkRow]:
     q = (query or "").strip().lower()
     if not q:
         return list(rows)
