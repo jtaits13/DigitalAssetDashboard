@@ -122,6 +122,8 @@ def _sidebar() -> bool:
             st.switch_page("pages/US_Crypto_ETPs.py")
         if st.button("RWA league table", use_container_width=True, key="sb_rwa"):
             st.switch_page("pages/RWA_League.py")
+        if st.button("RWA Stablecoins", use_container_width=True, key="sb_rwa_sc"):
+            st.switch_page("pages/RWA_Stablecoins.py")
         st.divider()
         st.caption("Refresh reloads RSS, prices, ETPs, regulatory feeds, RWA network league, and RWA Stablecoins embed.")
         refresh = st.button("Refresh all data", use_container_width=True, key="sb_refresh")

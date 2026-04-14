@@ -18,6 +18,7 @@ from rwa_league.dataframe_table import (
     build_rwa_dataframe,
     build_stablecoin_platform_dataframe,
     filter_rows_by_network,
+    filter_stablecoin_platform_rows,
     style_rwa_dataframe,
     style_stablecoin_platform_dataframe,
 )
@@ -344,19 +345,44 @@ def clear_rwa_league_cache() -> None:
     load_rwa_stablecoins_cached.clear()
 
 
-def _show_rwa_stablecoins_teaser(*, preview_rows: int = 8) -> None:
-    """Home-only block: Stablecoins KPI row + Platforms table preview."""
-    st.divider()
-    st.markdown(
-        '<h3 class="home-main-heading" style="margin-top:0.35rem;font-size:1.05rem;">'
-        "Stablecoins (RWA.xyz)</h3>",
-        unsafe_allow_html=True,
-    )
-    st.caption(
-        "Overview and **Platforms** league from [app.rwa.xyz/stablecoins](https://app.rwa.xyz/stablecoins) "
-        "(platform **market cap**, not network Distributed Value)."
-    )
+def show_rwa_stablecoins_widget(
+    *,
+    home_preview: bool = True,
+    preview_rows: int = 8,
+) -> None:
+    """
+    RWA.xyz Stablecoins embed: four overview KPIs + **Platforms** league.
+
+    ``home_preview=True`` (under RWA Data on the hub): short preview + link to full page.
+    ``home_preview=False``: full searchable table (use from ``pages/RWA_Stablecoins.py``).
+    """
+    if home_preview:
+        st.divider()
+        st.markdown(
+            '<h3 class="home-main-heading" style="margin-top:0.35rem;font-size:1.05rem;">'
+            "Stablecoins (RWA.xyz)</h3>",
+            unsafe_allow_html=True,
+        )
+        st.caption(
+            "Overview and **Platforms** league from [app.rwa.xyz/stablecoins](https://app.rwa.xyz/stablecoins) "
+            "(platform **market cap**, not network Distributed Value)."
+        )
+    else:
+        st.markdown(WIDGET_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
+        st.markdown(
+            '<div class="rwa-league-shell">'
+            '<h2 class="home-main-heading">Stablecoins</h2>'
+            "</div>",
+            unsafe_allow_html=True,
+        )
+        st.caption(
+            "Full **Platforms** league with search. Data from the "
+            "[RWA.xyz Stablecoins](https://app.rwa.xyz/stablecoins) page embed "
+            "(aggregate circulating **market cap** per issuance platform)."
+        )
+
     rows_sc, kpis_sc, err_sc = load_rwa_stablecoins_cached()
+
     if err_sc and not rows_sc:
         st.warning(escape(err_sc))
         _render_rwa_stablecoin_overview(kpis_sc)
@@ -364,30 +390,72 @@ def _show_rwa_stablecoins_teaser(*, preview_rows: int = 8) -> None:
             "Open Stablecoins on RWA.xyz",
             "https://app.rwa.xyz/stablecoins",
             use_container_width=True,
-            key="rwa_stablecoins_link_err",
+            key="rwa_sc_rwa_link_err_home" if home_preview else "rwa_sc_rwa_link_err_full",
         )
         return
+
     if not rows_sc:
         st.info("No platform rows returned for Stablecoins.")
         _render_rwa_stablecoin_overview(kpis_sc)
+        st.link_button(
+            "Open Stablecoins on RWA.xyz",
+            "https://app.rwa.xyz/stablecoins",
+            use_container_width=True,
+            key="rwa_sc_rwa_link_empty_home" if home_preview else "rwa_sc_rwa_link_empty_full",
+        )
         return
 
     _render_rwa_stablecoin_overview(kpis_sc)
-    n = max(1, min(preview_rows, len(rows_sc)))
-    preview = rows_sc[:n]
-    st.caption(
-        f"Preview: top **{n}** platforms by market cap (**Platforms** tab). "
-        "Other tabs on RWA.xyz: Networks, Managers, Jurisdiction."
-    )
-    df_sc = build_stablecoin_platform_dataframe(preview)
-    _show_stablecoin_platform_dataframe(df_sc, height=rwa_table_height(len(df_sc)))
+
+    if home_preview:
+        n = max(1, min(preview_rows, len(rows_sc)))
+        working = rows_sc[:n]
+        st.caption(
+            f"Preview: top **{n}** platforms by market cap (**Platforms** tab). "
+            "Other tabs on RWA.xyz: Networks, Managers, Jurisdiction."
+        )
+        table_h = rwa_table_height(len(working))
+    else:
+        q = st.text_input(
+            "Search platform",
+            "",
+            key="rwa_stablecoin_search_full",
+            placeholder="Filter by platform name…",
+        )
+        working = filter_stablecoin_platform_rows(rows_sc, q)
+        if q.strip():
+            st.caption(
+                f"Showing {len(working)} of {len(rows_sc)} platforms matching “{escape(q.strip())}”."
+            )
+        else:
+            st.caption(f"Showing all {len(working)} platforms (Stablecoins · Platforms tab).")
+        table_h = rwa_table_height(len(working), max_h=900)
+
+    df_sc = build_stablecoin_platform_dataframe(working)
+    _show_stablecoin_platform_dataframe(df_sc, height=table_h)
     st.caption(STABLECOIN_RWA_CAPTION)
-    st.link_button(
-        "Open Stablecoins on RWA.xyz",
-        "https://app.rwa.xyz/stablecoins",
-        use_container_width=True,
-        key="rwa_stablecoins_link_ok",
-    )
+
+    if home_preview:
+        if st.button(
+            "Open full Stablecoins table",
+            key="see_full_rwa_stablecoins",
+            use_container_width=True,
+            type="primary",
+        ):
+            st.switch_page("pages/RWA_Stablecoins.py")
+        st.link_button(
+            "Open Stablecoins on RWA.xyz",
+            "https://app.rwa.xyz/stablecoins",
+            use_container_width=True,
+            key="rwa_sc_rwa_link_home",
+        )
+    else:
+        st.link_button(
+            "Open Stablecoins on RWA.xyz",
+            "https://app.rwa.xyz/stablecoins",
+            use_container_width=True,
+            key="rwa_sc_rwa_link_full",
+        )
 
 
 def show_rwa_league_widget(
@@ -411,7 +479,7 @@ def show_rwa_league_widget(
         st.warning(escape(err))
         _render_rwa_global_overview(kpis)
         if home_preview:
-            _show_rwa_stablecoins_teaser(preview_rows=preview_rows)
+            show_rwa_stablecoins_widget(home_preview=True, preview_rows=preview_rows)
         return
 
     if not rows:
@@ -463,4 +531,4 @@ def show_rwa_league_widget(
         st.switch_page("pages/RWA_League.py")
 
     if home_preview:
-        _show_rwa_stablecoins_teaser(preview_rows=preview_rows)
+        show_rwa_stablecoins_widget(home_preview=True, preview_rows=preview_rows)
