@@ -10,12 +10,16 @@ from home_layout import STREAMLIT_TABLE_UNIFY_CSS
 from rwa_league.client import (
     RwaGlobalKpi,
     RwaNetworkLeagueRow,
+    RwaStablecoinPlatformRow,
     fetch_rwa_home_data,
+    fetch_rwa_stablecoins_data,
 )
 from rwa_league.dataframe_table import (
     build_rwa_dataframe,
+    build_stablecoin_platform_dataframe,
     filter_rows_by_network,
     style_rwa_dataframe,
+    style_stablecoin_platform_dataframe,
 )
 
 WIDGET_CSS = """
@@ -97,6 +101,11 @@ RWA_DATA_SOURCE_CAPTION = (
     "(Global Market Overview + Networks league **Distributed** tab; not the public API)."
 )
 
+STABLECOIN_RWA_CAPTION = (
+    "Source: [RWA.xyz Stablecoins](https://app.rwa.xyz/stablecoins) embedded overview + "
+    "**Platforms** league tab (market cap by issuer platform; not the public API)."
+)
+
 
 def _format_pct_change_30d(pct: float | None) -> tuple[str, str] | None:
     """Return (escaped_html_fragment, css_class) or None if unknown."""
@@ -111,6 +120,37 @@ def _format_pct_change_30d(pct: float | None) -> tuple[str, str] | None:
     else:
         cls = "neutral"
     return escape(s), cls
+
+
+def _render_rwa_stablecoin_overview(kpis: list[RwaGlobalKpi]) -> None:
+    """Stablecoins page overview: four KPI tiles (30D % change when present)."""
+    if not kpis:
+        return
+    cells = []
+    for k in kpis:
+        delta_html = ""
+        fd = _format_pct_change_30d(k.delta_30d_pct)
+        if fd is not None:
+            txt, cls = fd
+            delta_html = f"<span class='rwa-kpi-delta {cls}'>{txt}</span>"
+        cells.append(
+            "<div class='rwa-kpi-cell'>"
+            f"<span class='rwa-kpi-label'>{escape(k.label)}</span>"
+            f"<span class='rwa-kpi-val'>{escape(k.value_display)}</span>"
+            f"{delta_html}"
+            "</div>"
+        )
+    row = "<div class='rwa-kpi-row'>" + "".join(cells) + "</div>"
+    st.markdown(
+        '<div class="rwa-kpi-wrap">'
+        "<p class='rwa-kpi-window-note'>"
+        "All values in this row match the <strong>Stablecoins</strong> overview on RWA.xyz "
+        "(typically <strong>30D</strong> change where shown)."
+        "</p>"
+        f"{row}"
+        "</div>",
+        unsafe_allow_html=True,
+    )
 
 
 def _render_rwa_global_overview(kpis: list[RwaGlobalKpi]) -> None:
@@ -148,6 +188,72 @@ def rwa_table_height(num_rows: int, *, max_h: int = 520) -> int:
     header = 38
     row_h = 35
     return min(max_h, header + row_h * max(1, num_rows))
+
+
+def _show_stablecoin_platform_dataframe(df, *, height: int) -> None:
+    st.dataframe(
+        style_stablecoin_platform_dataframe(df),
+        use_container_width=True,
+        height=height,
+        hide_index=True,
+        column_order=[
+            "#",
+            "Platform",
+            "Link",
+            "Stablecoins",
+            "Total Value",
+            "7D Δ value",
+            "Market Share",
+            "30D Δ share",
+        ],
+        column_config={
+            "#": st.column_config.NumberColumn(
+                f"# {_SORT}",
+                format="%.0f",
+                help="Rank on RWA.xyz Platforms tab",
+            ),
+            "Platform": st.column_config.TextColumn(
+                f"Platform {_SORT}",
+                width="medium",
+                help="Issuance platform (e.g. Tether Holdings)",
+            ),
+            "Link": st.column_config.LinkColumn(
+                f"RWA Page {_SORT}",
+                display_text="↗",
+                validate=r"^https://",
+                width="small",
+                help="Open this platform on RWA.xyz",
+            ),
+            "Stablecoins": st.column_config.NumberColumn(
+                f"Stablecoins {_SORT}",
+                format="%.0f",
+                help="Number of tracked stablecoin assets for this platform",
+            ),
+            "Total Value": st.column_config.NumberColumn(
+                f"Market cap {_SORT}",
+                format=None,
+                width=140,
+                help="Aggregate circulating market cap (USD) for this platform’s stablecoins",
+            ),
+            "7D Δ value": st.column_config.NumberColumn(
+                f"7D Δ cap {_SORT}",
+                format=None,
+                width=100,
+                help="7-day change in aggregate market cap (%)",
+            ),
+            "Market Share": st.column_config.NumberColumn(
+                f"Share {_SORT}",
+                format=None,
+                help="Share of total stablecoin market cap (%)",
+            ),
+            "30D Δ share": st.column_config.NumberColumn(
+                f"30D Δ share {_SORT}",
+                format=None,
+                width=100,
+                help="Change in market share vs 30 days ago (pts)",
+            ),
+        },
+    )
 
 
 def _show_rwa_dataframe(df, *, height: int) -> None:
@@ -217,8 +323,64 @@ def load_rwa_league_cached(*, _rwa_schema: int = 3) -> tuple[list[RwaNetworkLeag
     return fetch_rwa_home_data()
 
 
+@st.cache_data(ttl=3600, show_spinner=False)
+def load_rwa_stablecoins_cached(
+    *, _stable_schema: int = 1
+) -> tuple[list[RwaStablecoinPlatformRow], list[RwaGlobalKpi], str | None]:
+    """Bump ``_stable_schema`` when ``/stablecoins`` embed shape changes."""
+    _ = _stable_schema
+    return fetch_rwa_stablecoins_data()
+
+
 def clear_rwa_league_cache() -> None:
     load_rwa_league_cached.clear()
+    load_rwa_stablecoins_cached.clear()
+
+
+def _show_rwa_stablecoins_teaser(*, preview_rows: int = 8) -> None:
+    """Home-only block: Stablecoins KPI row + Platforms table preview."""
+    st.divider()
+    st.markdown(
+        '<h3 class="home-main-heading" style="margin-top:0.35rem;font-size:1.05rem;">'
+        "Stablecoins (RWA.xyz)</h3>",
+        unsafe_allow_html=True,
+    )
+    st.caption(
+        "Overview and **Platforms** league from [app.rwa.xyz/stablecoins](https://app.rwa.xyz/stablecoins) "
+        "(platform **market cap**, not network Distributed Value)."
+    )
+    rows_sc, kpis_sc, err_sc = load_rwa_stablecoins_cached()
+    if err_sc and not rows_sc:
+        st.warning(escape(err_sc))
+        _render_rwa_stablecoin_overview(kpis_sc)
+        st.link_button(
+            "Open Stablecoins on RWA.xyz",
+            "https://app.rwa.xyz/stablecoins",
+            use_container_width=True,
+            key="rwa_stablecoins_link_err",
+        )
+        return
+    if not rows_sc:
+        st.info("No platform rows returned for Stablecoins.")
+        _render_rwa_stablecoin_overview(kpis_sc)
+        return
+
+    _render_rwa_stablecoin_overview(kpis_sc)
+    n = max(1, min(preview_rows, len(rows_sc)))
+    preview = rows_sc[:n]
+    st.caption(
+        f"Preview: top **{n}** platforms by market cap (**Platforms** tab). "
+        "Other tabs on RWA.xyz: Networks, Managers, Jurisdiction."
+    )
+    df_sc = build_stablecoin_platform_dataframe(preview)
+    _show_stablecoin_platform_dataframe(df_sc, height=rwa_table_height(len(df_sc)))
+    st.caption(STABLECOIN_RWA_CAPTION)
+    st.link_button(
+        "Open Stablecoins on RWA.xyz",
+        "https://app.rwa.xyz/stablecoins",
+        use_container_width=True,
+        key="rwa_stablecoins_link_ok",
+    )
 
 
 def show_rwa_league_widget(
@@ -241,6 +403,8 @@ def show_rwa_league_widget(
         )
         st.warning(escape(err))
         _render_rwa_global_overview(kpis)
+        if home_preview:
+            _show_rwa_stablecoins_teaser(preview_rows=preview_rows)
         return
 
     if not rows:
@@ -290,3 +454,6 @@ def show_rwa_league_widget(
         type="primary",
     ):
         st.switch_page("pages/RWA_League.py")
+
+    if home_preview:
+        _show_rwa_stablecoins_teaser(preview_rows=preview_rows)

@@ -19,6 +19,7 @@ from crypto_etps.client import format_usd_compact
 logger = logging.getLogger(__name__)
 
 APP_HOME = "https://app.rwa.xyz/"
+APP_STABLECOINS = "https://app.rwa.xyz/stablecoins"
 USER_AGENT = "JPM-Digital/1.0 (RWA league widget; contact via app maintainer)"
 
 
@@ -35,6 +36,20 @@ class RwaNetworkLeagueRow:
     market_share_raw: float  # fraction 0–1
     # Optional fractional 7D change in market share (if present in embedded payload).
     market_share_change_7d_raw: float | None
+
+
+@dataclass(frozen=True)
+class RwaStablecoinPlatformRow:
+    """One row from the Stablecoins page league table **Platforms** tab."""
+
+    rank: int
+    platform: str
+    platform_href: str | None
+    stablecoin_count: int
+    total_value_usd: float
+    value_change_7d_raw: float | None
+    market_share_raw: float  # fraction 0–1
+    market_share_change_30d_raw: float | None  # fractional change in share vs 30d ago
 
 
 @dataclass(frozen=True)
@@ -109,6 +124,67 @@ def _parse_aggregates(props: dict[str, Any]) -> list[RwaGlobalKpi]:
             if isinstance(v, (int, float)):
                 delta = float(v)
         out.append(RwaGlobalKpi(label=label, value_display=disp, delta_30d_pct=delta))
+    return out
+
+
+def _stablecoin_platform_rows_from_props(props: dict[str, Any]) -> list[dict[str, Any]] | None:
+    """Platforms tab rows on ``/stablecoins`` (``leagueTableTabs`` is a list of tab objects)."""
+    lt = props.get("pageProps", {}).get("leagueTableTabs")
+    if not isinstance(lt, list):
+        return None
+    for item in lt:
+        if isinstance(item, dict) and item.get("key") == "platforms":
+            data = item.get("data") or {}
+            rows = data.get("rows")
+            if isinstance(rows, list):
+                return rows
+    return None
+
+
+def _stablecoin_platform_rows_from_raw(raw_rows: list[dict[str, Any]]) -> list[RwaStablecoinPlatformRow]:
+    out: list[RwaStablecoinPlatformRow] = []
+    for row in raw_rows:
+        if not isinstance(row, dict):
+            continue
+        group = row.get("group") or {}
+        name = str(group.get("name") or "").strip() or "—"
+        link = group.get("linkTo") or {}
+        href = link.get("href") if isinstance(link, dict) else None
+        if isinstance(href, str) and href.strip():
+            platform_href = href.strip()
+        else:
+            platform_href = None
+
+        ri = row.get("rowIndex")
+        rank = int(ri) + 1 if isinstance(ri, int) else len(out) + 1
+
+        ac = row.get("asset_count")
+        n_coins = int(ac) if isinstance(ac, (int, float)) else 0
+
+        val = row.get("value")
+        total = float(val) if isinstance(val, (int, float)) else 0.0
+
+        ms = row.get("market_share_pct")
+        msf = float(ms) if isinstance(ms, (int, float)) else 0.0
+
+        ms30 = row.get("market_share_pct_30d_change")
+        ms30f = float(ms30) if isinstance(ms30, (int, float)) else None
+
+        v7 = row.get("value_7d_change")
+        v7f = float(v7) if isinstance(v7, (int, float)) else None
+
+        out.append(
+            RwaStablecoinPlatformRow(
+                rank=rank,
+                platform=name,
+                platform_href=platform_href,
+                stablecoin_count=n_coins,
+                total_value_usd=total,
+                value_change_7d_raw=v7f,
+                market_share_raw=msf,
+                market_share_change_30d_raw=ms30f,
+            )
+        )
     return out
 
 
@@ -211,3 +287,40 @@ def fetch_rwa_network_league() -> tuple[list[RwaNetworkLeagueRow], str | None]:
     """Return Networks league table for the **Distributed** view only."""
     rows, _, err = fetch_rwa_home_data()
     return rows, err
+
+
+def _fetch_stablecoins_props_payload() -> tuple[dict[str, Any] | None, str | None]:
+    headers = {"User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml"}
+    try:
+        r = requests.get(APP_STABLECOINS, headers=headers, timeout=60)
+        r.raise_for_status()
+    except (requests.RequestException, OSError) as e:
+        logger.debug("RWA stablecoins fetch: %s", e)
+        return None, str(e)
+
+    payload = _extract_next_data(r.text)
+    if not payload:
+        return None, "Could not parse __NEXT_DATA__ from app.rwa.xyz/stablecoins (layout may have changed)."
+    props = payload.get("props")
+    if not isinstance(props, dict):
+        return None, "Invalid __NEXT_DATA__ structure."
+    return props, None
+
+
+def fetch_rwa_stablecoins_data() -> tuple[list[RwaStablecoinPlatformRow], list[RwaGlobalKpi], str | None]:
+    """
+    Stablecoins dashboard: overview aggregates + **Platforms** league tab (not Networks).
+
+    Row value is platform stablecoin **market cap** (same as RWA.xyz table). ``percentChange``
+    on aggregates uses the interval in the payload (typically **30d**).
+    """
+    props, err = _fetch_stablecoins_props_payload()
+    if err:
+        return [], [], err
+    assert props is not None
+
+    raw_rows = _stablecoin_platform_rows_from_props(props)
+    kpis = _parse_aggregates(props)
+    if not raw_rows:
+        return [], kpis, "Stablecoins Platforms league table not found in page data."
+    return _stablecoin_platform_rows_from_raw(raw_rows), kpis, None
