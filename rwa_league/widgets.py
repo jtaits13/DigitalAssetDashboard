@@ -6,11 +6,16 @@ from html import escape
 
 import streamlit as st
 
+from crypto_etps.aum_history import build_aggregate_aum_plotly_figure
 from home_layout import STREAMLIT_TABLE_UNIFY_CSS
 from rwa_league.client import (
     RwaGlobalKpi,
     RwaNetworkLeagueRow,
     fetch_rwa_home_data,
+)
+from rwa_league.global_market_history import (
+    build_rwa_global_market_plot_df,
+    load_rwa_global_market_timeseries_cached,
 )
 from rwa_league.dataframe_table import (
     build_rwa_dataframe,
@@ -219,12 +224,25 @@ def load_rwa_league_cached(*, _rwa_schema: int = 3) -> tuple[list[RwaNetworkLeag
 
 def clear_rwa_league_cache() -> None:
     load_rwa_league_cached.clear()
+    load_rwa_global_market_timeseries_cached.clear()
+
+
+def _rwa_api_key_from_secrets() -> str | None:
+    try:
+        k = st.secrets.get("RWA_API_KEY", "")
+    except Exception:
+        return None
+    if k is None:
+        return None
+    s = str(k).strip()
+    return s or None
 
 
 def show_rwa_league_widget(
     *,
     home_preview: bool = False,
     preview_rows: int = 8,
+    show_global_trend_chart: bool = False,
 ) -> None:
     """
     RWA.xyz networks league table. ``home_preview=True`` shows only the top N rows (no search)
@@ -255,6 +273,49 @@ def show_rwa_league_widget(
     )
 
     _render_rwa_global_overview(kpis)
+
+    if show_global_trend_chart:
+        st.markdown(
+            '<h3 class="home-main-heading" style="margin-top:1rem;font-size:1rem;">'
+            "Distributed Asset Value trend (12 months)</h3>",
+            unsafe_allow_html=True,
+        )
+        st.caption(
+            "Weekly sum of circulating asset value (USD) via the "
+            "[RWA.xyz timeseries API](https://docs.rwa.xyz/api/timeseries.md) — same Plotly style as the "
+            "U.S. ETP aggregate AUM chart (default: last 12 months; zoom/pan the full series). "
+            "Requires [RWA_API_KEY](https://app.rwa.xyz/tools/api/api-keys) in app secrets."
+        )
+        api_key = _rwa_api_key_from_secrets()
+        if not api_key:
+            st.info(
+                "Add **`RWA_API_KEY`** to Streamlit secrets to load this chart. "
+                "Create a key under [RWA.xyz → API keys](https://app.rwa.xyz/tools/api/api-keys)."
+            )
+        else:
+            with st.spinner("Loading 12‑month Distributed Asset Value history from RWA.xyz API…"):
+                ts_df, ts_err = load_rwa_global_market_timeseries_cached(api_key)
+            if ts_df is not None and not ts_df.empty:
+                plot_df = build_rwa_global_market_plot_df(ts_df)
+                fig = build_aggregate_aum_plotly_figure(plot_df, height=640)
+                st.plotly_chart(
+                    fig,
+                    use_container_width=True,
+                    config={
+                        "scrollZoom": True,
+                        "displayModeBar": True,
+                    },
+                )
+                st.caption(
+                    "Vertical axis: **Distributed** circulating asset value, **billions USD** (weekly points). "
+                    "Compare to the Global Market row above; methodology follows RWA.xyz API filters."
+                )
+            elif ts_err:
+                st.info(ts_err)
+            else:
+                st.info("No time series returned for this API key. Check key permissions or try again later.")
+
+        st.divider()
 
     working = list(rows)
     if home_preview:

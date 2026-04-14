@@ -36,7 +36,7 @@ def main() -> None:
         "Full table with search. Data from the RWA.xyz homepage embed (Networks · Distributed Value only)."
     )
 
-    show_rwa_league_widget(home_preview=False)
+    show_rwa_league_widget(home_preview=False, show_global_trend_chart=True)
 
     st.caption(RWA_DATA_SOURCE_CAPTION)
     st.caption(
