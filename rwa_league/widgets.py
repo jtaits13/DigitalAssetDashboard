@@ -1067,15 +1067,15 @@ def show_rwa_tokenized_stocks_widget(
             placeholder="Filter by platform name…",
         )
         working = filter_tokenized_stock_platform_rows(rows_st_plat, q)
-        # User requested this table sorted by Platform for the dedicated page.
-        working = sorted(working, key=lambda r: (r.platform or "").lower())
+        # Keep full-page order aligned with the on-screen rank column.
+        working = sorted(working, key=lambda r: int(r.rank))
         if q.strip():
             st.caption(
                 f"Showing {len(working)} of {len(rows_st_plat)} platforms matching “{escape(q.strip())}”."
             )
         else:
             st.caption(
-                f"Showing all {len(working)} platforms (Tokenized Stocks · Distributed · Platforms), sorted by Platform."
+                f"Showing all {len(working)} platforms (Tokenized Stocks · Distributed · Platforms), sorted by #."
             )
         table_h = rwa_table_height(len(working), max_h=900)
         st.markdown(
@@ -1105,14 +1105,14 @@ def show_rwa_tokenized_stocks_widget(
                 placeholder="Filter by network name…",
             )
             working_n = filter_tokenized_stock_network_rows(rows_st_net, qn)
-            working_n = sorted(working_n, key=lambda r: (r.network or "").lower())
+            working_n = sorted(working_n, key=lambda r: int(r.rank))
             if qn.strip():
                 st.caption(
                     f"Showing {len(working_n)} of {len(rows_st_net)} networks matching “{escape(qn.strip())}”."
                 )
             else:
                 st.caption(
-                    f"Showing all {len(working_n)} networks (Tokenized Stocks · Distributed · Networks), sorted by Network."
+                    f"Showing all {len(working_n)} networks (Tokenized Stocks · Distributed · Networks), sorted by #."
                 )
             table_hn = rwa_table_height(len(working_n), max_h=900)
             df_n = build_tokenized_stock_network_dataframe(working_n)
