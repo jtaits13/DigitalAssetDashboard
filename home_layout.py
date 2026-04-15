@@ -8,16 +8,16 @@ STREAMLIT_TABLE_UNIFY_CSS = """
 <style>
 div[data-testid="stDataFrame"] {
   font-size: 0.875rem;
-  color: #0f172a;
+  color: #021D41;
 }
 div[data-testid="stDataFrame"] [data-testid="stHeaderCell"],
 div[data-testid="stDataFrame"] [role="columnheader"] {
-  color: #0f172a !important;
+  color: #021D41 !important;
   font-weight: 600;
   font-size: 0.875rem;
 }
 div[data-testid="stDataFrame"] [role="gridcell"] {
-  color: #0f172a;
+  color: #021D41;
   font-size: 0.875rem;
 }
 </style>
@@ -28,7 +28,7 @@ ETP_FULLPAGE_AUM_LINE_CSS = """
 .etp-fullpage-aum-line {
   font-size: 0.95rem;
   font-weight: 700;
-  color: #0f172a;
+  color: #021D41;
   margin: 0.35rem 0 0.85rem 0;
 }
 </style>
@@ -43,14 +43,14 @@ HOME_PAGE_LAYOUT_CSS = """
 }
 .jd-hub-dek {
     font-size: 0.88rem;
-    color: #64748b;
+    color: #3E6A7A;
     line-height: 1.45;
     margin: 0.15rem 0 0.85rem 0;
     max-width: 48rem;
 }
 .jd-hub-cta-note {
     font-size: 0.8rem;
-    color: #64748b;
+    color: #3E6A7A;
     margin: 0.5rem 0 0.15rem 0;
 }
 .cd-ticker-shell {
@@ -62,14 +62,14 @@ HOME_PAGE_LAYOUT_CSS = """
     letter-spacing: -0.015em;
     line-height: 1.3;
     text-transform: none;
-    color: #64748b;
+    color: #021D41;
     margin: 0.15rem 0 0.75rem 0;
     padding-bottom: 0.3rem;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid #C7D8E8;
 }
 .home-band-label.teal {
-    color: #1E7C99;
-    border-bottom-color: #cbd5e1;
+    color: #25809C;
+    border-bottom-color: #8CB9C9;
 }
 </style>
 """

@@ -16,8 +16,8 @@ TICKER_COUNT = 25
 TICKER_STYLES_MARKDOWN = """
 <style>
 .cd-ticker-shell {
-    background: linear-gradient(90deg, #ffffff 0%, #f1f5f9 50%, #ffffff 100%);
-    border: 1px solid #e2e8f0;
+    background: linear-gradient(90deg, #ffffff 0%, #EAF3F8 50%, #ffffff 100%);
+    border: 1px solid #C7D8E8;
     border-radius: 8px;
     padding: 0.45rem 0;
     margin-bottom: 1rem;
@@ -64,22 +64,22 @@ TICKER_STYLES_MARKDOWN = """
 }
 .cd-chip {
     font-size: 0.92rem;
-    color: #334155;
+    color: #1F4C67;
 }
 .cd-chip strong {
-    color: #0f172a;
+    color: #021D41;
     margin-right: 0.35rem;
 }
 .cd-usd {
-    color: #64748b;
+    color: #3E6A7A;
     margin-right: 0.35rem;
 }
 .cd-pct {
     font-weight: 600;
     font-size: 0.88rem;
 }
-.cd-pct-up { color: #059669; }
-.cd-pct-down { color: #dc2626; }
+.cd-pct-up { color: #28794E; }
+.cd-pct-down { color: #E17A37; }
 .cd-pct-na { color: #94a3b8; }
 a.cd-chip-link {
     text-decoration: none;
@@ -89,7 +89,7 @@ a.cd-chip-link {
     outline-offset: 2px;
 }
 a.cd-chip-link:hover .cd-chip {
-    background: rgba(5, 150, 105, 0.08);
+    background: rgba(37, 128, 156, 0.12);
 }
 a.cd-chip-link .cd-chip {
     padding: 0.15rem 0.35rem;

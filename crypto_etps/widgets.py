@@ -26,8 +26,8 @@ from news_feeds import load_etp_market_news_cached
 WIDGET_CSS = """
 <style>
 .etp-widget-shell {
-    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
-    border: 1px solid #e2e8f0;
+    background: linear-gradient(180deg, #F3F7FB 0%, #EAF3F8 100%);
+    border: 1px solid #C7D8E8;
     border-radius: 8px;
     padding: 0.75rem 1rem 1rem 1rem;
     margin-bottom: 0.5rem;
@@ -36,7 +36,7 @@ WIDGET_CSS = """
 .etp-aum-line {
     font-size: 0.95rem;
     font-weight: 700;
-    color: #0f172a;
+    color: #021D41;
     margin: 0.5rem 0 0.75rem 0;
 }
 </style>

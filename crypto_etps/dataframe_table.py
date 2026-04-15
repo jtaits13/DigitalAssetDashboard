@@ -86,9 +86,9 @@ def style_etp_dataframe(df: pd.DataFrame) -> pd.io.formats.style.Styler:
 
     def highlight_52w(s: pd.Series) -> list[str]:
         return [
-            "color: #059669; font-weight: 600"
+            "color: #28794E; font-weight: 600"
             if pd.notna(v) and float(v) >= 0
-            else "color: #dc2626; font-weight: 600"
+            else "color: #E17A37; font-weight: 600"
             if pd.notna(v) and float(v) < 0
             else ""
             for v in s

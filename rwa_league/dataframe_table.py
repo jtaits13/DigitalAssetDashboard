@@ -302,9 +302,9 @@ def style_us_treasury_platform_dataframe(df: pd.DataFrame) -> pd.io.formats.styl
 
     def highlight_delta(s: pd.Series) -> list[str]:
         return [
-            "color: #059669; font-weight: 600"
+            "color: #28794E; font-weight: 600"
             if pd.notna(v) and float(v) >= 0
-            else "color: #dc2626; font-weight: 600"
+            else "color: #E17A37; font-weight: 600"
             if pd.notna(v) and float(v) < 0
             else ""
             for v in s
@@ -328,9 +328,9 @@ def style_stablecoin_platform_dataframe(df: pd.DataFrame) -> pd.io.formats.style
 
     def highlight_delta(s: pd.Series) -> list[str]:
         return [
-            "color: #059669; font-weight: 600"
+            "color: #28794E; font-weight: 600"
             if pd.notna(v) and float(v) >= 0
-            else "color: #dc2626; font-weight: 600"
+            else "color: #E17A37; font-weight: 600"
             if pd.notna(v) and float(v) < 0
             else ""
             for v in s
@@ -355,9 +355,9 @@ def style_us_treasury_network_dataframe(df: pd.DataFrame) -> pd.io.formats.style
 
     def highlight_delta(s: pd.Series) -> list[str]:
         return [
-            "color: #059669; font-weight: 600"
+            "color: #28794E; font-weight: 600"
             if pd.notna(v) and float(v) >= 0
-            else "color: #dc2626; font-weight: 600"
+            else "color: #E17A37; font-weight: 600"
             if pd.notna(v) and float(v) < 0
             else ""
             for v in s
@@ -381,9 +381,9 @@ def style_tokenized_stock_platform_dataframe(df: pd.DataFrame) -> pd.io.formats.
 
     def highlight_delta(s: pd.Series) -> list[str]:
         return [
-            "color: #059669; font-weight: 600"
+            "color: #28794E; font-weight: 600"
             if pd.notna(v) and float(v) >= 0
-            else "color: #dc2626; font-weight: 600"
+            else "color: #E17A37; font-weight: 600"
             if pd.notna(v) and float(v) < 0
             else ""
             for v in s
@@ -407,9 +407,9 @@ def style_tokenized_stock_network_dataframe(df: pd.DataFrame) -> pd.io.formats.s
 
     def highlight_delta(s: pd.Series) -> list[str]:
         return [
-            "color: #059669; font-weight: 600"
+            "color: #28794E; font-weight: 600"
             if pd.notna(v) and float(v) >= 0
-            else "color: #dc2626; font-weight: 600"
+            else "color: #E17A37; font-weight: 600"
             if pd.notna(v) and float(v) < 0
             else ""
             for v in s
@@ -433,9 +433,9 @@ def style_rwa_dataframe(df: pd.DataFrame) -> pd.io.formats.style.Styler:
 
     def highlight_delta(s: pd.Series) -> list[str]:
         return [
-            "color: #059669; font-weight: 600"
+            "color: #28794E; font-weight: 600"
             if pd.notna(v) and float(v) >= 0
-            else "color: #dc2626; font-weight: 600"
+            else "color: #E17A37; font-weight: 600"
             if pd.notna(v) and float(v) < 0
             else ""
             for v in s

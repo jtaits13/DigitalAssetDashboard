@@ -118,7 +118,7 @@ def build_aggregate_aum_plotly_figure(
     plot_df: pd.DataFrame,
     *,
     height: int = 640,
-    line_color: str = "#1E7C99",
+    line_color: str = "#25809C",
 ) -> Any:
     """
     Line chart of aggregate AUM (billions USD) vs time.

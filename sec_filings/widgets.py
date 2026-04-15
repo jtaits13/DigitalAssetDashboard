@@ -11,8 +11,8 @@ from sec_filings.client import FORM_TYPES_LABEL, FundFilingsResult, fetch_crypto
 WIDGET_CSS = """
 <style>
 .sec-widget-shell {
-    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
-    border: 1px solid #e2e8f0;
+    background: linear-gradient(180deg, #F3F7FB 0%, #EAF3F8 100%);
+    border: 1px solid #C7D8E8;
     border-radius: 8px;
     padding: 0.75rem 1rem 1rem 1rem;
     margin-bottom: 0.5rem;
@@ -25,21 +25,21 @@ WIDGET_CSS = """
     line-height: 1.35;
 }
 .sec-filing-item {
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid #C7D8E8;
     padding: 0.5rem 0;
 }
 .sec-filing-item:last-child { border-bottom: none; }
 .sec-filing-meta {
     font-size: 0.72rem;
-    color: #64748b;
+    color: #3E6A7A;
     margin-top: 0.2rem;
 }
 a.sec-filing-link {
-    color: #0f172a;
+    color: #021D41;
     font-weight: 600;
     text-decoration: none;
 }
-a.sec-filing-link:hover { text-decoration: underline; color: #0d9488; }
+a.sec-filing-link:hover { text-decoration: underline; color: #25809C; }
 </style>
 """
 
@@ -76,7 +76,7 @@ def show_sec_fund_filings_widget(user_agent: str | None) -> None:
     st.markdown(
         '<div class="sec-widget-shell">'
         '<h2 class="home-main-heading">SEC Fund Filings · Digital Assets</h2>'
-        "<p style=\"font-size:0.78rem;color:#64748b;margin:0 0 0.5rem 0;\">"
+        "<p style=\"font-size:0.78rem;color:#3E6A7A;margin:0 0 0.5rem 0;\">"
         f"Form types: {escape(FORM_TYPES_LABEL)}. Sourced via EDGAR.</p>"
         "</div>",
         unsafe_allow_html=True,

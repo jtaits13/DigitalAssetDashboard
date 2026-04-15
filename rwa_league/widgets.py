@@ -46,8 +46,8 @@ from rwa_league.dataframe_table import (
 WIDGET_CSS = """
 <style>
 .rwa-league-shell {
-    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
-    border: 1px solid #e2e8f0;
+    background: linear-gradient(180deg, #F3F7FB 0%, #EAF3F8 100%);
+    border: 1px solid #C7D8E8;
     border-radius: 8px;
     padding: 0.75rem 1rem 1rem 1rem;
     margin-top: 0.5rem;
@@ -63,7 +63,7 @@ WIDGET_CSS = """
 .rwa-kpi-window-note {
     font-size: 6px;
     font-weight: 400;
-    color: #94a3b8;
+    color: #3E6A7A;
     margin: 0 0 0.5rem 0;
     line-height: 1.35;
 }
@@ -74,7 +74,7 @@ WIDGET_CSS = """
     align-items: flex-start;
     gap: 0.65rem 0.5rem;
     padding: 0.5rem 0 0.85rem 0;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid #C7D8E8;
 }
 .rwa-kpi-cell {
     flex: 1 1 0;
@@ -86,7 +86,7 @@ WIDGET_CSS = """
     display: block;
     font-size: 0.88rem;
     font-weight: 600;
-    color: #334155;
+    color: #1F4C67;
     margin-bottom: 0.35rem;
     line-height: 1.3;
     letter-spacing: 0.01em;
@@ -95,7 +95,7 @@ WIDGET_CSS = """
     display: block;
     font-size: 1.05rem;
     font-weight: 700;
-    color: #1E7C99;
+    color: #25809C;
     line-height: 1.2;
 }
 .rwa-kpi-delta {
@@ -106,13 +106,13 @@ WIDGET_CSS = """
     line-height: 1.2;
 }
 .rwa-kpi-delta.up {
-    color: #059669;
+    color: #28794E;
 }
 .rwa-kpi-delta.down {
-    color: #dc2626;
+    color: #E17A37;
 }
 .rwa-kpi-delta.neutral {
-    color: #64748b;
+    color: #3E6A7A;
 }
 </style>
 """
