@@ -31,6 +31,10 @@ def main() -> None:
     st.markdown(HOME_MAIN_HEADING_CSS, unsafe_allow_html=True)
     st.markdown(STREAMLIT_TABLE_UNIFY_CSS + ETP_FULLPAGE_AUM_LINE_CSS, unsafe_allow_html=True)
     show_price_ticker()
+    st.caption(
+        "A detailed snapshot of tokenized stablecoins, including top-line market metrics and platform-level "
+        "issuance distribution."
+    )
 
     show_rwa_stablecoins_widget(home_preview=False)
 

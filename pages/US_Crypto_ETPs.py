@@ -55,6 +55,10 @@ def main() -> None:
     st.markdown(HOME_MAIN_HEADING_CSS, unsafe_allow_html=True)
     st.markdown(STREAMLIT_TABLE_UNIFY_CSS + ETP_FULLPAGE_AUM_LINE_CSS, unsafe_allow_html=True)
     show_price_ticker()
+    st.caption(
+        "A comprehensive view of U.S. digital asset ETPs, combining market context, aggregate AUM trend signals, "
+        "and fund-level reference data in one place."
+    )
 
     st.markdown(
         '<h2 class="home-main-heading">U.S. Digital Asset ETPs — Full List</h2>',

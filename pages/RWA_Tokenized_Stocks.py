@@ -31,6 +31,10 @@ def main() -> None:
     st.markdown(HOME_MAIN_HEADING_CSS, unsafe_allow_html=True)
     st.markdown(STREAMLIT_TABLE_UNIFY_CSS + ETP_FULLPAGE_AUM_LINE_CSS, unsafe_allow_html=True)
     show_price_ticker()
+    st.caption(
+        "A full view of tokenized public equities, with aggregate market indicators and distributed platform/network "
+        "breakdowns for deeper comparison."
+    )
 
     show_rwa_tokenized_stocks_widget(home_preview=False)
 

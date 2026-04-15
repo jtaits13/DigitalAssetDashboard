@@ -31,6 +31,10 @@ def main() -> None:
     st.markdown(HOME_MAIN_HEADING_CSS, unsafe_allow_html=True)
     st.markdown(STREAMLIT_TABLE_UNIFY_CSS + ETP_FULLPAGE_AUM_LINE_CSS, unsafe_allow_html=True)
     show_price_ticker()
+    st.caption(
+        "This page covers the tokenized U.S. Treasuries market with headline metrics plus distributed network "
+        "and platform league views."
+    )
 
     show_rwa_treasuries_widget(home_preview=False)
 

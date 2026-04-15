@@ -31,6 +31,10 @@ def main() -> None:
     st.markdown(HOME_MAIN_HEADING_CSS, unsafe_allow_html=True)
     st.markdown(STREAMLIT_TABLE_UNIFY_CSS + ETP_FULLPAGE_AUM_LINE_CSS, unsafe_allow_html=True)
     show_price_ticker()
+    st.caption(
+        "This page summarizes the cross-network RWA market, highlighting distributed value and share dynamics "
+        "across blockchain ecosystems."
+    )
 
     st.caption(
         "Full table with search. Data from the RWA.xyz homepage embed (Networks · Distributed Value only)."
