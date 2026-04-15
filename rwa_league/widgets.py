@@ -119,25 +119,31 @@ WIDGET_CSS = """
 
 RWA_DATA_SOURCE_CAPTION = (
     "Source: [RWA.xyz](https://app.rwa.xyz/) homepage embedded data "
-    "(Global Market Overview + Networks league **Distributed** tab; not the public API)."
+    "(Global Market Overview + Networks league **Distributed** tab; not the public API). "
+    "Overview **% changes** are **30-day (30D)**; **Distributed Value** in the table is a level."
 )
 
 STABLECOIN_RWA_CAPTION = (
     "Source: [RWA.xyz Stablecoins](https://app.rwa.xyz/stablecoins) embedded overview + "
-    "**Platforms** league tab (market cap by issuer platform; not the public API)."
+    "**Platforms** league tab (market cap by issuer platform; not the public API). "
+    "Overview **% changes** are **30-day (30D)**; **market cap** figures are levels."
 )
 
 TREASURY_RWA_CAPTION = (
     "Source: [RWA.xyz US Treasuries](https://app.rwa.xyz/treasuries) embedded overview + "
-    "**Distributed** · **Networks** league (Distributed Value; not the public API)."
+    "**Distributed** · **Networks** league (Distributed Value; not the public API). "
+    "Overview **% changes** are **30-day (30D)**; **Distributed Value** is a level."
 )
 
 TREASURY_PLATFORM_CAPTION = (
-    "Tokenized Treasury league — **Distributed** · **Platforms** tab (issuer / platform totals; same embed as RWA.xyz)."
+    "Tokenized Treasury league — **Distributed** · **Platforms** tab (issuer totals from **RWA.xyz**). "
+    "**Value** totals are levels; **7-day** % change uses this embed’s `value_7d_change` "
+    "(RWA.xyz may label similar columns **30D** in the UI)."
 )
 TOKENIZED_STOCKS_RWA_CAPTION = (
     "Source: [RWA.xyz Tokenized Stocks](https://app.rwa.xyz/stocks) embedded overview + "
-    "**Distributed** · **Platforms** league (Distributed Value by platform; not the public API)."
+    "**Distributed** · **Platforms** league (Distributed Value by platform; not the public API). "
+    "Overview **% changes** are **30-day (30D)**; **Distributed Value** in the tables are levels."
 )
 
 TREASURIES_RWA_LINK_LABEL = "See US Treasuries on RWA.xyz"
@@ -157,6 +163,19 @@ def _format_pct_change_30d(pct: float | None) -> tuple[str, str] | None:
     else:
         cls = "neutral"
     return escape(s), cls
+
+
+def _rwa_kpi_window_note_html(*, overview_title: str) -> str:
+    """
+    Legend under RWA overview KPI tiles: 30D % changes vs headline level totals.
+    Same idea as the ETP home KPI note (deltas vs listed levels).
+    """
+    return (
+        "<p class='rwa-kpi-window-note'>"
+        "All % changes in this row are <strong>30-day (30D)</strong> (<strong>RWA.xyz</strong>). "
+        f"Headline totals from the <strong>RWA.xyz</strong> <strong>{escape(overview_title)}</strong> overview."
+        "</p>"
+    )
 
 
 def _render_rwa_stablecoin_overview(kpis: list[RwaGlobalKpi]) -> None:
@@ -180,10 +199,7 @@ def _render_rwa_stablecoin_overview(kpis: list[RwaGlobalKpi]) -> None:
     row = "<div class='rwa-kpi-row'>" + "".join(cells) + "</div>"
     st.markdown(
         '<div class="rwa-kpi-wrap">'
-        "<p class='rwa-kpi-window-note'>"
-        "All values in this row match the <strong>Stablecoins</strong> overview on RWA.xyz "
-        "(typically <strong>30D</strong> change where shown)."
-        "</p>"
+        f"{_rwa_kpi_window_note_html(overview_title='Stablecoins')}"
         f"{row}"
         "</div>",
         unsafe_allow_html=True,
@@ -211,17 +227,19 @@ def _render_rwa_global_overview(kpis: list[RwaGlobalKpi]) -> None:
     row = "<div class='rwa-kpi-row'>" + "".join(cells) + "</div>"
     st.markdown(
         '<div class="rwa-kpi-wrap">'
-        "<p class='rwa-kpi-window-note'>"
-        "All values in this row are <strong>30-day (30D)</strong> Global Market data points from RWA.xyz."
-        "</p>"
+        f"{_rwa_kpi_window_note_html(overview_title='Global Market')}"
         f"{row}"
         "</div>",
         unsafe_allow_html=True,
     )
 
 
-def _render_rwa_treasuries_overview(kpis: list[RwaGlobalKpi]) -> None:
-    """US Treasuries dashboard overview KPI row (same tile layout as Global Market)."""
+def _render_rwa_treasuries_overview(
+    kpis: list[RwaGlobalKpi],
+    *,
+    overview_title: str = "US Treasuries",
+) -> None:
+    """Overview KPI row for US Treasuries or Tokenized Stocks embed (same tile layout as Global Market)."""
     if not kpis:
         return
     cells = []
@@ -241,10 +259,7 @@ def _render_rwa_treasuries_overview(kpis: list[RwaGlobalKpi]) -> None:
     row = "<div class='rwa-kpi-row'>" + "".join(cells) + "</div>"
     st.markdown(
         '<div class="rwa-kpi-wrap">'
-        "<p class='rwa-kpi-window-note'>"
-        "All values in this row match the <strong>US Treasuries</strong> overview on RWA.xyz "
-        "(typically <strong>30D</strong> change where shown)."
-        "</p>"
+        f"{_rwa_kpi_window_note_html(overview_title=overview_title)}"
         f"{row}"
         "</div>",
         unsafe_allow_html=True,
@@ -735,8 +750,9 @@ def show_rwa_stablecoins_widget(
             unsafe_allow_html=True,
         )
         st.caption(
-            "Overview and **Platforms** league from [app.rwa.xyz/stablecoins](https://app.rwa.xyz/stablecoins) "
-            "(platform **market cap**, not network Distributed Value)."
+            "Overview **% changes** are **30-day (30D)**; table **market caps** are levels — "
+            "[app.rwa.xyz/stablecoins](https://app.rwa.xyz/stablecoins) **Platforms** tab "
+            "(not network Distributed Value)."
         )
     else:
         st.markdown(WIDGET_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
@@ -747,9 +763,9 @@ def show_rwa_stablecoins_widget(
             unsafe_allow_html=True,
         )
         st.caption(
-            "Full **Platforms** league with search. Data from the "
-            "[RWA.xyz Stablecoins](https://app.rwa.xyz/stablecoins) page embed "
-            "(aggregate circulating **market cap** per issuance platform)."
+            "Full **Platforms** league with search from the "
+            "[RWA.xyz Stablecoins](https://app.rwa.xyz/stablecoins) embed. "
+            "Overview **% changes** are **30-day (30D)**; each row’s **market cap** is a level."
         )
 
     rows_sc, kpis_sc, err_sc = load_rwa_stablecoins_cached()
@@ -848,8 +864,8 @@ def show_rwa_treasuries_widget(
             unsafe_allow_html=True,
         )
         st.caption(
-            "Overview and **Networks** league (**Distributed** tab) from "
-            f"[app.rwa.xyz/treasuries]({APP_TREASURIES}) — **Distributed Value** per network."
+            "Overview **% changes** are **30-day (30D)**; **Distributed Value** in the table is a level — "
+            f"**Networks** league (**Distributed**) from [app.rwa.xyz/treasuries]({APP_TREASURIES})."
         )
     else:
         st.markdown(WIDGET_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
@@ -860,8 +876,9 @@ def show_rwa_treasuries_widget(
             unsafe_allow_html=True,
         )
         st.caption(
-            "Full **Distributed** leagues with search: **Networks** (by chain) then **Platforms** "
-            f"(Tokenized Treasury league by issuer). Data from [RWA.xyz US Treasuries]({APP_TREASURIES})."
+            "Full **Distributed** leagues with search: **Networks** then **Platforms** "
+            f"(Tokenized Treasury by issuer). Overview **% changes** are **30-day (30D)**; "
+            f"**Distributed Value** columns are levels — [RWA.xyz US Treasuries]({APP_TREASURIES})."
         )
 
     rows_tr, plat_tr, kpis_tr, err_tr = load_rwa_treasuries_cached()
@@ -938,9 +955,9 @@ def show_rwa_treasuries_widget(
             unsafe_allow_html=True,
         )
         st.caption(
-            "**Distributed** tab · **Platforms** — RWA totals by issuer (e.g. Circle, Ondo). "
-            "Percent change on RWA.xyz may be labeled **30D** in the UI; the embed exposes **7-day** "
-            "value change (`value_7d_change`) for each row."
+            "**Distributed** · **Platforms** — issuer totals from **RWA.xyz**. "
+            "**Value** columns are levels; **7-day** change uses the embed field `value_7d_change` "
+            "(the site may label related moves **30D** in other views)."
         )
         qp = st.text_input(
             "Search platform",
@@ -1007,8 +1024,8 @@ def show_rwa_tokenized_stocks_widget(
             unsafe_allow_html=True,
         )
         st.caption(
-            "Overview and **Platforms** league (**Distributed** tab) from "
-            f"[app.rwa.xyz/stocks]({APP_STOCKS}) — Distributed Value by platform."
+            "Overview **% changes** are **30-day (30D)**; **Distributed Value** in the table is a level — "
+            f"**Platforms** (**Distributed**) from [app.rwa.xyz/stocks]({APP_STOCKS})."
         )
     else:
         st.markdown(WIDGET_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
@@ -1019,7 +1036,8 @@ def show_rwa_tokenized_stocks_widget(
             unsafe_allow_html=True,
         )
         st.caption(
-            "Full **Distributed** · **Platforms** league with search. Data from "
+            "Full **Distributed** · **Platforms** league with search. "
+            f"Overview **% changes** are **30-day (30D)**; **Distributed Value** columns are levels — "
             f"[RWA.xyz Tokenized Stocks]({APP_STOCKS})."
         )
 
@@ -1027,7 +1045,7 @@ def show_rwa_tokenized_stocks_widget(
 
     if err_st and not rows_st_net and not rows_st_plat:
         st.warning(escape(err_st))
-        _render_rwa_treasuries_overview(kpis_st)
+        _render_rwa_treasuries_overview(kpis_st, overview_title="Tokenized Stocks")
         st.link_button(
             TOKENIZED_STOCKS_RWA_LINK_LABEL,
             APP_STOCKS,
@@ -1038,7 +1056,7 @@ def show_rwa_tokenized_stocks_widget(
 
     if not rows_st_net and not rows_st_plat:
         st.info("No Tokenized Stocks league rows returned.")
-        _render_rwa_treasuries_overview(kpis_st)
+        _render_rwa_treasuries_overview(kpis_st, overview_title="Tokenized Stocks")
         st.link_button(
             TOKENIZED_STOCKS_RWA_LINK_LABEL,
             APP_STOCKS,
@@ -1047,7 +1065,7 @@ def show_rwa_tokenized_stocks_widget(
         )
         return
 
-    _render_rwa_treasuries_overview(kpis_st)
+    _render_rwa_treasuries_overview(kpis_st, overview_title="Tokenized Stocks")
 
     if rows_st_plat and home_preview:
         n = max(1, min(preview_rows, len(rows_st_plat)))
@@ -1195,7 +1213,7 @@ def show_rwa_league_widget(
         n = max(1, min(preview_rows, len(working)))
         working = working[:n]
         st.caption(
-            f"Preview: top **{n}** networks by Distributed Value from the league embed. "
+            f"Preview: top **{n}** networks by **Distributed Value** (level) from the league embed. "
             "Open the full page to search and see every network."
         )
     else:
@@ -1211,7 +1229,9 @@ def show_rwa_league_widget(
                 f"Showing {len(working)} of {len(rows)} networks matching “{escape(q.strip())}”."
             )
         else:
-            st.caption(f"Showing all {len(working)} networks (Distributed Value only).")
+            st.caption(
+                f"Showing all {len(working)} networks (**Distributed Value** levels; overview above: **30D** %)."
+            )
 
     df = build_rwa_dataframe(working)
     _show_rwa_dataframe(df, height=rwa_table_height(len(df)))

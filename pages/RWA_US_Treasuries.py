@@ -32,8 +32,8 @@ def main() -> None:
     st.markdown(STREAMLIT_TABLE_UNIFY_CSS + ETP_FULLPAGE_AUM_LINE_CSS, unsafe_allow_html=True)
     show_price_ticker()
     st.caption(
-        "This page covers the tokenized U.S. Treasuries market with headline metrics plus distributed network "
-        "and platform league views."
+        "Tokenized U.S. Treasuries: overview **30-day (30D)** % changes from **RWA.xyz** and league tables where "
+        "**Distributed Value** is a level (networks and platforms)."
     )
 
     show_rwa_treasuries_widget(home_preview=False)

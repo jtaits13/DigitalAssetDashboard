@@ -32,8 +32,8 @@ def main() -> None:
     st.markdown(STREAMLIT_TABLE_UNIFY_CSS + ETP_FULLPAGE_AUM_LINE_CSS, unsafe_allow_html=True)
     show_price_ticker()
     st.caption(
-        "A detailed snapshot of tokenized stablecoins, including top-line market metrics and platform-level "
-        "issuance distribution."
+        "Tokenized stablecoins: overview **30-day (30D)** % changes and **Platforms** **market caps** (levels) "
+        "by issuance platform."
     )
 
     show_rwa_stablecoins_widget(home_preview=False)

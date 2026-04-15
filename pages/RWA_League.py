@@ -37,7 +37,8 @@ def main() -> None:
     )
 
     st.caption(
-        "Full table with search. Data from the RWA.xyz homepage embed (Networks · Distributed Value only)."
+        "Full **Networks** table with search from the RWA.xyz homepage embed. "
+        "**Distributed Value** is a level; the Global Market overview row uses **30-day (30D)** % changes."
     )
 
     show_rwa_league_widget(home_preview=False)
