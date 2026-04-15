@@ -114,6 +114,113 @@ def load_aggregate_aum_history_cached(
     return build_aggregate_aum_history_12m(list(funds_key))
 
 
+def aggregate_aum_pct_from_history(
+    df: pd.DataFrame | None,
+) -> tuple[float | None, str]:
+    """
+    Percent change in **estimated** aggregate AUM (constant-shares price scaling).
+
+    Prefers **~1 month** (last weekly point on or before 30 days ago vs latest).
+    Falls back to **~1 year** if insufficient weekly history for a month window.
+    Returns ``(pct, "1M"|"1Y")`` or ``(None, "")`` if not computable.
+    """
+    if df is None or df.empty or "date" not in df.columns or "total_aum_usd" not in df.columns:
+        return None, ""
+    d = df.copy()
+    d["date"] = pd.to_datetime(d["date"])
+    d = d.sort_values("date").dropna(subset=["total_aum_usd"])
+    if len(d) < 2:
+        return None, ""
+    end_date = d["date"].iloc[-1]
+    end_val = float(d["total_aum_usd"].iloc[-1])
+    if end_val <= 0:
+        return None, ""
+
+    def _pct_for_cut(cut: pd.Timestamp) -> float | None:
+        prior = d[d["date"] <= cut]
+        if prior.empty:
+            return None
+        old_val = float(prior["total_aum_usd"].iloc[-1])
+        if old_val <= 0:
+            return None
+        return (end_val - old_val) / old_val * 100.0
+
+    cut_1m = end_date - pd.Timedelta(days=30)
+    p1m = _pct_for_cut(cut_1m)
+    if p1m is not None:
+        return p1m, "1M"
+
+    cut_1y = end_date - pd.DateOffset(years=1)
+    p1y = _pct_for_cut(cut_1y)
+    if p1y is not None:
+        return p1y, "1Y"
+
+    old_val = float(d["total_aum_usd"].iloc[0])
+    first_date = d["date"].iloc[0]
+    if old_val > 0 and (end_date - first_date).days >= 60:
+        return (end_val - old_val) / old_val * 100.0, "1Y*"
+
+    return None, ""
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def etp_symbol_price_change_cached(symbol: str, _rev: int = 1) -> tuple[float | None, str]:
+    """
+    Trailing return on **adjusted** ETF price (proxy for AUM when shares outstanding are stable).
+
+    Prefers **~1 month** (close vs close on or before 30 calendar days ago).
+    Falls back to **~1 year** (same vs ~365 days ago) on daily history.
+    Returns ``(pct, "1M"|"1Y")`` or ``(None, "")``.
+    """
+    _ = _rev
+    sym = re.sub(r"\s+", "", symbol or "").strip().upper()
+    if not sym:
+        return None, ""
+    try:
+        import yfinance as yf
+    except ImportError:
+        return None, ""
+
+    try:
+        t = yf.Ticker(sym)
+        hist = t.history(period="14mo", interval="1d", auto_adjust=True)
+        time.sleep(_REQUEST_PAUSE_SEC)
+    except Exception as e:
+        logger.debug("yfinance single %s: %s", sym, e)
+        return None, ""
+
+    if hist is None or hist.empty or "Close" not in hist.columns:
+        return None, ""
+    close = hist["Close"].dropna()
+    if len(close) < 5:
+        return None, ""
+
+    end = float(close.iloc[-1])
+    end_ts = close.index[-1]
+    if end <= 0:
+        return None, ""
+
+    def _pct_days_back(days: int) -> float | None:
+        cut = end_ts - pd.Timedelta(days=days)
+        past = close[close.index <= cut]
+        if past.empty:
+            return None
+        old = float(past.iloc[-1])
+        if old <= 0:
+            return None
+        return (end - old) / old * 100.0
+
+    p1m = _pct_days_back(30)
+    if p1m is not None:
+        return p1m, "1M"
+
+    p1y = _pct_days_back(365)
+    if p1y is not None:
+        return p1y, "1Y"
+
+    return None, ""
+
+
 def build_aggregate_aum_plotly_figure(
     plot_df: pd.DataFrame,
     *,

@@ -7,13 +7,19 @@ from html import escape
 import streamlit as st
 
 from crypto_etps.client import (
+    CryptoEtpRow,
     CryptoEtpsResult,
     fetch_crypto_etps_enriched,
     format_usd_compact,
     sorted_by_assets,
     total_aum_usd,
 )
-from crypto_etps.aum_history import load_aggregate_aum_history_cached
+from crypto_etps.aum_history import (
+    aggregate_aum_pct_from_history,
+    etp_rows_to_fund_pairs,
+    etp_symbol_price_change_cached,
+    load_aggregate_aum_history_cached,
+)
 from crypto_etps.sec_prospectus import clear_sec_prospectus_caches
 from crypto_etps.dataframe_table import (
     build_etp_dataframe,
@@ -39,6 +45,62 @@ WIDGET_CSS = """
     color: #021D41;
     margin: 0.5rem 0 0.75rem 0;
 }
+.etp-kpi-wrap {
+    margin: 0.35rem 0 0.85rem 0;
+}
+.etp-kpi-window-note {
+    font-size: 0.72rem;
+    font-weight: 400;
+    color: #3E6A7A;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.35;
+}
+.etp-kpi-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.65rem 0.5rem;
+    padding: 0.5rem 0 0.85rem 0;
+    border-bottom: 1px solid #C7D8E8;
+}
+.etp-kpi-cell {
+    flex: 1 1 0;
+    min-width: 8.5rem;
+    max-width: 100%;
+    text-align: center;
+}
+.etp-kpi-label {
+    display: block;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #1F4C67;
+    margin-bottom: 0.35rem;
+    line-height: 1.3;
+    letter-spacing: 0.01em;
+}
+.etp-kpi-val {
+    display: block;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #25809C;
+    line-height: 1.2;
+}
+.etp-kpi-delta {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-top: 0.2rem;
+    line-height: 1.2;
+}
+.etp-kpi-delta.up { color: #28794E; }
+.etp-kpi-delta.down { color: #dc2626; }
+.etp-kpi-delta.neutral { color: #3E6A7A; }
+.etp-kpi-window-tag {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #3E6A7A;
+}
 </style>
 """
 
@@ -60,6 +122,7 @@ def clear_crypto_etp_cache() -> None:
     load_crypto_etps_cached.clear()
     clear_sec_prospectus_caches()
     load_aggregate_aum_history_cached.clear()
+    etp_symbol_price_change_cached.clear()
     load_etp_market_news_cached.clear()
 
 
@@ -79,6 +142,99 @@ ETP_DATA_SOURCE_CAPTION = (
 )
 
 _SORT = "\u2195"
+
+
+def _row_by_symbol(rows: list[CryptoEtpRow], symbol: str) -> CryptoEtpRow | None:
+    u = symbol.strip().upper()
+    for r in rows:
+        if r.symbol.strip().upper() == u:
+            return r
+    return None
+
+
+def _etf_delta_html(pct: float | None, window_lbl: str) -> str:
+    if pct is None or not isinstance(pct, (int, float)):
+        return "<span class='etp-kpi-delta neutral'>—</span>"
+    p = float(pct)
+    cls = "up" if p > 0 else "down" if p < 0 else "neutral"
+    sign = "+" if p > 0 else ""
+    tag = escape(window_lbl) if window_lbl else ""
+    tag_html = f' <span class="etp-kpi-window-tag">({tag})</span>' if tag else ""
+    return f"<span class='etp-kpi-delta {cls}'>{escape(f'{sign}{p:.2f}%')}{tag_html}</span>"
+
+
+def _fund_trailing_pct(symbol: str, row: CryptoEtpRow | None) -> tuple[float | None, str]:
+    py, pl = etp_symbol_price_change_cached(symbol)
+    if py is not None:
+        return py, pl
+    if row is not None and row.pct_52w is not None:
+        return float(row.pct_52w), "52W"
+    return None, ""
+
+
+def _render_etp_home_kpi_row(
+    *,
+    total_aum_display: str,
+    agg_pct: float | None,
+    agg_window: str,
+    ibit_row: CryptoEtpRow | None,
+    etha_row: CryptoEtpRow | None,
+) -> None:
+    ibit_aum = (
+        format_usd_compact(ibit_row.assets_usd)
+        if ibit_row and ibit_row.assets_usd is not None and ibit_row.assets_usd > 0
+        else "—"
+    )
+    etha_aum = (
+        format_usd_compact(etha_row.assets_usd)
+        if etha_row and etha_row.assets_usd is not None and etha_row.assets_usd > 0
+        else "—"
+    )
+    ip, iw = _fund_trailing_pct("IBIT", ibit_row)
+    ep, ew = _fund_trailing_pct("ETHA", etha_row)
+
+    agg_tag = agg_window if agg_window else ""
+    cells = [
+        (
+            "Total AUM (listed)",
+            escape(total_aum_display),
+            _etf_delta_html(agg_pct, agg_tag),
+        ),
+        (
+            "IBIT · AUM",
+            escape(ibit_aum),
+            _etf_delta_html(ip, iw),
+        ),
+        (
+            "ETHA · AUM",
+            escape(etha_aum),
+            _etf_delta_html(ep, ew),
+        ),
+    ]
+    parts = []
+    for label, val_html, delta_html in cells:
+        parts.append(
+            "<div class='etp-kpi-cell'>"
+            f"<span class='etp-kpi-label'>{escape(label)}</span>"
+            f"<span class='etp-kpi-val'>{val_html}</span>"
+            f"{delta_html}"
+            "</div>"
+        )
+    st.markdown(
+        '<div class="etp-kpi-wrap">'
+        "<p class='etp-kpi-window-note'>"
+        "Listed AUM from StockAnalysis. Aggregate % change uses Yahoo-estimated portfolio value "
+        "(same method as the full-page AUM chart: prices vs the latest reported AUM snapshot). "
+        "Window is <strong>1M</strong> when enough history exists, otherwise <strong>1Y</strong>. "
+        "IBIT and ETHA % changes use Yahoo <strong>1M</strong> then <strong>1Y</strong> price returns when available; "
+        "otherwise the StockAnalysis <strong>52W</strong> past-year narrative."
+        "</p>"
+        "<div class='etp-kpi-row'>"
+        f"{''.join(parts)}"
+        "</div>"
+        "</div>",
+        unsafe_allow_html=True,
+    )
 
 
 def show_etp_dataframe(df, *, height: int) -> None:
@@ -193,6 +349,25 @@ def show_us_crypto_etps_widget(
         unsafe_allow_html=True,
     )
 
+    if home_preview:
+        pairs = etp_rows_to_fund_pairs(rows)
+        hist_df, _hist_err = load_aggregate_aum_history_cached(pairs)
+        agg_pct, agg_win = aggregate_aum_pct_from_history(hist_df)
+        ibit_r = _row_by_symbol(rows, "IBIT")
+        etha_r = _row_by_symbol(rows, "ETHA")
+        _render_etp_home_kpi_row(
+            total_aum_display=aum_s,
+            agg_pct=agg_pct,
+            agg_window=agg_win,
+            ibit_row=ibit_r,
+            etha_row=etha_r,
+        )
+    else:
+        st.markdown(
+            f'<p class="etp-aum-line">Total AUM (listed, known assets): {escape(aum_s)}</p>',
+            unsafe_allow_html=True,
+        )
+
     q = ""
     if not home_preview:
         q = st.text_input(
@@ -201,11 +376,6 @@ def show_us_crypto_etps_widget(
             key="etf_search_home",
             placeholder="Filter by fund name…",
         )
-
-    st.markdown(
-        f'<p class="etp-aum-line">Total AUM (listed, known assets): {escape(aum_s)}</p>',
-        unsafe_allow_html=True,
-    )
 
     ranked = sorted_by_assets(rows)
     filtered = filter_rows_by_fund_name(ranked, q)
