@@ -126,10 +126,12 @@ def _sidebar() -> bool:
             st.switch_page("pages/RWA_Stablecoins.py")
         if st.button("RWA US Treasuries", use_container_width=True, key="sb_rwa_tr"):
             st.switch_page("pages/RWA_US_Treasuries.py")
+        if st.button("RWA Tokenized Stocks", use_container_width=True, key="sb_rwa_stocks"):
+            st.switch_page("pages/RWA_Tokenized_Stocks.py")
         st.divider()
         st.caption(
             "Refresh reloads RSS, prices, ETPs, regulatory feeds, RWA network league, "
-            "RWA Stablecoins embed, and RWA US Treasuries embed."
+            "RWA Stablecoins embed, RWA US Treasuries embed, and RWA Tokenized Stocks embed."
         )
         refresh = st.button("Refresh all data", use_container_width=True, key="sb_refresh")
     return bool(refresh)

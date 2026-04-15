@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 APP_HOME = "https://app.rwa.xyz/"
 APP_STABLECOINS = "https://app.rwa.xyz/stablecoins"
 APP_TREASURIES = "https://app.rwa.xyz/treasuries"
+APP_STOCKS = "https://app.rwa.xyz/stocks"
 USER_AGENT = "JPM-Digital/1.0 (RWA league widget; contact via app maintainer)"
 
 
@@ -68,6 +69,20 @@ class RwaStablecoinPlatformRow:
     platform: str
     platform_href: str | None
     stablecoin_count: int
+    total_value_usd: float
+    value_change_7d_raw: float | None
+    market_share_raw: float  # fraction 0–1
+    market_share_change_30d_raw: float | None  # fractional change in share vs 30d ago
+
+
+@dataclass(frozen=True)
+class RwaTokenizedStockPlatformRow:
+    """One row from the Tokenized Stocks page league table **Platforms** tab (Distributed)."""
+
+    rank: int
+    platform: str
+    platform_href: str | None
+    rwa_count: int
     total_value_usd: float
     value_change_7d_raw: float | None
     market_share_raw: float  # fraction 0–1
@@ -294,6 +309,71 @@ def _stablecoin_platform_rows_from_raw(raw_rows: list[dict[str, Any]]) -> list[R
     return out
 
 
+def _stocks_platform_rows_from_props(props: dict[str, Any]) -> list[dict[str, Any]] | None:
+    """
+    Tokenized Stocks page: ``leagueTableTabs.distributed`` contains tab objects.
+    We need the **platforms** tab rows.
+    """
+    lt = props.get("pageProps", {}).get("leagueTableTabs", {})
+    bucket = lt.get("distributed")
+    if not isinstance(bucket, list):
+        return None
+    for tab in bucket:
+        if isinstance(tab, dict) and tab.get("key") == "platforms":
+            data = tab.get("data") or {}
+            rows = data.get("rows")
+            if isinstance(rows, list):
+                return rows
+    return None
+
+
+def _stocks_platform_rows_from_raw(raw_rows: list[dict[str, Any]]) -> list[RwaTokenizedStockPlatformRow]:
+    out: list[RwaTokenizedStockPlatformRow] = []
+    for row in raw_rows:
+        if not isinstance(row, dict):
+            continue
+        group = row.get("group") or {}
+        name = str(group.get("name") or "").strip() or "—"
+        link = group.get("linkTo") or {}
+        href = link.get("href") if isinstance(link, dict) else None
+        if isinstance(href, str) and href.strip():
+            platform_href = href.strip()
+        else:
+            platform_href = None
+
+        ri = row.get("rowIndex")
+        rank = int(ri) + 1 if isinstance(ri, int) else len(out) + 1
+
+        ac = row.get("asset_count")
+        n_assets = int(ac) if isinstance(ac, (int, float)) else 0
+
+        val = row.get("value")
+        total = float(val) if isinstance(val, (int, float)) else 0.0
+
+        ms = row.get("market_share_pct")
+        msf = float(ms) if isinstance(ms, (int, float)) else 0.0
+
+        ms30 = row.get("market_share_pct_30d_change")
+        ms30f = float(ms30) if isinstance(ms30, (int, float)) else None
+
+        v7 = row.get("value_7d_change")
+        v7f = float(v7) if isinstance(v7, (int, float)) else None
+
+        out.append(
+            RwaTokenizedStockPlatformRow(
+                rank=rank,
+                platform=name,
+                platform_href=platform_href,
+                rwa_count=n_assets,
+                total_value_usd=total,
+                value_change_7d_raw=v7f,
+                market_share_raw=msf,
+                market_share_change_30d_raw=ms30f,
+            )
+        )
+    return out
+
+
 def _rows_from_raw(raw_rows: list[dict[str, Any]]) -> list[RwaNetworkLeagueRow]:
     out: list[RwaNetworkLeagueRow] = []
     for row in raw_rows:
@@ -448,6 +528,29 @@ def _fetch_treasuries_props_payload() -> tuple[dict[str, Any] | None, str | None
     return props, None
 
 
+def _fetch_stocks_props_payload() -> tuple[dict[str, Any] | None, str | None]:
+    headers = {"User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml"}
+    try:
+        r = requests.get(APP_STOCKS, headers=headers, timeout=60)
+        r.raise_for_status()
+    except (requests.RequestException, OSError) as e:
+        logger.debug("RWA tokenized stocks fetch: %s", e)
+        return None, str(e)
+
+    payload = _extract_next_data(r.text)
+    if not payload:
+        return None, "Could not parse __NEXT_DATA__ from app.rwa.xyz/stocks (layout may have changed)."
+    if payload.get("page") != "/stocks":
+        return None, (
+            f"Expected Next.js page route /stocks in __NEXT_DATA__, got {payload.get('page')!r}. "
+            "Refusing to parse a different route so league rows are not mixed with another page payload."
+        )
+    props = payload.get("props")
+    if not isinstance(props, dict):
+        return None, "Invalid __NEXT_DATA__ structure."
+    return props, None
+
+
 def fetch_rwa_treasuries_data() -> tuple[
     list[RwaTreasuryDistributedNetworkRow],
     list[RwaTreasuryPlatformRow],
@@ -504,3 +607,23 @@ def fetch_rwa_stablecoins_data() -> tuple[list[RwaStablecoinPlatformRow], list[R
     if not raw_rows:
         return [], kpis, "Stablecoins Platforms league table not found in page data."
     return _stablecoin_platform_rows_from_raw(raw_rows), kpis, None
+
+
+def fetch_rwa_tokenized_stocks_data() -> tuple[
+    list[RwaTokenizedStockPlatformRow], list[RwaGlobalKpi], str | None
+]:
+    """
+    Tokenized Stocks dashboard: overview aggregates + **Distributed** · **Platforms** league tab.
+
+    Row value is platform distributed value in USD; aggregate percentChange fields are typically 30d.
+    """
+    props, err = _fetch_stocks_props_payload()
+    if err:
+        return [], [], err
+    assert props is not None
+
+    raw_rows = _stocks_platform_rows_from_props(props)
+    kpis = _parse_aggregates(props)
+    if not raw_rows:
+        return [], kpis, "Tokenized Stocks Distributed · Platforms league table not found in page data."
+    return _stocks_platform_rows_from_raw(raw_rows), kpis, None

@@ -8,27 +8,33 @@ import streamlit as st
 
 from home_layout import STREAMLIT_TABLE_UNIFY_CSS
 from rwa_league.client import (
+    APP_STOCKS,
     APP_TREASURIES,
     RwaGlobalKpi,
     RwaNetworkLeagueRow,
     RwaStablecoinPlatformRow,
+    RwaTokenizedStockPlatformRow,
     RwaTreasuryDistributedNetworkRow,
     RwaTreasuryPlatformRow,
     fetch_rwa_home_data,
     fetch_rwa_stablecoins_data,
+    fetch_rwa_tokenized_stocks_data,
     fetch_rwa_treasuries_data,
 )
 from rwa_league.dataframe_table import (
     build_rwa_dataframe,
     build_stablecoin_platform_dataframe,
+    build_tokenized_stock_platform_dataframe,
     build_us_treasury_network_dataframe,
     build_us_treasury_platform_dataframe,
     filter_rows_by_network,
     filter_stablecoin_platform_rows,
+    filter_tokenized_stock_platform_rows,
     filter_treasury_network_rows,
     filter_treasury_platform_rows,
     style_rwa_dataframe,
     style_stablecoin_platform_dataframe,
+    style_tokenized_stock_platform_dataframe,
     style_us_treasury_network_dataframe,
     style_us_treasury_platform_dataframe,
 )
@@ -125,8 +131,13 @@ TREASURY_RWA_CAPTION = (
 TREASURY_PLATFORM_CAPTION = (
     "Tokenized Treasury league — **Distributed** · **Platforms** tab (issuer / platform totals; same embed as RWA.xyz)."
 )
+TOKENIZED_STOCKS_RWA_CAPTION = (
+    "Source: [RWA.xyz Tokenized Stocks](https://app.rwa.xyz/stocks) embedded overview + "
+    "**Distributed** · **Platforms** league (Distributed Value by platform; not the public API)."
+)
 
 TREASURIES_RWA_LINK_LABEL = "See US Treasuries on RWA.xyz"
+TOKENIZED_STOCKS_RWA_LINK_LABEL = "See Tokenized Stocks on RWA.xyz"
 
 
 def _format_pct_change_30d(pct: float | None) -> tuple[str, str] | None:
@@ -516,6 +527,73 @@ def _show_us_treasury_network_dataframe(df, *, height: int) -> None:
     )
 
 
+def _show_tokenized_stock_platform_dataframe(df, *, height: int) -> None:
+    """Tokenized Stocks **Distributed** · **Platforms** table (sorted by platform on full page)."""
+    st.dataframe(
+        style_tokenized_stock_platform_dataframe(df),
+        use_container_width=True,
+        height=height,
+        hide_index=True,
+        column_order=[
+            "#",
+            "Platform",
+            "Link",
+            "RWA Count",
+            "Distributed Value",
+            "7D Δ value",
+            "Market Share",
+            "30D Δ share",
+        ],
+        column_config={
+            "#": st.column_config.NumberColumn(
+                f"# {_SORT}",
+                format="%.0f",
+                help="Rank on RWA.xyz Distributed · Platforms tab",
+            ),
+            "Platform": st.column_config.TextColumn(
+                f"Platform {_SORT}",
+                width="medium",
+                help="Issuance platform (e.g. Backed, Dinari, Ondo)",
+            ),
+            "Link": st.column_config.LinkColumn(
+                f"RWA Page {_SORT}",
+                display_text=_LINK_ARROW,
+                validate=r"^https://",
+                width="small",
+                help="Open this platform on RWA.xyz",
+            ),
+            "RWA Count": st.column_config.NumberColumn(
+                f"RWA Count {_SORT}",
+                format="%.0f",
+                help="Number of tokenized stock / ETF RWAs for this platform",
+            ),
+            "Distributed Value": st.column_config.NumberColumn(
+                f"Distributed Value {_SORT}",
+                format=None,
+                width=150,
+                help="Tokenized stocks Distributed Value (USD) for this platform",
+            ),
+            "7D Δ value": st.column_config.NumberColumn(
+                f"7D Δ value {_SORT}",
+                format=None,
+                width=100,
+                help="7-day change in Distributed Value (%)",
+            ),
+            "Market Share": st.column_config.NumberColumn(
+                f"Market Share {_SORT}",
+                format=None,
+                help="Current platform market share (%)",
+            ),
+            "30D Δ share": st.column_config.NumberColumn(
+                f"30D Δ share {_SORT}",
+                format=None,
+                width=100,
+                help="Change in market share vs 30 days ago (percentage points)",
+            ),
+        },
+    )
+
+
 @st.cache_data(ttl=3600, show_spinner=False)
 def load_rwa_league_cached(*, _rwa_schema: int = 4) -> tuple[list[RwaNetworkLeagueRow], list[RwaGlobalKpi], str | None]:
     """Bump ``_rwa_schema`` when homepage payload shape changes."""
@@ -546,10 +624,20 @@ def load_rwa_treasuries_cached(
     return fetch_rwa_treasuries_data()
 
 
+@st.cache_data(ttl=3600, show_spinner=False)
+def load_rwa_tokenized_stocks_cached(
+    *, _stocks_schema: int = 1
+) -> tuple[list[RwaTokenizedStockPlatformRow], list[RwaGlobalKpi], str | None]:
+    """Bump ``_stocks_schema`` when ``/stocks`` embed shape changes."""
+    _ = _stocks_schema
+    return fetch_rwa_tokenized_stocks_data()
+
+
 def clear_rwa_league_cache() -> None:
     load_rwa_league_cached.clear()
     load_rwa_stablecoins_cached.clear()
     load_rwa_treasuries_cached.clear()
+    load_rwa_tokenized_stocks_cached.clear()
 
 
 def show_rwa_stablecoins_widget(
@@ -824,6 +912,122 @@ def show_rwa_treasuries_widget(
         )
 
 
+def show_rwa_tokenized_stocks_widget(
+    *,
+    home_preview: bool = True,
+    preview_rows: int = 8,
+) -> None:
+    """
+    RWA.xyz Tokenized Stocks embed: overview KPIs + **Distributed** · **Platforms** league.
+
+    ``home_preview=True``: teaser on home page. ``home_preview=False``: full searchable table
+    (``pages/RWA_Tokenized_Stocks.py``).
+    """
+    if home_preview:
+        st.divider()
+        st.markdown(
+            '<h3 class="home-main-heading" style="margin-top:0.35rem;font-size:1.05rem;">'
+            "Tokenized Stocks (RWA.xyz)</h3>",
+            unsafe_allow_html=True,
+        )
+        st.caption(
+            "Overview and **Platforms** league (**Distributed** tab) from "
+            f"[app.rwa.xyz/stocks]({APP_STOCKS}) — Distributed Value by platform."
+        )
+    else:
+        st.markdown(WIDGET_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
+        st.markdown(
+            '<div class="rwa-league-shell">'
+            '<h2 class="home-main-heading">Tokenized Stocks</h2>'
+            "</div>",
+            unsafe_allow_html=True,
+        )
+        st.caption(
+            "Full **Distributed** · **Platforms** league with search. Data from "
+            f"[RWA.xyz Tokenized Stocks]({APP_STOCKS})."
+        )
+
+    rows_st, kpis_st, err_st = load_rwa_tokenized_stocks_cached()
+
+    if err_st and not rows_st:
+        st.warning(escape(err_st))
+        _render_rwa_treasuries_overview(kpis_st)
+        st.link_button(
+            TOKENIZED_STOCKS_RWA_LINK_LABEL,
+            APP_STOCKS,
+            use_container_width=True,
+            key="rwa_stocks_rwa_link_err_home" if home_preview else "rwa_stocks_rwa_link_err_full",
+        )
+        return
+
+    if not rows_st:
+        st.info("No Tokenized Stocks platform rows returned.")
+        _render_rwa_treasuries_overview(kpis_st)
+        st.link_button(
+            TOKENIZED_STOCKS_RWA_LINK_LABEL,
+            APP_STOCKS,
+            use_container_width=True,
+            key="rwa_stocks_rwa_link_empty_home" if home_preview else "rwa_stocks_rwa_link_empty_full",
+        )
+        return
+
+    _render_rwa_treasuries_overview(kpis_st)
+
+    if home_preview:
+        n = max(1, min(preview_rows, len(rows_st)))
+        working = rows_st[:n]
+        st.caption(
+            f"Preview: top **{n}** platforms by Distributed Value (**Distributed** · **Platforms** tab). "
+            "Open the full page for search and the full table."
+        )
+        table_h = rwa_table_height(len(working))
+    else:
+        q = st.text_input(
+            "Search platform",
+            "",
+            key="rwa_tokenized_stocks_search_full",
+            placeholder="Filter by platform name…",
+        )
+        working = filter_tokenized_stock_platform_rows(rows_st, q)
+        # User requested this table sorted by Platform for the dedicated page.
+        working = sorted(working, key=lambda r: (r.platform or "").lower())
+        if q.strip():
+            st.caption(
+                f"Showing {len(working)} of {len(rows_st)} platforms matching “{escape(q.strip())}”."
+            )
+        else:
+            st.caption(
+                f"Showing all {len(working)} platforms (Tokenized Stocks · Distributed · Platforms), sorted by Platform."
+            )
+        table_h = rwa_table_height(len(working), max_h=900)
+
+    df_st = build_tokenized_stock_platform_dataframe(working)
+    _show_tokenized_stock_platform_dataframe(df_st, height=table_h)
+    st.caption(TOKENIZED_STOCKS_RWA_CAPTION)
+
+    if home_preview:
+        if st.button(
+            "Open full Tokenized Stocks table",
+            key="see_full_rwa_tokenized_stocks",
+            use_container_width=True,
+            type="primary",
+        ):
+            st.switch_page("pages/RWA_Tokenized_Stocks.py")
+        st.link_button(
+            TOKENIZED_STOCKS_RWA_LINK_LABEL,
+            APP_STOCKS,
+            use_container_width=True,
+            key="rwa_stocks_rwa_link_home",
+        )
+    else:
+        st.link_button(
+            TOKENIZED_STOCKS_RWA_LINK_LABEL,
+            APP_STOCKS,
+            use_container_width=True,
+            key="rwa_stocks_rwa_link_full",
+        )
+
+
 def show_rwa_league_widget(
     *,
     home_preview: bool = False,
@@ -853,6 +1057,7 @@ def show_rwa_league_widget(
         if home_preview:
             show_rwa_stablecoins_widget(home_preview=True, preview_rows=preview_rows)
             show_rwa_treasuries_widget(home_preview=True, preview_rows=preview_rows)
+            show_rwa_tokenized_stocks_widget(home_preview=True, preview_rows=preview_rows)
         return
 
     if not rows:
@@ -913,3 +1118,4 @@ def show_rwa_league_widget(
     if home_preview:
         show_rwa_stablecoins_widget(home_preview=True, preview_rows=preview_rows)
         show_rwa_treasuries_widget(home_preview=True, preview_rows=preview_rows)
+        show_rwa_tokenized_stocks_widget(home_preview=True, preview_rows=preview_rows)
