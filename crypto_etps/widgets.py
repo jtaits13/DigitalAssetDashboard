@@ -176,7 +176,6 @@ def _render_etp_home_kpi_row(
     *,
     total_aum_display: str,
     agg_pct: float | None,
-    agg_window: str,
     ibit_row: CryptoEtpRow | None,
     etha_row: CryptoEtpRow | None,
 ) -> None:
@@ -190,25 +189,24 @@ def _render_etp_home_kpi_row(
         if etha_row and etha_row.assets_usd is not None and etha_row.assets_usd > 0
         else "—"
     )
-    ip, iw = _fund_trailing_pct("IBIT", ibit_row)
-    ep, ew = _fund_trailing_pct("ETHA", etha_row)
+    ip, _ = _fund_trailing_pct("IBIT", ibit_row)
+    ep, _ = _fund_trailing_pct("ETHA", etha_row)
 
-    agg_tag = agg_window if agg_window else ""
     cells = [
         (
             "Total AUM (listed)",
             escape(total_aum_display),
-            _etf_delta_html(agg_pct, agg_tag),
+            _etf_delta_html(agg_pct, ""),
         ),
         (
             "IBIT · AUM",
             escape(ibit_aum),
-            _etf_delta_html(ip, iw),
+            _etf_delta_html(ip, ""),
         ),
         (
             "ETHA · AUM",
             escape(etha_aum),
-            _etf_delta_html(ep, ew),
+            _etf_delta_html(ep, ""),
         ),
     ]
     parts = []
@@ -223,11 +221,8 @@ def _render_etp_home_kpi_row(
     st.markdown(
         '<div class="etp-kpi-wrap">'
         "<p class='etp-kpi-window-note'>"
-        "Listed AUM from StockAnalysis. Aggregate % change uses Yahoo-estimated portfolio value "
-        "(same method as the full-page AUM chart: prices vs the latest reported AUM snapshot). "
-        "Window is <strong>1M</strong> when enough history exists, otherwise <strong>1Y</strong>. "
-        "IBIT and ETHA % changes use Yahoo <strong>1M</strong> then <strong>1Y</strong> price returns when available; "
-        "otherwise the StockAnalysis <strong>52W</strong> past-year narrative."
+        "All % changes in this row are <strong>30-day (30D)</strong> (Yahoo Finance). "
+        "Listed AUM from <strong>StockAnalysis</strong>."
         "</p>"
         "<div class='etp-kpi-row'>"
         f"{''.join(parts)}"
@@ -352,13 +347,12 @@ def show_us_crypto_etps_widget(
     if home_preview:
         pairs = etp_rows_to_fund_pairs(rows)
         hist_df, _hist_err = load_aggregate_aum_history_cached(pairs)
-        agg_pct, agg_win = aggregate_aum_pct_from_history(hist_df)
+        agg_pct, _ = aggregate_aum_pct_from_history(hist_df)
         ibit_r = _row_by_symbol(rows, "IBIT")
         etha_r = _row_by_symbol(rows, "ETHA")
         _render_etp_home_kpi_row(
             total_aum_display=aum_s,
             agg_pct=agg_pct,
-            agg_window=agg_win,
             ibit_row=ibit_r,
             etha_row=etha_r,
         )
