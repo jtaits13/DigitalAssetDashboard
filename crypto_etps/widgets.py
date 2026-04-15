@@ -222,7 +222,7 @@ def _render_etp_home_kpi_row(
         '<div class="etp-kpi-wrap">'
         "<p class='etp-kpi-window-note'>"
         "All % changes in this row are <strong>30-day (30D)</strong> (Yahoo Finance). "
-        "Listed AUM from <strong>StockAnalysis</strong>."
+        "Listed AUM from <strong>StockAnalysis</strong> (crypto ETF list and detail pages; scraped; not affiliated)."
         "</p>"
         "<div class='etp-kpi-row'>"
         f"{''.join(parts)}"
@@ -377,7 +377,8 @@ def show_us_crypto_etps_widget(
     display_rows = filtered[:cap]
     df = build_etp_dataframe(display_rows)
     show_etp_dataframe(df, height=etp_table_height(len(df)))
-    st.caption(ETP_DATA_SOURCE_CAPTION)
+    if not home_preview:
+        st.caption(ETP_DATA_SOURCE_CAPTION)
 
     if home_preview:
         st.caption(
