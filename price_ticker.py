@@ -79,7 +79,7 @@ TICKER_STYLES_MARKDOWN = """
     font-size: 0.88rem;
 }
 .cd-pct-up { color: #28794E; }
-.cd-pct-down { color: #E17A37; }
+.cd-pct-down { color: #dc2626; }
 .cd-pct-na { color: #94a3b8; }
 a.cd-chip-link {
     text-decoration: none;

@@ -109,7 +109,7 @@ WIDGET_CSS = """
     color: #28794E;
 }
 .rwa-kpi-delta.down {
-    color: #E17A37;
+    color: #dc2626;
 }
 .rwa-kpi-delta.neutral {
     color: #3E6A7A;

@@ -88,7 +88,7 @@ def style_etp_dataframe(df: pd.DataFrame) -> pd.io.formats.style.Styler:
         return [
             "color: #28794E; font-weight: 600"
             if pd.notna(v) and float(v) >= 0
-            else "color: #E17A37; font-weight: 600"
+            else "color: #dc2626; font-weight: 600"
             if pd.notna(v) and float(v) < 0
             else ""
             for v in s
