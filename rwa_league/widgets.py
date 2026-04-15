@@ -739,15 +739,6 @@ def show_rwa_stablecoins_widget(
             "Stablecoins (RWA.xyz)</h3>",
             unsafe_allow_html=True,
         )
-        st.markdown(
-            '<p class="jd-kpi-window-note">'
-            "<strong>Platforms</strong> preview — "
-            '<a href="https://app.rwa.xyz/stablecoins">app.rwa.xyz/stablecoins</a> '
-            "(<strong>market cap</strong> by issuer; not the homepage <strong>Networks</strong> / "
-            "Distributed Value view)."
-            "</p>",
-            unsafe_allow_html=True,
-        )
     else:
         st.markdown(WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
         st.markdown(
@@ -859,13 +850,6 @@ def show_rwa_treasuries_widget(
         st.markdown(
             '<h3 class="home-main-heading" style="margin-top:0.35rem;font-size:1.05rem;">'
             "US Treasuries (RWA.xyz)</h3>",
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            '<p class="jd-kpi-window-note">'
-            f'<strong>Networks</strong> preview — <a href="{escape(APP_TREASURIES)}">app.rwa.xyz/treasuries</a> '
-            "(<strong>Distributed</strong> tab · <strong>Distributed Value</strong>)."
-            "</p>",
             unsafe_allow_html=True,
         )
     else:
@@ -1027,13 +1011,6 @@ def show_rwa_tokenized_stocks_widget(
         st.markdown(
             '<h3 class="home-main-heading" style="margin-top:0.35rem;font-size:1.05rem;">'
             "Tokenized Stocks (RWA.xyz)</h3>",
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            '<p class="jd-kpi-window-note">'
-            f'<strong>Platforms</strong> preview — <a href="{escape(APP_STOCKS)}">app.rwa.xyz/stocks</a> '
-            "(<strong>Distributed</strong> tab · <strong>Distributed Value</strong>)."
-            "</p>",
             unsafe_allow_html=True,
         )
     else:
