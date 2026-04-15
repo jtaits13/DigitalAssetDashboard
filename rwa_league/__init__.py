@@ -3,6 +3,7 @@
 from rwa_league.client import (
     RwaGlobalKpi,
     RwaNetworkLeagueRow,
+    RwaTokenizedStockNetworkRow,
     RwaStablecoinPlatformRow,
     RwaTokenizedStockPlatformRow,
     RwaTreasuryDistributedNetworkRow,
@@ -24,6 +25,7 @@ from rwa_league.widgets import (
 __all__ = [
     "RwaGlobalKpi",
     "RwaNetworkLeagueRow",
+    "RwaTokenizedStockNetworkRow",
     "RwaStablecoinPlatformRow",
     "RwaTokenizedStockPlatformRow",
     "RwaTreasuryDistributedNetworkRow",

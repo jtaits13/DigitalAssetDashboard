@@ -90,6 +90,11 @@ class RwaTokenizedStockPlatformRow:
 
 
 @dataclass(frozen=True)
+class RwaTokenizedStockNetworkRow(RwaNetworkLeagueRow):
+    """One row from the Tokenized Stocks page league table **Networks** tab (Distributed)."""
+
+
+@dataclass(frozen=True)
 class RwaGlobalKpi:
     """One card from the homepage “Global Market Overview” (``pageProps.aggregates``)."""
 
@@ -320,6 +325,24 @@ def _stocks_platform_rows_from_props(props: dict[str, Any]) -> list[dict[str, An
         return None
     for tab in bucket:
         if isinstance(tab, dict) and tab.get("key") == "platforms":
+            data = tab.get("data") or {}
+            rows = data.get("rows")
+            if isinstance(rows, list):
+                return rows
+    return None
+
+
+def _stocks_network_rows_from_props(props: dict[str, Any]) -> list[dict[str, Any]] | None:
+    """
+    Tokenized Stocks page: ``leagueTableTabs.distributed`` contains tab objects.
+    We need the **networks** tab rows.
+    """
+    lt = props.get("pageProps", {}).get("leagueTableTabs", {})
+    bucket = lt.get("distributed")
+    if not isinstance(bucket, list):
+        return None
+    for tab in bucket:
+        if isinstance(tab, dict) and tab.get("key") == "networks":
             data = tab.get("data") or {}
             rows = data.get("rows")
             if isinstance(rows, list):
@@ -610,20 +633,31 @@ def fetch_rwa_stablecoins_data() -> tuple[list[RwaStablecoinPlatformRow], list[R
 
 
 def fetch_rwa_tokenized_stocks_data() -> tuple[
-    list[RwaTokenizedStockPlatformRow], list[RwaGlobalKpi], str | None
+    list[RwaTokenizedStockNetworkRow],
+    list[RwaTokenizedStockPlatformRow],
+    list[RwaGlobalKpi],
+    str | None,
 ]:
     """
-    Tokenized Stocks dashboard: overview aggregates + **Distributed** · **Platforms** league tab.
+    Tokenized Stocks dashboard: overview aggregates + **Distributed** · **Networks** and **Platforms** league tabs.
 
     Row value is platform distributed value in USD; aggregate percentChange fields are typically 30d.
     """
     props, err = _fetch_stocks_props_payload()
     if err:
-        return [], [], err
+        return [], [], [], err
     assert props is not None
 
-    raw_rows = _stocks_platform_rows_from_props(props)
+    raw_net = _stocks_network_rows_from_props(props)
+    raw_plat = _stocks_platform_rows_from_props(props)
     kpis = _parse_aggregates(props)
-    if not raw_rows:
-        return [], kpis, "Tokenized Stocks Distributed · Platforms league table not found in page data."
-    return _stocks_platform_rows_from_raw(raw_rows), kpis, None
+    if not raw_net and not raw_plat:
+        return [], [], kpis, "Tokenized Stocks Distributed · Networks / Platforms league data not found in page data."
+
+    net_out: list[RwaTokenizedStockNetworkRow] = []
+    if raw_net:
+        league = _rows_from_raw(raw_net)
+        net_out = [RwaTokenizedStockNetworkRow(**asdict(r)) for r in league]
+
+    plat_out = _stocks_platform_rows_from_raw(raw_plat or [])
+    return net_out, plat_out, kpis, None

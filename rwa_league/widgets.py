@@ -12,6 +12,7 @@ from rwa_league.client import (
     APP_TREASURIES,
     RwaGlobalKpi,
     RwaNetworkLeagueRow,
+    RwaTokenizedStockNetworkRow,
     RwaStablecoinPlatformRow,
     RwaTokenizedStockPlatformRow,
     RwaTreasuryDistributedNetworkRow,
@@ -23,16 +24,19 @@ from rwa_league.client import (
 )
 from rwa_league.dataframe_table import (
     build_rwa_dataframe,
+    build_tokenized_stock_network_dataframe,
     build_stablecoin_platform_dataframe,
     build_tokenized_stock_platform_dataframe,
     build_us_treasury_network_dataframe,
     build_us_treasury_platform_dataframe,
     filter_rows_by_network,
+    filter_tokenized_stock_network_rows,
     filter_stablecoin_platform_rows,
     filter_tokenized_stock_platform_rows,
     filter_treasury_network_rows,
     filter_treasury_platform_rows,
     style_rwa_dataframe,
+    style_tokenized_stock_network_dataframe,
     style_stablecoin_platform_dataframe,
     style_tokenized_stock_platform_dataframe,
     style_us_treasury_network_dataframe,
@@ -594,6 +598,73 @@ def _show_tokenized_stock_platform_dataframe(df, *, height: int) -> None:
     )
 
 
+def _show_tokenized_stock_network_dataframe(df, *, height: int) -> None:
+    """Tokenized Stocks **Distributed** · **Networks** table."""
+    st.dataframe(
+        style_tokenized_stock_network_dataframe(df),
+        use_container_width=True,
+        height=height,
+        hide_index=True,
+        column_order=[
+            "#",
+            "Network",
+            "Link",
+            "RWA Count",
+            "Distributed Value",
+            "7D Δ value",
+            "Market Share",
+            "30D Δ share",
+        ],
+        column_config={
+            "#": st.column_config.NumberColumn(
+                f"# {_SORT}",
+                format="%.0f",
+                help="Rank on RWA.xyz Distributed · Networks tab",
+            ),
+            "Network": st.column_config.TextColumn(
+                f"Network {_SORT}",
+                width="medium",
+                help="Blockchain network for tokenized stocks RWAs",
+            ),
+            "Link": st.column_config.LinkColumn(
+                f"RWA Page {_SORT}",
+                display_text=_LINK_ARROW,
+                validate=r"^https://",
+                width="small",
+                help="Open this network on RWA.xyz",
+            ),
+            "RWA Count": st.column_config.NumberColumn(
+                f"RWA Count {_SORT}",
+                format="%.0f",
+                help="Number of tokenized stock / ETF RWAs on this network",
+            ),
+            "Distributed Value": st.column_config.NumberColumn(
+                f"Distributed Value {_SORT}",
+                format=None,
+                width=150,
+                help="Tokenized stocks Distributed Value (USD) for this network",
+            ),
+            "7D Δ value": st.column_config.NumberColumn(
+                f"7D Δ value {_SORT}",
+                format=None,
+                width=100,
+                help="7-day change in Distributed Value (%)",
+            ),
+            "Market Share": st.column_config.NumberColumn(
+                f"Market Share {_SORT}",
+                format=None,
+                help="Current network market share (%)",
+            ),
+            "30D Δ share": st.column_config.NumberColumn(
+                f"30D Δ share {_SORT}",
+                format=None,
+                width=100,
+                help="Change in market share vs 30 days ago (percentage points)",
+            ),
+        },
+    )
+
+
 @st.cache_data(ttl=3600, show_spinner=False)
 def load_rwa_league_cached(*, _rwa_schema: int = 4) -> tuple[list[RwaNetworkLeagueRow], list[RwaGlobalKpi], str | None]:
     """Bump ``_rwa_schema`` when homepage payload shape changes."""
@@ -626,8 +697,13 @@ def load_rwa_treasuries_cached(
 
 @st.cache_data(ttl=3600, show_spinner=False)
 def load_rwa_tokenized_stocks_cached(
-    *, _stocks_schema: int = 1
-) -> tuple[list[RwaTokenizedStockPlatformRow], list[RwaGlobalKpi], str | None]:
+    *, _stocks_schema: int = 2
+) -> tuple[
+    list[RwaTokenizedStockNetworkRow],
+    list[RwaTokenizedStockPlatformRow],
+    list[RwaGlobalKpi],
+    str | None,
+]:
     """Bump ``_stocks_schema`` when ``/stocks`` embed shape changes."""
     _ = _stocks_schema
     return fetch_rwa_tokenized_stocks_data()
@@ -947,9 +1023,9 @@ def show_rwa_tokenized_stocks_widget(
             f"[RWA.xyz Tokenized Stocks]({APP_STOCKS})."
         )
 
-    rows_st, kpis_st, err_st = load_rwa_tokenized_stocks_cached()
+    rows_st_net, rows_st_plat, kpis_st, err_st = load_rwa_tokenized_stocks_cached()
 
-    if err_st and not rows_st:
+    if err_st and not rows_st_net and not rows_st_plat:
         st.warning(escape(err_st))
         _render_rwa_treasuries_overview(kpis_st)
         st.link_button(
@@ -960,8 +1036,8 @@ def show_rwa_tokenized_stocks_widget(
         )
         return
 
-    if not rows_st:
-        st.info("No Tokenized Stocks platform rows returned.")
+    if not rows_st_net and not rows_st_plat:
+        st.info("No Tokenized Stocks league rows returned.")
         _render_rwa_treasuries_overview(kpis_st)
         st.link_button(
             TOKENIZED_STOCKS_RWA_LINK_LABEL,
@@ -973,36 +1049,77 @@ def show_rwa_tokenized_stocks_widget(
 
     _render_rwa_treasuries_overview(kpis_st)
 
-    if home_preview:
-        n = max(1, min(preview_rows, len(rows_st)))
-        working = rows_st[:n]
+    if rows_st_plat and home_preview:
+        n = max(1, min(preview_rows, len(rows_st_plat)))
+        working = rows_st_plat[:n]
         st.caption(
             f"Preview: top **{n}** platforms by Distributed Value (**Distributed** · **Platforms** tab). "
             "Open the full page for search and the full table."
         )
         table_h = rwa_table_height(len(working))
-    else:
+        df_st = build_tokenized_stock_platform_dataframe(working)
+        _show_tokenized_stock_platform_dataframe(df_st, height=table_h)
+    elif rows_st_plat and not home_preview:
         q = st.text_input(
             "Search platform",
             "",
             key="rwa_tokenized_stocks_search_full",
             placeholder="Filter by platform name…",
         )
-        working = filter_tokenized_stock_platform_rows(rows_st, q)
+        working = filter_tokenized_stock_platform_rows(rows_st_plat, q)
         # User requested this table sorted by Platform for the dedicated page.
         working = sorted(working, key=lambda r: (r.platform or "").lower())
         if q.strip():
             st.caption(
-                f"Showing {len(working)} of {len(rows_st)} platforms matching “{escape(q.strip())}”."
+                f"Showing {len(working)} of {len(rows_st_plat)} platforms matching “{escape(q.strip())}”."
             )
         else:
             st.caption(
                 f"Showing all {len(working)} platforms (Tokenized Stocks · Distributed · Platforms), sorted by Platform."
             )
         table_h = rwa_table_height(len(working), max_h=900)
+        st.markdown(
+            '<h3 class="home-main-heading" style="margin-top:0.5rem;font-size:1.05rem;">'
+            "By platform (Distributed · Platforms)</h3>",
+            unsafe_allow_html=True,
+        )
+        df_st = build_tokenized_stock_platform_dataframe(working)
+        _show_tokenized_stock_platform_dataframe(df_st, height=table_h)
+    elif home_preview:
+        st.info("No Tokenized Stocks platform rows returned.")
+    else:
+        st.info("No Tokenized Stocks Distributed · Platforms rows were returned.")
 
-    df_st = build_tokenized_stock_platform_dataframe(working)
-    _show_tokenized_stock_platform_dataframe(df_st, height=table_h)
+    if not home_preview:
+        st.divider()
+        st.markdown(
+            '<h3 class="home-main-heading" style="margin-top:0.35rem;font-size:1.05rem;">'
+            "By network (Distributed · Networks)</h3>",
+            unsafe_allow_html=True,
+        )
+        if rows_st_net:
+            qn = st.text_input(
+                "Search network",
+                "",
+                key="rwa_tokenized_stocks_network_search_full",
+                placeholder="Filter by network name…",
+            )
+            working_n = filter_tokenized_stock_network_rows(rows_st_net, qn)
+            working_n = sorted(working_n, key=lambda r: (r.network or "").lower())
+            if qn.strip():
+                st.caption(
+                    f"Showing {len(working_n)} of {len(rows_st_net)} networks matching “{escape(qn.strip())}”."
+                )
+            else:
+                st.caption(
+                    f"Showing all {len(working_n)} networks (Tokenized Stocks · Distributed · Networks), sorted by Network."
+                )
+            table_hn = rwa_table_height(len(working_n), max_h=900)
+            df_n = build_tokenized_stock_network_dataframe(working_n)
+            _show_tokenized_stock_network_dataframe(df_n, height=table_hn)
+        else:
+            st.info("No Tokenized Stocks Distributed · Networks rows were returned.")
+
     st.caption(TOKENIZED_STOCKS_RWA_CAPTION)
 
     if home_preview:

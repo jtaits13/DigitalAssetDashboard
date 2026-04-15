@@ -13,6 +13,7 @@ import pandas as pd
 from crypto_etps.client import format_usd_compact
 from rwa_league.client import (
     RwaNetworkLeagueRow,
+    RwaTokenizedStockNetworkRow,
     RwaStablecoinPlatformRow,
     RwaTokenizedStockPlatformRow,
     RwaTreasuryDistributedNetworkRow,
@@ -192,6 +193,40 @@ def build_tokenized_stock_platform_dataframe(rows: list[RwaTokenizedStockPlatfor
     return pd.DataFrame(recs)
 
 
+def build_tokenized_stock_network_dataframe(rows: list[RwaTokenizedStockNetworkRow]) -> pd.DataFrame:
+    """Tokenized Stocks network table (Distributed tab) with Distributed Value by network."""
+
+    recs: list[dict[str, object]] = []
+    for r in rows:
+        href = (r.network_href or "").strip()
+        url = f"{_APP_BASE}{href}" if href.startswith("/") else f"{_APP_BASE}/"
+        v7 = r.value_change_7d_raw
+        if v7 is None:
+            pct7 = np.nan
+        else:
+            f7 = float(v7)
+            pct7 = np.nan if np.isnan(f7) else f7 * 100.0
+        ms30 = r.market_share_change_30d_raw
+        if ms30 is None:
+            pct_ms30 = np.nan
+        else:
+            fm = float(ms30)
+            pct_ms30 = np.nan if np.isnan(fm) else fm * 100.0
+        recs.append(
+            {
+                "#": int(r.rank),
+                "Network": r.network,
+                "Link": url,
+                "RWA Count": int(r.rwa_count),
+                "Distributed Value": float(r.total_value_usd),
+                "7D Δ value": pct7,
+                "Market Share": float(r.market_share_raw * 100.0),
+                "30D Δ share": pct_ms30,
+            }
+        )
+    return pd.DataFrame(recs)
+
+
 def filter_stablecoin_platform_rows(
     rows: list[RwaStablecoinPlatformRow], query: str
 ) -> list[RwaStablecoinPlatformRow]:
@@ -215,6 +250,15 @@ def filter_tokenized_stock_platform_rows(
     if not q:
         return list(rows)
     return [r for r in rows if q in (r.platform or "").lower()]
+
+
+def filter_tokenized_stock_network_rows(
+    rows: list[RwaTokenizedStockNetworkRow], query: str
+) -> list[RwaTokenizedStockNetworkRow]:
+    q = (query or "").strip().lower()
+    if not q:
+        return list(rows)
+    return [r for r in rows if q in (r.network or "").lower()]
 
 
 def filter_rows_by_network(rows: list[RwaNetworkLeagueRow], query: str) -> list[RwaNetworkLeagueRow]:
@@ -334,6 +378,32 @@ def style_us_treasury_network_dataframe(df: pd.DataFrame) -> pd.io.formats.style
 
 def style_tokenized_stock_platform_dataframe(df: pd.DataFrame) -> pd.io.formats.style.Styler:
     """Tokenized Stocks platform styling (Distributed Value + 7D / 30D deltas)."""
+
+    def highlight_delta(s: pd.Series) -> list[str]:
+        return [
+            "color: #059669; font-weight: 600"
+            if pd.notna(v) and float(v) >= 0
+            else "color: #dc2626; font-weight: 600"
+            if pd.notna(v) and float(v) < 0
+            else ""
+            for v in s
+        ]
+
+    return df.style.apply(highlight_delta, subset=["7D Δ value"]).apply(
+        highlight_delta, subset=["30D Δ share"]
+    ).format(
+        {
+            "7D Δ value": _fmt_7d_cell,
+            "30D Δ share": _fmt_7d_cell,
+            "Distributed Value": _fmt_total_value_cell,
+            "Market Share": _fmt_market_share_cell,
+        },
+        na_rep="—",
+    )
+
+
+def style_tokenized_stock_network_dataframe(df: pd.DataFrame) -> pd.io.formats.style.Styler:
+    """Tokenized Stocks network styling (Distributed Value + 7D / 30D deltas)."""
 
     def highlight_delta(s: pd.Series) -> list[str]:
         return [
