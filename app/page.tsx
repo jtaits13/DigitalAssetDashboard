@@ -1,6 +1,7 @@
 import { NewsSection } from "./components/NewsSection";
 import { CryptoETPsSection } from "./components/CryptoETPsSection";
 import { StablecoinWidget } from "./components/StablecoinWidget";
+import { TokenizedStocksSection } from "./components/TokenizedStocksSection";
 
 export default function HomePage() {
   return (
@@ -15,6 +16,7 @@ export default function HomePage() {
         <NewsSection />
         <StablecoinWidget />
       </div>
+      <TokenizedStocksSection compact />
       <CryptoETPsSection />
     </div>
   );

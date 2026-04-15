@@ -30,6 +30,9 @@ export default function RootLayout({
               <Link href="/stablecoins" className="hover:text-white">
                 Stablecoins
               </Link>
+              <Link href="/tokenized-stocks" className="hover:text-white">
+                Tokenized Stocks
+              </Link>
             </nav>
           </div>
         </header>
