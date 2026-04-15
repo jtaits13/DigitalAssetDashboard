@@ -4,6 +4,19 @@ from __future__ import annotations
 
 # Section rhythm: soft labels, ticker spacing, teal accent aligned with primaryColor.
 # Streamlit st.dataframe: unify header/body font + color (sortable tables on home).
+# KPI tile legends (RWA + ETP): one size/color everywhere.
+KPI_WINDOW_NOTE_CSS = """
+<style>
+.jd-kpi-window-note {
+    font-size: 0.72rem;
+    font-weight: 400;
+    color: #3E6A7A;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.35;
+}
+</style>
+"""
+
 STREAMLIT_TABLE_UNIFY_CSS = """
 <style>
 div[data-testid="stDataFrame"] {

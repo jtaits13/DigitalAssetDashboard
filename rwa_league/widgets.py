@@ -6,7 +6,7 @@ from html import escape
 
 import streamlit as st
 
-from home_layout import STREAMLIT_TABLE_UNIFY_CSS
+from home_layout import KPI_WINDOW_NOTE_CSS, STREAMLIT_TABLE_UNIFY_CSS
 from rwa_league.client import (
     APP_STOCKS,
     APP_TREASURIES,
@@ -59,13 +59,6 @@ WIDGET_CSS = """
 }
 .rwa-kpi-wrap {
     margin: 0.45rem 0 0.85rem 0;
-}
-.rwa-kpi-window-note {
-    font-size: 6px;
-    font-weight: 400;
-    color: #3E6A7A;
-    margin: 0 0 0.5rem 0;
-    line-height: 1.35;
 }
 .rwa-kpi-row {
     display: flex;
@@ -166,41 +159,16 @@ def _format_pct_change_30d(pct: float | None) -> tuple[str, str] | None:
 
 
 def _rwa_kpi_window_note_html(*, overview_title: str) -> str:
-    """
-    Legend under RWA overview KPI tiles: 30D % changes vs headline level totals.
-    Same idea as the ETP home KPI note (deltas vs listed levels).
-    """
+    """Legend under RWA overview KPI tiles (same sentence pattern as Global Market)."""
     return (
-        "<p class='rwa-kpi-window-note'>"
+        "<p class=\"jd-kpi-window-note\">"
         "All % changes in this row are <strong>30-day (30D)</strong> (<strong>RWA.xyz</strong>). "
         f"Headline totals from the <strong>RWA.xyz</strong> <strong>{escape(overview_title)}</strong> overview."
         "</p>"
     )
 
 
-def _rwa_kpi_compact_note_html(*, overview_title: str) -> str:
-    """Shorter KPI legend for home-page subsections (avoids repeating the full Global Market blurb)."""
-    return (
-        "<p class='rwa-kpi-window-note'>"
-        "<strong>30-day (30D)</strong> % vs headline levels — "
-        f"<strong>RWA.xyz</strong> <strong>{escape(overview_title)}</strong>."
-        "</p>"
-    )
-
-
-def _rwa_kpi_legend_html(*, overview_title: str, note_style: str) -> str:
-    if note_style == "compact":
-        return _rwa_kpi_compact_note_html(overview_title=overview_title)
-    if note_style == "full":
-        return _rwa_kpi_window_note_html(overview_title=overview_title)
-    return ""
-
-
-def _render_rwa_stablecoin_overview(
-    kpis: list[RwaGlobalKpi],
-    *,
-    note_style: str = "full",
-) -> None:
+def _render_rwa_stablecoin_overview(kpis: list[RwaGlobalKpi]) -> None:
     """Stablecoins page overview: four KPI tiles (30D % change when present)."""
     if not kpis:
         return
@@ -221,7 +189,7 @@ def _render_rwa_stablecoin_overview(
     row = "<div class='rwa-kpi-row'>" + "".join(cells) + "</div>"
     st.markdown(
         '<div class="rwa-kpi-wrap">'
-        f"{_rwa_kpi_legend_html(overview_title='Stablecoins', note_style=note_style)}"
+        f"{_rwa_kpi_window_note_html(overview_title='Stablecoins')}"
         f"{row}"
         "</div>",
         unsafe_allow_html=True,
@@ -249,7 +217,7 @@ def _render_rwa_global_overview(kpis: list[RwaGlobalKpi]) -> None:
     row = "<div class='rwa-kpi-row'>" + "".join(cells) + "</div>"
     st.markdown(
         '<div class="rwa-kpi-wrap">'
-        f"{_rwa_kpi_legend_html(overview_title='Global Market', note_style='full')}"
+        f"{_rwa_kpi_window_note_html(overview_title='Global Market')}"
         f"{row}"
         "</div>",
         unsafe_allow_html=True,
@@ -260,7 +228,6 @@ def _render_rwa_treasuries_overview(
     kpis: list[RwaGlobalKpi],
     *,
     overview_title: str = "US Treasuries",
-    note_style: str = "full",
 ) -> None:
     """Overview KPI row for US Treasuries or Tokenized Stocks embed (same tile layout as Global Market)."""
     if not kpis:
@@ -282,7 +249,7 @@ def _render_rwa_treasuries_overview(
     row = "<div class='rwa-kpi-row'>" + "".join(cells) + "</div>"
     st.markdown(
         '<div class="rwa-kpi-wrap">'
-        f"{_rwa_kpi_legend_html(overview_title=overview_title, note_style=note_style)}"
+        f"{_rwa_kpi_window_note_html(overview_title=overview_title)}"
         f"{row}"
         "</div>",
         unsafe_allow_html=True,
@@ -772,12 +739,17 @@ def show_rwa_stablecoins_widget(
             "Stablecoins (RWA.xyz)</h3>",
             unsafe_allow_html=True,
         )
-        st.caption(
-            "**Platforms** preview — [app.rwa.xyz/stablecoins](https://app.rwa.xyz/stablecoins) "
-            "(**market cap** by issuer; not the homepage **Networks** / Distributed Value view)."
+        st.markdown(
+            '<p class="jd-kpi-window-note">'
+            "<strong>Platforms</strong> preview — "
+            '<a href="https://app.rwa.xyz/stablecoins">app.rwa.xyz/stablecoins</a> '
+            "(<strong>market cap</strong> by issuer; not the homepage <strong>Networks</strong> / "
+            "Distributed Value view)."
+            "</p>",
+            unsafe_allow_html=True,
         )
     else:
-        st.markdown(WIDGET_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
+        st.markdown(WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
         st.markdown(
             '<div class="rwa-league-shell">'
             '<h2 class="home-main-heading">Stablecoins</h2>'
@@ -794,10 +766,7 @@ def show_rwa_stablecoins_widget(
 
     if err_sc and not rows_sc:
         st.warning(escape(err_sc))
-        _render_rwa_stablecoin_overview(
-            kpis_sc,
-            note_style="compact" if home_preview else "full",
-        )
+        _render_rwa_stablecoin_overview(kpis_sc)
         st.link_button(
             STABLECOINS_RWA_LINK_LABEL,
             "https://app.rwa.xyz/stablecoins",
@@ -808,10 +777,7 @@ def show_rwa_stablecoins_widget(
 
     if not rows_sc:
         st.info("No platform rows returned for Stablecoins.")
-        _render_rwa_stablecoin_overview(
-            kpis_sc,
-            note_style="compact" if home_preview else "full",
-        )
+        _render_rwa_stablecoin_overview(kpis_sc)
         st.link_button(
             STABLECOINS_RWA_LINK_LABEL,
             "https://app.rwa.xyz/stablecoins",
@@ -820,17 +786,17 @@ def show_rwa_stablecoins_widget(
         )
         return
 
-    _render_rwa_stablecoin_overview(
-        kpis_sc,
-        note_style="compact" if home_preview else "full",
-    )
+    _render_rwa_stablecoin_overview(kpis_sc)
 
     if home_preview:
         n = max(1, min(preview_rows, len(rows_sc)))
         working = rows_sc[:n]
-        st.caption(
-            f"Preview: top **{n}** platforms by market cap (**Platforms** tab). "
+        st.markdown(
+            '<p class="jd-kpi-window-note">'
+            f"Preview: top <strong>{n}</strong> platforms by market cap (<strong>Platforms</strong> tab). "
             "Other tabs on RWA.xyz: Networks, Managers, Jurisdiction."
+            "</p>",
+            unsafe_allow_html=True,
         )
         table_h = rwa_table_height(len(working))
     else:
@@ -895,12 +861,15 @@ def show_rwa_treasuries_widget(
             "US Treasuries (RWA.xyz)</h3>",
             unsafe_allow_html=True,
         )
-        st.caption(
-            f"**Networks** preview — [app.rwa.xyz/treasuries]({APP_TREASURIES}) "
-            "(**Distributed** tab · **Distributed Value**)."
+        st.markdown(
+            '<p class="jd-kpi-window-note">'
+            f'<strong>Networks</strong> preview — <a href="{escape(APP_TREASURIES)}">app.rwa.xyz/treasuries</a> '
+            "(<strong>Distributed</strong> tab · <strong>Distributed Value</strong>)."
+            "</p>",
+            unsafe_allow_html=True,
         )
     else:
-        st.markdown(WIDGET_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
+        st.markdown(WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
         st.markdown(
             '<div class="rwa-league-shell">'
             '<h2 class="home-main-heading">US Treasuries</h2>'
@@ -917,10 +886,7 @@ def show_rwa_treasuries_widget(
 
     if err_tr and not rows_tr and not plat_tr:
         st.warning(escape(err_tr))
-        _render_rwa_treasuries_overview(
-            kpis_tr,
-            note_style="compact" if home_preview else "full",
-        )
+        _render_rwa_treasuries_overview(kpis_tr)
         st.link_button(
             TREASURIES_RWA_LINK_LABEL,
             APP_TREASURIES,
@@ -931,10 +897,7 @@ def show_rwa_treasuries_widget(
 
     if not rows_tr and not plat_tr:
         st.info("No US Treasuries league rows returned.")
-        _render_rwa_treasuries_overview(
-            kpis_tr,
-            note_style="compact" if home_preview else "full",
-        )
+        _render_rwa_treasuries_overview(kpis_tr)
         st.link_button(
             TREASURIES_RWA_LINK_LABEL,
             APP_TREASURIES,
@@ -943,18 +906,19 @@ def show_rwa_treasuries_widget(
         )
         return
 
-    _render_rwa_treasuries_overview(
-        kpis_tr,
-        note_style="compact" if home_preview else "full",
-    )
+    _render_rwa_treasuries_overview(kpis_tr)
 
     if rows_tr:
         if home_preview:
             n = max(1, min(preview_rows, len(rows_tr)))
             working = rows_tr[:n]
-            st.caption(
-                f"Preview: top **{n}** networks by Distributed Value (**Distributed** · **Networks** tab). "
-                "Open the full page for the complete Networks table and the **Platforms** league."
+            st.markdown(
+                '<p class="jd-kpi-window-note">'
+                f"Preview: top <strong>{n}</strong> networks by Distributed Value "
+                "(<strong>Distributed</strong> · <strong>Networks</strong> tab). "
+                "Open the full page for the complete Networks table and the <strong>Platforms</strong> league."
+                "</p>",
+                unsafe_allow_html=True,
             )
             table_h = rwa_table_height(len(working))
         else:
@@ -1065,12 +1029,15 @@ def show_rwa_tokenized_stocks_widget(
             "Tokenized Stocks (RWA.xyz)</h3>",
             unsafe_allow_html=True,
         )
-        st.caption(
-            f"**Platforms** preview — [app.rwa.xyz/stocks]({APP_STOCKS}) "
-            "(**Distributed** tab · **Distributed Value**)."
+        st.markdown(
+            '<p class="jd-kpi-window-note">'
+            f'<strong>Platforms</strong> preview — <a href="{escape(APP_STOCKS)}">app.rwa.xyz/stocks</a> '
+            "(<strong>Distributed</strong> tab · <strong>Distributed Value</strong>)."
+            "</p>",
+            unsafe_allow_html=True,
         )
     else:
-        st.markdown(WIDGET_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
+        st.markdown(WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
         st.markdown(
             '<div class="rwa-league-shell">'
             '<h2 class="home-main-heading">Tokenized Stocks</h2>'
@@ -1087,11 +1054,7 @@ def show_rwa_tokenized_stocks_widget(
 
     if err_st and not rows_st_net and not rows_st_plat:
         st.warning(escape(err_st))
-        _render_rwa_treasuries_overview(
-            kpis_st,
-            overview_title="Tokenized Stocks",
-            note_style="compact" if home_preview else "full",
-        )
+        _render_rwa_treasuries_overview(kpis_st, overview_title="Tokenized Stocks")
         st.link_button(
             TOKENIZED_STOCKS_RWA_LINK_LABEL,
             APP_STOCKS,
@@ -1102,11 +1065,7 @@ def show_rwa_tokenized_stocks_widget(
 
     if not rows_st_net and not rows_st_plat:
         st.info("No Tokenized Stocks league rows returned.")
-        _render_rwa_treasuries_overview(
-            kpis_st,
-            overview_title="Tokenized Stocks",
-            note_style="compact" if home_preview else "full",
-        )
+        _render_rwa_treasuries_overview(kpis_st, overview_title="Tokenized Stocks")
         st.link_button(
             TOKENIZED_STOCKS_RWA_LINK_LABEL,
             APP_STOCKS,
@@ -1115,18 +1074,18 @@ def show_rwa_tokenized_stocks_widget(
         )
         return
 
-    _render_rwa_treasuries_overview(
-        kpis_st,
-        overview_title="Tokenized Stocks",
-        note_style="compact" if home_preview else "full",
-    )
+    _render_rwa_treasuries_overview(kpis_st, overview_title="Tokenized Stocks")
 
     if rows_st_plat and home_preview:
         n = max(1, min(preview_rows, len(rows_st_plat)))
         working = rows_st_plat[:n]
-        st.caption(
-            f"Preview: top **{n}** platforms by Distributed Value (**Distributed** · **Platforms** tab). "
+        st.markdown(
+            '<p class="jd-kpi-window-note">'
+            f"Preview: top <strong>{n}</strong> platforms by Distributed Value "
+            "(<strong>Distributed</strong> · <strong>Platforms</strong> tab). "
             "Open the full page for search and the full table."
+            "</p>",
+            unsafe_allow_html=True,
         )
         table_h = rwa_table_height(len(working))
         df_st = build_tokenized_stock_platform_dataframe(working)
@@ -1227,7 +1186,7 @@ def show_rwa_league_widget(
     RWA.xyz networks league table. ``home_preview=True`` shows only the top N rows (no search)
     with a link to the full page — similar to a CoinDesk section teaser.
     """
-    st.markdown(WIDGET_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
+    st.markdown(WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
     rows, kpis, err = load_rwa_league_cached()
 
     if err and not rows:
@@ -1267,9 +1226,12 @@ def show_rwa_league_widget(
     if home_preview:
         n = max(1, min(preview_rows, len(working)))
         working = working[:n]
-        st.caption(
-            f"Preview: top **{n}** networks by **Distributed Value** (level) from the league embed. "
-            "Open the full page to search and see every network."
+        st.markdown(
+            '<p class="jd-kpi-window-note">'
+            f"Preview: top <strong>{n}</strong> networks by <strong>Distributed Value</strong> (level) "
+            "from the league embed. Open the full page to search and see every network."
+            "</p>",
+            unsafe_allow_html=True,
         )
     else:
         q = st.text_input(
@@ -1291,7 +1253,12 @@ def show_rwa_league_widget(
     df = build_rwa_dataframe(working)
     _show_rwa_dataframe(df, height=rwa_table_height(len(df)))
     if home_preview:
-        st.caption("**RWA.xyz** data from page embeds (not the public API).")
+        st.markdown(
+            '<p class="jd-kpi-window-note">'
+            "<strong>RWA.xyz</strong> data from page embeds (not the public API)."
+            "</p>",
+            unsafe_allow_html=True,
+        )
     else:
         st.caption(RWA_DATA_SOURCE_CAPTION)
 

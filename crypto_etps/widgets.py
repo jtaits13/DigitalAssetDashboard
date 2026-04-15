@@ -26,7 +26,7 @@ from crypto_etps.dataframe_table import (
     filter_rows_by_fund_name,
     style_etp_dataframe,
 )
-from home_layout import STREAMLIT_TABLE_UNIFY_CSS
+from home_layout import KPI_WINDOW_NOTE_CSS, STREAMLIT_TABLE_UNIFY_CSS
 from news_feeds import load_etp_market_news_cached
 
 WIDGET_CSS = """
@@ -47,13 +47,6 @@ WIDGET_CSS = """
 }
 .etp-kpi-wrap {
     margin: 0.35rem 0 0.85rem 0;
-}
-.etp-kpi-window-note {
-    font-size: 0.72rem;
-    font-weight: 400;
-    color: #3E6A7A;
-    margin: 0 0 0.5rem 0;
-    line-height: 1.35;
 }
 .etp-kpi-row {
     display: flex;
@@ -220,9 +213,10 @@ def _render_etp_home_kpi_row(
         )
     st.markdown(
         '<div class="etp-kpi-wrap">'
-        "<p class='etp-kpi-window-note'>"
-        "All % changes in this row are <strong>30-day (30D)</strong> (Yahoo Finance). "
-        "Listed AUM from <strong>StockAnalysis</strong> (crypto ETF list and detail pages; scraped; not affiliated)."
+        "<p class=\"jd-kpi-window-note\">"
+        "All % changes in this row are <strong>30-day (30D)</strong> (<strong>Yahoo Finance</strong>). "
+        "Headline totals are listed AUM from <strong>StockAnalysis</strong> "
+        "(crypto ETF list and detail pages; scraped; not affiliated)."
         "</p>"
         "<div class='etp-kpi-row'>"
         f"{''.join(parts)}"
@@ -318,7 +312,7 @@ def show_us_crypto_etps_widget(
     U.S. crypto ETP table. On the home page, pass ``home_preview=True`` for a short slice
     without search (CoinDesk-style teaser); full sort/filter lives on ``US_Crypto_ETPs``.
     """
-    st.markdown(WIDGET_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
+    st.markdown(WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
 
     ua = resolve_etp_user_agent(user_agent)
     with st.spinner("Loading U.S. digital asset ETPs (list + profile pages)…"):
@@ -381,9 +375,13 @@ def show_us_crypto_etps_widget(
         st.caption(ETP_DATA_SOURCE_CAPTION)
 
     if home_preview:
-        st.caption(
-            f"Preview: top **{min(cap, len(filtered))}** funds by assets. "
+        _prev_n = min(cap, len(filtered))
+        st.markdown(
+            '<p class="jd-kpi-window-note">'
+            f"Preview: top <strong>{_prev_n}</strong> funds by assets. "
             "Open the full list for search, every fund, and fund filing links."
+            "</p>",
+            unsafe_allow_html=True,
         )
 
     if st.button("See full ETF list", key="see_full_etf_list", use_container_width=True, type="primary"):
