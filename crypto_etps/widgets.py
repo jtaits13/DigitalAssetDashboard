@@ -374,16 +374,6 @@ def show_us_crypto_etps_widget(
     if not home_preview:
         st.caption(ETP_DATA_SOURCE_CAPTION)
 
-    if home_preview:
-        _prev_n = min(cap, len(filtered))
-        st.markdown(
-            '<p class="jd-kpi-window-note">'
-            f"Preview: top <strong>{_prev_n}</strong> funds by assets. "
-            "Open the full list for search, every fund, and fund filing links."
-            "</p>",
-            unsafe_allow_html=True,
-        )
-
     if st.button("See full ETF list", key="see_full_etf_list", use_container_width=True, type="primary"):
         st.switch_page("pages/US_Crypto_ETPs.py")
 

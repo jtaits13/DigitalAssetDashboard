@@ -782,13 +782,6 @@ def show_rwa_stablecoins_widget(
     if home_preview:
         n = max(1, min(preview_rows, len(rows_sc)))
         working = rows_sc[:n]
-        st.markdown(
-            '<p class="jd-kpi-window-note">'
-            f"Preview: top <strong>{n}</strong> platforms by market cap (<strong>Platforms</strong> tab). "
-            "Other tabs on RWA.xyz: Networks, Managers, Jurisdiction."
-            "</p>",
-            unsafe_allow_html=True,
-        )
         table_h = rwa_table_height(len(working))
     else:
         q = st.text_input(
@@ -896,14 +889,6 @@ def show_rwa_treasuries_widget(
         if home_preview:
             n = max(1, min(preview_rows, len(rows_tr)))
             working = rows_tr[:n]
-            st.markdown(
-                '<p class="jd-kpi-window-note">'
-                f"Preview: top <strong>{n}</strong> networks by Distributed Value "
-                "(<strong>Distributed</strong> · <strong>Networks</strong> tab). "
-                "Open the full page for the complete Networks table and the <strong>Platforms</strong> league."
-                "</p>",
-                unsafe_allow_html=True,
-            )
             table_h = rwa_table_height(len(working))
         else:
             q = st.text_input(
@@ -1056,14 +1041,6 @@ def show_rwa_tokenized_stocks_widget(
     if rows_st_plat and home_preview:
         n = max(1, min(preview_rows, len(rows_st_plat)))
         working = rows_st_plat[:n]
-        st.markdown(
-            '<p class="jd-kpi-window-note">'
-            f"Preview: top <strong>{n}</strong> platforms by Distributed Value "
-            "(<strong>Distributed</strong> · <strong>Platforms</strong> tab). "
-            "Open the full page for search and the full table."
-            "</p>",
-            unsafe_allow_html=True,
-        )
         table_h = rwa_table_height(len(working))
         df_st = build_tokenized_stock_platform_dataframe(working)
         _show_tokenized_stock_platform_dataframe(df_st, height=table_h)
@@ -1203,13 +1180,6 @@ def show_rwa_league_widget(
     if home_preview:
         n = max(1, min(preview_rows, len(working)))
         working = working[:n]
-        st.markdown(
-            '<p class="jd-kpi-window-note">'
-            f"Preview: top <strong>{n}</strong> networks by <strong>Distributed Value</strong> (level) "
-            "from the league embed. Open the full page to search and see every network."
-            "</p>",
-            unsafe_allow_html=True,
-        )
     else:
         q = st.text_input(
             "Search network",
@@ -1229,14 +1199,7 @@ def show_rwa_league_widget(
 
     df = build_rwa_dataframe(working)
     _show_rwa_dataframe(df, height=rwa_table_height(len(df)))
-    if home_preview:
-        st.markdown(
-            '<p class="jd-kpi-window-note">'
-            "<strong>RWA.xyz</strong> data from page embeds (not the public API)."
-            "</p>",
-            unsafe_allow_html=True,
-        )
-    else:
+    if not home_preview:
         st.caption(RWA_DATA_SOURCE_CAPTION)
 
     if home_preview and st.button(
