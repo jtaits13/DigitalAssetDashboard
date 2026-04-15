@@ -163,6 +163,10 @@ def main() -> None:
         HOME_MAIN_HEADING_CSS + HOME_PAGE_LAYOUT_CSS + HOME_PAGE_EXTRA_CSS,
         unsafe_allow_html=True,
     )
+    st.markdown(
+        '<h1 class="home-main-heading" style="margin:0.35rem 0 0.25rem 0;">Digital Assets Dashboard</h1>',
+        unsafe_allow_html=True,
+    )
     show_price_ticker()
 
     refresh = _sidebar()
