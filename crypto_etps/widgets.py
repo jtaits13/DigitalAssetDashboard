@@ -165,6 +165,32 @@ def _fund_trailing_pct(symbol: str, row: CryptoEtpRow | None) -> tuple[float | N
     return None, ""
 
 
+def render_etp_summary_kpi_row(
+    rows: list[CryptoEtpRow],
+    *,
+    include_styles: bool = True,
+) -> None:
+    """
+    Home-style KPI strip: total listed AUM (with aggregate 30D % from Yahoo-scaled history),
+    IBIT and ETHA AUM with 30D %. Used on the hub preview and the full ETP list page.
+    """
+    if include_styles:
+        st.markdown(WIDGET_CSS + KPI_WINDOW_NOTE_CSS, unsafe_allow_html=True)
+    total = total_aum_usd(rows)
+    aum_s = format_usd_compact(total) if total > 0 else "—"
+    pairs = etp_rows_to_fund_pairs(rows)
+    hist_df, _hist_err = load_aggregate_aum_history_cached(pairs)
+    agg_pct, _ = aggregate_aum_pct_from_history(hist_df)
+    ibit_r = _row_by_symbol(rows, "IBIT")
+    etha_r = _row_by_symbol(rows, "ETHA")
+    _render_etp_home_kpi_row(
+        total_aum_display=aum_s,
+        agg_pct=agg_pct,
+        ibit_row=ibit_r,
+        etha_row=etha_r,
+    )
+
+
 def _render_etp_home_kpi_row(
     *,
     total_aum_display: str,
@@ -350,17 +376,7 @@ def show_us_crypto_etps_widget(
     )
 
     if home_preview:
-        pairs = etp_rows_to_fund_pairs(rows)
-        hist_df, _hist_err = load_aggregate_aum_history_cached(pairs)
-        agg_pct, _ = aggregate_aum_pct_from_history(hist_df)
-        ibit_r = _row_by_symbol(rows, "IBIT")
-        etha_r = _row_by_symbol(rows, "ETHA")
-        _render_etp_home_kpi_row(
-            total_aum_display=aum_s,
-            agg_pct=agg_pct,
-            ibit_row=ibit_r,
-            etha_row=etha_r,
-        )
+        render_etp_summary_kpi_row(rows, include_styles=False)
     else:
         st.markdown(
             f'<p class="etp-aum-line">Total AUM (listed, known assets): {escape(aum_s)}</p>',

@@ -12,24 +12,26 @@ from crypto_etps.aum_history import (
     etp_rows_to_fund_pairs,
     load_aggregate_aum_history_cached,
 )
-from crypto_etps.client import (
-    format_usd_compact,
-    sorted_by_assets,
-    total_aum_usd,
-)
+from crypto_etps.client import sorted_by_assets
 from crypto_etps.dataframe_table import (
     build_etp_dataframe,
     filter_rows_by_fund_name,
 )
 from crypto_etps.widgets import (
     ETP_DATA_SOURCE_CAPTION,
+    WIDGET_CSS,
     etp_table_height,
     get_etp_user_agent_from_secrets,
     load_crypto_etps_cached,
+    render_etp_summary_kpi_row,
     resolve_etp_user_agent,
     show_etp_dataframe,
 )
-from home_layout import ETP_FULLPAGE_AUM_LINE_CSS, STREAMLIT_TABLE_UNIFY_CSS
+from home_layout import (
+    ETP_FULLPAGE_AUM_LINE_CSS,
+    KPI_WINDOW_NOTE_CSS,
+    STREAMLIT_TABLE_UNIFY_CSS,
+)
 from news_feeds import (
     HOME_MAIN_HEADING_CSS,
     article_styles_markdown,
@@ -53,7 +55,13 @@ def main() -> None:
         st.switch_page("streamlit_app.py")
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
     st.markdown(HOME_MAIN_HEADING_CSS, unsafe_allow_html=True)
-    st.markdown(STREAMLIT_TABLE_UNIFY_CSS + ETP_FULLPAGE_AUM_LINE_CSS, unsafe_allow_html=True)
+    st.markdown(
+        STREAMLIT_TABLE_UNIFY_CSS
+        + ETP_FULLPAGE_AUM_LINE_CSS
+        + WIDGET_CSS
+        + KPI_WINDOW_NOTE_CSS,
+        unsafe_allow_html=True,
+    )
     show_price_ticker()
     st.caption(
         "A comprehensive view of U.S. digital asset ETPs, combining market context, aggregate AUM trend signals, "
@@ -86,13 +94,8 @@ def main() -> None:
         return
 
     rows = data.rows
-    total = total_aum_usd(rows)
 
-    if total > 0:
-        st.markdown(
-            f'<p class="etp-fullpage-aum-line">Total AUM (known assets): {escape(format_usd_compact(total))}</p>',
-            unsafe_allow_html=True,
-        )
+    render_etp_summary_kpi_row(rows, include_styles=False)
 
     st.markdown(
         '<h3 class="home-main-heading" style="margin-top:1rem;font-size:1rem;">Aggregate AUM trend (12 months)</h3>',
