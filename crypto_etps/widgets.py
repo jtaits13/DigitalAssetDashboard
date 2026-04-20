@@ -226,8 +226,19 @@ def _render_etp_home_kpi_row(
     )
 
 
-def show_etp_dataframe(df, *, height: int) -> None:
-    """Render styled dataframe."""
+def show_etp_dataframe(
+    df,
+    *,
+    height: int,
+    empty_message: str | None = None,
+) -> None:
+    """Render styled dataframe, or an info note when there are no rows."""
+    if df.empty:
+        st.info(
+            empty_message
+            or "No funds to display."
+        )
+        return
     order = [
         "Symbol",
         "Fund Name",
@@ -370,7 +381,14 @@ def show_us_crypto_etps_widget(
     cap = preview_row_limit if home_preview else 10
     display_rows = filtered[:cap]
     df = build_etp_dataframe(display_rows)
-    show_etp_dataframe(df, height=etp_table_height(len(df)))
+    empty_msg = None
+    if df.empty and q.strip():
+        empty_msg = "No funds match your search. Try a different fund name or clear the search box."
+    show_etp_dataframe(
+        df,
+        height=etp_table_height(max(len(df), 1)),
+        empty_message=empty_msg,
+    )
     if not home_preview:
         st.caption(ETP_DATA_SOURCE_CAPTION)
 

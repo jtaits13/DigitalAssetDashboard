@@ -144,7 +144,18 @@ def main() -> None:
     else:
         st.caption(f"Showing all {len(sorted_rows)} funds.")
 
-    show_etp_dataframe(df, height=etp_table_height(len(df), max_h=900))
+    empty_msg = None
+    if df.empty:
+        empty_msg = (
+            "No funds match your search. Try a different fund name or clear the search box."
+            if q.strip()
+            else "No fund data available in the list yet."
+        )
+    show_etp_dataframe(
+        df,
+        height=etp_table_height(max(len(df), 1), max_h=900),
+        empty_message=empty_msg,
+    )
     st.caption(ETP_DATA_SOURCE_CAPTION)
     st.caption(
         f"Last loaded at {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "

@@ -35,6 +35,19 @@ def _parse_price(s: str) -> float:
         return np.nan
 
 
+_ETP_DF_COLUMNS: tuple[str, ...] = (
+    "Symbol",
+    "Fund Name",
+    "Price",
+    "52W %",
+    "Assets (B)",
+    "Issuer",
+    "Custodian",
+    "Inception",
+    "Fund Filing",
+)
+
+
 def build_etp_dataframe(rows: list[CryptoEtpRow]) -> pd.DataFrame:
     """Numeric / datetime columns for correct sorting in st.dataframe."""
     records: list[dict[str, object]] = []
@@ -56,6 +69,8 @@ def build_etp_dataframe(rows: list[CryptoEtpRow]) -> pd.DataFrame:
                 "Fund Filing": fund_filing,
             }
         )
+    if not records:
+        return pd.DataFrame(columns=list(_ETP_DF_COLUMNS))
     return pd.DataFrame(records)
 
 
@@ -93,6 +108,9 @@ def style_etp_dataframe(df: pd.DataFrame) -> pd.io.formats.style.Styler:
             else ""
             for v in s
         ]
+
+    if df.empty or "52W %" not in df.columns:
+        return df.style
 
     return df.style.apply(highlight_52w, subset=["52W %"]).format(
         {"52W %": _fmt_52w_cell, "Assets (B)": _fmt_assets_b_cell},
