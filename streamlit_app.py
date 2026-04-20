@@ -38,9 +38,12 @@ HOME_PAGE_EXTRA_CSS = ""
 _JD_SCROLL_MAP = {
     "top": "jd-page-top",
     "news": "jd-section-news",
-    "market": "jd-section-market",
-    "etps": "jd-section-etps",
-    "rwa": "jd-section-rwa",
+    "markets_funds": "jd-section-markets-funds",
+    "onchain": "jd-section-onchain",
+    # Legacy query params (old bookmarks / links)
+    "market": "jd-section-markets-funds",
+    "etps": "jd-section-markets-funds",
+    "rwa": "jd-section-onchain",
 }
 
 
@@ -267,16 +270,12 @@ def main() -> None:
 
         st.divider()
         st.markdown(
-            '<div id="jd-section-market" style="scroll-margin-top: 5.5rem;"></div>',
+            '<div id="jd-section-markets-funds" style="scroll-margin-top: 5.5rem;"></div>',
             unsafe_allow_html=True,
         )
-        st.markdown(section_label_teal("Markets & On-chain", placement="after_divider"), unsafe_allow_html=True)
+        st.markdown(section_label_teal("Markets & Funds", placement="after_divider"), unsafe_allow_html=True)
         st.markdown(
-            '<p class="jd-hub-dek">ETF/ETP listings and RWA league previews — each block links to a full data page.</p>',
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            '<div id="jd-section-etps" style="scroll-margin-top: 5.5rem;"></div>',
+            '<p class="jd-hub-dek">U.S. listed digital asset ETFs and ETPs — preview below; open the full list for search and fund details.</p>',
             unsafe_allow_html=True,
         )
         show_us_crypto_etps_widget(
@@ -286,7 +285,12 @@ def main() -> None:
 
         st.divider()
         st.markdown(
-            '<div id="jd-section-rwa" style="scroll-margin-top: 5.5rem;"></div>',
+            '<div id="jd-section-onchain" style="scroll-margin-top: 5.5rem;"></div>',
+            unsafe_allow_html=True,
+        )
+        st.markdown(section_label_teal("On-chain Data", placement="after_divider"), unsafe_allow_html=True)
+        st.markdown(
+            '<p class="jd-hub-dek">RWA.xyz tokenized markets and network leagues — previews below; open each page for full tables.</p>',
             unsafe_allow_html=True,
         )
         show_rwa_league_widget(home_preview=True)
@@ -357,16 +361,12 @@ def main() -> None:
 
     st.divider()
     st.markdown(
-        '<div id="jd-section-market" style="scroll-margin-top: 5.5rem;"></div>',
+        '<div id="jd-section-markets-funds" style="scroll-margin-top: 5.5rem;"></div>',
         unsafe_allow_html=True,
     )
-    st.markdown(section_label_teal("Markets & On-chain", placement="after_divider"), unsafe_allow_html=True)
+    st.markdown(section_label_teal("Markets & Funds", placement="after_divider"), unsafe_allow_html=True)
     st.markdown(
-        '<p class="jd-hub-dek">U.S. digital asset ETPs and RWA.xyz network data — previews below; open each page for search and full tables.</p>',
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        '<div id="jd-section-etps" style="scroll-margin-top: 5.5rem;"></div>',
+        '<p class="jd-hub-dek">U.S. listed digital asset ETFs and ETPs — preview below; open the full list for search and fund details.</p>',
         unsafe_allow_html=True,
     )
     show_us_crypto_etps_widget(
@@ -376,7 +376,12 @@ def main() -> None:
 
     st.divider()
     st.markdown(
-        '<div id="jd-section-rwa" style="scroll-margin-top: 5.5rem;"></div>',
+        '<div id="jd-section-onchain" style="scroll-margin-top: 5.5rem;"></div>',
+        unsafe_allow_html=True,
+    )
+    st.markdown(section_label_teal("On-chain Data", placement="after_divider"), unsafe_allow_html=True)
+    st.markdown(
+        '<p class="jd-hub-dek">RWA.xyz tokenized markets and network leagues — previews below; open each page for full tables.</p>',
         unsafe_allow_html=True,
     )
     show_rwa_league_widget(home_preview=True)

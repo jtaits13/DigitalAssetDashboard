@@ -195,9 +195,9 @@ def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -
       <span class="jd-site-brand">JPM Digital</span>
       <a class="jd-site-link" href="/?jd_scroll=top">Home</a>
       <a class="jd-site-link" href="#jd-section-news">News</a>
-      <a class="jd-site-link" href="#jd-section-etps">Digital Asset ETPs</a>
-      <div class="jd-nav-dd" role="group" aria-label="RWA subsections">
-        <a class="jd-site-link jd-nav-dd-head" href="#jd-section-rwa">RWA <span class="jd-nav-dd-caret" aria-hidden="true">▾</span></a>
+      <a class="jd-site-link" href="#jd-section-markets-funds">Markets &amp; Funds</a>
+      <div class="jd-nav-dd" role="group" aria-label="On-chain Data subsections">
+        <a class="jd-site-link jd-nav-dd-head" href="#jd-section-onchain">On-chain Data <span class="jd-nav-dd-caret" aria-hidden="true">▾</span></a>
         <ul class="jd-nav-dd-menu" role="menu">
           <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-market">Market overview</a></li>
           <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-stablecoins">Stablecoins</a></li>
@@ -228,9 +228,9 @@ def render_subpage_top_bar() -> None:
       <span class="jd-site-brand">JPM Digital</span>
       <a class="jd-site-link" href="/?jd_scroll=top">Home</a>
       <a class="jd-site-link" href="/?jd_scroll=news">News</a>
-      <a class="jd-site-link" href="/?jd_scroll=etps">Digital Asset ETPs</a>
-      <div class="jd-nav-dd" role="group" aria-label="RWA pages">
-        <a class="jd-site-link jd-nav-dd-head" href="/?jd_scroll=rwa">RWA <span class="jd-nav-dd-caret" aria-hidden="true">▾</span></a>
+      <a class="jd-site-link" href="/?jd_scroll=markets_funds">Markets &amp; Funds</a>
+      <div class="jd-nav-dd" role="group" aria-label="On-chain Data pages">
+        <a class="jd-site-link jd-nav-dd-head" href="/?jd_scroll=onchain">On-chain Data <span class="jd-nav-dd-caret" aria-hidden="true">▾</span></a>
         <ul class="jd-nav-dd-menu" role="menu">
           <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_League">Market overview</a></li>
           <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_Stablecoins">Stablecoins</a></li>
