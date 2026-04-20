@@ -7,13 +7,14 @@ from html import escape
 
 import streamlit as st
 
-from home_layout import section_label_teal
+from home_layout import section_label_teal, subpage_footer_heading_html, subpage_toolbar_note_html
 from news_feeds import (
     app_shared_layout_css,
     article_day_key,
     article_styles_markdown,
     filter_headlines_by_keyword,
     format_article_day_label,
+    render_subpage_sidebar,
     render_subpage_top_bar,
 )
 from price_ticker import show_price_ticker
@@ -32,15 +33,10 @@ def main() -> None:
     )
 
     render_subpage_top_bar()
-    if st.button("← Home", key="top_home_regulatory"):
-        st.switch_page("streamlit_app.py")
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
     st.markdown(app_shared_layout_css(), unsafe_allow_html=True)
     show_price_ticker()
-
-    with st.sidebar:
-        st.header("Navigation")
-        st.caption("Digital-asset regulatory stories from aggregated RSS feeds.")
+    render_subpage_sidebar(key_prefix="all_regulatory", current="regulatory")
 
     st.markdown(
         section_label_teal("Regulatory & Legal Headlines", placement="first"),
@@ -51,6 +47,7 @@ def main() -> None:
         "paginate the full list.</p>",
         unsafe_allow_html=True,
     )
+    st.divider()
 
     articles, feed_errors = load_regulatory_articles()
     if feed_errors:
@@ -95,7 +92,7 @@ def main() -> None:
     cap_parts = [f"Showing {start + 1}–{min(start + PER_PAGE, n)} of {n} headlines"]
     if search_q:
         cap_parts.append(f"(filtered from {len(articles)} total)")
-    st.caption(" · ".join(cap_parts))
+    st.markdown(subpage_toolbar_note_html(" · ".join(cap_parts)), unsafe_allow_html=True)
 
     prev_day_key = None
     for item in page_items:
@@ -111,7 +108,7 @@ def main() -> None:
         st.markdown(render_regulatory_card_html(item), unsafe_allow_html=True)
 
     st.divider()
-    st.markdown("**Pages**")
+    st.markdown(subpage_footer_heading_html("Pages"), unsafe_allow_html=True)
     c_prev, _c_mid, c_next = st.columns([1, 4, 1])
     with c_prev:
         go_prev = st.button("← Prev", disabled=page <= 1, key="reg_prev")
@@ -150,9 +147,10 @@ def main() -> None:
             st.session_state.all_regulatory_page = new_pg
             st.rerun()
 
+    st.divider()
     st.caption(
-        f"Last built at {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
-        f"Page {page} of {total_pages}"
+        f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
+        f"Page {page} of {total_pages} · Regulatory RSS feeds"
     )
 
 

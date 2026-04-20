@@ -109,6 +109,21 @@ h2.home-widget-heading {
     margin: 0.4rem 0 0.15rem 0;
     line-height: 1.4;
 }
+/* Multipage: result counts / filters under search (matches hub note color, clearer than raw caption) */
+p.jd-subpage-toolbar-note {
+    font-size: 0.78rem;
+    color: #3E6A7A;
+    margin: 0.35rem 0 0.85rem 0;
+    line-height: 1.45;
+    max-width: min(44rem, 100%);
+}
+p.jd-subpage-footer-heading {
+    font-size: 0.82rem;
+    font-weight: 650;
+    color: #1F4C67;
+    margin: 0.25rem 0 0.45rem 0;
+    letter-spacing: -0.01em;
+}
 .cd-ticker-shell {
     margin-bottom: 1.25rem !important;
 }
@@ -162,6 +177,16 @@ def section_label_teal(text: str, *, placement: str = "default") -> str:
 
 def section_label_neutral(text: str) -> str:
     return f'<p class="home-band-label">{text}</p>'
+
+
+def subpage_toolbar_note_html(text: str) -> str:
+    """Muted line for filter/result counts on multipage feeds (pairs with ``.jd-hub-dek`` rhythm)."""
+    return f'<p class="jd-subpage-toolbar-note">{escape(text)}</p>'
+
+
+def subpage_footer_heading_html(text: str) -> str:
+    """Small label above pagination controls (aligned with hub subsection color hierarchy)."""
+    return f'<p class="jd-subpage-footer-heading">{escape(text)}</p>'
 
 
 def hub_subsection_heading_html(text: str, *, element_id: str | None = None) -> str:

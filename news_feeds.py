@@ -242,6 +242,57 @@ def render_subpage_top_bar() -> None:
     )
 
 
+_SUBPAGE_SIDEBAR_REFRESH_NOTE = (
+    "Use **Refresh all data** on the home page to reload RSS, prices, ETPs, regulatory feeds, "
+    "and all RWA.xyz embed caches."
+)
+
+
+def render_subpage_sidebar(*, key_prefix: str, current: str) -> None:
+    """
+    Left navigation on multipage views — same structure as the home sidebar (brand + **Pages**),
+    without the refresh button (users return to the landing page to refresh).
+
+    ``key_prefix`` must be unique per page module (e.g. ``all_articles``) so widget keys stay isolated.
+
+    ``current`` marks the active destination: ``articles``, ``regulatory``, ``etp``, ``rwa_league``,
+    ``rwa_stablecoins``, ``rwa_treasuries``, ``rwa_tokenized_stocks``.
+    """
+    with st.sidebar:
+        st.markdown("### JPM Digital")
+        st.caption("Markets, policy, and on-chain market data.")
+        st.divider()
+        st.markdown("**Pages**")
+        if st.button(
+            "Home",
+            key=f"{key_prefix}_sb_landing",
+            use_container_width=True,
+            type="secondary",
+        ):
+            st.switch_page("streamlit_app.py")
+
+        nav: list[tuple[str, str, str]] = [
+            ("All articles", "pages/All_Articles.py", "articles"),
+            ("Regulatory headlines", "pages/All_Regulatory.py", "regulatory"),
+            ("U.S. Digital Asset ETPs", "pages/US_Crypto_ETPs.py", "etp"),
+            ("RWA league table", "pages/RWA_League.py", "rwa_league"),
+            ("RWA Stablecoins", "pages/RWA_Stablecoins.py", "rwa_stablecoins"),
+            ("RWA US Treasuries", "pages/RWA_US_Treasuries.py", "rwa_treasuries"),
+            ("RWA Tokenized Stocks", "pages/RWA_Tokenized_Stocks.py", "rwa_tokenized_stocks"),
+        ]
+        for label, page, slug in nav:
+            if st.button(
+                label,
+                key=f"{key_prefix}_sb_{slug}",
+                use_container_width=True,
+                type="primary" if current == slug else "secondary",
+            ):
+                st.switch_page(page)
+
+        st.divider()
+        st.caption(_SUBPAGE_SIDEBAR_REFRESH_NOTE)
+
+
 DEFAULT_FEEDS: list[tuple[str, str]] = [
     ("CoinTelegraph", "https://cointelegraph.com/rss"),
     ("Decrypt", "https://decrypt.co/feed"),
@@ -453,7 +504,7 @@ def article_styles_markdown() -> str:
     .day-sep {
         margin: 1.25rem 0 0.75rem 0;
         padding-top: 0.75rem;
-        border-top: 1px solid #cbd5e1;
+        border-top: 1px solid #dce7f0;
     }
     .day-label {
         font-size: 0.75rem;

@@ -33,12 +33,14 @@ from home_layout import (
     STREAMLIT_TABLE_UNIFY_CSS,
     hub_subsection_heading_html,
     section_label_teal,
+    subpage_toolbar_note_html,
 )
 from news_feeds import (
     app_shared_layout_css,
     article_styles_markdown,
     build_etp_market_news_box_html,
     load_etp_market_news_cached,
+    render_subpage_sidebar,
     render_subpage_top_bar,
 )
 from price_ticker import show_price_ticker
@@ -53,8 +55,6 @@ def main() -> None:
     )
 
     render_subpage_top_bar()
-    if st.button("← Home", key="top_home_etps"):
-        st.switch_page("streamlit_app.py")
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
     st.markdown(app_shared_layout_css(), unsafe_allow_html=True)
     st.markdown(
@@ -65,6 +65,8 @@ def main() -> None:
         unsafe_allow_html=True,
     )
     show_price_ticker()
+    render_subpage_sidebar(key_prefix="us_crypto_etps", current="etp")
+
     st.markdown(
         section_label_teal("U.S. Digital Asset ETPs — Full List", placement="first"),
         unsafe_allow_html=True,
@@ -76,6 +78,7 @@ def main() -> None:
         "(issuer, inception, past-year return as <strong>52W %</strong>).</p>",
         unsafe_allow_html=True,
     )
+    st.divider()
 
     with st.spinner("Loading crypto ETF / ETP headlines (RSS)…"):
         etp_pulse = load_etp_market_news_cached()
@@ -139,6 +142,8 @@ def main() -> None:
     elif chart_err:
         st.info(chart_err)
 
+    st.divider()
+
     q = st.text_input(
         "Search fund name",
         "",
@@ -151,11 +156,17 @@ def main() -> None:
     df = build_etp_dataframe(sorted_rows)
 
     if q.strip():
-        st.caption(
-            f"Showing {len(sorted_rows)} of {len(rows)} funds matching “{escape(q.strip())}”."
+        st.markdown(
+            subpage_toolbar_note_html(
+                f"Showing {len(sorted_rows)} of {len(rows)} funds matching “{escape(q.strip())}”."
+            ),
+            unsafe_allow_html=True,
         )
     else:
-        st.caption(f"Showing all {len(sorted_rows)} funds.")
+        st.markdown(
+            subpage_toolbar_note_html(f"Showing all {len(sorted_rows)} funds."),
+            unsafe_allow_html=True,
+        )
 
     empty_msg = None
     if df.empty:
@@ -169,10 +180,11 @@ def main() -> None:
         height=etp_table_height(max(len(df), 1), max_h=900),
         empty_message=empty_msg,
     )
+    st.divider()
     st.caption(ETP_DATA_SOURCE_CAPTION)
     st.caption(
-        f"Last loaded at {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
-        "Cached up to one hour; use **Refresh feeds** on the home page to reload."
+        f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
+        "StockAnalysis · Cached up to one hour · Use **Refresh all data** on the home page to reload."
     )
 
 
