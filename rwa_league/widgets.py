@@ -742,15 +742,15 @@ def show_rwa_stablecoins_widget(
     """
     RWA.xyz Stablecoins embed: four overview KPIs + **Platforms** league.
 
-    ``home_preview=True`` (under RWA Data on the hub): short preview + link to full page.
+    ``home_preview=True`` (under **On-chain Data** on the hub): short preview + link to full page.
     ``home_preview=False``: full searchable table (use from ``pages/RWA_Stablecoins.py``).
     """
+    h2_sub = "home-widget-heading" if home_preview else "home-main-heading"
     if home_preview:
         st.divider()
         st.markdown(
-            '<div id="jd-rwa-stablecoins">'
-            '<h3 class="home-rwa-subheading">'
-            "Stablecoins (RWA.xyz)</h3></div>",
+            f'<div class="jd-hub-subsection-head" id="jd-rwa-stablecoins">'
+            f'<h2 class="{h2_sub}">Stablecoins (RWA.xyz)</h2></div>',
             unsafe_allow_html=True,
         )
     else:
@@ -849,15 +849,15 @@ def show_rwa_treasuries_widget(
     """
     RWA.xyz US Treasuries embed: overview KPIs + **Distributed** · **Networks** league (Distributed Value).
 
-    ``home_preview=True``: teaser under RWA Data on the hub. ``home_preview=False``: full searchable table
+    ``home_preview=True``: teaser under **On-chain Data** on the hub. ``home_preview=False``: full searchable table
     (``pages/RWA_US_Treasuries.py``).
     """
+    h2_sub = "home-widget-heading" if home_preview else "home-main-heading"
     if home_preview:
         st.divider()
         st.markdown(
-            '<div id="jd-rwa-treasuries">'
-            '<h3 class="home-rwa-subheading">'
-            "US Treasuries (RWA.xyz)</h3></div>",
+            f'<div class="jd-hub-subsection-head" id="jd-rwa-treasuries">'
+            f'<h2 class="{h2_sub}">US Treasuries (RWA.xyz)</h2></div>',
             unsafe_allow_html=True,
         )
     else:
@@ -923,9 +923,10 @@ def show_rwa_treasuries_widget(
                 )
             table_h = rwa_table_height(len(working), max_h=900)
 
+        _bn_h2 = "home-widget-heading" if home_preview else "home-main-heading"
         st.markdown(
-            '<h3 class="home-rwa-subheading">'
-            "By network (Distributed · Networks)</h3>",
+            f'<div class="jd-hub-subsection-head">'
+            f'<h2 class="{_bn_h2}">By network (Distributed · Networks)</h2></div>',
             unsafe_allow_html=True,
         )
         df_tr = build_us_treasury_network_dataframe(working)
@@ -940,8 +941,8 @@ def show_rwa_treasuries_widget(
     if not home_preview and plat_tr:
         st.divider()
         st.markdown(
-            '<h3 class="home-rwa-subheading">'
-            "By platform (Tokenized Treasury league)</h3>",
+            '<div class="jd-hub-subsection-head">'
+            '<h2 class="home-main-heading">By platform (Tokenized Treasury league)</h2></div>',
             unsafe_allow_html=True,
         )
         st.caption(
@@ -1006,12 +1007,12 @@ def show_rwa_tokenized_stocks_widget(
     ``home_preview=True``: teaser on home page. ``home_preview=False``: full searchable table
     (``pages/RWA_Tokenized_Stocks.py``).
     """
+    h2_sub = "home-widget-heading" if home_preview else "home-main-heading"
     if home_preview:
         st.divider()
         st.markdown(
-            '<div id="jd-rwa-tokenized-stocks">'
-            '<h3 class="home-rwa-subheading">'
-            "Tokenized Stocks (RWA.xyz)</h3></div>",
+            f'<div class="jd-hub-subsection-head" id="jd-rwa-tokenized-stocks">'
+            f'<h2 class="{h2_sub}">Tokenized Stocks (RWA.xyz)</h2></div>',
             unsafe_allow_html=True,
         )
     else:
@@ -1089,8 +1090,8 @@ def show_rwa_tokenized_stocks_widget(
             )
         table_h = rwa_table_height(len(working), max_h=900)
         st.markdown(
-            '<h3 class="home-rwa-subheading">'
-            "By platform (Distributed · Platforms)</h3>",
+            '<div class="jd-hub-subsection-head">'
+            '<h2 class="home-main-heading">By platform (Distributed · Platforms)</h2></div>',
             unsafe_allow_html=True,
         )
         df_st = build_tokenized_stock_platform_dataframe(working)
@@ -1103,8 +1104,8 @@ def show_rwa_tokenized_stocks_widget(
     if not home_preview:
         st.divider()
         st.markdown(
-            '<h3 class="home-rwa-subheading">'
-            "By network (Distributed · Networks)</h3>",
+            '<div class="jd-hub-subsection-head">'
+            '<h2 class="home-main-heading">By network (Distributed · Networks)</h2></div>',
             unsafe_allow_html=True,
         )
         if rows_st_net:
@@ -1170,14 +1171,10 @@ def show_rwa_league_widget(
     h2_cls = "home-widget-heading" if home_preview else "home-main-heading"
 
     if err and not rows:
-        st.markdown(
-            f'<div class="jd-hub-subsection-head" id="jd-rwa-market">'
-            f'<h2 class="{h2_cls}">RWA Data</h2></div>',
-            unsafe_allow_html=True,
-        )
         st.warning(escape(err))
         st.markdown(
-            '<h3 class="home-rwa-subheading">Global Market Overview</h3>',
+            f'<div class="jd-hub-subsection-head" id="jd-rwa-market">'
+            f'<h2 class="{h2_cls}">Global Market Overview</h2></div>',
             unsafe_allow_html=True,
         )
         _render_rwa_global_overview(kpis)
@@ -1195,8 +1192,7 @@ def show_rwa_league_widget(
 
     if not rows:
         st.markdown(
-            f'<div class="jd-hub-subsection-head" id="jd-rwa-market">'
-            f'<h2 class="{h2_cls}">RWA Data</h2></div>',
+            '<div id="jd-rwa-market" style="scroll-margin-top: 5.5rem;"></div>',
             unsafe_allow_html=True,
         )
         st.info("No network rows returned.")
@@ -1204,11 +1200,7 @@ def show_rwa_league_widget(
 
     st.markdown(
         f'<div class="jd-hub-subsection-head" id="jd-rwa-market">'
-        f'<h2 class="{h2_cls}">RWA Data</h2></div>',
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        '<h3 class="home-rwa-subheading">Global Market Overview</h3>',
+        f'<h2 class="{h2_cls}">Global Market Overview</h2></div>',
         unsafe_allow_html=True,
     )
     _render_rwa_global_overview(kpis)

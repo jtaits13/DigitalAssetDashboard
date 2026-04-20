@@ -36,22 +36,6 @@ h2.home-main-heading {
     letter-spacing: -0.02em;
     line-height: 1.3;
 }
-/* Tier-3 titles under “RWA Data” — compact band (no side rail) */
-h3.home-rwa-subheading {
-    display: block;
-    font-size: 0.98rem;
-    font-weight: 650;
-    color: #1F4C67;
-    margin: 0.65rem 0 0.55rem 0;
-    padding: 0.45rem 0.75rem;
-    border: 1px solid #C7D8E8;
-    border-radius: 8px;
-    background: linear-gradient(180deg, #F7FAFC 0%, #F0F6FA 100%);
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
-    letter-spacing: -0.012em;
-    line-height: 1.35;
-    box-sizing: border-box;
-}
 </style>
 """
 
