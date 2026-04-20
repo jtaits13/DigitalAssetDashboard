@@ -23,6 +23,14 @@ h2.home-main-heading {
     letter-spacing: -0.02em;
     line-height: 1.3;
 }
+h3.home-rwa-subheading {
+    font-size: 0.98rem;
+    font-weight: 650;
+    color: #021D41;
+    margin: 0.5rem 0 0.4rem 0;
+    letter-spacing: -0.012em;
+    line-height: 1.35;
+}
 </style>
 """
 
@@ -164,7 +172,7 @@ def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -
   <div class="jd-site-nav-inner">
     <nav class="jd-site-nav" aria-label="Page sections">
       <span class="jd-site-brand">JPM Digital</span>
-      <a class="jd-site-link" href="#">Home</a>
+      <a class="jd-site-link" href="/?jd_scroll=top">Home</a>
       <a class="jd-site-link" href="#jd-section-news">News</a>
       <a class="jd-site-link" href="#jd-section-etps">Digital Asset ETPs</a>
       <div class="jd-nav-dd" role="group" aria-label="RWA subsections">
@@ -197,7 +205,7 @@ def render_subpage_top_bar() -> None:
   <div class="jd-site-nav-inner">
     <nav class="jd-site-nav" aria-label="Page sections">
       <span class="jd-site-brand">JPM Digital</span>
-      <a class="jd-site-link" href="/">Home</a>
+      <a class="jd-site-link" href="/?jd_scroll=top">Home</a>
       <a class="jd-site-link" href="/?jd_scroll=news">News</a>
       <a class="jd-site-link" href="/?jd_scroll=etps">Digital Asset ETPs</a>
       <div class="jd-nav-dd" role="group" aria-label="RWA pages">
@@ -464,7 +472,7 @@ def article_styles_markdown() -> str:
         flex-direction: column;
         gap: 0.75rem;
     }
-    .jd-home-lane-body h2.home-main-heading {
+    .jd-home-lane-body h2.home-lane-heading {
         margin: 0 0 0.15rem 0;
     }
     .jd-news-column-footnote {
@@ -513,7 +521,7 @@ def build_home_news_lane_body_html(
     """Heading + cards (+ optional footnote) for inside ``st.container(border=True)`` — no outer shell."""
     parts = [
         '<div class="jd-home-lane-body">',
-        '<h2 class="home-main-heading">Latest Digital Asset News</h2>',
+        '<h2 class="home-lane-heading">Latest Digital Asset News</h2>',
     ]
     for item in top:
         parts.append(render_article_card_html(item))

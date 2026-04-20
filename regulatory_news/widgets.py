@@ -46,7 +46,7 @@ def build_home_regulatory_column_html(
     parts = [
         '<div class="jd-news-column-shell">',
         '<div class="jd-news-column-inner">',
-        '<h2 class="home-main-heading">Regulatory & Legal Headlines</h2>',
+        '<h2 class="home-lane-heading">Regulatory & Legal Headlines</h2>',
     ]
     if not articles:
         parts.append(

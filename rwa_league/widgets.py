@@ -54,7 +54,8 @@ WIDGET_CSS = """
     margin-bottom: 0.5rem;
     box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
 }
-.rwa-league-shell h2.home-main-heading {
+.rwa-league-shell h2.home-main-heading,
+.rwa-league-shell h2.home-widget-heading {
     margin-bottom: 0.35rem;
 }
 #jd-rwa-market,
@@ -749,7 +750,7 @@ def show_rwa_stablecoins_widget(
         st.divider()
         st.markdown(
             '<div id="jd-rwa-stablecoins">'
-            '<h3 class="home-main-heading" style="margin-top:0.35rem;font-size:1.05rem;">'
+            '<h3 class="home-rwa-subheading">'
             "Stablecoins (RWA.xyz)</h3></div>",
             unsafe_allow_html=True,
         )
@@ -856,7 +857,7 @@ def show_rwa_treasuries_widget(
         st.divider()
         st.markdown(
             '<div id="jd-rwa-treasuries">'
-            '<h3 class="home-main-heading" style="margin-top:0.35rem;font-size:1.05rem;">'
+            '<h3 class="home-rwa-subheading">'
             "US Treasuries (RWA.xyz)</h3></div>",
             unsafe_allow_html=True,
         )
@@ -924,7 +925,7 @@ def show_rwa_treasuries_widget(
             table_h = rwa_table_height(len(working), max_h=900)
 
         st.markdown(
-            '<h3 class="home-main-heading" style="margin-top:0.5rem;font-size:1.05rem;">'
+            '<h3 class="home-rwa-subheading">'
             "By network (Distributed · Networks)</h3>",
             unsafe_allow_html=True,
         )
@@ -940,7 +941,7 @@ def show_rwa_treasuries_widget(
     if not home_preview and plat_tr:
         st.divider()
         st.markdown(
-            '<h3 class="home-main-heading" style="margin-top:0.35rem;font-size:1.05rem;">'
+            '<h3 class="home-rwa-subheading">'
             "By platform (Tokenized Treasury league)</h3>",
             unsafe_allow_html=True,
         )
@@ -1010,7 +1011,7 @@ def show_rwa_tokenized_stocks_widget(
         st.divider()
         st.markdown(
             '<div id="jd-rwa-tokenized-stocks">'
-            '<h3 class="home-main-heading" style="margin-top:0.35rem;font-size:1.05rem;">'
+            '<h3 class="home-rwa-subheading">'
             "Tokenized Stocks (RWA.xyz)</h3></div>",
             unsafe_allow_html=True,
         )
@@ -1092,7 +1093,7 @@ def show_rwa_tokenized_stocks_widget(
             )
         table_h = rwa_table_height(len(working), max_h=900)
         st.markdown(
-            '<h3 class="home-main-heading" style="margin-top:0.5rem;font-size:1.05rem;">'
+            '<h3 class="home-rwa-subheading">'
             "By platform (Distributed · Platforms)</h3>",
             unsafe_allow_html=True,
         )
@@ -1106,7 +1107,7 @@ def show_rwa_tokenized_stocks_widget(
     if not home_preview:
         st.divider()
         st.markdown(
-            '<h3 class="home-main-heading" style="margin-top:0.35rem;font-size:1.05rem;">'
+            '<h3 class="home-rwa-subheading">'
             "By network (Distributed · Networks)</h3>",
             unsafe_allow_html=True,
         )
@@ -1170,11 +1171,12 @@ def show_rwa_league_widget(
     """
     st.markdown(WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
     rows, kpis, err = load_rwa_league_cached()
+    h2_cls = "home-widget-heading" if home_preview else "home-main-heading"
 
     if err and not rows:
         st.markdown(
-            '<div class="rwa-league-shell" id="jd-rwa-market">'
-            '<h2 class="home-main-heading">RWA Data</h2></div>',
+            f'<div class="rwa-league-shell" id="jd-rwa-market">'
+            f'<h2 class="{h2_cls}">RWA Data</h2></div>',
             unsafe_allow_html=True,
         )
         st.warning(escape(err))
@@ -1193,16 +1195,16 @@ def show_rwa_league_widget(
 
     if not rows:
         st.markdown(
-            '<div class="rwa-league-shell" id="jd-rwa-market">'
-            '<h2 class="home-main-heading">RWA Data</h2></div>',
+            f'<div class="rwa-league-shell" id="jd-rwa-market">'
+            f'<h2 class="{h2_cls}">RWA Data</h2></div>',
             unsafe_allow_html=True,
         )
         st.info("No network rows returned.")
         return
 
     st.markdown(
-        '<div class="rwa-league-shell" id="jd-rwa-market">'
-        '<h2 class="home-main-heading">RWA Data</h2>'
+        f'<div class="rwa-league-shell" id="jd-rwa-market">'
+        f'<h2 class="{h2_cls}">RWA Data</h2>'
         "</div>",
         unsafe_allow_html=True,
     )

@@ -36,6 +36,7 @@ HOME_REGULATORY_PREVIEW = 3
 HOME_PAGE_EXTRA_CSS = ""
 
 _JD_SCROLL_MAP = {
+    "top": "jd-page-top",
     "news": "jd-section-news",
     "market": "jd-section-market",
     "etps": "jd-section-etps",
@@ -44,7 +45,7 @@ _JD_SCROLL_MAP = {
 
 
 def _jd_consume_scroll_query() -> None:
-    """Map ?jd_scroll=news|market from top-nav HTML links into session state; strip param from URL."""
+    """Map ?jd_scroll=top|news|market|… from top-nav links into session state; strip param from URL."""
     if "jd_scroll" not in st.query_params:
         return
     raw = st.query_params["jd_scroll"]
@@ -73,8 +74,27 @@ def _jd_inject_scroll_to_section() -> None:
 (function() {{
   const p = window.parent;
   const id = "{safe}";
+  function findByIdDeep(doc) {{
+    if (!doc) return null;
+    let el = doc.getElementById(id);
+    if (el) return el;
+    const frames = doc.querySelectorAll("iframe");
+    for (let i = 0; i < frames.length; i++) {{
+      try {{
+        const child = frames[i].contentDocument;
+        if (child) {{
+          el = findByIdDeep(child);
+          if (el) return el;
+        }}
+      }} catch (e) {{}}
+    }}
+    return null;
+  }}
   function go() {{
-    const el = p.document.getElementById(id);
+    let el = findByIdDeep(p.document);
+    if (!el) {{
+      try {{ el = findByIdDeep(window.document); }} catch (e) {{}}
+    }}
     if (el) {{
       el.scrollIntoView({{ block: "start", behavior: "auto" }});
       return true;
@@ -83,7 +103,23 @@ def _jd_inject_scroll_to_section() -> None:
   }}
   let n = 0;
   const t = p.setInterval(function () {{
-    if (go() || n++ > 50) p.clearInterval(t);
+    if (go()) {{
+      p.clearInterval(t);
+      return;
+    }}
+    n++;
+    if (n > 80) {{
+      if (id === "jd-page-top") {{
+        try {{ p.scrollTo({{ top: 0, left: 0, behavior: "auto" }}); }} catch (e) {{}}
+        try {{
+          const de = p.document.documentElement;
+          const b = p.document.body;
+          if (de) de.scrollTop = 0;
+          if (b) b.scrollTop = 0;
+        }} catch (e) {{}}
+      }}
+      p.clearInterval(t);
+    }}
   }}, 40);
 }})();
 </script>
@@ -164,7 +200,8 @@ def main() -> None:
         unsafe_allow_html=True,
     )
     st.markdown(
-        '<h1 class="home-main-heading" style="margin:0.35rem 0 0.25rem 0;">Digital Assets Dashboard</h1>',
+        '<h1 class="home-main-heading" id="jd-page-top" style="scroll-margin-top:5.5rem;">'
+        "Digital Assets Dashboard</h1>",
         unsafe_allow_html=True,
     )
     show_price_ticker()
@@ -191,9 +228,9 @@ def main() -> None:
             '<div id="jd-section-news" style="scroll-margin-top: 5.5rem;"></div>',
             unsafe_allow_html=True,
         )
-        st.markdown(section_label_teal("News & Regulatory"), unsafe_allow_html=True)
+        st.markdown(section_label_teal("News & Regulatory", placement="first"), unsafe_allow_html=True)
         st.markdown(
-            '<p class="jd-hub-dek">A quick read of headlines and policy wires — each section links to a full page.</p>',
+            '<p class="jd-hub-dek">Headlines and regulatory wires — open a lane for the full feed.</p>',
             unsafe_allow_html=True,
         )
         _needs_reg_btn_empty = len(regulatory_articles) > HOME_REGULATORY_PREVIEW
@@ -233,9 +270,9 @@ def main() -> None:
             '<div id="jd-section-market" style="scroll-margin-top: 5.5rem;"></div>',
             unsafe_allow_html=True,
         )
-        st.markdown(section_label_teal("Markets & On-chain"), unsafe_allow_html=True)
+        st.markdown(section_label_teal("Markets & On-chain", placement="after_divider"), unsafe_allow_html=True)
         st.markdown(
-            '<p class="jd-hub-dek">Digital asset ETPs and tokenized network league data — previews below; open each page for search and full tables.</p>',
+            '<p class="jd-hub-dek">ETF/ETP listings and RWA league previews — each block links to a full data page.</p>',
             unsafe_allow_html=True,
         )
         st.markdown(
@@ -268,10 +305,9 @@ def main() -> None:
         '<div id="jd-section-news" style="scroll-margin-top: 5.5rem;"></div>',
         unsafe_allow_html=True,
     )
-    st.markdown(section_label_teal("News & Regulatory"), unsafe_allow_html=True)
+    st.markdown(section_label_teal("News & Regulatory", placement="first"), unsafe_allow_html=True)
     st.markdown(
-        '<p class="jd-hub-dek">Headlines from major crypto RSS feeds and global regulatory wires — '
-        "open a lane below for the full feed.</p>",
+        '<p class="jd-hub-dek">Crypto RSS headlines and global regulatory wires — use a lane below for the full feed.</p>',
         unsafe_allow_html=True,
     )
     col_news, col_sec = st.columns([1.2, 1], gap="large")
@@ -324,10 +360,9 @@ def main() -> None:
         '<div id="jd-section-market" style="scroll-margin-top: 5.5rem;"></div>',
         unsafe_allow_html=True,
     )
-    st.markdown(section_label_teal("Markets & On-chain"), unsafe_allow_html=True)
+    st.markdown(section_label_teal("Markets & On-chain", placement="after_divider"), unsafe_allow_html=True)
     st.markdown(
-        '<p class="jd-hub-dek">Digital asset ETPs and the RWA.xyz network league — '
-        "teasers here; use each page for the complete table.</p>",
+        '<p class="jd-hub-dek">U.S. digital asset ETPs and RWA.xyz network data — previews below; open each page for search and full tables.</p>',
         unsafe_allow_html=True,
     )
     st.markdown(

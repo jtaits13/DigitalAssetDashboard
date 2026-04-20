@@ -355,10 +355,11 @@ def show_us_crypto_etps_widget(
     with st.spinner("Loading U.S. digital asset ETPs (list + profile pages)…"):
         data = load_crypto_etps_cached(ua)
 
+    h2_cls = "home-widget-heading" if home_preview else "home-main-heading"
     if data.error and not data.rows:
         st.markdown(
-            '<div class="etp-widget-shell">'
-            '<h2 class="home-main-heading">U.S. Digital Asset ETPs</h2>'
+            f'<div class="etp-widget-shell">'
+            f'<h2 class="{h2_cls}">U.S. Digital Asset ETPs</h2>'
             "</div>",
             unsafe_allow_html=True,
         )
@@ -369,8 +370,8 @@ def show_us_crypto_etps_widget(
     total = total_aum_usd(rows)
     aum_s = format_usd_compact(total) if total > 0 else "—"
     st.markdown(
-        '<div class="etp-widget-shell">'
-        '<h2 class="home-main-heading">U.S. Digital Asset ETPs</h2>'
+        f'<div class="etp-widget-shell">'
+        f'<h2 class="{h2_cls}">U.S. Digital Asset ETPs</h2>'
         "</div>",
         unsafe_allow_html=True,
     )
