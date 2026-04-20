@@ -1180,6 +1180,10 @@ def show_rwa_league_widget(
             unsafe_allow_html=True,
         )
         st.warning(escape(err))
+        st.markdown(
+            '<h3 class="home-rwa-subheading">Global Market Overview</h3>',
+            unsafe_allow_html=True,
+        )
         _render_rwa_global_overview(kpis)
         st.link_button(
             GLOBAL_MARKET_RWA_LINK_LABEL,
@@ -1208,7 +1212,10 @@ def show_rwa_league_widget(
         "</div>",
         unsafe_allow_html=True,
     )
-
+    st.markdown(
+        '<h3 class="home-rwa-subheading">Global Market Overview</h3>',
+        unsafe_allow_html=True,
+    )
     _render_rwa_global_overview(kpis)
 
     working = list(rows)
