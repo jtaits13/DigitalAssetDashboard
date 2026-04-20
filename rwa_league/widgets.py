@@ -750,7 +750,7 @@ def show_rwa_stablecoins_widget(
         st.divider()
         st.markdown(
             f'<div class="jd-hub-subsection-head" id="jd-rwa-stablecoins">'
-            f'<h2 class="{h2_sub}">Stablecoins (RWA.xyz)</h2></div>',
+            f'<h2 class="{h2_sub}">Stablecoins</h2></div>',
             unsafe_allow_html=True,
         )
     else:
@@ -857,7 +857,7 @@ def show_rwa_treasuries_widget(
         st.divider()
         st.markdown(
             f'<div class="jd-hub-subsection-head" id="jd-rwa-treasuries">'
-            f'<h2 class="{h2_sub}">US Treasuries (RWA.xyz)</h2></div>',
+            f'<h2 class="{h2_sub}">US Treasuries</h2></div>',
             unsafe_allow_html=True,
         )
     else:
@@ -1012,7 +1012,7 @@ def show_rwa_tokenized_stocks_widget(
         st.divider()
         st.markdown(
             f'<div class="jd-hub-subsection-head" id="jd-rwa-tokenized-stocks">'
-            f'<h2 class="{h2_sub}">Tokenized Stocks (RWA.xyz)</h2></div>',
+            f'<h2 class="{h2_sub}">Tokenized Stocks</h2></div>',
             unsafe_allow_html=True,
         )
     else:
