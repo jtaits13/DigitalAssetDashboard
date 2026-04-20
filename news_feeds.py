@@ -90,6 +90,61 @@ html {
 .jd-site-nav a.jd-site-link:active {
     color: #021D41;
 }
+/* Hover / keyboard-open dropdown (no JS; Streamlit allows injected HTML + CSS) */
+.jd-site-nav-fixed-wrap,
+.jd-site-nav-inner,
+.jd-site-nav {
+    overflow: visible;
+}
+.jd-nav-dd {
+    position: relative;
+    display: inline-block;
+}
+.jd-nav-dd-head.jd-site-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+.jd-nav-dd-caret {
+    font-size: 0.65rem;
+    opacity: 0.75;
+    transform: translateY(1px);
+}
+.jd-nav-dd-menu {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: calc(100% + 4px);
+    min-width: 12.5rem;
+    margin: 0;
+    padding: 0.35rem 0;
+    list-style: none;
+    background: #ffffff;
+    border: 1px solid #C7D8E8;
+    border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.12);
+    z-index: 10000000;
+}
+.jd-nav-dd:hover .jd-nav-dd-menu,
+.jd-nav-dd:focus-within .jd-nav-dd-menu {
+    display: block;
+}
+a.jd-nav-dd-item {
+    display: block;
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: #1F4C67;
+    text-decoration: none;
+    padding: 0.45rem 0.95rem;
+    line-height: 1.35;
+}
+a.jd-nav-dd-item:hover {
+    color: #25809C;
+    background: rgba(37, 128, 156, 0.1);
+}
+a.jd-nav-dd-item:active {
+    color: #021D41;
+}
 </style>
 """
 
@@ -112,7 +167,15 @@ def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -
       <a class="jd-site-link" href="#">Home</a>
       <a class="jd-site-link" href="#jd-section-news">News</a>
       <a class="jd-site-link" href="#jd-section-etps">Digital Asset ETPs</a>
-      <a class="jd-site-link" href="#jd-section-rwa">RWA</a>
+      <div class="jd-nav-dd" role="group" aria-label="RWA subsections">
+        <a class="jd-site-link jd-nav-dd-head" href="#jd-section-rwa">RWA <span class="jd-nav-dd-caret" aria-hidden="true">▾</span></a>
+        <ul class="jd-nav-dd-menu" role="menu">
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-market">Market overview</a></li>
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-stablecoins">Stablecoins</a></li>
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-treasuries">US Treasuries</a></li>
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-tokenized-stocks">Tokenized stocks</a></li>
+        </ul>
+      </div>
     </nav>
   </div>
 </div>
@@ -137,7 +200,15 @@ def render_subpage_top_bar() -> None:
       <a class="jd-site-link" href="/">Home</a>
       <a class="jd-site-link" href="/?jd_scroll=news">News</a>
       <a class="jd-site-link" href="/?jd_scroll=etps">Digital Asset ETPs</a>
-      <a class="jd-site-link" href="/?jd_scroll=rwa">RWA</a>
+      <div class="jd-nav-dd" role="group" aria-label="RWA pages">
+        <a class="jd-site-link jd-nav-dd-head" href="/?jd_scroll=rwa">RWA <span class="jd-nav-dd-caret" aria-hidden="true">▾</span></a>
+        <ul class="jd-nav-dd-menu" role="menu">
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_League">Market overview</a></li>
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_Stablecoins">Stablecoins</a></li>
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_US_Treasuries">US Treasuries</a></li>
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_Tokenized_Stocks">Tokenized stocks</a></li>
+        </ul>
+      </div>
     </nav>
   </div>
 </div>
