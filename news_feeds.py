@@ -15,6 +15,19 @@ import streamlit as st
 # Match `h2.home-main-heading` on the home page (Latest Digital Asset News).
 HOME_MAIN_HEADING_CSS = """
 <style>
+/* Slim subsection title (replaces bulky gradient shells on hub + RWA subpages) */
+.jd-hub-subsection-head {
+    margin: 0.65rem 0 0.5rem 0;
+    padding: 0 0 0.45rem 0;
+    border-bottom: 1px solid #C7D8E8;
+    background: transparent;
+    box-shadow: none;
+}
+.jd-hub-subsection-head h2.home-main-heading,
+.jd-hub-subsection-head h2.home-widget-heading {
+    margin: 0 !important;
+    padding: 0;
+}
 h2.home-main-heading {
     font-size: 1.06rem;
     font-weight: 650;

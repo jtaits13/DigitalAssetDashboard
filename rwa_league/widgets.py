@@ -45,18 +45,17 @@ from rwa_league.dataframe_table import (
 
 WIDGET_CSS = """
 <style>
-.rwa-league-shell {
-    background: linear-gradient(180deg, #F3F7FB 0%, #EAF3F8 100%);
-    border: 1px solid #C7D8E8;
-    border-radius: 8px;
-    padding: 0.75rem 1rem 1rem 1rem;
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+.jd-hub-subsection-head {
+    margin: 0.65rem 0 0.5rem 0;
+    padding: 0 0 0.45rem 0;
+    border-bottom: 1px solid #C7D8E8;
+    background: transparent;
+    box-shadow: none;
 }
-.rwa-league-shell h2.home-main-heading,
-.rwa-league-shell h2.home-widget-heading {
-    margin-bottom: 0.35rem;
+.jd-hub-subsection-head h2.home-main-heading,
+.jd-hub-subsection-head h2.home-widget-heading {
+    margin: 0 !important;
+    padding: 0;
 }
 #jd-rwa-market,
 #jd-rwa-stablecoins,
@@ -757,7 +756,7 @@ def show_rwa_stablecoins_widget(
     else:
         st.markdown(WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
         st.markdown(
-            '<div class="rwa-league-shell" id="jd-rwa-stablecoins">'
+            '<div class="jd-hub-subsection-head" id="jd-rwa-stablecoins">'
             '<h2 class="home-main-heading">Stablecoins</h2>'
             "</div>",
             unsafe_allow_html=True,
@@ -864,7 +863,7 @@ def show_rwa_treasuries_widget(
     else:
         st.markdown(WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
         st.markdown(
-            '<div class="rwa-league-shell" id="jd-rwa-treasuries">'
+            '<div class="jd-hub-subsection-head" id="jd-rwa-treasuries">'
             '<h2 class="home-main-heading">US Treasuries</h2>'
             "</div>",
             unsafe_allow_html=True,
@@ -1018,7 +1017,7 @@ def show_rwa_tokenized_stocks_widget(
     else:
         st.markdown(WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
         st.markdown(
-            '<div class="rwa-league-shell" id="jd-rwa-tokenized-stocks">'
+            '<div class="jd-hub-subsection-head" id="jd-rwa-tokenized-stocks">'
             '<h2 class="home-main-heading">Tokenized Stocks</h2>'
             "</div>",
             unsafe_allow_html=True,
@@ -1175,7 +1174,7 @@ def show_rwa_league_widget(
 
     if err and not rows:
         st.markdown(
-            f'<div class="rwa-league-shell" id="jd-rwa-market">'
+            f'<div class="jd-hub-subsection-head" id="jd-rwa-market">'
             f'<h2 class="{h2_cls}">RWA Data</h2></div>',
             unsafe_allow_html=True,
         )
@@ -1199,7 +1198,7 @@ def show_rwa_league_widget(
 
     if not rows:
         st.markdown(
-            f'<div class="rwa-league-shell" id="jd-rwa-market">'
+            f'<div class="jd-hub-subsection-head" id="jd-rwa-market">'
             f'<h2 class="{h2_cls}">RWA Data</h2></div>',
             unsafe_allow_html=True,
         )
@@ -1207,9 +1206,8 @@ def show_rwa_league_widget(
         return
 
     st.markdown(
-        f'<div class="rwa-league-shell" id="jd-rwa-market">'
-        f'<h2 class="{h2_cls}">RWA Data</h2>'
-        "</div>",
+        f'<div class="jd-hub-subsection-head" id="jd-rwa-market">'
+        f'<h2 class="{h2_cls}">RWA Data</h2></div>',
         unsafe_allow_html=True,
     )
     st.markdown(

@@ -31,13 +31,17 @@ from news_feeds import load_etp_market_news_cached
 
 WIDGET_CSS = """
 <style>
-.etp-widget-shell {
-    background: linear-gradient(180deg, #F3F7FB 0%, #EAF3F8 100%);
-    border: 1px solid #C7D8E8;
-    border-radius: 8px;
-    padding: 0.75rem 1rem 1rem 1rem;
-    margin-bottom: 0.5rem;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+.jd-hub-subsection-head {
+    margin: 0.65rem 0 0.5rem 0;
+    padding: 0 0 0.45rem 0;
+    border-bottom: 1px solid #C7D8E8;
+    background: transparent;
+    box-shadow: none;
+}
+.jd-hub-subsection-head h2.home-main-heading,
+.jd-hub-subsection-head h2.home-widget-heading {
+    margin: 0 !important;
+    padding: 0;
 }
 .etp-aum-line {
     font-size: 0.95rem;
@@ -358,9 +362,8 @@ def show_us_crypto_etps_widget(
     h2_cls = "home-widget-heading" if home_preview else "home-main-heading"
     if data.error and not data.rows:
         st.markdown(
-            f'<div class="etp-widget-shell">'
-            f'<h2 class="{h2_cls}">U.S. Digital Asset ETPs</h2>'
-            "</div>",
+            f'<div class="jd-hub-subsection-head">'
+            f'<h2 class="{h2_cls}">U.S. Digital Asset ETPs</h2></div>',
             unsafe_allow_html=True,
         )
         st.warning(escape(data.error))
@@ -370,9 +373,8 @@ def show_us_crypto_etps_widget(
     total = total_aum_usd(rows)
     aum_s = format_usd_compact(total) if total > 0 else "—"
     st.markdown(
-        f'<div class="etp-widget-shell">'
-        f'<h2 class="{h2_cls}">U.S. Digital Asset ETPs</h2>'
-        "</div>",
+        f'<div class="jd-hub-subsection-head">'
+        f'<h2 class="{h2_cls}">U.S. Digital Asset ETPs</h2></div>',
         unsafe_allow_html=True,
     )
 
