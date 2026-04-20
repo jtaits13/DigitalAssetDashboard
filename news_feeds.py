@@ -39,6 +39,17 @@ h2.home-main-heading {
 </style>
 """
 
+# Subpage hero blurbs: full width under teal band (hub keeps narrow .jd-hub-dek via max-width in home_layout).
+# Lives here so home_layout stays a small, stable import on all hosts.
+SUBPAGE_HERO_DEK_CSS = """
+<style>
+p.jd-hub-dek.jd-hub-dek-fullbleed {
+    max-width: 100%;
+    width: 100%;
+}
+</style>
+"""
+
 
 def app_shared_layout_css() -> str:
     """
@@ -47,7 +58,7 @@ def app_shared_layout_css() -> str:
     """
     from home_layout import HOME_PAGE_LAYOUT_CSS
 
-    return HOME_MAIN_HEADING_CSS + HOME_PAGE_LAYOUT_CSS
+    return HOME_MAIN_HEADING_CSS + HOME_PAGE_LAYOUT_CSS + SUBPAGE_HERO_DEK_CSS
 
 
 # Fixed top strip (home + subpage top bar). price_ticker.py aligns padding with .cd-ticker-shell.
