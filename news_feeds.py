@@ -36,13 +36,21 @@ h2.home-main-heading {
     letter-spacing: -0.02em;
     line-height: 1.3;
 }
+/* Tier-3 titles under “RWA Data” (Global Market, Stablecoins, …) — rail + rule so they don’t float */
 h3.home-rwa-subheading {
-    font-size: 0.93rem;
-    font-weight: 600;
-    color: #021D41;
-    margin: 0.5rem 0 0.4rem 0;
-    letter-spacing: -0.01em;
+    display: block;
+    font-size: 0.98rem;
+    font-weight: 650;
+    color: #1F4C67;
+    margin: 0.65rem 0 0.55rem 0;
+    padding: 0.4rem 0.5rem 0.45rem 0.65rem;
+    border-left: 3px solid #25809C;
+    border-bottom: 1px solid #C7D8E8;
+    background: linear-gradient(90deg, #F3F7FB 0%, rgba(243, 247, 251, 0.35) 55%, transparent 100%);
+    letter-spacing: -0.012em;
     line-height: 1.35;
+    border-radius: 0 4px 0 0;
+    box-sizing: border-box;
 }
 </style>
 """
