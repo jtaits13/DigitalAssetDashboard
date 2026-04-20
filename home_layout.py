@@ -98,7 +98,7 @@ h2.home-widget-heading {
     margin-bottom: 1.1rem !important;
 }
 .home-band-label {
-    font-size: 1.4rem;
+    font-size: 1.28rem;
     font-weight: 800;
     letter-spacing: -0.024em;
     line-height: 1.22;
@@ -112,7 +112,7 @@ h2.home-widget-heading {
     color: #25809C;
     border-bottom-color: #8CB9C9;
     /* Slightly larger optical size so teal reads at parity with navy headings */
-    font-size: 1.42rem;
+    font-size: 1.3rem;
 }
 p.home-band-label.teal.jd-home-band-first {
     margin-top: 0.25rem;
