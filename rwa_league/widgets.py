@@ -771,7 +771,7 @@ def show_rwa_stablecoins_widget(
 
     if err_sc and not rows_sc:
         st.warning(escape(err_sc))
-        _render_rwa_stablecoin_overview(kpis_sc, show_kpi_legend=not home_preview)
+        _render_rwa_stablecoin_overview(kpis_sc)
         st.link_button(
             STABLECOINS_RWA_LINK_LABEL,
             "https://app.rwa.xyz/stablecoins",
@@ -782,7 +782,7 @@ def show_rwa_stablecoins_widget(
 
     if not rows_sc:
         st.info("No platform rows returned for Stablecoins.")
-        _render_rwa_stablecoin_overview(kpis_sc, show_kpi_legend=not home_preview)
+        _render_rwa_stablecoin_overview(kpis_sc)
         st.link_button(
             STABLECOINS_RWA_LINK_LABEL,
             "https://app.rwa.xyz/stablecoins",
@@ -791,7 +791,7 @@ def show_rwa_stablecoins_widget(
         )
         return
 
-    _render_rwa_stablecoin_overview(kpis_sc, show_kpi_legend=not home_preview)
+    _render_rwa_stablecoin_overview(kpis_sc)
 
     if home_preview:
         n = max(1, min(preview_rows, len(rows_sc)))
@@ -878,7 +878,7 @@ def show_rwa_treasuries_widget(
 
     if err_tr and not rows_tr and not plat_tr:
         st.warning(escape(err_tr))
-        _render_rwa_treasuries_overview(kpis_tr, show_kpi_legend=not home_preview)
+        _render_rwa_treasuries_overview(kpis_tr)
         st.link_button(
             TREASURIES_RWA_LINK_LABEL,
             APP_TREASURIES,
@@ -889,7 +889,7 @@ def show_rwa_treasuries_widget(
 
     if not rows_tr and not plat_tr:
         st.info("No US Treasuries league rows returned.")
-        _render_rwa_treasuries_overview(kpis_tr, show_kpi_legend=not home_preview)
+        _render_rwa_treasuries_overview(kpis_tr)
         st.link_button(
             TREASURIES_RWA_LINK_LABEL,
             APP_TREASURIES,
@@ -898,7 +898,7 @@ def show_rwa_treasuries_widget(
         )
         return
 
-    _render_rwa_treasuries_overview(kpis_tr, show_kpi_legend=not home_preview)
+    _render_rwa_treasuries_overview(kpis_tr)
 
     if rows_tr:
         if home_preview:
@@ -1035,7 +1035,6 @@ def show_rwa_tokenized_stocks_widget(
         _render_rwa_treasuries_overview(
             kpis_st,
             overview_title="Tokenized Stocks",
-            show_kpi_legend=not home_preview,
         )
         st.link_button(
             TOKENIZED_STOCKS_RWA_LINK_LABEL,
@@ -1050,7 +1049,6 @@ def show_rwa_tokenized_stocks_widget(
         _render_rwa_treasuries_overview(
             kpis_st,
             overview_title="Tokenized Stocks",
-            show_kpi_legend=not home_preview,
         )
         st.link_button(
             TOKENIZED_STOCKS_RWA_LINK_LABEL,
@@ -1063,7 +1061,6 @@ def show_rwa_tokenized_stocks_widget(
     _render_rwa_treasuries_overview(
         kpis_st,
         overview_title="Tokenized Stocks",
-        show_kpi_legend=not home_preview,
     )
 
     if rows_st_plat and home_preview:
