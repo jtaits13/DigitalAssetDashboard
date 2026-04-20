@@ -47,7 +47,7 @@ def main() -> None:
         unsafe_allow_html=True,
     )
     st.markdown(
-        '<p class="jd-hub-dek">Browse every headline from the aggregated RSS feeds — search, filter by keyword, '
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed">Browse every headline from the aggregated RSS feeds — search, filter by keyword, '
         "and paginate.</p>",
         unsafe_allow_html=True,
     )

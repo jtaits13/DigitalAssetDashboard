@@ -74,7 +74,7 @@ def main() -> None:
         unsafe_allow_html=True,
     )
     st.markdown(
-        '<p class="jd-hub-dek">A comprehensive view of U.S. digital asset ETPs, combining market context, aggregate '
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed">A comprehensive view of U.S. digital asset ETPs, combining market context, aggregate '
         'AUM trend signals, and fund-level reference data in one place. Data from '
         '<a href="https://stockanalysis.com/list/crypto-etfs/">StockAnalysis.com</a> and each fund’s detail page '
         "(issuer, inception, past-year return as <strong>52W %</strong>).</p>",

@@ -36,7 +36,7 @@ def main() -> None:
 
     st.markdown(section_label_teal("Tokenized Stocks", placement="first"), unsafe_allow_html=True)
     st.markdown(
-        '<p class="jd-hub-dek">Tokenized public equities: overview <strong>30-day (30D)</strong> % changes and '
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed">Tokenized public equities: overview <strong>30-day (30D)</strong> % changes and '
         "<strong>Distributed Value</strong> breakdowns (levels) by platform and network. Full "
         "<strong>Distributed</strong> · <strong>Platforms</strong> league with search — "
         '<a href="https://app.rwa.xyz/stocks">RWA.xyz Tokenized Stocks</a>.</p>',

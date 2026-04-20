@@ -104,6 +104,11 @@ h2.home-widget-heading {
     margin: 0 0 1rem 0;
     max-width: min(44rem, 100%);
 }
+/* Multipage hero summary: align with full-width section band (hub lanes keep narrow dek above columns) */
+p.jd-hub-dek.jd-hub-dek-fullbleed {
+    max-width: 100%;
+    width: 100%;
+}
 .jd-hub-cta-note {
     font-size: 0.78rem;
     color: #3E6A7A;
