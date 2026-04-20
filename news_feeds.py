@@ -17,7 +17,7 @@ HOME_MAIN_HEADING_CSS = """
 <style>
 /* Slim subsection title (replaces bulky gradient shells on hub + RWA subpages) */
 .jd-hub-subsection-head {
-    margin: 0.65rem 0 0.5rem 0;
+    margin: 0.4rem 0 0.55rem 0;
     padding: 0 0 0.45rem 0;
     border-bottom: 1px solid #C7D8E8;
     background: transparent;

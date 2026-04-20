@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 import streamlit as st
 import streamlit.components.v1 as components
 
-from home_layout import HOME_PAGE_LAYOUT_CSS, section_label_teal
+from home_layout import HOME_PAGE_LAYOUT_CSS, hub_section_anchor, section_label_teal
 from news_feeds import (
     DEFAULT_FEEDS,
     HOME_MAIN_HEADING_CSS,
@@ -203,8 +203,7 @@ def main() -> None:
         unsafe_allow_html=True,
     )
     st.markdown(
-        '<h1 class="home-main-heading" id="jd-page-top" style="scroll-margin-top:5.5rem;">'
-        "Digital Assets Dashboard</h1>",
+        '<h1 class="home-main-heading" id="jd-page-top">Digital Assets Dashboard</h1>',
         unsafe_allow_html=True,
     )
     show_price_ticker()
@@ -227,10 +226,7 @@ def main() -> None:
 
     if not articles:
         st.info("No articles loaded. Check your network or RSS URLs in `news_feeds.py`.")
-        st.markdown(
-            '<div id="jd-section-news" style="scroll-margin-top: 5.5rem;"></div>',
-            unsafe_allow_html=True,
-        )
+        st.markdown(hub_section_anchor("jd-section-news"), unsafe_allow_html=True)
         st.markdown(section_label_teal("News & Regulatory", placement="first"), unsafe_allow_html=True)
         st.markdown(
             '<p class="jd-hub-dek">Headlines and regulatory wires — open a lane for the full feed.</p>',
@@ -269,10 +265,7 @@ def main() -> None:
                     )
 
         st.divider()
-        st.markdown(
-            '<div id="jd-section-markets-funds" style="scroll-margin-top: 5.5rem;"></div>',
-            unsafe_allow_html=True,
-        )
+        st.markdown(hub_section_anchor("jd-section-markets-funds"), unsafe_allow_html=True)
         st.markdown(section_label_teal("Markets & Funds", placement="after_divider"), unsafe_allow_html=True)
         st.markdown(
             '<p class="jd-hub-dek">U.S. listed digital asset ETFs and ETPs — preview below; open the full list for search and fund details.</p>',
@@ -284,10 +277,7 @@ def main() -> None:
         )
 
         st.divider()
-        st.markdown(
-            '<div id="jd-section-onchain" style="scroll-margin-top: 5.5rem;"></div>',
-            unsafe_allow_html=True,
-        )
+        st.markdown(hub_section_anchor("jd-section-onchain"), unsafe_allow_html=True)
         st.markdown(section_label_teal("On-chain Data", placement="after_divider"), unsafe_allow_html=True)
         st.markdown(
             '<p class="jd-hub-dek">RWA.xyz tokenized markets and network leagues — previews below; open each page for full tables.</p>',
@@ -305,10 +295,7 @@ def main() -> None:
     needs_news_btn = len(unique) > HOME_HEADLINE_COUNT
     needs_reg_btn = len(regulatory_articles) > HOME_REGULATORY_PREVIEW
 
-    st.markdown(
-        '<div id="jd-section-news" style="scroll-margin-top: 5.5rem;"></div>',
-        unsafe_allow_html=True,
-    )
+    st.markdown(hub_section_anchor("jd-section-news"), unsafe_allow_html=True)
     st.markdown(section_label_teal("News & Regulatory", placement="first"), unsafe_allow_html=True)
     st.markdown(
         '<p class="jd-hub-dek">Crypto RSS headlines and global regulatory wires — use a lane below for the full feed.</p>',
@@ -360,10 +347,7 @@ def main() -> None:
                 )
 
     st.divider()
-    st.markdown(
-        '<div id="jd-section-markets-funds" style="scroll-margin-top: 5.5rem;"></div>',
-        unsafe_allow_html=True,
-    )
+    st.markdown(hub_section_anchor("jd-section-markets-funds"), unsafe_allow_html=True)
     st.markdown(section_label_teal("Markets & Funds", placement="after_divider"), unsafe_allow_html=True)
     st.markdown(
         '<p class="jd-hub-dek">U.S. listed digital asset ETFs and ETPs — preview below; open the full list for search and fund details.</p>',
@@ -375,10 +359,7 @@ def main() -> None:
     )
 
     st.divider()
-    st.markdown(
-        '<div id="jd-section-onchain" style="scroll-margin-top: 5.5rem;"></div>',
-        unsafe_allow_html=True,
-    )
+    st.markdown(hub_section_anchor("jd-section-onchain"), unsafe_allow_html=True)
     st.markdown(section_label_teal("On-chain Data", placement="after_divider"), unsafe_allow_html=True)
     st.markdown(
         '<p class="jd-hub-dek">RWA.xyz tokenized markets and network leagues — previews below; open each page for full tables.</p>',

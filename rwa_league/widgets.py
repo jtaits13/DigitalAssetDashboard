@@ -6,7 +6,7 @@ from html import escape
 
 import streamlit as st
 
-from home_layout import KPI_WINDOW_NOTE_CSS, STREAMLIT_TABLE_UNIFY_CSS
+from home_layout import KPI_WINDOW_NOTE_CSS, STREAMLIT_TABLE_UNIFY_CSS, hub_section_anchor
 from rwa_league.client import (
     APP_STOCKS,
     APP_TREASURIES,
@@ -46,7 +46,7 @@ from rwa_league.dataframe_table import (
 WIDGET_CSS = """
 <style>
 .jd-hub-subsection-head {
-    margin: 0.65rem 0 0.5rem 0;
+    margin: 0.4rem 0 0.55rem 0;
     padding: 0 0 0.45rem 0;
     border-bottom: 1px solid #C7D8E8;
     background: transparent;
@@ -1191,10 +1191,7 @@ def show_rwa_league_widget(
         return
 
     if not rows:
-        st.markdown(
-            '<div id="jd-rwa-market" style="scroll-margin-top: 5.5rem;"></div>',
-            unsafe_allow_html=True,
-        )
+        st.markdown(hub_section_anchor("jd-rwa-market"), unsafe_allow_html=True)
         st.info("No network rows returned.")
         return
 

@@ -32,7 +32,7 @@ from news_feeds import load_etp_market_news_cached
 WIDGET_CSS = """
 <style>
 .jd-hub-subsection-head {
-    margin: 0.65rem 0 0.5rem 0;
+    margin: 0.4rem 0 0.55rem 0;
     padding: 0 0 0.45rem 0;
     border-bottom: 1px solid #C7D8E8;
     background: transparent;

@@ -58,12 +58,25 @@ h1.home-main-heading {
     color: #021D41;
     margin: 0.15rem 0 0.65rem 0;
 }
+h1.home-main-heading#jd-page-top {
+    scroll-margin-top: 5.5rem;
+}
+/* In-page jump targets (nav); zero layout height */
+.jd-hub-section-anchor {
+    scroll-margin-top: 5.5rem;
+    height: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden;
+    width: 100%;
+    border: none;
+}
 /* Inside News columns + Markets teasers — always smaller than .home-band-label */
 h2.home-lane-heading {
     font-size: 0.97rem;
     font-weight: 600;
     color: #021D41;
-    margin: 0 0 0.55rem 0;
+    margin: 0 0 0.5rem 0;
     letter-spacing: -0.015em;
     line-height: 1.35;
 }
@@ -71,7 +84,7 @@ h2.home-widget-heading {
     font-size: 1.02rem;
     font-weight: 650;
     color: #021D41;
-    margin: 0 0 0.35rem 0;
+    margin: 0 0 0.4rem 0;
     letter-spacing: -0.018em;
     line-height: 1.3;
 }
@@ -85,17 +98,17 @@ h2.home-widget-heading {
     font-weight: 400;
     color: #3E6A7A;
     line-height: 1.5;
-    margin: 0.15rem 0 0.85rem 0;
-    max-width: 44rem;
+    margin: 0 0 1rem 0;
+    max-width: min(44rem, 100%);
 }
 .jd-hub-cta-note {
     font-size: 0.78rem;
     color: #3E6A7A;
-    margin: 0.45rem 0 0.1rem 0;
+    margin: 0.4rem 0 0.15rem 0;
     line-height: 1.4;
 }
 .cd-ticker-shell {
-    margin-bottom: 1.1rem !important;
+    margin-bottom: 1.25rem !important;
 }
 .home-band-label {
     font-size: 1.28rem;
@@ -104,8 +117,8 @@ h2.home-widget-heading {
     line-height: 1.22;
     text-transform: none;
     color: #021D41;
-    margin: 0.35rem 0 0.35rem 0;
-    padding-bottom: 0.45rem;
+    margin: 0 0 0.2rem 0;
+    padding-bottom: 0.4rem;
     border-bottom: 2px solid #C7D8E8;
 }
 .home-band-label.teal {
@@ -115,10 +128,16 @@ h2.home-widget-heading {
     font-size: 1.3rem;
 }
 p.home-band-label.teal.jd-home-band-first {
-    margin-top: 0.25rem;
+    margin-top: 0.2rem;
 }
 p.home-band-label.teal.jd-home-band-after-rule {
-    margin-top: 0.35rem;
+    margin-top: 0.3rem;
+}
+/* Full-bleed dividers between major hub blocks */
+[data-testid="stAppViewContainer"] hr {
+    margin: 1.25rem 0 !important;
+    border: none;
+    border-top: 1px solid #dce7f0;
 }
 </style>
 """
@@ -141,3 +160,11 @@ def section_label_teal(text: str, *, placement: str = "default") -> str:
 
 def section_label_neutral(text: str) -> str:
     return f'<p class="home-band-label">{text}</p>'
+
+
+def hub_section_anchor(element_id: str) -> str:
+    """Zero-height scroll target for hub nav / fragment links (IDs must be URL-safe)."""
+    safe = "".join(c for c in element_id if c.isalnum() or c in "-_")
+    if not safe or safe != element_id.strip():
+        raise ValueError("hub_section_anchor: invalid element_id")
+    return f'<div id="{safe}" class="jd-hub-section-anchor" aria-hidden="true"></div>'
