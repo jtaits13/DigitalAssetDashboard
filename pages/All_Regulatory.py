@@ -10,6 +10,7 @@ import streamlit as st
 from news_feeds import (
     article_day_key,
     article_styles_markdown,
+    filter_headlines_by_keyword,
     format_article_day_label,
     render_subpage_top_bar,
 )
@@ -46,9 +47,25 @@ def main() -> None:
             for err in feed_errors:
                 st.warning(err)
 
-    n = len(articles)
+    st.text_input(
+        "Search headlines",
+        key="all_regulatory_search_input",
+        placeholder="Keywords in title, summary, source, or region — separate with spaces (all must match)",
+    )
+    search_q = (st.session_state.get("all_regulatory_search_input") or "").strip()
+    if "_all_regulatory_search_q_tracked" not in st.session_state:
+        st.session_state._all_regulatory_search_q_tracked = search_q
+    elif st.session_state._all_regulatory_search_q_tracked != search_q:
+        st.session_state._all_regulatory_search_q_tracked = search_q
+        st.session_state.all_regulatory_page = 1
+
+    filtered = filter_headlines_by_keyword(articles, search_q)
+    n = len(filtered)
     if n == 0:
-        st.info("No headlines matched the filters yet. Check your network or try again later.")
+        if len(articles) == 0:
+            st.info("No headlines matched the filters yet. Check your network or try again later.")
+        else:
+            st.info("No headlines match your search. Try different keywords or clear the search box.")
         return
 
     total_pages = max(1, (n + PER_PAGE - 1) // PER_PAGE)
@@ -62,9 +79,12 @@ def main() -> None:
 
     page = int(st.session_state.all_regulatory_page)
     start = (page - 1) * PER_PAGE
-    page_items = articles[start : start + PER_PAGE]
+    page_items = filtered[start : start + PER_PAGE]
 
-    st.caption(f"Showing {start + 1}–{min(start + PER_PAGE, n)} of {n} headlines")
+    cap_parts = [f"Showing {start + 1}–{min(start + PER_PAGE, n)} of {n} headlines"]
+    if search_q:
+        cap_parts.append(f"(filtered from {len(articles)} total)")
+    st.caption(" · ".join(cap_parts))
 
     prev_day_key = None
     for item in page_items:

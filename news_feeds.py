@@ -288,6 +288,32 @@ def dedupe_articles(articles: list[dict[str, Any]], max_items: int | None = None
     return unique
 
 
+def filter_headlines_by_keyword(articles: list[dict[str, Any]], query: str) -> list[dict[str, Any]]:
+    """
+    Keep items where every whitespace-separated token appears in title, summary,
+    source, link, or country (case-insensitive). Empty or whitespace-only query
+    returns a shallow copy of the input order.
+    """
+    tokens = [t.lower() for t in query.split() if t.strip()]
+    if not tokens:
+        return list(articles)
+    out: list[dict[str, Any]] = []
+    for a in articles:
+        blob = " ".join(
+            str(x or "")
+            for x in (
+                a.get("title"),
+                a.get("summary"),
+                a.get("source"),
+                a.get("link"),
+                a.get("country"),
+            )
+        ).lower()
+        if all(tok in blob for tok in tokens):
+            out.append(a)
+    return out
+
+
 def article_styles_markdown() -> str:
     """Inject once per page that renders news cards."""
     return """

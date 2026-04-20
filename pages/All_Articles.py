@@ -12,6 +12,7 @@ from news_feeds import (
     article_day_key,
     article_styles_markdown,
     dedupe_articles,
+    filter_headlines_by_keyword,
     format_article_day_label,
     load_all_feeds,
     render_article_card_html,
@@ -48,10 +49,26 @@ def main() -> None:
             for err in feed_errors:
                 st.warning(err)
 
+    st.text_input(
+        "Search headlines",
+        key="all_news_search_input",
+        placeholder="Keywords in title, summary, or source — separate with spaces (all must match)",
+    )
+    search_q = (st.session_state.get("all_news_search_input") or "").strip()
+    if "_all_news_search_q_tracked" not in st.session_state:
+        st.session_state._all_news_search_q_tracked = search_q
+    elif st.session_state._all_news_search_q_tracked != search_q:
+        st.session_state._all_news_search_q_tracked = search_q
+        st.session_state.all_news_page = 1
+
     unique = dedupe_articles(articles, max_items=None)
-    n = len(unique)
+    filtered = filter_headlines_by_keyword(unique, search_q)
+    n = len(filtered)
     if n == 0:
-        st.info("No articles loaded yet.")
+        if len(unique) == 0:
+            st.info("No articles loaded yet.")
+        else:
+            st.info("No articles match your search. Try different keywords or clear the search box.")
         return
 
     total_pages = max(1, (n + PER_PAGE - 1) // PER_PAGE)
@@ -65,9 +82,12 @@ def main() -> None:
 
     page = int(st.session_state.all_news_page)
     start = (page - 1) * PER_PAGE
-    page_items = unique[start : start + PER_PAGE]
+    page_items = filtered[start : start + PER_PAGE]
 
-    st.caption(f"Showing {start + 1}–{min(start + PER_PAGE, n)} of {n} articles")
+    cap_parts = [f"Showing {start + 1}–{min(start + PER_PAGE, n)} of {n} articles"]
+    if search_q:
+        cap_parts.append(f"(filtered from {len(unique)} total)")
+    st.caption(" · ".join(cap_parts))
 
     prev_day_key = None
     for item in page_items:
