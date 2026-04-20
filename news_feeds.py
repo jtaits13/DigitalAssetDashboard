@@ -37,11 +37,11 @@ h2.home-main-heading {
     line-height: 1.3;
 }
 h3.home-rwa-subheading {
-    font-size: 0.98rem;
-    font-weight: 650;
+    font-size: 0.93rem;
+    font-weight: 600;
     color: #021D41;
     margin: 0.5rem 0 0.4rem 0;
-    letter-spacing: -0.012em;
+    letter-spacing: -0.01em;
     line-height: 1.35;
 }
 </style>

@@ -49,7 +49,7 @@ ETP_FULLPAGE_AUM_LINE_CSS = """
 
 HOME_PAGE_LAYOUT_CSS = """
 <style>
-/* Hub hierarchy: hero (h1) → section band (teal) → dek → lane / widget titles */
+/* Hub hierarchy: h1 → major section band (largest body heading) → lane/widget (smaller) → dek (smallest) */
 h1.home-main-heading {
     font-size: clamp(1.45rem, 2.8vw, 1.85rem);
     font-weight: 750;
@@ -58,22 +58,21 @@ h1.home-main-heading {
     color: #021D41;
     margin: 0.15rem 0 0.65rem 0;
 }
-/* Column titles in the News & Regulatory row */
+/* Inside News columns + Markets teasers — always smaller than .home-band-label */
 h2.home-lane-heading {
+    font-size: 0.97rem;
+    font-weight: 600;
+    color: #021D41;
+    margin: 0 0 0.55rem 0;
+    letter-spacing: -0.015em;
+    line-height: 1.35;
+}
+h2.home-widget-heading {
     font-size: 1.02rem;
     font-weight: 650;
     color: #021D41;
-    margin: 0 0 0.55rem 0;
-    letter-spacing: -0.018em;
-    line-height: 1.35;
-}
-/* Teaser card titles under “Markets & On-chain” (ETP + RWA shells) */
-h2.home-widget-heading {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #021D41;
     margin: 0 0 0.35rem 0;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.018em;
     line-height: 1.3;
 }
 /* CoinDesk-style hub: section band + short dek + teaser content */
@@ -82,11 +81,11 @@ h2.home-widget-heading {
     margin-bottom: 0.35rem;
 }
 .jd-hub-dek {
-    font-size: 0.9rem;
+    font-size: 0.8125rem;
     font-weight: 400;
     color: #3E6A7A;
     line-height: 1.5;
-    margin: 0.2rem 0 1rem 0;
+    margin: 0.15rem 0 0.85rem 0;
     max-width: 44rem;
 }
 .jd-hub-cta-note {
@@ -99,10 +98,10 @@ h2.home-widget-heading {
     margin-bottom: 1.1rem !important;
 }
 .home-band-label {
-    font-size: 1.22rem;
-    font-weight: 750;
-    letter-spacing: -0.022em;
-    line-height: 1.25;
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: -0.024em;
+    line-height: 1.22;
     text-transform: none;
     color: #021D41;
     margin: 0.35rem 0 0.35rem 0;
@@ -112,6 +111,8 @@ h2.home-widget-heading {
 .home-band-label.teal {
     color: #25809C;
     border-bottom-color: #8CB9C9;
+    /* Slightly larger optical size so teal reads at parity with navy headings */
+    font-size: 1.42rem;
 }
 p.home-band-label.teal.jd-home-band-first {
     margin-top: 0.25rem;
