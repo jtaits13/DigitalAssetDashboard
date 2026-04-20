@@ -26,6 +26,8 @@ def main() -> None:
     )
 
     render_subpage_top_bar()
+    if st.button("← Home", key="top_home_rwa"):
+        st.switch_page("streamlit_app.py")
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
     st.markdown(app_shared_layout_css(), unsafe_allow_html=True)
     st.markdown(STREAMLIT_TABLE_UNIFY_CSS + ETP_FULLPAGE_AUM_LINE_CSS, unsafe_allow_html=True)

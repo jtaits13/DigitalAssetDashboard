@@ -35,6 +35,8 @@ def main() -> None:
     )
 
     render_subpage_top_bar()
+    if st.button("← Home", key="top_home_articles"):
+        st.switch_page("streamlit_app.py")
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
     st.markdown(app_shared_layout_css(), unsafe_allow_html=True)
     show_price_ticker()
