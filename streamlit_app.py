@@ -10,10 +10,10 @@ from datetime import datetime, timezone
 import streamlit as st
 import streamlit.components.v1 as components
 
-from home_layout import HOME_PAGE_LAYOUT_CSS, hub_section_anchor, section_label_teal
+from home_layout import hub_section_anchor, section_label_teal
 from news_feeds import (
     DEFAULT_FEEDS,
-    HOME_MAIN_HEADING_CSS,
+    app_shared_layout_css,
     article_styles_markdown,
     build_home_news_lane_body_html,
     dedupe_articles,
@@ -199,7 +199,7 @@ def main() -> None:
     render_home_top_bar("landing", is_landing=True)
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
     st.markdown(
-        HOME_MAIN_HEADING_CSS + HOME_PAGE_LAYOUT_CSS + HOME_PAGE_EXTRA_CSS,
+        app_shared_layout_css() + HOME_PAGE_EXTRA_CSS,
         unsafe_allow_html=True,
     )
     st.markdown(

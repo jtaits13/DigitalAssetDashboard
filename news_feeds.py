@@ -39,6 +39,17 @@ h2.home-main-heading {
 </style>
 """
 
+
+def app_shared_layout_css() -> str:
+    """
+    ``HOME_MAIN_HEADING_CSS`` plus ``HOME_PAGE_LAYOUT_CSS`` — same typography, section rhythm,
+    dividers, and ticker spacing as the hub. Use on ``streamlit_app`` and every multipage view.
+    """
+    from home_layout import HOME_PAGE_LAYOUT_CSS
+
+    return HOME_MAIN_HEADING_CSS + HOME_PAGE_LAYOUT_CSS
+
+
 # Fixed top strip (home + subpage top bar). price_ticker.py aligns padding with .cd-ticker-shell.
 SITE_NAV_CSS = """
 <style>

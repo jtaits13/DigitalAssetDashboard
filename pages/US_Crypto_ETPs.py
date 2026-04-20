@@ -33,7 +33,7 @@ from home_layout import (
     STREAMLIT_TABLE_UNIFY_CSS,
 )
 from news_feeds import (
-    HOME_MAIN_HEADING_CSS,
+    app_shared_layout_css,
     article_styles_markdown,
     build_etp_market_news_box_html,
     load_etp_market_news_cached,
@@ -54,7 +54,7 @@ def main() -> None:
     if st.button("← Home", key="top_home_etps"):
         st.switch_page("streamlit_app.py")
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
-    st.markdown(HOME_MAIN_HEADING_CSS, unsafe_allow_html=True)
+    st.markdown(app_shared_layout_css(), unsafe_allow_html=True)
     st.markdown(
         STREAMLIT_TABLE_UNIFY_CSS
         + ETP_FULLPAGE_AUM_LINE_CSS

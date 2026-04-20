@@ -8,6 +8,7 @@ from html import escape
 import streamlit as st
 
 from news_feeds import (
+    app_shared_layout_css,
     article_day_key,
     article_styles_markdown,
     filter_headlines_by_keyword,
@@ -33,13 +34,17 @@ def main() -> None:
     if st.button("← Home", key="top_home_regulatory"):
         st.switch_page("streamlit_app.py")
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
+    st.markdown(app_shared_layout_css(), unsafe_allow_html=True)
     show_price_ticker()
 
     with st.sidebar:
         st.header("Navigation")
         st.caption("Digital-asset regulatory stories from aggregated RSS feeds.")
 
-    st.title("Regulatory & Legal Headlines")
+    st.markdown(
+        '<h1 class="home-main-heading">Regulatory &amp; Legal Headlines</h1>',
+        unsafe_allow_html=True,
+    )
 
     articles, feed_errors = load_regulatory_articles()
     if feed_errors:

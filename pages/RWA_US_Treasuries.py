@@ -8,7 +8,7 @@ import streamlit as st
 
 from home_layout import ETP_FULLPAGE_AUM_LINE_CSS, STREAMLIT_TABLE_UNIFY_CSS
 from news_feeds import (
-    HOME_MAIN_HEADING_CSS,
+    app_shared_layout_css,
     article_styles_markdown,
     render_subpage_top_bar,
 )
@@ -28,7 +28,7 @@ def main() -> None:
     if st.button("← Home", key="top_home_rwa_treasuries"):
         st.switch_page("streamlit_app.py")
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
-    st.markdown(HOME_MAIN_HEADING_CSS, unsafe_allow_html=True)
+    st.markdown(app_shared_layout_css(), unsafe_allow_html=True)
     st.markdown(STREAMLIT_TABLE_UNIFY_CSS + ETP_FULLPAGE_AUM_LINE_CSS, unsafe_allow_html=True)
     show_price_ticker()
     st.caption(
