@@ -7,7 +7,7 @@ import re
 from datetime import date, datetime, timezone
 from html import escape
 from email.utils import parsedate_to_datetime
-from typing import Any
+from typing import Any, Optional
 
 import feedparser
 import streamlit as st
@@ -301,7 +301,7 @@ DEFAULT_FEEDS: list[tuple[str, str]] = [
 ]
 
 
-def parse_entry_date(entry: Any) -> datetime | None:
+def parse_entry_date(entry: Any) -> Optional[datetime]:
     """Parse published/updated date from a feedparser entry (UTC)."""
     if getattr(entry, "published_parsed", None):
         t = entry.published_parsed
@@ -420,7 +420,7 @@ def load_all_feeds(feeds: list[tuple[str, str]]) -> tuple[list[dict[str, Any]], 
     return combined, errors
 
 
-def dedupe_articles(articles: list[dict[str, Any]], max_items: int | None = None) -> list[dict[str, Any]]:
+def dedupe_articles(articles: list[dict[str, Any]], max_items: Optional[int] = None) -> list[dict[str, Any]]:
     seen: set[str] = set()
     unique: list[dict[str, Any]] = []
     for a in articles:
@@ -568,13 +568,13 @@ def article_styles_markdown() -> str:
     """
 
 
-def format_article_day_label(published: datetime | None) -> str:
+def format_article_day_label(published: Optional[datetime]) -> str:
     if not published:
         return "Date not listed"
     return published.astimezone(timezone.utc).strftime("%A, %B %d, %Y")
 
 
-def article_day_key(published: datetime | None) -> date | None:
+def article_day_key(published: Optional[datetime]) -> Optional[date]:
     if not published:
         return None
     return published.astimezone(timezone.utc).date()

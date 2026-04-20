@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from html import escape
+from typing import Optional
 
 # Section rhythm: soft labels, ticker spacing, teal accent aligned with primaryColor.
 # Streamlit st.dataframe: unify header/body font + color (sortable tables on home).
@@ -189,7 +190,7 @@ def subpage_footer_heading_html(text: str) -> str:
     return f'<p class="jd-subpage-footer-heading">{escape(text)}</p>'
 
 
-def hub_subsection_heading_html(text: str, *, element_id: str | None = None) -> str:
+def hub_subsection_heading_html(text: str, *, element_id: Optional[str] = None) -> str:
     """
     HTML for an in-section title matching **Global Market Overview** / **U.S. Digital Asset ETPs** on the hub:
     ``jd-hub-subsection-head`` + ``h2.home-main-heading`` (slim rule, navy text — not the teal major band).
