@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 
 import streamlit as st
 
-from home_layout import ETP_FULLPAGE_AUM_LINE_CSS, STREAMLIT_TABLE_UNIFY_CSS
+from home_layout import ETP_FULLPAGE_AUM_LINE_CSS, STREAMLIT_TABLE_UNIFY_CSS, section_label_teal
 from news_feeds import (
     app_shared_layout_css,
     article_styles_markdown,
@@ -31,14 +31,13 @@ def main() -> None:
     st.markdown(app_shared_layout_css(), unsafe_allow_html=True)
     st.markdown(STREAMLIT_TABLE_UNIFY_CSS + ETP_FULLPAGE_AUM_LINE_CSS, unsafe_allow_html=True)
     show_price_ticker()
-    st.caption(
-        "This page summarizes the cross-network RWA market, highlighting distributed value and share dynamics "
-        "across blockchain ecosystems."
-    )
-
-    st.caption(
-        "Full **Networks** table with search from the RWA.xyz homepage embed. "
-        "**Distributed Value** is a level; the Global Market overview row uses **30-day (30D)** % changes."
+    st.markdown(section_label_teal("RWA Data", placement="first"), unsafe_allow_html=True)
+    st.markdown(
+        '<p class="jd-hub-dek">This page summarizes the cross-network RWA market, highlighting distributed value and '
+        "share dynamics across blockchain ecosystems. Full <strong>Networks</strong> table with search from the "
+        "RWA.xyz homepage embed. <strong>Distributed Value</strong> is a level; the Global Market overview row uses "
+        "<strong>30-day (30D)</strong> % changes.</p>",
+        unsafe_allow_html=True,
     )
 
     show_rwa_league_widget(home_preview=False)

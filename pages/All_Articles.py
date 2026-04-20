@@ -7,6 +7,7 @@ from html import escape
 
 import streamlit as st
 
+from home_layout import section_label_teal
 from news_feeds import (
     DEFAULT_FEEDS,
     app_shared_layout_css,
@@ -44,7 +45,12 @@ def main() -> None:
         st.caption("All stories from aggregated RSS feeds.")
 
     st.markdown(
-        '<h1 class="home-main-heading">All News Articles</h1>',
+        section_label_teal("All News Articles", placement="first"),
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        '<p class="jd-hub-dek">Browse every headline from the aggregated RSS feeds — search, filter by keyword, '
+        "and paginate.</p>",
         unsafe_allow_html=True,
     )
 

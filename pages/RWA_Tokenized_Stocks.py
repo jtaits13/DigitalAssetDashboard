@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 
 import streamlit as st
 
-from home_layout import ETP_FULLPAGE_AUM_LINE_CSS, STREAMLIT_TABLE_UNIFY_CSS
+from home_layout import ETP_FULLPAGE_AUM_LINE_CSS, STREAMLIT_TABLE_UNIFY_CSS, section_label_teal
 from news_feeds import (
     app_shared_layout_css,
     article_styles_markdown,
@@ -31,12 +31,16 @@ def main() -> None:
     st.markdown(app_shared_layout_css(), unsafe_allow_html=True)
     st.markdown(STREAMLIT_TABLE_UNIFY_CSS + ETP_FULLPAGE_AUM_LINE_CSS, unsafe_allow_html=True)
     show_price_ticker()
-    st.caption(
-        "Tokenized public equities: overview **30-day (30D)** % changes and **Distributed Value** breakdowns "
-        "(levels) by platform and network."
+    st.markdown(section_label_teal("Tokenized Stocks", placement="first"), unsafe_allow_html=True)
+    st.markdown(
+        '<p class="jd-hub-dek">Tokenized public equities: overview <strong>30-day (30D)</strong> % changes and '
+        "<strong>Distributed Value</strong> breakdowns (levels) by platform and network. Full "
+        "<strong>Distributed</strong> · <strong>Platforms</strong> league with search — "
+        '<a href="https://app.rwa.xyz/stocks">RWA.xyz Tokenized Stocks</a>.</p>',
+        unsafe_allow_html=True,
     )
 
-    show_rwa_tokenized_stocks_widget(home_preview=False)
+    show_rwa_tokenized_stocks_widget(home_preview=False, full_page_header=True)
 
     st.caption(TOKENIZED_STOCKS_RWA_CAPTION)
     st.caption(

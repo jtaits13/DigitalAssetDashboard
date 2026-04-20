@@ -7,6 +7,7 @@ from html import escape
 
 import streamlit as st
 
+from home_layout import section_label_teal
 from news_feeds import (
     app_shared_layout_css,
     article_day_key,
@@ -42,7 +43,12 @@ def main() -> None:
         st.caption("Digital-asset regulatory stories from aggregated RSS feeds.")
 
     st.markdown(
-        '<h1 class="home-main-heading">Regulatory &amp; Legal Headlines</h1>',
+        section_label_teal("Regulatory & Legal Headlines", placement="first"),
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        '<p class="jd-hub-dek">Digital-asset regulatory and legal stories from aggregated RSS feeds — search and '
+        "paginate the full list.</p>",
         unsafe_allow_html=True,
     )
 

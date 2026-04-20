@@ -6,7 +6,12 @@ from html import escape
 
 import streamlit as st
 
-from home_layout import KPI_WINDOW_NOTE_CSS, STREAMLIT_TABLE_UNIFY_CSS, hub_section_anchor
+from home_layout import (
+    KPI_WINDOW_NOTE_CSS,
+    STREAMLIT_TABLE_UNIFY_CSS,
+    hub_section_anchor,
+    hub_subsection_heading_html,
+)
 from rwa_league.client import (
     APP_STOCKS,
     APP_TREASURIES,
@@ -738,12 +743,15 @@ def show_rwa_stablecoins_widget(
     *,
     home_preview: bool = True,
     preview_rows: int = 8,
+    full_page_header: bool = False,
 ) -> None:
     """
     RWA.xyz Stablecoins embed: four overview KPIs + **Platforms** league.
 
     ``home_preview=True`` (under **On-chain Data** on the hub): short preview + link to full page.
     ``home_preview=False``: full searchable table (use from ``pages/RWA_Stablecoins.py``).
+    ``full_page_header=True``: page supplies the teal major title; use a hub-style overview subsection
+    (``hub_subsection_heading_html``) instead of repeating the asset name + long caption.
     """
     h2_sub = "home-widget-heading" if home_preview else "home-main-heading"
     if home_preview:
@@ -755,17 +763,26 @@ def show_rwa_stablecoins_widget(
         )
     else:
         st.markdown(WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
-        st.markdown(
-            '<div class="jd-hub-subsection-head" id="jd-rwa-stablecoins">'
-            '<h2 class="home-main-heading">Stablecoins</h2>'
-            "</div>",
-            unsafe_allow_html=True,
-        )
-        st.caption(
-            "Full **Platforms** league with search from the "
-            "[RWA.xyz Stablecoins](https://app.rwa.xyz/stablecoins) embed. "
-            "Overview **% changes** are **30-day (30D)**; each row’s **market cap** is a level."
-        )
+        if not full_page_header:
+            st.markdown(
+                '<div class="jd-hub-subsection-head" id="jd-rwa-stablecoins">'
+                '<h2 class="home-main-heading">Stablecoins</h2>'
+                "</div>",
+                unsafe_allow_html=True,
+            )
+            st.caption(
+                "Full **Platforms** league with search from the "
+                "[RWA.xyz Stablecoins](https://app.rwa.xyz/stablecoins) embed. "
+                "Overview **% changes** are **30-day (30D)**; each row’s **market cap** is a level."
+            )
+        else:
+            st.markdown(
+                hub_subsection_heading_html(
+                    "Stablecoin overview",
+                    element_id="jd-rwa-stablecoins",
+                ),
+                unsafe_allow_html=True,
+            )
 
     rows_sc, kpis_sc, err_sc = load_rwa_stablecoins_cached()
 
@@ -845,12 +862,15 @@ def show_rwa_treasuries_widget(
     *,
     home_preview: bool = True,
     preview_rows: int = 8,
+    full_page_header: bool = False,
 ) -> None:
     """
     RWA.xyz US Treasuries embed: overview KPIs + **Distributed** · **Networks** league (Distributed Value).
 
     ``home_preview=True``: teaser under **On-chain Data** on the hub. ``home_preview=False``: full searchable table
     (``pages/RWA_US_Treasuries.py``).
+    ``full_page_header=True``: page supplies the teal major title; use an overview subsection instead of
+    repeating the asset name + long caption.
     """
     h2_sub = "home-widget-heading" if home_preview else "home-main-heading"
     if home_preview:
@@ -862,17 +882,26 @@ def show_rwa_treasuries_widget(
         )
     else:
         st.markdown(WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
-        st.markdown(
-            '<div class="jd-hub-subsection-head" id="jd-rwa-treasuries">'
-            '<h2 class="home-main-heading">US Treasuries</h2>'
-            "</div>",
-            unsafe_allow_html=True,
-        )
-        st.caption(
-            "Full **Distributed** leagues with search: **Networks** then **Platforms** "
-            f"(Tokenized Treasury by issuer). Overview **% changes** are **30-day (30D)**; "
-            f"**Distributed Value** columns are levels — [RWA.xyz US Treasuries]({APP_TREASURIES})."
-        )
+        if not full_page_header:
+            st.markdown(
+                '<div class="jd-hub-subsection-head" id="jd-rwa-treasuries">'
+                '<h2 class="home-main-heading">US Treasuries</h2>'
+                "</div>",
+                unsafe_allow_html=True,
+            )
+            st.caption(
+                "Full **Distributed** leagues with search: **Networks** then **Platforms** "
+                f"(Tokenized Treasury by issuer). Overview **% changes** are **30-day (30D)**; "
+                f"**Distributed Value** columns are levels — [RWA.xyz US Treasuries]({APP_TREASURIES})."
+            )
+        else:
+            st.markdown(
+                hub_subsection_heading_html(
+                    "Treasury overview",
+                    element_id="jd-rwa-treasuries",
+                ),
+                unsafe_allow_html=True,
+            )
 
     rows_tr, plat_tr, kpis_tr, err_tr = load_rwa_treasuries_cached()
 
@@ -1000,12 +1029,15 @@ def show_rwa_tokenized_stocks_widget(
     *,
     home_preview: bool = True,
     preview_rows: int = 8,
+    full_page_header: bool = False,
 ) -> None:
     """
     RWA.xyz Tokenized Stocks embed: overview KPIs + **Distributed** · **Platforms** league.
 
     ``home_preview=True``: teaser on home page. ``home_preview=False``: full searchable table
     (``pages/RWA_Tokenized_Stocks.py``).
+    ``full_page_header=True``: page supplies the teal major title; use an overview subsection instead of
+    repeating the asset name + long caption.
     """
     h2_sub = "home-widget-heading" if home_preview else "home-main-heading"
     if home_preview:
@@ -1017,17 +1049,26 @@ def show_rwa_tokenized_stocks_widget(
         )
     else:
         st.markdown(WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
-        st.markdown(
-            '<div class="jd-hub-subsection-head" id="jd-rwa-tokenized-stocks">'
-            '<h2 class="home-main-heading">Tokenized Stocks</h2>'
-            "</div>",
-            unsafe_allow_html=True,
-        )
-        st.caption(
-            "Full **Distributed** · **Platforms** league with search. "
-            f"Overview **% changes** are **30-day (30D)**; **Distributed Value** columns are levels — "
-            f"[RWA.xyz Tokenized Stocks]({APP_STOCKS})."
-        )
+        if not full_page_header:
+            st.markdown(
+                '<div class="jd-hub-subsection-head" id="jd-rwa-tokenized-stocks">'
+                '<h2 class="home-main-heading">Tokenized Stocks</h2>'
+                "</div>",
+                unsafe_allow_html=True,
+            )
+            st.caption(
+                "Full **Distributed** · **Platforms** league with search. "
+                f"Overview **% changes** are **30-day (30D)**; **Distributed Value** columns are levels — "
+                f"[RWA.xyz Tokenized Stocks]({APP_STOCKS})."
+            )
+        else:
+            st.markdown(
+                hub_subsection_heading_html(
+                    "Tokenized equity overview",
+                    element_id="jd-rwa-tokenized-stocks",
+                ),
+                unsafe_allow_html=True,
+            )
 
     rows_st_net, rows_st_plat, kpis_st, err_st = load_rwa_tokenized_stocks_cached()
 

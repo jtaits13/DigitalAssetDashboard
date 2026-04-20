@@ -31,6 +31,8 @@ from home_layout import (
     ETP_FULLPAGE_AUM_LINE_CSS,
     KPI_WINDOW_NOTE_CSS,
     STREAMLIT_TABLE_UNIFY_CSS,
+    hub_subsection_heading_html,
+    section_label_teal,
 )
 from news_feeds import (
     app_shared_layout_css,
@@ -63,18 +65,16 @@ def main() -> None:
         unsafe_allow_html=True,
     )
     show_price_ticker()
-    st.caption(
-        "A comprehensive view of U.S. digital asset ETPs, combining market context, aggregate AUM trend signals, "
-        "and fund-level reference data in one place."
-    )
-
     st.markdown(
-        '<h2 class="home-main-heading">U.S. Digital Asset ETPs — Full List</h2>',
+        section_label_teal("U.S. Digital Asset ETPs — Full List", placement="first"),
         unsafe_allow_html=True,
     )
-    st.caption(
-        "Data from [StockAnalysis.com](https://stockanalysis.com/list/crypto-etfs/) "
-        "and each fund’s detail page (issuer, inception, past-year return as 52W %)."
+    st.markdown(
+        '<p class="jd-hub-dek">A comprehensive view of U.S. digital asset ETPs, combining market context, aggregate '
+        'AUM trend signals, and fund-level reference data in one place. Data from '
+        '<a href="https://stockanalysis.com/list/crypto-etfs/">StockAnalysis.com</a> and each fund’s detail page '
+        "(issuer, inception, past-year return as <strong>52W %</strong>).</p>",
+        unsafe_allow_html=True,
     )
 
     with st.spinner("Loading crypto ETF / ETP headlines (RSS)…"):
@@ -95,10 +95,20 @@ def main() -> None:
 
     rows = data.rows
 
+    st.markdown(
+        hub_subsection_heading_html(
+            "U.S. Digital Asset ETPs",
+            element_id="jd-etp-summary",
+        ),
+        unsafe_allow_html=True,
+    )
     render_etp_summary_kpi_row(rows, include_styles=False)
 
     st.markdown(
-        '<h3 class="home-main-heading" style="margin-top:1rem;font-size:1rem;">Aggregate AUM trend (12 months)</h3>',
+        hub_subsection_heading_html(
+            "Aggregate AUM trend (12 months)",
+            element_id="jd-etp-aggregate-aum",
+        ),
         unsafe_allow_html=True,
     )
     st.caption(

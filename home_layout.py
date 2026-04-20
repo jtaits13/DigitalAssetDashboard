@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from html import escape
+
 # Section rhythm: soft labels, ticker spacing, teal accent aligned with primaryColor.
 # Streamlit st.dataframe: unify header/body font + color (sortable tables on home).
 # KPI tile legends (RWA + ETP): one size/color everywhere.
@@ -160,6 +162,18 @@ def section_label_teal(text: str, *, placement: str = "default") -> str:
 
 def section_label_neutral(text: str) -> str:
     return f'<p class="home-band-label">{text}</p>'
+
+
+def hub_subsection_heading_html(text: str, *, element_id: str | None = None) -> str:
+    """
+    HTML for an in-section title matching **Global Market Overview** / **U.S. Digital Asset ETPs** on the hub:
+    ``jd-hub-subsection-head`` + ``h2.home-main-heading`` (slim rule, navy text — not the teal major band).
+    """
+    id_attr = f' id="{escape(element_id, quote=True)}"' if element_id else ""
+    return (
+        f'<div class="jd-hub-subsection-head"{id_attr}>'
+        f'<h2 class="home-main-heading">{escape(text)}</h2></div>'
+    )
 
 
 def hub_section_anchor(element_id: str) -> str:
