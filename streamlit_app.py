@@ -234,41 +234,40 @@ def main() -> None:
             unsafe_allow_html=True,
         )
         _needs_reg_btn_empty = len(regulatory_articles) > HOME_REGULATORY_PREVIEW
-        col_news, col_sec = st.columns([1, 1], gap="medium")
+        # border=True gives equal-height column cells on Streamlit Cloud (needed for CTA alignment).
+        col_news, col_sec = st.columns([1, 1], gap="medium", border=True)
         _empty_news_hid = "jd-hub-news-market-h2"
         with col_news:
-            with st.container(border=False):
-                st.markdown(
-                    f'<section class="jd-hub-news-panel jd-hub-news-panel--empty" aria-labelledby="{_empty_news_hid}">'
-                    + hub_news_panel_header_html(
-                        eyebrow="Market feed",
-                        title="Latest Digital Asset News",
-                        heading_id=_empty_news_hid,
-                    )
-                    + '<p class="jd-hub-news-empty">Headlines will appear when RSS feeds load successfully.</p></section>',
-                    unsafe_allow_html=True,
+            st.markdown(
+                f'<section class="jd-hub-news-panel jd-hub-news-panel--empty" aria-labelledby="{_empty_news_hid}">'
+                + hub_news_panel_header_html(
+                    eyebrow="Market feed",
+                    title="Latest Digital Asset News",
+                    heading_id=_empty_news_hid,
                 )
+                + '<p class="jd-hub-news-empty">Headlines will appear when RSS feeds load successfully.</p></section>',
+                unsafe_allow_html=True,
+            )
         with col_sec:
-            with st.container(border=False):
+            st.markdown(
+                build_home_regulatory_lane_body_html(
+                    regulatory_articles,
+                    max_items=HOME_REGULATORY_PREVIEW,
+                ),
+                unsafe_allow_html=True,
+            )
+            if _needs_reg_btn_empty:
+                if st.button(
+                    "Explore all headlines →",
+                    key="see_more_regulatory_bottom_empty_feed",
+                    use_container_width=True,
+                    type="primary",
+                ):
+                    st.switch_page("pages/All_Regulatory.py")
                 st.markdown(
-                    build_home_regulatory_lane_body_html(
-                        regulatory_articles,
-                        max_items=HOME_REGULATORY_PREVIEW,
-                    ),
+                    '<p class="jd-hub-cta-note">Full regulatory feed on the next page.</p>',
                     unsafe_allow_html=True,
                 )
-                if _needs_reg_btn_empty:
-                    if st.button(
-                        "Explore all headlines →",
-                        key="see_more_regulatory_bottom_empty_feed",
-                        use_container_width=True,
-                        type="primary",
-                    ):
-                        st.switch_page("pages/All_Regulatory.py")
-                    st.markdown(
-                        '<p class="jd-hub-cta-note">Full regulatory feed on the next page.</p>',
-                        unsafe_allow_html=True,
-                    )
 
         st.divider()
         st.markdown(hub_section_anchor("jd-section-markets-funds"), unsafe_allow_html=True)
@@ -307,50 +306,49 @@ def main() -> None:
         '<p class="jd-hub-dek">Crypto RSS headlines and global regulatory wires — use a lane below for the full feed.</p>',
         unsafe_allow_html=True,
     )
-    col_news, col_sec = st.columns([1, 1], gap="medium")
+    # border=True: Streamlit stretches each column to the row height (Cloud + local).
+    col_news, col_sec = st.columns([1, 1], gap="medium", border=True)
     with col_news:
-        with st.container(border=False):
+        st.markdown(
+            build_home_news_lane_body_html(
+                top,
+                show_footnote=len(unique) <= HOME_HEADLINE_COUNT,
+            ),
+            unsafe_allow_html=True,
+        )
+        if needs_news_btn:
+            if st.button(
+                "Explore all articles →",
+                key="see_more_news_bottom",
+                use_container_width=True,
+                type="primary",
+            ):
+                st.switch_page("pages/All_Articles.py")
             st.markdown(
-                build_home_news_lane_body_html(
-                    top,
-                    show_footnote=len(unique) <= HOME_HEADLINE_COUNT,
-                ),
+                '<p class="jd-hub-cta-note">Full feed with filters and pagination on the next page.</p>',
                 unsafe_allow_html=True,
             )
-            if needs_news_btn:
-                if st.button(
-                    "Explore all articles →",
-                    key="see_more_news_bottom",
-                    use_container_width=True,
-                    type="primary",
-                ):
-                    st.switch_page("pages/All_Articles.py")
-                st.markdown(
-                    '<p class="jd-hub-cta-note">Full feed with filters and pagination on the next page.</p>',
-                    unsafe_allow_html=True,
-                )
 
     with col_sec:
-        with st.container(border=False):
+        st.markdown(
+            build_home_regulatory_lane_body_html(
+                regulatory_articles,
+                max_items=HOME_REGULATORY_PREVIEW,
+            ),
+            unsafe_allow_html=True,
+        )
+        if needs_reg_btn:
+            if st.button(
+                "Explore all headlines →",
+                key="see_more_regulatory_bottom",
+                use_container_width=True,
+                type="primary",
+            ):
+                st.switch_page("pages/All_Regulatory.py")
             st.markdown(
-                build_home_regulatory_lane_body_html(
-                    regulatory_articles,
-                    max_items=HOME_REGULATORY_PREVIEW,
-                ),
+                '<p class="jd-hub-cta-note">Full regulatory feed on the next page.</p>',
                 unsafe_allow_html=True,
             )
-            if needs_reg_btn:
-                if st.button(
-                    "Explore all headlines →",
-                    key="see_more_regulatory_bottom",
-                    use_container_width=True,
-                    type="primary",
-                ):
-                    st.switch_page("pages/All_Regulatory.py")
-                st.markdown(
-                    '<p class="jd-hub-cta-note">Full regulatory feed on the next page.</p>',
-                    unsafe_allow_html=True,
-                )
 
     st.divider()
     st.markdown(hub_section_anchor("jd-section-markets-funds"), unsafe_allow_html=True)

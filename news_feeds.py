@@ -583,8 +583,8 @@ def article_styles_markdown() -> str:
         border: none;
         border-bottom: 1px solid #dce7f0;
         transition: background 0.1s ease;
-        /* Same visual row height when one title is 1 line and the other is 2 (both columns stay even). */
-        min-height: 4.1rem;
+        /* Meta + chip row + 2-line title (both lanes use same row rhythm). */
+        min-height: 5.35rem;
         box-sizing: border-box;
     }
     .jd-hub-news-item:last-child {
@@ -618,11 +618,11 @@ def article_styles_markdown() -> str:
         overflow: hidden;
         text-overflow: ellipsis;
     }
-    .jd-hub-news-chips:empty {
-        display: none;
-    }
+    /* Always reserve one chip line so Market rows match Regulatory (region pill). */
     .jd-hub-news-chips {
         margin: 0 0 0.18rem 0;
+        min-height: 1.36rem;
+        line-height: 1.36rem;
     }
     .jd-hub-news-chip {
         display: inline-block;
@@ -721,11 +721,7 @@ def article_styles_markdown() -> str:
         color: #3E6A7A;
         margin-bottom: 0.5rem;
     }
-    /* Home: News & Regulatory columns — equal height lanes */
-    div[data-testid="stHorizontalBlock"]:has(.jd-hub-news-panel),
-    div[data-testid="stHorizontalBlock"]:has([data-testid="stVerticalBlockBorderWrapper"]) {
-        align-items: stretch !important;
-    }
+    /* Home: News & Regulatory — equal-height columns (st.columns(..., border=True)) */
     div[data-testid="stHorizontalBlock"]:has(.jd-hub-news-panel) {
         display: flex !important;
         flex-direction: row !important;
@@ -738,47 +734,64 @@ def article_styles_markdown() -> str:
         flex-direction: column !important;
         align-self: stretch !important;
     }
-    div[data-testid="column"]:has(.jd-hub-news-panel),
-    div[data-testid="column"]:has([data-testid="stVerticalBlockBorderWrapper"]) {
+    div[data-testid="column"]:has(.jd-hub-news-panel) {
         display: flex !important;
         flex-direction: column !important;
         align-self: stretch !important;
     }
+    /* Hide Streamlit's column border chrome; we only use border=True for equal cell height. */
+    div[data-testid="stHorizontalBlock"]:has(.jd-hub-news-panel)
+        > div[data-testid="column"]
+        > div[data-testid="stVerticalBlockBorderWrapper"] {
+        flex: 1 1 auto !important;
+        width: 100% !important;
+        min-height: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        background: transparent !important;
+        border-color: transparent !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+    }
+    /* Primary vertical stack: lane markdown + optional button + note */
+    div[data-testid="stHorizontalBlock"]:has(.jd-hub-news-panel)
+        > div[data-testid="column"]:has(.jd-hub-news-panel)
+        > div[data-testid="stVerticalBlockBorderWrapper"]
+        > div[data-testid="stVerticalBlock"],
     div[data-testid="column"]:has(.jd-hub-news-panel) > div[data-testid="stVerticalBlock"] {
         flex: 1 1 auto !important;
         width: 100% !important;
         min-height: 0 !important;
         display: flex !important;
         flex-direction: column !important;
+        gap: 0.45rem !important;
     }
-    div[data-testid="column"]:has(.jd-hub-news-panel) [data-testid="stElementContainer"] {
+    div[data-testid="column"]:has(.jd-hub-news-panel)
+        div[data-testid="stElementContainer"]:has(.jd-hub-news-panel) {
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+    }
+    div[data-testid="column"]:has(.jd-hub-news-panel)
+        div[data-testid="stElementContainer"]:has(.stButton) {
+        margin-top: auto !important;
+        flex: 0 0 auto !important;
+    }
+    div[data-testid="column"]:has(.jd-hub-news-panel)
+        div[data-testid="stElementContainer"]:has(.jd-hub-news-panel)
+        [data-testid="stMarkdownContainer"] {
         flex: 1 1 auto !important;
         display: flex !important;
         flex-direction: column !important;
         min-height: 0 !important;
     }
-    div[data-testid="column"]:has(.jd-hub-news-panel) [data-testid="stMarkdownContainer"] {
+    div[data-testid="column"]:has(.jd-hub-news-panel)
+        div[data-testid="stElementContainer"]:has(.jd-hub-news-panel)
+        [data-testid="stMarkdownContainer"]
+        > div {
         flex: 1 1 auto !important;
         display: flex !important;
         flex-direction: column !important;
         min-height: 0 !important;
-    }
-    div[data-testid="column"]:has(.jd-hub-news-panel) [data-testid="stMarkdownContainer"] > div {
-        flex: 1 1 auto !important;
-        display: flex !important;
-        flex-direction: column !important;
-        min-height: 0 !important;
-    }
-    div[data-testid="column"]:has([data-testid="stVerticalBlockBorderWrapper"])
-        > div[data-testid="stVerticalBlockBorderWrapper"] {
-        flex: 1 1 auto !important;
-        width: 100% !important;
-        min-height: 100% !important;
-        border-radius: 10px !important;
-        background: #ffffff !important;
-        border-color: #d8e4ef !important;
-        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
-        padding: 0.55rem 0.7rem 0.65rem 0.7rem !important;
     }
     .jd-home-lane-body {
         display: flex;
@@ -798,21 +811,21 @@ def article_styles_markdown() -> str:
         box-shadow: none;
         border-color: #eef2f7;
     }
-    /* Lane + CTA: tight stack (bordered widgets or hub news panels) */
-    [data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stVerticalBlock"],
-    div[data-testid="column"]:has(.jd-hub-news-panel) div[data-testid="stVerticalBlock"] {
+    /* Bordered stacks that use .news-card (not hub news columns). */
+    [data-testid="stVerticalBlockBorderWrapper"]:has(.news-card) div[data-testid="stVerticalBlock"] {
         justify-content: flex-start !important;
         align-content: flex-start !important;
     }
-    [data-testid="stVerticalBlockBorderWrapper"]
-        .stElementContainer:has([data-testid="stMarkdownContainer"]),
-    div[data-testid="column"]:has(.jd-hub-news-panel)
+    [data-testid="stVerticalBlockBorderWrapper"]:has(.news-card)
         .stElementContainer:has([data-testid="stMarkdownContainer"]) {
         margin-bottom: 0 !important;
     }
-    [data-testid="stVerticalBlockBorderWrapper"] .stElementContainer:has(.stButton),
-    div[data-testid="column"]:has(.jd-hub-news-panel) .stElementContainer:has(.stButton) {
+    [data-testid="stVerticalBlockBorderWrapper"]:has(.news-card) .stElementContainer:has(.stButton) {
         margin-top: 0 !important;
+    }
+    div[data-testid="column"]:has(.jd-hub-news-panel)
+        .stElementContainer:has([data-testid="stMarkdownContainer"]) {
+        margin-bottom: 0 !important;
     }
     </style>
     """
