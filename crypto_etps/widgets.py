@@ -99,6 +99,12 @@ WIDGET_CSS = """
     font-weight: 600;
     color: #3E6A7A;
 }
+.etp-custodian-footnote {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin: 0.35rem 0 0 0;
+    line-height: 1.45;
+}
 </style>
 """
 
@@ -140,9 +146,10 @@ ETP_DATA_SOURCE_CAPTION = (
     "and ETF detail pages (scraped; not affiliated)."
 )
 
-ETP_CUSTODIAN_TABLE_NOTE = (
-    "Custodian column: labels are filled only for a curated set of leading **spot** Bitcoin and "
-    "Ethereum funds (curated map in the app). All other rows are left blank."
+ETP_CUSTODIAN_TABLE_NOTE_HTML = (
+    '<p class="etp-custodian-footnote">* <strong>Custodian</strong> column: labels are filled only for '
+    "a curated set of leading <strong>spot</strong> Bitcoin and Ethereum funds. "
+    "All other rows are left blank.</p>"
 )
 
 _SORT = "\u2195"
@@ -319,7 +326,7 @@ def show_etp_dataframe(
             width="medium",
         ),
         "Custodian": st.column_config.TextColumn(
-            f"Custodian {_SORT}",
+            f"* Custodian {_SORT}",
             width="large",
             help="Filled only for selected **spot** Bitcoin and Ethereum funds in the curated map; "
             "otherwise blank. Bitcoin / digital-asset custody (and futures collateral where applicable).",
@@ -347,7 +354,7 @@ def show_etp_dataframe(
         column_order=order,
         column_config=column_config,
     )
-    st.caption(ETP_CUSTODIAN_TABLE_NOTE)
+    st.markdown(ETP_CUSTODIAN_TABLE_NOTE_HTML, unsafe_allow_html=True)
 
 
 def show_us_crypto_etps_widget(
