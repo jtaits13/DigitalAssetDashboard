@@ -147,10 +147,10 @@ def main() -> None:
     st.divider()
 
     q = st.text_input(
-        "Search fund name",
+        "Search by fund name or ticker",
         "",
         key="etf_search_full",
-        placeholder="Filter by fund name…",
+        placeholder="Filter by name or ticker…",
     )
 
     filtered = filter_rows_by_fund_name(rows, q)
@@ -173,7 +173,7 @@ def main() -> None:
     empty_msg = None
     if df.empty:
         empty_msg = (
-            "No funds match your search. Try a different fund name or clear the search box."
+            "No funds match your search. Try a different name, ticker, or clear the search box."
             if q.strip()
             else "No fund data available in the list yet."
         )

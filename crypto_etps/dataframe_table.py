@@ -75,10 +75,17 @@ def build_etp_dataframe(rows: list[CryptoEtpRow]) -> pd.DataFrame:
 
 
 def filter_rows_by_fund_name(rows: list[CryptoEtpRow], query: str) -> list[CryptoEtpRow]:
+    """Return rows whose fund name **or** ticker symbol contains ``query`` (case-insensitive substring)."""
     q = (query or "").strip().lower()
     if not q:
         return list(rows)
-    return [r for r in rows if q in r.name.lower()]
+    out: list[CryptoEtpRow] = []
+    for r in rows:
+        name = (r.name or "").lower()
+        sym = (r.symbol or "").lower()
+        if q in name or q in sym:
+            out.append(r)
+    return out
 
 
 def _fmt_52w_cell(v: object) -> str:

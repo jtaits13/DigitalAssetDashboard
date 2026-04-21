@@ -20,6 +20,7 @@ from crypto_etps.aum_history import (
     etp_symbol_price_change_cached,
     load_aggregate_aum_history_cached,
 )
+from crypto_etps.custodian import clear_custodian_map_cache
 from crypto_etps.sec_prospectus import clear_sec_prospectus_caches
 from crypto_etps.dataframe_table import (
     build_etp_dataframe,
@@ -117,6 +118,7 @@ def load_crypto_etps_cached(user_agent: str, *, _row_schema: int = 2) -> CryptoE
 
 def clear_crypto_etp_cache() -> None:
     load_crypto_etps_cached.clear()
+    clear_custodian_map_cache()
     clear_sec_prospectus_caches()
     load_aggregate_aum_history_cached.clear()
     etp_symbol_price_change_cached.clear()
@@ -315,8 +317,8 @@ def show_etp_dataframe(
             f"Custodian {_SORT}",
             width="large",
             help="Bitcoin / digital-asset custody (and futures collateral where applicable). "
-            "Sourced from a curated ticker map (``crypto_etps/data/custodian_by_ticker.json``); "
-            "extend with issuer or prospectus data where missing.",
+            "Curated map (``crypto_etps/data/custodian_by_ticker.json``) only lists tickers with a label; "
+            "rows come from the live ETF list, so a symbol shows a value only when it appears there and in the map.",
         ),
         "Inception": st.column_config.DatetimeColumn(
             f"Inception {_SORT}",
@@ -389,10 +391,10 @@ def show_us_crypto_etps_widget(
     q = ""
     if not home_preview:
         q = st.text_input(
-            "Search fund name",
+            "Search by fund name or ticker",
             "",
             key="etf_search_home",
-            placeholder="Filter by fund name…",
+            placeholder="Filter by name or ticker…",
         )
 
     ranked = sorted_by_assets(rows)
@@ -402,7 +404,7 @@ def show_us_crypto_etps_widget(
     df = build_etp_dataframe(display_rows)
     empty_msg = None
     if df.empty and q.strip():
-        empty_msg = "No funds match your search. Try a different fund name or clear the search box."
+        empty_msg = "No funds match your search. Try a different name, ticker, or clear the search box."
     show_etp_dataframe(
         df,
         height=etp_table_height(max(len(df), 1)),
