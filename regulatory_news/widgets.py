@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from html import escape
-from typing import Any
+from typing import Any, Optional
 
 REGULATORY_HEADLINE_COUNT = 5
 
@@ -39,13 +39,14 @@ def render_regulatory_card_html(item: dict[str, Any]) -> str:
 def build_home_regulatory_column_html(
     articles: list[dict[str, Any]],
     *,
-    max_items: int | None = None,
+    max_items: Optional[int] = None,
 ) -> str:
-    """Single HTML block for the home regulatory column (equal-height lane shell)."""
+    """Home regulatory lane: same compact row layout as general news (side-by-side uniformity)."""
+    from news_feeds import render_home_lane_compact_row_html
+
     limit = REGULATORY_HEADLINE_COUNT if max_items is None else max(1, max_items)
     parts = [
-        '<div class="jd-news-column-shell">',
-        '<div class="jd-news-column-inner">',
+        '<div class="jd-home-lane-body jd-home-lane-compact">',
         '<h2 class="home-lane-heading">Regulatory & Legal Headlines</h2>',
     ]
     if not articles:
@@ -54,14 +55,15 @@ def build_home_regulatory_column_html(
             "Try <strong>Refresh feeds</strong> in the sidebar.</p>"
         )
     else:
+        parts.append('<ul class="jd-home-headline-list">')
         for item in articles[:limit]:
-            parts.append(render_regulatory_card_html(item))
+            parts.append(render_home_lane_compact_row_html(item, show_country=True))
+        parts.append("</ul>")
         if len(articles) <= limit:
             parts.append(
-                '<p class="jd-news-column-footnote">Showing the most recent regulatory headlines '
-                "from the combined RSS list.</p>"
+                '<p class="jd-news-column-footnote">Most recent from the regulatory RSS list.</p>'
             )
-    parts.append("</div></div>")
+    parts.append("</div>")
     return "".join(parts)
 
 

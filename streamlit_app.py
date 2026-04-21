@@ -233,11 +233,12 @@ def main() -> None:
             unsafe_allow_html=True,
         )
         _needs_reg_btn_empty = len(regulatory_articles) > HOME_REGULATORY_PREVIEW
-        col_news, col_sec = st.columns([1.2, 1], gap="large")
+        col_news, col_sec = st.columns([1, 1], gap="medium")
         with col_news:
             with st.container(border=True):
                 st.markdown(
-                    '<div class="jd-home-lane-body">'
+                    '<div class="jd-home-lane-body jd-home-lane-compact">'
+                    '<h2 class="home-lane-heading">Latest Digital Asset News</h2>'
                     '<p class="jd-news-column-footnote">Headlines will appear here when feeds load.</p>'
                     "</div>",
                     unsafe_allow_html=True,
@@ -301,7 +302,7 @@ def main() -> None:
         '<p class="jd-hub-dek">Crypto RSS headlines and global regulatory wires — use a lane below for the full feed.</p>',
         unsafe_allow_html=True,
     )
-    col_news, col_sec = st.columns([1.2, 1], gap="large")
+    col_news, col_sec = st.columns([1, 1], gap="medium")
     with col_news:
         with st.container(border=True):
             st.markdown(

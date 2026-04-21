@@ -471,12 +471,105 @@ def filter_headlines_by_keyword(articles: list[dict[str, Any]], query: str) -> l
     return out
 
 
+def render_home_lane_compact_row_html(item: dict[str, Any], *, show_country: bool = False) -> str:
+    """Slim home-lane row: meta + title only (no summary) for uniform two-column layout."""
+    pub = item.get("published")
+    if isinstance(pub, datetime):
+        pub_s = pub.astimezone(timezone.utc).strftime("%b %d · %H:%M UTC")
+    else:
+        pub_s = "—"
+    title_esc = escape(item.get("title") or "Untitled")
+    link = item.get("link") or "#"
+    href = escape(str(link), quote=True)
+    src = (item.get("source") or "").strip()
+    meta_core = f"{escape(src)} · {escape(pub_s)}" if src else escape(pub_s)
+    region_html = ""
+    if show_country:
+        c = escape(str(item.get("country") or "Global"))
+        region_html = f'<div class="jd-home-headline-region">{c}</div>'
+    return (
+        f'<li class="jd-home-headline-row">'
+        f'<div class="jd-home-headline-meta">{meta_core}</div>'
+        f"{region_html}"
+        f'<a class="jd-home-headline-title" href="{href}" target="_blank" rel="noopener noreferrer">{title_esc}</a>'
+        f"</li>"
+    )
+
+
 def article_styles_markdown() -> str:
     """Inject once per page that renders news cards."""
     return """
     <style>
     div[data-testid="stVerticalBlock"] > div:has(div.news-card) {
         gap: 0.75rem;
+    }
+    /* Home News & Regulatory lanes: compact list (not card stack) */
+    .jd-home-lane-compact {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        min-height: 100%;
+    }
+    .jd-home-lane-compact .home-lane-heading {
+        font-size: 0.9rem;
+        font-weight: 650;
+        margin: 0 0 0.2rem 0;
+        padding-bottom: 0.35rem;
+        border-bottom: 1px solid #dce7f0;
+        letter-spacing: -0.01em;
+    }
+    .jd-home-headline-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        min-height: 10.5rem;
+    }
+    .jd-home-headline-row {
+        margin: 0;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #e8eef5;
+    }
+    .jd-home-headline-row:last-child {
+        border-bottom: none;
+        padding-bottom: 0.15rem;
+    }
+    .jd-home-headline-meta {
+        font-size: 0.68rem;
+        font-weight: 500;
+        color: #3E6A7A;
+        line-height: 1.3;
+        margin-bottom: 0.2rem;
+    }
+    .jd-home-headline-region {
+        font-size: 0.65rem;
+        font-weight: 600;
+        color: #5a7a8c;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin: -0.05rem 0 0.2rem 0;
+    }
+    .jd-home-headline-title {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        font-size: 0.84rem;
+        font-weight: 600;
+        line-height: 1.35;
+        color: #021D41;
+        text-decoration: none;
+    }
+    .jd-home-headline-title:hover {
+        color: #25809C;
+    }
+    .jd-home-lane-compact .jd-news-column-footnote {
+        margin-top: auto;
+        padding-top: 0.35rem;
+        font-size: 0.72rem;
+        line-height: 1.35;
     }
     .news-card {
         border: 1px solid #C7D8E8;
@@ -539,16 +632,19 @@ def article_styles_markdown() -> str:
         flex: 1 1 auto !important;
         width: 100% !important;
         min-height: 100% !important;
-        border-radius: 12px !important;
+        border-radius: 10px !important;
         background: #ffffff !important;
-        border-color: #C7D8E8 !important;
-        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06) !important;
-        padding: 0.65rem 0.85rem 0.85rem 0.85rem !important;
+        border-color: #d8e4ef !important;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+        padding: 0.55rem 0.7rem 0.65rem 0.7rem !important;
     }
     .jd-home-lane-body {
         display: flex;
         flex-direction: column;
         gap: 0.75rem;
+    }
+    .jd-home-lane-body.jd-home-lane-compact {
+        gap: 0;
     }
     .jd-home-lane-body h2.home-lane-heading {
         margin: 0 0 0.15rem 0;
@@ -596,16 +692,18 @@ def build_home_news_lane_body_html(
     *,
     show_footnote: bool,
 ) -> str:
-    """Heading + cards (+ optional footnote) for inside ``st.container(border=True)`` — no outer shell."""
+    """Heading + compact headline rows (+ optional footnote) for home lane — no summaries."""
     parts = [
-        '<div class="jd-home-lane-body">',
+        '<div class="jd-home-lane-body jd-home-lane-compact">',
         '<h2 class="home-lane-heading">Latest Digital Asset News</h2>',
+        '<ul class="jd-home-headline-list">',
     ]
     for item in top:
-        parts.append(render_article_card_html(item))
+        parts.append(render_home_lane_compact_row_html(item, show_country=False))
+    parts.append("</ul>")
     if show_footnote:
         parts.append(
-            '<p class="jd-news-column-footnote">Showing the most recent headlines from the combined RSS list.</p>'
+            '<p class="jd-news-column-footnote">Most recent from the combined RSS list.</p>'
         )
     parts.append("</div>")
     return "".join(parts)
