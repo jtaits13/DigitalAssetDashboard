@@ -110,7 +110,7 @@ def etp_table_height(num_rows: int, *, max_h: int = 520) -> int:
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
-def load_crypto_etps_cached(user_agent: str, *, _row_schema: int = 2) -> CryptoEtpsResult:
+def load_crypto_etps_cached(user_agent: str, *, _row_schema: int = 3) -> CryptoEtpsResult:
     """Bump ``_row_schema`` when ``CryptoEtpRow`` fields change so cached rows are not stale."""
     _ = _row_schema
     return fetch_crypto_etps_enriched(user_agent)

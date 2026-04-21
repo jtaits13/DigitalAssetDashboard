@@ -17,12 +17,12 @@ from crypto_etps.sec_prospectus import edgar_s1_fallback_url
 
 
 def _custodian_cell(r: CryptoEtpRow) -> str:
-    """Support rows from older Streamlit cache pickles that lack ``custodian``."""
-    raw = getattr(r, "custodian", None)
-    s = (raw if isinstance(raw, str) else "") or ""
-    if not s.strip():
-        s = resolve_custodian(r.symbol)
-    return s.strip() or "—"
+    """Custodian text only when the ticker exists in ``custodian_by_ticker.json``.
+
+    Always resolves from the map — never use ``r.custodian`` (stale Streamlit-cached rows can
+    still carry old prospectus-era strings after the JSON is slimmed).
+    """
+    return resolve_custodian(r.symbol).strip()
 
 
 def _parse_price(s: str) -> float:
