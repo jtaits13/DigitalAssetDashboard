@@ -38,7 +38,7 @@ def main() -> None:
     st.markdown(
         '<p class="jd-hub-dek jd-hub-dek-fullbleed">This page summarizes the cross-network RWA market, highlighting distributed value and '
         "share dynamics across blockchain ecosystems. Full <strong>Networks</strong> table with search from the "
-        "RWA.xyz homepage embed. <strong>Distributed Value</strong> is a level; the Global Market overview row uses "
+        "RWA.xyz homepage embed. <strong>Distributed Value</strong> is a level; the RWA Global Market Overview row uses "
         "<strong>30-day (30D)</strong> % changes.</p>",
         unsafe_allow_html=True,
     )

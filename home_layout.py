@@ -192,7 +192,7 @@ def subpage_footer_heading_html(text: str) -> str:
 
 def hub_subsection_heading_html(text: str, *, element_id: Optional[str] = None) -> str:
     """
-    HTML for an in-section title matching **Global Market Overview** / **U.S. Digital Asset ETPs** on the hub:
+    HTML for an in-section title matching **RWA Global Market Overview** / **U.S. Digital Asset ETPs** on the hub:
     ``jd-hub-subsection-head`` + ``h2.home-main-heading`` (slim rule, navy text — not the teal major band).
     """
     id_attr = f' id="{escape(element_id, quote=True)}"' if element_id else ""

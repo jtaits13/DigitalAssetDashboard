@@ -284,7 +284,8 @@ def _rank_column_label(*, by_metric: str) -> str:
 
 _LINK_ARROW = "\u2197"  # Northeast arrow for RWA.xyz LinkColumn (Unicode U+2197)
 STABLECOINS_RWA_LINK_LABEL = "See Stablecoins on RWA.xyz"
-GLOBAL_MARKET_RWA_LINK_LABEL = "See Global Market Overview on RWA.xyz"
+RWA_GLOBAL_MARKET_OVERVIEW_HEADING = "RWA Global Market Overview"
+GLOBAL_MARKET_RWA_LINK_LABEL = "See RWA Global Market Overview on RWA.xyz"
 GLOBAL_MARKET_RWA_URL = "https://app.rwa.xyz/"
 
 
@@ -1222,7 +1223,7 @@ def show_rwa_league_widget(
         st.warning(escape(err))
         st.markdown(
             f'<div class="jd-hub-subsection-head" id="jd-rwa-market">'
-            f'<h2 class="{h2_cls}">Global Market Overview</h2></div>',
+            f'<h2 class="{h2_cls}">{RWA_GLOBAL_MARKET_OVERVIEW_HEADING}</h2></div>',
             unsafe_allow_html=True,
         )
         _render_rwa_global_overview(kpis)
@@ -1245,7 +1246,7 @@ def show_rwa_league_widget(
 
     st.markdown(
         f'<div class="jd-hub-subsection-head" id="jd-rwa-market">'
-        f'<h2 class="{h2_cls}">Global Market Overview</h2></div>',
+        f'<h2 class="{h2_cls}">{RWA_GLOBAL_MARKET_OVERVIEW_HEADING}</h2></div>',
         unsafe_allow_html=True,
     )
     _render_rwa_global_overview(kpis)
