@@ -477,7 +477,7 @@ def hub_news_panel_header_html(*, eyebrow: str, title: str, heading_id: Optional
     return (
         '<header class="jd-hub-news-panel-header">'
         f'<span class="jd-hub-news-eyebrow">{escape(eyebrow)}</span>'
-        f'<h2 class="jd-hub-news-panel-title"{id_attr}>{escape(title)}</h2>'
+        f'<p class="jd-hub-news-panel-title" role="heading" aria-level="2"{id_attr}>{escape(title)}</p>'
         "</header>"
     )
 
@@ -553,13 +553,19 @@ def article_styles_markdown() -> str:
         color: #25809C;
         margin-bottom: 0.22rem;
     }
-    .jd-hub-news-panel-title {
-        font-size: 1.02rem;
-        font-weight: 650;
-        letter-spacing: -0.018em;
-        line-height: 1.3;
-        color: #021D41;
-        margin: 0;
+    /*
+     * Match hub section bands (.home-band-label.teal in home_layout.py).
+     * Use <p role="heading"> — Streamlit applies large theme styles to raw <h2> in markdown.
+     */
+    .jd-hub-news-panel .jd-hub-news-panel-title,
+    [data-testid="stMarkdownContainer"] .jd-hub-news-panel-title {
+        font-size: 1.3rem !important;
+        font-weight: 800 !important;
+        letter-spacing: -0.024em !important;
+        line-height: 1.22 !important;
+        color: #021D41 !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
     .jd-hub-news-list {
         list-style: none;
