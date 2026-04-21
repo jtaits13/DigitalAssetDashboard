@@ -1278,7 +1278,7 @@ def show_rwa_league_widget(
         st.caption(RWA_DATA_SOURCE_CAPTION)
 
     if home_preview and st.button(
-        "Open full RWA league table",
+        "Open full RWA Market Overview table",
         key="see_full_rwa_league",
         use_container_width=True,
         type="primary",
