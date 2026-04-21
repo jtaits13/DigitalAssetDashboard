@@ -12,6 +12,8 @@ import streamlit.components.v1 as components
 COINGECKO_MARKETS_URL = "https://api.coingecko.com/api/v3/coins/markets"
 COINCAP_ASSETS_URL = "https://api.coincap.io/v2/assets"
 TICKER_COUNT = 25
+# Banner title above the scrolling chips (data may be CoinGecko or CoinCap).
+PRICE_TICKER_BANNER_TITLE = f"Top {TICKER_COUNT} Cryptocurrencies"
 
 TICKER_STYLES_MARKDOWN = """
 <style>
@@ -243,17 +245,17 @@ def render_price_ticker_html(
     error: str | None,
     source_label: str = "",
 ) -> str:
-    label = escape(source_label) if source_label else "Live"
+    banner = escape(PRICE_TICKER_BANNER_TITLE)
     if error:
         esc = escape(error)
         return (
             f'<div class="cd-ticker-shell cd-ticker-error">'
-            f'<span class="cd-ticker-label">{label}</span> {esc}</div>'
+            f'<span class="cd-ticker-label">{banner}</span> {esc}</div>'
         )
     if not rows:
         return (
             f'<div class="cd-ticker-shell cd-ticker-error">'
-            f'<span class="cd-ticker-label">{label}</span> No price data.</div>'
+            f'<span class="cd-ticker-label">{banner}</span> No price data.</div>'
         )
 
     def one_item(r: dict[str, Any]) -> str:
@@ -283,10 +285,9 @@ def render_price_ticker_html(
     parts = [one_item(r) for r in rows]
     joined = "".join(parts)
     inner = f'<div class="cd-ticker-track">{joined}</div><div class="cd-ticker-track" aria-hidden="true">{joined}</div>'
-    src = escape(source_label) if source_label else "Live"
     return (
         f'<div class="cd-ticker-shell">'
-        f'<span class="cd-ticker-label">{src} · Top {len(rows)}</span>'
+        f'<span class="cd-ticker-label">{banner}</span>'
         f'<div class="cd-ticker-viewport"><div class="cd-ticker-move">{inner}</div></div></div>'
     )
 
