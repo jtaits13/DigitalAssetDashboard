@@ -140,6 +140,11 @@ ETP_DATA_SOURCE_CAPTION = (
     "and ETF detail pages (scraped; not affiliated)."
 )
 
+ETP_CUSTODIAN_TABLE_NOTE = (
+    "Custodian column: labels are filled only for a curated set of leading **spot** Bitcoin and "
+    "Ethereum funds (curated map in the app). All other rows are left blank."
+)
+
 _SORT = "\u2195"
 
 
@@ -316,9 +321,8 @@ def show_etp_dataframe(
         "Custodian": st.column_config.TextColumn(
             f"Custodian {_SORT}",
             width="large",
-            help="Bitcoin / digital-asset custody (and futures collateral where applicable). "
-            "Curated map (``crypto_etps/data/custodian_by_ticker.json``) only lists tickers with a label; "
-            "rows come from the live ETF list, so a symbol shows a value only when it appears there and in the map.",
+            help="Filled only for selected **spot** Bitcoin and Ethereum funds in the curated map; "
+            "otherwise blank. Bitcoin / digital-asset custody (and futures collateral where applicable).",
         ),
         "Inception": st.column_config.DatetimeColumn(
             f"Inception {_SORT}",
@@ -343,6 +347,7 @@ def show_etp_dataframe(
         column_order=order,
         column_config=column_config,
     )
+    st.caption(ETP_CUSTODIAN_TABLE_NOTE)
 
 
 def show_us_crypto_etps_widget(
