@@ -41,29 +41,34 @@ def build_home_regulatory_column_html(
     *,
     max_items: Optional[int] = None,
 ) -> str:
-    """Home regulatory lane: same compact row layout as general news (side-by-side uniformity)."""
-    from news_feeds import render_home_lane_compact_row_html
+    """Home regulatory column: same hub panel system as market news (matched readability)."""
+    from news_feeds import hub_news_panel_header_html, render_hub_news_lane_item_html
 
     limit = REGULATORY_HEADLINE_COUNT if max_items is None else max(1, max_items)
-    parts = [
-        '<div class="jd-home-lane-body jd-home-lane-compact">',
-        '<h2 class="home-lane-heading">Regulatory & Legal Headlines</h2>',
+    hid = "jd-hub-news-regulatory-h2"
+    parts: list[str] = [
+        f'<section class="jd-hub-news-panel" aria-labelledby="{hid}">',
+        hub_news_panel_header_html(
+            eyebrow="Regulatory wire",
+            title="Regulatory & Legal Headlines",
+            heading_id=hid,
+        ),
     ]
     if not articles:
         parts.append(
-            '<p class="jd-news-column-footnote">No regulatory headlines matched the filters yet. '
-            "Try <strong>Refresh feeds</strong> in the sidebar.</p>"
+            '<p class="jd-hub-news-empty">No regulatory headlines matched the filters yet. '
+            "Try <strong>Refresh all data</strong> on the home page.</p>"
         )
     else:
-        parts.append('<ul class="jd-home-headline-list">')
-        for item in articles[:limit]:
-            parts.append(render_home_lane_compact_row_html(item, show_country=True))
-        parts.append("</ul>")
+        parts.append('<ol class="jd-hub-news-list" role="list">')
+        for i, item in enumerate(articles[:limit], start=1):
+            parts.append(render_hub_news_lane_item_html(item, i, show_country=True))
+        parts.append("</ol>")
         if len(articles) <= limit:
             parts.append(
-                '<p class="jd-news-column-footnote">Most recent from the regulatory RSS list.</p>'
+                '<p class="jd-hub-news-footnote">Most recent from the regulatory RSS list.</p>'
             )
-    parts.append("</div>")
+    parts.append("</section>")
     return "".join(parts)
 
 

@@ -17,6 +17,7 @@ from news_feeds import (
     article_styles_markdown,
     build_home_news_lane_body_html,
     dedupe_articles,
+    hub_news_panel_header_html,
     load_all_feeds,
     render_home_top_bar,
 )
@@ -234,17 +235,21 @@ def main() -> None:
         )
         _needs_reg_btn_empty = len(regulatory_articles) > HOME_REGULATORY_PREVIEW
         col_news, col_sec = st.columns([1, 1], gap="medium")
+        _empty_news_hid = "jd-hub-news-market-h2"
         with col_news:
-            with st.container(border=True):
+            with st.container(border=False):
                 st.markdown(
-                    '<div class="jd-home-lane-body jd-home-lane-compact">'
-                    '<h2 class="home-lane-heading">Latest Digital Asset News</h2>'
-                    '<p class="jd-news-column-footnote">Headlines will appear here when feeds load.</p>'
-                    "</div>",
+                    f'<section class="jd-hub-news-panel jd-hub-news-panel--empty" aria-labelledby="{_empty_news_hid}">'
+                    + hub_news_panel_header_html(
+                        eyebrow="Market feed",
+                        title="Latest Digital Asset News",
+                        heading_id=_empty_news_hid,
+                    )
+                    + '<p class="jd-hub-news-empty">Headlines will appear when RSS feeds load successfully.</p></section>',
                     unsafe_allow_html=True,
                 )
         with col_sec:
-            with st.container(border=True):
+            with st.container(border=False):
                 st.markdown(
                     build_home_regulatory_lane_body_html(
                         regulatory_articles,
@@ -304,7 +309,7 @@ def main() -> None:
     )
     col_news, col_sec = st.columns([1, 1], gap="medium")
     with col_news:
-        with st.container(border=True):
+        with st.container(border=False):
             st.markdown(
                 build_home_news_lane_body_html(
                     top,
@@ -326,7 +331,7 @@ def main() -> None:
                 )
 
     with col_sec:
-        with st.container(border=True):
+        with st.container(border=False):
             st.markdown(
                 build_home_regulatory_lane_body_html(
                     regulatory_articles,

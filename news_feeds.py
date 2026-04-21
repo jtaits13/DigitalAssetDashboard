@@ -471,8 +471,24 @@ def filter_headlines_by_keyword(articles: list[dict[str, Any]], query: str) -> l
     return out
 
 
-def render_home_lane_compact_row_html(item: dict[str, Any], *, show_country: bool = False) -> str:
-    """Slim home-lane row: meta + title only (no summary) for uniform two-column layout."""
+def hub_news_panel_header_html(*, eyebrow: str, title: str, heading_id: Optional[str] = None) -> str:
+    """Shared lane chrome: eyebrow label + panel title (both hub columns use this)."""
+    id_attr = f' id="{escape(heading_id)}"' if heading_id else ""
+    return (
+        '<header class="jd-hub-news-panel-header">'
+        f'<span class="jd-hub-news-eyebrow">{escape(eyebrow)}</span>'
+        f'<h2 class="jd-hub-news-panel-title"{id_attr}>{escape(title)}</h2>'
+        "</header>"
+    )
+
+
+def render_hub_news_lane_item_html(
+    item: dict[str, Any],
+    index: int,
+    *,
+    show_country: bool = False,
+) -> str:
+    """One headline row inside the home hub panels (index + meta + optional region chip + title)."""
     pub = item.get("published")
     if isinstance(pub, datetime):
         pub_s = pub.astimezone(timezone.utc).strftime("%b %d · %H:%M UTC")
@@ -482,17 +498,21 @@ def render_home_lane_compact_row_html(item: dict[str, Any], *, show_country: boo
     link = item.get("link") or "#"
     href = escape(str(link), quote=True)
     src = (item.get("source") or "").strip()
-    meta_core = f"{escape(src)} · {escape(pub_s)}" if src else escape(pub_s)
-    region_html = ""
+    meta_line = f"{escape(src)} · {escape(pub_s)}" if src else escape(pub_s)
+    chip_html = ""
     if show_country:
         c = escape(str(item.get("country") or "Global"))
-        region_html = f'<div class="jd-home-headline-region">{c}</div>'
+        chip_html = f'<span class="jd-hub-news-chip">{c}</span>'
+    idx = max(1, min(99, index))
     return (
-        f'<li class="jd-home-headline-row">'
-        f'<div class="jd-home-headline-meta">{meta_core}</div>'
-        f"{region_html}"
-        f'<a class="jd-home-headline-title" href="{href}" target="_blank" rel="noopener noreferrer">{title_esc}</a>'
-        f"</li>"
+        f'<li class="jd-hub-news-item" data-index="{idx}">'
+        f'<span class="jd-hub-news-item-idx" aria-hidden="true">{idx:02d}</span>'
+        '<div class="jd-hub-news-item-body">'
+        f'<div class="jd-hub-news-meta">{meta_line}</div>'
+        f'<div class="jd-hub-news-chips">{chip_html}</div>'
+        f'<a class="jd-hub-news-title" href="{href}" target="_blank" rel="noopener noreferrer">{title_esc}</a>'
+        "</div>"
+        "</li>"
     )
 
 
@@ -503,73 +523,145 @@ def article_styles_markdown() -> str:
     div[data-testid="stVerticalBlock"] > div:has(div.news-card) {
         gap: 0.75rem;
     }
-    /* Home News & Regulatory lanes: compact list (not card stack) */
-    .jd-home-lane-compact {
+    /* Home hub: News & Regulatory panels (readability-first, matched columns) */
+    .jd-hub-news-panel {
         display: flex;
         flex-direction: column;
-        gap: 0.35rem;
+        gap: 0;
         min-height: 100%;
+        padding: 0.65rem 0.75rem 0.55rem;
+        border-radius: 10px;
+        background: linear-gradient(165deg, #ffffff 0%, #f4f8fb 100%);
+        border: 1px solid #d4e4ee;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
     }
-    .jd-home-lane-compact .home-lane-heading {
-        font-size: 0.9rem;
-        font-weight: 650;
-        margin: 0 0 0.2rem 0;
-        padding-bottom: 0.35rem;
-        border-bottom: 1px solid #dce7f0;
-        letter-spacing: -0.01em;
+    .jd-hub-news-panel-header {
+        margin: 0 0 0.55rem 0;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #cfe0eb;
     }
-    .jd-home-headline-list {
+    .jd-hub-news-eyebrow {
+        display: block;
+        font-size: 0.62rem;
+        font-weight: 750;
+        letter-spacing: 0.11em;
+        text-transform: uppercase;
+        color: #25809C;
+        margin-bottom: 0.28rem;
+    }
+    .jd-hub-news-panel-title {
+        font-size: 0.98rem;
+        font-weight: 750;
+        letter-spacing: -0.025em;
+        color: #021D41;
+        margin: 0;
+        line-height: 1.2;
+    }
+    .jd-hub-news-list {
         list-style: none;
         margin: 0;
         padding: 0;
         display: flex;
         flex-direction: column;
+        gap: 0;
         flex: 1 1 auto;
-        min-height: 10.5rem;
+        min-height: 11rem;
+        counter-reset: hubnews;
     }
-    .jd-home-headline-row {
-        margin: 0;
-        padding: 0.5rem 0;
-        border-bottom: 1px solid #e8eef5;
+    .jd-hub-news-item {
+        display: grid;
+        grid-template-columns: 1.85rem minmax(0, 1fr);
+        gap: 0.5rem 0.6rem;
+        align-items: start;
+        padding: 0.55rem 0.35rem;
+        margin: 0 -0.2rem;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        transition: background 0.12s ease, border-color 0.12s ease;
     }
-    .jd-home-headline-row:last-child {
-        border-bottom: none;
-        padding-bottom: 0.15rem;
+    .jd-hub-news-item:nth-child(odd) {
+        background: rgba(255, 255, 255, 0.55);
     }
-    .jd-home-headline-meta {
-        font-size: 0.68rem;
+    .jd-hub-news-item:hover {
+        background: #ffffff;
+        border-color: #b9d4e3;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+    }
+    .jd-hub-news-item-idx {
+        font-size: 0.7rem;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        color: #8cb9c9;
+        line-height: 1.45;
+        padding-top: 0.12rem;
+        text-align: right;
+        user-select: none;
+    }
+    .jd-hub-news-item-body {
+        min-width: 0;
+    }
+    .jd-hub-news-meta {
+        font-size: 0.72rem;
         font-weight: 500;
-        color: #3E6A7A;
-        line-height: 1.3;
-        margin-bottom: 0.2rem;
+        color: #3e6a7a;
+        line-height: 1.35;
+        margin: 0 0 0.22rem 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
-    .jd-home-headline-region {
-        font-size: 0.65rem;
-        font-weight: 600;
-        color: #5a7a8c;
+    .jd-hub-news-chips:empty {
+        display: none;
+    }
+    .jd-hub-news-chips {
+        margin: 0 0 0.2rem 0;
+    }
+    .jd-hub-news-chip {
+        display: inline-block;
+        font-size: 0.6rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
         text-transform: uppercase;
-        letter-spacing: 0.04em;
-        margin: -0.05rem 0 0.2rem 0;
+        color: #1f4c67;
+        background: #e8f2f7;
+        border: 1px solid #c5dce8;
+        border-radius: 999px;
+        padding: 0.12rem 0.4rem;
+        line-height: 1.2;
     }
-    .jd-home-headline-title {
+    .jd-hub-news-title {
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
-        font-size: 0.84rem;
-        font-weight: 600;
-        line-height: 1.35;
-        color: #021D41;
+        font-size: 0.875rem;
+        font-weight: 650;
+        line-height: 1.4;
+        color: #021d41;
         text-decoration: none;
     }
-    .jd-home-headline-title:hover {
-        color: #25809C;
+    .jd-hub-news-title:hover {
+        color: #25809c;
+        text-decoration: underline;
+        text-underline-offset: 2px;
     }
-    .jd-home-lane-compact .jd-news-column-footnote {
+    .jd-hub-news-footnote {
         margin-top: auto;
-        padding-top: 0.35rem;
+        padding-top: 0.45rem;
+        margin-bottom: 0;
         font-size: 0.72rem;
-        line-height: 1.35;
+        line-height: 1.4;
+        color: #3e6a7a;
+        border-top: 1px solid #dce7f0;
+    }
+    .jd-hub-news-empty {
+        margin: 0.35rem 0 0 0;
+        font-size: 0.8rem;
+        line-height: 1.45;
+        color: #3e6a7a;
+    }
+    .jd-hub-news-panel--empty .jd-hub-news-list {
+        min-height: 0;
     }
     .news-card {
         border: 1px solid #C7D8E8;
@@ -618,14 +710,21 @@ def article_styles_markdown() -> str:
         color: #3E6A7A;
         margin-bottom: 0.5rem;
     }
-    /* Home: News & Regulatory — bordered st.container(border=True) lanes, equal height */
+    /* Home: News & Regulatory columns — stretch; panels carry their own frame */
+    div[data-testid="stHorizontalBlock"]:has(.jd-hub-news-panel),
     div[data-testid="stHorizontalBlock"]:has([data-testid="stVerticalBlockBorderWrapper"]) {
         align-items: stretch !important;
     }
+    div[data-testid="column"]:has(.jd-hub-news-panel),
     div[data-testid="column"]:has([data-testid="stVerticalBlockBorderWrapper"]) {
         display: flex !important;
         flex-direction: column !important;
         align-self: stretch !important;
+    }
+    div[data-testid="column"]:has(.jd-hub-news-panel) > div[data-testid="stVerticalBlock"] {
+        flex: 1 1 auto !important;
+        width: 100% !important;
+        min-height: 100% !important;
     }
     div[data-testid="column"]:has([data-testid="stVerticalBlockBorderWrapper"])
         > div[data-testid="stVerticalBlockBorderWrapper"] {
@@ -643,9 +742,6 @@ def article_styles_markdown() -> str:
         flex-direction: column;
         gap: 0.75rem;
     }
-    .jd-home-lane-body.jd-home-lane-compact {
-        gap: 0;
-    }
     .jd-home-lane-body h2.home-lane-heading {
         margin: 0 0 0.15rem 0;
     }
@@ -659,16 +755,20 @@ def article_styles_markdown() -> str:
         box-shadow: none;
         border-color: #eef2f7;
     }
-    /* Bordered lane: avoid dead air between HTML lane + primary button when column height stretches */
-    [data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stVerticalBlock"] {
+    /* Lane + CTA: tight stack (bordered widgets or hub news panels) */
+    [data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stVerticalBlock"],
+    div[data-testid="column"]:has(.jd-hub-news-panel) div[data-testid="stVerticalBlock"] {
         justify-content: flex-start !important;
         align-content: flex-start !important;
     }
     [data-testid="stVerticalBlockBorderWrapper"]
+        .stElementContainer:has([data-testid="stMarkdownContainer"]),
+    div[data-testid="column"]:has(.jd-hub-news-panel)
         .stElementContainer:has([data-testid="stMarkdownContainer"]) {
         margin-bottom: 0 !important;
     }
-    [data-testid="stVerticalBlockBorderWrapper"] .stElementContainer:has(.stButton) {
+    [data-testid="stVerticalBlockBorderWrapper"] .stElementContainer:has(.stButton),
+    div[data-testid="column"]:has(.jd-hub-news-panel) .stElementContainer:has(.stButton) {
         margin-top: 0 !important;
     }
     </style>
@@ -692,20 +792,25 @@ def build_home_news_lane_body_html(
     *,
     show_footnote: bool,
 ) -> str:
-    """Heading + compact headline rows (+ optional footnote) for home lane — no summaries."""
-    parts = [
-        '<div class="jd-home-lane-body jd-home-lane-compact">',
-        '<h2 class="home-lane-heading">Latest Digital Asset News</h2>',
-        '<ul class="jd-home-headline-list">',
+    """Hub left column: panel shell, numbered rows, optional footnote (no summaries)."""
+    hid = "jd-hub-news-market-h2"
+    parts: list[str] = [
+        f'<section class="jd-hub-news-panel" aria-labelledby="{hid}">',
+        hub_news_panel_header_html(
+            eyebrow="Market feed",
+            title="Latest Digital Asset News",
+            heading_id=hid,
+        ),
+        '<ol class="jd-hub-news-list" role="list">',
     ]
-    for item in top:
-        parts.append(render_home_lane_compact_row_html(item, show_country=False))
-    parts.append("</ul>")
+    for i, item in enumerate(top, start=1):
+        parts.append(render_hub_news_lane_item_html(item, i, show_country=False))
+    parts.append("</ol>")
     if show_footnote:
         parts.append(
-            '<p class="jd-news-column-footnote">Most recent from the combined RSS list.</p>'
+            '<p class="jd-hub-news-footnote">Most recent stories from the combined RSS list.</p>'
         )
-    parts.append("</div>")
+    parts.append("</section>")
     return "".join(parts)
 
 
