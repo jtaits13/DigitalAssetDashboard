@@ -275,8 +275,13 @@ def _render_rwa_treasuries_overview(
 
 
 _SORT = "\u2195"
-# Descriptive header for the rank column (Glide shows this label; key stays "#" in dataframes).
-_RANK_BY_ASSETS_COL_LABEL = f"# {_SORT} by assets"
+
+
+def _rank_column_label(*, by_metric: str) -> str:
+    """Rank column header: '# by <primary sort metric>' then the sort affordance (matches RWA.xyz ordering)."""
+    return f"# by {by_metric} {_SORT}"
+
+
 _LINK_ARROW = "\u2197"  # Northeast arrow for RWA.xyz LinkColumn (Unicode U+2197)
 STABLECOINS_RWA_LINK_LABEL = "See Stablecoins on RWA.xyz"
 GLOBAL_MARKET_RWA_LINK_LABEL = "See Global Market Overview on RWA.xyz"
@@ -307,9 +312,9 @@ def _show_stablecoin_platform_dataframe(df, *, height: int) -> None:
         ],
         column_config={
             "#": st.column_config.NumberColumn(
-                _RANK_BY_ASSETS_COL_LABEL,
+                _rank_column_label(by_metric="Market cap"),
                 format="%.0f",
-                help="Rank on RWA.xyz Platforms tab",
+                help="Rank on RWA.xyz Platforms tab (by aggregate stablecoin market cap)",
             ),
             "Platform": st.column_config.TextColumn(
                 f"Platform {_SORT}",
@@ -374,9 +379,9 @@ def _show_rwa_dataframe(df, *, height: int) -> None:
         ],
         column_config={
             "#": st.column_config.NumberColumn(
-                _RANK_BY_ASSETS_COL_LABEL,
+                _rank_column_label(by_metric="Total Value"),
                 format="%.0f",
-                help="Ascending: lowest rank first · Descending: highest rank first",
+                help="Rank order from RWA.xyz (by network Total Value, USD)",
             ),
             "Network": st.column_config.TextColumn(
                 f"Network {_SORT}",
@@ -441,9 +446,9 @@ def _show_us_treasury_platform_dataframe(df, *, height: int) -> None:
         ],
         column_config={
             "#": st.column_config.NumberColumn(
-                _RANK_BY_ASSETS_COL_LABEL,
+                _rank_column_label(by_metric="Total Value"),
                 format="%.0f",
-                help="Rank on RWA.xyz Distributed · Platforms tab",
+                help="Rank on RWA.xyz Distributed · Platforms tab (by Total Value, USD)",
             ),
             "Platform": st.column_config.TextColumn(
                 f"Platform {_SORT}",
@@ -508,9 +513,9 @@ def _show_us_treasury_network_dataframe(df, *, height: int) -> None:
         ],
         column_config={
             "#": st.column_config.NumberColumn(
-                _RANK_BY_ASSETS_COL_LABEL,
+                _rank_column_label(by_metric="Distributed Value"),
                 format="%.0f",
-                help="Ascending: lowest rank first · Descending: highest rank first",
+                help="Rank order from RWA.xyz (by Distributed Value on this network, USD)",
             ),
             "Network": st.column_config.TextColumn(
                 f"Network {_SORT}",
@@ -575,9 +580,9 @@ def _show_tokenized_stock_platform_dataframe(df, *, height: int) -> None:
         ],
         column_config={
             "#": st.column_config.NumberColumn(
-                _RANK_BY_ASSETS_COL_LABEL,
+                _rank_column_label(by_metric="Distributed Value"),
                 format="%.0f",
-                help="Rank on RWA.xyz Distributed · Platforms tab",
+                help="Rank on RWA.xyz Distributed · Platforms tab (by Distributed Value, USD)",
             ),
             "Platform": st.column_config.TextColumn(
                 f"Platform {_SORT}",
@@ -642,9 +647,9 @@ def _show_tokenized_stock_network_dataframe(df, *, height: int) -> None:
         ],
         column_config={
             "#": st.column_config.NumberColumn(
-                _RANK_BY_ASSETS_COL_LABEL,
+                _rank_column_label(by_metric="Distributed Value"),
                 format="%.0f",
-                help="Rank on RWA.xyz Distributed · Networks tab",
+                help="Rank on RWA.xyz Distributed · Networks tab (by Distributed Value, USD)",
             ),
             "Network": st.column_config.TextColumn(
                 f"Network {_SORT}",
