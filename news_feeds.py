@@ -528,7 +528,11 @@ def article_styles_markdown() -> str:
         display: flex;
         flex-direction: column;
         gap: 0;
-        min-height: 100%;
+        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
+        /* Floor + stretch: both lanes share height; list flexes when one side is shorter on text. */
+        min-height: 17.5rem;
         padding: 0.55rem 0.65rem 0.5rem;
         border-radius: 12px;
         background: #ffffff;
@@ -565,7 +569,8 @@ def article_styles_markdown() -> str:
         flex-direction: column;
         gap: 0;
         flex: 1 1 auto;
-        min-height: 11rem;
+        min-height: 0;
+        align-self: stretch;
     }
     .jd-hub-news-item {
         display: grid;
@@ -578,6 +583,9 @@ def article_styles_markdown() -> str:
         border: none;
         border-bottom: 1px solid #dce7f0;
         transition: background 0.1s ease;
+        /* Same visual row height when one title is 1 line and the other is 2 (both columns stay even). */
+        min-height: 4.1rem;
+        box-sizing: border-box;
     }
     .jd-hub-news-item:last-child {
         border-bottom: none;
@@ -662,6 +670,10 @@ def article_styles_markdown() -> str:
     .jd-hub-news-panel--empty .jd-hub-news-list {
         min-height: 0;
     }
+    .jd-hub-news-panel--empty .jd-hub-news-empty {
+        flex: 1 1 auto;
+        margin-top: 0.25rem;
+    }
     .news-card {
         border: 1px solid #C7D8E8;
         border-radius: 10px;
@@ -709,10 +721,22 @@ def article_styles_markdown() -> str:
         color: #3E6A7A;
         margin-bottom: 0.5rem;
     }
-    /* Home: News & Regulatory columns — stretch; panels carry their own frame */
+    /* Home: News & Regulatory columns — equal height lanes */
     div[data-testid="stHorizontalBlock"]:has(.jd-hub-news-panel),
     div[data-testid="stHorizontalBlock"]:has([data-testid="stVerticalBlockBorderWrapper"]) {
         align-items: stretch !important;
+    }
+    div[data-testid="stHorizontalBlock"]:has(.jd-hub-news-panel) {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: stretch !important;
+    }
+    div[data-testid="stHorizontalBlock"]:has(.jd-hub-news-panel) > div[data-testid="column"] {
+        flex: 1 1 0 !important;
+        min-width: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-self: stretch !important;
     }
     div[data-testid="column"]:has(.jd-hub-news-panel),
     div[data-testid="column"]:has([data-testid="stVerticalBlockBorderWrapper"]) {
@@ -723,7 +747,27 @@ def article_styles_markdown() -> str:
     div[data-testid="column"]:has(.jd-hub-news-panel) > div[data-testid="stVerticalBlock"] {
         flex: 1 1 auto !important;
         width: 100% !important;
-        min-height: 100% !important;
+        min-height: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+    div[data-testid="column"]:has(.jd-hub-news-panel) [data-testid="stElementContainer"] {
+        flex: 1 1 auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        min-height: 0 !important;
+    }
+    div[data-testid="column"]:has(.jd-hub-news-panel) [data-testid="stMarkdownContainer"] {
+        flex: 1 1 auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        min-height: 0 !important;
+    }
+    div[data-testid="column"]:has(.jd-hub-news-panel) [data-testid="stMarkdownContainer"] > div {
+        flex: 1 1 auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        min-height: 0 !important;
     }
     div[data-testid="column"]:has([data-testid="stVerticalBlockBorderWrapper"])
         > div[data-testid="stVerticalBlockBorderWrapper"] {
