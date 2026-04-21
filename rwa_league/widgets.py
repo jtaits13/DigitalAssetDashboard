@@ -275,6 +275,8 @@ def _render_rwa_treasuries_overview(
 
 
 _SORT = "\u2195"
+# Descriptive header for the rank column (Glide shows this label; key stays "#" in dataframes).
+_RANK_BY_ASSETS_COL_LABEL = f"# {_SORT} by assets"
 _LINK_ARROW = "\u2197"  # Northeast arrow for RWA.xyz LinkColumn (Unicode U+2197)
 STABLECOINS_RWA_LINK_LABEL = "See Stablecoins on RWA.xyz"
 GLOBAL_MARKET_RWA_LINK_LABEL = "See Global Market Overview on RWA.xyz"
@@ -305,7 +307,7 @@ def _show_stablecoin_platform_dataframe(df, *, height: int) -> None:
         ],
         column_config={
             "#": st.column_config.NumberColumn(
-                f"# {_SORT}",
+                _RANK_BY_ASSETS_COL_LABEL,
                 format="%.0f",
                 help="Rank on RWA.xyz Platforms tab",
             ),
@@ -372,7 +374,7 @@ def _show_rwa_dataframe(df, *, height: int) -> None:
         ],
         column_config={
             "#": st.column_config.NumberColumn(
-                f"# {_SORT}",
+                _RANK_BY_ASSETS_COL_LABEL,
                 format="%.0f",
                 help="Ascending: lowest rank first · Descending: highest rank first",
             ),
@@ -439,7 +441,7 @@ def _show_us_treasury_platform_dataframe(df, *, height: int) -> None:
         ],
         column_config={
             "#": st.column_config.NumberColumn(
-                f"# {_SORT}",
+                _RANK_BY_ASSETS_COL_LABEL,
                 format="%.0f",
                 help="Rank on RWA.xyz Distributed · Platforms tab",
             ),
@@ -506,7 +508,7 @@ def _show_us_treasury_network_dataframe(df, *, height: int) -> None:
         ],
         column_config={
             "#": st.column_config.NumberColumn(
-                f"# {_SORT}",
+                _RANK_BY_ASSETS_COL_LABEL,
                 format="%.0f",
                 help="Ascending: lowest rank first · Descending: highest rank first",
             ),
@@ -573,7 +575,7 @@ def _show_tokenized_stock_platform_dataframe(df, *, height: int) -> None:
         ],
         column_config={
             "#": st.column_config.NumberColumn(
-                f"# {_SORT}",
+                _RANK_BY_ASSETS_COL_LABEL,
                 format="%.0f",
                 help="Rank on RWA.xyz Distributed · Platforms tab",
             ),
@@ -640,7 +642,7 @@ def _show_tokenized_stock_network_dataframe(df, *, height: int) -> None:
         ],
         column_config={
             "#": st.column_config.NumberColumn(
-                f"# {_SORT}",
+                _RANK_BY_ASSETS_COL_LABEL,
                 format="%.0f",
                 help="Rank on RWA.xyz Distributed · Networks tab",
             ),
