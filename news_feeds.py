@@ -907,29 +907,29 @@ def render_article_card_html(item: dict[str, Any]) -> str:
     )
 
 
-# --- ETF / ETP market lane (``ETP_NEWS_FEEDS`` = ``DEFAULT_FEEDS``) — fresh, loose heuristics; bump ``_filter_rev`` when this changes.
+# --- ETF / ETP market lane (``ETP_NEWS_FEEDS`` = ``DEFAULT_FEEDS``); bump ``_filter_rev`` when this changes.
 
 # Shown in the U.S. ETPs "Market pulse" box (full list still uses :func:`load_all_etf_etp_news_cached`).
 ETP_PULSE_PREVIEW_COUNT = 4
 
 _RE_ETF_MARKET_LANE = re.compile(
     r"""(?is)
-    # A) Fund / wrapper / listing language, then a digital-asset signal within a window
-    (?:\b(?:etf|etps?|etns?|etv|exchange[-\s]traded(?:\s+(?:funds?|products?|notes?|vehicles?))?|spot\s*etf|spot|listing|AUM|inflow|ticker|basket|wrapper|shares?)\b
+    # A) ETF/ETP / exchange-traded / flows — not generic "listing" / "ticker" / bare "spot"
+    (?:\b(?:etf|etps?|etns?|etv|exchange[-\s]traded(?:\s+(?:funds?|products?|notes?|vehicles?))?|spot\s*etf|AUM|inflow|outflow)\b
         [\s\S]{0,1000}?
-        \b(?:crypto|cryptocurren\w*|bitcoin|btc(?!ore)|\beth\b(?!s)|ether(?!eum\W*classic|net)|defi\w*?|blockchain|web3|xrp\w*|
+        \b(?:crypto|cryptocurren\w*|bitcoin|btc(?!ore)|\beth\b(?!s)|\bethereum\b|ether(?!eum\W*classic|net)|defi\w*?|blockchain|web3|xrp\w*|
         sol(?!d|f)|doge(?!r)|on[-\s]chain|digital\W*assets?|gbtc|ibit|fbtc|etha|qbtc|bito|eeth|stake[sd]?\W*et[fh]|
         stablecoin|altcoin|token\w*|layer|meme\W*coin|cbdc|grayscale|bitwise|vaneck|wisdomtree|ark|21\W*shares|hashdex|galaxy|invesco|franklin)
-    # B) Digital-asset or crypto-ETP issuer, then fund language within a window
-    |(?:\b(?:crypto|cryptocurren\w*|bitcoin|btc(?!ore)|\beth\b(?!s)|defi\w*?|blockchain|web3|xrp\w*|sol(?!d)|gbtc|ibit|fbtc|spot\W*btc|spot\W*eth(?!s)|
+    # B) Digital-asset (incl. stablecoin) or issuer, then strong ETF/ETP / flow terms (no "funds"/"listing" alone)
+    |(?:\b(?:crypto|cryptocurren\w*|bitcoin|btc(?!ore)|\beth\b(?!s)|\bethereum\b|defi\w*?|blockchain|web3|xrp\w*|sol(?!d)|gbtc|ibit|fbtc|spot\W*btc|spot\W*eth(?!s)|
         on[-\s]chain|digital\W*assets?|grayscale|bitwise|vaneck|wisdomtree|ark|21\W*shares|hashdex|galaxy|stablecoin|meme|defi\w*?\b|layer)
         [\s\S]{0,1000}?
-        \b(?:etf|etps?|etns?|etv|exchange[-\s]traded|funds?|AUM|inflow|outflow|listing|ticker|basket|spot\W*etf|spot\W*ether|spot\W*bitcoin|holdings))
+        \b(?:etf|etps?|etns?|etv|exchange[-\s]traded|AUM|inflow|outflow|spot\W*etf|spot\W*ether|spot\W*bitcoin|holdings))
     # C) Tight: known product tickers / spot pairings
     |(?:\b(?:gbtc|ibit|fbtc|etha|qbtc|bito|eeth|gder|feth)\b|spot\W+btc|spot\W+eth|spot\W+ether|spot\W+bitcoin|spot\W+ethereum|spot\W+xrp|spot\W+sol|spot\W+crypto|spot\W+defi)
     # D) Phrase: "X ETF" with digital asset X
     |(?:\b(?:bitcoin|btc|eth|ether|xrp|sol|defi\w*?|blockchain\w*?|meme\w*?|stablecoin\w*?|on[-\s]chain\w*?|digital\w*?|crypto\w*?)\W*[-–—,]?\W*et[fh]s?)\b
-    |(?:\bet[fh]p?s?\W*[-–—,]?\W*(?:for|in|on|exposure|tracking|listing|tender)\W+[\s\S]{0,80}?(?:bitcoin|btc|eth|xrp|sol|defi\w*?|blockchain\w*?|crypto\w*?|digital\w*?))
+    |(?:\bet[fh]p?s?\W*[-–—,]?\W*(?:for|in|on|exposure|tracking|tender)\W+[\s\S]{0,80}?(?:bitcoin|btc|eth|xrp|sol|defi\w*?|blockchain\w*?|crypto\w*?|digital\w*?))
     )""",
     re.VERBOSE,
 )
@@ -948,8 +948,8 @@ def _etf_market_feed_text(a: dict[str, Any]) -> str:
 
 def is_etf_market_feed_item(a: dict[str, Any]) -> bool:
     """
-    Heuristic: include if title + summary looks like **exchange-traded / fund-wrapper** content in the
-    **digital-asset** space. Purposely loose; sources are already crypto / digital-asset RSS.
+    Heuristic: title + summary should read **ETF/ETP / exchange-traded product**-oriented in the
+    digital-asset space (ticker/spot-ETF branch still catches spot-product headlines without the word *ETF*).
     """
     t = _etf_market_feed_text(a)
     if not t or len(t) < 4:
@@ -977,9 +977,9 @@ def pick_etf_market_feed(
 
 @st.cache_data(ttl=1800, show_spinner=False)
 def load_all_etf_etp_news_cached(
-    _filter_rev: int = 9,
+    _filter_rev: int = 10,
 ) -> tuple[list[dict[str, Any]], list[str]]:
-    """ETP lane: same RSS as ``DEFAULT_FEEDS``, deduped, then :func:`is_etf_market_feed_item` (loose heuristics)."""
+    """ETP lane: same RSS as ``DEFAULT_FEEDS``, deduped, then :func:`is_etf_market_feed_item` (ETF/ETP-forward heuristics)."""
     _ = _filter_rev
     combined, errors = load_all_feeds(ETP_NEWS_FEEDS)
     combined = dedupe_articles(combined, max_items=None)
@@ -991,7 +991,7 @@ def load_all_etf_etp_news_cached(
     return out, errors
 
 
-def load_etp_market_news_cached(_filter_rev: int = 9) -> list[dict[str, Any]]:
+def load_etp_market_news_cached(_filter_rev: int = 10) -> list[dict[str, Any]]:
     """First :data:`ETP_PULSE_PREVIEW_COUNT` items for the U.S. ETPs Market pulse (shared cache with :func:`load_all_etf_etp_news_cached`)."""
     articles, _ = load_all_etf_etp_news_cached(_filter_rev=_filter_rev)
     return articles[:ETP_PULSE_PREVIEW_COUNT]
@@ -1018,8 +1018,9 @@ def build_etp_market_news_box_html(articles: list[dict[str, Any]]) -> str:
         out.append("</ol>")
     out.append(
         '<p class="jd-hub-news-footnote">'
-        "Loose keyword match on <strong>exchange-traded / fund</strong> language and <strong>digital-asset</strong> context in the "
-        "title and summary (see All ETF news for the same pool). RSS only includes each site’s <strong>recent</strong> posts."
+        "Items favor <strong>ETF / ETP / exchange-traded</strong> and flow language (AUM, inflows) in the <strong>digital-asset</strong> "
+        "title and summary — not general crypto policy unless it also ties to those products. Same pool as <strong>All ETF news</strong>. "
+        "RSS is each site’s <strong>recent</strong> posts only."
         "</p>"
     )
     out.append("</section></div>")
