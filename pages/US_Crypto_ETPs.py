@@ -113,7 +113,8 @@ def main() -> None:
     )
     render_etp_summary_kpi_row(rows, include_styles=False)
 
-    col_aum, col_pulse = st.columns([1, 1], gap="medium")
+    # border=True: same as home News & Regulatory row — stretch columns and pin Explore CTA under the hub panel.
+    col_aum, col_pulse = st.columns([1, 1], gap="medium", border=True)
     with col_aum:
         st.markdown(
             hub_subsection_heading_html(
@@ -158,7 +159,7 @@ def main() -> None:
             build_etp_market_news_box_html(etp_pulse),
             unsafe_allow_html=True,
         )
-        if len(etp_all_news) > ETP_PULSE_NEWS_COUNT:
+        if len(etp_all_news) > 0:
             if st.button(
                 "Explore all articles →",
                 key="etp_explore_all_etf_news",
@@ -167,7 +168,7 @@ def main() -> None:
             ):
                 st.switch_page("pages/All_ETF_News.py")
             st.markdown(
-                '<p class="jd-hub-cta-note">Full ETF/ETP headlines with search and pagination on the next page.</p>',
+                '<p class="jd-hub-cta-note">Full ETF/ETP feed with search and pagination on the next page.</p>',
                 unsafe_allow_html=True,
             )
 
