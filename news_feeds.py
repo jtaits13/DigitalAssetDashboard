@@ -312,6 +312,9 @@ DEFAULT_FEEDS: list[tuple[str, str]] = [
     ("The Block", "https://www.theblockcrypto.com/rss.xml"),
 ]
 
+# ETF/ETP pulse + All ETF news page: same RSS pool as :data:`DEFAULT_FEEDS` (adds CoinTelegraph vs. an older 3-feed bundle).
+ETP_NEWS_FEEDS = DEFAULT_FEEDS
+
 
 def parse_entry_date(entry: Any) -> Optional[datetime]:
     """Parse published/updated date from a feedparser entry (UTC)."""
@@ -904,19 +907,15 @@ def render_article_card_html(item: dict[str, Any]) -> str:
     )
 
 
-# --- ETF / ETP pulse (RSS headlines: crypto context + ETF/ETP in title only) -----------------
-
-ETP_NEWS_FEEDS: list[tuple[str, str]] = [
-    ("CoinDesk", "https://www.coindesk.com/arc/outboundfeeds/rss/"),
-    ("The Block", "https://www.theblockcrypto.com/rss.xml"),
-    ("Decrypt", "https://decrypt.co/feed"),
-]
+# --- ETF / ETP pulse (RSS: digital-asset context + ETF/ETP in title; sources: ``ETP_NEWS_FEEDS`` = ``DEFAULT_FEEDS``) ---
 
 _CRYPTO_ETF = re.compile(
     r"(?is)\b(?:"
     r"crypto(?:currency|currencies)?|bitcoin|\bbtc\b|ethereum|\beth\b|digital\s+assets?|"
     r"blockchain|defi|altcoin|stablecoin|solana|xrp|dogecoin|pepe|meme\s+coin|"
-    r"spot\s+(?:bitcoin|ether|ethereum)|web3|\bcbdc\b|altcoins?|tokeni[sz]e"
+    r"spot\s+(?:bitcoin|ether|ethereum)|web3|\bcbdc\b|altcoins?|tokeni[sz]e|"
+    r"grayscale|gbtc|ibit|fbtc|etha|bitwise|valkyrie|vaneck|21shares|wisdomtree|invesco|"
+    r"hashdex|galaxy|franklin\s+templeton"
     r")\b",
 )
 
@@ -983,9 +982,9 @@ def pick_crypto_etf_headlines(
 
 @st.cache_data(ttl=1800, show_spinner=False)
 def load_all_etf_etp_news_cached(
-    _filter_rev: int = 6,
+    _filter_rev: int = 7,
 ) -> tuple[list[dict[str, Any]], list[str]]:
-    """ETP RSS feeds, deduped, filtered to crypto + ETF/ETP-in-title. Bump ``_filter_rev`` when matching rules change."""
+    """ETP RSS feeds (same pool as ``DEFAULT_FEEDS``), deduped, filtered to digital-asset context + ETF/ETP-in-title. Bump ``_filter_rev`` when rules or feed list change."""
     _ = _filter_rev
     combined, errors = load_all_feeds(ETP_NEWS_FEEDS)
     combined = dedupe_articles(combined, max_items=None)
@@ -997,7 +996,7 @@ def load_all_etf_etp_news_cached(
     return out, errors
 
 
-def load_etp_market_news_cached(_filter_rev: int = 6) -> list[dict[str, Any]]:
+def load_etp_market_news_cached(_filter_rev: int = 7) -> list[dict[str, Any]]:
     """First 8 headlines for the ETP full-page pulse and home-adjacent widgets (shares cache with :func:`load_all_etf_etp_news_cached`)."""
     articles, _ = load_all_etf_etp_news_cached(_filter_rev=_filter_rev)
     return articles[:8]

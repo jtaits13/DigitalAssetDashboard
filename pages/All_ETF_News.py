@@ -47,9 +47,9 @@ def main() -> None:
     )
     _feed_name_list = ", ".join(n for n, _ in ETP_NEWS_FEEDS)
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed">Headlines from the ETF/ETP RSS bundle where the <strong>title</strong> mentions an '
-        "ETF, ETP, or exchange-traded product and the story has digital-asset context — search and paginate. "
-        f"Same feeds as the U.S. ETPs page: {escape(_feed_name_list)}.</p>",
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed">Headlines from the <strong>same RSS sources as All articles</strong>, filtered to stories where the '
+        "<strong>title</strong> mentions an ETF, ETP, or exchange-traded product and the text has digital-asset or crypto-ETP context — search and paginate. "
+        f"Sources: {escape(_feed_name_list)}.</p>",
         unsafe_allow_html=True,
     )
     st.divider()
