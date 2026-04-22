@@ -167,7 +167,7 @@ def main() -> None:
             ):
                 st.switch_page("pages/All_ETF_News.py")
             st.markdown(
-                '<p class="jd-hub-cta-note">Full ETF/ETP feed with search and pagination on the next page.</p>',
+                '<p class="jd-hub-cta-note">Full ETF/ETP feed (last <strong>3 months</strong>, UTC) with search and pagination on the next page.</p>',
                 unsafe_allow_html=True,
             )
 

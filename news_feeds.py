@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import calendar
 import html as html_module
 import re
 from datetime import date, datetime, timezone
@@ -940,6 +941,34 @@ def render_article_card_html(item: dict[str, Any]) -> str:
 # Shown in the U.S. ETPs "Market pulse" box (full list still uses :func:`load_all_etf_etp_news_cached`).
 ETP_PULSE_PREVIEW_COUNT = 4
 
+# ETF / ETP lane: drop items older than this many **calendar** months (rolling, UTC calendar dates).
+ETF_NEWS_RECENCY_MONTHS = 3
+
+
+def _etf_news_cutoff_date_utc() -> date:
+    """First calendar date (UTC) still included in the ETF news window (inclusive)."""
+    now = datetime.now(timezone.utc)
+    y, m = now.year, now.month
+    m -= ETF_NEWS_RECENCY_MONTHS
+    while m < 1:
+        m += 12
+        y -= 1
+    last_day = calendar.monthrange(y, m)[1]
+    d = min(now.day, last_day)
+    return date(y, m, d)
+
+
+def _etf_news_item_within_recency(a: dict[str, Any]) -> bool:
+    pub = a.get("published")
+    if not isinstance(pub, datetime):
+        return False
+    if pub.tzinfo is None:
+        pub = pub.replace(tzinfo=timezone.utc)
+    else:
+        pub = pub.astimezone(timezone.utc)
+    return pub.date() >= _etf_news_cutoff_date_utc()
+
+
 _RE_ETF_MARKET_LANE = re.compile(
     r"""(?is)
     # A) ETF/ETP / exchange-traded / flows — not generic "listing" / "ticker" / bare "spot"
@@ -1005,9 +1034,9 @@ def pick_etf_market_feed(
 
 @st.cache_data(ttl=1800, show_spinner=False)
 def load_all_etf_etp_news_cached(
-    _filter_rev: int = 12,
+    _filter_rev: int = 13,
 ) -> tuple[list[dict[str, Any]], list[str]]:
-    """ETP lane: :data:`ETP_NEWS_FEEDS` (crypto RSS + :data:`ETP_SUPPLEMENT_FEEDS`), deduped, then :func:`is_etf_market_feed_item`."""
+    """ETP lane: :data:`ETP_NEWS_FEEDS`, deduped, :func:`is_etf_market_feed_item`, then last :data:`ETF_NEWS_RECENCY_MONTHS` months (UTC)."""
     _ = _filter_rev
     combined, errors = load_all_feeds(ETP_NEWS_FEEDS)
     combined = dedupe_articles(combined, max_items=None)
@@ -1016,10 +1045,11 @@ def load_all_etf_etp_news_cached(
         reverse=True,
     )
     out = pick_etf_market_feed(combined, limit=None, scan_cap=None)
+    out = [a for a in out if _etf_news_item_within_recency(a)]
     return out, errors
 
 
-def load_etp_market_news_cached(_filter_rev: int = 12) -> list[dict[str, Any]]:
+def load_etp_market_news_cached(_filter_rev: int = 13) -> list[dict[str, Any]]:
     """First :data:`ETP_PULSE_PREVIEW_COUNT` items for the U.S. ETPs Market pulse (shared cache with :func:`load_all_etf_etp_news_cached`)."""
     articles, _ = load_all_etf_etp_news_cached(_filter_rev=_filter_rev)
     return articles[:ETP_PULSE_PREVIEW_COUNT]
@@ -1048,7 +1078,7 @@ def build_etp_market_news_box_html(articles: list[dict[str, Any]]) -> str:
         '<p class="jd-hub-news-footnote">'
         "Items favor <strong>ETF / ETP / exchange-traded</strong> and flow language (AUM, inflows) in the <strong>digital-asset</strong> "
         "title and summary — not general crypto policy unless it also ties to those products. Same pool as <strong>All ETF news</strong>. "
-        "Feeds are <strong>recent-only</strong> (RSS + capped Google News), not a full archive."
+        "Only the <strong>last three calendar months</strong> (UTC) are shown. Feeds are still RSS / capped Google News, not a full archive."
         "</p>"
     )
     out.append("</section></div>")
