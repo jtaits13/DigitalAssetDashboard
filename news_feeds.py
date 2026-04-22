@@ -482,6 +482,16 @@ def hub_news_panel_header_html(*, eyebrow: str, title: str, heading_id: Optional
     )
 
 
+def hub_etp_pulse_panel_header_html(*, heading_id: str) -> str:
+    """U.S. ETP full page: ETF and ETP plus Market Pulse on one line, same panel title band as the home hub."""
+    line = f'{escape("ETF & ETP")} · {escape("Market Pulse")}'
+    return (
+        '<header class="jd-hub-news-panel-header jd-hub-news-panel-header--etp-pulse">'
+        f'<p class="jd-hub-news-panel-title" role="heading" aria-level="2" id="{escape(heading_id)}">'
+        f"{line}</p></header>"
+    )
+
+
 def render_hub_news_lane_item_html(
     item: dict[str, Any],
     index: int,
@@ -993,7 +1003,7 @@ def build_etp_market_news_box_html(articles: list[dict[str, Any]]) -> str:
     out: list[str] = [
         '<div class="jd-etp-pulse-rail">',
         f'<section class="{panel_cls}" aria-labelledby="{hid}">',
-        hub_news_panel_header_html(eyebrow="ETF & ETP", title="Market pulse", heading_id=hid),
+        hub_etp_pulse_panel_header_html(heading_id=hid),
     ]
     if not articles:
         out.append(
