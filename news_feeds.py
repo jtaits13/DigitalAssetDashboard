@@ -312,8 +312,12 @@ DEFAULT_FEEDS: list[tuple[str, str]] = [
     ("The Block", "https://www.theblockcrypto.com/rss.xml"),
 ]
 
-# Extra ETF/ETP-dedicated sources (checked with feedparser). Appended to :data:`DEFAULT_FEEDS` for the pulse + All ETF news only
-# (home / All articles still use ``DEFAULT_FEEDS``).
+# Extra ETF/ETP-dedicated + broader crypto/finance sources (checked with feedparser). Appended to :data:`DEFAULT_FEEDS`
+# for the pulse + All ETF news only (home / All articles still use ``DEFAULT_FEEDS``).
+#
+# **Why date gaps happen:** each outlet’s RSS is only its latest N posts; older URLs fall off the feed entirely.
+# Google News search RSS returns ~100 headlines per query and often spans more calendar time, which helps fill
+# holes—but this is still not a full archive (subject to Google’s terms for the feed URL).
 ETP_SUPPLEMENT_FEEDS: list[tuple[str, str]] = [
     ("ETF Trends (VettaFi)", "https://www.etftrends.com/feed/"),
     ("Benzinga ETFs", "https://www.benzinga.com/topic/etfs/feed"),
@@ -323,6 +327,18 @@ ETP_SUPPLEMENT_FEEDS: list[tuple[str, str]] = [
         "https://www.globenewswire.com/RssFeed/subjectcode/23-Exchange%20Traded%20Funds-25/feedTitle/"
         "GlobeNewswire%20-%20Company%20Announcements%20on%20Exchange%20Traded%20Funds",
     ),
+    # Aggregated search: more items + longer tail than single-site RSS (still capped ~100/query).
+    ("Google News (crypto ETF)", "https://news.google.com/rss/search?q=crypto+ETF&hl=en-US&gl=US&ceid=US:en"),
+    (
+        "Google News (spot Bitcoin ETF)",
+        "https://news.google.com/rss/search?q=spot+bitcoin+ETF&hl=en-US&gl=US&ceid=US:en",
+    ),
+    (
+        "Google News (crypto ETP / ETF)",
+        "https://news.google.com/rss/search?q=crypto+exchange+traded+fund&hl=en-US&gl=US&ceid=US:en",
+    ),
+    ("Yahoo Finance (headlines)", "https://finance.yahoo.com/news/rssindex"),
+    ("Blockworks", "https://blockworks.co/feed"),
 ]
 
 ETP_NEWS_FEEDS: list[tuple[str, str]] = list(DEFAULT_FEEDS) + ETP_SUPPLEMENT_FEEDS
@@ -989,7 +1005,7 @@ def pick_etf_market_feed(
 
 @st.cache_data(ttl=1800, show_spinner=False)
 def load_all_etf_etp_news_cached(
-    _filter_rev: int = 11,
+    _filter_rev: int = 12,
 ) -> tuple[list[dict[str, Any]], list[str]]:
     """ETP lane: :data:`ETP_NEWS_FEEDS` (crypto RSS + :data:`ETP_SUPPLEMENT_FEEDS`), deduped, then :func:`is_etf_market_feed_item`."""
     _ = _filter_rev
@@ -1003,7 +1019,7 @@ def load_all_etf_etp_news_cached(
     return out, errors
 
 
-def load_etp_market_news_cached(_filter_rev: int = 11) -> list[dict[str, Any]]:
+def load_etp_market_news_cached(_filter_rev: int = 12) -> list[dict[str, Any]]:
     """First :data:`ETP_PULSE_PREVIEW_COUNT` items for the U.S. ETPs Market pulse (shared cache with :func:`load_all_etf_etp_news_cached`)."""
     articles, _ = load_all_etf_etp_news_cached(_filter_rev=_filter_rev)
     return articles[:ETP_PULSE_PREVIEW_COUNT]
@@ -1032,7 +1048,7 @@ def build_etp_market_news_box_html(articles: list[dict[str, Any]]) -> str:
         '<p class="jd-hub-news-footnote">'
         "Items favor <strong>ETF / ETP / exchange-traded</strong> and flow language (AUM, inflows) in the <strong>digital-asset</strong> "
         "title and summary — not general crypto policy unless it also ties to those products. Same pool as <strong>All ETF news</strong>. "
-        "RSS is each site’s <strong>recent</strong> posts only."
+        "Feeds are <strong>recent-only</strong> (RSS + capped Google News), not a full archive."
         "</p>"
     )
     out.append("</section></div>")

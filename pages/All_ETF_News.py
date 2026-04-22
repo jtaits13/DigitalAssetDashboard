@@ -50,7 +50,8 @@ def main() -> None:
         '<p class="jd-hub-dek jd-hub-dek-fullbleed">Headlines from the <strong>major crypto news RSS feeds</strong> <strong>plus</strong> dedicated ETF/issuer sources, '
         "filtered to items that read <strong>ETF- or ETP-oriented</strong> (including known spot / ticker language), not general crypto or stablecoin policy unless it "
         "clearly ties to those products. "
-        "Search and paginate. Each feed is only the site’s <strong>recent</strong> items — not a full archive, so old dates roll off. "
+        "Search and paginate. Outlets only expose <strong>recent</strong> posts in RSS; <strong>Google News</strong> queries add more breadth but are still capped (~100 headlines each) — "
+        "not a complete archive, so calendar gaps can remain. "
         f"Sources: {escape(_feed_name_list)}.</p>",
         unsafe_allow_html=True,
     )
