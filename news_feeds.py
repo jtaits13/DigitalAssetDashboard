@@ -312,8 +312,20 @@ DEFAULT_FEEDS: list[tuple[str, str]] = [
     ("The Block", "https://www.theblockcrypto.com/rss.xml"),
 ]
 
-# ETF/ETP pulse + All ETF news page: same RSS pool as :data:`DEFAULT_FEEDS` (adds CoinTelegraph vs. an older 3-feed bundle).
-ETP_NEWS_FEEDS = DEFAULT_FEEDS
+# Extra ETF/ETP-dedicated sources (checked with feedparser). Appended to :data:`DEFAULT_FEEDS` for the pulse + All ETF news only
+# (home / All articles still use ``DEFAULT_FEEDS``).
+ETP_SUPPLEMENT_FEEDS: list[tuple[str, str]] = [
+    ("ETF Trends (VettaFi)", "https://www.etftrends.com/feed/"),
+    ("Benzinga ETFs", "https://www.benzinga.com/topic/etfs/feed"),
+    ("ETFdb", "https://www.etfdb.com/feed/"),
+    (
+        "GlobeNewswire (ETF)",
+        "https://www.globenewswire.com/RssFeed/subjectcode/23-Exchange%20Traded%20Funds-25/feedTitle/"
+        "GlobeNewswire%20-%20Company%20Announcements%20on%20Exchange%20Traded%20Funds",
+    ),
+]
+
+ETP_NEWS_FEEDS: list[tuple[str, str]] = list(DEFAULT_FEEDS) + ETP_SUPPLEMENT_FEEDS
 
 
 def parse_entry_date(entry: Any) -> Optional[datetime]:
@@ -907,7 +919,7 @@ def render_article_card_html(item: dict[str, Any]) -> str:
     )
 
 
-# --- ETF / ETP market lane (``ETP_NEWS_FEEDS`` = ``DEFAULT_FEEDS``); bump ``_filter_rev`` when this changes.
+# --- ETF / ETP market lane (``ETP_NEWS_FEEDS`` = ``DEFAULT_FEEDS`` + :data:`ETP_SUPPLEMENT_FEEDS`); bump ``_filter_rev`` when this changes.
 
 # Shown in the U.S. ETPs "Market pulse" box (full list still uses :func:`load_all_etf_etp_news_cached`).
 ETP_PULSE_PREVIEW_COUNT = 4
@@ -977,9 +989,9 @@ def pick_etf_market_feed(
 
 @st.cache_data(ttl=1800, show_spinner=False)
 def load_all_etf_etp_news_cached(
-    _filter_rev: int = 10,
+    _filter_rev: int = 11,
 ) -> tuple[list[dict[str, Any]], list[str]]:
-    """ETP lane: same RSS as ``DEFAULT_FEEDS``, deduped, then :func:`is_etf_market_feed_item` (ETF/ETP-forward heuristics)."""
+    """ETP lane: :data:`ETP_NEWS_FEEDS` (crypto RSS + :data:`ETP_SUPPLEMENT_FEEDS`), deduped, then :func:`is_etf_market_feed_item`."""
     _ = _filter_rev
     combined, errors = load_all_feeds(ETP_NEWS_FEEDS)
     combined = dedupe_articles(combined, max_items=None)
@@ -991,7 +1003,7 @@ def load_all_etf_etp_news_cached(
     return out, errors
 
 
-def load_etp_market_news_cached(_filter_rev: int = 10) -> list[dict[str, Any]]:
+def load_etp_market_news_cached(_filter_rev: int = 11) -> list[dict[str, Any]]:
     """First :data:`ETP_PULSE_PREVIEW_COUNT` items for the U.S. ETPs Market pulse (shared cache with :func:`load_all_etf_etp_news_cached`)."""
     articles, _ = load_all_etf_etp_news_cached(_filter_rev=_filter_rev)
     return articles[:ETP_PULSE_PREVIEW_COUNT]
