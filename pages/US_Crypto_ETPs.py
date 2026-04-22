@@ -45,6 +45,9 @@ from news_feeds import (
 )
 from price_ticker import show_price_ticker
 
+# Tighter chart when KPI + AUM sit in a half-width column next to the ETF pulse panel.
+ETP_TOP_SPLIT_AUM_CHART_HEIGHT = 420
+
 
 def main() -> None:
     st.set_page_config(
@@ -82,15 +85,6 @@ def main() -> None:
     )
     st.divider()
 
-    with st.spinner("Loading crypto ETF / ETP headlines (RSS)…"):
-        etp_pulse = load_etp_market_news_cached()
-    st.markdown(
-        build_etp_market_news_box_html(etp_pulse),
-        unsafe_allow_html=True,
-    )
-
-    st.divider()
-
     with st.spinner("Loading U.S. digital asset ETPs (list + profile pages)…"):
         data = load_crypto_etps_cached(resolve_etp_user_agent(get_etp_user_agent_from_secrets()))
 
@@ -100,49 +94,62 @@ def main() -> None:
 
     rows = data.rows
 
-    st.markdown(
-        hub_subsection_heading_html(
-            "U.S. Digital Asset ETPs",
-            element_id="jd-etp-summary",
-        ),
-        unsafe_allow_html=True,
-    )
-    render_etp_summary_kpi_row(rows, include_styles=False)
+    with st.spinner("Loading crypto ETF / ETP headlines (RSS)…"):
+        etp_pulse = load_etp_market_news_cached()
 
-    st.markdown(
-        hub_subsection_heading_html(
-            "Aggregate AUM trend (12 months)",
-            element_id="jd-etp-aggregate-aum",
-        ),
-        unsafe_allow_html=True,
-    )
-    st.caption(
-        "Estimated from **Yahoo Finance** weekly closes: each fund’s latest reported AUM from StockAnalysis "
-        "is scaled by its price path (constant-shares approximation), then summed. Covers the full list below — "
-        "not official fund AUM filings."
-    )
-    with st.spinner("Loading 12-month price history for aggregate AUM estimate…"):
-        pairs = etp_rows_to_fund_pairs(rows)
-        chart_df, chart_err = load_aggregate_aum_history_cached(pairs)
-    if chart_df is not None and not chart_df.empty:
-        plot_df = chart_df.copy()
-        plot_df["aum_billions_usd"] = plot_df["total_aum_usd"] / 1e9
-        fig = build_aggregate_aum_plotly_figure(plot_df, height=640)
-        st.plotly_chart(
-            fig,
-            use_container_width=True,
-            config={
-                "scrollZoom": True,
-                "displayModeBar": True,
-            },
+    col_kpi, col_pulse = st.columns([1, 1], gap="medium")
+    with col_kpi:
+        st.markdown(
+            hub_subsection_heading_html(
+                "U.S. Digital Asset ETPs",
+                element_id="jd-etp-summary",
+            ),
+            unsafe_allow_html=True,
+        )
+        render_etp_summary_kpi_row(rows, include_styles=False)
+        st.markdown(
+            hub_subsection_heading_html(
+                "Aggregate AUM trend (12 months)",
+                element_id="jd-etp-aggregate-aum",
+            ),
+            unsafe_allow_html=True,
         )
         st.caption(
-            "Vertical axis: total estimated AUM, **billions USD** (weekly points). "
-            "Default view is the last **12 months** (month labels on the x-axis); scroll or use the "
-            "mode bar to zoom and pan the full history."
+            "Estimated from **Yahoo Finance** weekly closes: each fund’s latest reported AUM from StockAnalysis "
+            "is scaled by its price path (constant-shares approximation), then summed. Covers the full list below — "
+            "not official fund AUM filings."
         )
-    elif chart_err:
-        st.info(chart_err)
+        with st.spinner("Loading 12-month price history for aggregate AUM estimate…"):
+            pairs = etp_rows_to_fund_pairs(rows)
+            chart_df, chart_err = load_aggregate_aum_history_cached(pairs)
+        if chart_df is not None and not chart_df.empty:
+            plot_df = chart_df.copy()
+            plot_df["aum_billions_usd"] = plot_df["total_aum_usd"] / 1e9
+            fig = build_aggregate_aum_plotly_figure(
+                plot_df,
+                height=ETP_TOP_SPLIT_AUM_CHART_HEIGHT,
+            )
+            st.plotly_chart(
+                fig,
+                use_container_width=True,
+                config={
+                    "scrollZoom": True,
+                    "displayModeBar": True,
+                },
+            )
+            st.caption(
+                "Vertical axis: total estimated AUM, **billions USD** (weekly points). "
+                "Default view is the last **12 months** (month labels on the x-axis); scroll or use the "
+                "mode bar to zoom and pan the full history."
+            )
+        elif chart_err:
+            st.info(chart_err)
+
+    with col_pulse:
+        st.markdown(
+            build_etp_market_news_box_html(etp_pulse),
+            unsafe_allow_html=True,
+        )
 
     st.divider()
 

@@ -833,6 +833,10 @@ def article_styles_markdown() -> str:
         .stElementContainer:has([data-testid="stMarkdownContainer"]) {
         margin-bottom: 0 !important;
     }
+    /* U.S. crypto ETP full page: pulse rail (half width) — avoid 17.5rem floor in a narrow column */
+    .jd-etp-pulse-rail .jd-hub-news-panel {
+        min-height: 0;
+    }
     </style>
     """
 
@@ -983,22 +987,29 @@ def load_etp_market_news_cached(_filter_rev: int = 5) -> list[dict[str, Any]]:
 
 
 def build_etp_market_news_box_html(articles: list[dict[str, Any]]) -> str:
-    parts = [
-        '<div class="jd-home-lane-body etp-news-pulse">',
-        '<h3 class="home-main-heading" style="font-size:1.05rem;margin:0 0 0.35rem 0;">'
-        "ETF &amp; ETP pulse</h3>",
-        '<p class="jd-news-column-footnote" style="margin:0 0 0.75rem 0;">'
-        "Crypto and digital-asset stories from major RSS where the <strong>headline</strong> includes "
-        "<strong>ETF</strong>, <strong>ETP</strong>, or an <strong>exchange-traded</strong> fund/product phrase; "
-        "summary-only mentions are excluded.</p>",
+    """ETF/ETP RSS pulse: same hub panel + numbered rows as home hub news (``jd-hub-news-*``)."""
+    hid = "jd-etp-pulse-h2"
+    panel_cls = "jd-hub-news-panel jd-hub-news-panel--empty" if not articles else "jd-hub-news-panel"
+    out: list[str] = [
+        '<div class="jd-etp-pulse-rail">',
+        f'<section class="{panel_cls}" aria-labelledby="{hid}">',
+        hub_news_panel_header_html(eyebrow="ETF & ETP", title="Market pulse", heading_id=hid),
     ]
     if not articles:
-        parts.append(
-            '<p class="jd-news-column-footnote">No matching headlines right now. '
-            "Try <strong>Refresh feeds</strong> on the home page.</p>"
+        out.append(
+            '<p class="jd-hub-news-empty">No matching headlines right now. Try '
+            "<strong>Refresh all data</strong> on the home page to reload RSS.</p>"
         )
     else:
-        for item in articles:
-            parts.append(render_article_card_html(item))
-    parts.append("</div>")
-    return "".join(parts)
+        out.append('<ol class="jd-hub-news-list" role="list">')
+        for i, item in enumerate(articles, start=1):
+            out.append(render_hub_news_lane_item_html(item, i, show_country=False))
+        out.append("</ol>")
+    out.append(
+        '<p class="jd-hub-news-footnote">'
+        "From major RSS where the <strong>headline</strong> includes <strong>ETF</strong>, <strong>ETP</strong>, or "
+        "an <strong>exchange-traded</strong> fund/product phrase; crypto / digital-asset context; "
+        "summary-only matches excluded.</p>"
+    )
+    out.append("</section></div>")
+    return "".join(out)
