@@ -36,6 +36,7 @@ from home_layout import (
     subpage_toolbar_note_html,
 )
 from news_feeds import (
+    ETP_PULSE_PREVIEW_COUNT,
     app_shared_layout_css,
     article_styles_markdown,
     build_etp_market_news_box_html,
@@ -47,8 +48,6 @@ from price_ticker import show_price_ticker
 
 # Chart sits in a half-width column next to the ETF pulse panel; KPI row is full width above.
 ETP_TOP_SPLIT_AUM_CHART_HEIGHT = 420
-# Pulse widget shows this many rows; "Explore all articles" when the filtered feed has more.
-ETP_PULSE_NEWS_COUNT = 8
 
 
 def main() -> None:
@@ -98,7 +97,7 @@ def main() -> None:
 
     with st.spinner("Loading crypto ETF / ETP headlines (RSS)…"):
         etp_all_news, _etp_feed_errors = load_all_etf_etp_news_cached()
-    etp_pulse = etp_all_news[:ETP_PULSE_NEWS_COUNT]
+    etp_pulse = etp_all_news[:ETP_PULSE_PREVIEW_COUNT]
     if _etp_feed_errors:
         with st.expander("Some ETF/ETP RSS feeds could not be loaded", expanded=False):
             for err in _etp_feed_errors:
@@ -159,7 +158,7 @@ def main() -> None:
             build_etp_market_news_box_html(etp_pulse),
             unsafe_allow_html=True,
         )
-        if len(etp_all_news) > 0:
+        if len(etp_all_news) > ETP_PULSE_PREVIEW_COUNT:
             if st.button(
                 "Explore all articles →",
                 key="etp_explore_all_etf_news",

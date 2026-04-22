@@ -907,23 +907,31 @@ def render_article_card_html(item: dict[str, Any]) -> str:
     )
 
 
-# --- ETF / ETP pulse (RSS: digital-asset context + ETF/ETP in title; sources: ``ETP_NEWS_FEEDS`` = ``DEFAULT_FEEDS``) ---
+# --- ETF / ETP market lane (``ETP_NEWS_FEEDS`` = ``DEFAULT_FEEDS``) — fresh, loose heuristics; bump ``_filter_rev`` when this changes.
 
-_CRYPTO_ETF = re.compile(
-    r"(?is)\b(?:"
-    r"crypto(?:currency|currencies)?|bitcoin|\bbtc\b|ethereum|\beth\b|digital\s+assets?|"
-    r"blockchain|defi|altcoin|stablecoin|solana|xrp|dogecoin|pepe|meme\s+coin|"
-    r"spot\s+(?:bitcoin|ether|ethereum)|web3|\bcbdc\b|altcoins?|tokeni[sz]e|"
-    r"grayscale|gbtc|ibit|fbtc|etha|bitwise|valkyrie|vaneck|21shares|wisdomtree|invesco|"
-    r"hashdex|galaxy|franklin\s+templeton"
-    r")\b",
-)
+# Shown in the U.S. ETPs "Market pulse" box (full list still uses :func:`load_all_etf_etp_news_cached`).
+ETP_PULSE_PREVIEW_COUNT = 4
 
-_RE_ETF_TOKENS = re.compile(
-    r"(?is)(?<![a-z0-9])(?:etf|etfs|etp|etps)(?![a-z0-9])",
-)
-_RE_EXCHANGE_TRADED = re.compile(
-    r"(?is)exchange\s*[-]?\s*traded\s+(?:fund|funds|product|products)\b",
+_RE_ETF_MARKET_LANE = re.compile(
+    r"""(?is)
+    # A) Fund / wrapper / listing language, then a digital-asset signal within a window
+    (?:\b(?:etf|etps?|etns?|etv|exchange[-\s]traded(?:\s+(?:funds?|products?|notes?|vehicles?))?|spot\s*etf|spot|listing|AUM|inflow|ticker|basket|wrapper|shares?)\b
+        [\s\S]{0,1000}?
+        \b(?:crypto|cryptocurren\w*|bitcoin|btc(?!ore)|\beth\b(?!s)|ether(?!eum\W*classic|net)|defi\w*?|blockchain|web3|xrp\w*|
+        sol(?!d|f)|doge(?!r)|on[-\s]chain|digital\W*assets?|gbtc|ibit|fbtc|etha|qbtc|bito|eeth|stake[sd]?\W*et[fh]|
+        stablecoin|altcoin|token\w*|layer|meme\W*coin|cbdc|grayscale|bitwise|vaneck|wisdomtree|ark|21\W*shares|hashdex|galaxy|invesco|franklin)
+    # B) Digital-asset or crypto-ETP issuer, then fund language within a window
+    |(?:\b(?:crypto|cryptocurren\w*|bitcoin|btc(?!ore)|\beth\b(?!s)|defi\w*?|blockchain|web3|xrp\w*|sol(?!d)|gbtc|ibit|fbtc|spot\W*btc|spot\W*eth(?!s)|
+        on[-\s]chain|digital\W*assets?|grayscale|bitwise|vaneck|wisdomtree|ark|21\W*shares|hashdex|galaxy|stablecoin|meme|defi\w*?\b|layer)
+        [\s\S]{0,1000}?
+        \b(?:etf|etps?|etns?|etv|exchange[-\s]traded|funds?|AUM|inflow|outflow|listing|ticker|basket|spot\W*etf|spot\W*ether|spot\W*bitcoin|holdings))
+    # C) Tight: known product tickers / spot pairings
+    |(?:\b(?:gbtc|ibit|fbtc|etha|qbtc|bito|eeth|gder|feth)\b|spot\W+btc|spot\W+eth|spot\W+ether|spot\W+bitcoin|spot\W+ethereum|spot\W+xrp|spot\W+sol|spot\W+crypto|spot\W+defi)
+    # D) Phrase: "X ETF" with digital asset X
+    |(?:\b(?:bitcoin|btc|eth|ether|xrp|sol|defi\w*?|blockchain\w*?|meme\w*?|stablecoin\w*?|on[-\s]chain\w*?|digital\w*?|crypto\w*?)\W*[-–—,]?\W*et[fh]s?)\b
+    |(?:\bet[fh]p?s?\W*[-–—,]?\W*(?:for|in|on|exposure|tracking|listing|tender)\W+[\s\S]{0,80}?(?:bitcoin|btc|eth|xrp|sol|defi\w*?|blockchain\w*?|crypto\w*?|digital\w*?))
+    )""",
+    re.VERBOSE,
 )
 
 
@@ -934,57 +942,33 @@ def _normalize_headline_for_etp(raw: str) -> str:
     return t
 
 
-def title_mentions_etf_or_etp_vehicle(text: str) -> bool:
-    t = _normalize_headline_for_etp(text).lower()
-    if not t:
+def _etf_market_feed_text(a: dict[str, Any]) -> str:
+    return _normalize_headline_for_etp(f"{a.get('title') or ''} {a.get('summary') or ''}").lower()
+
+
+def is_etf_market_feed_item(a: dict[str, Any]) -> bool:
+    """
+    Heuristic: include if title + summary looks like **exchange-traded / fund-wrapper** content in the
+    **digital-asset** space. Purposely loose; sources are already crypto / digital-asset RSS.
+    """
+    t = _etf_market_feed_text(a)
+    if not t or len(t) < 4:
         return False
-    if _RE_ETF_TOKENS.search(t):
-        return True
-    if _RE_EXCHANGE_TRADED.search(t):
-        return True
-    return False
+    return _RE_ETF_MARKET_LANE.search(t) is not None
 
 
-def article_mentions_etf_or_etp_vehicle(a: dict[str, Any]) -> bool:
-    """ETF/ETP product mention in the RSS **title** or the **opening of the summary** (many items put ETF in the deck only)."""
-    title = (a.get("title") or "").strip()
-    if title_mentions_etf_or_etp_vehicle(title):
-        return True
-    raw = a.get("summary") or ""
-    if len(raw) > 4000:
-        raw = raw[:4000]
-    return title_mentions_etf_or_etp_vehicle(raw)
-
-
-def _title_and_blob_etp(a: dict[str, Any]) -> tuple[str, str]:
-    title = (a.get("title") or "").strip()
-    blob = f"{title} {a.get('summary') or ''}".strip()
-    return title, blob
-
-
-def is_crypto_etf_or_etp_article(a: dict[str, Any]) -> bool:
-    title, blob = _title_and_blob_etp(a)
-    if not blob.strip():
-        return False
-    if not article_mentions_etf_or_etp_vehicle(a):
-        return False
-    if not _CRYPTO_ETF.search(blob):
-        return False
-    return True
-
-
-def pick_crypto_etf_headlines(
+def pick_etf_market_feed(
     articles: list[dict[str, Any]],
     *,
-    limit: Optional[int] = 8,
-    scan_cap: Optional[int] = 200,
+    limit: Optional[int] = None,
+    scan_cap: Optional[int] = None,
 ) -> list[dict[str, Any]]:
-    """Select ETF/ETP + crypto-context headlines. ``limit=None`` and ``scan_cap=None`` return all matches (within ``articles``)."""
+    """``limit=None`` and ``scan_cap=None`` = all items in ``articles`` (full scan)."""
     n = len(articles)
     take = n if scan_cap is None else min(n, max(0, scan_cap))
     out: list[dict[str, Any]] = []
     for a in articles[:take]:
-        if is_crypto_etf_or_etp_article(a):
+        if is_etf_market_feed_item(a):
             out.append(a)
             if limit is not None and len(out) >= limit:
                 break
@@ -993,9 +977,9 @@ def pick_crypto_etf_headlines(
 
 @st.cache_data(ttl=1800, show_spinner=False)
 def load_all_etf_etp_news_cached(
-    _filter_rev: int = 8,
+    _filter_rev: int = 9,
 ) -> tuple[list[dict[str, Any]], list[str]]:
-    """ETP RSS feeds (same pool as ``DEFAULT_FEEDS``), deduped, filtered to digital-asset context + ETF/ETP in title or lead summary. Bump ``_filter_rev`` when rules or feed list change."""
+    """ETP lane: same RSS as ``DEFAULT_FEEDS``, deduped, then :func:`is_etf_market_feed_item` (loose heuristics)."""
     _ = _filter_rev
     combined, errors = load_all_feeds(ETP_NEWS_FEEDS)
     combined = dedupe_articles(combined, max_items=None)
@@ -1003,14 +987,14 @@ def load_all_etf_etp_news_cached(
         key=lambda x: x["published"] or datetime.min.replace(tzinfo=timezone.utc),
         reverse=True,
     )
-    out = pick_crypto_etf_headlines(combined, limit=None, scan_cap=None)
+    out = pick_etf_market_feed(combined, limit=None, scan_cap=None)
     return out, errors
 
 
-def load_etp_market_news_cached(_filter_rev: int = 8) -> list[dict[str, Any]]:
-    """First 8 headlines for the ETP full-page pulse and home-adjacent widgets (shares cache with :func:`load_all_etf_etp_news_cached`)."""
+def load_etp_market_news_cached(_filter_rev: int = 9) -> list[dict[str, Any]]:
+    """First :data:`ETP_PULSE_PREVIEW_COUNT` items for the U.S. ETPs Market pulse (shared cache with :func:`load_all_etf_etp_news_cached`)."""
     articles, _ = load_all_etf_etp_news_cached(_filter_rev=_filter_rev)
-    return articles[:8]
+    return articles[:ETP_PULSE_PREVIEW_COUNT]
 
 
 def build_etp_market_news_box_html(articles: list[dict[str, Any]]) -> str:
@@ -1034,10 +1018,9 @@ def build_etp_market_news_box_html(articles: list[dict[str, Any]]) -> str:
         out.append("</ol>")
     out.append(
         '<p class="jd-hub-news-footnote">'
-        "From major RSS when the <strong>title</strong> or <strong>article summary (opening text)</strong> includes "
-        "<strong>ETF</strong>, <strong>ETP</strong>, or an <strong>exchange-traded</strong> fund/product phrase, and the "
-        "item has digital-asset context. RSS feeds only expose each outlet’s <strong>recent</strong> items, so you may see "
-        "gaps in dates when older stories roll off the live feeds (not a full archive).</p>"
+        "Loose keyword match on <strong>exchange-traded / fund</strong> language and <strong>digital-asset</strong> context in the "
+        "title and summary (see All ETF news for the same pool). RSS only includes each site’s <strong>recent</strong> posts."
+        "</p>"
     )
     out.append("</section></div>")
     return "".join(out)

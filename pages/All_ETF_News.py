@@ -47,10 +47,9 @@ def main() -> None:
     )
     _feed_name_list = ", ".join(n for n, _ in ETP_NEWS_FEEDS)
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed">Headlines from the <strong>same RSS sources as All articles</strong>, filtered when the <strong>title</strong> '
-        "or <strong>opening summary</strong> mentions an ETF, ETP, or exchange-traded product, with digital-asset or crypto-ETP context. "
-        "Search and paginate. Listings reflect each site’s <strong>current</strong> RSS (typically the last many dozen posts per feed) — we don’t have a long-term archive, "
-        "so older dates disappear as outlets roll the feed. "
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed">Headlines from the <strong>same RSS pool as All articles</strong>, with a <strong>loose</strong> pass that keeps items '
+        "where title or summary plausibly ties <strong>exchange-traded / fund / listing</strong> language to <strong>digital-asset</strong> context. "
+        "Search and paginate. Each feed is only the site’s <strong>recent</strong> items — not a full archive, so old dates roll off. "
         f"Sources: {escape(_feed_name_list)}.</p>",
         unsafe_allow_html=True,
     )
