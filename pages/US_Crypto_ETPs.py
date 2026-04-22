@@ -45,7 +45,7 @@ from news_feeds import (
 )
 from price_ticker import show_price_ticker
 
-# Tighter chart when KPI + AUM sit in a half-width column next to the ETF pulse panel.
+# Chart sits in a half-width column next to the ETF pulse panel; KPI row is full width above.
 ETP_TOP_SPLIT_AUM_CHART_HEIGHT = 420
 
 
@@ -97,16 +97,17 @@ def main() -> None:
     with st.spinner("Loading crypto ETF / ETP headlines (RSS)…"):
         etp_pulse = load_etp_market_news_cached()
 
-    col_kpi, col_pulse = st.columns([1, 1], gap="medium")
-    with col_kpi:
-        st.markdown(
-            hub_subsection_heading_html(
-                "U.S. Digital Asset ETPs",
-                element_id="jd-etp-summary",
-            ),
-            unsafe_allow_html=True,
-        )
-        render_etp_summary_kpi_row(rows, include_styles=False)
+    st.markdown(
+        hub_subsection_heading_html(
+            "U.S. Digital Asset ETPs",
+            element_id="jd-etp-summary",
+        ),
+        unsafe_allow_html=True,
+    )
+    render_etp_summary_kpi_row(rows, include_styles=False)
+
+    col_aum, col_pulse = st.columns([1, 1], gap="medium")
+    with col_aum:
         st.markdown(
             hub_subsection_heading_html(
                 "Aggregate AUM trend (12 months)",
