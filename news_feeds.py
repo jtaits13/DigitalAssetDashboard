@@ -12,8 +12,6 @@ from typing import Any, Optional
 import feedparser
 import streamlit as st
 
-from home_layout import hub_subsection_heading_html
-
 # Match `h2.home-main-heading` on the home page (Latest Digital Asset News).
 HOME_MAIN_HEADING_CSS = """
 <style>
@@ -835,72 +833,9 @@ def article_styles_markdown() -> str:
         .stElementContainer:has([data-testid="stMarkdownContainer"]) {
         margin-bottom: 0 !important;
     }
-    /* U.S. crypto ETP full page: market pulse (subsection rhythm + list, not home hub news card) */
-    .jd-etp-pulse-rail {
-        width: 100%;
-        min-width: 0;
-    }
-    .jd-etp-pulse-block .jd-hub-subsection-head {
-        margin-top: 0;
-    }
-    .jd-etp-pulse-list {
-        list-style: none;
-        margin: 0.2rem 0 0 0;
-        padding: 0;
-    }
-    .jd-etp-pulse-item {
-        margin: 0;
-        padding: 0.45rem 0 0.5rem 0;
-        border-bottom: 1px solid #dce7f0;
-    }
-    .jd-etp-pulse-item:first-child {
-        padding-top: 0.15rem;
-    }
-    .jd-etp-pulse-item:last-child {
-        border-bottom: none;
-    }
-    .jd-etp-pulse-item:hover {
-        background: #F3F7FB;
-    }
-    .jd-etp-pulse-meta {
-        font-size: 0.78rem;
-        font-weight: 500;
-        color: #3E6A7A;
-        line-height: 1.4;
-        margin: 0 0 0.2rem 0;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    .jd-etp-pulse-title {
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        margin: 0;
-    }
-    .jd-etp-pulse-title a {
-        font-size: 0.92rem;
-        font-weight: 600;
-        line-height: 1.35;
-        color: #021D41;
-        text-decoration: none;
-    }
-    .jd-etp-pulse-title a:hover {
-        color: #25809C;
-    }
-    .jd-etp-pulse-empty {
-        font-size: 0.8125rem;
-        line-height: 1.5;
-        color: #3E6A7A;
-        margin: 0.3rem 0 0 0;
-    }
-    .jd-etp-pulse-block .jd-subpage-toolbar-note {
-        margin: 0.5rem 0 0 0;
-        max-width: 100%;
-    }
-    .jd-etp-pulse-block.jd-etp-pulse--empty .jd-subpage-toolbar-note {
-        margin-top: 0.45rem;
+    /* U.S. crypto ETP full page: pulse rail (half width) — avoid 17.5rem floor in a narrow column */
+    .jd-etp-pulse-rail .jd-hub-news-panel {
+        min-height: 0;
     }
     </style>
     """
@@ -1051,47 +986,27 @@ def load_etp_market_news_cached(_filter_rev: int = 5) -> list[dict[str, Any]]:
     return pick_crypto_etf_headlines(combined, limit=8)
 
 
-def _etp_pulse_item_html(item: dict[str, Any]) -> str:
-    """One RSS row for the ETP full page (subsection-adjacent list, not home hub news lane)."""
-    pub = item.get("published")
-    if isinstance(pub, datetime):
-        pub_s = pub.astimezone(timezone.utc).strftime("%b %d · %H:%M UTC")
-    else:
-        pub_s = "—"
-    title_esc = escape(item.get("title") or "Untitled")
-    link = item.get("link") or "#"
-    href = escape(str(link), quote=True)
-    src = (item.get("source") or "").strip()
-    meta_line = f"{escape(src)} · {escape(pub_s)}" if src else escape(pub_s)
-    return (
-        f'<li class="jd-etp-pulse-item">'
-        f'<div class="jd-etp-pulse-meta">{meta_line}</div>'
-        f'<p class="jd-etp-pulse-title">'
-        f'<a href="{href}" target="_blank" rel="noopener noreferrer">{title_esc}</a></p>'
-        f"</li>"
-    )
-
-
 def build_etp_market_news_box_html(articles: list[dict[str, Any]]) -> str:
-    """ETF/ETP RSS pulse: same subsection + note styling as the rest of the U.S. ETP full page."""
-    block_cls = "jd-etp-pulse-block jd-etp-pulse--empty" if not articles else "jd-etp-pulse-block"
+    """ETF/ETP RSS pulse: same hub panel + numbered rows as home hub news (``jd-hub-news-*``)."""
+    hid = "jd-etp-pulse-h2"
+    panel_cls = "jd-hub-news-panel jd-hub-news-panel--empty" if not articles else "jd-hub-news-panel"
     out: list[str] = [
         '<div class="jd-etp-pulse-rail">',
-        f'<section class="{block_cls}" aria-label="ETF and ETP market pulse">',
-        hub_subsection_heading_html("ETF & ETP market pulse", element_id="jd-etp-pulse"),
+        f'<section class="{panel_cls}" aria-labelledby="{hid}">',
+        hub_news_panel_header_html(eyebrow="ETF & ETP", title="Market pulse", heading_id=hid),
     ]
     if not articles:
         out.append(
-            '<p class="jd-etp-pulse-empty">No matching headlines right now. Try '
+            '<p class="jd-hub-news-empty">No matching headlines right now. Try '
             "<strong>Refresh all data</strong> on the home page to reload RSS.</p>"
         )
     else:
-        out.append('<ul class="jd-etp-pulse-list" role="list">')
-        for item in articles:
-            out.append(_etp_pulse_item_html(item))
-        out.append("</ul>")
+        out.append('<ol class="jd-hub-news-list" role="list">')
+        for i, item in enumerate(articles, start=1):
+            out.append(render_hub_news_lane_item_html(item, i, show_country=False))
+        out.append("</ol>")
     out.append(
-        '<p class="jd-subpage-toolbar-note">'
+        '<p class="jd-hub-news-footnote">'
         "From major RSS where the <strong>headline</strong> includes <strong>ETF</strong>, <strong>ETP</strong>, or "
         "an <strong>exchange-traded</strong> fund/product phrase; crypto / digital-asset context; "
         "summary-only matches excluded.</p>"
