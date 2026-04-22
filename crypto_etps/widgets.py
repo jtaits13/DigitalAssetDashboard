@@ -28,7 +28,7 @@ from crypto_etps.dataframe_table import (
     style_etp_dataframe,
 )
 from home_layout import KPI_WINDOW_NOTE_CSS, STREAMLIT_TABLE_UNIFY_CSS
-from news_feeds import load_etp_market_news_cached
+from news_feeds import load_all_etf_etp_news_cached
 
 WIDGET_CSS = """
 <style>
@@ -128,7 +128,7 @@ def clear_crypto_etp_cache() -> None:
     clear_sec_prospectus_caches()
     load_aggregate_aum_history_cached.clear()
     etp_symbol_price_change_cached.clear()
-    load_etp_market_news_cached.clear()
+    load_all_etf_etp_news_cached.clear()
 
 
 def _default_ua() -> str:

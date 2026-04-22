@@ -12,6 +12,8 @@ from typing import Any, Optional
 import feedparser
 import streamlit as st
 
+from home_layout import hub_subsection_heading_html
+
 # Match `h2.home-main-heading` on the home page (Latest Digital Asset News).
 HOME_MAIN_HEADING_CSS = """
 <style>
@@ -266,8 +268,8 @@ def render_subpage_sidebar(*, key_prefix: str, current: str) -> None:
 
     ``key_prefix`` must be unique per page module (e.g. ``all_articles``) so widget keys stay isolated.
 
-    ``current`` marks the active destination: ``articles``, ``regulatory``, ``etp``, ``rwa_league``,
-    ``rwa_stablecoins``, ``rwa_treasuries``, ``rwa_tokenized_stocks``.
+    ``current`` marks the active destination: ``articles``, ``regulatory``, ``etp``, ``etf_news``,
+    ``rwa_league``, ``rwa_stablecoins``, ``rwa_treasuries``, ``rwa_tokenized_stocks``.
     """
     with st.sidebar:
         st.markdown("### JPM Digital")
@@ -286,6 +288,7 @@ def render_subpage_sidebar(*, key_prefix: str, current: str) -> None:
             ("All articles", "pages/All_Articles.py", "articles"),
             ("Regulatory headlines", "pages/All_Regulatory.py", "regulatory"),
             ("U.S. Digital Asset ETPs", "pages/US_Crypto_ETPs.py", "etp"),
+            ("ETF & ETP market news", "pages/All_ETF_News.py", "etf_news"),
             ("RWA league table", "pages/RWA_League.py", "rwa_league"),
             ("RWA Stablecoins", "pages/RWA_Stablecoins.py", "rwa_stablecoins"),
             ("RWA US Treasuries", "pages/RWA_US_Treasuries.py", "rwa_treasuries"),
@@ -482,16 +485,6 @@ def hub_news_panel_header_html(*, eyebrow: str, title: str, heading_id: Optional
     )
 
 
-def hub_etp_pulse_panel_header_html(*, heading_id: str) -> str:
-    """U.S. ETP full page: ETF and ETP plus Market Pulse on one line, same panel title band as the home hub."""
-    line = f'{escape("ETF & ETP")} · {escape("Market Pulse")}'
-    return (
-        '<header class="jd-hub-news-panel-header jd-hub-news-panel-header--etp-pulse">'
-        f'<p class="jd-hub-news-panel-title" role="heading" aria-level="2" id="{escape(heading_id)}">'
-        f"{line}</p></header>"
-    )
-
-
 def render_hub_news_lane_item_html(
     item: dict[str, Any],
     index: int,
@@ -553,6 +546,10 @@ def article_styles_markdown() -> str:
         margin: 0 0 0.45rem 0;
         padding: 0 0 0.45rem 0;
         border-bottom: 1px solid #C7D8E8;
+    }
+    /* ETP full page: pulse title uses same subsection head as AUM (``h2.home-main-heading``); no extra top in card */
+    .jd-hub-news-panel > .jd-hub-subsection-head:first-child {
+        margin-top: 0;
     }
     .jd-hub-news-eyebrow {
         display: block;
@@ -843,9 +840,72 @@ def article_styles_markdown() -> str:
         .stElementContainer:has([data-testid="stMarkdownContainer"]) {
         margin-bottom: 0 !important;
     }
-    /* U.S. crypto ETP full page: pulse rail (half width) — avoid 17.5rem floor in a narrow column */
-    .jd-etp-pulse-rail .jd-hub-news-panel {
-        min-height: 0;
+    /* U.S. crypto ETP full page: market pulse (subsection rhythm + list, not home hub news card) */
+    .jd-etp-pulse-rail {
+        width: 100%;
+        min-width: 0;
+    }
+    .jd-etp-pulse-block .jd-hub-news-panel-header--etp-pulse {
+        margin-top: 0;
+    }
+    .jd-etp-pulse-list {
+        list-style: none;
+        margin: 0.2rem 0 0 0;
+        padding: 0;
+    }
+    .jd-etp-pulse-item {
+        margin: 0;
+        padding: 0.45rem 0 0.5rem 0;
+        border-bottom: 1px solid #dce7f0;
+    }
+    .jd-etp-pulse-item:first-child {
+        padding-top: 0.15rem;
+    }
+    .jd-etp-pulse-item:last-child {
+        border-bottom: none;
+    }
+    .jd-etp-pulse-item:hover {
+        background: #F3F7FB;
+    }
+    .jd-etp-pulse-meta {
+        font-size: 0.78rem;
+        font-weight: 500;
+        color: #3E6A7A;
+        line-height: 1.4;
+        margin: 0 0 0.2rem 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .jd-etp-pulse-title {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        margin: 0;
+    }
+    .jd-etp-pulse-title a {
+        font-size: 0.92rem;
+        font-weight: 600;
+        line-height: 1.35;
+        color: #021D41;
+        text-decoration: none;
+    }
+    .jd-etp-pulse-title a:hover {
+        color: #25809C;
+    }
+    .jd-etp-pulse-empty {
+        font-size: 0.8125rem;
+        line-height: 1.5;
+        color: #3E6A7A;
+        margin: 0.3rem 0 0 0;
+    }
+    .jd-etp-pulse-block .jd-subpage-toolbar-note {
+        margin: 0.5rem 0 0 0;
+        max-width: 100%;
+    }
+    .jd-etp-pulse-block.jd-etp-pulse--empty .jd-subpage-toolbar-note {
+        margin-top: 0.45rem;
     }
     </style>
     """
@@ -971,52 +1031,85 @@ def is_crypto_etf_or_etp_article(a: dict[str, Any]) -> bool:
 def pick_crypto_etf_headlines(
     articles: list[dict[str, Any]],
     *,
-    limit: int = 8,
-    scan_cap: int = 200,
+    limit: Optional[int] = 8,
+    scan_cap: Optional[int] = 200,
 ) -> list[dict[str, Any]]:
+    """Select ETF/ETP + crypto-context headlines. ``limit=None`` and ``scan_cap=None`` return all matches (within ``articles``)."""
+    n = len(articles)
+    take = n if scan_cap is None else min(n, max(0, scan_cap))
     out: list[dict[str, Any]] = []
-    for a in articles[:scan_cap]:
+    for a in articles[:take]:
         if is_crypto_etf_or_etp_article(a):
             out.append(a)
-            if len(out) >= limit:
+            if limit is not None and len(out) >= limit:
                 break
     return out
 
 
 @st.cache_data(ttl=1800, show_spinner=False)
-def load_etp_market_news_cached(_filter_rev: int = 5) -> list[dict[str, Any]]:
-    """Bump ``_filter_rev`` default when headline-matching rules change (invalidates Streamlit cache)."""
+def load_all_etf_etp_news_cached(
+    _filter_rev: int = 6,
+) -> tuple[list[dict[str, Any]], list[str]]:
+    """ETP RSS feeds, deduped, filtered to crypto + ETF/ETP-in-title. Bump ``_filter_rev`` when matching rules change."""
     _ = _filter_rev
-    combined, _errors = load_all_feeds(ETP_NEWS_FEEDS)
+    combined, errors = load_all_feeds(ETP_NEWS_FEEDS)
     combined = dedupe_articles(combined, max_items=None)
     combined.sort(
         key=lambda x: x["published"] or datetime.min.replace(tzinfo=timezone.utc),
         reverse=True,
     )
-    return pick_crypto_etf_headlines(combined, limit=8)
+    out = pick_crypto_etf_headlines(combined, limit=None, scan_cap=None)
+    return out, errors
+
+
+def load_etp_market_news_cached(_filter_rev: int = 6) -> list[dict[str, Any]]:
+    """First 8 headlines for the ETP full-page pulse and home-adjacent widgets (shares cache with :func:`load_all_etf_etp_news_cached`)."""
+    articles, _ = load_all_etf_etp_news_cached(_filter_rev=_filter_rev)
+    return articles[:8]
+
+
+def _etp_pulse_item_html(item: dict[str, Any]) -> str:
+    """One RSS row for the ETP full page (subsection-adjacent list, not home hub news lane)."""
+    pub = item.get("published")
+    if isinstance(pub, datetime):
+        pub_s = pub.astimezone(timezone.utc).strftime("%b %d · %H:%M UTC")
+    else:
+        pub_s = "—"
+    title_esc = escape(item.get("title") or "Untitled")
+    link = item.get("link") or "#"
+    href = escape(str(link), quote=True)
+    src = (item.get("source") or "").strip()
+    meta_line = f"{escape(src)} · {escape(pub_s)}" if src else escape(pub_s)
+    return (
+        f'<li class="jd-etp-pulse-item">'
+        f'<div class="jd-etp-pulse-meta">{meta_line}</div>'
+        f'<p class="jd-etp-pulse-title">'
+        f'<a href="{href}" target="_blank" rel="noopener noreferrer">{title_esc}</a></p>'
+        f"</li>"
+    )
 
 
 def build_etp_market_news_box_html(articles: list[dict[str, Any]]) -> str:
-    """ETF/ETP RSS pulse: same hub panel + numbered rows as home hub news (``jd-hub-news-*``)."""
+    """ETF/ETP RSS pulse: one-line **ETF & ETP · Market Pulse** band title (same as home hub main title) + list + footnote."""
     hid = "jd-etp-pulse-h2"
-    panel_cls = "jd-hub-news-panel jd-hub-news-panel--empty" if not articles else "jd-hub-news-panel"
+    block_cls = "jd-etp-pulse-block jd-etp-pulse--empty" if not articles else "jd-etp-pulse-block"
     out: list[str] = [
         '<div class="jd-etp-pulse-rail">',
-        f'<section class="{panel_cls}" aria-labelledby="{hid}">',
-        hub_etp_pulse_panel_header_html(heading_id=hid),
+        f'<section class="{block_cls}" aria-labelledby="{escape(hid)}">',
+        hub_subsection_heading_html("ETF & ETP · Market Pulse", element_id=hid),
     ]
     if not articles:
         out.append(
-            '<p class="jd-hub-news-empty">No matching headlines right now. Try '
+            '<p class="jd-etp-pulse-empty">No matching headlines right now. Try '
             "<strong>Refresh all data</strong> on the home page to reload RSS.</p>"
         )
     else:
-        out.append('<ol class="jd-hub-news-list" role="list">')
-        for i, item in enumerate(articles, start=1):
-            out.append(render_hub_news_lane_item_html(item, i, show_country=False))
-        out.append("</ol>")
+        out.append('<ul class="jd-etp-pulse-list" role="list">')
+        for item in articles:
+            out.append(_etp_pulse_item_html(item))
+        out.append("</ul>")
     out.append(
-        '<p class="jd-hub-news-footnote">'
+        '<p class="jd-subpage-toolbar-note">'
         "From major RSS where the <strong>headline</strong> includes <strong>ETF</strong>, <strong>ETP</strong>, or "
         "an <strong>exchange-traded</strong> fund/product phrase; crypto / digital-asset context; "
         "summary-only matches excluded.</p>"

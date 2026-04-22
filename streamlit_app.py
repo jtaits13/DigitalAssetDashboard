@@ -258,7 +258,7 @@ def main() -> None:
             )
             if _needs_reg_btn_empty:
                 if st.button(
-                    "Explore all headlines →",
+                    "Explore all articles →",
                     key="see_more_regulatory_bottom_empty_feed",
                     use_container_width=True,
                     type="primary",
@@ -339,7 +339,7 @@ def main() -> None:
         )
         if needs_reg_btn:
             if st.button(
-                "Explore all headlines →",
+                "Explore all articles →",
                 key="see_more_regulatory_bottom",
                 use_container_width=True,
                 type="primary",
