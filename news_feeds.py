@@ -934,8 +934,8 @@ def _normalize_headline_for_etp(raw: str) -> str:
     return t
 
 
-def title_mentions_etf_or_etp_vehicle(title: str) -> bool:
-    t = _normalize_headline_for_etp(title).lower()
+def title_mentions_etf_or_etp_vehicle(text: str) -> bool:
+    t = _normalize_headline_for_etp(text).lower()
     if not t:
         return False
     if _RE_ETF_TOKENS.search(t):
@@ -943,6 +943,17 @@ def title_mentions_etf_or_etp_vehicle(title: str) -> bool:
     if _RE_EXCHANGE_TRADED.search(t):
         return True
     return False
+
+
+def article_mentions_etf_or_etp_vehicle(a: dict[str, Any]) -> bool:
+    """ETF/ETP product mention in the RSS **title** or the **opening of the summary** (many items put ETF in the deck only)."""
+    title = (a.get("title") or "").strip()
+    if title_mentions_etf_or_etp_vehicle(title):
+        return True
+    raw = a.get("summary") or ""
+    if len(raw) > 4000:
+        raw = raw[:4000]
+    return title_mentions_etf_or_etp_vehicle(raw)
 
 
 def _title_and_blob_etp(a: dict[str, Any]) -> tuple[str, str]:
@@ -953,9 +964,9 @@ def _title_and_blob_etp(a: dict[str, Any]) -> tuple[str, str]:
 
 def is_crypto_etf_or_etp_article(a: dict[str, Any]) -> bool:
     title, blob = _title_and_blob_etp(a)
-    if not title:
+    if not blob.strip():
         return False
-    if not title_mentions_etf_or_etp_vehicle(title):
+    if not article_mentions_etf_or_etp_vehicle(a):
         return False
     if not _CRYPTO_ETF.search(blob):
         return False
@@ -982,9 +993,9 @@ def pick_crypto_etf_headlines(
 
 @st.cache_data(ttl=1800, show_spinner=False)
 def load_all_etf_etp_news_cached(
-    _filter_rev: int = 7,
+    _filter_rev: int = 8,
 ) -> tuple[list[dict[str, Any]], list[str]]:
-    """ETP RSS feeds (same pool as ``DEFAULT_FEEDS``), deduped, filtered to digital-asset context + ETF/ETP-in-title. Bump ``_filter_rev`` when rules or feed list change."""
+    """ETP RSS feeds (same pool as ``DEFAULT_FEEDS``), deduped, filtered to digital-asset context + ETF/ETP in title or lead summary. Bump ``_filter_rev`` when rules or feed list change."""
     _ = _filter_rev
     combined, errors = load_all_feeds(ETP_NEWS_FEEDS)
     combined = dedupe_articles(combined, max_items=None)
@@ -996,7 +1007,7 @@ def load_all_etf_etp_news_cached(
     return out, errors
 
 
-def load_etp_market_news_cached(_filter_rev: int = 7) -> list[dict[str, Any]]:
+def load_etp_market_news_cached(_filter_rev: int = 8) -> list[dict[str, Any]]:
     """First 8 headlines for the ETP full-page pulse and home-adjacent widgets (shares cache with :func:`load_all_etf_etp_news_cached`)."""
     articles, _ = load_all_etf_etp_news_cached(_filter_rev=_filter_rev)
     return articles[:8]
@@ -1023,9 +1034,10 @@ def build_etp_market_news_box_html(articles: list[dict[str, Any]]) -> str:
         out.append("</ol>")
     out.append(
         '<p class="jd-hub-news-footnote">'
-        "From major RSS where the <strong>headline</strong> includes <strong>ETF</strong>, <strong>ETP</strong>, or "
-        "an <strong>exchange-traded</strong> fund/product phrase; crypto / digital-asset context; "
-        "summary-only matches excluded.</p>"
+        "From major RSS when the <strong>title</strong> or <strong>article summary (opening text)</strong> includes "
+        "<strong>ETF</strong>, <strong>ETP</strong>, or an <strong>exchange-traded</strong> fund/product phrase, and the "
+        "item has digital-asset context. RSS feeds only expose each outlet’s <strong>recent</strong> items, so you may see "
+        "gaps in dates when older stories roll off the live feeds (not a full archive).</p>"
     )
     out.append("</section></div>")
     return "".join(out)

@@ -34,8 +34,8 @@ def main() -> None:
     )
 
     render_subpage_top_bar()
-    if st.button("← Home", key="top_home_etf_news"):
-        st.switch_page("streamlit_app.py")
+    if st.button("← Back", key="top_back_etf_news"):
+        st.switch_page("pages/US_Crypto_ETPs.py")
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
     st.markdown(app_shared_layout_css(), unsafe_allow_html=True)
     show_price_ticker()
@@ -47,8 +47,10 @@ def main() -> None:
     )
     _feed_name_list = ", ".join(n for n, _ in ETP_NEWS_FEEDS)
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed">Headlines from the <strong>same RSS sources as All articles</strong>, filtered to stories where the '
-        "<strong>title</strong> mentions an ETF, ETP, or exchange-traded product and the text has digital-asset or crypto-ETP context — search and paginate. "
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed">Headlines from the <strong>same RSS sources as All articles</strong>, filtered when the <strong>title</strong> '
+        "or <strong>opening summary</strong> mentions an ETF, ETP, or exchange-traded product, with digital-asset or crypto-ETP context. "
+        "Search and paginate. Listings reflect each site’s <strong>current</strong> RSS (typically the last many dozen posts per feed) — we don’t have a long-term archive, "
+        "so older dates disappear as outlets roll the feed. "
         f"Sources: {escape(_feed_name_list)}.</p>",
         unsafe_allow_html=True,
     )
