@@ -1,4 +1,4 @@
-"""RWA.xyz **Networks** embed: hub + full-page widgets (``/networks`` ``__NEXT_DATA__``)."""
+"""RWA.xyz **Networks** and **Platforms** embeds: hub + full-page widgets (``__NEXT_DATA__`` from ``/networks`` and ``/platforms``)."""
 
 from __future__ import annotations
 
@@ -14,16 +14,19 @@ from home_layout import (
 )
 from rwa_league.client import (
     APP_NETWORKS,
+    APP_PLATFORMS,
     APP_STOCKS,
     APP_TREASURIES,
     RwaGlobalKpi,
     RwaNetworksTabRow,
+    RwaPlatformsTabRow,
     RwaTokenizedStockNetworkRow,
     RwaStablecoinPlatformRow,
     RwaTokenizedStockPlatformRow,
     RwaTreasuryDistributedNetworkRow,
     RwaTreasuryPlatformRow,
     fetch_rwa_networks_page_data,
+    fetch_rwa_platforms_page_data,
     fetch_rwa_stablecoins_data,
     fetch_rwa_tokenized_stocks_data,
     fetch_rwa_treasuries_data,
@@ -31,12 +34,14 @@ from rwa_league.client import (
 from rwa_league.dataframe_table import (
     build_rwa_dataframe,
     build_rwa_networks_page_dataframe,
+    build_rwa_platforms_page_dataframe,
     build_tokenized_stock_network_dataframe,
     build_stablecoin_platform_dataframe,
     build_tokenized_stock_platform_dataframe,
     build_us_treasury_network_dataframe,
     build_us_treasury_platform_dataframe,
     filter_rows_by_network,
+    filter_platforms_tab_rows,
     filter_tokenized_stock_network_rows,
     filter_stablecoin_platform_rows,
     filter_tokenized_stock_platform_rows,
@@ -44,6 +49,7 @@ from rwa_league.dataframe_table import (
     filter_treasury_platform_rows,
     style_rwa_dataframe,
     style_rwa_networks_page_dataframe,
+    style_rwa_platforms_page_dataframe,
     style_tokenized_stock_network_dataframe,
     style_stablecoin_platform_dataframe,
     style_tokenized_stock_platform_dataframe,
@@ -67,6 +73,8 @@ WIDGET_CSS = """
 }
 #jd-rwa-participants,
 #jd-rwa-participants-networks,
+#jd-rwa-participants-platforms,
+#jd-rwa-platforms-overview,
 #jd-rwa-market,
 #jd-rwa-stablecoins,
 #jd-rwa-treasuries,
@@ -141,6 +149,14 @@ RWA_DATA_SOURCE_CAPTION = (
     "**RWA count** and **RWA total (excl. stablecoins)** use non-stablecoin rows in `asset_class_stats` (same as the on-site table). "
     "**RWA value (distributed)** = `transferability.transferable`; **(represented)** = `non_transferable`; "
     "**% distributed** = distributed ÷ that total. Top-line **%** are **30D**; **7D Δ** uses `transferable_30d`."
+)
+
+RWA_PLATFORMS_DATA_SOURCE_CAPTION = (
+    "Source: [RWA.xyz Platforms](https://app.rwa.xyz/platforms) embedded **__NEXT_DATA__** "
+    "(`listQueryResponse` issuer rows + `asset_class_stats`; no row-level `transferability`). "
+    "**RWA value (distributed)** = Σ non-stable `bridged_token_value`; **RWA total (excl. stablecoins)** = Σ non-stable "
+    "`circulating_asset_value`; **(represented)** = max(0, total − distributed). Top-line **%** are **30D**; "
+    "**7D Δ** uses top-level `bridged_token_value` `val` vs `val_30d`."
 )
 
 STABLECOIN_RWA_CAPTION = (
@@ -307,8 +323,11 @@ STABLECOINS_RWA_LINK_LABEL = "See Stablecoins on RWA.xyz"
 RWA_GLOBAL_MARKET_OVERVIEW_HEADING = "RWA Global Market Overview"
 # Full-page Participants — Networks: hub-style heading above the KPI row (like “Stablecoin overview”).
 RWA_NETWORKS_SUBPAGE_OVERVIEW_HEADING = "Networks overview"
+RWA_PLATFORMS_SUBPAGE_OVERVIEW_HEADING = "Platforms overview"
 GLOBAL_MARKET_RWA_LINK_LABEL = "See RWA Networks on RWA.xyz"
 GLOBAL_MARKET_RWA_URL = APP_NETWORKS
+PLATFORMS_RWA_LINK_LABEL = "See RWA Platforms on RWA.xyz"
+PLATFORMS_RWA_URL = APP_PLATFORMS
 
 
 def rwa_table_height(num_rows: int, *, max_h: int = 520) -> int:
@@ -532,6 +551,93 @@ def _show_rwa_networks_page_dataframe(df, *, height: int) -> None:
                 format=None,
                 width=100,
                 help="Change in market share (percentage points) using current vs 30D-ago transferable totals.",
+            ),
+        },
+    )
+
+
+def _show_rwa_platforms_page_dataframe(df, *, height: int) -> None:
+    """RWA [Platforms](https://app.rwa.xyz/platforms) issuer table — :func:`build_rwa_platforms_page_dataframe`."""
+    st.dataframe(
+        style_rwa_platforms_page_dataframe(df),
+        use_container_width=True,
+        height=height,
+        hide_index=True,
+        column_order=[
+            "#",
+            "Platform",
+            "Link",
+            "RWA Count",
+            "RWA value (distributed)",
+            "RWA value (represented)",
+            "% distributed",
+            "RWA total (excl. stablecoins)",
+            "7D Δ value",
+            "Market Share",
+            "30D Δ share",
+        ],
+        column_config={
+            "#": st.column_config.NumberColumn(
+                _rank_column_label(by_metric="RWA value (distributed)"),
+                format="%.0f",
+                help="Rank by RWA value (distributed), largest first (Σ non-stable bridged value, USD).",
+            ),
+            "Platform": st.column_config.TextColumn(
+                f"Platform {_SORT}",
+                width="medium",
+            ),
+            "Link": st.column_config.LinkColumn(
+                f"RWA Page {_SORT}",
+                display_text=_LINK_ARROW,
+                validate=r"^https://",
+                width="small",
+                help="Open this issuer on RWA.xyz",
+            ),
+            "RWA Count": st.column_config.NumberColumn(
+                f"RWA count {_SORT}",
+                format="%.0f",
+                help="Non-stablecoin asset_count sum in asset_class_stats.",
+            ),
+            "RWA value (distributed)": st.column_config.NumberColumn(
+                f"RWA value (distributed) {_SORT}",
+                format=None,
+                width=150,
+                help="Σ non-stable bridged_token_value (issuer distributed bucket).",
+            ),
+            "RWA value (represented)": st.column_config.NumberColumn(
+                f"RWA value (represented) {_SORT}",
+                format=None,
+                width=150,
+                help="max(0, total excl. stables − distributed) for this issuer.",
+            ),
+            "% distributed": st.column_config.NumberColumn(
+                f"% distributed {_SORT}",
+                format=None,
+                width=110,
+                help="distributed ÷ RWA total (excl. stablecoins).",
+            ),
+            "RWA total (excl. stablecoins)": st.column_config.NumberColumn(
+                f"RWA total (excl. stables) {_SORT}",
+                format=None,
+                width=180,
+                help="Σ non-stable circulating_asset_value in asset_class_stats.",
+            ),
+            "7D Δ value": st.column_config.NumberColumn(
+                f"7D Δ value {_SORT}",
+                format=None,
+                width=100,
+                help="(bridged val − val_30d) / val_30d on issuer-level bridged_token_value_dollar.",
+            ),
+            "Market Share": st.column_config.NumberColumn(
+                f"Market Share {_SORT}",
+                format=None,
+                help="This issuer’s share of Σ distributed in this table.",
+            ),
+            "30D Δ share": st.column_config.NumberColumn(
+                f"30D Δ share {_SORT}",
+                format=None,
+                width=100,
+                help="Change in market share (percentage points) using distributed vs 30D-ago distributed cohort totals.",
             ),
         },
     )
@@ -813,6 +919,13 @@ def load_rwa_league_cached(*, _rwa_schema: int = 7) -> tuple[list[RwaNetworksTab
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
+def load_rwa_platforms_cached(*, _platforms_schema: int = 1) -> tuple[list[RwaPlatformsTabRow], list[RwaGlobalKpi], str | None]:
+    """Bump ``_platforms_schema`` when ``/platforms`` ``__NEXT_DATA__`` shape changes."""
+    _ = _platforms_schema
+    return fetch_rwa_platforms_page_data()
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
 def load_rwa_stablecoins_cached(
     *, _stable_schema: int = 1
 ) -> tuple[list[RwaStablecoinPlatformRow], list[RwaGlobalKpi], str | None]:
@@ -851,6 +964,7 @@ def load_rwa_tokenized_stocks_cached(
 
 def clear_rwa_league_cache() -> None:
     load_rwa_league_cached.clear()
+    load_rwa_platforms_cached.clear()
     load_rwa_stablecoins_cached.clear()
     load_rwa_treasuries_cached.clear()
     load_rwa_tokenized_stocks_cached.clear()
@@ -1451,6 +1565,45 @@ def _show_rwa_participants_networks_home_footer(
     )
 
 
+def _show_rwa_participants_platforms_home_footer(
+    rows: list[RwaPlatformsTabRow],
+    kpis: list[RwaGlobalKpi],
+    *,
+    preview_rows: int,
+) -> None:
+    """Hub tail under **Participants**: **Platforms** KPI row + table (same layout as Networks)."""
+    if not rows:
+        return
+    st.divider()
+    st.markdown(
+        '<div class="jd-hub-subsection-head" id="jd-rwa-participants-platforms">'
+        '<h2 class="home-widget-heading">Platforms</h2></div>',
+        unsafe_allow_html=True,
+    )
+    _render_rwa_global_overview(kpis, kpi_legend_name="Platforms")
+    st.caption(
+        "Preview of the **Platforms** (issuer) table from the [RWA.xyz Platforms](https://app.rwa.xyz/platforms) embed."
+    )
+    n = max(1, min(preview_rows, len(rows)))
+    working = list(rows)[:n]
+    df = build_rwa_platforms_page_dataframe(working)
+    _show_rwa_platforms_page_dataframe(df, height=rwa_table_height(len(df), max_h=900))
+
+    if st.button(
+        "Open full Participants — Platforms page",
+        key="see_full_rwa_participants_platforms_footer",
+        use_container_width=True,
+        type="primary",
+    ):
+        st.switch_page("pages/RWA_Participants_Platforms.py")
+    st.link_button(
+        PLATFORMS_RWA_LINK_LABEL,
+        PLATFORMS_RWA_URL,
+        use_container_width=True,
+        key="rwa_participants_rwa_platforms_link_home_footer",
+    )
+
+
 def show_rwa_participants_networks_widget(
     *,
     home_preview: bool = False,
@@ -1547,6 +1700,99 @@ def show_rwa_participants_networks_widget(
     )
 
 
+def show_rwa_participants_platforms_widget(
+    *,
+    home_preview: bool = False,
+    full_page_header: bool = False,
+) -> None:
+    """
+    **Full page only**: **Participants — Platforms** with the /platforms overview KPIs + issuer table.
+    """
+    if home_preview:
+        raise ValueError(
+            "show_rwa_participants_platforms_widget is only for full pages; use show_rwa_league_widget on the hub."
+        )
+
+    st.markdown(
+        WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS,
+        unsafe_allow_html=True,
+    )
+
+    rows, kpis, err = load_rwa_platforms_cached()
+
+    if err and not rows:
+        st.warning(escape(err))
+        st.markdown(
+            f'<div class="jd-hub-subsection-head" id="jd-rwa-platforms-overview">'
+            f'<h2 class="home-main-heading">{escape(RWA_PLATFORMS_SUBPAGE_OVERVIEW_HEADING)}</h2></div>',
+            unsafe_allow_html=True,
+        )
+        _render_rwa_global_overview(kpis, kpi_legend_name="Platforms")
+        st.link_button(
+            PLATFORMS_RWA_LINK_LABEL,
+            PLATFORMS_RWA_URL,
+            use_container_width=True,
+            key="rwa_pp_rwa_link_err_full",
+        )
+        return
+
+    if not rows:
+        st.info("No platform rows returned.")
+        return
+
+    if full_page_header:
+        st.markdown(
+            hub_subsection_heading_html(
+                RWA_PLATFORMS_SUBPAGE_OVERVIEW_HEADING,
+                element_id="jd-rwa-platforms-overview",
+            ),
+            unsafe_allow_html=True,
+        )
+    else:
+        st.markdown(
+            '<div class="jd-hub-subsection-head" id="jd-rwa-participants-platforms">'
+            '<h2 class="home-main-heading">Platforms</h2></div>',
+            unsafe_allow_html=True,
+        )
+        st.caption(
+            "Searchable issuer table from the [RWA.xyz Platforms](https://app.rwa.xyz/platforms) embed."
+        )
+
+    _render_rwa_global_overview(kpis, kpi_legend_name="Platforms")
+
+    q = st.text_input(
+        "Search platform",
+        "",
+        key="rwa_participants_platforms_search_full",
+        placeholder="Filter by issuer / platform name…",
+    )
+    working = filter_platforms_tab_rows(rows, q)
+    if q.strip():
+        st.caption(
+            f"Showing {len(working)} of {len(rows)} platforms matching “{escape(q.strip())}”."
+        )
+    else:
+        st.caption(
+            f"Showing all {len(working)} platforms. Headline KPI **%** are **30D**; see the table caption for columns."
+        )
+
+    st.markdown(
+        '<div class="jd-hub-subsection-head">'
+        '<h2 class="home-main-heading">Platforms table</h2></div>',
+        unsafe_allow_html=True,
+    )
+    df = build_rwa_platforms_page_dataframe(working)
+    _show_rwa_platforms_page_dataframe(df, height=rwa_table_height(len(df), max_h=900))
+    st.caption(RWA_PLATFORMS_DATA_SOURCE_CAPTION)
+
+    st.link_button(
+        PLATFORMS_RWA_LINK_LABEL,
+        PLATFORMS_RWA_URL,
+        use_container_width=True,
+        key="rwa_participants_platforms_rwa_link_full",
+    )
+
+
 def show_rwa_league_widget(
     *,
     home_preview: bool = False,
@@ -1554,7 +1800,7 @@ def show_rwa_league_widget(
 ) -> None:
     """
     On-chain Data bundle: **RWA Global Market Overview** (KPIs + Networks table) first, then Stablecoins,
-    US Treasuries, Tokenized Stocks, and a **Participants → Networks** block with the same overview KPIs + table preview.
+    US Treasuries, Tokenized Stocks, **Participants → Networks**, then **Platforms** (overview + issuer preview).
     """
     st.markdown(WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
     rows, kpis, err = load_rwa_league_cached()
@@ -1567,3 +1813,6 @@ def show_rwa_league_widget(
         show_rwa_tokenized_stocks_widget(home_preview=True, preview_rows=preview_rows)
     if home_preview and status == "OK" and rows:
         _show_rwa_participants_networks_home_footer(rows, kpis, preview_rows=preview_rows)
+        plat_rows, plat_kpis, _plat_err = load_rwa_platforms_cached()
+        if plat_rows:
+            _show_rwa_participants_platforms_home_footer(plat_rows, plat_kpis, preview_rows=preview_rows)

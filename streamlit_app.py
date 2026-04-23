@@ -168,10 +168,13 @@ def _sidebar() -> bool:
             st.switch_page("pages/RWA_Tokenized_Stocks.py")
         if st.button("Participants — Networks", use_container_width=True, key="sb_rwa"):
             st.switch_page("pages/RWA_Participants_Networks.py")
+        if st.button("Participants — Platforms", use_container_width=True, key="sb_rwa_plat"):
+            st.switch_page("pages/RWA_Participants_Platforms.py")
         st.divider()
         st.caption(
             "Refresh reloads RSS, prices, ETPs, regulatory feeds, RWA Global Market / Networks embed, "
-            "RWA Stablecoins, RWA US Treasuries, RWA Tokenized Stocks, and RWA Participants — Networks embeds."
+            "RWA Stablecoins, RWA US Treasuries, RWA Tokenized Stocks, RWA Participants — Networks, and "
+            "RWA Participants — Platforms embeds."
         )
         refresh = st.button("Refresh all data", use_container_width=True, key="sb_refresh")
     return bool(refresh)
@@ -286,7 +289,7 @@ def main() -> None:
         st.markdown(section_label_teal("On-chain Data", placement="after_divider"), unsafe_allow_html=True)
         st.markdown(
             '<p class="jd-hub-dek">RWA.xyz <strong>Global Market overview</strong> and asset-class teasers (stablecoins, treasuries, tokenized stocks), '
-            "then a <strong>Participants → Networks</strong> preview at the bottom — open each page for full tables.</p>",
+            "then <strong>Participants → Networks</strong> and <strong>Platforms</strong> previews — open each page for full tables.</p>",
             unsafe_allow_html=True,
         )
         show_rwa_league_widget(home_preview=True)
@@ -368,7 +371,7 @@ def main() -> None:
     st.markdown(section_label_teal("On-chain Data", placement="after_divider"), unsafe_allow_html=True)
     st.markdown(
         '<p class="jd-hub-dek">RWA.xyz <strong>Global Market overview</strong> and asset-class teasers (stablecoins, treasuries, tokenized stocks), '
-        "then a <strong>Participants → Networks</strong> preview at the bottom — open each page for full tables.</p>",
+        "then <strong>Participants → Networks</strong> and <strong>Platforms</strong> previews — open each page for full tables.</p>",
         unsafe_allow_html=True,
     )
     show_rwa_league_widget(home_preview=True)

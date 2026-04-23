@@ -14,6 +14,7 @@ from crypto_etps.client import format_usd_compact
 from rwa_league.client import (
     RwaNetworkLeagueRow,
     RwaNetworksTabRow,
+    RwaPlatformsTabRow,
     RwaTokenizedStockNetworkRow,
     RwaStablecoinPlatformRow,
     RwaTokenizedStockPlatformRow,
@@ -97,6 +98,49 @@ def build_rwa_networks_page_dataframe(rows: list[RwaNetworksTabRow]) -> pd.DataF
             }
         )
     return pd.DataFrame(recs)
+
+
+def build_rwa_platforms_page_dataframe(rows: list[RwaPlatformsTabRow]) -> pd.DataFrame:
+    """RWA **Platforms** (``/platforms``): same column layout as :func:`build_rwa_networks_page_dataframe` but **Platform**."""
+    recs: list[dict[str, object]] = []
+    for r in rows:
+        href = (r.platform_href or "").strip()
+        url = f"{_APP_BASE}{href}" if href.startswith("/") else f"{_APP_BASE}/"
+        v7 = r.value_change_7d_raw
+        if v7 is None:
+            pct7 = np.nan
+        else:
+            f7 = float(v7)
+            pct7 = np.nan if np.isnan(f7) else f7 * 100.0
+        ms30 = r.market_share_change_30d_raw
+        if ms30 is None:
+            pct_ms30 = np.nan
+        else:
+            fm = float(ms30)
+            pct_ms30 = np.nan if np.isnan(fm) else fm * 100.0
+        recs.append(
+            {
+                "#": int(r.rank),
+                "Platform": r.platform,
+                "Link": url,
+                "RWA Count": int(r.rwa_count),
+                "RWA value (distributed)": float(r.distributed_usd),
+                "RWA value (represented)": float(r.represented_usd),
+                "% distributed": float(r.pct_distributed_raw * 100.0),
+                "RWA total (excl. stablecoins)": float(r.rwa_total_excl_stablecoin_usd),
+                "7D Δ value": pct7,
+                "Market Share": float(r.market_share_raw * 100.0),
+                "30D Δ share": pct_ms30,
+            }
+        )
+    return pd.DataFrame(recs)
+
+
+def filter_platforms_tab_rows(rows: list[RwaPlatformsTabRow], query: str) -> list[RwaPlatformsTabRow]:
+    q = (query or "").strip().lower()
+    if not q:
+        return list(rows)
+    return [r for r in rows if q in (r.platform or "").lower()]
 
 
 def build_us_treasury_network_dataframe(rows: list[RwaTreasuryDistributedNetworkRow]) -> pd.DataFrame:
@@ -505,6 +549,35 @@ def _fmt_pct_plain(v: object) -> str:
 
 def style_rwa_networks_page_dataframe(df: pd.DataFrame) -> pd.io.formats.style.Styler:
     """Styling for :func:`build_rwa_networks_page_dataframe` (RWA /networks)."""
+
+    def highlight_delta(s: pd.Series) -> list[str]:
+        return [
+            "color: #28794E; font-weight: 600"
+            if pd.notna(v) and float(v) >= 0
+            else "color: #dc2626; font-weight: 600"
+            if pd.notna(v) and float(v) < 0
+            else ""
+            for v in s
+        ]
+
+    return df.style.apply(highlight_delta, subset=["7D Δ value"]).apply(
+        highlight_delta, subset=["30D Δ share"]
+    ).format(
+        {
+            "7D Δ value": _fmt_7d_cell,
+            "30D Δ share": _fmt_7d_cell,
+            "RWA value (distributed)": _fmt_total_value_cell,
+            "RWA value (represented)": _fmt_total_value_cell,
+            "RWA total (excl. stablecoins)": _fmt_total_value_cell,
+            "% distributed": _fmt_pct_plain,
+            "Market Share": _fmt_market_share_cell,
+        },
+        na_rep="—",
+    )
+
+
+def style_rwa_platforms_page_dataframe(df: pd.DataFrame) -> pd.io.formats.style.Styler:
+    """Same styling as :func:`style_rwa_networks_page_dataframe` for :func:`build_rwa_platforms_page_dataframe`."""
 
     def highlight_delta(s: pd.Series) -> list[str]:
         return [
