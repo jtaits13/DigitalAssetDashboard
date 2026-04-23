@@ -181,6 +181,11 @@ a.jd-nav-dd-item:hover {
 a.jd-nav-dd-item:active {
     color: #021D41;
 }
+a.jd-nav-dd-item.jd-nav-dd-sub {
+    padding-left: 1.5rem;
+    font-weight: 500;
+    color: #3E6A7A;
+}
 </style>
 """
 
@@ -206,7 +211,8 @@ def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -
       <div class="jd-nav-dd" role="group" aria-label="On-chain Data subsections">
         <a class="jd-site-link jd-nav-dd-head" href="#jd-section-onchain">On-chain Data <span class="jd-nav-dd-caret" aria-hidden="true">▾</span></a>
         <ul class="jd-nav-dd-menu" role="menu">
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-market">Market overview</a></li>
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-participants">Participants</a></li>
+          <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="#jd-rwa-participants-networks">Networks</a></li>
           <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-stablecoins">Stablecoins</a></li>
           <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-treasuries">US Treasuries</a></li>
           <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-tokenized-stocks">Tokenized stocks</a></li>
@@ -239,7 +245,7 @@ def render_subpage_top_bar() -> None:
       <div class="jd-nav-dd" role="group" aria-label="On-chain Data pages">
         <a class="jd-site-link jd-nav-dd-head" href="/?jd_scroll=onchain">On-chain Data <span class="jd-nav-dd-caret" aria-hidden="true">▾</span></a>
         <ul class="jd-nav-dd-menu" role="menu">
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_League">Market overview</a></li>
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_Participants_Networks">Participants — Networks</a></li>
           <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_Stablecoins">Stablecoins</a></li>
           <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_US_Treasuries">US Treasuries</a></li>
           <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_Tokenized_Stocks">Tokenized stocks</a></li>
@@ -268,7 +274,7 @@ def render_subpage_sidebar(*, key_prefix: str, current: str) -> None:
     ``key_prefix`` must be unique per page module (e.g. ``all_articles``) so widget keys stay isolated.
 
     ``current`` marks the active destination: ``articles``, ``regulatory``, ``etp``, ``etf_news``,
-    ``rwa_league``, ``rwa_stablecoins``, ``rwa_treasuries``, ``rwa_tokenized_stocks``.
+    ``rwa_participants_networks``, ``rwa_stablecoins``, ``rwa_treasuries``, ``rwa_tokenized_stocks``.
     """
     with st.sidebar:
         st.markdown("### JPM Digital")
@@ -288,7 +294,7 @@ def render_subpage_sidebar(*, key_prefix: str, current: str) -> None:
             ("Regulatory headlines", "pages/All_Regulatory.py", "regulatory"),
             ("U.S. Digital Asset ETPs", "pages/US_Crypto_ETPs.py", "etp"),
             ("ETF & ETP market news", "pages/All_ETF_News.py", "etf_news"),
-            ("RWA league table", "pages/RWA_League.py", "rwa_league"),
+            ("Participants — Networks", "pages/RWA_Participants_Networks.py", "rwa_participants_networks"),
             ("RWA Stablecoins", "pages/RWA_Stablecoins.py", "rwa_stablecoins"),
             ("RWA US Treasuries", "pages/RWA_US_Treasuries.py", "rwa_treasuries"),
             ("RWA Tokenized Stocks", "pages/RWA_Tokenized_Stocks.py", "rwa_tokenized_stocks"),

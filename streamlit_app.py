@@ -160,8 +160,8 @@ def _sidebar() -> bool:
             st.switch_page("pages/All_Regulatory.py")
         if st.button("U.S. Digital Asset ETPs", use_container_width=True, key="sb_etp"):
             st.switch_page("pages/US_Crypto_ETPs.py")
-        if st.button("RWA league table", use_container_width=True, key="sb_rwa"):
-            st.switch_page("pages/RWA_League.py")
+        if st.button("Participants — Networks", use_container_width=True, key="sb_rwa"):
+            st.switch_page("pages/RWA_Participants_Networks.py")
         if st.button("RWA Stablecoins", use_container_width=True, key="sb_rwa_sc"):
             st.switch_page("pages/RWA_Stablecoins.py")
         if st.button("RWA US Treasuries", use_container_width=True, key="sb_rwa_tr"):
@@ -171,7 +171,7 @@ def _sidebar() -> bool:
         st.divider()
         st.caption(
             "Refresh reloads RSS, prices, ETPs, regulatory feeds, RWA network league, "
-            "RWA Stablecoins embed, RWA US Treasuries embed, and RWA Tokenized Stocks embed."
+            "RWA Participants — Networks, RWA Stablecoins, RWA US Treasuries, and RWA Tokenized Stocks embeds."
         )
         refresh = st.button("Refresh all data", use_container_width=True, key="sb_refresh")
     return bool(refresh)
@@ -285,7 +285,8 @@ def main() -> None:
         st.markdown(hub_section_anchor("jd-section-onchain"), unsafe_allow_html=True)
         st.markdown(section_label_teal("On-chain Data", placement="after_divider"), unsafe_allow_html=True)
         st.markdown(
-            '<p class="jd-hub-dek">RWA.xyz tokenized markets and network leagues — previews below; open each page for full tables.</p>',
+            '<p class="jd-hub-dek">RWA.xyz <strong>Participants</strong> (Networks first), stablecoins, treasuries, and tokenized stocks — '
+            "previews below; open each page for full tables.</p>",
             unsafe_allow_html=True,
         )
         show_rwa_league_widget(home_preview=True)
@@ -366,7 +367,8 @@ def main() -> None:
     st.markdown(hub_section_anchor("jd-section-onchain"), unsafe_allow_html=True)
     st.markdown(section_label_teal("On-chain Data", placement="after_divider"), unsafe_allow_html=True)
     st.markdown(
-        '<p class="jd-hub-dek">RWA.xyz tokenized markets and network leagues — previews below; open each page for full tables.</p>',
+        '<p class="jd-hub-dek">RWA.xyz <strong>Participants</strong> (Networks first), stablecoins, treasuries, and tokenized stocks — '
+        "previews below; open each page for full tables.</p>",
         unsafe_allow_html=True,
     )
     show_rwa_league_widget(home_preview=True)

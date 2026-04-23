@@ -62,11 +62,22 @@ WIDGET_CSS = """
     margin: 0 !important;
     padding: 0;
 }
+#jd-rwa-participants,
+#jd-rwa-participants-networks,
 #jd-rwa-market,
 #jd-rwa-stablecoins,
 #jd-rwa-treasuries,
 #jd-rwa-tokenized-stocks {
     scroll-margin-top: 5.5rem;
+}
+.jd-rwa-participants-eyebrow {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #25809C;
+    margin: 0 0 0.35rem 0;
+    padding: 0;
 }
 .rwa-kpi-wrap {
     margin: 0.45rem 0 0.85rem 0;
@@ -1206,20 +1217,43 @@ def show_rwa_tokenized_stocks_widget(
         )
 
 
-def show_rwa_league_widget(
+def show_rwa_participants_networks_widget(
     *,
-    home_preview: bool = False,
+    home_preview: bool = True,
     preview_rows: int = 8,
-) -> None:
+    full_page_header: bool = False,
+) -> str:
     """
-    RWA.xyz networks league table. ``home_preview=True`` shows only the top N rows (no search)
-    with a link to the full page — similar to a CoinDesk section teaser.
+    **Participants → Networks** (RWA.xyz homepage embed): **Distributed Value** in the **Networks** league
+    plus the **Global Market overview** row (KPIs).
+
+    Returns
+    -------
+    ``"continue_home"``
+        When ``home_preview=True``; caller should also render the Stablecoins / US Treasuries / Tokenized Stocks teasers.
+    ``"stop"``
+        When only this block should render (full page, or the empty no-rows state on the hub).
     """
-    st.markdown(WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
+    if not home_preview:
+        st.markdown(
+            WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS,
+            unsafe_allow_html=True,
+        )
+
     rows, kpis, err = load_rwa_league_cached()
     h2_cls = "home-widget-heading" if home_preview else "home-main-heading"
 
     if err and not rows:
+        if home_preview:
+            st.markdown(
+                '<p class="jd-rwa-participants-eyebrow" id="jd-rwa-participants">Participants</p>',
+                unsafe_allow_html=True,
+            )
+            st.markdown(
+                f'<div class="jd-hub-subsection-head" id="jd-rwa-participants-networks">'
+                f'<h2 class="{h2_cls}">Networks</h2></div>',
+                unsafe_allow_html=True,
+            )
         st.warning(escape(err))
         st.markdown(
             f'<div class="jd-hub-subsection-head" id="jd-rwa-market">'
@@ -1231,24 +1265,64 @@ def show_rwa_league_widget(
             GLOBAL_MARKET_RWA_LINK_LABEL,
             GLOBAL_MARKET_RWA_URL,
             use_container_width=True,
-            key="rwa_global_market_err_home" if home_preview else "rwa_global_market_err_full",
+            key="rwa_pn_rwa_link_err_home" if home_preview else "rwa_pn_rwa_link_err_full",
         )
         if home_preview:
-            show_rwa_stablecoins_widget(home_preview=True, preview_rows=preview_rows)
-            show_rwa_treasuries_widget(home_preview=True, preview_rows=preview_rows)
-            show_rwa_tokenized_stocks_widget(home_preview=True, preview_rows=preview_rows)
-        return
+            return "continue_home"
+        return "stop"
 
     if not rows:
+        if home_preview:
+            st.markdown(
+                '<p class="jd-rwa-participants-eyebrow" id="jd-rwa-participants">Participants</p>',
+                unsafe_allow_html=True,
+            )
+            st.markdown(
+                f'<div class="jd-hub-subsection-head" id="jd-rwa-participants-networks">'
+                f'<h2 class="{h2_cls}">Networks</h2></div>',
+                unsafe_allow_html=True,
+            )
         st.markdown(hub_section_anchor("jd-rwa-market"), unsafe_allow_html=True)
         st.info("No network rows returned.")
-        return
+        return "stop"
 
-    st.markdown(
-        f'<div class="jd-hub-subsection-head" id="jd-rwa-market">'
-        f'<h2 class="{h2_cls}">{RWA_GLOBAL_MARKET_OVERVIEW_HEADING}</h2></div>',
-        unsafe_allow_html=True,
-    )
+    if home_preview:
+        st.markdown(
+            '<p class="jd-rwa-participants-eyebrow" id="jd-rwa-participants">Participants</p>',
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            f'<div class="jd-hub-subsection-head" id="jd-rwa-participants-networks">'
+            f'<h2 class="{h2_cls}">Networks</h2></div>',
+            unsafe_allow_html=True,
+        )
+        st.markdown(hub_section_anchor("jd-rwa-market"), unsafe_allow_html=True)
+    else:
+        if full_page_header:
+            st.markdown(
+                hub_subsection_heading_html(
+                    "RWA Global Market overview",
+                    element_id="jd-rwa-market",
+                ),
+                unsafe_allow_html=True,
+            )
+        else:
+            st.markdown(
+                '<div class="jd-hub-subsection-head" id="jd-rwa-participants-networks">'
+                '<h2 class="home-main-heading">Networks</h2></div>',
+                unsafe_allow_html=True,
+            )
+            st.caption(
+                "Full **Participants → Networks** table with search from the "
+                "[RWA.xyz](https://app.rwa.xyz/) homepage embed. **Distributed Value** in each row is a level; "
+                "overview **% changes** are **30-day (30D)** from the RWA **Global Market** bar."
+            )
+            st.markdown(
+                f'<div class="jd-hub-subsection-head" id="jd-rwa-market">'
+                f'<h2 class="home-main-heading">{RWA_GLOBAL_MARKET_OVERVIEW_HEADING}</h2></div>',
+                unsafe_allow_html=True,
+            )
+
     _render_rwa_global_overview(kpis)
 
     working = list(rows)
@@ -1259,7 +1333,7 @@ def show_rwa_league_widget(
         q = st.text_input(
             "Search network",
             "",
-            key="rwa_search_home",
+            key="rwa_participants_networks_search_full",
             placeholder="Filter by network name…",
         )
         working = filter_rows_by_network(rows, q)
@@ -1269,30 +1343,56 @@ def show_rwa_league_widget(
             )
         else:
             st.caption(
-                f"Showing all {len(working)} networks (**Distributed Value** levels; overview above: **30D** %)."
+                f"Showing all {len(working)} networks (Distributed Value; overview above: **30D** % on headline KPIs)."
             )
 
+    if not home_preview:
+        st.markdown(
+            '<div class="jd-hub-subsection-head">'
+            '<h2 class="home-main-heading">League table (Distributed · Networks)</h2></div>',
+            unsafe_allow_html=True,
+        )
     df = build_rwa_dataframe(working)
     _show_rwa_dataframe(df, height=rwa_table_height(len(df)))
     if not home_preview:
         st.caption(RWA_DATA_SOURCE_CAPTION)
 
     if home_preview and st.button(
-        "Open full RWA Market Overview table",
-        key="see_full_rwa_league",
+        "Open full Networks table",
+        key="see_full_rwa_participants_networks",
         use_container_width=True,
         type="primary",
     ):
-        st.switch_page("pages/RWA_League.py")
+        st.switch_page("pages/RWA_Participants_Networks.py")
 
     st.link_button(
         GLOBAL_MARKET_RWA_LINK_LABEL,
         GLOBAL_MARKET_RWA_URL,
         use_container_width=True,
-        key="rwa_global_market_home" if home_preview else "rwa_global_market_full",
+        key="rwa_participants_rwa_link_home" if home_preview else "rwa_participants_rwa_link_full",
     )
 
     if home_preview:
+        return "continue_home"
+    return "stop"
+
+
+def show_rwa_league_widget(
+    *,
+    home_preview: bool = False,
+    preview_rows: int = 8,
+) -> None:
+    """
+    On-chain Data bundle: **Participants → Networks** (RWA market overview + distributed-value league) plus
+    Stablecoins, US Treasuries, and Tokenized Stocks when ``home_preview=True``.
+    """
+    st.markdown(WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
+    nxt = show_rwa_participants_networks_widget(
+        home_preview=home_preview,
+        preview_rows=preview_rows,
+        full_page_header=False,
+    )
+    if nxt == "continue_home" and home_preview:
         show_rwa_stablecoins_widget(home_preview=True, preview_rows=preview_rows)
         show_rwa_treasuries_widget(home_preview=True, preview_rows=preview_rows)
         show_rwa_tokenized_stocks_widget(home_preview=True, preview_rows=preview_rows)
