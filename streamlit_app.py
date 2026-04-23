@@ -5,6 +5,14 @@ Deploy on Streamlit Community Cloud with this file as the main entrypoint.
 
 from __future__ import annotations
 
+# Streamlit / some hosts run with a cwd that omits the repo root from sys.path; local imports need it.
+import sys
+from pathlib import Path
+
+_REPO = Path(__file__).resolve().parent
+if str(_REPO) not in sys.path:
+    sys.path.insert(0, str(_REPO))
+
 from datetime import datetime, timezone
 
 import streamlit as st
