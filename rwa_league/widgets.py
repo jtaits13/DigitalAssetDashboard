@@ -471,9 +471,9 @@ def _show_rwa_networks_page_dataframe(df, *, height: int) -> None:
         ],
         column_config={
             "#": st.column_config.NumberColumn(
-                _rank_column_label(by_metric="embed list order"),
+                _rank_column_label(by_metric="RWA value (distributed)"),
                 format="%.0f",
-                help="1-based index in the /networks __NEXT_DATA__ list (default sort is often name A→Z).",
+                help="Rank by RWA value (distributed), largest first (transferability.transferable, USD).",
             ),
             "Network": st.column_config.TextColumn(
                 f"Network {_SORT}",
@@ -798,8 +798,8 @@ def _show_tokenized_stock_network_dataframe(df, *, height: int) -> None:
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
-def load_rwa_league_cached(*, _rwa_schema: int = 5) -> tuple[list[RwaNetworksTabRow], list[RwaGlobalKpi], str | None]:
-    """Bump ``_rwa_schema`` when ``/networks`` or ``__NEXT_DATA__`` shape changes."""
+def load_rwa_league_cached(*, _rwa_schema: int = 6) -> tuple[list[RwaNetworksTabRow], list[RwaGlobalKpi], str | None]:
+    """Bump ``_rwa_schema`` when ``/networks`` or ``__NEXT_DATA__`` shape changes (or default row ordering)."""
     _ = _rwa_schema
     return fetch_rwa_networks_page_data()
 

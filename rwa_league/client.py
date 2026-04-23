@@ -115,6 +115,7 @@ class RwaNetworksTabRow:
     **Distributed** RWA value is ``transferability.transferable`` in the public embed — it lines up with the homepage
     ``parent_networks`` league and with the “Distributed Asset Value” top-line (sum of transferables, ~same as
     the Networks overview KPIs). **Represented** is ``transferable + non_transferable`` for that same block.
+    ``rank`` is **1-based** after sorting by distributed value **descending** (ties broken by network name).
     """
 
     rank: int
@@ -491,32 +492,37 @@ def _rows_from_raw(raw_rows: list[dict[str, Any]]) -> list[RwaNetworkLeagueRow]:
     return out
 
 
+def _transferable_usd(row: dict[str, Any]) -> float:
+    tr = row.get("transferability") or {}
+    t = tr.get("transferable")
+    return float(t) if isinstance(t, (int, float)) else 0.0
+
+
+def _transferable_30d_usd(row: dict[str, Any]) -> float:
+    tr = row.get("transferability") or {}
+    t30 = tr.get("transferable_30d")
+    return float(t30) if isinstance(t30, (int, float)) else 0.0
+
+
 def _rows_from_networks_list_results(raw: list[dict[str, Any]]) -> list[RwaNetworksTabRow]:
     """
-    Build rows in **API list order** (``listQueryResponse.results`` — the Networks page default in ``__NEXT_DATA__``
-    is often name A→Z, see ``listQueryResponse.sort``).
+    Build rows sorted by **RWA value (distributed)** descending (``transferability.transferable``), then
+    **#** is 1-based rank. Market share uses Σ transferable across all networks (unchanged by sort).
     """
-    if not raw:
+    rows_in = [r for r in raw if isinstance(r, dict)]
+    if not rows_in:
         return []
-    ts: list[float] = []
-    t30s: list[float] = []
-    for row in raw:
-        if not isinstance(row, dict):
-            ts.append(0.0)
-            t30s.append(0.0)
-            continue
-        tr = row.get("transferability") or {}
-        t = tr.get("transferable")
-        t30 = tr.get("transferable_30d")
-        ts.append(float(t) if isinstance(t, (int, float)) else 0.0)
-        t30s.append(float(t30) if isinstance(t30, (int, float)) else 0.0)
-    total_t = sum(ts) or 0.0
-    total_t30 = sum(t30s) or 0.0
+
+    total_t = sum(_transferable_usd(r) for r in rows_in) or 0.0
+    total_t30 = sum(_transferable_30d_usd(r) for r in rows_in) or 0.0
+
+    sorted_rows = sorted(
+        rows_in,
+        key=lambda r: (-_transferable_usd(r), str(r.get("name") or "").lower()),
+    )
 
     out: list[RwaNetworksTabRow] = []
-    for i, row in enumerate(raw):
-        if not isinstance(row, dict):
-            continue
+    for i, row in enumerate(sorted_rows):
         name = str(row.get("name") or "").strip() or "—"
         slug = str(row.get("slug") or "").strip()
         href = f"/networks/{slug}" if slug else None
