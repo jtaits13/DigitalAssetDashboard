@@ -305,6 +305,8 @@ def _rank_column_label(*, by_metric: str) -> str:
 _LINK_ARROW = "\u2197"  # Northeast arrow for RWA.xyz LinkColumn (Unicode U+2197)
 STABLECOINS_RWA_LINK_LABEL = "See Stablecoins on RWA.xyz"
 RWA_GLOBAL_MARKET_OVERVIEW_HEADING = "RWA Global Market Overview"
+# Full-page Participants — Networks: hub-style heading above the KPI row (like “Stablecoin overview”).
+RWA_NETWORKS_SUBPAGE_OVERVIEW_HEADING = "Networks overview"
 GLOBAL_MARKET_RWA_LINK_LABEL = "See RWA Networks on RWA.xyz"
 GLOBAL_MARKET_RWA_URL = APP_NETWORKS
 
@@ -1396,11 +1398,13 @@ def _rwa_global_market_status(
 
 def _show_rwa_participants_networks_home_footer(
     rows: list[RwaNetworksTabRow],
+    kpis: list[RwaGlobalKpi],
     *,
     preview_rows: int,
 ) -> None:
     """
-    Hub-only tail: **Participants → Networks** + the same **/networks** table preview (no duplicate KPI row).
+    Hub-only tail: **Participants → Networks** with the same **Networks overview** KPI row + table preview
+    (mirrors Stablecoins / Treasuries / Stocks home sections).
     """
     if not rows:
         return
@@ -1414,9 +1418,10 @@ def _show_rwa_participants_networks_home_footer(
         '<h2 class="home-widget-heading">Networks</h2></div>',
         unsafe_allow_html=True,
     )
+    _render_rwa_global_overview(kpis, kpi_legend_name="Networks")
     st.caption(
-        "Same **RWA Networks** table as in **RWA Global Market** above, grouped under **Participants** to mirror "
-        "[RWA.xyz Networks](https://app.rwa.xyz/networks)."
+        "Preview of the **Networks** table from the [RWA.xyz Networks](https://app.rwa.xyz/networks) embed "
+        "(same totals as **RWA Global Market** above, formatted here under **Participants**)."
     )
     n = max(1, min(preview_rows, len(rows)))
     working = list(rows)[:n]
@@ -1463,7 +1468,7 @@ def show_rwa_participants_networks_widget(
         st.warning(escape(err))
         st.markdown(
             f'<div class="jd-hub-subsection-head" id="jd-rwa-market">'
-            f'<h2 class="home-main-heading">{RWA_GLOBAL_MARKET_OVERVIEW_HEADING}</h2></div>',
+            f'<h2 class="home-main-heading">{escape(RWA_NETWORKS_SUBPAGE_OVERVIEW_HEADING)}</h2></div>',
             unsafe_allow_html=True,
         )
         _render_rwa_global_overview(kpis, kpi_legend_name="Networks")
@@ -1483,7 +1488,7 @@ def show_rwa_participants_networks_widget(
     if full_page_header:
         st.markdown(
             hub_subsection_heading_html(
-                "RWA Global Market overview",
+                RWA_NETWORKS_SUBPAGE_OVERVIEW_HEADING,
                 element_id="jd-rwa-market",
             ),
             unsafe_allow_html=True,
@@ -1497,11 +1502,6 @@ def show_rwa_participants_networks_widget(
         st.caption(
             "Searchable table from the [RWA.xyz Networks](https://app.rwa.xyz/networks) embed. "
             "RWA value columns use the same **transferability** fields as the on-site list; top-line **%** are **30D**."
-        )
-        st.markdown(
-            f'<div class="jd-hub-subsection-head" id="jd-rwa-market">'
-            f'<h2 class="home-main-heading">{RWA_GLOBAL_MARKET_OVERVIEW_HEADING}</h2></div>',
-            unsafe_allow_html=True,
         )
 
     _render_rwa_global_overview(kpis, kpi_legend_name="Networks")
@@ -1545,8 +1545,8 @@ def show_rwa_league_widget(
     preview_rows: int = 8,
 ) -> None:
     """
-    On-chain Data bundle: **RWA Global Market Overview** (KPIs + Networks league) first, then Stablecoins,
-    US Treasuries, Tokenized Stocks, and finally a **Participants → Networks** hub footer (same league, no duplicate KPIs).
+    On-chain Data bundle: **RWA Global Market Overview** (KPIs + Networks table) first, then Stablecoins,
+    US Treasuries, Tokenized Stocks, and a **Participants → Networks** block with the same overview KPIs + table preview.
     """
     st.markdown(WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
     rows, kpis, err = load_rwa_league_cached()
@@ -1558,4 +1558,4 @@ def show_rwa_league_widget(
         show_rwa_treasuries_widget(home_preview=True, preview_rows=preview_rows)
         show_rwa_tokenized_stocks_widget(home_preview=True, preview_rows=preview_rows)
     if home_preview and status == "OK" and rows:
-        _show_rwa_participants_networks_home_footer(rows, preview_rows=preview_rows)
+        _show_rwa_participants_networks_home_footer(rows, kpis, preview_rows=preview_rows)

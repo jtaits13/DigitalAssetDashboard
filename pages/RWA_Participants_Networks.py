@@ -36,10 +36,10 @@ def main() -> None:
 
     st.markdown(section_label_teal("Participants — Networks", placement="first"), unsafe_allow_html=True)
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed">RWA <strong>Participants</strong> · <strong>Networks</strong>: distributed '
-        "value and share dynamics across <strong>blockchain</strong> ecosystems. Headline <strong>30-day (30D)</strong> % changes come from the "
-        '<a href="https://app.rwa.xyz/">RWA.xyz</a> <strong>Global Market overview</strong>; the <strong>Networks</strong> table '
-        "is the <strong>League</strong> <strong>Networks</strong> view (<strong>distributed</strong> value by network).</p>",
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed">RWA <strong>Participants</strong> · <strong>Networks</strong>: the same '
+        "<strong>Networks overview</strong> headline metrics and on-chain <strong>Networks</strong> table as "
+        '<a href="https://app.rwa.xyz/networks">RWA.xyz</a> (embedded in <code>__NEXT_DATA__</code>). '
+        "Top-line <strong>30D</strong> % changes and per-network <strong>transferability</strong> / share columns are pulled from that page.</p>",
         unsafe_allow_html=True,
     )
     st.divider()
