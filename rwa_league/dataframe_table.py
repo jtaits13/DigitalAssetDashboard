@@ -61,8 +61,9 @@ def build_rwa_dataframe(rows: list[RwaNetworkLeagueRow]) -> pd.DataFrame:
 
 def build_rwa_networks_page_dataframe(rows: list[RwaNetworksTabRow]) -> pd.DataFrame:
     """
-    RWA **Networks** page: distributed / represented / % distributed from ``transferability``; 7D Δ uses the
-    same fractional move as the homepage (base = ``transferable_30d`` in the public payload).
+    RWA **Networks** (``/networks`` ``listQueryResponse`` + ``asset_class_stats``), matched to the on-site
+    table: RWA count excl. stablecoins, *represented* = ``non_transferable``, total excl. stables from class
+    **bridged_token_value** sums.
     """
     recs: list[dict[str, object]] = []
     for r in rows:
@@ -89,6 +90,7 @@ def build_rwa_networks_page_dataframe(rows: list[RwaNetworksTabRow]) -> pd.DataF
                 "RWA value (distributed)": float(r.distributed_usd),
                 "RWA value (represented)": float(r.represented_usd),
                 "% distributed": float(r.pct_distributed_raw * 100.0),
+                "RWA total (excl. stablecoins)": float(r.rwa_total_excl_stablecoin_usd),
                 "7D Δ value": pct7,
                 "Market Share": float(r.market_share_raw * 100.0),
                 "30D Δ share": pct_ms30,
@@ -522,6 +524,7 @@ def style_rwa_networks_page_dataframe(df: pd.DataFrame) -> pd.io.formats.style.S
             "30D Δ share": _fmt_7d_cell,
             "RWA value (distributed)": _fmt_total_value_cell,
             "RWA value (represented)": _fmt_total_value_cell,
+            "RWA total (excl. stablecoins)": _fmt_total_value_cell,
             "% distributed": _fmt_pct_plain,
             "Market Share": _fmt_market_share_cell,
         },

@@ -136,11 +136,11 @@ WIDGET_CSS = """
 """
 
 RWA_DATA_SOURCE_CAPTION = (
-    "Source: [RWA.xyz Networks](https://app.rwa.xyz/networks) embedded data "
-    "(**__NEXT_DATA__** overview + `listQueryResponse` with `transferability`); not the public API. "
-    "Top-line **% changes** are **30D**; **7D Δ value** uses the same `transferable_30d` base as the homepage league. "
-    "**RWA value (distributed)** = `transferability.transferable` (reconciles to **Distributed Asset Value**; "
-    "**% distributed** = `pct_transferable`)."
+    "Source: [RWA.xyz Networks](https://app.rwa.xyz/networks) embedded **__NEXT_DATA__** "
+    "(`listQueryResponse` + per-network `asset_class_stats` and `transferability`); not the public API. "
+    "**RWA count** and **RWA total (excl. stablecoins)** use non-stablecoin rows in `asset_class_stats` (same as the on-site table). "
+    "**RWA value (distributed)** = `transferability.transferable`; **(represented)** = `non_transferable`; "
+    "**% distributed** = distributed ÷ that total. Top-line **%** are **30D**; **7D Δ** uses `transferable_30d`."
 )
 
 STABLECOIN_RWA_CAPTION = (
@@ -465,6 +465,7 @@ def _show_rwa_networks_page_dataframe(df, *, height: int) -> None:
             "RWA value (distributed)",
             "RWA value (represented)",
             "% distributed",
+            "RWA total (excl. stablecoins)",
             "7D Δ value",
             "Market Share",
             "30D Δ share",
@@ -489,24 +490,31 @@ def _show_rwa_networks_page_dataframe(df, *, height: int) -> None:
             "RWA Count": st.column_config.NumberColumn(
                 f"RWA count {_SORT}",
                 format="%.0f",
+                help="Count of RWA assets excluding the Stablecoin class (sum of non-stable `asset_count` in `asset_class_stats`).",
             ),
             "RWA value (distributed)": st.column_config.NumberColumn(
                 f"RWA value (distributed) {_SORT}",
                 format=None,
                 width=150,
-                help="transferability.transferable (matches homepage parent_networks & overview total).",
+                help="`transferability.transferable` (same *Distributed* column as RWA.xyz).",
             ),
             "RWA value (represented)": st.column_config.NumberColumn(
                 f"RWA value (represented) {_SORT}",
                 format=None,
                 width=150,
-                help="transferable + non_transferable in the RWA on-chain block.",
+                help="`transferability.non_transferable` (RWA *Represented* on RWA.xyz).",
             ),
             "% distributed": st.column_config.NumberColumn(
                 f"% distributed {_SORT}",
                 format=None,
                 width=110,
-                help="pct_transferable in the embed (distributed ÷ represented in this model).",
+                help="distributed ÷ RWA total (excl. stablecoins) from per-class `bridged_token_value` sums.",
+            ),
+            "RWA total (excl. stablecoins)": st.column_config.NumberColumn(
+                f"RWA total (excl. stables) {_SORT}",
+                format=None,
+                width=180,
+                help="Sum of `bridged_token_value_dollar` in `asset_class_stats` excluding Stablecoins (RWA *Total Excl. Stablecoins*).",
             ),
             "7D Δ value": st.column_config.NumberColumn(
                 f"7D Δ value {_SORT}",
@@ -798,8 +806,8 @@ def _show_tokenized_stock_network_dataframe(df, *, height: int) -> None:
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
-def load_rwa_league_cached(*, _rwa_schema: int = 6) -> tuple[list[RwaNetworksTabRow], list[RwaGlobalKpi], str | None]:
-    """Bump ``_rwa_schema`` when ``/networks`` or ``__NEXT_DATA__`` shape changes (or default row ordering)."""
+def load_rwa_league_cached(*, _rwa_schema: int = 7) -> tuple[list[RwaNetworksTabRow], list[RwaGlobalKpi], str | None]:
+    """Bump ``_rwa_schema`` when ``/networks`` or ``__NEXT_DATA__`` shape or row field definitions change."""
     _ = _rwa_schema
     return fetch_rwa_networks_page_data()
 

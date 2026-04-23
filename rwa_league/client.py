@@ -110,12 +110,19 @@ class RwaGlobalKpi:
 @dataclass(frozen=True)
 class RwaNetworksTabRow:
     """
-    One network row from ``/networks`` (``listQueryResponse.results``).
+    One network row from ``/networks`` (``listQueryResponse.results``), aligned with the on-site **Networks** table
+    (same public embed RWA.xyz uses; not a different scraper or homepage league only).
 
-    **Distributed** RWA value is ``transferability.transferable`` in the public embed — it lines up with the homepage
-    ``parent_networks`` league and with the “Distributed Asset Value” top-line (sum of transferables, ~same as
-    the Networks overview KPIs). **Represented** is ``transferable + non_transferable`` for that same block.
-    ``rank`` is **1-based** after sorting by distributed value **descending** (ties broken by network name).
+    **RWA value (distributed)** = ``transferability.transferable`` (RWA in distributed form, matches overview totals).
+
+    **RWA value (represented)** = ``transferability.non_transferable`` (the site’s *Represented* column).
+
+    **RWA total (excl. stablecoins)** = sum of each non-stablecoin class’s ``bridged_token_value_dollar`` in
+    ``asset_class_stats`` (matches RWA *Total Value (Excl. Stablecoins)*).
+
+    **RWA count** = sum of non-stablecoin ``asset_count`` in ``asset_class_stats`` (the site lists ~802 for Ethereum, not
+    top-level ``asset_count`` which includes stablecoin assets).
+    ``rank`` is 1-based after sorting by **distributed** USD descending.
     """
 
     rank: int
@@ -123,8 +130,9 @@ class RwaNetworksTabRow:
     network_href: str | None
     rwa_count: int
     distributed_usd: float
-    represented_usd: float
-    pct_distributed_raw: float  # 0..1 (``transferability.pct_transferable``)
+    represented_usd: float  # non_transferable; site column “RWA Value (Represented)”
+    rwa_total_excl_stablecoin_usd: float
+    pct_distributed_raw: float  # 0..1, distributed / rwa_total (excl. stables) when that total > 0
     value_change_7d_raw: float | None  # fractional: (t−t_ago)/t_ago; ``t_ago`` = ``transferable_30d`` in the embed
     market_share_raw: float  # fraction 0..1
     market_share_change_30d_raw: float | None  # current share minus share implied by row ``transferable_30d`` / Σ same
@@ -504,6 +512,42 @@ def _transferable_30d_usd(row: dict[str, Any]) -> float:
     return float(t30) if isinstance(t30, (int, float)) else 0.0
 
 
+def _is_stablecoin_asset_class(ac: dict[str, Any] | None) -> bool:
+    """``asset_class_stats`` item is the RWA *Stablecoins* class (excluded for count / excl. stablecoin value)."""
+    if not ac or not isinstance(ac, dict):
+        return False
+    slug = (ac.get("slug") or "").lower()
+    name = (ac.get("name") or "").lower()
+    if slug == "stablecoins" or "stablecoin" in slug:
+        return True
+    if name == "stablecoins" or "stablecoin" in name:
+        return True
+    return bool(slug == "stable" and "stable" in name)
+
+
+def _rwa_count_excl_stablecoin(stats: list[dict[str, Any]]) -> int:
+    n = 0
+    for ac in stats:
+        if not isinstance(ac, dict) or _is_stablecoin_asset_class(ac):
+            continue
+        c = ac.get("asset_count")
+        if isinstance(c, (int, float)):
+            n += int(c)
+    return n
+
+
+def _bridged_value_sum_excl_stablecoin(stats: list[dict[str, Any]]) -> float:
+    t = 0.0
+    for ac in stats:
+        if not isinstance(ac, dict) or _is_stablecoin_asset_class(ac):
+            continue
+        o = (ac.get("bridged_token_value_dollar") or {}) if isinstance(ac, dict) else {}
+        v = o.get("val")
+        if isinstance(v, (int, float)):
+            t += float(v)
+    return t
+
+
 def _rows_from_networks_list_results(raw: list[dict[str, Any]]) -> list[RwaNetworksTabRow]:
     """
     Build rows sorted by **RWA value (distributed)** descending (``transferability.transferable``), then
@@ -535,10 +579,23 @@ def _rows_from_networks_list_results(raw: list[dict[str, Any]]) -> list[RwaNetwo
         t_f = float(t) if isinstance(t, (int, float)) else 0.0
         t30_f = float(t30) if isinstance(t30, (int, float)) else 0.0
         nt_f = float(nt) if isinstance(nt, (int, float)) else 0.0
-        pct = float(pctf) if isinstance(pctf, (int, float)) else (t_f / (t_f + nt_f) if (t_f + nt_f) > 0 else 0.0)
 
-        ac = row.get("asset_count")
-        rwa = int(ac) if isinstance(ac, (int, float)) else 0
+        ac_stats: list[dict[str, Any]] = [
+            a for a in (row.get("asset_class_stats") or []) if isinstance(a, dict)
+        ]
+        if ac_stats:
+            rwa = _rwa_count_excl_stablecoin(ac_stats)
+        else:
+            acn = row.get("asset_count")
+            rwa = int(acn) if isinstance(acn, (int, float)) else 0
+
+        excl_sum = _bridged_value_sum_excl_stablecoin(ac_stats) if ac_stats else 0.0
+        if excl_sum <= 0 and t_f + nt_f > 0:
+            excl_sum = t_f + nt_f
+        if excl_sum > 0:
+            pct = t_f / excl_sum
+        else:
+            pct = float(pctf) if isinstance(pctf, (int, float)) else 0.0
 
         v7: float | None
         if t30_f and t30_f > 0 and isinstance(t, (int, float)):
@@ -561,7 +618,8 @@ def _rows_from_networks_list_results(raw: list[dict[str, Any]]) -> list[RwaNetwo
                 network_href=href,
                 rwa_count=rwa,
                 distributed_usd=t_f,
-                represented_usd=t_f + nt_f,
+                represented_usd=nt_f,
+                rwa_total_excl_stablecoin_usd=excl_sum,
                 pct_distributed_raw=pct,
                 value_change_7d_raw=v7,
                 market_share_raw=ms,
@@ -595,8 +653,9 @@ def _fetch_networks_props_payload() -> tuple[dict[str, Any] | None, str | None]:
 
 def fetch_rwa_networks_page_data() -> tuple[list[RwaNetworksTabRow], list[RwaGlobalKpi], str | None]:
     """
-    RWA **Networks** page: ``pageProps.aggregates`` (same top-line as the /networks overview) + **networks table** rows
-    from ``listQueryResponse.results`` (transferability / asset counts; not the raw homepage ``leagueTableTabs`` object).
+    RWA **Networks** page: ``pageProps.aggregates`` + ``listQueryResponse.results``, using ``transferability`` and
+    per-network ``asset_class_stats`` so RWA count / total (excl. stables) / *represented* match the on-site table
+    (same public ``__NEXT_DATA__`` the Next app loads — not a separate “Market Overview” league only).
     """
     props, err = _fetch_networks_props_payload()
     if err:
