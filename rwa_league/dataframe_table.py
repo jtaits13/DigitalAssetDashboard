@@ -101,7 +101,7 @@ def build_rwa_networks_page_dataframe(rows: list[RwaNetworksTabRow]) -> pd.DataF
 
 
 def build_rwa_platforms_page_dataframe(rows: list[RwaPlatformsTabRow]) -> pd.DataFrame:
-    """RWA **Platforms** (``/platforms``): same column layout as :func:`build_rwa_networks_page_dataframe` but **Platform**."""
+    """RWA **Platforms** **Distributed** league (``/platforms``): same columns as :func:`build_rwa_networks_page_dataframe` but **Platform**."""
     recs: list[dict[str, object]] = []
     for r in rows:
         href = (r.platform_href or "").strip()

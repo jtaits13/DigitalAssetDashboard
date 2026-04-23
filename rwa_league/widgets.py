@@ -153,10 +153,12 @@ RWA_DATA_SOURCE_CAPTION = (
 
 RWA_PLATFORMS_DATA_SOURCE_CAPTION = (
     "Source: [RWA.xyz Platforms](https://app.rwa.xyz/platforms) embedded **__NEXT_DATA__** "
-    "(`listQueryResponse` issuer rows + `asset_class_stats`; no row-level `transferability`). "
-    "**RWA value (distributed)** = Σ non-stable `bridged_token_value`; **RWA total (excl. stablecoins)** = Σ non-stable "
-    "`circulating_asset_value`; **(represented)** = max(0, total − distributed). Top-line **%** are **30D**; "
-    "**7D Δ** uses top-level `bridged_token_value` `val` vs `val_30d`."
+    "(`listQueryResponse` issuer rows). The table matches the on-site **Distributed** Platforms league: when "
+    "`tokenization_type_stats` is present, **distributed** / **represented** USD and RWA counts use the "
+    "`distributed` / `represented` buckets (represented-only issuers are omitted); otherwise non-stablecoin "
+    "`asset_class_stats` bridged/circulating sums apply. **RWA total (excl. stablecoins)** = distributed + represented "
+    "when both buckets exist. Top-line **%** are **30D**; **7D Δ** uses distributed-bucket `val` vs `val_30d`, or "
+    "top-level `bridged_token_value` when the bucket list is empty."
 )
 
 STABLECOIN_RWA_CAPTION = (
@@ -919,8 +921,8 @@ def load_rwa_league_cached(*, _rwa_schema: int = 7) -> tuple[list[RwaNetworksTab
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
-def load_rwa_platforms_cached(*, _platforms_schema: int = 1) -> tuple[list[RwaPlatformsTabRow], list[RwaGlobalKpi], str | None]:
-    """Bump ``_platforms_schema`` when ``/platforms`` ``__NEXT_DATA__`` shape changes."""
+def load_rwa_platforms_cached(*, _platforms_schema: int = 2) -> tuple[list[RwaPlatformsTabRow], list[RwaGlobalKpi], str | None]:
+    """Bump ``_platforms_schema`` when ``/platforms`` ``__NEXT_DATA__`` shape or row mapping changes."""
     _ = _platforms_schema
     return fetch_rwa_platforms_page_data()
 
@@ -1582,7 +1584,7 @@ def _show_rwa_participants_platforms_home_footer(
     )
     _render_rwa_global_overview(kpis, kpi_legend_name="Platforms")
     st.caption(
-        "Preview of the **Platforms** (issuer) table from the [RWA.xyz Platforms](https://app.rwa.xyz/platforms) embed."
+        "Preview of the **Distributed** Platforms issuer table from the [RWA.xyz Platforms](https://app.rwa.xyz/platforms) embed."
     )
     n = max(1, min(preview_rows, len(rows)))
     working = list(rows)[:n]
@@ -1755,7 +1757,7 @@ def show_rwa_participants_platforms_widget(
             unsafe_allow_html=True,
         )
         st.caption(
-            "Searchable issuer table from the [RWA.xyz Platforms](https://app.rwa.xyz/platforms) embed."
+            "Searchable **Distributed** Platforms issuer table from the [RWA.xyz Platforms](https://app.rwa.xyz/platforms) embed."
         )
 
     _render_rwa_global_overview(kpis, kpi_legend_name="Platforms")

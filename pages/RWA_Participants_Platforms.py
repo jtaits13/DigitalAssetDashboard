@@ -37,8 +37,9 @@ def main() -> None:
     st.markdown(section_label_teal("Participants — Platforms", placement="first"), unsafe_allow_html=True)
     st.markdown(
         '<p class="jd-hub-dek jd-hub-dek-fullbleed">RWA <strong>Participants</strong> · <strong>Platforms</strong>: '
-        "issuer-level **Platforms overview** metrics and the **Platforms** table from "
-        '<a href="https://app.rwa.xyz/platforms">RWA.xyz</a> (embedded in <code>__NEXT_DATA__</code>). '
+        "issuer-level **Platforms overview** metrics and the **Distributed** Platforms issuer table from "
+        '<a href="https://app.rwa.xyz/platforms">RWA.xyz</a> (embedded in <code>__NEXT_DATA__</code>; '
+        '<code>tokenization_type_stats</code> distributed bucket). '
         "Top-line <strong>30D</strong> % changes and per-issuer columns follow the same public payload as the site.</p>",
         unsafe_allow_html=True,
     )

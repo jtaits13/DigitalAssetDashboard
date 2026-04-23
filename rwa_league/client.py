@@ -3,8 +3,10 @@ Fetch RWA.xyz data from public Next.js ``__NEXT_DATA__`` embeds (homepage, /netw
 
 The **Networks** dashboard uses ``/networks`` (not only the smaller homepage **parent_networks** league) so that
 overviews and the network table line up with the on-site [Networks](https://app.rwa.xyz/networks) experience.
-The **Platforms** dashboard uses ``/platforms`` (issuer ``listQueryResponse`` rows with ``asset_class_stats``; no
-row-level ``transferability``).
+The **Platforms** dashboard uses ``/platforms`` (issuer ``listQueryResponse`` rows). When present,
+``tokenization_type_stats`` splits **distributed** vs **represented** value; the Participants table follows the
+on-site **Distributed** Platforms league (represented-only issuers are omitted). Rows without that block still use
+``asset_class_stats`` totals as a fallback.
 
 Not an official API; structure may change. For production use RWA.xyz's data products.
 """
@@ -144,12 +146,14 @@ class RwaNetworksTabRow:
 @dataclass(frozen=True)
 class RwaPlatformsTabRow:
     """
-    One **issuer / platform** row from ``/platforms`` (``listQueryResponse.results``).
+    One **issuer / platform** row from ``/platforms`` (``listQueryResponse.results``), aligned with the on-site
+    **Distributed** Platforms league.
 
-    There is no ``transferability`` block on these rows. **RWA value (distributed)** is the sum of non-stablecoin
-    ``bridged_token_value_dollar`` in ``asset_class_stats``; **RWA total (excl. stablecoins)** is the sum of non-stable
-    ``circulating_asset_value_dollar``; **RWA value (represented)** is the gap ``max(0, total − distributed)``.
-    **7D Δ** uses top-level ``bridged_token_value_dollar`` ``val`` vs ``val_30d`` (same window convention as Networks).
+    When ``tokenization_type_stats`` is present, **distributed** / **represented** USD and RWA counts come from the
+    ``distributed`` and ``represented`` buckets there (hybrids such as Figure include both). Issuers with stats but
+    no **distributed** value are excluded. If that list is empty, measures fall back to non-stablecoin
+    ``asset_class_stats`` bridged/circulating sums and **7D Δ** from top-level ``bridged_token_value_dollar`` (same
+    window convention as Networks).
     """
 
     rank: int
@@ -609,10 +613,42 @@ def _bridged_top_level_30d(row: dict[str, Any]) -> tuple[float, float]:
     return vf, v30f
 
 
+def _tokenization_type_bucket_sums(row: dict[str, Any], type_key: str) -> tuple[float, float, int]:
+    """
+    For ``tokenization_type_stats`` entries matching ``type_key`` (``distributed`` / ``represented``), sum
+    ``bridged_token_value_dollar`` ``val``, ``val_30d``, and ``asset_count``.
+    """
+    want = (type_key or "").strip().lower()
+    val_t = 0.0
+    v30_t = 0.0
+    rwa = 0
+    raw = row.get("tokenization_type_stats")
+    if not isinstance(raw, list):
+        return 0.0, 0.0, 0
+    for item in raw:
+        if not isinstance(item, dict):
+            continue
+        if str(item.get("type") or "").strip().lower() != want:
+            continue
+        br = item.get("bridged_token_value_dollar") or {}
+        v = br.get("val")
+        v30 = br.get("val_30d")
+        if isinstance(v, (int, float)):
+            val_t += float(v)
+        if isinstance(v30, (int, float)):
+            v30_t += float(v30)
+        ac = item.get("asset_count")
+        if isinstance(ac, (int, float)):
+            rwa += int(ac)
+    return val_t, v30_t, rwa
+
+
 def _rows_from_platforms_list_results(raw: list[dict[str, Any]]) -> list[RwaPlatformsTabRow]:
     """
-    Issuer rows sorted by **RWA value (distributed)** (non-stable bridged sum) descending.
-    Market share uses Σ distributed; 30D Δ share uses Σ ``bridged`` ``val_30d`` excl. stable per row.
+    Issuer rows for the on-site **Distributed** Platforms league: sorted by **RWA value (distributed)** descending.
+
+    Rows with non-empty ``tokenization_type_stats`` and no positive **distributed** bucket are skipped (represented-only
+    issuers). Market share uses Σ distributed; 30D Δ share uses Σ distributed ``val_30d`` per row.
     """
     rows_in = [r for r in raw if isinstance(r, dict)]
     if not rows_in:
@@ -623,34 +659,51 @@ def _rows_from_platforms_list_results(raw: list[dict[str, Any]]) -> list[RwaPlat
         name = str(row.get("name") or "").strip() or "—"
         slug = str(row.get("slug") or "").strip()
         href = f"/platforms/{slug}" if slug else None
-        ac_stats: list[dict[str, Any]] = [
-            a for a in (row.get("asset_class_stats") or []) if isinstance(a, dict)
-        ]
-        if ac_stats:
-            rwa = _rwa_count_excl_stablecoin(ac_stats)
-            dist = _bridged_value_sum_excl_stablecoin(ac_stats)
-            total_excl = _circulating_value_sum_excl_stablecoin(ac_stats)
-            dist30 = _bridged_value_30d_sum_excl_stablecoin(ac_stats)
-        else:
-            acn = row.get("asset_count")
-            rwa = int(acn) if isinstance(acn, (int, float)) else 0
-            br = row.get("bridged_token_value_dollar") or {}
-            cr = row.get("circulating_asset_value_dollar") or {}
-            dist = float(br["val"]) if isinstance(br.get("val"), (int, float)) else 0.0
-            total_excl = float(cr["val"]) if isinstance(cr.get("val"), (int, float)) else 0.0
-            dist30 = float(br["val_30d"]) if isinstance(br.get("val_30d"), (int, float)) else 0.0
+        tts = row.get("tokenization_type_stats")
+        has_tts = isinstance(tts, list) and len(tts) > 0
 
-        if total_excl <= 0 and dist > 0:
-            total_excl = dist
-        rep = max(0.0, total_excl - dist)
-        pct = (dist / total_excl) if total_excl > 0 else 0.0
-
-        b_now, b30_top = _bridged_top_level_30d(row)
-        v7: float | None
-        if b30_top and b30_top > 0:
-            v7 = (b_now - b30_top) / b30_top
+        if has_tts:
+            dist, dist30, rwa = _tokenization_type_bucket_sums(row, "distributed")
+            rep, _, _ = _tokenization_type_bucket_sums(row, "represented")
+            if dist <= 0:
+                continue
+            total_excl = dist + rep
+            if total_excl <= 0 and dist > 0:
+                total_excl = dist
+            pct = (dist / total_excl) if total_excl > 0 else 0.0
+            v7: float | None
+            if dist30 and dist30 > 0:
+                v7 = (dist - dist30) / dist30
+            else:
+                v7 = None
         else:
-            v7 = None
+            ac_stats: list[dict[str, Any]] = [
+                a for a in (row.get("asset_class_stats") or []) if isinstance(a, dict)
+            ]
+            if ac_stats:
+                rwa = _rwa_count_excl_stablecoin(ac_stats)
+                dist = _bridged_value_sum_excl_stablecoin(ac_stats)
+                total_excl = _circulating_value_sum_excl_stablecoin(ac_stats)
+                dist30 = _bridged_value_30d_sum_excl_stablecoin(ac_stats)
+            else:
+                acn = row.get("asset_count")
+                rwa = int(acn) if isinstance(acn, (int, float)) else 0
+                br = row.get("bridged_token_value_dollar") or {}
+                cr = row.get("circulating_asset_value_dollar") or {}
+                dist = float(br["val"]) if isinstance(br.get("val"), (int, float)) else 0.0
+                total_excl = float(cr["val"]) if isinstance(cr.get("val"), (int, float)) else 0.0
+                dist30 = float(br["val_30d"]) if isinstance(br.get("val_30d"), (int, float)) else 0.0
+
+            if total_excl <= 0 and dist > 0:
+                total_excl = dist
+            rep = max(0.0, total_excl - dist)
+            pct = (dist / total_excl) if total_excl > 0 else 0.0
+
+            b_now, b30_top = _bridged_top_level_30d(row)
+            if b30_top and b30_top > 0:
+                v7 = (b_now - b30_top) / b30_top
+            else:
+                v7 = None
 
         interim.append(
             {
@@ -851,8 +904,9 @@ def _fetch_platforms_props_payload() -> tuple[dict[str, Any] | None, str | None]
 
 def fetch_rwa_platforms_page_data() -> tuple[list[RwaPlatformsTabRow], list[RwaGlobalKpi], str | None]:
     """
-    RWA **Platforms** page: ``pageProps.aggregates`` + ``listQueryResponse.results`` (issuer platforms with
-    ``asset_class_stats``; same public ``__NEXT_DATA__`` as [Platforms](https://app.rwa.xyz/platforms)).
+    RWA **Platforms** page: ``pageProps.aggregates`` + ``listQueryResponse.results`` (issuer platforms; same public
+    ``__NEXT_DATA__`` as [Platforms](https://app.rwa.xyz/platforms)). The returned table follows the on-site
+    **Distributed** league (``tokenization_type_stats`` / ``distributed`` bucket when present).
     """
     props, err = _fetch_platforms_props_payload()
     if err:
