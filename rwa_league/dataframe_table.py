@@ -13,6 +13,7 @@ import pandas as pd
 from crypto_etps.client import format_usd_compact
 from rwa_league.client import (
     RwaNetworkLeagueRow,
+    RwaNetworksTabRow,
     RwaTokenizedStockNetworkRow,
     RwaStablecoinPlatformRow,
     RwaTokenizedStockPlatformRow,
@@ -50,6 +51,44 @@ def build_rwa_dataframe(rows: list[RwaNetworkLeagueRow]) -> pd.DataFrame:
                 "Link": url,
                 "RWA Count": int(r.rwa_count),
                 "Total Value": float(r.total_value_usd),
+                "7D Δ value": pct7,
+                "Market Share": float(r.market_share_raw * 100.0),
+                "30D Δ share": pct_ms30,
+            }
+        )
+    return pd.DataFrame(recs)
+
+
+def build_rwa_networks_page_dataframe(rows: list[RwaNetworksTabRow]) -> pd.DataFrame:
+    """
+    RWA **Networks** page: distributed / represented / % distributed from ``transferability``; 7D Δ uses the
+    same fractional move as the homepage (base = ``transferable_30d`` in the public payload).
+    """
+    recs: list[dict[str, object]] = []
+    for r in rows:
+        href = (r.network_href or "").strip()
+        url = f"{_APP_BASE}{href}" if href.startswith("/") else f"{_APP_BASE}/"
+        v7 = r.value_change_7d_raw
+        if v7 is None:
+            pct7 = np.nan
+        else:
+            f7 = float(v7)
+            pct7 = np.nan if np.isnan(f7) else f7 * 100.0
+        ms30 = r.market_share_change_30d_raw
+        if ms30 is None:
+            pct_ms30 = np.nan
+        else:
+            fm = float(ms30)
+            pct_ms30 = np.nan if np.isnan(fm) else fm * 100.0
+        recs.append(
+            {
+                "#": int(r.rank),
+                "Network": r.network,
+                "Link": url,
+                "RWA Count": int(r.rwa_count),
+                "RWA value (distributed)": float(r.distributed_usd),
+                "RWA value (represented)": float(r.represented_usd),
+                "% distributed": float(r.pct_distributed_raw * 100.0),
                 "7D Δ value": pct7,
                 "Market Share": float(r.market_share_raw * 100.0),
                 "30D Δ share": pct_ms30,
@@ -261,7 +300,9 @@ def filter_tokenized_stock_network_rows(
     return [r for r in rows if q in (r.network or "").lower()]
 
 
-def filter_rows_by_network(rows: list[RwaNetworkLeagueRow], query: str) -> list[RwaNetworkLeagueRow]:
+def filter_rows_by_network(
+    rows: list[RwaNetworkLeagueRow] | list[RwaNetworksTabRow], query: str
+) -> list[RwaNetworkLeagueRow] | list[RwaNetworksTabRow]:
     q = (query or "").strip().lower()
     if not q:
         return list(rows)
@@ -448,6 +489,40 @@ def style_rwa_dataframe(df: pd.DataFrame) -> pd.io.formats.style.Styler:
             "7D Δ value": _fmt_7d_cell,
             "30D Δ share": _fmt_7d_cell,
             "Total Value": _fmt_total_value_cell,
+            "Market Share": _fmt_market_share_cell,
+        },
+        na_rep="—",
+    )
+
+
+def _fmt_pct_plain(v: object) -> str:
+    if pd.isna(v):
+        return "—"
+    return f"{float(v):.2f}%"
+
+
+def style_rwa_networks_page_dataframe(df: pd.DataFrame) -> pd.io.formats.style.Styler:
+    """Styling for :func:`build_rwa_networks_page_dataframe` (RWA /networks)."""
+
+    def highlight_delta(s: pd.Series) -> list[str]:
+        return [
+            "color: #28794E; font-weight: 600"
+            if pd.notna(v) and float(v) >= 0
+            else "color: #dc2626; font-weight: 600"
+            if pd.notna(v) and float(v) < 0
+            else ""
+            for v in s
+        ]
+
+    return df.style.apply(highlight_delta, subset=["7D Δ value"]).apply(
+        highlight_delta, subset=["30D Δ share"]
+    ).format(
+        {
+            "7D Δ value": _fmt_7d_cell,
+            "30D Δ share": _fmt_7d_cell,
+            "RWA value (distributed)": _fmt_total_value_cell,
+            "RWA value (represented)": _fmt_total_value_cell,
+            "% distributed": _fmt_pct_plain,
             "Market Share": _fmt_market_share_cell,
         },
         na_rep="—",

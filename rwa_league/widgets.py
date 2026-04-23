@@ -1,4 +1,4 @@
-"""Home page widget: RWA.xyz Networks league table (embedded page data)."""
+"""RWA.xyz **Networks** embed: hub + full-page widgets (``/networks`` ``__NEXT_DATA__``)."""
 
 from __future__ import annotations
 
@@ -13,22 +13,24 @@ from home_layout import (
     hub_subsection_heading_html,
 )
 from rwa_league.client import (
+    APP_NETWORKS,
     APP_STOCKS,
     APP_TREASURIES,
     RwaGlobalKpi,
-    RwaNetworkLeagueRow,
+    RwaNetworksTabRow,
     RwaTokenizedStockNetworkRow,
     RwaStablecoinPlatformRow,
     RwaTokenizedStockPlatformRow,
     RwaTreasuryDistributedNetworkRow,
     RwaTreasuryPlatformRow,
-    fetch_rwa_home_data,
+    fetch_rwa_networks_page_data,
     fetch_rwa_stablecoins_data,
     fetch_rwa_tokenized_stocks_data,
     fetch_rwa_treasuries_data,
 )
 from rwa_league.dataframe_table import (
     build_rwa_dataframe,
+    build_rwa_networks_page_dataframe,
     build_tokenized_stock_network_dataframe,
     build_stablecoin_platform_dataframe,
     build_tokenized_stock_platform_dataframe,
@@ -41,6 +43,7 @@ from rwa_league.dataframe_table import (
     filter_treasury_network_rows,
     filter_treasury_platform_rows,
     style_rwa_dataframe,
+    style_rwa_networks_page_dataframe,
     style_tokenized_stock_network_dataframe,
     style_stablecoin_platform_dataframe,
     style_tokenized_stock_platform_dataframe,
@@ -133,9 +136,11 @@ WIDGET_CSS = """
 """
 
 RWA_DATA_SOURCE_CAPTION = (
-    "Source: [RWA.xyz](https://app.rwa.xyz/) homepage embedded data "
-    "(Global Market Overview + Networks league **Distributed** tab; not the public API). "
-    "Overview **% changes** are **30-day (30D)**; **Distributed Value** in the table is a level."
+    "Source: [RWA.xyz Networks](https://app.rwa.xyz/networks) embedded data "
+    "(**__NEXT_DATA__** overview + `listQueryResponse` with `transferability`); not the public API. "
+    "Top-line **% changes** are **30D**; **7D Δ value** uses the same `transferable_30d` base as the homepage league. "
+    "**RWA value (distributed)** = `transferability.transferable` (reconciles to **Distributed Asset Value**; "
+    "**% distributed** = `pct_transferable`)."
 )
 
 STABLECOIN_RWA_CAPTION = (
@@ -223,8 +228,12 @@ def _render_rwa_stablecoin_overview(
     )
 
 
-def _render_rwa_global_overview(kpis: list[RwaGlobalKpi]) -> None:
-    """Global Market Overview: five columns; slate titles, teal values, 30D % change (no “30D” suffix)."""
+def _render_rwa_global_overview(
+    kpis: list[RwaGlobalKpi],
+    *,
+    kpi_legend_name: str = "Global Market",
+) -> None:
+    """Global / Networks overview: KPI tiles; slate titles, teal values, 30D % change (no “30D” suffix on labels)."""
     if not kpis:
         return
     cells = []
@@ -244,7 +253,7 @@ def _render_rwa_global_overview(kpis: list[RwaGlobalKpi]) -> None:
     row = "<div class='rwa-kpi-row'>" + "".join(cells) + "</div>"
     st.markdown(
         '<div class="rwa-kpi-wrap">'
-        f"{_rwa_kpi_window_note_html(overview_title='Global Market')}"
+        f"{_rwa_kpi_window_note_html(overview_title=kpi_legend_name)}"
         f"{row}"
         "</div>",
         unsafe_allow_html=True,
@@ -296,8 +305,8 @@ def _rank_column_label(*, by_metric: str) -> str:
 _LINK_ARROW = "\u2197"  # Northeast arrow for RWA.xyz LinkColumn (Unicode U+2197)
 STABLECOINS_RWA_LINK_LABEL = "See Stablecoins on RWA.xyz"
 RWA_GLOBAL_MARKET_OVERVIEW_HEADING = "RWA Global Market Overview"
-GLOBAL_MARKET_RWA_LINK_LABEL = "See RWA Global Market Overview on RWA.xyz"
-GLOBAL_MARKET_RWA_URL = "https://app.rwa.xyz/"
+GLOBAL_MARKET_RWA_LINK_LABEL = "See RWA Networks on RWA.xyz"
+GLOBAL_MARKET_RWA_URL = APP_NETWORKS
 
 
 def rwa_table_height(num_rows: int, *, max_h: int = 520) -> int:
@@ -434,6 +443,85 @@ def _show_rwa_dataframe(df, *, height: int) -> None:
                 format=None,
                 width=100,
                 help="Change in market share vs 30 days ago (percentage points; same as Stablecoins table)",
+            ),
+        },
+    )
+
+
+def _show_rwa_networks_page_dataframe(df, *, height: int) -> None:
+    """RWA [Networks](https://app.rwa.xyz/networks) table — see :func:`build_rwa_networks_page_dataframe`."""
+    st.dataframe(
+        style_rwa_networks_page_dataframe(df),
+        use_container_width=True,
+        height=height,
+        hide_index=True,
+        column_order=[
+            "#",
+            "Network",
+            "Link",
+            "RWA Count",
+            "RWA value (distributed)",
+            "RWA value (represented)",
+            "% distributed",
+            "7D Δ value",
+            "Market Share",
+            "30D Δ share",
+        ],
+        column_config={
+            "#": st.column_config.NumberColumn(
+                _rank_column_label(by_metric="embed list order"),
+                format="%.0f",
+                help="1-based index in the /networks __NEXT_DATA__ list (default sort is often name A→Z).",
+            ),
+            "Network": st.column_config.TextColumn(
+                f"Network {_SORT}",
+                width="medium",
+            ),
+            "Link": st.column_config.LinkColumn(
+                f"RWA Page {_SORT}",
+                display_text=_LINK_ARROW,
+                validate=r"^https://",
+                width="small",
+                help="Open this network on RWA.xyz",
+            ),
+            "RWA Count": st.column_config.NumberColumn(
+                f"RWA count {_SORT}",
+                format="%.0f",
+            ),
+            "RWA value (distributed)": st.column_config.NumberColumn(
+                f"RWA value (distributed) {_SORT}",
+                format=None,
+                width=150,
+                help="transferability.transferable (matches homepage parent_networks & overview total).",
+            ),
+            "RWA value (represented)": st.column_config.NumberColumn(
+                f"RWA value (represented) {_SORT}",
+                format=None,
+                width=150,
+                help="transferable + non_transferable in the RWA on-chain block.",
+            ),
+            "% distributed": st.column_config.NumberColumn(
+                f"% distributed {_SORT}",
+                format=None,
+                width=110,
+                help="pct_transferable in the embed (distributed ÷ represented in this model).",
+            ),
+            "7D Δ value": st.column_config.NumberColumn(
+                f"7D Δ value {_SORT}",
+                format=None,
+                width=100,
+                help="(transferable−transferable_30d) / transferable_30d (same as homepage value_7d_change).",
+            ),
+            "Market Share": st.column_config.NumberColumn(
+                f"Market Share {_SORT}",
+                format=None,
+                help="This network’s share of Σ RWA value (distributed) in this list.",
+            ),
+            "30D Δ share": st.column_config.NumberColumn(
+                f"30D Δ share {_SORT}",
+                format=None,
+                width=100,
+                help="Change in market share (percentage points) using current vs 30D-ago transferable totals.",
             ),
         },
     )
@@ -708,10 +796,10 @@ def _show_tokenized_stock_network_dataframe(df, *, height: int) -> None:
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
-def load_rwa_league_cached(*, _rwa_schema: int = 4) -> tuple[list[RwaNetworkLeagueRow], list[RwaGlobalKpi], str | None]:
-    """Bump ``_rwa_schema`` when homepage payload shape changes."""
+def load_rwa_league_cached(*, _rwa_schema: int = 5) -> tuple[list[RwaNetworksTabRow], list[RwaGlobalKpi], str | None]:
+    """Bump ``_rwa_schema`` when ``/networks`` or ``__NEXT_DATA__`` shape changes."""
     _ = _rwa_schema
-    return fetch_rwa_home_data()
+    return fetch_rwa_networks_page_data()
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
@@ -1218,7 +1306,7 @@ def show_rwa_tokenized_stocks_widget(
 
 
 def _rwa_global_market_status(
-    rows: list[RwaNetworkLeagueRow],
+    rows: list[RwaNetworksTabRow],
     kpis: list[RwaGlobalKpi],
     err: str | None,
     *,
@@ -1226,7 +1314,8 @@ def _rwa_global_market_status(
     preview_rows: int,
 ) -> str:
     """
-    Original hub block: **RWA Global Market Overview** + KPIs + Networks league (homepage embed).
+    Hub block: **RWA Global Market Overview** (heading) + top-line **Networks** overview KPIs + the **Networks** table
+    (from ``/networks`` ``__NEXT_DATA__``, not the smaller homepage **parent_networks** league only).
 
     Returns ``"STOP"`` (abort rest of On-chain bundle), ``"ERR_HOME"`` (fetch error on hub — caller adds
     Stablecoins / Treasuries / Stocks), or ``"OK"`` (caller may add asset teasers + Participants footer on hub).
@@ -1240,7 +1329,7 @@ def _rwa_global_market_status(
             f'<h2 class="{h2_cls}">{RWA_GLOBAL_MARKET_OVERVIEW_HEADING}</h2></div>',
             unsafe_allow_html=True,
         )
-        _render_rwa_global_overview(kpis)
+        _render_rwa_global_overview(kpis, kpi_legend_name="Networks")
         st.link_button(
             GLOBAL_MARKET_RWA_LINK_LABEL,
             GLOBAL_MARKET_RWA_URL,
@@ -1259,7 +1348,7 @@ def _rwa_global_market_status(
         f'<h2 class="{h2_cls}">{RWA_GLOBAL_MARKET_OVERVIEW_HEADING}</h2></div>',
         unsafe_allow_html=True,
     )
-    _render_rwa_global_overview(kpis)
+    _render_rwa_global_overview(kpis, kpi_legend_name="Networks")
 
     working = list(rows)
     if home_preview:
@@ -1279,11 +1368,12 @@ def _rwa_global_market_status(
             )
         else:
             st.caption(
-                f"Showing all {len(working)} networks (**Distributed Value** levels; overview above: **30D** %)."
+                f"Showing all {len(working)} networks (see caption below for RWA / **Networks** column definitions; "
+                f"headline **%** above: **30D**)."
             )
 
-    df = build_rwa_dataframe(working)
-    _show_rwa_dataframe(df, height=rwa_table_height(len(df)))
+    df = build_rwa_networks_page_dataframe(working)
+    _show_rwa_networks_page_dataframe(df, height=rwa_table_height(len(df), max_h=900))
     if not home_preview:
         st.caption(RWA_DATA_SOURCE_CAPTION)
 
@@ -1305,12 +1395,12 @@ def _rwa_global_market_status(
 
 
 def _show_rwa_participants_networks_home_footer(
-    rows: list[RwaNetworkLeagueRow],
+    rows: list[RwaNetworksTabRow],
     *,
     preview_rows: int,
 ) -> None:
     """
-    Hub-only tail: **Participants → Networks** framing + the same Networks league preview (no duplicate KPI row).
+    Hub-only tail: **Participants → Networks** + the same **/networks** table preview (no duplicate KPI row).
     """
     if not rows:
         return
@@ -1325,13 +1415,13 @@ def _show_rwa_participants_networks_home_footer(
         unsafe_allow_html=True,
     )
     st.caption(
-        "Same **Networks** league as above (RWA.xyz homepage **Distributed** view), grouped here under **Participants** "
-        "to mirror [RWA.xyz Networks](https://app.rwa.xyz/networks)."
+        "Same **RWA Networks** table as in **RWA Global Market** above, grouped under **Participants** to mirror "
+        "[RWA.xyz Networks](https://app.rwa.xyz/networks)."
     )
     n = max(1, min(preview_rows, len(rows)))
     working = list(rows)[:n]
-    df = build_rwa_dataframe(working)
-    _show_rwa_dataframe(df, height=rwa_table_height(len(df)))
+    df = build_rwa_networks_page_dataframe(working)
+    _show_rwa_networks_page_dataframe(df, height=rwa_table_height(len(df), max_h=900))
 
     if st.button(
         "Open full Participants — Networks page",
@@ -1376,7 +1466,7 @@ def show_rwa_participants_networks_widget(
             f'<h2 class="home-main-heading">{RWA_GLOBAL_MARKET_OVERVIEW_HEADING}</h2></div>',
             unsafe_allow_html=True,
         )
-        _render_rwa_global_overview(kpis)
+        _render_rwa_global_overview(kpis, kpi_legend_name="Networks")
         st.link_button(
             GLOBAL_MARKET_RWA_LINK_LABEL,
             GLOBAL_MARKET_RWA_URL,
@@ -1405,9 +1495,8 @@ def show_rwa_participants_networks_widget(
             unsafe_allow_html=True,
         )
         st.caption(
-            "Full **Participants → Networks** table with search from the "
-            "[RWA.xyz](https://app.rwa.xyz/) homepage embed. **Distributed Value** in each row is a level; "
-            "overview **% changes** are **30-day (30D)** from the RWA **Global Market** bar."
+            "Searchable table from the [RWA.xyz Networks](https://app.rwa.xyz/networks) embed. "
+            "RWA value columns use the same **transferability** fields as the on-site list; top-line **%** are **30D**."
         )
         st.markdown(
             f'<div class="jd-hub-subsection-head" id="jd-rwa-market">'
@@ -1415,7 +1504,7 @@ def show_rwa_participants_networks_widget(
             unsafe_allow_html=True,
         )
 
-    _render_rwa_global_overview(kpis)
+    _render_rwa_global_overview(kpis, kpi_legend_name="Networks")
 
     q = st.text_input(
         "Search network",
@@ -1430,16 +1519,16 @@ def show_rwa_participants_networks_widget(
         )
     else:
         st.caption(
-            f"Showing all {len(working)} networks (Distributed Value; overview above: **30D** % on headline KPIs)."
+            f"Showing all {len(working)} networks. Headline KPI **%** are **30D**; see the table caption for column definitions."
         )
 
     st.markdown(
         '<div class="jd-hub-subsection-head">'
-        '<h2 class="home-main-heading">League table (Distributed · Networks)</h2></div>',
+        '<h2 class="home-main-heading">Networks table</h2></div>',
         unsafe_allow_html=True,
     )
-    df = build_rwa_dataframe(working)
-    _show_rwa_dataframe(df, height=rwa_table_height(len(df)))
+    df = build_rwa_networks_page_dataframe(working)
+    _show_rwa_networks_page_dataframe(df, height=rwa_table_height(len(df), max_h=900))
     st.caption(RWA_DATA_SOURCE_CAPTION)
 
     st.link_button(

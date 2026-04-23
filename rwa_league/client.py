@@ -1,5 +1,8 @@
 """
-Fetch RWA.xyz homepage data from Next.js __NEXT_DATA__: Networks league + Global Market Overview.
+Fetch RWA.xyz data from public Next.js ``__NEXT_DATA__`` embeds (homepage, /networks, /stablecoins, etc.).
+
+The **Networks** dashboard uses ``/networks`` (not only the smaller homepage **parent_networks** league) so that
+overviews and the network table line up with the on-site [Networks](https://app.rwa.xyz/networks) experience.
 
 Not an official API; structure may change. For production use RWA.xyz's data products.
 """
@@ -19,6 +22,7 @@ from crypto_etps.client import format_usd_compact
 logger = logging.getLogger(__name__)
 
 APP_HOME = "https://app.rwa.xyz/"
+APP_NETWORKS = "https://app.rwa.xyz/networks"
 APP_STABLECOINS = "https://app.rwa.xyz/stablecoins"
 APP_TREASURIES = "https://app.rwa.xyz/treasuries"
 APP_STOCKS = "https://app.rwa.xyz/stocks"
@@ -101,6 +105,28 @@ class RwaGlobalKpi:
     label: str
     value_display: str
     delta_30d_pct: float | None  # fractional change e.g. 0.075 for +7.5%
+
+
+@dataclass(frozen=True)
+class RwaNetworksTabRow:
+    """
+    One network row from ``/networks`` (``listQueryResponse.results``).
+
+    **Distributed** RWA value is ``transferability.transferable`` in the public embed — it lines up with the homepage
+    ``parent_networks`` league and with the “Distributed Asset Value” top-line (sum of transferables, ~same as
+    the Networks overview KPIs). **Represented** is ``transferable + non_transferable`` for that same block.
+    """
+
+    rank: int
+    network: str
+    network_href: str | None
+    rwa_count: int
+    distributed_usd: float
+    represented_usd: float
+    pct_distributed_raw: float  # 0..1 (``transferability.pct_transferable``)
+    value_change_7d_raw: float | None  # fractional: (t−t_ago)/t_ago; ``t_ago`` = ``transferable_30d`` in the embed
+    market_share_raw: float  # fraction 0..1
+    market_share_change_30d_raw: float | None  # current share minus share implied by row ``transferable_30d`` / Σ same
 
 
 def _extract_next_data(html: str) -> dict[str, Any] | None:
@@ -465,6 +491,126 @@ def _rows_from_raw(raw_rows: list[dict[str, Any]]) -> list[RwaNetworkLeagueRow]:
     return out
 
 
+def _rows_from_networks_list_results(raw: list[dict[str, Any]]) -> list[RwaNetworksTabRow]:
+    """
+    Build rows in **API list order** (``listQueryResponse.results`` — the Networks page default in ``__NEXT_DATA__``
+    is often name A→Z, see ``listQueryResponse.sort``).
+    """
+    if not raw:
+        return []
+    ts: list[float] = []
+    t30s: list[float] = []
+    for row in raw:
+        if not isinstance(row, dict):
+            ts.append(0.0)
+            t30s.append(0.0)
+            continue
+        tr = row.get("transferability") or {}
+        t = tr.get("transferable")
+        t30 = tr.get("transferable_30d")
+        ts.append(float(t) if isinstance(t, (int, float)) else 0.0)
+        t30s.append(float(t30) if isinstance(t30, (int, float)) else 0.0)
+    total_t = sum(ts) or 0.0
+    total_t30 = sum(t30s) or 0.0
+
+    out: list[RwaNetworksTabRow] = []
+    for i, row in enumerate(raw):
+        if not isinstance(row, dict):
+            continue
+        name = str(row.get("name") or "").strip() or "—"
+        slug = str(row.get("slug") or "").strip()
+        href = f"/networks/{slug}" if slug else None
+
+        tr = row.get("transferability") or {}
+        t = tr.get("transferable")
+        t30 = tr.get("transferable_30d")
+        nt = tr.get("non_transferable")
+        pctf = tr.get("pct_transferable")
+        t_f = float(t) if isinstance(t, (int, float)) else 0.0
+        t30_f = float(t30) if isinstance(t30, (int, float)) else 0.0
+        nt_f = float(nt) if isinstance(nt, (int, float)) else 0.0
+        pct = float(pctf) if isinstance(pctf, (int, float)) else (t_f / (t_f + nt_f) if (t_f + nt_f) > 0 else 0.0)
+
+        ac = row.get("asset_count")
+        rwa = int(ac) if isinstance(ac, (int, float)) else 0
+
+        v7: float | None
+        if t30_f and t30_f > 0 and isinstance(t, (int, float)):
+            v7 = (t_f - t30_f) / t30_f
+        else:
+            v7 = None
+
+        ms = (t_f / total_t) if total_t > 0 else 0.0
+        ms30: float | None
+        if total_t30 and total_t30 > 0:
+            share30 = t30_f / total_t30
+            ms30 = (t_f / total_t) - share30 if total_t else None
+        else:
+            ms30 = None
+
+        out.append(
+            RwaNetworksTabRow(
+                rank=i + 1,
+                network=name,
+                network_href=href,
+                rwa_count=rwa,
+                distributed_usd=t_f,
+                represented_usd=t_f + nt_f,
+                pct_distributed_raw=pct,
+                value_change_7d_raw=v7,
+                market_share_raw=ms,
+                market_share_change_30d_raw=ms30,
+            )
+        )
+    return out
+
+
+def _fetch_networks_props_payload() -> tuple[dict[str, Any] | None, str | None]:
+    headers = {"User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml"}
+    try:
+        r = requests.get(APP_NETWORKS, headers=headers, timeout=60)
+        r.raise_for_status()
+    except (requests.RequestException, OSError) as e:
+        logger.debug("RWA /networks fetch: %s", e)
+        return None, str(e)
+    payload = _extract_next_data(r.text)
+    if not payload:
+        return None, "Could not parse __NEXT_DATA__ from app.rwa.xyz/networks (layout may have changed)."
+    if payload.get("page") != "/networks":
+        return None, (
+            f"Expected Next.js page route /networks in __NEXT_DATA__, got {payload.get('page')!r}. "
+            "Refusing to parse a different route."
+        )
+    props = payload.get("props")
+    if not isinstance(props, dict):
+        return None, "Invalid __NEXT_DATA__ structure."
+    return props, None
+
+
+def fetch_rwa_networks_page_data() -> tuple[list[RwaNetworksTabRow], list[RwaGlobalKpi], str | None]:
+    """
+    RWA **Networks** page: ``pageProps.aggregates`` (same top-line as the /networks overview) + **networks table** rows
+    from ``listQueryResponse.results`` (transferability / asset counts; not the raw homepage ``leagueTableTabs`` object).
+    """
+    props, err = _fetch_networks_props_payload()
+    if err:
+        return [], [], err
+    assert props is not None
+
+    lqr = props.get("pageProps", {}).get("listQueryResponse")
+    if not isinstance(lqr, dict):
+        return [], [], "listQueryResponse missing from app.rwa.xyz/networks page data."
+    results = lqr.get("results")
+    if not isinstance(results, list) or not results:
+        return [], _parse_aggregates(props), "No networks in listQueryResponse on /networks."
+
+    rows = _rows_from_networks_list_results([r for r in results if isinstance(r, dict)])
+    kpis = _parse_aggregates(props)
+    if not rows:
+        return [], kpis, "Could not parse listQueryResponse results into network rows."
+    return rows, kpis, None
+
+
 def _fetch_props_payload() -> tuple[dict[str, Any] | None, str | None]:
     headers = {"User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml"}
     try:
@@ -504,9 +650,9 @@ def fetch_rwa_home_data() -> tuple[list[RwaNetworkLeagueRow], list[RwaGlobalKpi]
     return _rows_from_raw(raw_rows), kpis, None
 
 
-def fetch_rwa_network_league() -> tuple[list[RwaNetworkLeagueRow], str | None]:
-    """Return Networks league table for the **Distributed** view only."""
-    rows, _, err = fetch_rwa_home_data()
+def fetch_rwa_network_league() -> tuple[list[RwaNetworksTabRow], str | None]:
+    """Return the **Networks** page table (``/networks``), same as :func:`fetch_rwa_networks_page_data` rows."""
+    rows, _, err = fetch_rwa_networks_page_data()
     return rows, err
 
 
