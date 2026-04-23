@@ -138,7 +138,7 @@ def build_rwa_platforms_page_dataframe(rows: list[RwaPlatformsTabRow]) -> pd.Dat
 
 
 def build_rwa_asset_managers_page_dataframe(rows: list[RwaAssetManagersTabRow]) -> pd.DataFrame:
-    """RWA **Asset managers** **Distributed** tab (``/asset-managers``): same value columns as Platforms; **Asset manager** name."""
+    """RWA **Asset Managers** **Distributed** tab (``/asset-managers``): same value columns as Platforms; **Asset manager** name column."""
     recs: list[dict[str, object]] = []
     for r in rows:
         href = (r.manager_href or "").strip()

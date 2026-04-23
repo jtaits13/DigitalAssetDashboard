@@ -1,4 +1,4 @@
-"""RWA.xyz **Networks**, **Platforms**, and **Asset managers** embeds (``__NEXT_DATA__`` from ``/networks``, ``/platforms``, ``/asset-managers``)."""
+"""RWA.xyz **Networks**, **Platforms**, and **Asset Managers** embeds (``__NEXT_DATA__`` from ``/networks``, ``/platforms``, ``/asset-managers``)."""
 
 from __future__ import annotations
 
@@ -81,6 +81,8 @@ WIDGET_CSS = """
 #jd-rwa-participants-networks,
 #jd-rwa-participants-platforms,
 #jd-rwa-participants-asset-managers,
+#jd-rwa-explore-asset-type,
+#jd-rwa-explore-market-participant,
 #jd-rwa-platforms-overview,
 #jd-rwa-asset-managers-overview,
 #jd-rwa-market,
@@ -170,7 +172,7 @@ RWA_PLATFORMS_DATA_SOURCE_CAPTION = (
 )
 
 RWA_ASSET_MANAGERS_DATA_SOURCE_CAPTION = (
-    "Source: [RWA.xyz Asset managers](https://app.rwa.xyz/asset-managers) embedded **__NEXT_DATA__** "
+    "Source: [RWA.xyz Asset Managers](https://app.rwa.xyz/asset-managers) embedded **__NEXT_DATA__** "
     "(`listQueryResponse`). The table matches the on-site **Distributed** tab: **RWA value (distributed)** / "
     "**(represented)** use `distributed_value` and `represented_value`; **RWA count** uses `rwa_asset_count` when "
     "present. Managers with no distributed value are omitted. Top-line **%** are **30D**; **7D Δ** uses "
@@ -342,12 +344,12 @@ RWA_GLOBAL_MARKET_OVERVIEW_HEADING = "RWA Global Market Overview"
 # Full-page Participants — Networks: hub-style heading above the KPI row (like “Stablecoin overview”).
 RWA_NETWORKS_SUBPAGE_OVERVIEW_HEADING = "Networks overview"
 RWA_PLATFORMS_SUBPAGE_OVERVIEW_HEADING = "Platforms overview"
-RWA_ASSET_MANAGERS_SUBPAGE_OVERVIEW_HEADING = "Asset managers overview"
+RWA_ASSET_MANAGERS_SUBPAGE_OVERVIEW_HEADING = "Asset Managers overview"
 GLOBAL_MARKET_RWA_LINK_LABEL = "See RWA Networks on RWA.xyz"
 GLOBAL_MARKET_RWA_URL = APP_NETWORKS
 PLATFORMS_RWA_LINK_LABEL = "See RWA Platforms on RWA.xyz"
 PLATFORMS_RWA_URL = APP_PLATFORMS
-ASSET_MANAGERS_RWA_LINK_LABEL = "See RWA Asset managers on RWA.xyz"
+ASSET_MANAGERS_RWA_LINK_LABEL = "See RWA Asset Managers on RWA.xyz"
 ASSET_MANAGERS_RWA_URL = APP_ASSET_MANAGERS
 
 
@@ -665,7 +667,7 @@ def _show_rwa_platforms_page_dataframe(df, *, height: int) -> None:
 
 
 def _show_rwa_asset_managers_page_dataframe(df, *, height: int) -> None:
-    """RWA [Asset managers](https://app.rwa.xyz/asset-managers) table — :func:`build_rwa_asset_managers_page_dataframe`."""
+    """RWA [Asset Managers](https://app.rwa.xyz/asset-managers) table — :func:`build_rwa_asset_managers_page_dataframe`."""
     st.dataframe(
         style_rwa_asset_managers_page_dataframe(df),
         use_container_width=True,
@@ -1559,8 +1561,8 @@ def _rwa_global_market_status(
     Hub block: **RWA Global Market Overview** (heading) + top-line **Networks** overview KPIs + the **Networks** table
     (from ``/networks`` ``__NEXT_DATA__``, not the smaller homepage **parent_networks** league only).
 
-    Returns ``"STOP"`` (abort rest of On-chain bundle), ``"ERR_HOME"`` (fetch error on hub — caller adds
-    Stablecoins / Treasuries / Stocks), or ``"OK"`` (caller may add asset teasers + Participants footer on hub).
+    Returns ``"STOP"`` (abort rest of On-chain bundle), ``"ERR_HOME"`` (fetch error on hub — caller may still add
+    Explore gateway columns), or ``"OK"`` (caller may add **Explore by Asset Type** / **Market Participant** gateways).
     """
     h2_cls = "home-widget-heading" if home_preview else "home-main-heading"
 
@@ -1728,19 +1730,19 @@ def _show_rwa_participants_asset_managers_home_footer(
     *,
     preview_rows: int,
 ) -> None:
-    """Hub tail under **Participants**: **Asset managers** KPI row + Distributed-tab table preview."""
+    """Hub tail under **Participants**: **Asset Managers** KPI row + Distributed-tab table preview."""
     if not rows:
         return
     st.divider()
     st.markdown(
         '<div class="jd-hub-subsection-head" id="jd-rwa-participants-asset-managers">'
-        '<h2 class="home-widget-heading">Asset managers</h2></div>',
+        '<h2 class="home-widget-heading">Asset Managers</h2></div>',
         unsafe_allow_html=True,
     )
-    _render_rwa_global_overview(kpis, kpi_legend_name="Asset managers")
+    _render_rwa_global_overview(kpis, kpi_legend_name="Asset Managers")
     st.caption(
-        "Preview of the **Distributed** Asset managers table from the "
-        "[RWA.xyz Asset managers](https://app.rwa.xyz/asset-managers) embed."
+        "Preview of the **Distributed** Asset Managers table from the "
+        "[RWA.xyz Asset Managers](https://app.rwa.xyz/asset-managers) embed."
     )
     n = max(1, min(preview_rows, len(rows)))
     working = list(rows)[:n]
@@ -1748,7 +1750,7 @@ def _show_rwa_participants_asset_managers_home_footer(
     _show_rwa_asset_managers_page_dataframe(df, height=rwa_table_height(len(df), max_h=900))
 
     if st.button(
-        "Open full Participants — Asset managers page",
+        "Open full Participants — Asset Managers page",
         key="see_full_rwa_participants_asset_managers_footer",
         use_container_width=True,
         type="primary",
@@ -1957,7 +1959,7 @@ def show_rwa_participants_asset_managers_widget(
     full_page_header: bool = False,
 ) -> None:
     """
-    **Full page only**: **Participants — Asset managers** with /asset-managers overview KPIs + Distributed table.
+    **Full page only**: **Participants — Asset Managers** with /asset-managers overview KPIs + Distributed table.
     """
     if home_preview:
         raise ValueError(
@@ -1978,7 +1980,7 @@ def show_rwa_participants_asset_managers_widget(
             f'<h2 class="home-main-heading">{escape(RWA_ASSET_MANAGERS_SUBPAGE_OVERVIEW_HEADING)}</h2></div>',
             unsafe_allow_html=True,
         )
-        _render_rwa_global_overview(kpis, kpi_legend_name="Asset managers")
+        _render_rwa_global_overview(kpis, kpi_legend_name="Asset Managers")
         st.link_button(
             ASSET_MANAGERS_RWA_LINK_LABEL,
             ASSET_MANAGERS_RWA_URL,
@@ -2002,15 +2004,15 @@ def show_rwa_participants_asset_managers_widget(
     else:
         st.markdown(
             '<div class="jd-hub-subsection-head" id="jd-rwa-participants-asset-managers">'
-            '<h2 class="home-main-heading">Asset managers</h2></div>',
+            '<h2 class="home-main-heading">Asset Managers</h2></div>',
             unsafe_allow_html=True,
         )
         st.caption(
-            "Searchable **Distributed** Asset managers table from the "
-            "[RWA.xyz Asset managers](https://app.rwa.xyz/asset-managers) embed."
+            "Searchable **Distributed** Asset Managers table from the "
+            "[RWA.xyz Asset Managers](https://app.rwa.xyz/asset-managers) embed."
         )
 
-    _render_rwa_global_overview(kpis, kpi_legend_name="Asset managers")
+    _render_rwa_global_overview(kpis, kpi_legend_name="Asset Managers")
 
     q = st.text_input(
         "Search asset manager",
@@ -2030,7 +2032,7 @@ def show_rwa_participants_asset_managers_widget(
 
     st.markdown(
         '<div class="jd-hub-subsection-head">'
-        '<h2 class="home-main-heading">Asset managers table</h2></div>',
+        '<h2 class="home-main-heading">Asset Managers table</h2></div>',
         unsafe_allow_html=True,
     )
     df = build_rwa_asset_managers_page_dataframe(working)
@@ -2045,14 +2047,96 @@ def show_rwa_participants_asset_managers_widget(
     )
 
 
+def show_rwa_onchain_explore_gateways(*, preview_rows: int = 8) -> None:
+    """
+    Home hub row under **RWA Global Market Overview**: two bordered columns with blurbs and **Explore** navigation
+    to the asset-type and market-participant index pages.
+    """
+    _ = preview_rows
+    st.divider()
+    st.markdown(
+        '<p class="jd-hub-dek" style="margin-top:0.15rem;margin-bottom:0.75rem;">'
+        "Continue in <strong>Explore by Asset Type</strong> for stablecoins, treasuries, and tokenized equities, "
+        "or <strong>Explore by Market Participant</strong> for networks, platforms, and Asset Managers on RWA.xyz.</p>",
+        unsafe_allow_html=True,
+    )
+    c1, c2 = st.columns(2, gap="medium", border=True)
+    with c1:
+        st.markdown(hub_section_anchor("jd-rwa-explore-asset-type"), unsafe_allow_html=True)
+        st.markdown("### Explore by Asset Type")
+        st.markdown(
+            '<p class="jd-hub-dek">RWA.xyz <strong>Stablecoins</strong> overview and platform league; '
+            '<strong>US Treasuries</strong> distributed value by network and platform; and <strong>Tokenized Stocks</strong> '
+            'by network and platform — the same compact previews as before, each with a link to its full page.</p>',
+            unsafe_allow_html=True,
+        )
+        if st.button(
+            "Explore",
+            key="hub_onchain_explore_asset_type",
+            type="primary",
+            use_container_width=True,
+        ):
+            st.switch_page("pages/RWA_Explore_By_Asset_Type.py")
+    with c2:
+        st.markdown(hub_section_anchor("jd-rwa-explore-market-participant"), unsafe_allow_html=True)
+        st.markdown("### Explore by Market Participant")
+        st.markdown(
+            '<p class="jd-hub-dek"><strong>Networks</strong> (distributed value, aligned with Global Market totals), '
+            '<strong>Platforms</strong> (distributed issuers), and <strong>Asset Managers</strong> (distributed managers) '
+            'from RWA.xyz — same previews as before, each with a link to its full page.</p>',
+            unsafe_allow_html=True,
+        )
+        if st.button(
+            "Explore",
+            key="hub_onchain_explore_market_participant",
+            type="primary",
+            use_container_width=True,
+        ):
+            st.switch_page("pages/RWA_Explore_By_Market_Participant.py")
+
+
+def show_rwa_explore_by_asset_type_widget(*, preview_rows: int = 8) -> None:
+    """Index page: Stablecoins, US Treasuries, and Tokenized Stocks hub previews (``home_preview=True``)."""
+    st.markdown(WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
+    show_rwa_stablecoins_widget(home_preview=True, preview_rows=preview_rows)
+    show_rwa_treasuries_widget(home_preview=True, preview_rows=preview_rows)
+    show_rwa_tokenized_stocks_widget(home_preview=True, preview_rows=preview_rows)
+
+
+def show_rwa_explore_by_market_participant_widget(*, preview_rows: int = 8) -> None:
+    """Index page: Networks, Platforms, and Asset Managers hub previews (same blocks as the former home tail)."""
+    st.markdown(WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
+    rows, kpis, err = load_rwa_league_cached()
+    if err and not rows:
+        st.warning(escape(err))
+        st.link_button(
+            GLOBAL_MARKET_RWA_LINK_LABEL,
+            GLOBAL_MARKET_RWA_URL,
+            use_container_width=True,
+            key="rwa_explore_mp_global_err",
+        )
+        return
+    if not rows:
+        st.info("No network rows returned; Participants previews need Global Market data.")
+        return
+    _show_rwa_participants_networks_home_footer(rows, kpis, preview_rows=preview_rows)
+    plat_rows, plat_kpis, _plat_err = load_rwa_platforms_cached()
+    if plat_rows:
+        _show_rwa_participants_platforms_home_footer(plat_rows, plat_kpis, preview_rows=preview_rows)
+    am_rows, am_kpis, _am_err = load_rwa_asset_managers_cached()
+    if am_rows:
+        _show_rwa_participants_asset_managers_home_footer(am_rows, am_kpis, preview_rows=preview_rows)
+
+
 def show_rwa_league_widget(
     *,
     home_preview: bool = False,
     preview_rows: int = 8,
 ) -> None:
     """
-    On-chain Data bundle: **RWA Global Market Overview** (KPIs + Networks table) first, then Stablecoins,
-    US Treasuries, Tokenized Stocks, **Participants** (Networks, Platforms, Asset managers previews on the hub).
+    On-chain Data hub: **RWA Global Market Overview** (KPIs + Networks table), then **Explore by Asset Type** /
+    **Explore by Market Participant** gateway columns when ``home_preview=True``. Full standalone Global Market uses
+    ``home_preview=False`` (searchable table only).
     """
     st.markdown(WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
     rows, kpis, err = load_rwa_league_cached()
@@ -2060,14 +2144,4 @@ def show_rwa_league_widget(
     if status == "STOP":
         return
     if home_preview and status in ("OK", "ERR_HOME"):
-        show_rwa_stablecoins_widget(home_preview=True, preview_rows=preview_rows)
-        show_rwa_treasuries_widget(home_preview=True, preview_rows=preview_rows)
-        show_rwa_tokenized_stocks_widget(home_preview=True, preview_rows=preview_rows)
-    if home_preview and status == "OK" and rows:
-        _show_rwa_participants_networks_home_footer(rows, kpis, preview_rows=preview_rows)
-        plat_rows, plat_kpis, _plat_err = load_rwa_platforms_cached()
-        if plat_rows:
-            _show_rwa_participants_platforms_home_footer(plat_rows, plat_kpis, preview_rows=preview_rows)
-        am_rows, am_kpis, _am_err = load_rwa_asset_managers_cached()
-        if am_rows:
-            _show_rwa_participants_asset_managers_home_footer(am_rows, am_kpis, preview_rows=preview_rows)
+        show_rwa_onchain_explore_gateways(preview_rows=preview_rows)

@@ -1,4 +1,4 @@
-"""RWA.xyz Participants — Asset managers: overview KPIs + Distributed tab table (``/asset-managers`` embed)."""
+"""RWA.xyz Participants — Asset Managers: overview KPIs + Distributed tab table (``/asset-managers`` embed)."""
 
 from __future__ import annotations
 
@@ -26,7 +26,7 @@ from rwa_league.widgets import RWA_ASSET_MANAGERS_DATA_SOURCE_CAPTION, show_rwa_
 
 def main() -> None:
     st.set_page_config(
-        page_title="Participants — Asset managers — JPM Digital",
+        page_title="Participants — Asset Managers — JPM Digital",
         page_icon="◆",
         layout="wide",
         initial_sidebar_state="expanded",
@@ -41,10 +41,10 @@ def main() -> None:
     show_price_ticker()
     render_subpage_sidebar(key_prefix="rwa_participants_asset_managers", current="rwa_participants_asset_managers")
 
-    st.markdown(section_label_teal("Participants — Asset managers", placement="first"), unsafe_allow_html=True)
+    st.markdown(section_label_teal("Participants — Asset Managers", placement="first"), unsafe_allow_html=True)
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed">RWA <strong>Participants</strong> · <strong>Asset managers</strong>: '
-        "manager-level **Asset managers overview** metrics and the **Distributed** tab table from "
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed">RWA <strong>Participants</strong> · <strong>Asset Managers</strong>: '
+        "manager-level **Asset Managers overview** metrics and the **Distributed** tab table from "
         '<a href="https://app.rwa.xyz/asset-managers">RWA.xyz</a> (embedded in <code>__NEXT_DATA__</code>; '
         "<code>distributed_value</code> / <code>represented_value</code>). "
         "Top-line <strong>30D</strong> % changes and per-manager columns follow the same public payload as the site.</p>",

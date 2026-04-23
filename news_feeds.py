@@ -212,13 +212,8 @@ def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -
         <a class="jd-site-link jd-nav-dd-head" href="#jd-section-onchain">On-chain Data <span class="jd-nav-dd-caret" aria-hidden="true">▾</span></a>
         <ul class="jd-nav-dd-menu" role="menu">
           <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-market">Global Market overview</a></li>
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-stablecoins">Stablecoins</a></li>
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-treasuries">US Treasuries</a></li>
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-tokenized-stocks">Tokenized stocks</a></li>
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-participants">Participants</a></li>
-          <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="#jd-rwa-participants-networks">Networks</a></li>
-          <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="#jd-rwa-participants-platforms">Platforms</a></li>
-          <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="#jd-rwa-participants-asset-managers">Asset managers</a></li>
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-explore-asset-type">Explore by Asset Type</a></li>
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-explore-market-participant">Explore by Market Participant</a></li>
         </ul>
       </div>
     </nav>
@@ -251,9 +246,11 @@ def render_subpage_top_bar() -> None:
           <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_Stablecoins">Stablecoins</a></li>
           <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_US_Treasuries">US Treasuries</a></li>
           <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_Tokenized_Stocks">Tokenized stocks</a></li>
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_Explore_By_Asset_Type">Explore by Asset Type</a></li>
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_Explore_By_Market_Participant">Explore by Market Participant</a></li>
           <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_Participants_Networks">Participants — Networks</a></li>
           <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_Participants_Platforms">Participants — Platforms</a></li>
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_Participants_Asset_Managers">Participants — Asset managers</a></li>
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_Participants_Asset_Managers">Participants — Asset Managers</a></li>
         </ul>
       </div>
     </nav>
@@ -279,7 +276,7 @@ def render_subpage_sidebar(*, key_prefix: str, current: str) -> None:
     ``key_prefix`` must be unique per page module (e.g. ``all_articles``) so widget keys stay isolated.
 
     ``current`` marks the active destination: ``articles``, ``regulatory``, ``etp``, ``etf_news``,
-    ``rwa_participants_networks``, ``rwa_participants_platforms``, ``rwa_participants_asset_managers``, ``rwa_stablecoins``, ``rwa_treasuries``, ``rwa_tokenized_stocks``.
+    ``rwa_explore_asset_type``, ``rwa_explore_market_participant``, ``rwa_participants_networks``, ``rwa_participants_platforms``, ``rwa_participants_asset_managers``, ``rwa_stablecoins``, ``rwa_treasuries``, ``rwa_tokenized_stocks``.
     """
     with st.sidebar:
         st.markdown("### JPM Digital")
@@ -302,9 +299,11 @@ def render_subpage_sidebar(*, key_prefix: str, current: str) -> None:
             ("RWA Stablecoins", "pages/RWA_Stablecoins.py", "rwa_stablecoins"),
             ("RWA US Treasuries", "pages/RWA_US_Treasuries.py", "rwa_treasuries"),
             ("RWA Tokenized Stocks", "pages/RWA_Tokenized_Stocks.py", "rwa_tokenized_stocks"),
+            ("Explore by Asset Type", "pages/RWA_Explore_By_Asset_Type.py", "rwa_explore_asset_type"),
+            ("Explore by Market Participant", "pages/RWA_Explore_By_Market_Participant.py", "rwa_explore_market_participant"),
             ("Participants — Networks", "pages/RWA_Participants_Networks.py", "rwa_participants_networks"),
             ("Participants — Platforms", "pages/RWA_Participants_Platforms.py", "rwa_participants_platforms"),
-            ("Participants — Asset managers", "pages/RWA_Participants_Asset_Managers.py", "rwa_participants_asset_managers"),
+            ("Participants — Asset Managers", "pages/RWA_Participants_Asset_Managers.py", "rwa_participants_asset_managers"),
         ]
         for label, page, slug in nav:
             if st.button(
