@@ -2055,9 +2055,9 @@ def show_rwa_onchain_explore_gateways(*, preview_rows: int = 8) -> None:
     _ = preview_rows
     st.divider()
     st.markdown(
-        '<p class="jd-hub-dek" style="margin-top:0.15rem;margin-bottom:0.75rem;">'
-        "Continue in <strong>Explore by Asset Type</strong> for stablecoins, treasuries, and tokenized equities, "
-        "or <strong>Explore by Market Participant</strong> for networks, platforms, and Asset Managers on RWA.xyz.</p>",
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed">Continue in <strong>Explore by Asset Type</strong> for stablecoins, '
+        "treasuries, and tokenized equities, or <strong>Explore by Market Participant</strong> for networks, platforms, "
+        "and Asset Managers on RWA.xyz.</p>",
         unsafe_allow_html=True,
     )
     c1, c2 = st.columns(2, gap="medium", border=True)
@@ -2065,9 +2065,9 @@ def show_rwa_onchain_explore_gateways(*, preview_rows: int = 8) -> None:
         st.markdown(hub_section_anchor("jd-rwa-explore-asset-type"), unsafe_allow_html=True)
         st.markdown("### Explore by Asset Type")
         st.markdown(
-            '<p class="jd-hub-dek">RWA.xyz <strong>Stablecoins</strong> overview and platform league; '
-            '<strong>US Treasuries</strong> distributed value by network and platform; and <strong>Tokenized Stocks</strong> '
-            'by network and platform — the same compact previews as before, each with a link to its full page.</p>',
+            '<p class="jd-hub-dek jd-hub-dek-fullbleed">RWA.xyz <strong>Stablecoins</strong> overview and platform league; '
+            "<strong>US Treasuries</strong> distributed value by network and platform; and <strong>Tokenized Stocks</strong> "
+            "by network and platform — the same compact previews as before, each with a link to its full page.</p>",
             unsafe_allow_html=True,
         )
         if st.button(
@@ -2081,9 +2081,9 @@ def show_rwa_onchain_explore_gateways(*, preview_rows: int = 8) -> None:
         st.markdown(hub_section_anchor("jd-rwa-explore-market-participant"), unsafe_allow_html=True)
         st.markdown("### Explore by Market Participant")
         st.markdown(
-            '<p class="jd-hub-dek"><strong>Networks</strong> (distributed value, aligned with Global Market totals), '
-            '<strong>Platforms</strong> (distributed issuers), and <strong>Asset Managers</strong> (distributed managers) '
-            'from RWA.xyz — same previews as before, each with a link to its full page.</p>',
+            '<p class="jd-hub-dek jd-hub-dek-fullbleed"><strong>Networks</strong> (distributed value, aligned with Global '
+            "Market totals), <strong>Platforms</strong> (distributed issuers), and <strong>Asset Managers</strong> "
+            "(distributed managers) from RWA.xyz — same previews as before, each with a link to its full page.</p>",
             unsafe_allow_html=True,
         )
         if st.button(
@@ -2141,7 +2141,7 @@ def show_rwa_league_widget(
     st.markdown(WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
     rows, kpis, err = load_rwa_league_cached()
     status = _rwa_global_market_status(rows, kpis, err, home_preview=home_preview, preview_rows=preview_rows)
-    if status == "STOP":
+    if status == "STOP" and not home_preview:
         return
-    if home_preview and status in ("OK", "ERR_HOME"):
+    if home_preview:
         show_rwa_onchain_explore_gateways(preview_rows=preview_rows)

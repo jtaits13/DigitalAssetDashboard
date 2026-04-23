@@ -303,10 +303,10 @@ def main() -> None:
         st.markdown(hub_section_anchor("jd-section-onchain"), unsafe_allow_html=True)
         st.markdown(section_label_teal("On-chain Data", placement="after_divider"), unsafe_allow_html=True)
         st.markdown(
-            '<p class="jd-hub-dek"><strong>RWA Global Market overview</strong> (networks table from RWA.xyz), then two '
-            "gateways — <strong>Explore by Asset Type</strong> (stablecoins, treasuries, tokenized stocks) and "
-            "<strong>Explore by Market Participant</strong> (networks, platforms, Asset Managers) — each opens an index "
-            "page with the same previews as before, plus links to every full RWA embed page.</p>",
+            '<p class="jd-hub-dek jd-hub-dek-fullbleed"><strong>RWA Global Market overview</strong> (networks table from '
+            "RWA.xyz), then two gateways — <strong>Explore by Asset Type</strong> (stablecoins, treasuries, tokenized "
+            "stocks) and <strong>Explore by Market Participant</strong> (networks, platforms, Asset Managers) — each "
+            "opens an index page with the same previews as before, plus links to every full RWA embed page.</p>",
             unsafe_allow_html=True,
         )
         show_rwa_league_widget(home_preview=True)
@@ -387,10 +387,10 @@ def main() -> None:
     st.markdown(hub_section_anchor("jd-section-onchain"), unsafe_allow_html=True)
     st.markdown(section_label_teal("On-chain Data", placement="after_divider"), unsafe_allow_html=True)
     st.markdown(
-        '<p class="jd-hub-dek"><strong>RWA Global Market overview</strong> (networks table from RWA.xyz), then two '
-        "gateways — <strong>Explore by Asset Type</strong> (stablecoins, treasuries, tokenized stocks) and "
-        "<strong>Explore by Market Participant</strong> (networks, platforms, Asset Managers) — each opens an index "
-        "page with the same previews as before, plus links to every full RWA embed page.</p>",
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed"><strong>RWA Global Market overview</strong> (networks table from '
+        "RWA.xyz), then two gateways — <strong>Explore by Asset Type</strong> (stablecoins, treasuries, tokenized "
+        "stocks) and <strong>Explore by Market Participant</strong> (networks, platforms, Asset Managers) — each "
+        "opens an index page with the same previews as before, plus links to every full RWA embed page.</p>",
         unsafe_allow_html=True,
     )
     show_rwa_league_widget(home_preview=True)

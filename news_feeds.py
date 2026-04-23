@@ -40,13 +40,19 @@ h2.home-main-heading {
 </style>
 """
 
-# Subpage hero blurbs: full width under teal band (hub keeps narrow .jd-hub-dek via max-width in home_layout).
+# Hero / section blurbs that should span the main column (multipage heroes + On-chain hub intros). Default
+# ``.jd-hub-dek`` in home_layout keeps a ~44rem measure for other hub lines (News, Markets, etc.).
 # Lives here so home_layout stays a small, stable import on all hosts.
 SUBPAGE_HERO_DEK_CSS = """
 <style>
+/* Wider than default .jd-hub-dek (max ~44rem) — hub section intros + multipage hero lines */
 p.jd-hub-dek.jd-hub-dek-fullbleed {
     max-width: 100%;
     width: 100%;
+    box-sizing: border-box;
+    margin-top: 0.2rem;
+    margin-bottom: 0.85rem;
+    line-height: 1.55;
 }
 </style>
 """
