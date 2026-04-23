@@ -7,6 +7,8 @@ The **Platforms** dashboard uses ``/platforms`` (issuer ``listQueryResponse`` ro
 ``tokenization_type_stats`` splits **distributed** vs **represented** value; the Participants table follows the
 on-site **Distributed** Platforms league (represented-only issuers are omitted). Rows without that block still use
 ``asset_class_stats`` totals as a fallback.
+The **Asset managers** page uses ``/asset-managers`` with top-level ``distributed_value`` and ``represented_value``
+per manager (aligned with the on-site **Distributed** tab; managers with no distributed value are omitted).
 
 Not an official API; structure may change. For production use RWA.xyz's data products.
 """
@@ -31,6 +33,7 @@ APP_PLATFORMS = "https://app.rwa.xyz/platforms"
 APP_STABLECOINS = "https://app.rwa.xyz/stablecoins"
 APP_TREASURIES = "https://app.rwa.xyz/treasuries"
 APP_STOCKS = "https://app.rwa.xyz/stocks"
+APP_ASSET_MANAGERS = "https://app.rwa.xyz/asset-managers"
 USER_AGENT = "JPM-Digital/1.0 (RWA league widget; contact via app maintainer)"
 
 
@@ -167,6 +170,36 @@ class RwaPlatformsTabRow:
     value_change_7d_raw: float | None
     market_share_raw: float
     market_share_change_30d_raw: float | None
+
+
+@dataclass(frozen=True)
+class RwaAssetManagersTabRow:
+    """
+    One **asset manager** row from ``/asset-managers`` (``listQueryResponse.results``), aligned with the on-site
+    **Distributed** tab. **RWA value (distributed)** / **(represented)** use ``distributed_value`` and
+    ``represented_value``; **7D Δ** uses ``(val - val_30d) / val_30d`` on ``distributed_value`` (same 30D baseline
+    window as the other Participants tables).
+    """
+
+    rank: int
+    manager: str
+    manager_href: str | None
+    rwa_count: int
+    distributed_usd: float
+    represented_usd: float
+    rwa_total_excl_stablecoin_usd: float
+    pct_distributed_raw: float
+    value_change_7d_raw: float | None
+    market_share_raw: float
+    market_share_change_30d_raw: float | None
+
+
+def _dollar_subfield(b: object, key: str) -> float:
+    """Read ``key`` (e.g. ``val`` / ``val_30d``) from a RWA money object dict."""
+    if not isinstance(b, dict):
+        return 0.0
+    v = b.get(key)
+    return float(v) if isinstance(v, (int, float)) else 0.0
 
 
 def _extract_next_data(html: str) -> dict[str, Any] | None:
@@ -752,6 +785,89 @@ def _rows_from_platforms_list_results(raw: list[dict[str, Any]]) -> list[RwaPlat
     return out
 
 
+def _rows_from_asset_managers_list_results(raw: list[dict[str, Any]]) -> list[RwaAssetManagersTabRow]:
+    """
+    **Asset managers** **Distributed** tab: per-row ``distributed_value`` / ``represented_value`` (USD).
+    Rows with no positive distributed value are excluded. Sorted by distributed descending; market share and 30D share
+    deltas use the distributed ``val_30d`` series.
+    """
+    rows_in = [r for r in raw if isinstance(r, dict)]
+    if not rows_in:
+        return []
+
+    interim: list[dict[str, Any]] = []
+    for row in rows_in:
+        name = str(row.get("name") or "").strip() or "—"
+        slug = str(row.get("slug") or "").strip()
+        href = f"/asset-managers/{slug}" if slug else None
+        dv = row.get("distributed_value") or {}
+        rv = row.get("represented_value") or {}
+        dist = _dollar_subfield(dv, "val")
+        if dist <= 0:
+            continue
+        dist30 = _dollar_subfield(dv, "val_30d")
+        rep = _dollar_subfield(rv, "val")
+        total_excl = dist + rep
+        if total_excl <= 0 and dist > 0:
+            total_excl = dist
+        pct = (dist / total_excl) if total_excl > 0 else 0.0
+        v7: float | None
+        if dist30 and dist30 > 0:
+            v7 = (dist - dist30) / dist30
+        else:
+            v7 = None
+        rwa_c = row.get("rwa_asset_count")
+        if isinstance(rwa_c, (int, float)):
+            rwa = int(rwa_c)
+        else:
+            acn = row.get("asset_count")
+            rwa = int(acn) if isinstance(acn, (int, float)) else 0
+        interim.append(
+            {
+                "name": name,
+                "href": href,
+                "rwa": rwa,
+                "dist": dist,
+                "rep": rep,
+                "total_excl": total_excl,
+                "pct": pct,
+                "v7": v7,
+                "dist30": dist30,
+            }
+        )
+
+    total_dist = sum(float(x["dist"]) for x in interim) or 0.0
+    total_dist30 = sum(float(x["dist30"]) for x in interim) or 0.0
+    sorted_interim = sorted(interim, key=lambda x: (-float(x["dist"]), str(x["name"]).lower()))
+    out: list[RwaAssetManagersTabRow] = []
+    for i, x in enumerate(sorted_interim):
+        dist_f = float(x["dist"])
+        dist30_f = float(x["dist30"])
+        ms = (dist_f / total_dist) if total_dist > 0 else 0.0
+        ms30: float | None
+        if total_dist30 and total_dist30 > 0:
+            share30 = dist30_f / total_dist30
+            ms30 = (dist_f / total_dist) - share30 if total_dist else None
+        else:
+            ms30 = None
+        out.append(
+            RwaAssetManagersTabRow(
+                rank=i + 1,
+                manager=str(x["name"]),
+                manager_href=x.get("href") if isinstance(x.get("href"), str) else None,
+                rwa_count=int(x["rwa"]),
+                distributed_usd=dist_f,
+                represented_usd=float(x["rep"]),
+                rwa_total_excl_stablecoin_usd=float(x["total_excl"]),
+                pct_distributed_raw=float(x["pct"]),
+                value_change_7d_raw=x["v7"] if isinstance(x.get("v7"), (int, float)) else None,
+                market_share_raw=ms,
+                market_share_change_30d_raw=ms30,
+            )
+        )
+    return out
+
+
 def _rows_from_networks_list_results(raw: list[dict[str, Any]]) -> list[RwaNetworksTabRow]:
     """
     Build rows sorted by **RWA value (distributed)** descending (``transferability.transferable``), then
@@ -924,6 +1040,53 @@ def fetch_rwa_platforms_page_data() -> tuple[list[RwaPlatformsTabRow], list[RwaG
     kpis = _parse_aggregates(props)
     if not rows:
         return [], kpis, "Could not parse listQueryResponse results into platform rows."
+    return rows, kpis, None
+
+
+def _fetch_asset_managers_props_payload() -> tuple[dict[str, Any] | None, str | None]:
+    headers = {"User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml"}
+    try:
+        r = requests.get(APP_ASSET_MANAGERS, headers=headers, timeout=60)
+        r.raise_for_status()
+    except (requests.RequestException, OSError) as e:
+        logger.debug("RWA /asset-managers fetch: %s", e)
+        return None, str(e)
+    payload = _extract_next_data(r.text)
+    if not payload:
+        return None, "Could not parse __NEXT_DATA__ from app.rwa.xyz/asset-managers (layout may have changed)."
+    if payload.get("page") != "/asset-managers":
+        return None, (
+            f"Expected Next.js page route /asset-managers in __NEXT_DATA__, got {payload.get('page')!r}. "
+            "Refusing to parse a different route."
+        )
+    props = payload.get("props")
+    if not isinstance(props, dict):
+        return None, "Invalid __NEXT_DATA__ structure."
+    return props, None
+
+
+def fetch_rwa_asset_managers_page_data() -> tuple[list[RwaAssetManagersTabRow], list[RwaGlobalKpi], str | None]:
+    """
+    RWA **Asset managers** page: ``pageProps.aggregates`` + ``listQueryResponse.results``; same public ``__NEXT_DATA__``
+    as [Asset managers](https://app.rwa.xyz/asset-managers). The table follows the on-site **Distributed** tab
+    (``distributed_value`` > 0).
+    """
+    props, err = _fetch_asset_managers_props_payload()
+    if err:
+        return [], [], err
+    assert props is not None
+
+    lqr = props.get("pageProps", {}).get("listQueryResponse")
+    if not isinstance(lqr, dict):
+        return [], [], "listQueryResponse missing from app.rwa.xyz/asset-managers page data."
+    results = lqr.get("results")
+    if not isinstance(results, list) or not results:
+        return [], _parse_aggregates(props), "No asset managers in listQueryResponse on /asset-managers."
+
+    rows = _rows_from_asset_managers_list_results([r for r in results if isinstance(r, dict)])
+    kpis = _parse_aggregates(props)
+    if not rows:
+        return [], kpis, "Could not parse listQueryResponse results into asset manager rows."
     return rows, kpis, None
 
 

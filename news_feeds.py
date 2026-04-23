@@ -218,6 +218,7 @@ def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -
           <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-participants">Participants</a></li>
           <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="#jd-rwa-participants-networks">Networks</a></li>
           <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="#jd-rwa-participants-platforms">Platforms</a></li>
+          <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="#jd-rwa-participants-asset-managers">Asset managers</a></li>
         </ul>
       </div>
     </nav>
@@ -252,6 +253,7 @@ def render_subpage_top_bar() -> None:
           <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_Tokenized_Stocks">Tokenized stocks</a></li>
           <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_Participants_Networks">Participants — Networks</a></li>
           <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_Participants_Platforms">Participants — Platforms</a></li>
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_Participants_Asset_Managers">Participants — Asset managers</a></li>
         </ul>
       </div>
     </nav>
@@ -277,7 +279,7 @@ def render_subpage_sidebar(*, key_prefix: str, current: str) -> None:
     ``key_prefix`` must be unique per page module (e.g. ``all_articles``) so widget keys stay isolated.
 
     ``current`` marks the active destination: ``articles``, ``regulatory``, ``etp``, ``etf_news``,
-    ``rwa_participants_networks``, ``rwa_participants_platforms``, ``rwa_stablecoins``, ``rwa_treasuries``, ``rwa_tokenized_stocks``.
+    ``rwa_participants_networks``, ``rwa_participants_platforms``, ``rwa_participants_asset_managers``, ``rwa_stablecoins``, ``rwa_treasuries``, ``rwa_tokenized_stocks``.
     """
     with st.sidebar:
         st.markdown("### JPM Digital")
@@ -302,6 +304,7 @@ def render_subpage_sidebar(*, key_prefix: str, current: str) -> None:
             ("RWA Tokenized Stocks", "pages/RWA_Tokenized_Stocks.py", "rwa_tokenized_stocks"),
             ("Participants — Networks", "pages/RWA_Participants_Networks.py", "rwa_participants_networks"),
             ("Participants — Platforms", "pages/RWA_Participants_Platforms.py", "rwa_participants_platforms"),
+            ("Participants — Asset managers", "pages/RWA_Participants_Asset_Managers.py", "rwa_participants_asset_managers"),
         ]
         for label, page, slug in nav:
             if st.button(

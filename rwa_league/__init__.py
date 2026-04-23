@@ -1,6 +1,7 @@
 """RWA.xyz league table widget (scraped from embedded Next.js data)."""
 
 from rwa_league.client import (
+    RwaAssetManagersTabRow,
     RwaGlobalKpi,
     RwaNetworkLeagueRow,
     RwaNetworksTabRow,
@@ -12,6 +13,7 @@ from rwa_league.client import (
     RwaTreasuryPlatformRow,
     fetch_rwa_home_data,
     fetch_rwa_network_league,
+    fetch_rwa_asset_managers_page_data,
     fetch_rwa_networks_page_data,
     fetch_rwa_platforms_page_data,
     fetch_rwa_stablecoins_data,
@@ -22,6 +24,7 @@ from rwa_league.widgets import (
     clear_rwa_league_cache,
     show_rwa_league_widget,
     show_rwa_participants_networks_widget,
+    show_rwa_participants_asset_managers_widget,
     show_rwa_participants_platforms_widget,
     show_rwa_stablecoins_widget,
     show_rwa_tokenized_stocks_widget,
@@ -31,6 +34,7 @@ from rwa_league.widgets import (
 __all__ = [
     "RwaGlobalKpi",
     "RwaNetworkLeagueRow",
+    "RwaAssetManagersTabRow",
     "RwaNetworksTabRow",
     "RwaPlatformsTabRow",
     "RwaTokenizedStockNetworkRow",
@@ -41,6 +45,7 @@ __all__ = [
     "clear_rwa_league_cache",
     "fetch_rwa_home_data",
     "fetch_rwa_network_league",
+    "fetch_rwa_asset_managers_page_data",
     "fetch_rwa_networks_page_data",
     "fetch_rwa_platforms_page_data",
     "fetch_rwa_stablecoins_data",
@@ -48,6 +53,7 @@ __all__ = [
     "fetch_rwa_treasuries_data",
     "show_rwa_league_widget",
     "show_rwa_participants_networks_widget",
+    "show_rwa_participants_asset_managers_widget",
     "show_rwa_participants_platforms_widget",
     "show_rwa_stablecoins_widget",
     "show_rwa_tokenized_stocks_widget",

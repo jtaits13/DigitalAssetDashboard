@@ -1,4 +1,4 @@
-"""RWA.xyz **Networks** and **Platforms** embeds: hub + full-page widgets (``__NEXT_DATA__`` from ``/networks`` and ``/platforms``)."""
+"""RWA.xyz **Networks**, **Platforms**, and **Asset managers** embeds (``__NEXT_DATA__`` from ``/networks``, ``/platforms``, ``/asset-managers``)."""
 
 from __future__ import annotations
 
@@ -13,10 +13,12 @@ from home_layout import (
     hub_subsection_heading_html,
 )
 from rwa_league.client import (
+    APP_ASSET_MANAGERS,
     APP_NETWORKS,
     APP_PLATFORMS,
     APP_STOCKS,
     APP_TREASURIES,
+    RwaAssetManagersTabRow,
     RwaGlobalKpi,
     RwaNetworksTabRow,
     RwaPlatformsTabRow,
@@ -25,6 +27,7 @@ from rwa_league.client import (
     RwaTokenizedStockPlatformRow,
     RwaTreasuryDistributedNetworkRow,
     RwaTreasuryPlatformRow,
+    fetch_rwa_asset_managers_page_data,
     fetch_rwa_networks_page_data,
     fetch_rwa_platforms_page_data,
     fetch_rwa_stablecoins_data,
@@ -32,6 +35,7 @@ from rwa_league.client import (
     fetch_rwa_treasuries_data,
 )
 from rwa_league.dataframe_table import (
+    build_rwa_asset_managers_page_dataframe,
     build_rwa_dataframe,
     build_rwa_networks_page_dataframe,
     build_rwa_platforms_page_dataframe,
@@ -41,6 +45,7 @@ from rwa_league.dataframe_table import (
     build_us_treasury_network_dataframe,
     build_us_treasury_platform_dataframe,
     filter_rows_by_network,
+    filter_asset_managers_tab_rows,
     filter_platforms_tab_rows,
     filter_tokenized_stock_network_rows,
     filter_stablecoin_platform_rows,
@@ -49,6 +54,7 @@ from rwa_league.dataframe_table import (
     filter_treasury_platform_rows,
     style_rwa_dataframe,
     style_rwa_networks_page_dataframe,
+    style_rwa_asset_managers_page_dataframe,
     style_rwa_platforms_page_dataframe,
     style_tokenized_stock_network_dataframe,
     style_stablecoin_platform_dataframe,
@@ -74,7 +80,9 @@ WIDGET_CSS = """
 #jd-rwa-participants,
 #jd-rwa-participants-networks,
 #jd-rwa-participants-platforms,
+#jd-rwa-participants-asset-managers,
 #jd-rwa-platforms-overview,
+#jd-rwa-asset-managers-overview,
 #jd-rwa-market,
 #jd-rwa-stablecoins,
 #jd-rwa-treasuries,
@@ -159,6 +167,14 @@ RWA_PLATFORMS_DATA_SOURCE_CAPTION = (
     "`asset_class_stats` bridged/circulating sums apply. **RWA total (excl. stablecoins)** = distributed + represented "
     "when both buckets exist. Top-line **%** are **30D**; **7D Δ** uses distributed-bucket `val` vs `val_30d`, or "
     "top-level `bridged_token_value` when the bucket list is empty."
+)
+
+RWA_ASSET_MANAGERS_DATA_SOURCE_CAPTION = (
+    "Source: [RWA.xyz Asset managers](https://app.rwa.xyz/asset-managers) embedded **__NEXT_DATA__** "
+    "(`listQueryResponse`). The table matches the on-site **Distributed** tab: **RWA value (distributed)** / "
+    "**(represented)** use `distributed_value` and `represented_value`; **RWA count** uses `rwa_asset_count` when "
+    "present. Managers with no distributed value are omitted. Top-line **%** are **30D**; **7D Δ** uses "
+    "`distributed_value.val` vs `val_30d`."
 )
 
 STABLECOIN_RWA_CAPTION = (
@@ -326,10 +342,13 @@ RWA_GLOBAL_MARKET_OVERVIEW_HEADING = "RWA Global Market Overview"
 # Full-page Participants — Networks: hub-style heading above the KPI row (like “Stablecoin overview”).
 RWA_NETWORKS_SUBPAGE_OVERVIEW_HEADING = "Networks overview"
 RWA_PLATFORMS_SUBPAGE_OVERVIEW_HEADING = "Platforms overview"
+RWA_ASSET_MANAGERS_SUBPAGE_OVERVIEW_HEADING = "Asset managers overview"
 GLOBAL_MARKET_RWA_LINK_LABEL = "See RWA Networks on RWA.xyz"
 GLOBAL_MARKET_RWA_URL = APP_NETWORKS
 PLATFORMS_RWA_LINK_LABEL = "See RWA Platforms on RWA.xyz"
 PLATFORMS_RWA_URL = APP_PLATFORMS
+ASSET_MANAGERS_RWA_LINK_LABEL = "See RWA Asset managers on RWA.xyz"
+ASSET_MANAGERS_RWA_URL = APP_ASSET_MANAGERS
 
 
 def rwa_table_height(num_rows: int, *, max_h: int = 520) -> int:
@@ -645,6 +664,93 @@ def _show_rwa_platforms_page_dataframe(df, *, height: int) -> None:
     )
 
 
+def _show_rwa_asset_managers_page_dataframe(df, *, height: int) -> None:
+    """RWA [Asset managers](https://app.rwa.xyz/asset-managers) table — :func:`build_rwa_asset_managers_page_dataframe`."""
+    st.dataframe(
+        style_rwa_asset_managers_page_dataframe(df),
+        use_container_width=True,
+        height=height,
+        hide_index=True,
+        column_order=[
+            "#",
+            "Asset manager",
+            "Link",
+            "RWA Count",
+            "RWA value (distributed)",
+            "RWA value (represented)",
+            "% distributed",
+            "RWA total (excl. stablecoins)",
+            "7D Δ value",
+            "Market Share",
+            "30D Δ share",
+        ],
+        column_config={
+            "#": st.column_config.NumberColumn(
+                _rank_column_label(by_metric="RWA value (distributed)"),
+                format="%.0f",
+                help="Rank by RWA value (distributed), largest first (USD from distributed_value on RWA.xyz).",
+            ),
+            "Asset manager": st.column_config.TextColumn(
+                f"Asset manager {_SORT}",
+                width="medium",
+            ),
+            "Link": st.column_config.LinkColumn(
+                f"RWA Page {_SORT}",
+                display_text=_LINK_ARROW,
+                validate=r"^https://",
+                width="small",
+                help="Open this manager on RWA.xyz",
+            ),
+            "RWA Count": st.column_config.NumberColumn(
+                f"RWA count {_SORT}",
+                format="%.0f",
+                help="rwa_asset_count from the asset managers embed (fallback: asset_count).",
+            ),
+            "RWA value (distributed)": st.column_config.NumberColumn(
+                f"RWA value (distributed) {_SORT}",
+                format=None,
+                width=150,
+                help="distributed_value.val (USD).",
+            ),
+            "RWA value (represented)": st.column_config.NumberColumn(
+                f"RWA value (represented) {_SORT}",
+                format=None,
+                width=150,
+                help="represented_value.val (USD).",
+            ),
+            "% distributed": st.column_config.NumberColumn(
+                f"% distributed {_SORT}",
+                format=None,
+                width=110,
+                help="distributed ÷ (distributed + represented) for this manager.",
+            ),
+            "RWA total (excl. stablecoins)": st.column_config.NumberColumn(
+                f"RWA total (excl. stables) {_SORT}",
+                format=None,
+                width=180,
+                help="Sum of distributed and represented value (USD).",
+            ),
+            "7D Δ value": st.column_config.NumberColumn(
+                f"7D Δ value {_SORT}",
+                format=None,
+                width=100,
+                help="(distributed_value val − val_30d) / val_30d (same 30D baseline as other Participants tables).",
+            ),
+            "Market Share": st.column_config.NumberColumn(
+                f"Market Share {_SORT}",
+                format=None,
+                help="This manager’s share of Σ distributed in this table.",
+            ),
+            "30D Δ share": st.column_config.NumberColumn(
+                f"30D Δ share {_SORT}",
+                format=None,
+                width=100,
+                help="Change in market share (percentage points) using distributed val vs val_30d cohort totals.",
+            ),
+        },
+    )
+
+
 def _show_us_treasury_platform_dataframe(df, *, height: int) -> None:
     """Tokenized Treasury league: **Distributed** → **Platforms** (RWA.xyz table layout)."""
     st.dataframe(
@@ -928,6 +1034,15 @@ def load_rwa_platforms_cached(*, _platforms_schema: int = 2) -> tuple[list[RwaPl
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
+def load_rwa_asset_managers_cached(
+    *, _asset_managers_schema: int = 1
+) -> tuple[list[RwaAssetManagersTabRow], list[RwaGlobalKpi], str | None]:
+    """Bump ``_asset_managers_schema`` when ``/asset-managers`` ``__NEXT_DATA__`` shape or row mapping changes."""
+    _ = _asset_managers_schema
+    return fetch_rwa_asset_managers_page_data()
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
 def load_rwa_stablecoins_cached(
     *, _stable_schema: int = 1
 ) -> tuple[list[RwaStablecoinPlatformRow], list[RwaGlobalKpi], str | None]:
@@ -967,6 +1082,7 @@ def load_rwa_tokenized_stocks_cached(
 def clear_rwa_league_cache() -> None:
     load_rwa_league_cached.clear()
     load_rwa_platforms_cached.clear()
+    load_rwa_asset_managers_cached.clear()
     load_rwa_stablecoins_cached.clear()
     load_rwa_treasuries_cached.clear()
     load_rwa_tokenized_stocks_cached.clear()
@@ -1606,6 +1722,46 @@ def _show_rwa_participants_platforms_home_footer(
     )
 
 
+def _show_rwa_participants_asset_managers_home_footer(
+    rows: list[RwaAssetManagersTabRow],
+    kpis: list[RwaGlobalKpi],
+    *,
+    preview_rows: int,
+) -> None:
+    """Hub tail under **Participants**: **Asset managers** KPI row + Distributed-tab table preview."""
+    if not rows:
+        return
+    st.divider()
+    st.markdown(
+        '<div class="jd-hub-subsection-head" id="jd-rwa-participants-asset-managers">'
+        '<h2 class="home-widget-heading">Asset managers</h2></div>',
+        unsafe_allow_html=True,
+    )
+    _render_rwa_global_overview(kpis, kpi_legend_name="Asset managers")
+    st.caption(
+        "Preview of the **Distributed** Asset managers table from the "
+        "[RWA.xyz Asset managers](https://app.rwa.xyz/asset-managers) embed."
+    )
+    n = max(1, min(preview_rows, len(rows)))
+    working = list(rows)[:n]
+    df = build_rwa_asset_managers_page_dataframe(working)
+    _show_rwa_asset_managers_page_dataframe(df, height=rwa_table_height(len(df), max_h=900))
+
+    if st.button(
+        "Open full Participants — Asset managers page",
+        key="see_full_rwa_participants_asset_managers_footer",
+        use_container_width=True,
+        type="primary",
+    ):
+        st.switch_page("pages/RWA_Participants_Asset_Managers.py")
+    st.link_button(
+        ASSET_MANAGERS_RWA_LINK_LABEL,
+        ASSET_MANAGERS_RWA_URL,
+        use_container_width=True,
+        key="rwa_participants_rwa_asset_managers_link_home_footer",
+    )
+
+
 def show_rwa_participants_networks_widget(
     *,
     home_preview: bool = False,
@@ -1795,6 +1951,100 @@ def show_rwa_participants_platforms_widget(
     )
 
 
+def show_rwa_participants_asset_managers_widget(
+    *,
+    home_preview: bool = False,
+    full_page_header: bool = False,
+) -> None:
+    """
+    **Full page only**: **Participants — Asset managers** with /asset-managers overview KPIs + Distributed table.
+    """
+    if home_preview:
+        raise ValueError(
+            "show_rwa_participants_asset_managers_widget is only for full pages; use show_rwa_league_widget on the hub."
+        )
+
+    st.markdown(
+        WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS,
+        unsafe_allow_html=True,
+    )
+
+    rows, kpis, err = load_rwa_asset_managers_cached()
+
+    if err and not rows:
+        st.warning(escape(err))
+        st.markdown(
+            f'<div class="jd-hub-subsection-head" id="jd-rwa-asset-managers-overview">'
+            f'<h2 class="home-main-heading">{escape(RWA_ASSET_MANAGERS_SUBPAGE_OVERVIEW_HEADING)}</h2></div>',
+            unsafe_allow_html=True,
+        )
+        _render_rwa_global_overview(kpis, kpi_legend_name="Asset managers")
+        st.link_button(
+            ASSET_MANAGERS_RWA_LINK_LABEL,
+            ASSET_MANAGERS_RWA_URL,
+            use_container_width=True,
+            key="rwa_pam_rwa_link_err_full",
+        )
+        return
+
+    if not rows:
+        st.info("No asset manager rows returned.")
+        return
+
+    if full_page_header:
+        st.markdown(
+            hub_subsection_heading_html(
+                RWA_ASSET_MANAGERS_SUBPAGE_OVERVIEW_HEADING,
+                element_id="jd-rwa-asset-managers-overview",
+            ),
+            unsafe_allow_html=True,
+        )
+    else:
+        st.markdown(
+            '<div class="jd-hub-subsection-head" id="jd-rwa-participants-asset-managers">'
+            '<h2 class="home-main-heading">Asset managers</h2></div>',
+            unsafe_allow_html=True,
+        )
+        st.caption(
+            "Searchable **Distributed** Asset managers table from the "
+            "[RWA.xyz Asset managers](https://app.rwa.xyz/asset-managers) embed."
+        )
+
+    _render_rwa_global_overview(kpis, kpi_legend_name="Asset managers")
+
+    q = st.text_input(
+        "Search asset manager",
+        "",
+        key="rwa_participants_asset_managers_search_full",
+        placeholder="Filter by manager name…",
+    )
+    working = filter_asset_managers_tab_rows(rows, q)
+    if q.strip():
+        st.caption(
+            f"Showing {len(working)} of {len(rows)} asset managers matching “{escape(q.strip())}”."
+        )
+    else:
+        st.caption(
+            f"Showing all {len(working)} asset managers. Headline KPI **%** are **30D**; see the table caption for columns."
+        )
+
+    st.markdown(
+        '<div class="jd-hub-subsection-head">'
+        '<h2 class="home-main-heading">Asset managers table</h2></div>',
+        unsafe_allow_html=True,
+    )
+    df = build_rwa_asset_managers_page_dataframe(working)
+    _show_rwa_asset_managers_page_dataframe(df, height=rwa_table_height(len(df), max_h=900))
+    st.caption(RWA_ASSET_MANAGERS_DATA_SOURCE_CAPTION)
+
+    st.link_button(
+        ASSET_MANAGERS_RWA_LINK_LABEL,
+        ASSET_MANAGERS_RWA_URL,
+        use_container_width=True,
+        key="rwa_participants_asset_managers_rwa_link_full",
+    )
+
+
 def show_rwa_league_widget(
     *,
     home_preview: bool = False,
@@ -1802,7 +2052,7 @@ def show_rwa_league_widget(
 ) -> None:
     """
     On-chain Data bundle: **RWA Global Market Overview** (KPIs + Networks table) first, then Stablecoins,
-    US Treasuries, Tokenized Stocks, **Participants → Networks**, then **Platforms** (overview + issuer preview).
+    US Treasuries, Tokenized Stocks, **Participants** (Networks, Platforms, Asset managers previews on the hub).
     """
     st.markdown(WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
     rows, kpis, err = load_rwa_league_cached()
@@ -1818,3 +2068,6 @@ def show_rwa_league_widget(
         plat_rows, plat_kpis, _plat_err = load_rwa_platforms_cached()
         if plat_rows:
             _show_rwa_participants_platforms_home_footer(plat_rows, plat_kpis, preview_rows=preview_rows)
+        am_rows, am_kpis, _am_err = load_rwa_asset_managers_cached()
+        if am_rows:
+            _show_rwa_participants_asset_managers_home_footer(am_rows, am_kpis, preview_rows=preview_rows)
