@@ -43,8 +43,16 @@ def main() -> None:
 
     st.markdown(section_label_teal("Explore by Market Participant", placement="first"), unsafe_allow_html=True)
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed">Networks, Platforms, and Asset Managers from <strong>RWA.xyz</strong> '
-        "— the same preview blocks as on the home hub. Use each section’s button or link to open the full page.</p>",
+        '<div class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-explore-blurb">'
+        "<p>Data from <strong>RWA.xyz</strong>. Below are three ways the market is shown:</p>"
+        "<ul>"
+        "<li>Networks</li>"
+        "<li>Platforms</li>"
+        "<li>Asset managers</li>"
+        "</ul>"
+        '<p class="jd-hub-explore-blurb--tail">'
+        "Each section is a quick preview. Use the links inside when you want the full RWA view."
+        "</p></div>",
         unsafe_allow_html=True,
     )
     st.divider()

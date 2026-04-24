@@ -43,9 +43,16 @@ def main() -> None:
 
     st.markdown(section_label_teal("Explore by Asset Type", placement="first"), unsafe_allow_html=True)
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed">Stablecoins, US Treasuries, and Tokenized Stocks from '
-        "<strong>RWA.xyz</strong> — the same preview blocks as on the home hub. Use each section’s button or link to "
-        "open the full embed page.</p>",
+        '<div class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-explore-blurb">'
+        "<p>Data from <strong>RWA.xyz</strong>. Below are three areas covered on this page:</p>"
+        "<ul>"
+        "<li>Stablecoins</li>"
+        "<li>US Treasuries</li>"
+        "<li>Tokenized stocks</li>"
+        "</ul>"
+        '<p class="jd-hub-explore-blurb--tail">'
+        "Each section is a quick preview. Use the links inside when you want the full RWA view."
+        "</p></div>",
         unsafe_allow_html=True,
     )
     st.divider()

@@ -54,6 +54,31 @@ p.jd-hub-dek.jd-hub-dek-fullbleed {
     margin-bottom: 0.85rem;
     line-height: 1.55;
 }
+/* Hub Explore gateway cards: short intro + bullet list (home + index heroes) */
+div.jd-hub-dek.jd-hub-dek-fullbleed.jd-hub-explore-blurb {
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0.15rem 0 0.95rem 0;
+    line-height: 1.55;
+    font-size: 0.8125rem;
+    font-weight: 400;
+    color: #3E6A7A;
+}
+div.jd-hub-dek.jd-hub-dek-fullbleed.jd-hub-explore-blurb p {
+    margin: 0 0 0.4rem 0;
+}
+div.jd-hub-dek.jd-hub-dek-fullbleed.jd-hub-explore-blurb p.jd-hub-explore-blurb--tail {
+    margin-top: 0.45rem;
+    margin-bottom: 0;
+}
+div.jd-hub-dek.jd-hub-dek-fullbleed.jd-hub-explore-blurb ul {
+    margin: 0.15rem 0 0.2rem 0;
+    padding-left: 1.2rem;
+}
+div.jd-hub-dek.jd-hub-dek-fullbleed.jd-hub-explore-blurb li {
+    margin: 0.2rem 0;
+}
 </style>
 """
 

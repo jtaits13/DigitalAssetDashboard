@@ -2059,9 +2059,15 @@ def show_rwa_onchain_explore_gateways(*, preview_rows: int = 8) -> None:
         st.markdown(hub_section_anchor("jd-rwa-explore-asset-type"), unsafe_allow_html=True)
         st.markdown("### Explore by Asset Type")
         st.markdown(
-            '<p class="jd-hub-dek jd-hub-dek-fullbleed">RWA.xyz <strong>Stablecoins</strong> overview and platform league; '
-            "<strong>US Treasuries</strong> distributed value by network and platform; and <strong>Tokenized Stocks</strong> "
-            "by network and platform — the same compact previews as before, each with a link to its full page.</p>",
+            '<div class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-explore-blurb">'
+            "<p>Short previews of on-chain data for:</p>"
+            "<ul>"
+            "<li>Stablecoins</li>"
+            "<li>US Treasuries</li>"
+            "<li>Tokenized stocks</li>"
+            "</ul>"
+            '<p class="jd-hub-explore-blurb--tail">Use <strong>Explore</strong> to open the hub and go deeper on the next pages.</p>'
+            "</div>",
             unsafe_allow_html=True,
         )
         if st.button(
@@ -2075,9 +2081,15 @@ def show_rwa_onchain_explore_gateways(*, preview_rows: int = 8) -> None:
         st.markdown(hub_section_anchor("jd-rwa-explore-market-participant"), unsafe_allow_html=True)
         st.markdown("### Explore by Market Participant")
         st.markdown(
-            '<p class="jd-hub-dek jd-hub-dek-fullbleed"><strong>Networks</strong> (distributed value, aligned with Global '
-            "Market totals), <strong>Platforms</strong> (distributed issuers), and <strong>Asset Managers</strong> "
-            "(distributed managers) from RWA.xyz — same previews as before, each with a link to its full page.</p>",
+            '<div class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-explore-blurb">'
+            "<p>Short previews organized by who is in the market:</p>"
+            "<ul>"
+            "<li>Networks</li>"
+            "<li>Platforms</li>"
+            "<li>Asset managers</li>"
+            "</ul>"
+            '<p class="jd-hub-explore-blurb--tail">Use <strong>Explore</strong> to open the hub and go deeper on the next pages.</p>'
+            "</div>",
             unsafe_allow_html=True,
         )
         if st.button(
