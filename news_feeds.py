@@ -55,18 +55,18 @@ p.jd-hub-dek.jd-hub-dek-fullbleed {
     line-height: 1.55;
 }
 /* Hub Explore gateway cards: short intro + bullet list (home + index heroes).
-   All non-header copy at one size (0.875rem) — matches lead “View on-chain RWA data for:” line. */
+   All non-header copy one size: 15% up from 0.875rem (see calc). */
 div.jd-hub-dek.jd-hub-dek-fullbleed.jd-hub-explore-blurb {
     max-width: 100%;
     width: 100%;
     box-sizing: border-box;
     margin: 0.15rem 0 0.95rem 0;
     line-height: 1.45;
-    font-size: 0.875rem;
+    font-size: calc(0.875rem * 1.15);
     color: #3E6A7A;
 }
 div.jd-hub-dek.jd-hub-dek-fullbleed.jd-hub-explore-blurb p {
-    font-size: 0.875rem !important;
+    font-size: calc(0.875rem * 1.15) !important;
     line-height: 1.45 !important;
     color: #3E6A7A !important;
     margin: 0 0 0.4rem 0;
@@ -81,7 +81,7 @@ div.jd-hub-dek.jd-hub-dek-fullbleed.jd-hub-explore-blurb p.jd-hub-explore-blurb-
 }
 div.jd-hub-dek.jd-hub-dek-fullbleed.jd-hub-explore-blurb ul,
 div.jd-hub-dek.jd-hub-dek-fullbleed.jd-hub-explore-blurb li {
-    font-size: 0.875rem !important;
+    font-size: calc(0.875rem * 1.15) !important;
     line-height: 1.45 !important;
     color: #3E6A7A !important;
 }
