@@ -2054,12 +2054,6 @@ def show_rwa_onchain_explore_gateways(*, preview_rows: int = 8) -> None:
     """
     _ = preview_rows
     st.divider()
-    st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed">Continue in <strong>Explore by Asset Type</strong> for stablecoins, '
-        "treasuries, and tokenized equities, or <strong>Explore by Market Participant</strong> for networks, platforms, "
-        "and Asset Managers on RWA.xyz.</p>",
-        unsafe_allow_html=True,
-    )
     c1, c2 = st.columns(2, gap="medium", border=True)
     with c1:
         st.markdown(hub_section_anchor("jd-rwa-explore-asset-type"), unsafe_allow_html=True)
