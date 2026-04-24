@@ -154,6 +154,12 @@ WIDGET_CSS = """
 </style>
 """
 
+_RWA_KPI_PANEL_INLINE_STYLE = (
+    "background-color:#ffffff;border:1px solid #C7D8E8;border-radius:10px;"
+    "box-shadow:0 1px 3px rgba(15,23,42,0.06);padding:0.65rem 0.9rem 0.55rem;"
+    "margin:0.45rem 0 0.9rem 0;box-sizing:border-box;"
+)
+
 RWA_DATA_SOURCE_CAPTION = (
     "Source: [RWA.xyz Networks](https://app.rwa.xyz/networks) embedded **__NEXT_DATA__** "
     "(`listQueryResponse` + per-network `asset_class_stats` and `transferability`); not the public API. "
@@ -269,6 +275,7 @@ def _render_rwa_global_overview(
     kpis: list[RwaGlobalKpi],
     *,
     kpi_legend_name: str = "Global Market",
+    hub_kpi_emphasis: bool = False,
 ) -> None:
     """Global / Networks overview: KPI tiles; slate titles, teal values, 30D % change (no “30D” suffix on labels)."""
     if not kpis:
@@ -288,13 +295,17 @@ def _render_rwa_global_overview(
             "</div>"
         )
     row = "<div class='rwa-kpi-row'>" + "".join(cells) + "</div>"
-    st.markdown(
-        '<div class="rwa-kpi-wrap">'
-        f"{_rwa_kpi_window_note_html(overview_title=kpi_legend_name)}"
-        f"{row}"
-        "</div>",
-        unsafe_allow_html=True,
+    if hub_kpi_emphasis:
+        open_wrap = f'<div class="rwa-kpi-wrap" style="{_RWA_KPI_PANEL_INLINE_STYLE}">'
+    else:
+        open_wrap = '<div class="rwa-kpi-wrap">'
+    rwa_kpi_html = (
+        open_wrap
+        + f"{_rwa_kpi_window_note_html(overview_title=kpi_legend_name)}"
+        + f"{row}"
+        + "</div>"
     )
+    st.html(rwa_kpi_html)
 
 
 def _render_rwa_treasuries_overview(
@@ -1574,7 +1585,11 @@ def _rwa_global_market_status(
             f'<h2 class="{h2_cls}">{RWA_GLOBAL_MARKET_OVERVIEW_HEADING}</h2></div>',
             unsafe_allow_html=True,
         )
-        _render_rwa_global_overview(kpis, kpi_legend_name="Networks")
+        _render_rwa_global_overview(
+            kpis,
+            kpi_legend_name="Networks",
+            hub_kpi_emphasis=home_preview,
+        )
         st.link_button(
             GLOBAL_MARKET_RWA_LINK_LABEL,
             GLOBAL_MARKET_RWA_URL,
@@ -1593,7 +1608,11 @@ def _rwa_global_market_status(
         f'<h2 class="{h2_cls}">{RWA_GLOBAL_MARKET_OVERVIEW_HEADING}</h2></div>',
         unsafe_allow_html=True,
     )
-    _render_rwa_global_overview(kpis, kpi_legend_name="Networks")
+    _render_rwa_global_overview(
+        kpis,
+        kpi_legend_name="Networks",
+        hub_kpi_emphasis=home_preview,
+    )
 
     working = list(rows)
     if home_preview:
@@ -1661,7 +1680,11 @@ def _show_rwa_participants_networks_home_footer(
         '<h2 class="home-widget-heading">Networks</h2></div>',
         unsafe_allow_html=True,
     )
-    _render_rwa_global_overview(kpis, kpi_legend_name="Networks")
+    _render_rwa_global_overview(
+        kpis,
+        kpi_legend_name="Networks",
+        hub_kpi_emphasis=True,
+    )
     st.caption(
         "Preview of the **Networks** table from the [RWA.xyz Networks](https://app.rwa.xyz/networks) embed "
         "(same totals as **RWA Global Market** above, formatted here under **Participants**)."
@@ -1701,7 +1724,11 @@ def _show_rwa_participants_platforms_home_footer(
         '<h2 class="home-widget-heading">Platforms</h2></div>',
         unsafe_allow_html=True,
     )
-    _render_rwa_global_overview(kpis, kpi_legend_name="Platforms")
+    _render_rwa_global_overview(
+        kpis,
+        kpi_legend_name="Platforms",
+        hub_kpi_emphasis=True,
+    )
     st.caption(
         "Preview of the **Distributed** Platforms issuer table from the [RWA.xyz Platforms](https://app.rwa.xyz/platforms) embed."
     )
@@ -1740,7 +1767,11 @@ def _show_rwa_participants_asset_managers_home_footer(
         '<h2 class="home-widget-heading">Asset Managers</h2></div>',
         unsafe_allow_html=True,
     )
-    _render_rwa_global_overview(kpis, kpi_legend_name="Asset Managers")
+    _render_rwa_global_overview(
+        kpis,
+        kpi_legend_name="Asset Managers",
+        hub_kpi_emphasis=True,
+    )
     st.caption(
         "Preview of the **Distributed** Asset Managers table from the "
         "[RWA.xyz Asset Managers](https://app.rwa.xyz/asset-managers) embed."

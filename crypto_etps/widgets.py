@@ -108,6 +108,13 @@ WIDGET_CSS = """
 </style>
 """
 
+# White panel: use with ``st.html`` — ``st.markdown`` often drops/breaks inline layout on the hosted app.
+_ETP_KPI_PANEL_INLINE_STYLE = (
+    "background-color:#ffffff;border:1px solid #C7D8E8;border-radius:10px;"
+    "box-shadow:0 1px 3px rgba(15,23,42,0.06);padding:0.65rem 0.9rem 0.55rem;"
+    "margin:0.45rem 0 0.9rem 0;box-sizing:border-box;"
+)
+
 
 def etp_table_height(num_rows: int, *, max_h: int = 520) -> int:
     header = 38
@@ -255,8 +262,8 @@ def _render_etp_home_kpi_row(
             f"{delta_html}"
             "</div>"
         )
-    st.markdown(
-        '<div class="etp-kpi-wrap">'
+    kpi_html = (
+        f'<div class="etp-kpi-wrap" style="{_ETP_KPI_PANEL_INLINE_STYLE}">'
         "<p class=\"jd-kpi-window-note\">"
         "All % changes in this row are <strong>30-day (30D)</strong> (<strong>Yahoo Finance</strong>). "
         "Headline totals are listed AUM from <strong>StockAnalysis</strong> "
@@ -265,9 +272,9 @@ def _render_etp_home_kpi_row(
         "<div class='etp-kpi-row'>"
         f"{''.join(parts)}"
         "</div>"
-        "</div>",
-        unsafe_allow_html=True,
+        "</div>"
     )
+    st.html(kpi_html)
 
 
 def show_etp_dataframe(

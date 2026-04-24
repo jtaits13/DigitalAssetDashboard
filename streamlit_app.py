@@ -43,8 +43,6 @@ from rwa_league.widgets import clear_rwa_league_cache, show_rwa_league_widget
 HOME_HEADLINE_COUNT = 3
 HOME_REGULATORY_PREVIEW = 3
 
-HOME_PAGE_EXTRA_CSS = ""
-
 _JD_SCROLL_MAP = {
     "top": "jd-page-top",
     "news": "jd-section-news",
@@ -218,10 +216,7 @@ def main() -> None:
 
     render_home_top_bar("landing", is_landing=True)
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
-    st.markdown(
-        app_shared_layout_css() + HOME_PAGE_EXTRA_CSS,
-        unsafe_allow_html=True,
-    )
+    st.markdown(app_shared_layout_css(), unsafe_allow_html=True)
     st.markdown(
         '<h1 class="home-main-heading" id="jd-page-top">Digital Assets Dashboard</h1>',
         unsafe_allow_html=True,
