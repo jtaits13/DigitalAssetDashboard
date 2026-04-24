@@ -13,6 +13,7 @@ _REPO = Path(__file__).resolve().parent
 if str(_REPO) not in sys.path:
     sys.path.insert(0, str(_REPO))
 
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 
 import streamlit as st
@@ -238,8 +239,11 @@ def main() -> None:
         clear_rwa_league_cache()
         st.rerun()
 
-    articles, feed_errors = load_all_feeds(DEFAULT_FEEDS)
-    regulatory_articles, regulatory_errors = load_regulatory_articles()
+    with ThreadPoolExecutor(max_workers=2) as _pool:
+        _f_news = _pool.submit(load_all_feeds, DEFAULT_FEEDS)
+        _f_reg = _pool.submit(load_regulatory_articles)
+        articles, feed_errors = _f_news.result()
+        regulatory_articles, regulatory_errors = _f_reg.result()
 
     _feed_status_expanders(feed_errors, regulatory_errors)
 

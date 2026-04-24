@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import calendar
+import functools
 import html as html_module
 import re
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date, datetime, timezone
 from html import escape
 from email.utils import parsedate_to_datetime
@@ -101,6 +103,7 @@ div.jd-hub-dek.jd-hub-dek-fullbleed.jd-hub-explore-blurb li {
 """
 
 
+@functools.lru_cache(maxsize=1)
 def app_shared_layout_css() -> str:
     """
     ``HOME_MAIN_HEADING_CSS`` plus ``HOME_PAGE_LAYOUT_CSS`` — same typography, section rhythm,
@@ -510,14 +513,35 @@ def fetch_feed(source_name: str, url: str) -> list[dict[str, Any]]:
     return out
 
 
+def _load_one_rss(name: str, url: str) -> tuple[list[dict[str, Any]], str | None]:
+    try:
+        return fetch_feed(name, url), None
+    except Exception as e:  # noqa: BLE001
+        return [], f"{name}: {e!s}"
+
+
 def load_all_feeds(feeds: list[tuple[str, str]]) -> tuple[list[dict[str, Any]], list[str]]:
+    """Fetch each RSS in parallel; same dedupe/ordering as before (cache is per feed)."""
     combined: list[dict[str, Any]] = []
     errors: list[str] = []
-    for name, url in feeds:
-        try:
-            combined.extend(fetch_feed(name, url))
-        except Exception as e:  # noqa: BLE001
-            errors.append(f"{name}: {e!s}")
+    if not feeds:
+        return combined, errors
+    n = len(feeds)
+    if n == 1:
+        name, url = feeds[0]
+        rows, err = _load_one_rss(name, url)
+        combined.extend(rows)
+        if err:
+            errors.append(err)
+    else:
+        max_w = min(8, n)
+        with ThreadPoolExecutor(max_workers=max_w) as ex:
+            futs = {ex.submit(_load_one_rss, name, url): name for name, url in feeds}
+            for fut in as_completed(futs):
+                rows, err = fut.result()
+                combined.extend(rows)
+                if err:
+                    errors.append(err)
     combined.sort(
         key=lambda x: x["published"] or datetime.min.replace(tzinfo=timezone.utc),
         reverse=True,
@@ -610,6 +634,7 @@ def render_hub_news_lane_item_html(
     )
 
 
+@functools.lru_cache(maxsize=1)
 def article_styles_markdown() -> str:
     """Inject once per page that renders news cards."""
     return """

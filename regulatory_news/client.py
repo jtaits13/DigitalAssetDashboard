@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from typing import Any
 
@@ -118,20 +119,51 @@ def _one_entry(
     }
 
 
+def _load_one_regulatory_source(
+    source_name: str,
+    url: str,
+    feed_default: str,
+    is_gov: bool,
+) -> tuple[list[dict[str, Any]], str | None]:
+    try:
+        parsed = feedparser.parse(url)
+        out: list[dict[str, Any]] = []
+        for entry in getattr(parsed, "entries", []) or []:
+            row = _one_entry(entry, source_name, feed_default, is_gov)
+            if row:
+                out.append(row)
+        return out, None
+    except Exception as e:  # noqa: BLE001
+        return [], f"{source_name}: {e!s}"
+
+
 @st.cache_data(ttl=300, show_spinner=False)
 def load_regulatory_articles() -> tuple[list[dict[str, Any]], list[str]]:
     """Load, filter, dedupe, and sort regulatory headlines (newest first)."""
     combined: list[dict[str, Any]] = []
     errors: list[str] = []
-    for source_name, url, feed_default, is_gov in REGULATORY_FEEDS:
-        try:
-            parsed = feedparser.parse(url)
-            for entry in getattr(parsed, "entries", []) or []:
-                row = _one_entry(entry, source_name, feed_default, is_gov)
-                if row:
-                    combined.append(row)
-        except Exception as e:  # noqa: BLE001
-            errors.append(f"{source_name}: {e!s}")
+    feeds = REGULATORY_FEEDS
+    n = len(feeds)
+    if n == 0:
+        return combined, errors
+    if n == 1:
+        (source_name, url, feed_default, is_gov) = feeds[0]
+        rows, err = _load_one_regulatory_source(source_name, url, feed_default, is_gov)
+        combined.extend(rows)
+        if err:
+            errors.append(err)
+    else:
+        max_w = min(6, n)
+        with ThreadPoolExecutor(max_workers=max_w) as ex:
+            futs = {
+                ex.submit(_load_one_regulatory_source, sn, url, fd, is_gov): sn
+                for (sn, url, fd, is_gov) in feeds
+            }
+            for fut in as_completed(futs):
+                rows, err = fut.result()
+                combined.extend(rows)
+                if err:
+                    errors.append(err)
     combined.sort(
         key=lambda x: x["published"] if isinstance(x["published"], datetime) else datetime.min.replace(tzinfo=timezone.utc),
         reverse=True,
