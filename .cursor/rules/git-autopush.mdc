@@ -1,0 +1,15 @@
+---
+description: After coding tasks, commit and push to origin without waiting for a separate request.
+alwaysApply: true
+---
+
+# Git: commit and push
+
+When a task changes project files in a way that is ready to share (user did not say to leave work uncommitted or to stop before deploy):
+
+1. **Commit** the relevant changes on `main` with a short, specific message in complete sentences.
+2. **Push** to `origin` (typically `git push origin main`).
+
+If there is nothing to commit, say so. If push fails (auth, network), try once more with a different approach if reasonable, then report the error clearly.
+
+Do not push secrets or local-only config the user is clearly keeping private. If a change is strictly experimental or the user said “don’t commit,” skip.
