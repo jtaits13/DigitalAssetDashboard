@@ -55,21 +55,23 @@ p.jd-hub-dek.jd-hub-dek-fullbleed {
     line-height: 1.55;
 }
 /* Hub Explore gateway cards: short intro + bullet list (home + index heroes).
-   First line = .jd-hub-cta-note scale (0.78rem) — home lane “footnote” size; list one step down. */
+   Use fixed rem + !important so size matches hub copy inside st.columns / stMarkdown (Streamlit can
+   otherwise make custom HTML look smaller than full-width markdown). Lead/tail = 0.875rem (~14px),
+   same band as .jd-hub-dek; list one step down. */
 div.jd-hub-dek.jd-hub-dek-fullbleed.jd-hub-explore-blurb {
     max-width: 100%;
     width: 100%;
     box-sizing: border-box;
     margin: 0.15rem 0 0.95rem 0;
-    line-height: 1.4;
-    font-size: 0.75rem;
+    line-height: 1.45;
+    font-size: 0.8125rem;
     color: #3E6A7A;
 }
 div.jd-hub-dek.jd-hub-dek-fullbleed.jd-hub-explore-blurb > p:first-of-type {
-    font-size: 0.78rem;
-    line-height: 1.4;
+    font-size: 0.875rem !important;
+    line-height: 1.45 !important;
     font-weight: 500;
-    color: #3E6A7A;
+    color: #3E6A7A !important;
     margin: 0 0 0.4rem 0;
     letter-spacing: -0.01em;
 }
@@ -77,17 +79,25 @@ div.jd-hub-dek.jd-hub-dek-fullbleed.jd-hub-explore-blurb p {
     margin: 0 0 0.4rem 0;
 }
 div.jd-hub-dek.jd-hub-dek-fullbleed.jd-hub-explore-blurb p.jd-hub-explore-blurb--tail {
-    font-size: 0.78rem;
-    line-height: 1.4;
+    font-size: 0.875rem !important;
+    line-height: 1.45 !important;
+    color: #3E6A7A !important;
     margin-top: 0.45rem;
     margin-bottom: 0;
 }
 div.jd-hub-dek.jd-hub-dek-fullbleed.jd-hub-explore-blurb ul {
+    font-size: 0.8125rem !important;
+    line-height: 1.45 !important;
     margin: 0.1rem 0 0.2rem 0;
     padding-left: 1.2rem;
+    color: #3E6A7A !important;
 }
 div.jd-hub-dek.jd-hub-dek-fullbleed.jd-hub-explore-blurb li {
     margin: 0.2rem 0;
+}
+[data-testid="stMarkdownContainer"] div.jd-hub-explore-blurb p,
+[data-testid="stMarkdownContainer"] div.jd-hub-explore-blurb li {
+    -webkit-text-size-adjust: 100%;
 }
 </style>
 """
