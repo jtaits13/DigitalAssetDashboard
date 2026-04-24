@@ -58,7 +58,6 @@ def main() -> None:
         "</p></div>",
         unsafe_allow_html=True,
     )
-    st.divider()
 
     show_rwa_explore_by_market_participant_widget(preview_rows=8)
 
