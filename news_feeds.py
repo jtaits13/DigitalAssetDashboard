@@ -966,6 +966,15 @@ def article_styles_markdown() -> str:
     [data-testid="column"]:has(.jd-hub-explore-card) .stElementContainer:has(.stButton) button {
         font-weight: 700 !important;
     }
+    /* Explore index pages (multipage): teal band = title; blurb only in card — tighter than two-column CTA */
+    section.jd-hub-explore-card.jd-hub-explore-card--index {
+        min-height: 0;
+        margin: 0.2rem 0 0.25rem 0;
+        padding: 0.7rem 0.9rem 0.8rem 1rem;
+    }
+    section.jd-hub-explore-card.jd-hub-explore-card--index .jd-hub-dek.jd-hub-explore-blurb {
+        margin: 0 !important;
+    }
     </style>
     """
 
