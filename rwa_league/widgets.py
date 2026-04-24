@@ -2057,17 +2057,15 @@ def show_rwa_onchain_explore_gateways(*, preview_rows: int = 8) -> None:
     st.divider()
     c1, c2 = st.columns(2, gap="medium", border=True)
     with c1:
-        st.markdown(hub_section_anchor("jd-rwa-explore-asset-type"), unsafe_allow_html=True)
         st.markdown(
-            hub_news_panel_header_html(
+            hub_section_anchor("jd-rwa-explore-asset-type")
+            + '<section class="jd-hub-explore-card" aria-labelledby="jd-rwa-explore-asset-h2">'
+            + hub_news_panel_header_html(
                 eyebrow="On-chain",
                 title="Explore by Asset Type",
                 heading_id="jd-rwa-explore-asset-h2",
-            ),
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            '<div class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-explore-blurb">'
+            )
+            + '<div class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-explore-blurb">'
             "<p>View on-chain RWA data for:</p>"
             "<ul>"
             "<li>Stablecoins</li>"
@@ -2075,7 +2073,7 @@ def show_rwa_onchain_explore_gateways(*, preview_rows: int = 8) -> None:
             "<li>Tokenized stocks</li>"
             "</ul>"
             '<p class="jd-hub-explore-blurb--tail">Use <strong>Explore</strong> to open the hub and go deeper on the next pages.</p>'
-            "</div>",
+            "</div></section>",
             unsafe_allow_html=True,
         )
         if st.button(
@@ -2086,17 +2084,15 @@ def show_rwa_onchain_explore_gateways(*, preview_rows: int = 8) -> None:
         ):
             st.switch_page("pages/RWA_Explore_By_Asset_Type.py")
     with c2:
-        st.markdown(hub_section_anchor("jd-rwa-explore-market-participant"), unsafe_allow_html=True)
         st.markdown(
-            hub_news_panel_header_html(
+            hub_section_anchor("jd-rwa-explore-market-participant")
+            + '<section class="jd-hub-explore-card" aria-labelledby="jd-rwa-explore-participant-h2">'
+            + hub_news_panel_header_html(
                 eyebrow="On-chain",
                 title="Explore by Market Participant",
                 heading_id="jd-rwa-explore-participant-h2",
-            ),
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            '<div class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-explore-blurb">'
+            )
+            + '<div class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-explore-blurb">'
             "<p>View on-chain RWA data for:</p>"
             "<ul>"
             "<li>Networks</li>"
@@ -2104,7 +2100,7 @@ def show_rwa_onchain_explore_gateways(*, preview_rows: int = 8) -> None:
             "<li>Asset managers</li>"
             "</ul>"
             '<p class="jd-hub-explore-blurb--tail">Use <strong>Explore</strong> to open the hub and go deeper on the next pages.</p>'
-            "</div>",
+            "</div></section>",
             unsafe_allow_html=True,
         )
         if st.button(

@@ -937,6 +937,37 @@ def article_styles_markdown() -> str:
     .jd-etp-pulse-rail .jd-hub-news-panel {
         min-height: 0;
     }
+    /* On-chain Explore gateways — stronger card than default column chrome so CTAs are easy to spot */
+    section.jd-hub-explore-card {
+        display: block;
+        box-sizing: border-box;
+        width: 100%;
+        min-height: 10.5rem;
+        margin: 0 0 0.55rem 0;
+        padding: 0.7rem 0.9rem 0.85rem 1rem;
+        border-radius: 12px;
+        background: linear-gradient(165deg, #ffffff 0%, #f0f7fa 55%, #e8f4f7 100%);
+        border: 1px solid #8cb9c9;
+        border-left: 4px solid #25809c;
+        box-shadow: 0 4px 18px rgba(2, 29, 65, 0.1), 0 1px 0 rgba(255, 255, 255, 0.7) inset;
+        transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+    section.jd-hub-explore-card:hover {
+        box-shadow: 0 8px 28px rgba(30, 124, 153, 0.16), 0 1px 0 rgba(255, 255, 255, 0.85) inset;
+        border-color: #6a9eac;
+    }
+    section.jd-hub-explore-card .jd-hub-news-panel-header {
+        border-bottom-color: #b8d4db;
+    }
+    section.jd-hub-explore-card .jd-hub-dek.jd-hub-explore-blurb {
+        margin-bottom: 0.35rem;
+    }
+    [data-testid="column"]:has(.jd-hub-explore-card) .stElementContainer:has(.stButton) {
+        margin-top: 0.2rem;
+    }
+    [data-testid="column"]:has(.jd-hub-explore-card) .stElementContainer:has(.stButton) button {
+        font-weight: 700 !important;
+    }
     </style>
     """
 
