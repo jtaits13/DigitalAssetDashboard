@@ -13,12 +13,7 @@ from datetime import datetime, timezone
 
 import streamlit as st
 
-from home_layout import (
-    ETP_FULLPAGE_AUM_LINE_CSS,
-    STREAMLIT_TABLE_UNIFY_CSS,
-    hub_section_anchor,
-    section_label_teal,
-)
+from home_layout import ETP_FULLPAGE_AUM_LINE_CSS, STREAMLIT_TABLE_UNIFY_CSS, section_label_teal
 from news_feeds import (
     app_shared_layout_css,
     article_styles_markdown,
@@ -46,14 +41,11 @@ def main() -> None:
     show_price_ticker()
     render_subpage_sidebar(key_prefix="rwa_explore_market_participant", current="rwa_explore_market_participant")
 
-    st.markdown(hub_section_anchor("jd-page-top"), unsafe_allow_html=True)
     st.markdown(
         section_label_teal("Explore by Market Participant", placement="first"),
         unsafe_allow_html=True,
     )
     st.markdown(
-        '<section class="jd-hub-explore-card jd-hub-explore-card--index" '
-        'aria-label="What you will find on this page">'
         '<div class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-explore-blurb">'
         "<p>Data from <strong>RWA.xyz</strong>. Below are three ways the market is shown:</p>"
         "<ul>"
@@ -63,17 +55,18 @@ def main() -> None:
         "</ul>"
         '<p class="jd-hub-explore-blurb--tail">'
         "Each section is a quick preview. Use the links inside when you want the full RWA view."
-        "</p></div></section>",
+        "</p></div>",
         unsafe_allow_html=True,
     )
+    st.divider()
 
     show_rwa_explore_by_market_participant_widget(preview_rows=8)
 
     st.divider()
     st.caption(
+        f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
         "RWA.xyz embeds · Cached up to one hour · Use **Refresh all data** on the home page to reload."
     )
-    st.caption(f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC")
 
 
 main()
