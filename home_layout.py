@@ -11,11 +11,11 @@ from typing import Optional
 KPI_WINDOW_NOTE_CSS = """
 <style>
 .jd-kpi-window-note {
-    font-size: 0.72rem;
+    font-size: 0.64rem;
     font-weight: 400;
     color: #3E6A7A;
     margin: 0 0 0.5rem 0;
-    line-height: 1.35;
+    line-height: 1.32;
 }
 </style>
 """
@@ -156,6 +156,16 @@ p.home-band-label.teal.jd-home-band-after-rule {
     margin: 1.25rem 0 !important;
     border: none;
     border-top: 1px solid #dce7f0;
+}
+/* Smaller default Streamlit captions in main: data-source / legend text (not the sidebar) */
+section[data-testid="stMain"] [data-testid="stCaptionContainer"] {
+    font-size: 0.75rem;
+    line-height: 1.4;
+    color: #5f6b7a;
+}
+section[data-testid="stMain"] [data-testid="stCaptionContainer"] p {
+    font-size: inherit !important;
+    line-height: inherit;
 }
 </style>
 """

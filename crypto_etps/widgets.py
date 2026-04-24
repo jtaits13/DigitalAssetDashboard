@@ -100,10 +100,10 @@ WIDGET_CSS = """
     color: #3E6A7A;
 }
 .etp-custodian-footnote {
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     color: #6c757d;
     margin: 0.35rem 0 0 0;
-    line-height: 1.45;
+    line-height: 1.4;
 }
 </style>
 """

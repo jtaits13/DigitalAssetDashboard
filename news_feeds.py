@@ -781,8 +781,8 @@ def article_styles_markdown() -> str:
         margin-top: auto;
         padding-top: 0.4rem;
         margin-bottom: 0;
-        font-size: 0.78rem;
-        line-height: 1.4;
+        font-size: 0.7rem;
+        line-height: 1.35;
         color: #3E6A7A;
         border-top: 1px solid #dce7f0;
     }
