@@ -2060,7 +2060,7 @@ def show_rwa_onchain_explore_gateways(*, preview_rows: int = 8) -> None:
         st.markdown("### Explore by Asset Type")
         st.markdown(
             '<div class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-explore-blurb">'
-            "<p>Short previews of on-chain data for:</p>"
+            "<p>View on-chain RWA data for:</p>"
             "<ul>"
             "<li>Stablecoins</li>"
             "<li>US Treasuries</li>"
@@ -2082,7 +2082,7 @@ def show_rwa_onchain_explore_gateways(*, preview_rows: int = 8) -> None:
         st.markdown("### Explore by Market Participant")
         st.markdown(
             '<div class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-explore-blurb">'
-            "<p>Short previews organized by who is in the market:</p>"
+            "<p>View on-chain RWA data for:</p>"
             "<ul>"
             "<li>Networks</li>"
             "<li>Platforms</li>"
