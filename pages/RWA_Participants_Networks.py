@@ -1,4 +1,4 @@
-"""RWA.xyz Participants — Networks: distributed value KPIs + Networks league (homepage embed)."""
+"""RWA.xyz Global Market Overview: homepage KPI + Networks table (homepage embed)."""
 
 from __future__ import annotations
 
@@ -26,7 +26,7 @@ from rwa_league.widgets import RWA_DATA_SOURCE_CAPTION, show_rwa_participants_ne
 
 def main() -> None:
     st.set_page_config(
-        page_title="Participants — Networks — JPM Digital",
+        page_title="RWA Global Market Overview — JPM Digital",
         page_icon="◆",
         layout="wide",
         initial_sidebar_state="expanded",
@@ -41,12 +41,12 @@ def main() -> None:
     show_price_ticker()
     render_subpage_sidebar(key_prefix="rwa_participants_networks", current="rwa_participants_networks")
 
-    st.markdown(section_label_teal("Participants — Networks", placement="first"), unsafe_allow_html=True)
+    st.markdown(section_label_teal("RWA Global Market Overview", placement="first"), unsafe_allow_html=True)
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed">RWA <strong>Participants</strong> · <strong>Networks</strong>: the same '
-        "<strong>Networks overview</strong> headline metrics and on-chain <strong>Networks</strong> table as "
-        '<a href="https://app.rwa.xyz/networks">RWA.xyz</a> (embedded in <code>__NEXT_DATA__</code>). '
-        "Top-line <strong>30D</strong> % changes and per-network <strong>transferability</strong> / share columns are pulled from that page.</p>",
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed">RWA <strong>Global Market Overview</strong>: the same '
+        "<strong>headline metrics</strong> and <strong>Networks</strong> table as the "
+        '<a href="https://app.rwa.xyz/">RWA.xyz</a> Market Overview tab (embedded in <code>__NEXT_DATA__</code>). '
+        "Top-line <strong>30D</strong> % changes and table values are pulled from that homepage dataset.</p>",
         unsafe_allow_html=True,
     )
     st.divider()
