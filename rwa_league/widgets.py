@@ -1653,7 +1653,7 @@ def _rwa_global_market_status(
         use_container_width=True,
         type="primary",
     ):
-        st.switch_page("pages/RWA_Participants_Networks.py")
+        st.switch_page("pages/RWA_Global_Market_Overview.py")
 
     st.link_button(
         GLOBAL_MARKET_RWA_LINK_LABEL,
