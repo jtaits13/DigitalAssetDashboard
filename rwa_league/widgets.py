@@ -21,6 +21,7 @@ from rwa_league.client import (
     APP_TREASURIES,
     RwaAssetManagersTabRow,
     RwaGlobalKpi,
+    RwaNetworkLeagueRow,
     RwaNetworksTabRow,
     RwaPlatformsTabRow,
     RwaTokenizedStockNetworkRow,
@@ -29,6 +30,7 @@ from rwa_league.client import (
     RwaTreasuryDistributedNetworkRow,
     RwaTreasuryPlatformRow,
     fetch_rwa_asset_managers_page_data,
+    fetch_rwa_home_data,
     fetch_rwa_networks_page_data,
     fetch_rwa_platforms_page_data,
     fetch_rwa_stablecoins_data,
@@ -166,6 +168,11 @@ RWA_DATA_SOURCE_CAPTION = (
     "**RWA count** and **RWA total (excl. stablecoins)** use non-stablecoin rows in `asset_class_stats` (same as the on-site table). "
     "**RWA value (distributed)** = `transferability.transferable`; **(represented)** = `non_transferable`; "
     "**% distributed** = distributed ÷ that total. Top-line **%** are **30D**; **7D Δ** uses `transferable_30d`."
+)
+RWA_GLOBAL_MARKET_DATA_SOURCE_CAPTION = (
+    "Source: [RWA.xyz homepage](https://app.rwa.xyz/) embedded **__NEXT_DATA__** "
+    "(`pageProps.aggregates` + Distributed `leagueTableTabs.parent_networks`). "
+    "This section is intentionally aligned to the on-site **Global Market Overview** tab."
 )
 
 RWA_PLATFORMS_DATA_SOURCE_CAPTION = (
@@ -1032,6 +1039,15 @@ def _show_tokenized_stock_network_dataframe(df, *, height: int) -> None:
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
+def load_rwa_global_market_cached(
+    *, _global_schema: int = 1
+) -> tuple[list[RwaNetworkLeagueRow], list[RwaGlobalKpi], str | None]:
+    """Bump ``_global_schema`` when homepage Market Overview embed shape changes."""
+    _ = _global_schema
+    return fetch_rwa_home_data()
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
 def load_rwa_league_cached(*, _rwa_schema: int = 7) -> tuple[list[RwaNetworksTabRow], list[RwaGlobalKpi], str | None]:
     """Bump ``_rwa_schema`` when ``/networks`` or ``__NEXT_DATA__`` shape or row field definitions change."""
     _ = _rwa_schema
@@ -1092,6 +1108,7 @@ def load_rwa_tokenized_stocks_cached(
 
 
 def clear_rwa_league_cache() -> None:
+    load_rwa_global_market_cached.clear()
     load_rwa_league_cached.clear()
     load_rwa_platforms_cached.clear()
     load_rwa_asset_managers_cached.clear()
@@ -1560,7 +1577,7 @@ def show_rwa_tokenized_stocks_widget(
 
 
 def _rwa_global_market_status(
-    rows: list[RwaNetworksTabRow],
+    rows: list[RwaNetworkLeagueRow],
     kpis: list[RwaGlobalKpi],
     err: str | None,
     *,
@@ -1568,8 +1585,8 @@ def _rwa_global_market_status(
     preview_rows: int,
 ) -> str:
     """
-    Hub block: **RWA Global Market Overview** (heading) + top-line **Networks** overview KPIs + the **Networks** table
-    (from ``/networks`` ``__NEXT_DATA__``, not the smaller homepage **parent_networks** league only).
+    Hub block: **RWA Global Market Overview** (heading) + top-line overview KPIs + the homepage Networks table
+    from RWA.xyz Market Overview (Distributed / parent_networks).
 
     Returns ``"STOP"`` (abort rest of On-chain bundle), ``"ERR_HOME"`` (fetch error on hub — caller may still add
     Explore gateway columns), or ``"OK"`` (caller may add **Explore by Asset Type** / **Market Participant** gateways).
@@ -1583,11 +1600,7 @@ def _rwa_global_market_status(
             f'<h2 class="{h2_cls}">{RWA_GLOBAL_MARKET_OVERVIEW_HEADING}</h2></div>',
             unsafe_allow_html=True,
         )
-        _render_rwa_global_overview(
-            kpis,
-            kpi_legend_name="Networks",
-            hub_kpi_emphasis=home_preview,
-        )
+        _render_rwa_global_overview(kpis, kpi_legend_name="Global Market", hub_kpi_emphasis=home_preview)
         st.link_button(
             GLOBAL_MARKET_RWA_LINK_LABEL,
             GLOBAL_MARKET_RWA_URL,
@@ -1606,11 +1619,7 @@ def _rwa_global_market_status(
         f'<h2 class="{h2_cls}">{RWA_GLOBAL_MARKET_OVERVIEW_HEADING}</h2></div>',
         unsafe_allow_html=True,
     )
-    _render_rwa_global_overview(
-        kpis,
-        kpi_legend_name="Networks",
-        hub_kpi_emphasis=home_preview,
-    )
+    _render_rwa_global_overview(kpis, kpi_legend_name="Global Market", hub_kpi_emphasis=home_preview)
 
     working = list(rows)
     if home_preview:
@@ -1630,14 +1639,13 @@ def _rwa_global_market_status(
             )
         else:
             st.caption(
-                f"Showing all {len(working)} networks (see caption below for RWA / **Networks** column definitions; "
-                f"headline **%** above: **30D**)."
+                f"Showing all {len(working)} networks from the homepage **Global Market Overview** table."
             )
 
-    df = build_rwa_networks_page_dataframe(working)
-    _show_rwa_networks_page_dataframe(df, height=rwa_table_height(len(df), max_h=900))
+    df = build_rwa_dataframe(working)
+    _show_rwa_dataframe(df, height=rwa_table_height(len(df), max_h=900))
     if not home_preview:
-        st.caption(RWA_DATA_SOURCE_CAPTION)
+        st.caption(RWA_GLOBAL_MARKET_DATA_SOURCE_CAPTION)
 
     if home_preview and st.button(
         "Open full RWA Market Overview table",
@@ -1812,6 +1820,62 @@ def show_rwa_participants_networks_widget(
         WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS,
         unsafe_allow_html=True,
     )
+
+    if full_page_header:
+        rows_home, kpis_home, err_home = load_rwa_global_market_cached()
+        if err_home and not rows_home:
+            st.warning(escape(err_home))
+            st.markdown(
+                f'<div class="jd-hub-subsection-head" id="jd-rwa-market">'
+                f'<h2 class="home-main-heading">{escape(RWA_GLOBAL_MARKET_OVERVIEW_HEADING)}</h2></div>',
+                unsafe_allow_html=True,
+            )
+            _render_rwa_global_overview(kpis_home, kpi_legend_name="Global Market")
+            st.link_button(
+                GLOBAL_MARKET_RWA_LINK_LABEL,
+                GLOBAL_MARKET_RWA_URL,
+                use_container_width=True,
+                key="rwa_global_market_page_err_full",
+            )
+            return
+
+        if not rows_home:
+            st.markdown(hub_section_anchor("jd-rwa-market"), unsafe_allow_html=True)
+            st.info("No network rows returned.")
+            return
+
+        st.markdown(
+            hub_subsection_heading_html(
+                RWA_GLOBAL_MARKET_OVERVIEW_HEADING,
+                element_id="jd-rwa-market",
+            ),
+            unsafe_allow_html=True,
+        )
+        _render_rwa_global_overview(kpis_home, kpi_legend_name="Global Market")
+        q = st.text_input(
+            "Search network",
+            "",
+            key="rwa_global_market_search_full",
+            placeholder="Filter by network name…",
+        )
+        working_home = filter_rows_by_network(rows_home, q)
+        if q.strip():
+            st.caption(
+                f"Showing {len(working_home)} of {len(rows_home)} networks matching “{escape(q.strip())}”."
+            )
+        else:
+            st.caption(f"Showing all {len(working_home)} networks from the homepage Global Market table.")
+
+        df_home = build_rwa_dataframe(working_home)
+        _show_rwa_dataframe(df_home, height=rwa_table_height(len(df_home), max_h=900))
+        st.caption(RWA_GLOBAL_MARKET_DATA_SOURCE_CAPTION)
+        st.link_button(
+            GLOBAL_MARKET_RWA_LINK_LABEL,
+            GLOBAL_MARKET_RWA_URL,
+            use_container_width=True,
+            key="rwa_global_market_page_full",
+        )
+        return
 
     rows, kpis, err = load_rwa_league_cached()
 
@@ -2185,7 +2249,7 @@ def show_rwa_league_widget(
     ``home_preview=False`` (searchable table only).
     """
     st.markdown(WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
-    rows, kpis, err = load_rwa_league_cached()
+    rows, kpis, err = load_rwa_global_market_cached()
     status = _rwa_global_market_status(rows, kpis, err, home_preview=home_preview, preview_rows=preview_rows)
     if status == "STOP" and not home_preview:
         return
