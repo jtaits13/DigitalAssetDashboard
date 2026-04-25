@@ -262,13 +262,13 @@ def _render_rwa_stablecoin_overview(
         )
     row = "<div class='rwa-kpi-row'>" + "".join(cells) + "</div>"
     legend = _rwa_kpi_window_note_html(overview_title="Stablecoins") if show_kpi_legend else ""
-    st.markdown(
-        '<div class="rwa-kpi-wrap">'
-        f"{legend}"
-        f"{row}"
-        "</div>",
-        unsafe_allow_html=True,
+    stablecoin_kpi_html = (
+        f'<div class="rwa-kpi-wrap" style="{_RWA_KPI_PANEL_INLINE_STYLE}">'
+        + f"{legend}"
+        + f"{row}"
+        + "</div>"
     )
+    st.html(stablecoin_kpi_html)
 
 
 def _render_rwa_global_overview(
@@ -280,6 +280,7 @@ def _render_rwa_global_overview(
     """Global / Networks overview: KPI tiles; slate titles, teal values, 30D % change (no “30D” suffix on labels)."""
     if not kpis:
         return
+    _ = hub_kpi_emphasis
     cells = []
     for k in kpis:
         delta_html = ""
@@ -295,10 +296,7 @@ def _render_rwa_global_overview(
             "</div>"
         )
     row = "<div class='rwa-kpi-row'>" + "".join(cells) + "</div>"
-    if hub_kpi_emphasis:
-        open_wrap = f'<div class="rwa-kpi-wrap" style="{_RWA_KPI_PANEL_INLINE_STYLE}">'
-    else:
-        open_wrap = '<div class="rwa-kpi-wrap">'
+    open_wrap = f'<div class="rwa-kpi-wrap" style="{_RWA_KPI_PANEL_INLINE_STYLE}">'
     rwa_kpi_html = (
         open_wrap
         + f"{_rwa_kpi_window_note_html(overview_title=kpi_legend_name)}"
@@ -333,13 +331,13 @@ def _render_rwa_treasuries_overview(
         )
     row = "<div class='rwa-kpi-row'>" + "".join(cells) + "</div>"
     legend = _rwa_kpi_window_note_html(overview_title=overview_title) if show_kpi_legend else ""
-    st.markdown(
-        '<div class="rwa-kpi-wrap">'
-        f"{legend}"
-        f"{row}"
-        "</div>",
-        unsafe_allow_html=True,
+    treasuries_kpi_html = (
+        f'<div class="rwa-kpi-wrap" style="{_RWA_KPI_PANEL_INLINE_STYLE}">'
+        + f"{legend}"
+        + f"{row}"
+        + "</div>"
     )
+    st.html(treasuries_kpi_html)
 
 
 _SORT = "\u2195"
