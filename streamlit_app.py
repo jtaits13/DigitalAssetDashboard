@@ -302,8 +302,8 @@ def main() -> None:
         st.markdown(hub_section_anchor("jd-section-onchain"), unsafe_allow_html=True)
         st.markdown(section_label_teal("On-chain Data", placement="after_divider"), unsafe_allow_html=True)
         st.markdown(
-            '<p class="jd-hub-dek jd-hub-dek-fullbleed">A <strong>global RWA</strong> snapshot from RWA.xyz, then two cards '
-            "below. Use <strong>Explore</strong> on a card to open a hub; full tables and detail are on the pages you open "
+            '<p class="jd-hub-dek jd-hub-dek-fullbleed">A global RWA snapshot from RWA.xyz, then two cards '
+            "below. Use Explore on a card to open a hub; full tables and detail are on the pages you open "
             "from there.</p>",
             unsafe_allow_html=True,
         )
@@ -385,8 +385,8 @@ def main() -> None:
     st.markdown(hub_section_anchor("jd-section-onchain"), unsafe_allow_html=True)
     st.markdown(section_label_teal("On-chain Data", placement="after_divider"), unsafe_allow_html=True)
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed">A <strong>global RWA</strong> snapshot from RWA.xyz, then two cards '
-        "below. Use <strong>Explore</strong> on a card to open a hub; full tables and detail are on the pages you open "
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed">A global RWA snapshot from RWA.xyz, then two cards '
+        "below. Use Explore on a card to open a hub; full tables and detail are on the pages you open "
         "from there.</p>",
         unsafe_allow_html=True,
     )
