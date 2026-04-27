@@ -1865,8 +1865,9 @@ def show_rwa_participants_networks_widget(
     On the hub, use :func:`show_rwa_league_widget` instead (Global Market first, asset teasers, then this block’s
     footer via :func:`_show_rwa_participants_networks_home_footer`).
 
-    ``global_market_observations_html``: when set with ``full_page_header=True`` (Global Market Overview page), render a
-    two-column lead (top-networks bar chart + observations), then Explore gateways and the table.
+    ``global_market_observations_html``: when set with ``full_page_header=True`` (Global Market Overview page), render
+    observations full-width under the KPI row, then Explore gateways and search, then a two-column **Networks table |
+    top-networks chart** row.
     """
     if home_preview:
         raise ValueError("show_rwa_participants_networks_widget is only for full pages; use show_rwa_league_widget on the hub.")
@@ -1912,28 +1913,7 @@ def show_rwa_participants_networks_widget(
             tight_bottom=True,
         )
         if global_market_observations_html is not None:
-            col_chart, col_obs = st.columns([1, 1], gap="medium", border=True)
-            fig_bar = _rwa_global_market_top_networks_bar_figure(rows_home)
-            with col_chart:
-                st.markdown(
-                    hub_subsection_heading_html(
-                        "Top networks by value",
-                        element_id="jd-rwa-gmo-bar",
-                    ),
-                    unsafe_allow_html=True,
-                )
-                st.plotly_chart(
-                    fig_bar,
-                    use_container_width=True,
-                    config={"scrollZoom": False, "displayModeBar": True},
-                )
-                st.markdown(
-                    '<p class="jd-hub-cta-note">Homepage embed universe (same as the table below); total RWA value '
-                    "(USD) per network.</p>",
-                    unsafe_allow_html=True,
-                )
-            with col_obs:
-                st.markdown(global_market_observations_html, unsafe_allow_html=True)
+            st.markdown(global_market_observations_html, unsafe_allow_html=True)
             st.divider()
         show_rwa_onchain_explore_gateways(
             preview_rows=8,
@@ -1956,7 +1936,42 @@ def show_rwa_participants_networks_widget(
             st.caption(f"Showing all {len(working_home)} networks from the homepage Global Market table.")
 
         df_home = build_rwa_dataframe(working_home)
-        _show_rwa_dataframe(df_home, height=rwa_table_height(len(df_home), max_h=900))
+        if global_market_observations_html is not None:
+            split_h = rwa_table_height(max(len(df_home), 1), max_h=560)
+            col_tbl, col_chart = st.columns([1, 1], gap="medium", border=True)
+            with col_tbl:
+                st.markdown(
+                    hub_subsection_heading_html(
+                        "Networks table",
+                        element_id="jd-rwa-gmo-table",
+                    ),
+                    unsafe_allow_html=True,
+                )
+                _show_rwa_dataframe(df_home, height=split_h)
+            with col_chart:
+                st.markdown(
+                    hub_subsection_heading_html(
+                        "Top networks by value",
+                        element_id="jd-rwa-gmo-bar",
+                    ),
+                    unsafe_allow_html=True,
+                )
+                if working_home:
+                    fig_bar = _rwa_global_market_top_networks_bar_figure(working_home)
+                    st.plotly_chart(
+                        fig_bar,
+                        use_container_width=True,
+                        config={"scrollZoom": False, "displayModeBar": True},
+                    )
+                else:
+                    st.caption("No networks match this filter; there is nothing to chart.")
+                st.markdown(
+                    '<p class="jd-hub-cta-note">Chart: top <strong>10</strong> networks by total value among the '
+                    "<strong>filtered</strong> rows (same scope as the table).</p>",
+                    unsafe_allow_html=True,
+                )
+        else:
+            _show_rwa_dataframe(df_home, height=rwa_table_height(len(df_home), max_h=900))
         st.caption(RWA_GLOBAL_MARKET_DATA_SOURCE_CAPTION)
         st.link_button(
             GLOBAL_MARKET_RWA_LINK_LABEL,
