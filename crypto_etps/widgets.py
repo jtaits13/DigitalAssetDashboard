@@ -99,13 +99,27 @@ WIDGET_CSS = """
     font-weight: 600;
     color: #3E6A7A;
 }
-/* Custodian legend: same classes as Markets hub intro (``jd-hub-dek jd-hub-dek--large`` in ``streamlit_app`` / ``app_shared_layout_css``). */
-p.jd-hub-dek.jd-hub-dek--large.etp-custodian-note {
-    margin: 0.35rem 0 0.55rem 0 !important;
-    max-width: min(44rem, 100%);
+/* Custodian note: full column width + chrome aligned with hub tables (``#C7D8E8`` like ``jd-hub-news-panel``). */
+.etp-custodian-wrap {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: 0.45rem 0 0.55rem 0;
+    padding: 0.5rem 0.65rem 0.55rem;
+    border: 1px solid #c7d8e8;
+    border-radius: 10px;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
 }
-[data-testid="stMarkdownContainer"] p.jd-hub-dek.jd-hub-dek--large.etp-custodian-note {
-    margin: 0.35rem 0 0.55rem 0 !important;
+.etp-custodian-wrap p.jd-hub-dek {
+    margin: 0 !important;
+    max-width: none !important;
+    width: 100%;
+    box-sizing: border-box;
+}
+[data-testid="stMarkdownContainer"] .etp-custodian-wrap p.jd-hub-dek {
+    margin: 0 !important;
+    max-width: none !important;
 }
 </style>
 """
@@ -156,9 +170,10 @@ ETP_DATA_SOURCE_CAPTION = (
 )
 
 ETP_CUSTODIAN_TABLE_NOTE_HTML = (
-    '<p class="jd-hub-dek jd-hub-dek--large etp-custodian-note">* <strong>Custodian</strong> column: labels are filled only for '
+    '<div class="etp-custodian-wrap">'
+    '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">* <strong>Custodian</strong> column: labels are filled only for '
     "a curated set of leading <strong>spot</strong> Bitcoin and Ethereum funds. "
-    "All other rows are left blank.</p>"
+    "All other rows are left blank.</p></div>"
 )
 
 _SORT = "\u2195"
