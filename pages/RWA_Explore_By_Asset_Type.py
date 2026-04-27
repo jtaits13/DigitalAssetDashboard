@@ -21,6 +21,7 @@ from news_feeds import (
     render_subpage_top_bar,
 )
 from price_ticker import show_price_ticker
+from rwa_league.explore_nav import render_rwa_explore_top_nav_button
 from rwa_league.widgets import show_rwa_explore_by_asset_type_widget
 
 
@@ -33,8 +34,7 @@ def main() -> None:
     )
 
     render_subpage_top_bar()
-    if st.button("← Home", key="top_home_rwa_explore_asset_type"):
-        st.switch_page("streamlit_app.py")
+    render_rwa_explore_top_nav_button(key="top_home_rwa_explore_asset_type")
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
     st.markdown(app_shared_layout_css(), unsafe_allow_html=True)
     st.markdown(STREAMLIT_TABLE_UNIFY_CSS + ETP_FULLPAGE_AUM_LINE_CSS, unsafe_allow_html=True)

@@ -38,6 +38,7 @@ from crypto_etps.widgets import (
 )
 from regulatory_news.client import load_regulatory_articles
 from regulatory_news.widgets import build_home_regulatory_lane_body_html, clear_regulatory_cache
+from rwa_league.explore_nav import set_rwa_explore_top_nav_target
 from rwa_league.widgets import clear_rwa_league_cache, show_rwa_league_widget
 
 HOME_HEADLINE_COUNT = 3
@@ -174,8 +175,10 @@ def _sidebar() -> bool:
         if st.button("RWA Tokenized Stocks", use_container_width=True, key="sb_rwa_stocks"):
             st.switch_page("pages/RWA_Tokenized_Stocks.py")
         if st.button("Explore by Asset Type", use_container_width=True, key="sb_rwa_explore_at"):
+            set_rwa_explore_top_nav_target("home")
             st.switch_page("pages/RWA_Explore_By_Asset_Type.py")
         if st.button("Explore by Market Participant", use_container_width=True, key="sb_rwa_explore_mp"):
+            set_rwa_explore_top_nav_target("home")
             st.switch_page("pages/RWA_Explore_By_Market_Participant.py")
         if st.button("Participants — Networks", use_container_width=True, key="sb_rwa"):
             st.switch_page("pages/RWA_Participants_Networks.py")

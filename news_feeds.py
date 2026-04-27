@@ -14,6 +14,8 @@ from typing import Any, Optional
 import feedparser
 import streamlit as st
 
+from rwa_league.explore_nav import set_rwa_explore_top_nav_target
+
 # Match `h2.home-main-heading` on the home page (Latest Digital Asset News).
 HOME_MAIN_HEADING_CSS = """
 <style>
@@ -329,6 +331,13 @@ def render_subpage_top_bar() -> None:
     )
 
 
+_RWA_EXPLORE_INDEX_PAGES = frozenset(
+    {
+        "pages/RWA_Explore_By_Asset_Type.py",
+        "pages/RWA_Explore_By_Market_Participant.py",
+    }
+)
+
 _SUBPAGE_SIDEBAR_REFRESH_NOTE = (
     "Use **Refresh all data** on the home page to reload RSS, prices, ETPs, regulatory feeds, "
     "and all RWA.xyz embed caches."
@@ -379,6 +388,8 @@ def render_subpage_sidebar(*, key_prefix: str, current: str) -> None:
                 use_container_width=True,
                 type="primary" if current == slug else "secondary",
             ):
+                if page in _RWA_EXPLORE_INDEX_PAGES:
+                    set_rwa_explore_top_nav_target("home")
                 st.switch_page(page)
 
         st.divider()

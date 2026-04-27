@@ -13,6 +13,7 @@ from home_layout import (
     hub_subsection_heading_html,
 )
 from news_feeds import hub_news_panel_header_html
+from rwa_league.explore_nav import RwaExploreTopNavTarget, set_rwa_explore_top_nav_target
 from rwa_league.client import (
     APP_ASSET_MANAGERS,
     APP_NETWORKS,
@@ -1862,6 +1863,7 @@ def show_rwa_participants_networks_widget(
             preview_rows=8,
             leading_divider=False,
             key_prefix="rwa_gmo",
+            explore_top_nav_target="global_market",
         )
         q = st.text_input(
             "Search network",
@@ -2157,6 +2159,7 @@ def show_rwa_onchain_explore_gateways(
     preview_rows: int = 8,
     leading_divider: bool = True,
     key_prefix: str = "hub_onchain",
+    explore_top_nav_target: RwaExploreTopNavTarget = "home",
 ) -> None:
     """
     Two bordered columns (same as the home On-chain hub): **Explore by Asset Type** and **Explore by Market Participant**.
@@ -2164,6 +2167,8 @@ def show_rwa_onchain_explore_gateways(
     ``leading_divider``: when ``True`` (default on the home hub), a rule is drawn above this row. On the Global Market
     Overview full page, callers may set ``False`` if a divider is already supplied above the KPI block.
     ``key_prefix``: prefix for Streamlit widget keys (use a distinct value on subpages, e.g. ``rwa_gmo``).
+    ``explore_top_nav_target``: ``"home"`` (default) or ``"global_market"`` — stored before ``switch_page`` so Explore
+    index pages show **← Home** or **← Back** to Global Market Overview accordingly.
     """
     _ = preview_rows
     if leading_divider:
@@ -2195,6 +2200,7 @@ def show_rwa_onchain_explore_gateways(
             type="primary",
             use_container_width=True,
         ):
+            set_rwa_explore_top_nav_target(explore_top_nav_target)
             st.switch_page("pages/RWA_Explore_By_Asset_Type.py")
     with c2:
         st.markdown(
@@ -2222,6 +2228,7 @@ def show_rwa_onchain_explore_gateways(
             type="primary",
             use_container_width=True,
         ):
+            set_rwa_explore_top_nav_target(explore_top_nav_target)
             st.switch_page("pages/RWA_Explore_By_Market_Participant.py")
 
 
