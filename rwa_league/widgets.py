@@ -275,8 +275,12 @@ def _render_rwa_global_overview(
     *,
     kpi_legend_name: str = "Global Market",
     hub_kpi_emphasis: bool = False,
+    tight_bottom: bool = False,
 ) -> None:
-    """Global / Networks overview: KPI tiles; slate titles, teal values, 30D % change (no “30D” suffix on labels)."""
+    """Global / Networks overview: KPI tiles; slate titles, teal values, 30D % change (no “30D” suffix on labels).
+
+    ``tight_bottom``: smaller margin below the panel when the next block is nearby (e.g. Explore gateways).
+    """
     if not kpis:
         return
     _ = hub_kpi_emphasis
@@ -295,7 +299,13 @@ def _render_rwa_global_overview(
             "</div>"
         )
     row = "<div class='rwa-kpi-row'>" + "".join(cells) + "</div>"
-    open_wrap = f'<div class="rwa-kpi-wrap" style="{_RWA_KPI_PANEL_INLINE_STYLE}">'
+    mb = "0.35rem" if tight_bottom else "0.9rem"
+    panel_style = (
+        "background-color:#ffffff;border:1px solid #C7D8E8;border-radius:10px;"
+        "box-shadow:0 1px 3px rgba(15,23,42,0.06);padding:0.65rem 0.9rem 0.55rem;"
+        f"margin:0.45rem 0 {mb} 0;box-sizing:border-box;"
+    )
+    open_wrap = f'<div class="rwa-kpi-wrap" style="{panel_style}">'
     rwa_kpi_html = (
         open_wrap
         + f"{_rwa_kpi_window_note_html(overview_title=kpi_legend_name)}"
@@ -1843,10 +1853,14 @@ def show_rwa_participants_networks_widget(
             ),
             unsafe_allow_html=True,
         )
-        _render_rwa_global_overview(kpis_home, kpi_legend_name="Global Market")
+        _render_rwa_global_overview(
+            kpis_home,
+            kpi_legend_name="Global Market",
+            tight_bottom=True,
+        )
         show_rwa_onchain_explore_gateways(
             preview_rows=8,
-            leading_divider=True,
+            leading_divider=False,
             key_prefix="rwa_gmo",
         )
         q = st.text_input(
