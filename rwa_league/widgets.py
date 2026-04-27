@@ -1390,7 +1390,7 @@ def show_rwa_treasuries_widget(
             table_h = rwa_table_height(len(working))
         else:
             q = st.text_input(
-                "Search network",
+                "Search network table",
                 "",
                 key="rwa_treasury_search_full",
                 placeholder="Filter by network name…",
@@ -1605,7 +1605,7 @@ def show_rwa_tokenized_stocks_widget(
         )
         if rows_st_net:
             qn = st.text_input(
-                "Search network",
+                "Search network table",
                 "",
                 key="rwa_tokenized_stocks_network_search_full",
                 placeholder="Filter by network name…",
@@ -1703,7 +1703,7 @@ def _rwa_global_market_status(
         working = working[:n]
     else:
         q = st.text_input(
-            "Search network",
+            "Search network table",
             "",
             key="rwa_search_home",
             placeholder="Filter by network name…",
@@ -1950,7 +1950,7 @@ def show_rwa_participants_networks_widget(
             explore_top_nav_target="global_market",
         )
         q = st.text_input(
-            "Search network",
+            "Search network table",
             "",
             key="rwa_global_market_search_full",
             placeholder="Filter by network name…",
@@ -2055,7 +2055,7 @@ def show_rwa_participants_networks_widget(
     _render_rwa_global_overview(kpis, kpi_legend_name="Networks")
 
     q = st.text_input(
-        "Search network",
+        "Search network table",
         "",
         key="rwa_participants_networks_search_full",
         placeholder="Filter by network name…",
