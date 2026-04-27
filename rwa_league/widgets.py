@@ -1844,6 +1844,11 @@ def show_rwa_participants_networks_widget(
             unsafe_allow_html=True,
         )
         _render_rwa_global_overview(kpis_home, kpi_legend_name="Global Market")
+        show_rwa_onchain_explore_gateways(
+            preview_rows=8,
+            leading_divider=True,
+            key_prefix="rwa_gmo",
+        )
         q = st.text_input(
             "Search network",
             "",
@@ -2133,13 +2138,22 @@ def show_rwa_participants_asset_managers_widget(
     )
 
 
-def show_rwa_onchain_explore_gateways(*, preview_rows: int = 8) -> None:
+def show_rwa_onchain_explore_gateways(
+    *,
+    preview_rows: int = 8,
+    leading_divider: bool = True,
+    key_prefix: str = "hub_onchain",
+) -> None:
     """
-    Home hub row under **RWA Global Market Overview**: two bordered columns with blurbs and **Explore** navigation
-    to the asset-type and market-participant index pages.
+    Two bordered columns (same as the home On-chain hub): **Explore by Asset Type** and **Explore by Market Participant**.
+
+    ``leading_divider``: when ``True`` (default on the home hub), a rule is drawn above this row. On the Global Market
+    Overview full page, callers may set ``False`` if a divider is already supplied above the KPI block.
+    ``key_prefix``: prefix for Streamlit widget keys (use a distinct value on subpages, e.g. ``rwa_gmo``).
     """
     _ = preview_rows
-    st.divider()
+    if leading_divider:
+        st.divider()
     c1, c2 = st.columns(2, gap="medium", border=True)
     with c1:
         st.markdown(
@@ -2155,7 +2169,7 @@ def show_rwa_onchain_explore_gateways(*, preview_rows: int = 8) -> None:
             "<ul>"
             "<li>Stablecoins</li>"
             "<li>US Treasuries</li>"
-            "<li>Tokenized stocks</li>"
+            "<li>Tokenized Stocks</li>"
             "</ul>"
             '<p class="jd-hub-explore-blurb--tail">Use <strong>Explore</strong> to open the hub and go deeper on the next pages.</p>'
             "</div></section>",
@@ -2163,7 +2177,7 @@ def show_rwa_onchain_explore_gateways(*, preview_rows: int = 8) -> None:
         )
         if st.button(
             "Explore",
-            key="hub_onchain_explore_asset_type",
+            key=f"{key_prefix}_explore_asset_type",
             type="primary",
             use_container_width=True,
         ):
@@ -2190,7 +2204,7 @@ def show_rwa_onchain_explore_gateways(*, preview_rows: int = 8) -> None:
         )
         if st.button(
             "Explore",
-            key="hub_onchain_explore_market_participant",
+            key=f"{key_prefix}_explore_market_participant",
             type="primary",
             use_container_width=True,
         ):
