@@ -2158,7 +2158,7 @@ def show_rwa_onchain_explore_gateways(*, preview_rows: int = 8) -> None:
                 title="Explore by Asset Type",
                 heading_id="jd-rwa-explore-asset-h2",
             )
-            + '<div class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-explore-blurb">'
+            + '<div class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-explore-blurb jd-hub-dek--large">'
             "<p>View on-chain RWA data for:</p>"
             "<ul>"
             "<li>Stablecoins</li>"
@@ -2185,7 +2185,7 @@ def show_rwa_onchain_explore_gateways(*, preview_rows: int = 8) -> None:
                 title="Explore by Market Participant",
                 heading_id="jd-rwa-explore-participant-h2",
             )
-            + '<div class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-explore-blurb">'
+            + '<div class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-explore-blurb jd-hub-dek--large">'
             "<p>View on-chain RWA data for:</p>"
             "<ul>"
             "<li>Networks</li>"

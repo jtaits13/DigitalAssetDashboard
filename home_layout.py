@@ -172,11 +172,11 @@ p.home-band-label.teal.jd-home-band-after-rule {
     border: none;
     border-top: 1px solid #dce7f0;
 }
-/* Smaller default Streamlit captions in main: data-source / legend text (not the sidebar) */
+/* Main-area captions: same tier as ``jd-hub-cta-note`` (sources, timestamps, section footnotes). */
 section[data-testid="stMain"] [data-testid="stCaptionContainer"] {
-    font-size: 0.75rem;
-    line-height: 1.4;
-    color: #5f6b7a;
+    font-size: 0.68rem;
+    line-height: 1.38;
+    color: #3e6a7a;
 }
 section[data-testid="stMain"] [data-testid="stCaptionContainer"] p {
     font-size: inherit !important;
@@ -213,6 +213,19 @@ def subpage_toolbar_note_html(text: str) -> str:
 def subpage_footer_heading_html(text: str) -> str:
     """Small label above pagination controls (aligned with hub subsection color hierarchy)."""
     return f'<p class="jd-subpage-footer-heading">{escape(text)}</p>'
+
+
+def subpage_footnote_html(text: str) -> str:
+    """Bottom-of-page or bottom-of-section footnote (``jd-hub-cta-note``); plain text only (escaped)."""
+    return f'<p class="jd-hub-cta-note">{escape(text)}</p>'
+
+
+def subpage_footnote_markup_html(inner_html: str) -> str:
+    """
+    Same visual tier as :func:`subpage_footnote_html` for **trusted** inline markup only
+    (e.g. ``<strong>`` / ``<a href="...">`` from static copy in repo code).
+    """
+    return f'<p class="jd-hub-cta-note">{inner_html}</p>'
 
 
 def hub_subsection_heading_html(text: str, *, element_id: Optional[str] = None) -> str:

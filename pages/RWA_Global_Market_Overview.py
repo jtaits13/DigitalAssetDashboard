@@ -46,7 +46,7 @@ def main() -> None:
 
     st.markdown(section_label_teal("RWA Global Market Overview", placement="first"), unsafe_allow_html=True)
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed">RWA <strong>Global Market Overview</strong>: the same '
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">RWA <strong>Global Market Overview</strong>: the same '
         "<strong>headline metrics</strong> and <strong>Networks</strong> table as the "
         '<a href="https://app.rwa.xyz/">RWA.xyz</a> Market Overview tab (embedded in <code>__NEXT_DATA__</code>). '
         "Top-line <strong>30D</strong> % changes and table values are pulled from that homepage dataset.</p>",

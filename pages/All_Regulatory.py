@@ -14,7 +14,12 @@ from html import escape
 
 import streamlit as st
 
-from home_layout import section_label_teal, subpage_footer_heading_html, subpage_toolbar_note_html
+from home_layout import (
+    section_label_teal,
+    subpage_footer_heading_html,
+    subpage_footnote_html,
+    subpage_toolbar_note_html,
+)
 from news_feeds import (
     app_shared_layout_css,
     article_day_key,
@@ -52,7 +57,7 @@ def main() -> None:
         unsafe_allow_html=True,
     )
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed">Digital-asset regulatory and legal stories from aggregated RSS feeds — search and '
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">Digital-asset regulatory and legal stories from aggregated RSS feeds — search and '
         "paginate the full list.</p>",
         unsafe_allow_html=True,
     )
@@ -157,9 +162,12 @@ def main() -> None:
             st.rerun()
 
     st.divider()
-    st.caption(
-        f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
-        f"Page {page} of {total_pages} · Regulatory RSS feeds"
+    st.markdown(
+        subpage_footnote_html(
+            f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
+            f"Page {page} of {total_pages} · Regulatory RSS feeds"
+        ),
+        unsafe_allow_html=True,
     )
 
 

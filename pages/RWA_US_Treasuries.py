@@ -43,7 +43,7 @@ def main() -> None:
 
     st.markdown(section_label_teal("US Treasuries", placement="first"), unsafe_allow_html=True)
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed">Tokenized U.S. Treasuries: overview <strong>30-day (30D)</strong> % changes from '
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">Tokenized U.S. Treasuries: overview <strong>30-day (30D)</strong> % changes from '
         "<strong>RWA.xyz</strong> and <strong>Distributed</strong> leagues with search: <strong>Networks</strong> "
         "then <strong>Platforms</strong> (tokenized Treasury by issuer). <strong>Distributed Value</strong> columns "
         'are levels — <a href="https://app.rwa.xyz/treasuries">RWA.xyz US Treasuries</a>.</p>',

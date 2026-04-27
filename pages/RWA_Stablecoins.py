@@ -43,7 +43,7 @@ def main() -> None:
 
     st.markdown(section_label_teal("Stablecoins", placement="first"), unsafe_allow_html=True)
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed">Tokenized stablecoins: overview <strong>30-day (30D)</strong> % changes and '
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">Tokenized stablecoins: overview <strong>30-day (30D)</strong> % changes and '
         "<strong>Platforms</strong> <strong>market caps</strong> (levels) by issuance platform. Full "
         "<strong>Platforms</strong> league with search from the "
         '<a href="https://app.rwa.xyz/stablecoins">RWA.xyz Stablecoins</a> embed; each row’s <strong>market cap</strong> '

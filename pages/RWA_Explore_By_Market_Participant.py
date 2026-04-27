@@ -46,7 +46,7 @@ def main() -> None:
         unsafe_allow_html=True,
     )
     st.markdown(
-        '<div class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-explore-blurb">'
+        '<div class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-explore-blurb jd-hub-dek--large">'
         "<p>Data from <strong>RWA.xyz</strong>. Below are three ways the market is shown:</p>"
         "<ul>"
         "<li>Networks</li>"

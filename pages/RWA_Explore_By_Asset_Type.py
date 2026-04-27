@@ -43,7 +43,7 @@ def main() -> None:
 
     st.markdown(section_label_teal("Explore by Asset Type", placement="first"), unsafe_allow_html=True)
     st.markdown(
-        '<div class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-explore-blurb">'
+        '<div class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-explore-blurb jd-hub-dek--large">'
         "<p>Data from <strong>RWA.xyz</strong>. Below are three areas covered on this page:</p>"
         "<ul>"
         "<li>Stablecoins</li>"

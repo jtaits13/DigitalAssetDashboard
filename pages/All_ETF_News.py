@@ -14,7 +14,12 @@ from html import escape
 
 import streamlit as st
 
-from home_layout import section_label_teal, subpage_footer_heading_html, subpage_toolbar_note_html
+from home_layout import (
+    section_label_teal,
+    subpage_footer_heading_html,
+    subpage_footnote_html,
+    subpage_toolbar_note_html,
+)
 from news_feeds import (
     ETP_NEWS_FEEDS,
     app_shared_layout_css,
@@ -70,7 +75,7 @@ div[data-testid="stColumn"]:has(.jd-etf-pager-r) div[data-testid="stVerticalBloc
     )
     _feed_name_list = ", ".join(n for n, _ in ETP_NEWS_FEEDS)
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed">Headlines from the <strong>major crypto news RSS feeds</strong> <strong>plus</strong> dedicated ETF/issuer sources, '
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">Headlines from the <strong>major crypto news RSS feeds</strong> <strong>plus</strong> dedicated ETF/issuer sources, '
         "filtered to items that read <strong>ETF- or ETP-oriented</strong> (including known spot / ticker language), not general crypto or stablecoin policy unless it "
         "clearly ties to those products. "
         "Search and paginate. Headlines are limited to the <strong>last three calendar months</strong> (UTC). Outlets only expose <strong>recent</strong> posts in RSS; "
@@ -183,9 +188,12 @@ div[data-testid="stColumn"]:has(.jd-etf-pager-r) div[data-testid="stVerticalBloc
             st.rerun()
 
     st.divider()
-    st.caption(
-        f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
-        f"Page {page} of {total_pages} · ETF/ETP RSS (filtered)"
+    st.markdown(
+        subpage_footnote_html(
+            f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
+            f"Page {page} of {total_pages} · ETF/ETP RSS (filtered)"
+        ),
+        unsafe_allow_html=True,
     )
 
 

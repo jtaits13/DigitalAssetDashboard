@@ -40,6 +40,7 @@ from home_layout import (
     STREAMLIT_TABLE_UNIFY_CSS,
     hub_subsection_heading_html,
     section_label_teal,
+    subpage_footnote_markup_html,
     subpage_toolbar_note_html,
 )
 from news_feeds import (
@@ -85,7 +86,7 @@ def main() -> None:
         unsafe_allow_html=True,
     )
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed">A comprehensive view of U.S. digital asset ETPs, combining market context, aggregate '
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">A comprehensive view of U.S. digital asset ETPs, combining market context, aggregate '
         'AUM trend signals, and fund-level reference data in one place. Data from '
         '<a href="https://stockanalysis.com/list/crypto-etfs/">StockAnalysis.com</a> and each fund’s detail page '
         "(issuer, inception, past-year return as <strong>52W %</strong>).</p>",
@@ -129,10 +130,13 @@ def main() -> None:
             ),
             unsafe_allow_html=True,
         )
-        st.caption(
-            "Estimated from **Yahoo Finance** weekly closes: each fund’s latest reported AUM from StockAnalysis "
-            "is scaled by its price path (constant-shares approximation), then summed. Covers the full list below — "
-            "not official fund AUM filings."
+        st.markdown(
+            subpage_footnote_markup_html(
+                "Estimated from <strong>Yahoo Finance</strong> weekly closes: each fund’s latest reported AUM from StockAnalysis "
+                "is scaled by its price path (constant-shares approximation), then summed. Covers the full list below — "
+                "not official fund AUM filings."
+            ),
+            unsafe_allow_html=True,
         )
         with st.spinner("Loading 12-month price history for aggregate AUM estimate…"):
             pairs = etp_rows_to_fund_pairs(rows)
@@ -152,10 +156,13 @@ def main() -> None:
                     "displayModeBar": True,
                 },
             )
-            st.caption(
-                "Vertical axis: total estimated AUM, **billions USD** (weekly points). "
-                "Default view is the last **12 months** (month labels on the x-axis); scroll or use the "
-                "mode bar to zoom and pan the full history."
+            st.markdown(
+                subpage_footnote_markup_html(
+                    "Vertical axis: total estimated AUM, <strong>billions USD</strong> (weekly points). "
+                    "Default view is the last <strong>12 months</strong> (month labels on the x-axis); scroll or use the "
+                    "mode bar to zoom and pan the full history."
+                ),
+                unsafe_allow_html=True,
             )
         elif chart_err:
             st.info(chart_err)
@@ -218,9 +225,12 @@ def main() -> None:
     )
     st.divider()
     st.caption(ETP_DATA_SOURCE_CAPTION)
-    st.caption(
-        f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
-        "StockAnalysis · Cached up to one hour · Use **Refresh all data** on the home page to reload."
+    st.markdown(
+        subpage_footnote_markup_html(
+            f"{escape(datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S'))} UTC · "
+            "StockAnalysis · Cached up to one hour · Use <strong>Refresh all data</strong> on the home page to reload."
+        ),
+        unsafe_allow_html=True,
     )
 
 
