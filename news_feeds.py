@@ -14,8 +14,6 @@ from typing import Any, Optional
 import feedparser
 import streamlit as st
 
-from rwa_league.explore_nav import set_rwa_explore_top_nav_target
-
 # Match `h2.home-main-heading` on the home page (Latest Digital Asset News).
 HOME_MAIN_HEADING_CSS = """
 <style>
@@ -354,6 +352,9 @@ def render_subpage_sidebar(*, key_prefix: str, current: str) -> None:
     ``current`` marks the active destination: ``articles``, ``regulatory``, ``etp``, ``etf_news``,
     ``rwa_explore_asset_type``, ``rwa_explore_market_participant``, ``rwa_participants_networks``, ``rwa_participants_platforms``, ``rwa_participants_asset_managers``, ``rwa_stablecoins``, ``rwa_treasuries``, ``rwa_tokenized_stocks``.
     """
+    # Import here to avoid a circular import: news_feeds → rwa_league → widgets → news_feeds.
+    from rwa_league.explore_nav import set_rwa_explore_top_nav_target
+
     with st.sidebar:
         st.markdown("### JPM Digital")
         st.caption("Markets, policy, and on-chain market data.")
