@@ -70,7 +70,7 @@ RWA_GLOBAL_MARKET_MACRO_CONTEXT_HTML = f"""
 }}
 </style>
 <div class="rwa-gmo-takeaways">
-  <h3>RWA space — what to know</h3>
+  <h3>RWA Market - Key Observations</h3>
   <ul>
     <li><strong>Institutional momentum.</strong> Large asset managers, banks, and market utilities are scaling tokenized
     cash funds, bonds, and repo-style workflows—often on permissioned networks first—while public-ledger RWA issuance
@@ -87,8 +87,8 @@ RWA_GLOBAL_MARKET_MACRO_CONTEXT_HTML = f"""
     <strong>~$16&nbsp;trillion</strong> style outcome for a broader tokenization / illiquid-asset framing—definitions and
     scope differ materially, so treat any headline number as illustrative.</li>
   </ul>
-  <p class="rwa-gmo-takeaway-note">Snapshot for context only (not investment advice). The table below reflects RWA.xyz
-  embedded homepage data, not the third-party forecasts above.</p>
+  <p class="rwa-gmo-takeaway-note">Snapshot for context only (not investment advice). The chart and table below reflect
+  RWA.xyz embedded homepage data, not the third-party forecasts above.</p>
 </div>
 """
 
@@ -111,7 +111,6 @@ def main() -> None:
     render_subpage_sidebar(key_prefix="rwa_global_market_overview", current="rwa_participants_networks")
 
     st.markdown(section_label_teal("RWA Global Market Overview", placement="first"), unsafe_allow_html=True)
-    st.markdown(RWA_GLOBAL_MARKET_MACRO_CONTEXT_HTML, unsafe_allow_html=True)
     st.markdown(
         '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">RWA <strong>Global Market Overview</strong>: the same '
         "<strong>headline metrics</strong> and <strong>Networks</strong> table as the "
@@ -121,7 +120,11 @@ def main() -> None:
     )
     st.divider()
 
-    show_rwa_participants_networks_widget(home_preview=False, full_page_header=True)
+    show_rwa_participants_networks_widget(
+        home_preview=False,
+        full_page_header=True,
+        global_market_observations_html=RWA_GLOBAL_MARKET_MACRO_CONTEXT_HTML,
+    )
 
     st.divider()
     st.caption(RWA_GLOBAL_MARKET_DATA_SOURCE_CAPTION)
