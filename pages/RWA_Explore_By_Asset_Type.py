@@ -48,7 +48,7 @@ def main() -> None:
         "<ul>"
         "<li>Stablecoins</li>"
         "<li>US Treasuries</li>"
-        "<li>Tokenized stocks</li>"
+        "<li>Tokenized Stocks</li>"
         "</ul>"
         '<p class="jd-hub-explore-blurb--tail">'
         "Each section is a quick preview. Use the links inside when you want the full RWA view."

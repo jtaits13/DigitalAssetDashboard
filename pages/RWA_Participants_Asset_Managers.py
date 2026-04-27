@@ -44,7 +44,7 @@ def main() -> None:
     st.markdown(section_label_teal("Participants — Asset Managers", placement="first"), unsafe_allow_html=True)
     st.markdown(
         '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">RWA <strong>Participants</strong> · <strong>Asset Managers</strong>: '
-        "manager-level **Asset Managers overview** metrics and the **Distributed** tab table from "
+        "manager-level **Asset Managers Overview** metrics and the **Distributed** tab table from "
         '<a href="https://app.rwa.xyz/asset-managers">RWA.xyz</a> (embedded in <code>__NEXT_DATA__</code>; '
         "<code>distributed_value</code> / <code>represented_value</code>). "
         "Top-line <strong>30D</strong> % changes and per-manager columns follow the same public payload as the site.</p>",

@@ -278,7 +278,7 @@ def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -
       <div class="jd-nav-dd" role="group" aria-label="On-chain Data subsections">
         <a class="jd-site-link jd-nav-dd-head" href="#jd-section-onchain">On-chain Data <span class="jd-nav-dd-caret" aria-hidden="true">▾</span></a>
         <ul class="jd-nav-dd-menu" role="menu">
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-market">Global Market overview</a></li>
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-market">Global Market Overview</a></li>
           <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-explore-asset-type">Explore by Asset Type</a></li>
           <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-explore-market-participant">Explore by Market Participant</a></li>
         </ul>

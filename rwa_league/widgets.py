@@ -240,7 +240,7 @@ def _rwa_kpi_window_note_html(*, overview_title: str) -> str:
     return (
         "<p class=\"jd-kpi-window-note\">"
         "All % changes in this row are <strong>30-day (30D)</strong> (<strong>RWA.xyz</strong>). "
-        f"Headline totals from the <strong>RWA.xyz</strong> <strong>{escape(overview_title)}</strong> overview."
+        f"Headline totals from the <strong>RWA.xyz</strong> <strong>{escape(overview_title)}</strong> Overview."
         "</p>"
     )
 
@@ -358,10 +358,10 @@ def _rank_column_label(*, by_metric: str) -> str:
 _LINK_ARROW = "\u2197"  # Northeast arrow for RWA.xyz LinkColumn (Unicode U+2197)
 STABLECOINS_RWA_LINK_LABEL = "See Stablecoins on RWA.xyz"
 RWA_GLOBAL_MARKET_OVERVIEW_HEADING = "RWA Global Market Overview"
-# Full-page Participants — Networks: hub-style heading above the KPI row (like “Stablecoin overview”).
-RWA_NETWORKS_SUBPAGE_OVERVIEW_HEADING = "Networks overview"
-RWA_PLATFORMS_SUBPAGE_OVERVIEW_HEADING = "Platforms overview"
-RWA_ASSET_MANAGERS_SUBPAGE_OVERVIEW_HEADING = "Asset Managers overview"
+# Full-page Participants — Networks: hub-style heading above the KPI row (like “Stablecoin Overview”).
+RWA_NETWORKS_SUBPAGE_OVERVIEW_HEADING = "Networks Overview"
+RWA_PLATFORMS_SUBPAGE_OVERVIEW_HEADING = "Platforms Overview"
+RWA_ASSET_MANAGERS_SUBPAGE_OVERVIEW_HEADING = "Asset Managers Overview"
 GLOBAL_MARKET_RWA_LINK_LABEL = "See RWA Networks on RWA.xyz"
 GLOBAL_MARKET_RWA_URL = APP_NETWORKS
 PLATFORMS_RWA_LINK_LABEL = "See RWA Platforms on RWA.xyz"
@@ -1156,7 +1156,7 @@ def show_rwa_stablecoins_widget(
         else:
             st.markdown(
                 hub_subsection_heading_html(
-                    "Stablecoin overview",
+                    "Stablecoin Overview",
                     element_id="jd-rwa-stablecoins",
                 ),
                 unsafe_allow_html=True,
@@ -1275,7 +1275,7 @@ def show_rwa_treasuries_widget(
         else:
             st.markdown(
                 hub_subsection_heading_html(
-                    "Treasury overview",
+                    "Treasury Overview",
                     element_id="jd-rwa-treasuries",
                 ),
                 unsafe_allow_html=True,
@@ -1442,7 +1442,7 @@ def show_rwa_tokenized_stocks_widget(
         else:
             st.markdown(
                 hub_subsection_heading_html(
-                    "Tokenized equity overview",
+                    "Tokenized Equity Overview",
                     element_id="jd-rwa-tokenized-stocks",
                 ),
                 unsafe_allow_html=True,
@@ -1671,7 +1671,7 @@ def _show_rwa_participants_networks_home_footer(
     preview_rows: int,
 ) -> None:
     """
-    Hub-only tail: **Participants → Networks** with the same **Networks overview** KPI row + table preview
+    Hub-only tail: **Participants → Networks** with the same **Networks Overview** KPI row + table preview
     (mirrors Stablecoins / Treasuries / Stocks home sections).
     """
     if not rows:
@@ -2190,7 +2190,7 @@ def show_rwa_onchain_explore_gateways(*, preview_rows: int = 8) -> None:
             "<ul>"
             "<li>Networks</li>"
             "<li>Platforms</li>"
-            "<li>Asset managers</li>"
+            "<li>Asset Managers</li>"
             "</ul>"
             '<p class="jd-hub-explore-blurb--tail">Use <strong>Explore</strong> to open the hub and go deeper on the next pages.</p>'
             "</div></section>",

@@ -51,7 +51,7 @@ def main() -> None:
         "<ul>"
         "<li>Networks</li>"
         "<li>Platforms</li>"
-        "<li>Asset managers</li>"
+        "<li>Asset Managers</li>"
         "</ul>"
         '<p class="jd-hub-explore-blurb--tail">'
         "Each section is a quick preview. Use the links inside when you want the full RWA view."
