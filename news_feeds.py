@@ -253,6 +253,43 @@ a.jd-nav-dd-item.jd-nav-dd-sub {
     font-weight: 500;
     color: #3E6A7A;
 }
+/* Second-level flyout under “Explore by Asset Type” */
+.jd-nav-dd-menu > li.jd-nav-dd-has-submenu {
+    position: relative;
+    list-style: none;
+}
+.jd-nav-dd-submenu {
+    display: none;
+    position: absolute;
+    left: 100%;
+    top: 0;
+    margin: 0 0 0 3px;
+    padding: 0.35rem 0;
+    min-width: 11.75rem;
+    list-style: none;
+    background: #ffffff;
+    border: 1px solid #C7D8E8;
+    border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.12);
+    z-index: 10000001;
+}
+.jd-nav-dd-has-submenu:hover > .jd-nav-dd-submenu,
+.jd-nav-dd-has-submenu:focus-within > .jd-nav-dd-submenu {
+    display: block;
+}
+a.jd-nav-dd-item.jd-nav-dd-with-flyout {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+.jd-nav-dd-flyout-caret {
+    font-size: 0.65rem;
+    opacity: 0.65;
+    flex-shrink: 0;
+}
 </style>
 """
 
@@ -279,7 +316,14 @@ def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -
         <a class="jd-site-link jd-nav-dd-head" href="#jd-section-onchain">On-chain Data <span class="jd-nav-dd-caret" aria-hidden="true">▾</span></a>
         <ul class="jd-nav-dd-menu" role="menu">
           <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-market">Global Market Overview</a></li>
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-explore-asset-type">Explore by Asset Type</a></li>
+          <li class="jd-nav-dd-has-submenu" role="none">
+            <a class="jd-nav-dd-item jd-nav-dd-with-flyout" role="menuitem" href="#jd-rwa-explore-asset-type" aria-haspopup="true">Explore by Asset Type <span class="jd-nav-dd-flyout-caret" aria-hidden="true">▸</span></a>
+            <ul class="jd-nav-dd-submenu" role="menu" aria-label="Asset type pages">
+              <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="/RWA_Stablecoins">Stablecoins</a></li>
+              <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="/RWA_US_Treasuries">US Treasuries</a></li>
+              <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="/RWA_Tokenized_Stocks">Tokenized Stocks</a></li>
+            </ul>
+          </li>
           <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-explore-market-participant">Explore by Market Participant</a></li>
         </ul>
       </div>
@@ -295,8 +339,9 @@ def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -
 def render_subpage_top_bar() -> None:
     """
     Same fixed banner as the home page. ``Home``, ``News``, and ``Markets & Funds`` use ``?jd_scroll=`` so the landing
-    page scrolls after load. **On-chain Data** uses the same three subsection links as the home hub (scroll targets on
-    the landing page), not separate multipage URLs.
+    page scrolls after load. **On-chain Data** mirrors the home hub: **Explore by Asset Type** opens a flyout with
+    Stablecoins, US Treasuries, and Tokenized Stocks (full pages); the parent row still scrolls the landing page to the
+    hub Explore cards.
     """
     st.markdown(SITE_NAV_CSS, unsafe_allow_html=True)
     st.markdown(
@@ -312,7 +357,14 @@ def render_subpage_top_bar() -> None:
         <a class="jd-site-link jd-nav-dd-head" href="/?jd_scroll=onchain">On-chain Data <span class="jd-nav-dd-caret" aria-hidden="true">▾</span></a>
         <ul class="jd-nav-dd-menu" role="menu">
           <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/?jd_scroll=rwa_global_market">Global Market Overview</a></li>
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/?jd_scroll=rwa_explore_asset_type">Explore by Asset Type</a></li>
+          <li class="jd-nav-dd-has-submenu" role="none">
+            <a class="jd-nav-dd-item jd-nav-dd-with-flyout" role="menuitem" href="/?jd_scroll=rwa_explore_asset_type" aria-haspopup="true">Explore by Asset Type <span class="jd-nav-dd-flyout-caret" aria-hidden="true">▸</span></a>
+            <ul class="jd-nav-dd-submenu" role="menu" aria-label="Asset type pages">
+              <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="/RWA_Stablecoins">Stablecoins</a></li>
+              <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="/RWA_US_Treasuries">US Treasuries</a></li>
+              <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="/RWA_Tokenized_Stocks">Tokenized Stocks</a></li>
+            </ul>
+          </li>
           <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/?jd_scroll=rwa_explore_market_participant">Explore by Market Participant</a></li>
         </ul>
       </div>
