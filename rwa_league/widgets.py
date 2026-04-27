@@ -1,4 +1,4 @@
-"""RWA.xyz **Networks**, **Platforms**, and **Asset Managers** embeds (``__NEXT_DATA__`` from ``/networks``, ``/platforms``, ``/asset-managers``)."""
+"""RWA.xyz **Networks**, **Platforms**, and **Asset Managers** data aligned with the public **RWA.xyz** web app."""
 
 from __future__ import annotations
 
@@ -181,9 +181,8 @@ RWA_DATA_SOURCE_CAPTION = (
     "Overview **% changes** are **30-day (30D)**; table figures match the embedded league view."
 )
 RWA_GLOBAL_MARKET_DATA_SOURCE_CAPTION = (
-    "Source: [RWA.xyz homepage](https://app.rwa.xyz/) embedded **__NEXT_DATA__** "
-    "(`pageProps.aggregates` + Distributed `leagueTableTabs.parent_networks`). "
-    "This section is intentionally aligned to the on-site **Global Market Overview** tab."
+    "Source: [RWA.xyz homepage](https://app.rwa.xyz/)—the same **Global Market Overview** headline figures and "
+    "**Networks** league (Distributed / parent networks) shown on the live site, not RWA.xyz’s separate public API."
 )
 
 RWA_PLATFORMS_DATA_SOURCE_CAPTION = (
@@ -212,7 +211,7 @@ TREASURY_RWA_CAPTION = (
 
 TREASURY_PLATFORM_CAPTION = (
     "Tokenized Treasury league — **Distributed** · **Platforms** tab (issuer totals from **RWA.xyz**). "
-    "**Value** totals are levels; **7-day** % change uses this embed’s `value_7d_change` "
+    "**Value** totals are levels; **7-day** % change follows the numeric change field from the page "
     "(RWA.xyz may label similar columns **30D** in the UI)."
 )
 TOKENIZED_STOCKS_RWA_CAPTION = (
@@ -1125,14 +1124,14 @@ def load_rwa_global_market_cached(
 
 @st.cache_data(ttl=3600, show_spinner=False)
 def load_rwa_league_cached(*, _rwa_schema: int = 7) -> tuple[list[RwaNetworksTabRow], list[RwaGlobalKpi], str | None]:
-    """Bump ``_rwa_schema`` when ``/networks`` or ``__NEXT_DATA__`` shape or row field definitions change."""
+    """Bump ``_rwa_schema`` when the RWA.xyz Networks page layout or row fields we read change."""
     _ = _rwa_schema
     return fetch_rwa_networks_page_data()
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
 def load_rwa_platforms_cached(*, _platforms_schema: int = 2) -> tuple[list[RwaPlatformsTabRow], list[RwaGlobalKpi], str | None]:
-    """Bump ``_platforms_schema`` when ``/platforms`` ``__NEXT_DATA__`` shape or row mapping changes."""
+    """Bump ``_platforms_schema`` when the RWA.xyz Platforms page layout or row mapping changes."""
     _ = _platforms_schema
     return fetch_rwa_platforms_page_data()
 
@@ -1141,7 +1140,7 @@ def load_rwa_platforms_cached(*, _platforms_schema: int = 2) -> tuple[list[RwaPl
 def load_rwa_asset_managers_cached(
     *, _asset_managers_schema: int = 1
 ) -> tuple[list[RwaAssetManagersTabRow], list[RwaGlobalKpi], str | None]:
-    """Bump ``_asset_managers_schema`` when ``/asset-managers`` ``__NEXT_DATA__`` shape or row mapping changes."""
+    """Bump ``_asset_managers_schema`` when the RWA.xyz Asset Managers page layout or row mapping changes."""
     _ = _asset_managers_schema
     return fetch_rwa_asset_managers_page_data()
 

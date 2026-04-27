@@ -47,9 +47,9 @@ def main() -> None:
     st.markdown(
         '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">RWA <strong>Participants</strong> · <strong>Asset Managers</strong>: '
         "manager-level **Asset Managers Overview** metrics and the **Distributed** tab table from "
-        '<a href="https://app.rwa.xyz/asset-managers">RWA.xyz</a> (embedded in <code>__NEXT_DATA__</code>; '
-        "<code>distributed_value</code> / <code>represented_value</code>). "
-        "Top-line <strong>30D</strong> % changes and per-manager columns follow the same public payload as the site.</p>",
+        '<a href="https://app.rwa.xyz/asset-managers">RWA.xyz</a> <strong>Asset Managers</strong> page, aligned with the live '
+        "**Distributed** tab (distributed and represented value columns). "
+        "Top-line <strong>30D</strong> % changes and per-manager columns match the public page.</p>",
         unsafe_allow_html=True,
     )
     st.divider()

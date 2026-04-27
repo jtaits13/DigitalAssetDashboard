@@ -1,16 +1,12 @@
 """
-Fetch RWA.xyz data from public Next.js ``__NEXT_DATA__`` embeds (homepage, /networks, /stablecoins, etc.).
+Fetch RWA.xyz figures from the same public web pages visitors use (homepage, Networks, Platforms, Stablecoins, etc.).
 
-The **Networks** dashboard uses ``/networks`` (not only the smaller homepage **parent_networks** league) so that
-overviews and the network table line up with the on-site [Networks](https://app.rwa.xyz/networks) experience.
-The **Platforms** dashboard uses ``/platforms`` (issuer ``listQueryResponse`` rows). When present,
-``tokenization_type_stats`` splits **distributed** vs **represented** value; the Participants table follows the
-on-site **Distributed** Platforms league (represented-only issuers are omitted). Rows without that block still use
-``asset_class_stats`` totals as a fallback.
-The **Asset managers** page uses ``/asset-managers`` with top-level ``distributed_value`` and ``represented_value``
-per manager (aligned with the on-site **Distributed** tab; managers with no distributed value are omitted).
+The **Networks** integration reads the dedicated [Networks](https://app.rwa.xyz/networks) page—not only the smaller
+homepage league—so KPIs and the table match that experience. **Platforms** follows the on-site **Distributed**
+issuer view (distributed vs. represented where the UI exposes it; represented-only rows are omitted when
+appropriate). **Asset managers** follows the **Distributed** tab with distributed and represented amounts per manager.
 
-Not an official API; structure may change. For production use RWA.xyz's data products.
+This is not RWA.xyz’s official API; page structure may change. For production workloads, use RWA.xyz data products.
 """
 
 from __future__ import annotations
@@ -45,7 +41,7 @@ class RwaNetworkLeagueRow:
     rwa_count: int
     total_value_usd: float
     # Fractional change in total value — from embedded field `value_7d_change` (7 calendar days).
-    # There is no value_30d_change in the public __NEXT_DATA__ payload.
+    # There is no value_30d_change in the public page payload we read.
     value_change_7d_raw: float | None
     market_share_raw: float  # fraction 0–1
     # Optional fractional 7D change in market share (if present in embedded payload).
@@ -108,7 +104,7 @@ class RwaTokenizedStockNetworkRow(RwaNetworkLeagueRow):
 
 @dataclass(frozen=True)
 class RwaGlobalKpi:
-    """One card from the homepage “Global Market Overview” (``pageProps.aggregates``)."""
+    """One headline metric from the RWA.xyz homepage **Global Market Overview** strip."""
 
     label: str
     value_display: str
@@ -118,8 +114,8 @@ class RwaGlobalKpi:
 @dataclass(frozen=True)
 class RwaNetworksTabRow:
     """
-    One network row from ``/networks`` (``listQueryResponse.results``), aligned with the on-site **Networks** table
-    (same public embed RWA.xyz uses; not a different scraper or homepage league only).
+    One network row from the public **Networks** page data, aligned with the on-site **Networks** table
+    (same view RWA.xyz serves in the browser; not a different scraper or homepage-only league).
 
     **RWA value (distributed)** = ``transferability.transferable`` (RWA in distributed form, matches overview totals).
 
@@ -149,7 +145,7 @@ class RwaNetworksTabRow:
 @dataclass(frozen=True)
 class RwaPlatformsTabRow:
     """
-    One **issuer / platform** row from ``/platforms`` (``listQueryResponse.results``), aligned with the on-site
+    One **issuer / platform** row from the public **Platforms** page data, aligned with the on-site
     **Distributed** Platforms league.
 
     When ``tokenization_type_stats`` is present, **distributed** / **represented** USD and RWA counts come from the
@@ -175,7 +171,7 @@ class RwaPlatformsTabRow:
 @dataclass(frozen=True)
 class RwaAssetManagersTabRow:
     """
-    One **asset manager** row from ``/asset-managers`` (``listQueryResponse.results``), aligned with the on-site
+    One **asset manager** row from the public **Asset managers** page data, aligned with the on-site
     **Distributed** tab. **RWA value (distributed)** / **(represented)** use ``distributed_value`` and
     ``represented_value``; **7D Δ** uses ``(val - val_30d) / val_30d`` on ``distributed_value`` (same 30D baseline
     window as the other Participants tables).
@@ -203,6 +199,7 @@ def _dollar_subfield(b: object, key: str) -> float:
 
 
 def _extract_next_data(html: str) -> dict[str, Any] | None:
+    """Load the JSON payload RWA.xyz embeds in its HTML (Next.js pattern; id must match the live page)."""
     m = re.search(
         r'<script id="__NEXT_DATA__" type="application/json">(.+?)</script>',
         html,
@@ -213,7 +210,7 @@ def _extract_next_data(html: str) -> dict[str, Any] | None:
     try:
         return json.loads(m.group(1))
     except json.JSONDecodeError as e:
-        logger.debug("__NEXT_DATA__ JSON: %s", e)
+        logger.debug("RWA.xyz page JSON parse error: %s", e)
         return None
 
 
@@ -959,23 +956,21 @@ def _fetch_networks_props_payload() -> tuple[dict[str, Any] | None, str | None]:
         return None, str(e)
     payload = _extract_next_data(r.text)
     if not payload:
-        return None, "Could not parse __NEXT_DATA__ from app.rwa.xyz/networks (layout may have changed)."
+        return None, "Could not read data from the RWA.xyz Networks page (the site layout may have changed)."
     if payload.get("page") != "/networks":
         return None, (
-            f"Expected Next.js page route /networks in __NEXT_DATA__, got {payload.get('page')!r}. "
-            "Refusing to parse a different route."
+            f"The RWA.xyz Networks page returned an unexpected layout (expected Networks, got {payload.get('page')!r})."
         )
     props = payload.get("props")
     if not isinstance(props, dict):
-        return None, "Invalid __NEXT_DATA__ structure."
+        return None, "The RWA.xyz Networks page data was not in the expected format."
     return props, None
 
 
 def fetch_rwa_networks_page_data() -> tuple[list[RwaNetworksTabRow], list[RwaGlobalKpi], str | None]:
     """
-    RWA **Networks** page: ``pageProps.aggregates`` + ``listQueryResponse.results``, using ``transferability`` and
-    per-network ``asset_class_stats`` so RWA count / total (excl. stables) / *represented* match the on-site table
-    (same public ``__NEXT_DATA__`` the Next app loads — not a separate “Market Overview” league only).
+    RWA **Networks** page: overview KPIs plus the main Networks table, using the same transferability and
+    per-asset-class breakdown as the live site (not a separate homepage-only league).
     """
     props, err = _fetch_networks_props_payload()
     if err:
@@ -984,15 +979,15 @@ def fetch_rwa_networks_page_data() -> tuple[list[RwaNetworksTabRow], list[RwaGlo
 
     lqr = props.get("pageProps", {}).get("listQueryResponse")
     if not isinstance(lqr, dict):
-        return [], [], "listQueryResponse missing from app.rwa.xyz/networks page data."
+        return [], [], "The RWA.xyz Networks page did not include the expected network list."
     results = lqr.get("results")
     if not isinstance(results, list) or not results:
-        return [], _parse_aggregates(props), "No networks in listQueryResponse on /networks."
+        return [], _parse_aggregates(props), "The RWA.xyz Networks page returned an empty network list."
 
     rows = _rows_from_networks_list_results([r for r in results if isinstance(r, dict)])
     kpis = _parse_aggregates(props)
     if not rows:
-        return [], kpis, "Could not parse listQueryResponse results into network rows."
+        return [], kpis, "Could not interpret network rows from the RWA.xyz Networks page."
     return rows, kpis, None
 
 
@@ -1006,23 +1001,22 @@ def _fetch_platforms_props_payload() -> tuple[dict[str, Any] | None, str | None]
         return None, str(e)
     payload = _extract_next_data(r.text)
     if not payload:
-        return None, "Could not parse __NEXT_DATA__ from app.rwa.xyz/platforms (layout may have changed)."
+        return None, "Could not read data from the RWA.xyz Platforms page (the site layout may have changed)."
     if payload.get("page") != "/platforms":
         return None, (
-            f"Expected Next.js page route /platforms in __NEXT_DATA__, got {payload.get('page')!r}. "
-            "Refusing to parse a different route."
+            f"The RWA.xyz Platforms page returned an unexpected layout (expected Platforms, got {payload.get('page')!r})."
         )
     props = payload.get("props")
     if not isinstance(props, dict):
-        return None, "Invalid __NEXT_DATA__ structure."
+        return None, "The RWA.xyz Platforms page data was not in the expected format."
     return props, None
 
 
 def fetch_rwa_platforms_page_data() -> tuple[list[RwaPlatformsTabRow], list[RwaGlobalKpi], str | None]:
     """
-    RWA **Platforms** page: ``pageProps.aggregates`` + ``listQueryResponse.results`` (issuer platforms; same public
-    ``__NEXT_DATA__`` as [Platforms](https://app.rwa.xyz/platforms)). The returned table follows the on-site
-    **Distributed** league (``tokenization_type_stats`` / ``distributed`` bucket when present).
+    RWA **Platforms** page: overview KPIs plus issuer rows from the same public
+    [Platforms](https://app.rwa.xyz/platforms) view as in the browser. The table follows the on-site **Distributed**
+    league (distributed vs. represented splits when the page provides them).
     """
     props, err = _fetch_platforms_props_payload()
     if err:
@@ -1031,15 +1025,15 @@ def fetch_rwa_platforms_page_data() -> tuple[list[RwaPlatformsTabRow], list[RwaG
 
     lqr = props.get("pageProps", {}).get("listQueryResponse")
     if not isinstance(lqr, dict):
-        return [], [], "listQueryResponse missing from app.rwa.xyz/platforms page data."
+        return [], [], "The RWA.xyz Platforms page did not include the expected issuer list."
     results = lqr.get("results")
     if not isinstance(results, list) or not results:
-        return [], _parse_aggregates(props), "No platforms in listQueryResponse on /platforms."
+        return [], _parse_aggregates(props), "The RWA.xyz Platforms page returned an empty issuer list."
 
     rows = _rows_from_platforms_list_results([r for r in results if isinstance(r, dict)])
     kpis = _parse_aggregates(props)
     if not rows:
-        return [], kpis, "Could not parse listQueryResponse results into platform rows."
+        return [], kpis, "Could not interpret issuer rows from the RWA.xyz Platforms page."
     return rows, kpis, None
 
 
@@ -1053,23 +1047,23 @@ def _fetch_asset_managers_props_payload() -> tuple[dict[str, Any] | None, str | 
         return None, str(e)
     payload = _extract_next_data(r.text)
     if not payload:
-        return None, "Could not parse __NEXT_DATA__ from app.rwa.xyz/asset-managers (layout may have changed)."
+        return None, "Could not read data from the RWA.xyz Asset Managers page (the site layout may have changed)."
     if payload.get("page") != "/asset-managers":
         return None, (
-            f"Expected Next.js page route /asset-managers in __NEXT_DATA__, got {payload.get('page')!r}. "
-            "Refusing to parse a different route."
+            f"The RWA.xyz Asset Managers page returned an unexpected layout "
+            f"(expected Asset Managers, got {payload.get('page')!r})."
         )
     props = payload.get("props")
     if not isinstance(props, dict):
-        return None, "Invalid __NEXT_DATA__ structure."
+        return None, "The RWA.xyz Asset Managers page data was not in the expected format."
     return props, None
 
 
 def fetch_rwa_asset_managers_page_data() -> tuple[list[RwaAssetManagersTabRow], list[RwaGlobalKpi], str | None]:
     """
-    RWA **Asset managers** page: ``pageProps.aggregates`` + ``listQueryResponse.results``; same public ``__NEXT_DATA__``
-    as [Asset managers](https://app.rwa.xyz/asset-managers). The table follows the on-site **Distributed** tab
-    (``distributed_value`` > 0).
+    RWA **Asset managers** page: overview KPIs plus manager rows from the same public
+    [Asset managers](https://app.rwa.xyz/asset-managers) view. The table follows the on-site **Distributed** tab
+    (managers with meaningful distributed value).
     """
     props, err = _fetch_asset_managers_props_payload()
     if err:
@@ -1078,15 +1072,15 @@ def fetch_rwa_asset_managers_page_data() -> tuple[list[RwaAssetManagersTabRow], 
 
     lqr = props.get("pageProps", {}).get("listQueryResponse")
     if not isinstance(lqr, dict):
-        return [], [], "listQueryResponse missing from app.rwa.xyz/asset-managers page data."
+        return [], [], "The RWA.xyz Asset Managers page did not include the expected manager list."
     results = lqr.get("results")
     if not isinstance(results, list) or not results:
-        return [], _parse_aggregates(props), "No asset managers in listQueryResponse on /asset-managers."
+        return [], _parse_aggregates(props), "The RWA.xyz Asset Managers page returned an empty manager list."
 
     rows = _rows_from_asset_managers_list_results([r for r in results if isinstance(r, dict)])
     kpis = _parse_aggregates(props)
     if not rows:
-        return [], kpis, "Could not parse listQueryResponse results into asset manager rows."
+        return [], kpis, "Could not interpret manager rows from the RWA.xyz Asset Managers page."
     return rows, kpis, None
 
 
@@ -1101,10 +1095,10 @@ def _fetch_props_payload() -> tuple[dict[str, Any] | None, str | None]:
 
     payload = _extract_next_data(r.text)
     if not payload:
-        return None, "Could not parse __NEXT_DATA__ from app.rwa.xyz (layout may have changed)."
+        return None, "Could not read data from the RWA.xyz homepage (the site layout may have changed)."
     props = payload.get("props")
     if not isinstance(props, dict):
-        return None, "Invalid __NEXT_DATA__ structure."
+        return None, "The RWA.xyz homepage data was not in the expected format."
     return props, None
 
 
@@ -1112,8 +1106,8 @@ def fetch_rwa_home_data() -> tuple[list[RwaNetworkLeagueRow], list[RwaGlobalKpi]
     """
     Homepage Networks league (**Distributed** tab) plus Global Market Overview aggregates.
 
-    Percentage change in total value comes from **`value_7d_change`** on each league row.
-    Overview metrics use **30d** ``percentChange`` when present.
+    Percentage change in total value comes from the **7-day** change field on each league row.
+    Overview metrics use **30-day** percentage change when the homepage provides it.
     """
     props, err = _fetch_props_payload()
     if err:
@@ -1130,7 +1124,7 @@ def fetch_rwa_home_data() -> tuple[list[RwaNetworkLeagueRow], list[RwaGlobalKpi]
 
 
 def fetch_rwa_network_league() -> tuple[list[RwaNetworksTabRow], str | None]:
-    """Return the **Networks** page table (``/networks``), same as :func:`fetch_rwa_networks_page_data` rows."""
+    """Return the **Networks** page table, same as :func:`fetch_rwa_networks_page_data` rows."""
     rows, _, err = fetch_rwa_networks_page_data()
     return rows, err
 
@@ -1146,10 +1140,10 @@ def _fetch_stablecoins_props_payload() -> tuple[dict[str, Any] | None, str | Non
 
     payload = _extract_next_data(r.text)
     if not payload:
-        return None, "Could not parse __NEXT_DATA__ from app.rwa.xyz/stablecoins (layout may have changed)."
+        return None, "Could not read data from the RWA.xyz Stablecoins page (the site layout may have changed)."
     props = payload.get("props")
     if not isinstance(props, dict):
-        return None, "Invalid __NEXT_DATA__ structure."
+        return None, "The RWA.xyz Stablecoins page data was not in the expected format."
     return props, None
 
 
@@ -1164,15 +1158,14 @@ def _fetch_treasuries_props_payload() -> tuple[dict[str, Any] | None, str | None
 
     payload = _extract_next_data(r.text)
     if not payload:
-        return None, "Could not parse __NEXT_DATA__ from app.rwa.xyz/treasuries (layout may have changed)."
+        return None, "Could not read data from the RWA.xyz US Treasuries page (the site layout may have changed)."
     if payload.get("page") != "/treasuries":
         return None, (
-            f"Expected Next.js page route /treasuries in __NEXT_DATA__, got {payload.get('page')!r}. "
-            "Refusing to parse a different route so league rows are not mixed with the global homepage table."
+            f"The RWA.xyz Treasuries page returned an unexpected layout (expected Treasuries, got {payload.get('page')!r})."
         )
     props = payload.get("props")
     if not isinstance(props, dict):
-        return None, "Invalid __NEXT_DATA__ structure."
+        return None, "The RWA.xyz Treasuries page data was not in the expected format."
     return props, None
 
 
@@ -1187,15 +1180,14 @@ def _fetch_stocks_props_payload() -> tuple[dict[str, Any] | None, str | None]:
 
     payload = _extract_next_data(r.text)
     if not payload:
-        return None, "Could not parse __NEXT_DATA__ from app.rwa.xyz/stocks (layout may have changed)."
+        return None, "Could not read data from the RWA.xyz Tokenized Stocks page (the site layout may have changed)."
     if payload.get("page") != "/stocks":
         return None, (
-            f"Expected Next.js page route /stocks in __NEXT_DATA__, got {payload.get('page')!r}. "
-            "Refusing to parse a different route so league rows are not mixed with another page payload."
+            f"The RWA.xyz Tokenized Stocks page returned an unexpected layout (expected Stocks, got {payload.get('page')!r})."
         )
     props = payload.get("props")
     if not isinstance(props, dict):
-        return None, "Invalid __NEXT_DATA__ structure."
+        return None, "The RWA.xyz Tokenized Stocks page data was not in the expected format."
     return props, None
 
 

@@ -63,9 +63,8 @@ def build_rwa_dataframe(rows: list[RwaNetworkLeagueRow]) -> pd.DataFrame:
 
 def build_rwa_networks_page_dataframe(rows: list[RwaNetworksTabRow]) -> pd.DataFrame:
     """
-    RWA **Networks** (``/networks`` ``listQueryResponse`` + ``asset_class_stats``), matched to the on-site
-    table: RWA count excl. stablecoins, *represented* = ``non_transferable``, total excl. stables from class
-    **bridged_token_value** sums.
+    RWA **Networks** page table, matched to the on-site view: RWA count excl. stablecoins, *represented* =
+    ``non_transferable``, total excl. stables from class **bridged_token_value** sums.
     """
     recs: list[dict[str, object]] = []
     for r in rows:

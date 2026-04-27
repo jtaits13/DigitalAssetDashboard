@@ -1,4 +1,4 @@
-"""RWA.xyz league table widget (scraped from embedded Next.js data)."""
+"""RWA.xyz league table widgets (data aligned with the public RWA.xyz web app)."""
 
 from rwa_league.client import (
     RwaAssetManagersTabRow,

@@ -47,8 +47,8 @@ def main() -> None:
     st.markdown(
         '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">RWA <strong>Participants</strong> · <strong>Networks</strong>: the same '
         "<strong>Networks Overview</strong> headline metrics and on-chain <strong>Networks</strong> table as "
-        '<a href="https://app.rwa.xyz/networks">RWA.xyz</a> (embedded in <code>__NEXT_DATA__</code>). '
-        "Top-line <strong>30D</strong> % changes and per-network <strong>transferability</strong> / share columns are pulled from that page.</p>",
+        '<a href="https://app.rwa.xyz/networks">RWA.xyz</a> <strong>Networks</strong> page. '
+        "Top-line <strong>30D</strong> % changes and per-network <strong>transferability</strong> / share columns match the live site for the same view.</p>",
         unsafe_allow_html=True,
     )
     st.divider()

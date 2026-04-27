@@ -1,4 +1,4 @@
-"""RWA.xyz Global Market Overview: homepage KPI + Networks table (homepage embed)."""
+"""RWA.xyz Global Market Overview: homepage KPIs and Networks table aligned with the live site."""
 
 from __future__ import annotations
 
@@ -134,8 +134,8 @@ def main() -> None:
     st.markdown(
         '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">RWA <strong>Global Market Overview</strong>: the same '
         "<strong>headline metrics</strong> and <strong>Networks</strong> table as the "
-        '<a href="https://app.rwa.xyz/">RWA.xyz</a> Market Overview tab (embedded in <code>__NEXT_DATA__</code>). '
-        "Top-line <strong>30D</strong> % changes and table values are pulled from that homepage dataset.</p>",
+        '<a href="https://app.rwa.xyz/">RWA.xyz</a> <strong>Market Overview</strong> tab on the live site. '
+        "Top-line <strong>30D</strong> % changes and table values are read from that page so they stay in sync with what visitors see.</p>",
         unsafe_allow_html=True,
     )
     st.divider()
