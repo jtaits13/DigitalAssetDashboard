@@ -247,7 +247,7 @@ def main() -> None:
         st.markdown(hub_section_anchor("jd-section-news"), unsafe_allow_html=True)
         st.markdown(section_label_teal("News & Regulatory", placement="first"), unsafe_allow_html=True)
         st.markdown(
-            '<p class="jd-hub-dek">Headlines and regulatory wires — open a lane for the full feed.</p>',
+            '<p class="jd-hub-dek jd-hub-dek--large">Headlines and regulatory wires — open a lane for the full feed.</p>',
             unsafe_allow_html=True,
         )
         _needs_reg_btn_empty = len(regulatory_articles) > HOME_REGULATORY_PREVIEW
@@ -322,7 +322,7 @@ def main() -> None:
     st.markdown(hub_section_anchor("jd-section-news"), unsafe_allow_html=True)
     st.markdown(section_label_teal("News & Regulatory", placement="first"), unsafe_allow_html=True)
     st.markdown(
-        '<p class="jd-hub-dek">Crypto RSS headlines and global regulatory wires — use a lane below for the full feed.</p>',
+        '<p class="jd-hub-dek jd-hub-dek--large">Crypto RSS headlines and global regulatory wires — use a lane below for the full feed.</p>',
         unsafe_allow_html=True,
     )
     # border=True: Streamlit stretches each column to the row height (Cloud + local).
