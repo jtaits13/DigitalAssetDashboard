@@ -327,7 +327,16 @@ def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -
               </ul>
             </div>
           </li>
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-explore-market-participant">Explore by Market Participant</a></li>
+          <li role="none">
+            <div class="jd-nav-dd-flyout-trigger">
+              <a class="jd-nav-dd-item jd-nav-dd-with-flyout" role="menuitem" href="#jd-rwa-explore-market-participant" aria-haspopup="true">Explore by Market Participant <span class="jd-nav-dd-flyout-caret" aria-hidden="true">▸</span></a>
+              <ul class="jd-nav-dd-submenu" role="menu" aria-label="Market participant pages">
+                <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="/RWA_Participants_Networks">Networks</a></li>
+                <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="/RWA_Participants_Platforms">Platforms</a></li>
+                <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="/RWA_Participants_Asset_Managers">Asset Managers</a></li>
+              </ul>
+            </div>
+          </li>
         </ul>
       </div>
     </nav>
@@ -342,9 +351,9 @@ def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -
 def render_subpage_top_bar() -> None:
     """
     Same fixed banner as the home page. ``Home``, ``News``, and ``Markets & Funds`` use ``?jd_scroll=`` so the landing
-    page scrolls after load. **On-chain Data** mirrors the home hub: **Explore by Asset Type** opens a flyout with
-    Stablecoins, US Treasuries, and Tokenized Stocks (full pages); the parent row still scrolls the landing page to the
-    hub Explore cards.
+    page scrolls after load. **On-chain Data** mirrors the home hub: **Explore by Asset Type** and **Explore by Market
+    Participant** each use a hover flyout to full RWA pages; the parent row scrolls the landing page to the matching hub
+    Explore cards.
     """
     st.markdown(SITE_NAV_CSS, unsafe_allow_html=True)
     st.markdown(
@@ -370,7 +379,16 @@ def render_subpage_top_bar() -> None:
               </ul>
             </div>
           </li>
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/?jd_scroll=rwa_explore_market_participant">Explore by Market Participant</a></li>
+          <li role="none">
+            <div class="jd-nav-dd-flyout-trigger">
+              <a class="jd-nav-dd-item jd-nav-dd-with-flyout" role="menuitem" href="/?jd_scroll=rwa_explore_market_participant" aria-haspopup="true">Explore by Market Participant <span class="jd-nav-dd-flyout-caret" aria-hidden="true">▸</span></a>
+              <ul class="jd-nav-dd-submenu" role="menu" aria-label="Market participant pages">
+                <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="/RWA_Participants_Networks">Networks</a></li>
+                <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="/RWA_Participants_Platforms">Platforms</a></li>
+                <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="/RWA_Participants_Asset_Managers">Asset Managers</a></li>
+              </ul>
+            </div>
+          </li>
         </ul>
       </div>
     </nav>
