@@ -99,11 +99,13 @@ WIDGET_CSS = """
     font-weight: 600;
     color: #3E6A7A;
 }
-.etp-custodian-footnote {
-    font-size: 0.75rem;
-    color: #6c757d;
-    margin: 0.35rem 0 0 0;
-    line-height: 1.4;
+/* Custodian legend: same classes as Markets hub intro (``jd-hub-dek jd-hub-dek--large`` in ``streamlit_app`` / ``app_shared_layout_css``). */
+p.jd-hub-dek.jd-hub-dek--large.etp-custodian-note {
+    margin: 0.35rem 0 0.55rem 0 !important;
+    max-width: min(44rem, 100%);
+}
+[data-testid="stMarkdownContainer"] p.jd-hub-dek.jd-hub-dek--large.etp-custodian-note {
+    margin: 0.35rem 0 0.55rem 0 !important;
 }
 </style>
 """
@@ -154,7 +156,7 @@ ETP_DATA_SOURCE_CAPTION = (
 )
 
 ETP_CUSTODIAN_TABLE_NOTE_HTML = (
-    '<p class="etp-custodian-footnote">* <strong>Custodian</strong> column: labels are filled only for '
+    '<p class="jd-hub-dek jd-hub-dek--large etp-custodian-note">* <strong>Custodian</strong> column: labels are filled only for '
     "a curated set of leading <strong>spot</strong> Bitcoin and Ethereum funds. "
     "All other rows are left blank.</p>"
 )
