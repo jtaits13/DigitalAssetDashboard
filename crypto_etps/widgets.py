@@ -99,19 +99,16 @@ WIDGET_CSS = """
     font-weight: 600;
     color: #3E6A7A;
 }
-/* Custodian line under ETP table: plain text, full column width; sit tight under dataframe. */
-div[data-testid="stElementContainer"]:has([data-testid="stDataFrame"]) + div[data-testid="stElementContainer"]:has(p.etp-custodian-note) {
-    margin-top: -0.85rem !important;
-}
+/* Custodian line under ETP table: plain text, full column width (no frame). */
 p.jd-hub-dek.jd-hub-dek-fullbleed.etp-custodian-note {
     width: 100%;
     max-width: 100% !important;
     box-sizing: border-box;
-    margin: -0.2rem 0 0.45rem 0 !important;
+    margin: 0.35rem 0 0.55rem 0 !important;
 }
 [data-testid="stMarkdownContainer"] p.jd-hub-dek.jd-hub-dek-fullbleed.etp-custodian-note {
     max-width: 100% !important;
-    margin: -0.2rem 0 0.45rem 0 !important;
+    margin: 0.35rem 0 0.55rem 0 !important;
 }
 </style>
 """
