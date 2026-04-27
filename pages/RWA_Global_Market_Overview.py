@@ -86,9 +86,6 @@ RWA_GLOBAL_MARKET_MACRO_CONTEXT_HTML = f"""
     <li><strong>Institutional momentum.</strong> Large asset managers, banks, and market utilities are scaling tokenized
     cash funds, bonds, and repo-style workflows—often on permissioned networks first—while public-ledger RWA issuance
     keeps expanding in parallel.</li>
-    <li><strong>Growth from a small share of global markets.</strong> On-chain aggregates such as the RWA.xyz snapshot
-    below can grow quickly in percentage terms as pilots multiply, yet still represent a thin slice of total global
-    financial assets—so month-to-month moves in headline figures are expected.</li>
     <li><strong>2030 market size (estimates only; not apples-to-apples).</strong>
       <ul>
         <li><a href="{_MCKINSEY_TOKENIZATION_URL}">McKinsey &amp; Company</a> (June&nbsp;2024): <strong>~$2&nbsp;trillion</strong>
