@@ -97,18 +97,26 @@ h2.home-widget-heading {
     margin-bottom: 0.35rem;
 }
 .jd-hub-dek {
-    font-size: 0.8125rem;
+    font-size: 0.76rem;
     font-weight: 400;
     color: #3E6A7A;
     line-height: 1.5;
     margin: 0 0 1rem 0;
     max-width: min(44rem, 100%);
 }
+[data-testid="stMarkdownContainer"] p.jd-hub-dek {
+    font-size: 0.76rem !important;
+}
 .jd-hub-cta-note {
-    font-size: 0.78rem;
+    font-size: 0.68rem;
+    font-weight: 400;
     color: #3E6A7A;
     margin: 0.4rem 0 0.15rem 0;
-    line-height: 1.4;
+    line-height: 1.38;
+}
+[data-testid="stMarkdownContainer"] p.jd-hub-cta-note {
+    font-size: 0.68rem !important;
+    line-height: 1.38 !important;
 }
 /* Multipage: result counts / filters under search (matches hub note color, clearer than raw caption) */
 p.jd-subpage-toolbar-note {
