@@ -380,16 +380,17 @@ def rwa_table_height(num_rows: int, *, max_h: int = 520) -> int:
     return min(max_h, header + row_h * max(1, num_rows))
 
 
-RWA_GMO_NETWORK_BAR_CHART_HEIGHT = 420
+# Global Market split row: chart shows at most this many bars; table height uses the same row budget.
+RWA_GMO_CHART_MAX_BARS = 12
 
 
 def _rwa_global_market_top_networks_bar_figure(
     rows: list[RwaNetworkLeagueRow],
     *,
-    height: int = RWA_GMO_NETWORK_BAR_CHART_HEIGHT,
+    height: int,
 ) -> go.Figure:
-    """Horizontal bar: top 10 networks by total distributed RWA value (USD)."""
-    top_n = min(10, len(rows))
+    """Horizontal bar: up to ``RWA_GMO_CHART_MAX_BARS`` networks by total distributed RWA value (USD)."""
+    top_n = min(RWA_GMO_CHART_MAX_BARS, len(rows))
     top = sorted(rows, key=lambda r: r.total_value_usd, reverse=True)[:top_n]
     asc = sorted(top, key=lambda r: r.total_value_usd)
     y_labels = [str(r.network).strip() or "—" for r in asc]
@@ -406,7 +407,7 @@ def _rwa_global_market_top_networks_bar_figure(
         )
     )
     fig.update_layout(
-        height=height,
+        height=int(height),
         margin=dict(l=8, r=16, t=8, b=40),
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="#f8fafc",
@@ -1941,7 +1942,17 @@ def show_rwa_participants_networks_widget(
 
         df_home = build_rwa_dataframe(working_home)
         if global_market_observations_html is not None:
-            split_h = rwa_table_height(max(len(df_home), 1), max_h=560)
+            chart_rows = sorted(
+                working_home,
+                key=lambda r: r.total_value_usd,
+                reverse=True,
+            )[:RWA_GMO_CHART_MAX_BARS]
+            n_sync = (
+                min(RWA_GMO_CHART_MAX_BARS, len(working_home))
+                if working_home
+                else max(1, len(df_home))
+            )
+            split_h = rwa_table_height(max(1, n_sync), max_h=560)
             col_tbl, col_chart = st.columns([1, 1], gap="medium", border=True)
             with col_tbl:
                 st.markdown(
@@ -1960,8 +1971,8 @@ def show_rwa_participants_networks_widget(
                     ),
                     unsafe_allow_html=True,
                 )
-                if working_home:
-                    fig_bar = _rwa_global_market_top_networks_bar_figure(working_home)
+                if chart_rows:
+                    fig_bar = _rwa_global_market_top_networks_bar_figure(chart_rows, height=split_h)
                     st.plotly_chart(
                         fig_bar,
                         use_container_width=True,
@@ -1970,8 +1981,8 @@ def show_rwa_participants_networks_widget(
                 else:
                     st.caption("No networks match this filter; there is nothing to chart.")
                 st.markdown(
-                    '<p class="jd-hub-cta-note">Chart: top <strong>10</strong> networks by total value among the '
-                    "<strong>filtered</strong> rows (same scope as the table).</p>",
+                    '<p class="jd-hub-cta-note">Chart: top <strong>12</strong> networks by total value (scroll the '
+                    "table for the full filtered list).</p>",
                     unsafe_allow_html=True,
                 )
         else:
