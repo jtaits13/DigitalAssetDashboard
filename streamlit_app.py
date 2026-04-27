@@ -290,7 +290,7 @@ def main() -> None:
         st.markdown(hub_section_anchor("jd-section-markets-funds"), unsafe_allow_html=True)
         st.markdown(section_label_teal("Markets & Funds", placement="after_divider"), unsafe_allow_html=True)
         st.markdown(
-            '<p class="jd-hub-dek">U.S. listed digital asset ETFs and ETPs — preview below; open the full list for search and fund details.</p>',
+            '<p class="jd-hub-dek jd-hub-dek--large">U.S. listed digital asset ETFs and ETPs — preview below; open the full list for search and fund details.</p>',
             unsafe_allow_html=True,
         )
         show_us_crypto_etps_widget(
@@ -302,8 +302,8 @@ def main() -> None:
         st.markdown(hub_section_anchor("jd-section-onchain"), unsafe_allow_html=True)
         st.markdown(section_label_teal("On-chain Data", placement="after_divider"), unsafe_allow_html=True)
         st.markdown(
-            '<p class="jd-hub-dek jd-hub-dek-fullbleed">A global RWA snapshot from RWA.xyz, then two cards '
-            "below. Use Explore on a card to open a hub; full tables and detail are on the pages you open "
+            '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">A <strong>global RWA</strong> snapshot from RWA.xyz, then two cards '
+            "below. Use <strong>Explore</strong> on a card to open a hub; full tables and detail are on the pages you open "
             "from there.</p>",
             unsafe_allow_html=True,
         )
@@ -373,7 +373,7 @@ def main() -> None:
     st.markdown(hub_section_anchor("jd-section-markets-funds"), unsafe_allow_html=True)
     st.markdown(section_label_teal("Markets & Funds", placement="after_divider"), unsafe_allow_html=True)
     st.markdown(
-        '<p class="jd-hub-dek">U.S. listed digital asset ETFs and ETPs — preview below; open the full list for search and fund details.</p>',
+        '<p class="jd-hub-dek jd-hub-dek--large">U.S. listed digital asset ETFs and ETPs — preview below; open the full list for search and fund details.</p>',
         unsafe_allow_html=True,
     )
     show_us_crypto_etps_widget(
@@ -385,8 +385,8 @@ def main() -> None:
     st.markdown(hub_section_anchor("jd-section-onchain"), unsafe_allow_html=True)
     st.markdown(section_label_teal("On-chain Data", placement="after_divider"), unsafe_allow_html=True)
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed">A global RWA snapshot from RWA.xyz, then two cards '
-        "below. Use Explore on a card to open a hub; full tables and detail are on the pages you open "
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">A <strong>global RWA</strong> snapshot from RWA.xyz, then two cards '
+        "below. Use <strong>Explore</strong> on a card to open a hub; full tables and detail are on the pages you open "
         "from there.</p>",
         unsafe_allow_html=True,
     )

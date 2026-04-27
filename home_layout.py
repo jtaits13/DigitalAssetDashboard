@@ -107,6 +107,13 @@ h2.home-widget-heading {
 [data-testid="stMarkdownContainer"] p.jd-hub-dek {
     font-size: 0.76rem !important;
 }
+/* Home (and similar): restore pre-shrink dek size for selected section intros only */
+.jd-hub-dek.jd-hub-dek--large {
+    font-size: 0.8125rem;
+}
+[data-testid="stMarkdownContainer"] p.jd-hub-dek.jd-hub-dek--large {
+    font-size: 0.8125rem !important;
+}
 .jd-hub-cta-note {
     font-size: 0.68rem;
     font-weight: 400;
