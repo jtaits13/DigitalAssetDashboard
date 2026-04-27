@@ -388,12 +388,12 @@ def _rwa_global_market_top_networks_bar_figure(
     *,
     height: int = RWA_GMO_NETWORK_BAR_CHART_HEIGHT,
 ) -> go.Figure:
-    """Horizontal bar: top networks by total distributed RWA value (USD)."""
-    top_n = min(15, len(rows))
+    """Horizontal bar: top 10 networks by total distributed RWA value (USD)."""
+    top_n = min(10, len(rows))
     top = sorted(rows, key=lambda r: r.total_value_usd, reverse=True)[:top_n]
     asc = sorted(top, key=lambda r: r.total_value_usd)
-    y_labels = [r.network for r in asc]
-    x_vals = [r.total_value_usd for r in asc]
+    y_labels = [str(r.network).strip() or "—" for r in asc]
+    x_vals = [float(r.total_value_usd) for r in asc]
     fig = go.Figure(
         go.Bar(
             x=x_vals,
@@ -402,19 +402,28 @@ def _rwa_global_market_top_networks_bar_figure(
             marker_color="#25809C",
             marker_line_color="#1F4C67",
             marker_line_width=0.5,
+            showlegend=False,
         )
     )
     fig.update_layout(
         height=height,
-        margin=dict(l=8, r=16, t=12, b=48),
+        margin=dict(l=8, r=16, t=8, b=40),
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="#f8fafc",
-        xaxis_title="Total value (USD)",
-        yaxis_title=None,
         font=dict(size=12, color="#1F4C67"),
-        title=None,
+        showlegend=False,
+        xaxis=dict(
+            title=dict(text="Total value (USD)", font=dict(size=12, color="#1F4C67")),
+            tickprefix="$",
+            separatethousands=True,
+        ),
+        yaxis=dict(
+            type="category",
+            categoryorder="array",
+            categoryarray=y_labels,
+            showticklabels=True,
+        ),
     )
-    fig.update_xaxes(tickprefix="$", separatethousands=True)
     return fig
 
 

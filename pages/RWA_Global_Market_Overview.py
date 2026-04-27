@@ -62,6 +62,14 @@ RWA_GLOBAL_MARKET_MACRO_CONTEXT_HTML = f"""
 .rwa-gmo-takeaways li {{
   margin-bottom: 0.45rem;
 }}
+.rwa-gmo-takeaways ul ul {{
+  margin: 0.2rem 0 0.1rem 0.85rem;
+  padding: 0;
+  list-style-type: disc;
+}}
+.rwa-gmo-takeaways ul ul li {{
+  margin-bottom: 0.3rem;
+}}
 .rwa-gmo-takeaways .rwa-gmo-takeaway-note {{
   margin: 0.55rem 0 0 0;
   font-size: 0.78rem;
@@ -78,14 +86,17 @@ RWA_GLOBAL_MARKET_MACRO_CONTEXT_HTML = f"""
     <li><strong>Growth from a small share of global markets.</strong> On-chain aggregates such as the RWA.xyz snapshot
     below can grow quickly in percentage terms as pilots multiply, yet still represent a thin slice of total global
     financial assets—so month-to-month moves in headline figures are expected.</li>
-    <li><strong>2030 is scenario-driven, not a single “answer.”</strong>
-    <a href="{_MCKINSEY_TOKENIZATION_URL}">McKinsey</a> (June&nbsp;2024) sizes <strong>tokenized</strong> financial-asset
-    market capitalization at roughly <strong>$2&nbsp;trillion by 2030</strong> in a central case, with a published band
-    of about <strong>$1–4&nbsp;trillion</strong> across pessimistic/optimistic paths (excluding major cryptocurrencies and
-    stablecoins to avoid double counting). Commentary on
-    <a href="{_BCG_TOKENIZED_FUNDS_PDF_URL}">BCG</a> “tokenized funds” work often cites a much larger
-    <strong>~$16&nbsp;trillion</strong> style outcome for a broader tokenization / illiquid-asset framing—definitions and
-    scope differ materially, so treat any headline number as illustrative.</li>
+    <li><strong>2030 market size (estimates only; definitions differ).</strong>
+      <ul>
+        <li><a href="{_MCKINSEY_TOKENIZATION_URL}">McKinsey</a> (June&nbsp;2024): <strong>~$2&nbsp;trillion</strong> tokenized
+        financial-asset market cap by <strong>2030</strong> (central case); about <strong>$1–4&nbsp;trillion</strong> across their
+        published scenarios; excludes major crypto and stablecoins to avoid double counting.</li>
+        <li><a href="{_BCG_TOKENIZED_FUNDS_PDF_URL}">BCG</a> (tokenized funds): secondary coverage often cites
+        <strong>~$16&nbsp;trillion</strong> for a broader “tokenized economy” / illiquid-asset framing—<strong>not</strong> the same
+        scope as McKinsey’s line item.</li>
+        <li>Use these as <strong>directional scenarios</strong>, not a single consensus forecast.</li>
+      </ul>
+    </li>
   </ul>
   <p class="rwa-gmo-takeaway-note">Snapshot for context only (not investment advice). The chart and table below reflect
   RWA.xyz embedded homepage data, not the third-party forecasts above.</p>
