@@ -163,11 +163,9 @@ _RWA_KPI_PANEL_INLINE_STYLE = (
 )
 
 RWA_DATA_SOURCE_CAPTION = (
-    "Source: [RWA.xyz Networks](https://app.rwa.xyz/networks) embedded **__NEXT_DATA__** "
-    "(`listQueryResponse` + per-network `asset_class_stats` and `transferability`); not the public API. "
-    "**RWA count** and **RWA total (excl. stablecoins)** use non-stablecoin rows in `asset_class_stats` (same as the on-site table). "
-    "**RWA value (distributed)** = `transferability.transferable`; **(represented)** = `non_transferable`; "
-    "**% distributed** = distributed ÷ that total. Top-line **%** are **30D**; **7D Δ** uses `transferable_30d`."
+    "Source: [RWA.xyz Networks](https://app.rwa.xyz/networks) embedded overview + "
+    "**Distributed** **Networks** league tab (RWA counts and transferability-based value as on site; not the public API). "
+    "Overview **% changes** are **30-day (30D)**; table figures match the embedded league view."
 )
 RWA_GLOBAL_MARKET_DATA_SOURCE_CAPTION = (
     "Source: [RWA.xyz homepage](https://app.rwa.xyz/) embedded **__NEXT_DATA__** "
@@ -176,21 +174,15 @@ RWA_GLOBAL_MARKET_DATA_SOURCE_CAPTION = (
 )
 
 RWA_PLATFORMS_DATA_SOURCE_CAPTION = (
-    "Source: [RWA.xyz Platforms](https://app.rwa.xyz/platforms) embedded **__NEXT_DATA__** "
-    "(`listQueryResponse` issuer rows). The table matches the on-site **Distributed** Platforms league: when "
-    "`tokenization_type_stats` is present, **distributed** / **represented** USD and RWA counts use the "
-    "`distributed` / `represented` buckets (represented-only issuers are omitted); otherwise non-stablecoin "
-    "`asset_class_stats` bridged/circulating sums apply. **RWA total (excl. stablecoins)** = distributed + represented "
-    "when both buckets exist. Top-line **%** are **30D**; **7D Δ** uses distributed-bucket `val` vs `val_30d`, or "
-    "top-level `bridged_token_value` when the bucket list is empty."
+    "Source: [RWA.xyz Platforms](https://app.rwa.xyz/platforms) embedded overview + "
+    "**Distributed** **Platforms** issuer league tab (issuer distributed / represented value as on site; not the public API). "
+    "Overview **% changes** are **30-day (30D)**; issuer totals are levels."
 )
 
 RWA_ASSET_MANAGERS_DATA_SOURCE_CAPTION = (
-    "Source: [RWA.xyz Asset Managers](https://app.rwa.xyz/asset-managers) embedded **__NEXT_DATA__** "
-    "(`listQueryResponse`). The table matches the on-site **Distributed** tab: **RWA value (distributed)** / "
-    "**(represented)** use `distributed_value` and `represented_value`; **RWA count** uses `rwa_asset_count` when "
-    "present. Managers with no distributed value are omitted. Top-line **%** are **30D**; **7D Δ** uses "
-    "`distributed_value.val` vs `val_30d`."
+    "Source: [RWA.xyz Asset Managers](https://app.rwa.xyz/asset-managers) embedded overview + "
+    "**Distributed** tab manager table (RWA value distributed and represented as on site; not the public API). "
+    "Overview **% changes** are **30-day (30D)**; table figures are levels."
 )
 
 STABLECOIN_RWA_CAPTION = (

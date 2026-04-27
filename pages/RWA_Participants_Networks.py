@@ -21,7 +21,7 @@ from news_feeds import (
     render_subpage_top_bar,
 )
 from price_ticker import show_price_ticker
-from rwa_league.widgets import RWA_DATA_SOURCE_CAPTION, show_rwa_participants_networks_widget
+from rwa_league.widgets import show_rwa_participants_networks_widget
 
 
 def main() -> None:
@@ -54,7 +54,6 @@ def main() -> None:
     show_rwa_participants_networks_widget(home_preview=False, full_page_header=False)
 
     st.divider()
-    st.caption(RWA_DATA_SOURCE_CAPTION)
     st.caption(
         f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
         "RWA.xyz embed · Cached up to one hour · Use **Refresh all data** on the home page to reload."
