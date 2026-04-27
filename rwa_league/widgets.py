@@ -7,8 +7,6 @@ from html import escape
 import plotly.graph_objects as go
 import streamlit as st
 
-from crypto_etps.client import format_usd_compact
-
 from home_layout import (
     KPI_WINDOW_NOTE_CSS,
     STREAMLIT_TABLE_UNIFY_CSS,
@@ -156,25 +154,6 @@ WIDGET_CSS = """
 }
 .rwa-kpi-delta.neutral {
     color: #3E6A7A;
-}
-.rwa-gmo-snapshot p.rwa-gmo-snapshot-heading {
-    margin: 0.55rem 0 0.2rem 0;
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: #1F4C67;
-}
-.rwa-gmo-snapshot p.rwa-gmo-snapshot-heading:first-child {
-    margin-top: 0;
-}
-.rwa-gmo-snapshot ul {
-    margin: 0.1rem 0 0.4rem 1.05rem;
-    padding: 0;
-    font-size: 0.86rem;
-    color: #1F4C67;
-    line-height: 1.42;
-}
-.rwa-gmo-snapshot li {
-    margin-bottom: 0.12rem;
 }
 </style>
 """
@@ -404,44 +383,6 @@ def rwa_table_height(num_rows: int, *, max_h: int = 520) -> int:
 RWA_GMO_NETWORK_BAR_CHART_HEIGHT = 420
 
 
-def _rwa_global_market_snapshot_panel_html(rows: list[RwaNetworkLeagueRow]) -> str:
-    """HTML for Global Market full-page split: largest networks + top 7D value gainers (embed has no 30D value delta)."""
-    if not rows:
-        return '<p class="jd-hub-cta-note">No network rows in this snapshot.</p>'
-    largest = sorted(rows, key=lambda r: r.total_value_usd, reverse=True)[:5]
-    mover_candidates = [r for r in rows if r.value_change_7d_raw is not None]
-    movers = sorted(mover_candidates, key=lambda r: float(r.value_change_7d_raw or 0.0), reverse=True)[:5]
-    parts = ['<div class="rwa-gmo-snapshot">']
-    parts.append('<p class="rwa-gmo-snapshot-heading">Largest networks (total value)</p><ul>')
-    for r in largest:
-        pct7 = ""
-        if r.value_change_7d_raw is not None:
-            p = float(r.value_change_7d_raw) * 100.0
-            pct7 = f" ({p:+.1f}% 7D)"
-        parts.append(
-            f"<li><strong>{escape(r.network)}</strong> — {escape(format_usd_compact(r.total_value_usd))}"
-            f"{escape(pct7)}</li>"
-        )
-    parts.append("</ul>")
-    parts.append('<p class="rwa-gmo-snapshot-heading">Biggest 7D value gainers</p><ul>')
-    if movers:
-        for r in movers:
-            v = float(r.value_change_7d_raw or 0.0) * 100.0
-            parts.append(
-                f"<li><strong>{escape(r.network)}</strong> — {v:+.1f}% 7D · "
-                f"{escape(format_usd_compact(r.total_value_usd))}</li>"
-            )
-    else:
-        parts.append("<li><em>No 7D value change field in this pull.</em></li>")
-    parts.append("</ul>")
-    parts.append(
-        '<p class="jd-hub-cta-note">Per-network <strong>30D value</strong> change is not in the RWA.xyz homepage embed; '
-        "we show <strong>7D</strong> Δ total value (same column family as the table below).</p>"
-    )
-    parts.append("</div>")
-    return "".join(parts)
-
-
 def _rwa_global_market_top_networks_bar_figure(
     rows: list[RwaNetworkLeagueRow],
     *,
@@ -471,12 +412,7 @@ def _rwa_global_market_top_networks_bar_figure(
         xaxis_title="Total value (USD)",
         yaxis_title=None,
         font=dict(size=12, color="#1F4C67"),
-        title=dict(
-            text="Top networks by total RWA value (homepage embed)",
-            font=dict(size=13, color="#021D41"),
-            x=0,
-            xanchor="left",
-        ),
+        title=None,
     )
     fig.update_xaxes(tickprefix="$", separatethousands=True)
     return fig
@@ -1921,7 +1857,7 @@ def show_rwa_participants_networks_widget(
     footer via :func:`_show_rwa_participants_networks_home_footer`).
 
     ``global_market_observations_html``: when set with ``full_page_header=True`` (Global Market Overview page), render a
-    two-column lead (network snapshot + observations), then a bar chart, then Explore gateways and the table.
+    two-column lead (top-networks bar chart + observations), then Explore gateways and the table.
     """
     if home_preview:
         raise ValueError("show_rwa_participants_networks_widget is only for full pages; use show_rwa_league_widget on the hub.")
@@ -1967,30 +1903,28 @@ def show_rwa_participants_networks_widget(
             tight_bottom=True,
         )
         if global_market_observations_html is not None:
-            col_snap, col_obs = st.columns([1, 1], gap="medium", border=True)
-            with col_snap:
+            col_chart, col_obs = st.columns([1, 1], gap="medium", border=True)
+            fig_bar = _rwa_global_market_top_networks_bar_figure(rows_home)
+            with col_chart:
                 st.markdown(
                     hub_subsection_heading_html(
-                        "Network snapshot",
-                        element_id="jd-rwa-gmo-snapshot",
+                        "Top networks by value",
+                        element_id="jd-rwa-gmo-bar",
                     ),
                     unsafe_allow_html=True,
                 )
-                st.markdown(_rwa_global_market_snapshot_panel_html(rows_home), unsafe_allow_html=True)
+                st.plotly_chart(
+                    fig_bar,
+                    use_container_width=True,
+                    config={"scrollZoom": False, "displayModeBar": True},
+                )
+                st.markdown(
+                    '<p class="jd-hub-cta-note">Homepage embed universe (same as the table below); total RWA value '
+                    "(USD) per network.</p>",
+                    unsafe_allow_html=True,
+                )
             with col_obs:
                 st.markdown(global_market_observations_html, unsafe_allow_html=True)
-            st.divider()
-            fig_bar = _rwa_global_market_top_networks_bar_figure(rows_home)
-            st.plotly_chart(
-                fig_bar,
-                use_container_width=True,
-                config={"scrollZoom": False, "displayModeBar": True},
-            )
-            st.markdown(
-                '<p class="jd-hub-cta-note">Same homepage-embed universe as the searchable table below; values are '
-                "total RWA value (USD) per network.</p>",
-                unsafe_allow_html=True,
-            )
             st.divider()
         show_rwa_onchain_explore_gateways(
             preview_rows=8,
