@@ -26,6 +26,72 @@ from rwa_league.widgets import (
     show_rwa_participants_networks_widget,
 )
 
+# Macro context for readers (third-party research; not investment advice). Links verified via public pages.
+_MCKINSEY_TOKENIZATION_URL = (
+    "https://www.mckinsey.com/industries/financial-services/our-insights/"
+    "from-ripples-to-waves-the-transformational-power-of-tokenizing-assets"
+)
+_BCG_TOKENIZED_FUNDS_PDF_URL = (
+    "https://web-assets.bcg.com/81/71/6ff0849641a58706581b5a77113f/"
+    "tokenized-funds-the-third-revolution-in-asset-management-decoded.pdf"
+)
+
+RWA_GLOBAL_MARKET_MACRO_CONTEXT_HTML = f"""
+<style>
+.rwa-gmo-takeaways {{
+  border: 1px solid #C7D8E8;
+  border-radius: 10px;
+  padding: 0.85rem 1rem 0.95rem;
+  margin: 0.35rem 0 0.85rem;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(15,23,42,0.06);
+}}
+.rwa-gmo-takeaways h3 {{
+  margin: 0 0 0.5rem 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #021D41;
+}}
+.rwa-gmo-takeaways ul {{
+  margin: 0.35rem 0 0.25rem 1.1rem;
+  padding: 0;
+  color: #1F4C67;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}}
+.rwa-gmo-takeaways li {{
+  margin-bottom: 0.45rem;
+}}
+.rwa-gmo-takeaways .rwa-gmo-takeaway-note {{
+  margin: 0.55rem 0 0 0;
+  font-size: 0.78rem;
+  color: #3E6A7A;
+  line-height: 1.4;
+}}
+</style>
+<div class="rwa-gmo-takeaways">
+  <h3>RWA space — what to know</h3>
+  <ul>
+    <li><strong>Institutional momentum.</strong> Large asset managers, banks, and market utilities are scaling tokenized
+    cash funds, bonds, and repo-style workflows—often on permissioned networks first—while public-ledger RWA issuance
+    keeps expanding in parallel.</li>
+    <li><strong>Growth from a small share of global markets.</strong> On-chain aggregates such as the RWA.xyz snapshot
+    below can grow quickly in percentage terms as pilots multiply, yet still represent a thin slice of total global
+    financial assets—so month-to-month moves in headline figures are expected.</li>
+    <li><strong>2030 is scenario-driven, not a single “answer.”</strong>
+    <a href="{_MCKINSEY_TOKENIZATION_URL}">McKinsey</a> (June&nbsp;2024) sizes <strong>tokenized</strong> financial-asset
+    market capitalization at roughly <strong>$2&nbsp;trillion by 2030</strong> in a central case, with a published band
+    of about <strong>$1–4&nbsp;trillion</strong> across pessimistic/optimistic paths (excluding major cryptocurrencies and
+    stablecoins to avoid double counting). Commentary on
+    <a href="{_BCG_TOKENIZED_FUNDS_PDF_URL}">BCG</a> “tokenized funds” work often cites a much larger
+    <strong>~$16&nbsp;trillion</strong> style outcome for a broader tokenization / illiquid-asset framing—definitions and
+    scope differ materially, so treat any headline number as illustrative.</li>
+  </ul>
+  <p class="rwa-gmo-takeaway-note">Snapshot for context only (not investment advice). The table below reflects RWA.xyz
+  embedded homepage data, not the third-party forecasts above.</p>
+</div>
+"""
+
 
 def main() -> None:
     st.set_page_config(
@@ -45,6 +111,7 @@ def main() -> None:
     render_subpage_sidebar(key_prefix="rwa_global_market_overview", current="rwa_participants_networks")
 
     st.markdown(section_label_teal("RWA Global Market Overview", placement="first"), unsafe_allow_html=True)
+    st.markdown(RWA_GLOBAL_MARKET_MACRO_CONTEXT_HTML, unsafe_allow_html=True)
     st.markdown(
         '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">RWA <strong>Global Market Overview</strong>: the same '
         "<strong>headline metrics</strong> and <strong>Networks</strong> table as the "
