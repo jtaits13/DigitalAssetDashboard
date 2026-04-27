@@ -31,9 +31,14 @@ _MCKINSEY_TOKENIZATION_URL = (
     "https://www.mckinsey.com/industries/financial-services/our-insights/"
     "from-ripples-to-waves-the-transformational-power-of-tokenizing-assets"
 )
-_BCG_TOKENIZED_FUNDS_PDF_URL = (
-    "https://web-assets.bcg.com/81/71/6ff0849641a58706581b5a77113f/"
-    "tokenized-funds-the-third-revolution-in-asset-management-decoded.pdf"
+_BCG_ADDX_TOKENIZATION_REPORT_URL = (
+    "https://www.addx.co/files/bcg_ADDX_report_Asset_tokenization_trillion_opportunity_by_2030_de2aaa41a4.pdf"
+)
+_CITI_GPS_STABLECOINS_2030_URL = (
+    "https://www.citigroup.com/rcs/citigpa/storage/public/GPS_Report_Stablecoins_2030.pdf"
+)
+_WEF_ASSET_TOKENIZATION_2025_URL = (
+    "https://reports.weforum.org/docs/WEF_Asset_Tokenization_in_Financial_Markets_2025.pdf"
 )
 
 RWA_GLOBAL_MARKET_MACRO_CONTEXT_HTML = f"""
@@ -86,16 +91,25 @@ RWA_GLOBAL_MARKET_MACRO_CONTEXT_HTML = f"""
     <li><strong>Growth from a small share of global markets.</strong> On-chain aggregates such as the RWA.xyz snapshot
     below can grow quickly in percentage terms as pilots multiply, yet still represent a thin slice of total global
     financial assets—so month-to-month moves in headline figures are expected.</li>
-    <li><strong>2030 market size (estimates only; definitions differ).</strong>
+    <li><strong>2030 market size (estimates only; not apples-to-apples).</strong>
       <ul>
-        <li><a href="{_MCKINSEY_TOKENIZATION_URL}">McKinsey</a> (June&nbsp;2024): <strong>~$2&nbsp;trillion</strong> tokenized
-        financial-asset market cap by <strong>2030</strong> (central case); about <strong>$1–4&nbsp;trillion</strong> across their
+        <li><a href="{_MCKINSEY_TOKENIZATION_URL}">McKinsey &amp; Company</a> (June&nbsp;2024): <strong>~$2&nbsp;trillion</strong>
+        tokenized financial-asset market cap by <strong>2030</strong> (central case); about <strong>$1–4&nbsp;trillion</strong> across
         published scenarios; excludes major crypto and stablecoins to avoid double counting.</li>
-        <li><a href="{_BCG_TOKENIZED_FUNDS_PDF_URL}">BCG</a> (tokenized funds): secondary coverage often cites
-        <strong>~$16&nbsp;trillion</strong> for a broader “tokenized economy” / illiquid-asset framing—<strong>not</strong> the same
-        scope as McKinsey’s line item.</li>
-        <li>Use these as <strong>directional scenarios</strong>, not a single consensus forecast.</li>
+        <li><a href="{_BCG_ADDX_TOKENIZATION_REPORT_URL}">Boston Consulting Group</a> (with ADDX): widely cited
+        <strong>~$16&nbsp;trillion</strong> framing for <strong>illiquid-asset</strong> tokenization potential by <strong>2030</strong>
+        (see joint report PDF; scope is broader than McKinsey’s tokenized-financial-assets slice).</li>
+        <li><a href="{_CITI_GPS_STABLECOINS_2030_URL}">Citigroup</a> (GPS, <em>Stablecoins 2030</em>, 2025 refresh): bank
+        scenario work summarized in the press points to roughly <strong>~$1.9&nbsp;trillion (base) to ~$4&nbsp;trillion (bull)</strong>
+        for <strong>stablecoin-related</strong> market size by <strong>2030</strong>—definitions are payment-rail / bank-token
+        oriented, not “all RWAs.”</li>
+        <li><a href="{_WEF_ASSET_TOKENIZATION_2025_URL}">World Economic Forum</a> (2025, <em>Asset Tokenization in Financial
+        Markets</em>): cites industry projections that global private equity / venture capital <strong>could reach ~$7&nbsp;trillion
+        by 2030</strong>, with discussion that <strong>~10%</strong> might be tokenized—one asset-class lens inside a wider survey
+        of markets and policy.</li>
       </ul>
+      <p class="rwa-gmo-takeaway-note" style="margin-top:0.35rem;margin-bottom:0;">Treat each line as a <strong>directional
+      scenario</strong> from a different perimeter—do not sum or average across firms.</p>
     </li>
   </ul>
   <p class="rwa-gmo-takeaway-note">Snapshot for context only (not investment advice). The chart and table below reflect
