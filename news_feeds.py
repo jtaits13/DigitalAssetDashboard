@@ -294,8 +294,9 @@ def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -
 
 def render_subpage_top_bar() -> None:
     """
-    Same fixed banner as the home page. Links go to the main app; News adds ``?jd_scroll=``
-    so the home page scrolls to that section after load.
+    Same fixed banner as the home page. ``Home``, ``News``, and ``Markets & Funds`` use ``?jd_scroll=`` so the landing
+    page scrolls after load. **On-chain Data** uses the same three subsection links as the home hub (scroll targets on
+    the landing page), not separate multipage URLs.
     """
     st.markdown(SITE_NAV_CSS, unsafe_allow_html=True)
     st.markdown(
@@ -307,17 +308,12 @@ def render_subpage_top_bar() -> None:
       <a class="jd-site-link" href="/?jd_scroll=top">Home</a>
       <a class="jd-site-link" href="/?jd_scroll=news">News</a>
       <a class="jd-site-link" href="/?jd_scroll=markets_funds">Markets &amp; Funds</a>
-      <div class="jd-nav-dd" role="group" aria-label="On-chain Data pages">
+      <div class="jd-nav-dd" role="group" aria-label="On-chain Data subsections">
         <a class="jd-site-link jd-nav-dd-head" href="/?jd_scroll=onchain">On-chain Data <span class="jd-nav-dd-caret" aria-hidden="true">▾</span></a>
         <ul class="jd-nav-dd-menu" role="menu">
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_Stablecoins">Stablecoins</a></li>
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_US_Treasuries">US Treasuries</a></li>
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_Tokenized_Stocks">Tokenized stocks</a></li>
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_Explore_By_Asset_Type">Explore by Asset Type</a></li>
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_Explore_By_Market_Participant">Explore by Market Participant</a></li>
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_Participants_Networks">Participants — Networks</a></li>
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_Participants_Platforms">Participants — Platforms</a></li>
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/RWA_Participants_Asset_Managers">Participants — Asset Managers</a></li>
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/?jd_scroll=rwa_global_market">Global Market Overview</a></li>
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/?jd_scroll=rwa_explore_asset_type">Explore by Asset Type</a></li>
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/?jd_scroll=rwa_explore_market_participant">Explore by Market Participant</a></li>
         </ul>
       </div>
     </nav>

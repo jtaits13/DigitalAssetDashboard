@@ -49,6 +49,10 @@ _JD_SCROLL_MAP = {
     "news": "jd-section-news",
     "markets_funds": "jd-section-markets-funds",
     "onchain": "jd-section-onchain",
+    # On-chain hub sub-anchors (subpage top bar matches home dropdown)
+    "rwa_global_market": "jd-rwa-market",
+    "rwa_explore_asset_type": "jd-rwa-explore-asset-type",
+    "rwa_explore_market_participant": "jd-rwa-explore-market-participant",
     # Legacy query params (old bookmarks / links)
     "market": "jd-section-markets-funds",
     "etps": "jd-section-markets-funds",
