@@ -85,14 +85,11 @@ RWA_GLOBAL_MARKET_MACRO_CONTEXT_HTML = f"""
   <ul>
     <li><strong>Institutional momentum.</strong> Large asset managers, banks, and market utilities are scaling tokenized
     cash funds, bonds, and repo-style workflows—often on permissioned networks first—while public-ledger RWA issuance
-    keeps expanding in parallel.</li>
-    <li><strong>Custodian and infrastructure strategy.</strong> Tokenized cash, bonds, and funds increasingly tie
-    <strong>safekeeping</strong> to <strong>on-chain settlement</strong> and compressed settlement cycles—so
-    <strong>qualified custodian</strong> expectations, <strong>segregation</strong>, <strong>sub-custody</strong>, and
-    <strong>key management</strong> design have to align with <strong>T+0-style</strong> workflows and, where venues allow it,
-    <strong>24/7</strong> liquidity and collateral discipline. <strong>Build, buy, and partner</strong> choices across digital
-    custody stacks, <strong>tokenization platforms</strong>, and <strong>network</strong> coverage are becoming a strategic fork
-    for custodians—not only a technology upgrade.</li>
+    keeps expanding in parallel. For <strong>custodians</strong> and <strong>market infrastructure</strong> providers, that
+    widens where <strong>safekeeping</strong> meets <strong>on-chain settlement</strong>, <strong>sub-custody</strong> chains,
+    and—where venues allow—<strong>T+0-style</strong> or <strong>24/7</strong> liquidity, so <strong>build, buy, and partner</strong>
+    sequencing across <strong>digital custody</strong>, <strong>key management</strong>, and <strong>tokenization</strong>
+    platforms is becoming as strategic as picking asset classes to cover.</li>
     <li><strong>2030 market size (estimates only; not apples-to-apples).</strong>
       <ul>
         <li><a href="{_MCKINSEY_TOKENIZATION_URL}">McKinsey &amp; Company</a> (June&nbsp;2024): <strong>~$2&nbsp;trillion</strong>
