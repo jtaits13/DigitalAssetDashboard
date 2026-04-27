@@ -21,10 +21,7 @@ from news_feeds import (
     render_subpage_top_bar,
 )
 from price_ticker import show_price_ticker
-from rwa_league.widgets import (
-    RWA_GLOBAL_MARKET_DATA_SOURCE_CAPTION,
-    show_rwa_participants_networks_widget,
-)
+from rwa_league.widgets import show_rwa_participants_networks_widget
 
 # Macro context for readers (third-party research; not investment advice). Links verified via public pages.
 _MCKINSEY_TOKENIZATION_URL = (
@@ -46,16 +43,17 @@ RWA_GLOBAL_MARKET_MACRO_CONTEXT_HTML = f"""
 .rwa-gmo-takeaways {{
   border: 1px solid #C7D8E8;
   border-radius: 10px;
-  padding: 0.85rem 1rem 0.95rem;
-  margin: 0.35rem 0 0.85rem;
+  padding: 0.9rem 1.05rem 1rem;
+  margin: 0.15rem 0 0.5rem;
   background: #ffffff;
   box-shadow: 0 1px 3px rgba(15,23,42,0.06);
 }}
 .rwa-gmo-takeaways h3 {{
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.55rem 0;
   font-size: 0.95rem;
   font-weight: 700;
   color: #021D41;
+  letter-spacing: 0.01em;
 }}
 .rwa-gmo-takeaways ul {{
   margin: 0.35rem 0 0.25rem 1.1rem;
@@ -151,11 +149,9 @@ def main() -> None:
         global_market_observations_html=RWA_GLOBAL_MARKET_MACRO_CONTEXT_HTML,
     )
 
-    st.divider()
-    st.caption(RWA_GLOBAL_MARKET_DATA_SOURCE_CAPTION)
     st.caption(
-        f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
-        "RWA.xyz embed · Cached up to one hour · Use **Refresh all data** on the home page to reload."
+        f"As of {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC. "
+        "RWA.xyz data in the section above is cached up to one hour; use **Refresh all data** on the home page to reload."
     )
 
 

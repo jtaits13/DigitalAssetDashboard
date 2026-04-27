@@ -93,8 +93,19 @@ WIDGET_CSS = """
 #jd-rwa-market,
 #jd-rwa-stablecoins,
 #jd-rwa-treasuries,
-#jd-rwa-tokenized-stocks {
+#jd-rwa-tokenized-stocks,
+#jd-rwa-gmo-table,
+#jd-rwa-gmo-bar {
     scroll-margin-top: 5.5rem;
+}
+hr.jd-rwa-gmo-soft-rule {
+    border: none;
+    border-top: 1px solid #d4e4ef;
+    margin: 0.75rem 0 0.7rem;
+    max-width: 100%;
+}
+p.jd-rwa-gmo-split-note {
+    margin: 0.35rem 0 0.15rem;
 }
 .jd-rwa-participants-eyebrow {
     font-size: 0.72rem;
@@ -417,7 +428,7 @@ def _rwa_global_market_top_networks_bar_figure(
     )
     fig.update_layout(
         height=int(height),
-        margin=dict(l=8, r=100, t=8, b=40),
+        margin=dict(l=8, r=100, t=14, b=36),
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="#f8fafc",
         font=dict(size=12, color="#1F4C67"),
@@ -1924,11 +1935,14 @@ def show_rwa_participants_networks_widget(
         _render_rwa_global_overview(
             kpis_home,
             kpi_legend_name="Global Market",
-            tight_bottom=True,
+            tight_bottom=global_market_observations_html is None,
         )
         if global_market_observations_html is not None:
             st.markdown(global_market_observations_html, unsafe_allow_html=True)
-            st.divider()
+            st.markdown(
+                '<hr class="jd-rwa-gmo-soft-rule" aria-hidden="true"/>',
+                unsafe_allow_html=True,
+            )
         show_rwa_onchain_explore_gateways(
             preview_rows=8,
             leading_divider=False,
@@ -1962,7 +1976,7 @@ def show_rwa_participants_networks_widget(
                 else max(1, len(df_home))
             )
             split_h = rwa_table_height(max(1, n_sync), max_h=560)
-            col_tbl, col_chart = st.columns([1, 1], gap="medium", border=True)
+            col_tbl, col_chart = st.columns([1, 1], gap="large", border=True)
             with col_tbl:
                 st.markdown(
                     hub_subsection_heading_html(
@@ -1989,11 +2003,11 @@ def show_rwa_participants_networks_widget(
                     )
                 else:
                     st.caption("No networks match this filter; there is nothing to chart.")
-                st.markdown(
-                    '<p class="jd-hub-cta-note">Chart: top <strong>12</strong> networks by total value (scroll the '
-                    "table for the full filtered list).</p>",
-                    unsafe_allow_html=True,
-                )
+            st.markdown(
+                '<p class="jd-hub-cta-note jd-rwa-gmo-split-note">The chart lists the top <strong>12</strong> '
+                "networks by total value (labels include market share). Scroll the table for the full filtered list.</p>",
+                unsafe_allow_html=True,
+            )
         else:
             _show_rwa_dataframe(df_home, height=rwa_table_height(len(df_home), max_h=900))
         st.caption(RWA_GLOBAL_MARKET_DATA_SOURCE_CAPTION)
@@ -2028,24 +2042,15 @@ def show_rwa_participants_networks_widget(
         st.info("No network rows returned.")
         return
 
-    if full_page_header:
-        st.markdown(
-            hub_subsection_heading_html(
-                RWA_NETWORKS_SUBPAGE_OVERVIEW_HEADING,
-                element_id="jd-rwa-market",
-            ),
-            unsafe_allow_html=True,
-        )
-    else:
-        st.markdown(
-            '<div class="jd-hub-subsection-head" id="jd-rwa-participants-networks">'
-            '<h2 class="home-main-heading">Networks</h2></div>',
-            unsafe_allow_html=True,
-        )
-        st.caption(
-            "Searchable table from the [RWA.xyz Networks](https://app.rwa.xyz/networks) embed. "
-            "RWA value columns use the same **transferability** fields as the on-site list; top-line **%** are **30D**."
-        )
+    st.markdown(
+        '<div class="jd-hub-subsection-head" id="jd-rwa-participants-networks">'
+        '<h2 class="home-main-heading">Networks</h2></div>',
+        unsafe_allow_html=True,
+    )
+    st.caption(
+        "Searchable table from the [RWA.xyz Networks](https://app.rwa.xyz/networks) embed. "
+        "RWA value columns use the same **transferability** fields as the on-site list; top-line **%** are **30D**."
+    )
 
     _render_rwa_global_overview(kpis, kpi_legend_name="Networks")
 
