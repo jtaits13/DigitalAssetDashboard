@@ -512,9 +512,11 @@ def _show_rwa_dataframe(df, *, height: int) -> None:
         ],
         column_config={
             "#": st.column_config.NumberColumn(
-                _rank_column_label(by_metric="Total Value"),
+                f"# {_SORT}",
                 format="%.0f",
-                help="Rank order from RWA.xyz (by network Total Value, USD)",
+                width="small",
+                help="Rank on the RWA.xyz homepage league (by Total Value, USD). Cells are integers; the site uses "
+                "the longer “# by Total Value” sort label.",
             ),
             "Network": st.column_config.TextColumn(
                 f"Network {_SORT}",
@@ -531,29 +533,31 @@ def _show_rwa_dataframe(df, *, height: int) -> None:
             "RWA Count": st.column_config.NumberColumn(
                 f"RWA Count {_SORT}",
                 format="%.0f",
+                width="small",
                 help="Ascending: lowest first · Descending: highest first",
             ),
             "Total Value": st.column_config.NumberColumn(
                 f"Total Value {_SORT}",
                 format=None,
-                width=140,
+                width="small",
                 help="Ascending: smallest USD first",
             ),
             "7D Δ value": st.column_config.NumberColumn(
                 f"7D Δ value {_SORT}",
                 format=None,
-                width=100,
+                width="small",
                 help="7-day change in total value (%) · Ascending: lowest first",
             ),
             "Market Share": st.column_config.NumberColumn(
                 f"Market Share {_SORT}",
                 format=None,
+                width="small",
                 help="Current network share (%)",
             ),
             "30D Δ share": st.column_config.NumberColumn(
                 f"30D Δ share {_SORT}",
                 format=None,
-                width=100,
+                width="small",
                 help="Change in market share vs 30 days ago (percentage points; same as Stablecoins table)",
             ),
         },
