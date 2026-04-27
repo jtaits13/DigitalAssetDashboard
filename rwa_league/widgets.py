@@ -1985,7 +1985,7 @@ def show_rwa_participants_networks_widget(
                     st.plotly_chart(
                         fig_bar,
                         use_container_width=True,
-                        config={"scrollZoom": False, "displayModeBar": True},
+                        config={"scrollZoom": False, "displayModeBar": False},
                     )
                 else:
                     st.caption("No networks match this filter; there is nothing to chart.")
