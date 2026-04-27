@@ -395,6 +395,8 @@ def _rwa_global_market_top_networks_bar_figure(
     asc = sorted(top, key=lambda r: r.total_value_usd)
     y_labels = [str(r.network).strip() or "—" for r in asc]
     x_vals = [float(r.total_value_usd) for r in asc]
+    share_pct = [float(r.market_share_raw) * 100.0 for r in asc]
+    share_text = [f"{s:.2f}% share" for s in share_pct]
     fig = go.Figure(
         go.Bar(
             x=x_vals,
@@ -404,11 +406,18 @@ def _rwa_global_market_top_networks_bar_figure(
             marker_line_color="#1F4C67",
             marker_line_width=0.5,
             showlegend=False,
+            text=share_text,
+            textposition="outside",
+            textfont=dict(size=11, color="#3E6A7A"),
+            cliponaxis=False,
+            hovertemplate=(
+                "<b>%{y}</b><br>Total value: %{x:$,.0f}<br>Market share: %{text}<extra></extra>"
+            ),
         )
     )
     fig.update_layout(
         height=int(height),
-        margin=dict(l=8, r=16, t=8, b=40),
+        margin=dict(l=8, r=100, t=8, b=40),
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="#f8fafc",
         font=dict(size=12, color="#1F4C67"),
