@@ -600,13 +600,55 @@ def hub_news_panel_header_html(*, eyebrow: str, title: str, heading_id: Optional
     )
 
 
+# Subject chip for Latest Digital Asset News (mirrors regulatory region pill). Order: specific first.
+_LANE_TOPIC_PATTERNS: tuple[tuple[re.Pattern[str], str], ...] = (
+    (re.compile(r"\b(?:hack(?:ed|ing)?|exploit|breach|drain|phish(?:ing)?|ransomware|stolen)\b"), "Security"),
+    (re.compile(r"\b(?:stablecoin|de-?peg|usdt|usdc|tether|dai\b|circle\b)\b"), "Stablecoins"),
+    (re.compile(r"\bcbdc\b|central bank digital"), "CBDC"),
+    (re.compile(r"\b(?:non[-\s]?fungible|nft(?:s)?|opensea)\b"), "NFTs"),
+    (re.compile(r"\b(?:etf|etp|etns?|exchange[-\s]traded)\b"), "ETF & ETP"),
+    (re.compile(r"\b(?:defi|decentralized finance|uniswap|aave|curve finance|dex)\b"), "DeFi"),
+    (
+        re.compile(
+            r"\b(?:lawsuit|indictment|enforcement|subpoena|regulator|regulation|"
+            r"congress|senate|legislat|mica\b|crypto bill|bill passes|court rules)\b"
+        ),
+        "Policy & law",
+    ),
+    (re.compile(r"\b(?:sec|cftc|finma|esma)\b"), "Policy & law"),
+    (re.compile(r"\bbitcoin\b|\bbtc\b"), "Bitcoin"),
+    (re.compile(r"\bethereum\b|\beth\b|\bether\b(?!eum\s+classic)"), "Ethereum"),
+    (re.compile(r"\bsolana\b|\bsol\b"), "Solana"),
+    (re.compile(r"\bxrp\b|\bripple\b"), "XRP"),
+    (
+        re.compile(
+            r"\b(?:layer[-\s]?2|l2\b|arbitrum|optimism|base\b|starknet|zk\s*sync|polygon\b)\b"
+        ),
+        "Layer 2",
+    ),
+    (re.compile(r"\b(?:real[-\s]world asset|\brwa\b|tokenized treasur|tokenised treasur)\b"), "RWA"),
+    (re.compile(r"\b(?:mining|hashrate|halving)\b"), "Mining"),
+    (re.compile(r"\b(?:wallet|custod|self[-\s]custod)\b"), "Custody"),
+)
+
+
+def infer_digital_news_lane_topic(item: dict[str, Any]) -> str:
+    """Short subject label for the market-news lane chip (keyword heuristic on title + summary)."""
+    blob = f"{item.get('title') or ''} {item.get('summary') or ''}".lower()
+    for pat, label in _LANE_TOPIC_PATTERNS:
+        if pat.search(blob):
+            return label
+    return "Digital assets"
+
+
 def render_hub_news_lane_item_html(
     item: dict[str, Any],
     index: int,
     *,
     show_country: bool = False,
+    topic_chip: Optional[str] = None,
 ) -> str:
-    """One headline row inside the home hub panels (index + meta + optional region chip + title)."""
+    """One headline row inside the home hub panels (index + meta + region/topic chip + title)."""
     pub = item.get("published")
     if isinstance(pub, datetime):
         pub_s = pub.astimezone(timezone.utc).strftime("%b %d · %H:%M UTC")
@@ -621,6 +663,10 @@ def render_hub_news_lane_item_html(
     if show_country:
         c = escape(str(item.get("country") or "Global"))
         chip_html = f'<span class="jd-hub-news-chip">{c}</span>'
+    else:
+        chip = (topic_chip or "").strip()
+        if chip:
+            chip_html = f'<span class="jd-hub-news-chip">{escape(chip)}</span>'
     idx = max(1, min(99, index))
     return (
         f'<li class="jd-hub-news-item" data-index="{idx}">'
@@ -1024,7 +1070,14 @@ def build_home_news_lane_body_html(
         '<ol class="jd-hub-news-list" role="list">',
     ]
     for i, item in enumerate(top, start=1):
-        parts.append(render_hub_news_lane_item_html(item, i, show_country=False))
+        parts.append(
+            render_hub_news_lane_item_html(
+                item,
+                i,
+                show_country=False,
+                topic_chip=infer_digital_news_lane_topic(item),
+            )
+        )
     parts.append("</ol>")
     if show_footnote:
         parts.append(
