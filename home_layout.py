@@ -107,12 +107,12 @@ h2.home-widget-heading {
 [data-testid="stMarkdownContainer"] p.jd-hub-dek {
     font-size: 0.76rem !important;
 }
-/* Home (and similar): restore pre-shrink dek size for selected section intros only */
+/* Lead hub intros (see ``HOME_LEAD_DEK_OVERRIDE_LAST_CSS`` in news_feeds — appended last for cascade). */
 .jd-hub-dek.jd-hub-dek--large {
-    font-size: 0.8125rem;
+    font-size: 0.9375rem;
 }
 [data-testid="stMarkdownContainer"] p.jd-hub-dek.jd-hub-dek--large {
-    font-size: 0.8125rem !important;
+    font-size: 0.9375rem !important;
 }
 .jd-hub-cta-note {
     font-size: 0.68rem;

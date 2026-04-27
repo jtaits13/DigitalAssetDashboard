@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import calendar
-import functools
 import html as html_module
 import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -102,8 +101,19 @@ div.jd-hub-dek.jd-hub-dek-fullbleed.jd-hub-explore-blurb li {
 </style>
 """
 
+# Appended last in :func:`app_shared_layout_css` so lead hub intros beat shrink rules and theme ``p`` styles.
+# (Do not ``lru_cache`` the combined layout CSS — edits would stay invisible until a full process restart.)
+HOME_LEAD_DEK_OVERRIDE_LAST_CSS = """
+<style>
+section[data-testid="stMain"] [data-testid="stMarkdownContainer"] p.jd-hub-dek.jd-hub-dek--large,
+section[data-testid="stMain"] p.jd-hub-dek.jd-hub-dek--large {
+    font-size: 0.9375rem !important;
+    line-height: 1.52 !important;
+}
+</style>
+"""
 
-@functools.lru_cache(maxsize=1)
+
 def app_shared_layout_css() -> str:
     """
     ``HOME_MAIN_HEADING_CSS`` plus ``HOME_PAGE_LAYOUT_CSS`` — same typography, section rhythm,
@@ -111,7 +121,12 @@ def app_shared_layout_css() -> str:
     """
     from home_layout import HOME_PAGE_LAYOUT_CSS
 
-    return HOME_MAIN_HEADING_CSS + HOME_PAGE_LAYOUT_CSS + SUBPAGE_HERO_DEK_CSS
+    return (
+        HOME_MAIN_HEADING_CSS
+        + HOME_PAGE_LAYOUT_CSS
+        + SUBPAGE_HERO_DEK_CSS
+        + HOME_LEAD_DEK_OVERRIDE_LAST_CSS
+    )
 
 
 # Fixed top strip (home + subpage top bar). price_ticker.py aligns padding with .cd-ticker-shell.
@@ -680,7 +695,6 @@ def render_hub_news_lane_item_html(
     )
 
 
-@functools.lru_cache(maxsize=1)
 def article_styles_markdown() -> str:
     """Inject once per page that renders news cards."""
     return """
