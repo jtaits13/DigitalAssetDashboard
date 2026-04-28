@@ -21,11 +21,11 @@ from news_feeds import (
     render_subpage_top_bar,
 )
 from price_ticker import show_price_ticker
-from rwa_league.widgets import STABLECOIN_RWA_CAPTION, show_rwa_stablecoins_widget
-from rwa_league.widgets import load_rwa_stablecoins_cached
 
 
 def _stablecoins_takeaway_html() -> str:
+    from rwa_league.widgets import load_rwa_stablecoins_cached
+
     rows, _kpis, _err = load_rwa_stablecoins_cached()
     if not rows:
         bullet = "Live stablecoin platform snapshot is unavailable right now."
@@ -51,6 +51,8 @@ def _stablecoins_takeaway_html() -> str:
 
 
 def main() -> None:
+    from rwa_league.widgets import STABLECOIN_RWA_CAPTION, show_rwa_stablecoins_widget
+
     st.set_page_config(
         page_title="Stablecoins — JPM Digital",
         page_icon="◆",

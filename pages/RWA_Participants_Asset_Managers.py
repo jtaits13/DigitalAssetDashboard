@@ -21,11 +21,11 @@ from news_feeds import (
     render_subpage_top_bar,
 )
 from price_ticker import show_price_ticker
-from rwa_league.widgets import show_rwa_participants_asset_managers_widget
-from rwa_league.widgets import load_rwa_asset_managers_cached
 
 
 def _participants_asset_managers_takeaway_html() -> str:
+    from rwa_league.widgets import load_rwa_asset_managers_cached
+
     rows, _kpis, _err = load_rwa_asset_managers_cached()
     if not rows:
         bullet = "Live asset-manager concentration snapshot is unavailable right now."
@@ -50,6 +50,8 @@ def _participants_asset_managers_takeaway_html() -> str:
 
 
 def main() -> None:
+    from rwa_league.widgets import show_rwa_participants_asset_managers_widget
+
     st.set_page_config(
         page_title="Participants — Asset Managers — JPM Digital",
         page_icon="◆",

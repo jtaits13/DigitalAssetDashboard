@@ -21,11 +21,11 @@ from news_feeds import (
     render_subpage_top_bar,
 )
 from price_ticker import show_price_ticker
-from rwa_league.widgets import TOKENIZED_STOCKS_RWA_CAPTION, show_rwa_tokenized_stocks_widget
-from rwa_league.widgets import load_rwa_tokenized_stocks_cached
 
 
 def _tokenized_stocks_takeaway_html() -> str:
+    from rwa_league.widgets import load_rwa_tokenized_stocks_cached
+
     nets, plats, _kpis, _err = load_rwa_tokenized_stocks_cached()
     if not plats:
         bullet = "Live tokenized-stocks platform snapshot is unavailable right now."
@@ -57,6 +57,8 @@ def _tokenized_stocks_takeaway_html() -> str:
 
 
 def main() -> None:
+    from rwa_league.widgets import TOKENIZED_STOCKS_RWA_CAPTION, show_rwa_tokenized_stocks_widget
+
     st.set_page_config(
         page_title="Tokenized Stocks — JPM Digital",
         page_icon="◆",
