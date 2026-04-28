@@ -1,4 +1,4 @@
-"""RWA.xyz Participants — Platforms: issuer overview KPIs + Platforms table (``/platforms`` embed)."""
+"""RWA.xyz Participants — Platforms: issuer overview KPIs + Platforms table."""
 
 from __future__ import annotations
 
@@ -75,11 +75,10 @@ def main() -> None:
 
     st.markdown(section_label_teal("Participants — Platforms", placement="first"), unsafe_allow_html=True)
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">RWA <strong>Participants</strong> · <strong>Platforms</strong>: '
-        "issuer-level **Platforms Overview** metrics and the **Distributed** Platforms issuer table from "
-        '<a href="https://app.rwa.xyz/platforms">RWA.xyz</a> <strong>Platforms</strong> page, aligned with the live '
-        "**Distributed** issuers view (including distributed vs. represented splits where the site shows them). "
-        "Top-line <strong>30D</strong> % changes and per-issuer columns match the public page.</p>",
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">This page mirrors the '
+        '<a href="https://app.rwa.xyz/platforms">RWA.xyz Platforms</a> view, including issuer-level headline metrics '
+        "and the <strong>Distributed</strong> issuer table. Top-line <strong>30D</strong> % changes and per-issuer "
+        "columns match the live page.</p>",
         unsafe_allow_html=True,
     )
     st.markdown(_participants_platforms_takeaway_html(), unsafe_allow_html=True)
@@ -90,7 +89,7 @@ def main() -> None:
     st.divider()
     st.caption(
         f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
-        "RWA.xyz embed · Cached up to one hour · Use **Refresh all data** on the home page to reload."
+        "RWA.xyz data · Cached up to one hour · Use **Refresh all data** on the home page to reload."
     )
 
 

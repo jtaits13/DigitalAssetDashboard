@@ -123,8 +123,8 @@ ETP_KEY_OBSERVATIONS_HTML = f"""
     risk transfer around spot ETPs, which can influence advisor suitability frameworks, institutional implementation,
     and trading-desk workflow design.</li>
   </ul>
-  <p class="etp-takeaway-note">Context for strategy only (not investment advice). The KPI row, chart, and table below are
-  from the StockAnalysis + Yahoo-based workflow described on this page.</p>
+  <p class="etp-takeaway-note">Context for strategy only (not investment advice). The KPI row, chart, and table below use
+  data from the StockAnalysis + Yahoo process described on this page.</p>
 </div>
 """
 
@@ -157,7 +157,7 @@ def main() -> None:
         unsafe_allow_html=True,
     )
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">A comprehensive view of U.S. digital asset ETPs, combining market context, aggregate '
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">A clear view of U.S. digital asset ETPs, combining market context, aggregate '
         'AUM trend signals, and fund-level reference data in one place. Data from '
         '<a href="https://stockanalysis.com/list/crypto-etfs/">StockAnalysis.com</a> and each fund’s detail page '
         "(issuer, inception, past-year return as <strong>52W %</strong>).</p>",

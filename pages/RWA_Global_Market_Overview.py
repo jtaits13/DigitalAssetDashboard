@@ -106,7 +106,7 @@ RWA_GLOBAL_MARKET_MACRO_CONTEXT_HTML = f"""
     </li>
   </ul>
   <p class="rwa-gmo-takeaway-note">Snapshot for context only (not investment advice). The chart and table below reflect
-  RWA.xyz embedded homepage data, not the third-party forecasts above.</p>
+  RWA.xyz homepage data, not the third-party forecasts above.</p>
 </div>
 """
 

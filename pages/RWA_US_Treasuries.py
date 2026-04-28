@@ -75,10 +75,11 @@ def main() -> None:
 
     st.markdown(section_label_teal("US Treasuries", placement="first"), unsafe_allow_html=True)
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">Tokenized U.S. Treasuries: overview <strong>30-day (30D)</strong> % changes from '
-        "<strong>RWA.xyz</strong> and <strong>Distributed</strong> leagues with search: <strong>Networks</strong> "
-        "then <strong>Platforms</strong> (tokenized Treasury by issuer). <strong>Distributed Value</strong> columns "
-        'are levels — <a href="https://app.rwa.xyz/treasuries">RWA.xyz US Treasuries</a>.</p>',
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">This page mirrors the '
+        '<a href="https://app.rwa.xyz/treasuries">RWA.xyz US Treasuries</a> view, including headline '
+        "<strong>30-day (30D)</strong> % changes and searchable <strong>Distributed</strong> tables for "
+        "<strong>Networks</strong> and <strong>Platforms</strong>. <strong>Distributed Value</strong> columns are "
+        "shown as current levels.</p>",
         unsafe_allow_html=True,
     )
     st.markdown(_treasuries_takeaway_html(), unsafe_allow_html=True)
@@ -90,7 +91,7 @@ def main() -> None:
     st.caption(TREASURY_RWA_CAPTION)
     st.caption(
         f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
-        "RWA.xyz embed · Cached up to one hour · Use **Refresh all data** on the home page to reload."
+        "RWA.xyz data · Cached up to one hour · Use **Refresh all data** on the home page to reload."
     )
 
 

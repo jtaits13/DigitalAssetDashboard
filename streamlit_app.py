@@ -192,10 +192,7 @@ def _sidebar() -> bool:
             st.switch_page("pages/RWA_Participants_Asset_Managers.py")
         st.divider()
         st.caption(
-            "Refresh reloads RSS, prices, ETPs, regulatory feeds, RWA Global Market / Networks embed, "
-            "RWA Explore by Asset Type / Market Participant index pages, RWA Stablecoins, RWA US Treasuries, "
-            "RWA Tokenized Stocks, RWA Participants — Networks, RWA Participants — Platforms, and "
-            "RWA Participants — Asset Managers embeds."
+            "Refresh reloads market prices, news and regulatory feeds, ETP data, and all RWA pages."
         )
         refresh = st.button("Refresh all data", use_container_width=True, key="sb_refresh")
     return bool(refresh)
@@ -204,7 +201,7 @@ def _sidebar() -> bool:
 def _footer_line() -> None:
     st.caption(
         f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M')} UTC · "
-        "CoinGecko/CoinCap · RSS · StockAnalysis · RWA.xyz embed"
+        "CoinGecko/CoinCap · RSS · StockAnalysis · RWA.xyz"
     )
 
 
@@ -250,7 +247,7 @@ def main() -> None:
     _feed_status_expanders(feed_errors, regulatory_errors)
 
     if not articles:
-        st.info("No articles loaded. Check your network or RSS URLs in `news_feeds.py`.")
+        st.info("No articles loaded. Check your network connection and feed sources.")
         st.markdown(hub_section_anchor("jd-section-news"), unsafe_allow_html=True)
         st.markdown(section_label_teal("News & Regulatory", placement="first"), unsafe_allow_html=True)
         st.markdown(

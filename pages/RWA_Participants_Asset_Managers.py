@@ -1,4 +1,4 @@
-"""RWA.xyz Participants — Asset Managers: overview KPIs + Distributed tab table (``/asset-managers`` embed)."""
+"""RWA.xyz Participants — Asset Managers: overview KPIs + Distributed tab table."""
 
 from __future__ import annotations
 
@@ -75,11 +75,10 @@ def main() -> None:
 
     st.markdown(section_label_teal("Participants — Asset Managers", placement="first"), unsafe_allow_html=True)
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">RWA <strong>Participants</strong> · <strong>Asset Managers</strong>: '
-        "manager-level **Asset Managers Overview** metrics and the **Distributed** tab table from "
-        '<a href="https://app.rwa.xyz/asset-managers">RWA.xyz</a> <strong>Asset Managers</strong> page, aligned with the live '
-        "**Distributed** tab (distributed and represented value columns). "
-        "Top-line <strong>30D</strong> % changes and per-manager columns match the public page.</p>",
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">This page mirrors the '
+        '<a href="https://app.rwa.xyz/asset-managers">RWA.xyz Asset Managers</a> view, including manager-level '
+        "headline metrics and the <strong>Distributed</strong> table. Top-line <strong>30D</strong> % changes and "
+        "per-manager columns match the live page.</p>",
         unsafe_allow_html=True,
     )
     st.markdown(_participants_asset_managers_takeaway_html(), unsafe_allow_html=True)
@@ -90,7 +89,7 @@ def main() -> None:
     st.divider()
     st.caption(
         f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
-        "RWA.xyz embed · Cached up to one hour · Use **Refresh all data** on the home page to reload."
+        "RWA.xyz data · Cached up to one hour · Use **Refresh all data** on the home page to reload."
     )
 
 

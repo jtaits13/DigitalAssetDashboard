@@ -59,8 +59,8 @@ def main() -> None:
         unsafe_allow_html=True,
     )
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">Browse every headline from the aggregated RSS feeds — search, filter by keyword, '
-        "and paginate.</p>",
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">Browse all headlines from aggregated RSS feeds. '
+        "Use search, keyword filters, and pagination to navigate the full list.</p>",
         unsafe_allow_html=True,
     )
     st.divider()

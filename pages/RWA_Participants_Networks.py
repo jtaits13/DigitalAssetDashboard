@@ -1,4 +1,4 @@
-"""RWA.xyz Participants — Networks: distributed value KPIs + Networks league (homepage embed)."""
+"""RWA.xyz Participants — Networks: distributed value KPIs + Networks league."""
 
 from __future__ import annotations
 
@@ -75,10 +75,10 @@ def main() -> None:
 
     st.markdown(section_label_teal("Participants — Networks", placement="first"), unsafe_allow_html=True)
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">RWA <strong>Participants</strong> · <strong>Networks</strong>: the same '
-        "<strong>Networks Overview</strong> headline metrics and on-chain <strong>Networks</strong> table as "
-        '<a href="https://app.rwa.xyz/networks">RWA.xyz</a> <strong>Networks</strong> page. '
-        "Top-line <strong>30D</strong> % changes and per-network <strong>transferability</strong> / share columns match the live site for the same view.</p>",
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">This page mirrors the '
+        '<a href="https://app.rwa.xyz/networks">RWA.xyz Networks</a> view, including headline metrics and the '
+        "<strong>Networks</strong> table. Top-line <strong>30D</strong> % changes and per-network "
+        "<strong>transferability</strong> and share columns match the live page.</p>",
         unsafe_allow_html=True,
     )
     st.markdown(_participants_networks_takeaway_html(), unsafe_allow_html=True)
@@ -89,7 +89,7 @@ def main() -> None:
     st.divider()
     st.caption(
         f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
-        "RWA.xyz embed · Cached up to one hour · Use **Refresh all data** on the home page to reload."
+        "RWA.xyz data · Cached up to one hour · Use **Refresh all data** on the home page to reload."
     )
 
 

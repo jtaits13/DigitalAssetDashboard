@@ -57,8 +57,8 @@ def main() -> None:
         unsafe_allow_html=True,
     )
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">Digital-asset regulatory and legal stories from aggregated RSS feeds — search and '
-        "paginate the full list.</p>",
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">Browse digital-asset regulatory and legal stories '
+        "from aggregated RSS feeds. Use search and pagination to navigate the full list.</p>",
         unsafe_allow_html=True,
     )
     st.divider()

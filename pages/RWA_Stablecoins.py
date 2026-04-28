@@ -1,4 +1,4 @@
-"""Full RWA.xyz Stablecoins page: overview KPIs + Platforms league (same embed as home preview)."""
+"""Full RWA.xyz Stablecoins page: overview KPIs + Platforms table."""
 
 from __future__ import annotations
 
@@ -76,11 +76,10 @@ def main() -> None:
 
     st.markdown(section_label_teal("Stablecoins", placement="first"), unsafe_allow_html=True)
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">Tokenized stablecoins: overview <strong>30-day (30D)</strong> % changes and '
-        "<strong>Platforms</strong> <strong>market caps</strong> (levels) by issuance platform. Full "
-        "<strong>Platforms</strong> league with search from the "
-        '<a href="https://app.rwa.xyz/stablecoins">RWA.xyz Stablecoins</a> embed; each row’s <strong>market cap</strong> '
-        "is a level.</p>",
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">This page mirrors the '
+        '<a href="https://app.rwa.xyz/stablecoins">RWA.xyz Stablecoins</a> view, including headline '
+        "<strong>30-day (30D)</strong> % changes and the <strong>Platforms</strong> table by issuer market cap. "
+        "Market-cap columns are shown as current levels.</p>",
         unsafe_allow_html=True,
     )
     st.markdown(_stablecoins_takeaway_html(), unsafe_allow_html=True)
@@ -92,7 +91,7 @@ def main() -> None:
     st.caption(STABLECOIN_RWA_CAPTION)
     st.caption(
         f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
-        "RWA.xyz embed · Cached up to one hour · Use **Refresh all data** on the home page to reload."
+        "RWA.xyz data · Cached up to one hour · Use **Refresh all data** on the home page to reload."
     )
 
 

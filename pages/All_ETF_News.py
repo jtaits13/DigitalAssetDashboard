@@ -75,11 +75,10 @@ div[data-testid="stColumn"]:has(.jd-etf-pager-r) div[data-testid="stVerticalBloc
     )
     _feed_name_list = ", ".join(n for n, _ in ETP_NEWS_FEEDS)
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">Headlines from the <strong>major crypto news RSS feeds</strong> <strong>plus</strong> dedicated ETF/issuer sources, '
-        "filtered to items that read <strong>ETF- or ETP-oriented</strong> (including known spot / ticker language), not general crypto or stablecoin policy unless it "
-        "clearly ties to those products. "
-        "Search and paginate. Headlines are limited to the <strong>last three calendar months</strong> (UTC). Outlets only expose <strong>recent</strong> posts in RSS; "
-        "<strong>Google News</strong> queries add breadth but are capped (~100 headlines each) — not a complete archive. "
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">Headlines from major crypto RSS sources plus ETF/issuer feeds, '
+        "filtered for <strong>ETF/ETP-focused</strong> stories. "
+        "Use search and pagination to browse results. The list covers the <strong>last three calendar months</strong> (UTC). "
+        "RSS feeds typically publish only recent posts, and <strong>Google News</strong> adds coverage but is still not a complete archive. "
         f"Sources: {escape(_feed_name_list)}.</p>",
         unsafe_allow_html=True,
     )

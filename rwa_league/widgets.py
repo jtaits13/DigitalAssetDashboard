@@ -173,9 +173,9 @@ _RWA_KPI_PANEL_INLINE_STYLE = (
 )
 
 RWA_DATA_SOURCE_CAPTION = (
-    "Source: [RWA.xyz Networks](https://app.rwa.xyz/networks) embedded overview + "
-    "**Distributed** **Networks** league tab (RWA counts and transferability-based value as on site; not the public API). "
-    "Overview **% changes** are **30-day (30D)**; table figures match the embedded league view."
+    "Source: [RWA.xyz Networks](https://app.rwa.xyz/networks). "
+    "This page mirrors the live **Distributed Networks** view. "
+    "Top-line **% changes** are **30-day (30D)**; table values are current levels."
 )
 RWA_GLOBAL_MARKET_DATA_SOURCE_CAPTION = (
     "Source: [RWA.xyz homepage](https://app.rwa.xyz/)—the same **Global Market Overview** headline figures and "
@@ -183,27 +183,27 @@ RWA_GLOBAL_MARKET_DATA_SOURCE_CAPTION = (
 )
 
 RWA_PLATFORMS_DATA_SOURCE_CAPTION = (
-    "Source: [RWA.xyz Platforms](https://app.rwa.xyz/platforms) embedded overview + "
-    "**Distributed** **Platforms** issuer league tab (issuer distributed / represented value as on site; not the public API). "
-    "Overview **% changes** are **30-day (30D)**; issuer totals are levels."
+    "Source: [RWA.xyz Platforms](https://app.rwa.xyz/platforms). "
+    "This page mirrors the live **Distributed Platforms** issuer view. "
+    "Top-line **% changes** are **30-day (30D)**; issuer values are current levels."
 )
 
 RWA_ASSET_MANAGERS_DATA_SOURCE_CAPTION = (
-    "Source: [RWA.xyz Asset Managers](https://app.rwa.xyz/asset-managers) embedded overview + "
-    "**Distributed** tab manager table (RWA value distributed and represented as on site; not the public API). "
-    "Overview **% changes** are **30-day (30D)**; table figures are levels."
+    "Source: [RWA.xyz Asset Managers](https://app.rwa.xyz/asset-managers). "
+    "This page mirrors the live **Distributed** manager view. "
+    "Top-line **% changes** are **30-day (30D)**; table values are current levels."
 )
 
 STABLECOIN_RWA_CAPTION = (
-    "Source: [RWA.xyz Stablecoins](https://app.rwa.xyz/stablecoins) embedded overview + "
-    "**Platforms** league tab (market cap by issuer platform; not the public API). "
-    "Overview **% changes** are **30-day (30D)**; **market cap** figures are levels."
+    "Source: [RWA.xyz Stablecoins](https://app.rwa.xyz/stablecoins). "
+    "This page mirrors the live **Platforms** view by issuer market cap. "
+    "Top-line **% changes** are **30-day (30D)**; **market cap** values are current levels."
 )
 
 TREASURY_RWA_CAPTION = (
-    "Source: [RWA.xyz US Treasuries](https://app.rwa.xyz/treasuries) embedded overview + "
-    "**Distributed** · **Networks** league (Distributed Value; not the public API). "
-    "Overview **% changes** are **30-day (30D)**; **Distributed Value** is a level."
+    "Source: [RWA.xyz US Treasuries](https://app.rwa.xyz/treasuries). "
+    "This page mirrors the live **Distributed Networks** view. "
+    "Top-line **% changes** are **30-day (30D)**; **Distributed Value** is a current level."
 )
 
 TREASURY_PLATFORM_CAPTION = (
@@ -212,9 +212,9 @@ TREASURY_PLATFORM_CAPTION = (
     "(RWA.xyz may label similar columns **30D** in the UI)."
 )
 TOKENIZED_STOCKS_RWA_CAPTION = (
-    "Source: [RWA.xyz Tokenized Stocks](https://app.rwa.xyz/stocks) embedded overview + "
-    "**Distributed** · **Platforms** league (Distributed Value by platform; not the public API). "
-    "Overview **% changes** are **30-day (30D)**; **Distributed Value** in the tables are levels."
+    "Source: [RWA.xyz Tokenized Stocks](https://app.rwa.xyz/stocks). "
+    "This page mirrors the live **Distributed Platforms** view. "
+    "Top-line **% changes** are **30-day (30D)**; **Distributed Value** is shown as current levels."
 )
 
 TREASURIES_RWA_LINK_LABEL = "See US Treasuries on RWA.xyz"
@@ -1778,7 +1778,7 @@ def _show_rwa_participants_networks_home_footer(
         hub_kpi_emphasis=True,
     )
     st.caption(
-        "Preview of the **Networks** table from the [RWA.xyz Networks](https://app.rwa.xyz/networks) embed "
+        "Preview of the **Networks** table from [RWA.xyz Networks](https://app.rwa.xyz/networks) "
         "(same totals as **RWA Global Market** above, formatted here under **Participants**)."
     )
     n = max(1, min(preview_rows, len(rows)))
@@ -1822,7 +1822,7 @@ def _show_rwa_participants_platforms_home_footer(
         hub_kpi_emphasis=True,
     )
     st.caption(
-        "Preview of the **Distributed** Platforms issuer table from the [RWA.xyz Platforms](https://app.rwa.xyz/platforms) embed."
+        "Preview of the **Distributed** Platforms issuer table from [RWA.xyz Platforms](https://app.rwa.xyz/platforms)."
     )
     n = max(1, min(preview_rows, len(rows)))
     working = list(rows)[:n]
@@ -1866,7 +1866,7 @@ def _show_rwa_participants_asset_managers_home_footer(
     )
     st.caption(
         "Preview of the **Distributed** Asset Managers table from the "
-        "[RWA.xyz Asset Managers](https://app.rwa.xyz/asset-managers) embed."
+        "[RWA.xyz Asset Managers](https://app.rwa.xyz/asset-managers)."
     )
     n = max(1, min(preview_rows, len(rows)))
     working = list(rows)[:n]
@@ -2058,7 +2058,7 @@ def show_rwa_participants_networks_widget(
         unsafe_allow_html=True,
     )
     st.caption(
-        "Searchable table from the [RWA.xyz Networks](https://app.rwa.xyz/networks) embed. "
+        "Searchable table from [RWA.xyz Networks](https://app.rwa.xyz/networks). "
         "RWA value columns use the same **transferability** fields as the on-site list; top-line **%** are **30D**."
     )
 
@@ -2152,7 +2152,7 @@ def show_rwa_participants_platforms_widget(
             unsafe_allow_html=True,
         )
         st.caption(
-            "Searchable **Distributed** Platforms issuer table from the [RWA.xyz Platforms](https://app.rwa.xyz/platforms) embed."
+            "Searchable **Distributed** Platforms issuer table from [RWA.xyz Platforms](https://app.rwa.xyz/platforms)."
         )
 
     _render_rwa_global_overview(kpis, kpi_legend_name="Platforms")
@@ -2246,7 +2246,7 @@ def show_rwa_participants_asset_managers_widget(
         )
         st.caption(
             "Searchable **Distributed** Asset Managers table from the "
-            "[RWA.xyz Asset Managers](https://app.rwa.xyz/asset-managers) embed."
+            "[RWA.xyz Asset Managers](https://app.rwa.xyz/asset-managers)."
         )
 
     _render_rwa_global_overview(kpis, kpi_legend_name="Asset Managers")

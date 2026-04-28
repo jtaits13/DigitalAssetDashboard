@@ -75,10 +75,10 @@ def main() -> None:
 
     st.markdown(section_label_teal("Tokenized Stocks", placement="first"), unsafe_allow_html=True)
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">Tokenized public equities: overview <strong>30-day (30D)</strong> % changes and '
-        "<strong>Distributed Value</strong> breakdowns (levels) by platform and network. Full "
-        "<strong>Distributed</strong> · <strong>Platforms</strong> league with search — "
-        '<a href="https://app.rwa.xyz/stocks">RWA.xyz Tokenized Stocks</a>.</p>',
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">This page mirrors the '
+        '<a href="https://app.rwa.xyz/stocks">RWA.xyz Tokenized Stocks</a> view, including headline '
+        "<strong>30-day (30D)</strong> % changes and the searchable <strong>Distributed Platforms</strong> table. "
+        "<strong>Distributed Value</strong> columns are shown as current levels.</p>",
         unsafe_allow_html=True,
     )
     st.markdown(_tokenized_stocks_takeaway_html(), unsafe_allow_html=True)
@@ -90,7 +90,7 @@ def main() -> None:
     st.caption(TOKENIZED_STOCKS_RWA_CAPTION)
     st.caption(
         f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
-        "RWA.xyz embed · Cached up to one hour · Use **Refresh all data** on the home page to reload."
+        "RWA.xyz data · Cached up to one hour · Use **Refresh all data** on the home page to reload."
     )
 
 
