@@ -14,12 +14,6 @@ from datetime import datetime, timezone
 import streamlit as st
 
 from home_layout import ETP_FULLPAGE_AUM_LINE_CSS, STREAMLIT_TABLE_UNIFY_CSS, section_label_teal
-from news_feeds import (
-    app_shared_layout_css,
-    article_styles_markdown,
-    render_subpage_sidebar,
-    render_subpage_top_bar,
-)
 from price_ticker import show_price_ticker
 
 
@@ -40,6 +34,12 @@ def _tokenized_stocks_takeaway_html() -> str:
 
 def main() -> None:
     from rwa_league.widgets import TOKENIZED_STOCKS_RWA_CAPTION, show_rwa_tokenized_stocks_widget
+    from news_feeds import (
+        app_shared_layout_css,
+        article_styles_markdown,
+        render_subpage_sidebar,
+        render_subpage_top_bar,
+    )
 
     st.set_page_config(
         page_title="Tokenized Stocks — JPM Digital",

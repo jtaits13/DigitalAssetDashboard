@@ -14,12 +14,6 @@ from datetime import datetime, timezone
 import streamlit as st
 
 from home_layout import ETP_FULLPAGE_AUM_LINE_CSS, STREAMLIT_TABLE_UNIFY_CSS, section_label_teal
-from news_feeds import (
-    app_shared_layout_css,
-    article_styles_markdown,
-    render_subpage_sidebar,
-    render_subpage_top_bar,
-)
 from price_ticker import show_price_ticker
 
 
@@ -40,6 +34,12 @@ def _participants_platforms_takeaway_html() -> str:
 
 def main() -> None:
     from rwa_league.widgets import show_rwa_participants_platforms_widget
+    from news_feeds import (
+        app_shared_layout_css,
+        article_styles_markdown,
+        render_subpage_sidebar,
+        render_subpage_top_bar,
+    )
 
     st.set_page_config(
         page_title="Participants — Platforms — JPM Digital",
