@@ -1240,13 +1240,9 @@ def show_rwa_stablecoins_widget(
                 "Overview **% changes** are **30-day (30D)**; each row’s **market cap** is a level."
             )
         else:
-            st.markdown(
-                hub_subsection_heading_html(
-                    "Stablecoin Overview",
-                    element_id="jd-rwa-stablecoins",
-                ),
-                unsafe_allow_html=True,
-            )
+            # Full page already renders the primary section title/description.
+            # Avoid repeating a second overview heading before KPI tiles.
+            pass
 
     rows_sc, kpis_sc, err_sc = load_rwa_stablecoins_cached()
 
@@ -1359,13 +1355,9 @@ def show_rwa_treasuries_widget(
                 f"**Distributed Value** columns are levels — [RWA.xyz US Treasuries]({APP_TREASURIES})."
             )
         else:
-            st.markdown(
-                hub_subsection_heading_html(
-                    "Treasury Overview",
-                    element_id="jd-rwa-treasuries",
-                ),
-                unsafe_allow_html=True,
-            )
+            # Full page already renders the primary section title/description.
+            # Avoid repeating a second overview heading before KPI tiles.
+            pass
 
     rows_tr, plat_tr, kpis_tr, err_tr = load_rwa_treasuries_cached()
 
@@ -1526,13 +1518,9 @@ def show_rwa_tokenized_stocks_widget(
                 f"[RWA.xyz Tokenized Stocks]({APP_STOCKS})."
             )
         else:
-            st.markdown(
-                hub_subsection_heading_html(
-                    "Tokenized Equity Overview",
-                    element_id="jd-rwa-tokenized-stocks",
-                ),
-                unsafe_allow_html=True,
-            )
+            # Full page already renders the primary section title/description.
+            # Avoid repeating a second overview heading before KPI tiles.
+            pass
 
     rows_st_net, rows_st_plat, kpis_st, err_st = load_rwa_tokenized_stocks_cached()
 
@@ -1916,11 +1904,6 @@ def show_rwa_participants_networks_widget(
         rows_home, kpis_home, err_home = load_rwa_global_market_cached()
         if err_home and not rows_home:
             st.warning(escape(err_home))
-            st.markdown(
-                f'<div class="jd-hub-subsection-head" id="jd-rwa-market">'
-                f'<h2 class="home-main-heading">{escape(RWA_GLOBAL_MARKET_OVERVIEW_HEADING)}</h2></div>',
-                unsafe_allow_html=True,
-            )
             _render_rwa_global_overview(kpis_home, kpi_legend_name="Global Market")
             st.link_button(
                 GLOBAL_MARKET_RWA_LINK_LABEL,
@@ -1935,13 +1918,6 @@ def show_rwa_participants_networks_widget(
             st.info("No network rows returned.")
             return
 
-        st.markdown(
-            hub_subsection_heading_html(
-                RWA_GLOBAL_MARKET_OVERVIEW_HEADING,
-                element_id="jd-rwa-market",
-            ),
-            unsafe_allow_html=True,
-        )
         _render_rwa_global_overview(
             kpis_home,
             kpi_legend_name="Global Market",
@@ -2137,15 +2113,7 @@ def show_rwa_participants_platforms_widget(
         st.info("No platform rows returned.")
         return
 
-    if full_page_header:
-        st.markdown(
-            hub_subsection_heading_html(
-                RWA_PLATFORMS_SUBPAGE_OVERVIEW_HEADING,
-                element_id="jd-rwa-platforms-overview",
-            ),
-            unsafe_allow_html=True,
-        )
-    else:
+    if not full_page_header:
         st.markdown(
             '<div class="jd-hub-subsection-head" id="jd-rwa-participants-platforms">'
             '<h2 class="home-main-heading">Platforms</h2></div>',
@@ -2230,15 +2198,7 @@ def show_rwa_participants_asset_managers_widget(
         st.info("No asset manager rows returned.")
         return
 
-    if full_page_header:
-        st.markdown(
-            hub_subsection_heading_html(
-                RWA_ASSET_MANAGERS_SUBPAGE_OVERVIEW_HEADING,
-                element_id="jd-rwa-asset-managers-overview",
-            ),
-            unsafe_allow_html=True,
-        )
-    else:
+    if not full_page_header:
         st.markdown(
             '<div class="jd-hub-subsection-head" id="jd-rwa-participants-asset-managers">'
             '<h2 class="home-main-heading">Asset Managers</h2></div>',

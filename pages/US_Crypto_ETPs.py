@@ -184,7 +184,7 @@ def main() -> None:
 
     st.markdown(
         hub_subsection_heading_html(
-            "U.S. Digital Asset ETPs",
+            "Top-line market snapshot",
             element_id="jd-etp-summary",
         ),
         unsafe_allow_html=True,
