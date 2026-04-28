@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from html import escape
+from typing import TYPE_CHECKING
 
 import plotly.graph_objects as go
 import streamlit as st
@@ -15,30 +16,20 @@ from home_layout import (
 )
 from news_feeds import hub_news_panel_header_html
 from rwa_league.explore_nav import RwaExploreTopNavTarget, set_rwa_explore_top_nav_target
-from rwa_league.client import (
-    APP_ASSET_MANAGERS,
-    APP_NETWORKS,
-    APP_PLATFORMS,
-    APP_STOCKS,
-    APP_TREASURIES,
-    RwaAssetManagersTabRow,
-    RwaGlobalKpi,
-    RwaNetworkLeagueRow,
-    RwaNetworksTabRow,
-    RwaPlatformsTabRow,
-    RwaTokenizedStockNetworkRow,
-    RwaStablecoinPlatformRow,
-    RwaTokenizedStockPlatformRow,
-    RwaTreasuryDistributedNetworkRow,
-    RwaTreasuryPlatformRow,
-    fetch_rwa_asset_managers_page_data,
-    fetch_rwa_home_data,
-    fetch_rwa_networks_page_data,
-    fetch_rwa_platforms_page_data,
-    fetch_rwa_stablecoins_data,
-    fetch_rwa_tokenized_stocks_data,
-    fetch_rwa_treasuries_data,
-)
+
+if TYPE_CHECKING:
+    from rwa_league.client import (
+        RwaAssetManagersTabRow,
+        RwaGlobalKpi,
+        RwaNetworkLeagueRow,
+        RwaNetworksTabRow,
+        RwaPlatformsTabRow,
+        RwaTokenizedStockNetworkRow,
+        RwaStablecoinPlatformRow,
+        RwaTokenizedStockPlatformRow,
+        RwaTreasuryDistributedNetworkRow,
+        RwaTreasuryPlatformRow,
+    )
 from rwa_league.dataframe_table import (
     build_rwa_asset_managers_page_dataframe,
     build_rwa_dataframe,
@@ -67,6 +58,12 @@ from rwa_league.dataframe_table import (
     style_us_treasury_network_dataframe,
     style_us_treasury_platform_dataframe,
 )
+
+APP_NETWORKS = "https://app.rwa.xyz/networks"
+APP_PLATFORMS = "https://app.rwa.xyz/platforms"
+APP_STOCKS = "https://app.rwa.xyz/stocks"
+APP_TREASURIES = "https://app.rwa.xyz/treasuries"
+APP_ASSET_MANAGERS = "https://app.rwa.xyz/asset-managers"
 
 WIDGET_CSS = """
 <style>
@@ -1119,6 +1116,8 @@ def load_rwa_global_market_cached(
 ) -> tuple[list[RwaNetworkLeagueRow], list[RwaGlobalKpi], str | None]:
     """Bump ``_global_schema`` when homepage Market Overview embed shape changes."""
     _ = _global_schema
+    from rwa_league.client import fetch_rwa_home_data
+
     return fetch_rwa_home_data()
 
 
@@ -1126,6 +1125,8 @@ def load_rwa_global_market_cached(
 def load_rwa_league_cached(*, _rwa_schema: int = 7) -> tuple[list[RwaNetworksTabRow], list[RwaGlobalKpi], str | None]:
     """Bump ``_rwa_schema`` when the RWA.xyz Networks page layout or row fields we read change."""
     _ = _rwa_schema
+    from rwa_league.client import fetch_rwa_networks_page_data
+
     return fetch_rwa_networks_page_data()
 
 
@@ -1133,6 +1134,8 @@ def load_rwa_league_cached(*, _rwa_schema: int = 7) -> tuple[list[RwaNetworksTab
 def load_rwa_platforms_cached(*, _platforms_schema: int = 2) -> tuple[list[RwaPlatformsTabRow], list[RwaGlobalKpi], str | None]:
     """Bump ``_platforms_schema`` when the RWA.xyz Platforms page layout or row mapping changes."""
     _ = _platforms_schema
+    from rwa_league.client import fetch_rwa_platforms_page_data
+
     return fetch_rwa_platforms_page_data()
 
 
@@ -1142,6 +1145,8 @@ def load_rwa_asset_managers_cached(
 ) -> tuple[list[RwaAssetManagersTabRow], list[RwaGlobalKpi], str | None]:
     """Bump ``_asset_managers_schema`` when the RWA.xyz Asset Managers page layout or row mapping changes."""
     _ = _asset_managers_schema
+    from rwa_league.client import fetch_rwa_asset_managers_page_data
+
     return fetch_rwa_asset_managers_page_data()
 
 
@@ -1151,6 +1156,8 @@ def load_rwa_stablecoins_cached(
 ) -> tuple[list[RwaStablecoinPlatformRow], list[RwaGlobalKpi], str | None]:
     """Bump ``_stable_schema`` when ``/stablecoins`` embed shape changes."""
     _ = _stable_schema
+    from rwa_league.client import fetch_rwa_stablecoins_data
+
     return fetch_rwa_stablecoins_data()
 
 
@@ -1165,6 +1172,8 @@ def load_rwa_treasuries_cached(
 ]:
     """Bump ``_treasury_schema`` when ``/treasuries`` embed shape changes."""
     _ = _treasury_schema
+    from rwa_league.client import fetch_rwa_treasuries_data
+
     return fetch_rwa_treasuries_data()
 
 
@@ -1179,6 +1188,8 @@ def load_rwa_tokenized_stocks_cached(
 ]:
     """Bump ``_stocks_schema`` when ``/stocks`` embed shape changes."""
     _ = _stocks_schema
+    from rwa_league.client import fetch_rwa_tokenized_stocks_data
+
     return fetch_rwa_tokenized_stocks_data()
 
 
