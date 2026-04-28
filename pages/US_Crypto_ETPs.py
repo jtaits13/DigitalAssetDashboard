@@ -162,7 +162,6 @@ def main() -> None:
         "(issuer, inception, past-year return as <strong>52W %</strong>).</p>",
         unsafe_allow_html=True,
     )
-    st.markdown(ETP_KEY_OBSERVATIONS_HTML, unsafe_allow_html=True)
     st.divider()
 
     with st.spinner("Loading U.S. digital asset ETPs (list + profile pages)…"):
@@ -190,6 +189,7 @@ def main() -> None:
         unsafe_allow_html=True,
     )
     render_etp_summary_kpi_row(rows, include_styles=False)
+    st.markdown(ETP_KEY_OBSERVATIONS_HTML, unsafe_allow_html=True)
 
     # border=True: same as home News & Regulatory row — stretch columns and pin Explore CTA under the hub panel.
     col_aum, col_pulse = st.columns([1, 1], gap="medium", border=True)
