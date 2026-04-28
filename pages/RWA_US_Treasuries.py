@@ -52,9 +52,14 @@ def main() -> None:
         unsafe_allow_html=True,
     )
     st.markdown(
-        "**Key Observation**\n"
-        "- Tokenized U.S. Treasuries are scaling as the **institutional bridge** between traditional fixed income and "
-        "on-chain collateral, with distribution and issuer credibility driving share more than product novelty."
+        '<div style="border:1px solid #C7D8E8;border-radius:10px;padding:0.75rem 0.95rem;'
+        'margin:0.1rem 0 0.55rem;background:#ffffff;box-shadow:0 1px 3px rgba(15,23,42,0.06);">'
+        '<p style="margin:0 0 0.28rem 0;font-size:0.9rem;font-weight:700;color:#021D41;">Key Observation</p>'
+        '<ul style="margin:0.1rem 0 0 1.05rem;padding:0;color:#1F4C67;font-size:0.9rem;line-height:1.4;">'
+        '<li>Tokenized U.S. Treasuries are scaling as an <strong>institutional bridge</strong> between fixed income and '
+        'on-chain collateral, with distribution and issuer credibility driving share more than product novelty.</li>'
+        "</ul></div>",
+        unsafe_allow_html=True,
     )
     st.divider()
 
