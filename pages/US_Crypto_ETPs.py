@@ -59,9 +59,6 @@ ETP_TOP_SPLIT_AUM_CHART_HEIGHT = 420
 
 _SEC_SPOT_BTC_ETPS_ORDER_URL = "https://www.sec.gov/files/rules/sro/nysearca/2024/34-99306.pdf"
 _SEC_OPTIONS_APPROVAL_URL = "https://www.sec.gov/files/rules/sro/cboebzx/2024/34-101224.pdf"
-_SSGA_GALAXY_FEE_WAR_URL = (
-    "https://www.ssga.com/us/en/intermediary/insights/bitcoin-etf-fee-war-what-advisors-need-to-know"
-)
 _DL_NEWS_BTC_ETF_AUM_SCENARIO_URL = (
     "https://www.dlnews.com/articles/markets/bitcoin-etfs-to-top-180-billion-usd-in-2026-say-analysts/"
 )
@@ -113,10 +110,6 @@ ETP_KEY_OBSERVATIONS_HTML = f"""
     ETF assets, compared with roughly <strong>~$145B today</strong> in that same discussion context (see
     <a href="{_DL_NEWS_BTC_ETF_AUM_SCENARIO_URL}">DL News summary of analyst estimates</a>). Treat these as directional
     planning ranges, not a base-case forecast.</li>
-    <li><strong>Fee pressure is structural.</strong> Issuer pricing competition intensified early and remains a core
-    differentiator (example context: <a href="{_SSGA_GALAXY_FEE_WAR_URL}">State Street / Galaxy note</a>), pushing
-    managers toward operational efficiency, securities-lending discipline, and cross-product revenue strategy rather
-    than headline fee alone.</li>
     <li><strong>Market structure is maturing around liquidity tools.</strong> Milestones such as U.S. exchange-listed
     spot Bitcoin options approvals (see <a href="{_SEC_OPTIONS_APPROVAL_URL}">SEC approval order</a>) improve hedging and
     risk transfer around spot ETPs, which can influence advisor suitability frameworks, institutional implementation,
