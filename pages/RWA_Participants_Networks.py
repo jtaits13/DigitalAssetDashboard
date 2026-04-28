@@ -13,7 +13,12 @@ from datetime import datetime, timezone
 
 import streamlit as st
 
-from home_layout import ETP_FULLPAGE_AUM_LINE_CSS, STREAMLIT_TABLE_UNIFY_CSS, section_label_teal
+from home_layout import (
+    ETP_FULLPAGE_AUM_LINE_CSS,
+    STREAMLIT_TABLE_UNIFY_CSS,
+    hub_subsection_heading_html,
+    section_label_teal,
+)
 from price_ticker import show_price_ticker
 
 
@@ -37,7 +42,6 @@ def _participants_networks_takeaway_html() -> str:
     return (
         '<div style="border:1px solid #C7D8E8;border-radius:10px;padding:0.75rem 0.95rem;'
         'margin:0.1rem 0 0.55rem;background:#ffffff;box-shadow:0 1px 3px rgba(15,23,42,0.06);">'
-        '<p style="margin:0 0 0.28rem 0;font-size:0.9rem;font-weight:700;color:#021D41;">Key Observation</p>'
         '<ul style="margin:0.1rem 0 0 1.05rem;padding:0;color:#1F4C67;font-size:0.9rem;line-height:1.4;">'
         '<li><strong>RWA value remains network-concentrated:</strong> the top chains continue to capture the majority of '
         'distributed issuance and often set near-term market direction.</li>'
@@ -81,6 +85,7 @@ def main() -> None:
         "<strong>transferability</strong> and share columns match the live page.</p>",
         unsafe_allow_html=True,
     )
+    st.markdown(hub_subsection_heading_html("Key Observations"), unsafe_allow_html=True)
     st.markdown(_participants_networks_takeaway_html(), unsafe_allow_html=True)
     st.divider()
 
