@@ -9,8 +9,6 @@ appropriate). **Asset managers** follows the **Distributed** tab with distribute
 This is not RWA.xyz’s official API; page structure may change. For production workloads, use RWA.xyz data products.
 """
 
-from __future__ import annotations
-
 import json
 import logging
 import re
