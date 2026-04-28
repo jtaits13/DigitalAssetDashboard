@@ -12,6 +12,8 @@ This is not RWA.xyz’s official API; page structure may change. For production 
 import json
 import logging
 import re
+import sys
+import types
 from dataclasses import asdict, dataclass
 from typing import Any
 
@@ -27,6 +29,13 @@ APP_TREASURIES = "https://app.rwa.xyz/treasuries"
 APP_STOCKS = "https://app.rwa.xyz/stocks"
 APP_ASSET_MANAGERS = "https://app.rwa.xyz/asset-managers"
 USER_AGENT = "JPM-Digital/1.0 (RWA league widget; contact via app maintainer)"
+
+# Defensive registration for runtimes/loaders where dataclasses may inspect this module
+# before the import system exposes it through sys.modules.
+if sys.modules.get(__name__) is None:
+    _m = types.ModuleType(__name__)
+    _m.__dict__.update(globals())
+    sys.modules[__name__] = _m
 
 
 def format_usd_compact(n: float) -> str:
