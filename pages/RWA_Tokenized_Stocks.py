@@ -24,15 +24,6 @@ from price_ticker import show_price_ticker
 from rwa_league.explore_nav import set_rwa_explore_top_nav_target
 from rwa_league.widgets import TOKENIZED_STOCKS_RWA_CAPTION, show_rwa_tokenized_stocks_widget
 
-RWA_TOKENIZED_STOCKS_TAKEAWAY_HTML = """
-<div style="border:1px solid #C7D8E8;border-radius:10px;padding:0.7rem 0.95rem;margin:0.1rem 0 0.55rem;background:#fff;box-shadow:0 1px 3px rgba(15,23,42,0.06);">
-  <p style="margin:0 0 0.25rem 0;font-size:0.9rem;font-weight:700;color:#021D41;">Key Observation</p>
-  <ul style="margin:0.15rem 0 0 1.05rem;padding:0;color:#1F4C67;font-size:0.9rem;line-height:1.4;">
-    <li>Tokenized stocks remain an <strong>early-stage access format</strong> where liquidity and scale are still concentrated, so growth depends on tighter market-structure alignment between brokers, venues, and custody rails.</li>
-  </ul>
-</div>
-"""
-
 
 def main() -> None:
     st.set_page_config(
@@ -60,7 +51,11 @@ def main() -> None:
         '<a href="https://app.rwa.xyz/stocks">RWA.xyz Tokenized Stocks</a>.</p>',
         unsafe_allow_html=True,
     )
-    st.markdown(RWA_TOKENIZED_STOCKS_TAKEAWAY_HTML, unsafe_allow_html=True)
+    st.markdown(
+        "**Key Observation**\n"
+        "- Tokenized stocks remain an **early-stage access format** where liquidity and scale are still concentrated, "
+        "so growth depends on tighter market-structure alignment between brokers, venues, and custody rails."
+    )
     st.divider()
 
     show_rwa_tokenized_stocks_widget(home_preview=False, full_page_header=True)
