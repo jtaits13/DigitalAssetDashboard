@@ -103,8 +103,6 @@ RWA_GLOBAL_MARKET_MACRO_CONTEXT_HTML = f"""
         by 2030</strong>, with discussion that <strong>~10%</strong> might be tokenized—one asset-class lens inside a wider survey
         of markets and policy.</li>
       </ul>
-      <p class="rwa-gmo-takeaway-note" style="margin-top:0.35rem;margin-bottom:0;">Treat each line as a <strong>directional
-      scenario</strong> from a different perimeter—do not sum or average across firms.</p>
     </li>
   </ul>
   <p class="rwa-gmo-takeaway-note">Snapshot for context only (not investment advice). The chart and table below reflect
