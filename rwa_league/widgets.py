@@ -1427,7 +1427,7 @@ def show_rwa_treasuries_widget(
         st.divider()
         st.markdown(
             '<div class="jd-hub-subsection-head">'
-            '<h2 class="home-main-heading">By platform (Tokenized Treasury league)</h2></div>',
+            '<h2 class="home-main-heading">By Platform (Tokenized Treasury League)</h2></div>',
             unsafe_allow_html=True,
         )
         st.caption(
@@ -1584,7 +1584,7 @@ def show_rwa_tokenized_stocks_widget(
         table_h = rwa_table_height(len(working), max_h=900)
         st.markdown(
             '<div class="jd-hub-subsection-head">'
-            '<h2 class="home-main-heading">By platform (Distributed · Platforms)</h2></div>',
+            '<h2 class="home-main-heading">By Platform (Distributed · Platforms)</h2></div>',
             unsafe_allow_html=True,
         )
         df_st = build_tokenized_stock_platform_dataframe(working)
@@ -1598,7 +1598,7 @@ def show_rwa_tokenized_stocks_widget(
         st.divider()
         st.markdown(
             '<div class="jd-hub-subsection-head">'
-            '<h2 class="home-main-heading">By network (Distributed · Networks)</h2></div>',
+            '<h2 class="home-main-heading">By Network (Distributed · Networks)</h2></div>',
             unsafe_allow_html=True,
         )
         if rows_st_net:
@@ -2058,7 +2058,7 @@ def show_rwa_participants_networks_widget(
 
     st.markdown(
         '<div class="jd-hub-subsection-head">'
-        '<h2 class="home-main-heading">Networks table</h2></div>',
+        '<h2 class="home-main-heading">Networks Table</h2></div>',
         unsafe_allow_html=True,
     )
     df = build_rwa_networks_page_dataframe(working)
@@ -2143,7 +2143,7 @@ def show_rwa_participants_platforms_widget(
 
     st.markdown(
         '<div class="jd-hub-subsection-head">'
-        '<h2 class="home-main-heading">Platforms table</h2></div>',
+        '<h2 class="home-main-heading">Platforms Table</h2></div>',
         unsafe_allow_html=True,
     )
     df = build_rwa_platforms_page_dataframe(working)
@@ -2229,7 +2229,7 @@ def show_rwa_participants_asset_managers_widget(
 
     st.markdown(
         '<div class="jd-hub-subsection-head">'
-        '<h2 class="home-main-heading">Asset Managers table</h2></div>',
+        '<h2 class="home-main-heading">Asset Managers Table</h2></div>',
         unsafe_allow_html=True,
     )
     df = build_rwa_asset_managers_page_dataframe(working)
