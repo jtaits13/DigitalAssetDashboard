@@ -17,6 +17,22 @@ from home_layout import ETP_FULLPAGE_AUM_LINE_CSS, STREAMLIT_TABLE_UNIFY_CSS, se
 from price_ticker import show_price_ticker
 
 
+def _monthly_review_note_html(*, year: int = 2026, month: int = 4) -> str:
+    last_review = datetime(year, month, 1, tzinfo=timezone.utc)
+    label = last_review.strftime("%b %Y")
+    age_days = max(0, (datetime.now(timezone.utc) - last_review).days)
+    if age_days > 31:
+        return (
+            '<p style="margin:0.1rem 0 0.55rem 0;color:#b91c1c;font-size:0.78rem;">'
+            f"<strong>Review due:</strong> last reviewed {label} ({age_days} days ago)."
+            "</p>"
+        )
+    return (
+        '<p style="margin:0.1rem 0 0.55rem 0;color:#3E6A7A;font-size:0.78rem;">'
+        f"Reviewed monthly · Last reviewed: {label}</p>"
+    )
+
+
 def _participants_networks_takeaway_html() -> str:
     return (
         '<div style="border:1px solid #C7D8E8;border-radius:10px;padding:0.75rem 0.95rem;'
@@ -28,7 +44,7 @@ def _participants_networks_takeaway_html() -> str:
         '<li><strong>Institutional expansion is likely staged:</strong> large-scale adoption typically lands on proven '
         'networks first, then broadens as compliance, interoperability, and liquidity deepen.</li>'
         "</ul></div>"
-        '<p style="margin:0.1rem 0 0.55rem 0;color:#3E6A7A;font-size:0.78rem;">Reviewed monthly · Last reviewed: Apr 2026</p>'
+        + _monthly_review_note_html()
     )
 
 
