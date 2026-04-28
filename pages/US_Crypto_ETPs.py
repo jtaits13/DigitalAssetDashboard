@@ -62,6 +62,9 @@ _SEC_OPTIONS_APPROVAL_URL = "https://www.sec.gov/files/rules/sro/cboebzx/2024/34
 _SSGA_GALAXY_FEE_WAR_URL = (
     "https://www.ssga.com/us/en/intermediary/insights/bitcoin-etf-fee-war-what-advisors-need-to-know"
 )
+_DL_NEWS_BTC_ETF_AUM_SCENARIO_URL = (
+    "https://www.dlnews.com/articles/markets/bitcoin-etfs-to-top-180-billion-usd-in-2026-say-analysts/"
+)
 
 ETP_KEY_OBSERVATIONS_HTML = f"""
 <style>
@@ -104,6 +107,11 @@ ETP_KEY_OBSERVATIONS_HTML = f"""
     2024 (see <a href="{_SEC_SPOT_BTC_ETPS_ORDER_URL}">SEC order</a>), listed access broadened quickly, but assets still
     cluster in a few large funds. For allocators and service providers, scale and distribution economics now matter at
     least as much as first-mover timing.</li>
+    <li><strong>Forward market-size scenarios are large, but still assumptions-driven.</strong> Public analyst commentary
+    continues to frame the next few years in a broad range rather than a single consensus point. For example, one
+    widely-cited 2026 scenario set discussed in market coverage points to roughly <strong>$180B-$220B</strong> for Bitcoin
+    ETF assets (see <a href="{_DL_NEWS_BTC_ETF_AUM_SCENARIO_URL}">DL News summary of analyst estimates</a>). Treat these
+    as directional planning ranges, not a base-case forecast.</li>
     <li><strong>Fee pressure is structural.</strong> Issuer pricing competition intensified early and remains a core
     differentiator (example context: <a href="{_SSGA_GALAXY_FEE_WAR_URL}">State Street / Galaxy note</a>), pushing
     managers toward operational efficiency, securities-lending discipline, and cross-product revenue strategy rather
