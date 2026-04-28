@@ -24,28 +24,17 @@ from price_ticker import show_price_ticker
 
 
 def _participants_platforms_takeaway_html() -> str:
-    from rwa_league.widgets import load_rwa_platforms_cached
-
-    rows, _kpis, _err = load_rwa_platforms_cached()
-    if not rows:
-        bullet = "Live platform concentration snapshot is unavailable right now."
-    else:
-        ranked = sorted(rows, key=lambda r: float(r.distributed_usd), reverse=True)
-        leader = ranked[0]
-        top3_share = sum(float(r.market_share_raw) for r in ranked[:3]) * 100.0
-        leader_share = float(leader.market_share_raw) * 100.0
-        bullet = (
-            f"Live snapshot: <strong>{leader.platform}</strong> leads distributed platform value with "
-            f"<strong>{leader_share:.1f}%</strong> share; the top 3 platforms account for "
-            f"<strong>{top3_share:.1f}%</strong> of tracked distributed value."
-        )
     return (
         '<div style="border:1px solid #C7D8E8;border-radius:10px;padding:0.75rem 0.95rem;'
         'margin:0.1rem 0 0.55rem;background:#ffffff;box-shadow:0 1px 3px rgba(15,23,42,0.06);">'
         '<p style="margin:0 0 0.28rem 0;font-size:0.9rem;font-weight:700;color:#021D41;">Key Observation</p>'
         '<ul style="margin:0.1rem 0 0 1.05rem;padding:0;color:#1F4C67;font-size:0.9rem;line-height:1.4;">'
-        f"<li>{bullet}</li>"
+        '<li><strong>Platform competition is increasingly distribution-led:</strong> partnership depth and channel reach '
+        'are becoming stronger share drivers than technical differentiation alone.</li>'
+        '<li><strong>Scale tends to reinforce itself:</strong> once platforms establish issuer and liquidity depth, they '
+        'often capture a disproportionate share of incremental distributed value.</li>'
         "</ul></div>"
+        '<p style="margin:0.1rem 0 0.55rem 0;color:#3E6A7A;font-size:0.78rem;">Reviewed monthly · Last reviewed: Apr 2026</p>'
     )
 
 
