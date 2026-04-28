@@ -1942,12 +1942,6 @@ def show_rwa_participants_networks_widget(
                 '<hr class="jd-rwa-gmo-soft-rule" aria-hidden="true"/>',
                 unsafe_allow_html=True,
             )
-        show_rwa_onchain_explore_gateways(
-            preview_rows=8,
-            leading_divider=False,
-            key_prefix="rwa_gmo",
-            explore_top_nav_target="global_market",
-        )
         q = st.text_input(
             "Search network table",
             "",
@@ -2015,6 +2009,12 @@ def show_rwa_participants_networks_widget(
             GLOBAL_MARKET_RWA_URL,
             use_container_width=True,
             key="rwa_global_market_page_full",
+        )
+        show_rwa_onchain_explore_gateways(
+            preview_rows=8,
+            leading_divider=True,
+            key_prefix="rwa_gmo",
+            explore_top_nav_target="global_market",
         )
         return
 
