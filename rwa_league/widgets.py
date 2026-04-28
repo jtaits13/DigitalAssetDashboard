@@ -1268,6 +1268,11 @@ def show_rwa_stablecoins_widget(
         )
         return
 
+    if not home_preview:
+        st.markdown(
+            hub_subsection_heading_html("Top-Line Market Snapshot"),
+            unsafe_allow_html=True,
+        )
     _render_rwa_stablecoin_overview(kpis_sc)
 
     if home_preview:
@@ -1383,6 +1388,11 @@ def show_rwa_treasuries_widget(
         )
         return
 
+    if not home_preview:
+        st.markdown(
+            hub_subsection_heading_html("Top-Line Market Snapshot"),
+            unsafe_allow_html=True,
+        )
     _render_rwa_treasuries_overview(kpis_tr)
 
     if rows_tr:
@@ -1552,6 +1562,11 @@ def show_rwa_tokenized_stocks_widget(
         )
         return
 
+    if not home_preview:
+        st.markdown(
+            hub_subsection_heading_html("Top-Line Market Snapshot"),
+            unsafe_allow_html=True,
+        )
     _render_rwa_treasuries_overview(
         kpis_st,
         overview_title="Tokenized Stocks",
@@ -1918,6 +1933,10 @@ def show_rwa_participants_networks_widget(
             st.info("No network rows returned.")
             return
 
+        st.markdown(
+            hub_subsection_heading_html("Top-Line Market Snapshot"),
+            unsafe_allow_html=True,
+        )
         _render_rwa_global_overview(
             kpis_home,
             kpi_legend_name="Global Market",
@@ -2042,6 +2061,10 @@ def show_rwa_participants_networks_widget(
         "RWA value columns use the same **transferability** fields as the on-site list; top-line **%** are **30D**."
     )
 
+    st.markdown(
+        hub_subsection_heading_html("Top-Line Market Snapshot"),
+        unsafe_allow_html=True,
+    )
     _render_rwa_global_overview(kpis, kpi_legend_name="Networks")
 
     q = st.text_input(
@@ -2127,6 +2150,10 @@ def show_rwa_participants_platforms_widget(
             "Searchable **Distributed** Platforms issuer table from [RWA.xyz Platforms](https://app.rwa.xyz/platforms)."
         )
 
+    st.markdown(
+        hub_subsection_heading_html("Top-Line Market Snapshot"),
+        unsafe_allow_html=True,
+    )
     _render_rwa_global_overview(kpis, kpi_legend_name="Platforms")
 
     q = st.text_input(
@@ -2213,6 +2240,10 @@ def show_rwa_participants_asset_managers_widget(
             "[RWA.xyz Asset Managers](https://app.rwa.xyz/asset-managers)."
         )
 
+    st.markdown(
+        hub_subsection_heading_html("Top-Line Market Snapshot"),
+        unsafe_allow_html=True,
+    )
     _render_rwa_global_overview(kpis, kpi_legend_name="Asset Managers")
 
     q = st.text_input(
