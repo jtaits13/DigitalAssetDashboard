@@ -57,6 +57,67 @@ from price_ticker import show_price_ticker
 # Chart sits in a half-width column next to the ETF pulse panel; KPI row is full width above.
 ETP_TOP_SPLIT_AUM_CHART_HEIGHT = 420
 
+_SEC_SPOT_BTC_ETPS_ORDER_URL = "https://www.sec.gov/files/rules/sro/nysearca/2024/34-99306.pdf"
+_SEC_OPTIONS_APPROVAL_URL = "https://www.sec.gov/files/rules/sro/cboebzx/2024/34-101224.pdf"
+_SSGA_GALAXY_FEE_WAR_URL = (
+    "https://www.ssga.com/us/en/intermediary/insights/bitcoin-etf-fee-war-what-advisors-need-to-know"
+)
+
+ETP_KEY_OBSERVATIONS_HTML = f"""
+<style>
+.etp-takeaways {{
+  border: 1px solid #C7D8E8;
+  border-radius: 10px;
+  padding: 0.9rem 1.05rem 1rem;
+  margin: 0.1rem 0 0.55rem;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(15,23,42,0.06);
+}}
+.etp-takeaways h3 {{
+  margin: 0 0 0.55rem 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #021D41;
+  letter-spacing: 0.01em;
+}}
+.etp-takeaways ul {{
+  margin: 0.35rem 0 0.2rem 1.1rem;
+  padding: 0;
+  color: #1F4C67;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}}
+.etp-takeaways li {{
+  margin-bottom: 0.45rem;
+}}
+.etp-takeaways .etp-takeaway-note {{
+  margin: 0.5rem 0 0 0;
+  font-size: 0.78rem;
+  color: #3E6A7A;
+  line-height: 1.4;
+}}
+</style>
+<div class="etp-takeaways">
+  <h3>ETF Market - Key Observations</h3>
+  <ul>
+    <li><strong>Product access expanded quickly, then concentrated.</strong> After U.S. spot Bitcoin ETP approvals in
+    2024 (see <a href="{_SEC_SPOT_BTC_ETPS_ORDER_URL}">SEC order</a>), listed access broadened quickly, but assets still
+    cluster in a few large funds. For allocators and service providers, scale and distribution economics now matter at
+    least as much as first-mover timing.</li>
+    <li><strong>Fee pressure is structural.</strong> Issuer pricing competition intensified early and remains a core
+    differentiator (example context: <a href="{_SSGA_GALAXY_FEE_WAR_URL}">State Street / Galaxy note</a>), pushing
+    managers toward operational efficiency, securities-lending discipline, and cross-product revenue strategy rather
+    than headline fee alone.</li>
+    <li><strong>Market structure is maturing around liquidity tools.</strong> Milestones such as U.S. exchange-listed
+    spot Bitcoin options approvals (see <a href="{_SEC_OPTIONS_APPROVAL_URL}">SEC approval order</a>) improve hedging and
+    risk transfer around spot ETPs, which can influence advisor suitability frameworks, institutional implementation,
+    and trading-desk workflow design.</li>
+  </ul>
+  <p class="etp-takeaway-note">Context for strategy only (not investment advice). The KPI row, chart, and table below are
+  from the StockAnalysis + Yahoo-based workflow described on this page.</p>
+</div>
+"""
+
 
 def main() -> None:
     st.set_page_config(
@@ -92,6 +153,7 @@ def main() -> None:
         "(issuer, inception, past-year return as <strong>52W %</strong>).</p>",
         unsafe_allow_html=True,
     )
+    st.markdown(ETP_KEY_OBSERVATIONS_HTML, unsafe_allow_html=True)
     st.divider()
 
     with st.spinner("Loading U.S. digital asset ETPs (list + profile pages)…"):
