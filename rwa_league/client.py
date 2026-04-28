@@ -17,8 +17,6 @@ from typing import Any
 
 import requests
 
-from crypto_etps.client import format_usd_compact
-
 logger = logging.getLogger(__name__)
 
 APP_HOME = "https://app.rwa.xyz/"
@@ -29,6 +27,19 @@ APP_TREASURIES = "https://app.rwa.xyz/treasuries"
 APP_STOCKS = "https://app.rwa.xyz/stocks"
 APP_ASSET_MANAGERS = "https://app.rwa.xyz/asset-managers"
 USER_AGENT = "JPM-Digital/1.0 (RWA league widget; contact via app maintainer)"
+
+
+def format_usd_compact(n: float) -> str:
+    """Compact USD formatter used for KPI display values."""
+    if n >= 1e12:
+        return f"${n / 1e12:.2f}T"
+    if n >= 1e9:
+        return f"${n / 1e9:.2f}B"
+    if n >= 1e6:
+        return f"${n / 1e6:.2f}M"
+    if n >= 1e3:
+        return f"${n / 1e3:.2f}K"
+    return f"${n:,.2f}"
 
 
 @dataclass(frozen=True)
