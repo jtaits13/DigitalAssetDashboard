@@ -21,7 +21,6 @@ from news_feeds import (
     render_subpage_top_bar,
 )
 from price_ticker import show_price_ticker
-from rwa_league.explore_nav import set_rwa_explore_top_nav_target
 from rwa_league.widgets import show_rwa_participants_networks_widget
 
 _MCKINSEY_TOKENIZATION_URL = (
@@ -40,7 +39,6 @@ def main() -> None:
 
     render_subpage_top_bar()
     if st.button("← Back", key="top_back_rwa_participants_networks"):
-        set_rwa_explore_top_nav_target("home")
         st.switch_page("pages/RWA_Explore_By_Market_Participant.py")
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
     st.markdown(app_shared_layout_css(), unsafe_allow_html=True)
