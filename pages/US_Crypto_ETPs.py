@@ -110,8 +110,9 @@ ETP_KEY_OBSERVATIONS_HTML = f"""
     <li><strong>Forward market-size scenarios are large, but still assumptions-driven.</strong> Public analyst commentary
     continues to frame the next few years in a broad range rather than a single consensus point. For example, one
     widely-cited 2026 scenario set discussed in market coverage points to roughly <strong>$180B-$220B</strong> for Bitcoin
-    ETF assets (see <a href="{_DL_NEWS_BTC_ETF_AUM_SCENARIO_URL}">DL News summary of analyst estimates</a>). Treat these
-    as directional planning ranges, not a base-case forecast.</li>
+    ETF assets, compared with roughly <strong>~$145B today</strong> in that same discussion context (see
+    <a href="{_DL_NEWS_BTC_ETF_AUM_SCENARIO_URL}">DL News summary of analyst estimates</a>). Treat these as directional
+    planning ranges, not a base-case forecast.</li>
     <li><strong>Fee pressure is structural.</strong> Issuer pricing competition intensified early and remains a core
     differentiator (example context: <a href="{_SSGA_GALAXY_FEE_WAR_URL}">State Street / Galaxy note</a>), pushing
     managers toward operational efficiency, securities-lending discipline, and cross-product revenue strategy rather
