@@ -24,6 +24,10 @@ from price_ticker import show_price_ticker
 from rwa_league.explore_nav import set_rwa_explore_top_nav_target
 from rwa_league.widgets import show_rwa_participants_platforms_widget
 
+_BCG_ADDX_TOKENIZATION_REPORT_URL = (
+    "https://www.addx.co/files/bcg_ADDX_report_Asset_tokenization_trillion_opportunity_by_2030_de2aaa41a4.pdf"
+)
+
 
 def main() -> None:
     st.set_page_config(
@@ -57,8 +61,11 @@ def main() -> None:
         'margin:0.1rem 0 0.55rem;background:#ffffff;box-shadow:0 1px 3px rgba(15,23,42,0.06);">'
         '<p style="margin:0 0 0.28rem 0;font-size:0.9rem;font-weight:700;color:#021D41;">Key Observation</p>'
         '<ul style="margin:0.1rem 0 0 1.05rem;padding:0;color:#1F4C67;font-size:0.9rem;line-height:1.4;">'
-        '<li>Platform share is increasingly shaped by <strong>distribution partnerships</strong> and product shelf '
-        'access, so issuer/platform scale advantages can compound faster than purely technical differentiation.</li>'
+        '<li><strong>Platform competition is becoming distribution-led.</strong> The distributed-value leaderboard below '
+        'shows where issuer reach and shelf access are translating into sustained market share.</li>'
+        '<li><strong>That fits larger tokenization commercialization narratives.</strong> '
+        '<a href="' + _BCG_ADDX_TOKENIZATION_REPORT_URL + '">BCG/ADDX</a> frames scale-up as an ecosystem-and-distribution '
+        'challenge, not just a protocol feature race.</li>'
         "</ul></div>",
         unsafe_allow_html=True,
     )

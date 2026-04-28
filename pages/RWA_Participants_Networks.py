@@ -24,6 +24,11 @@ from price_ticker import show_price_ticker
 from rwa_league.explore_nav import set_rwa_explore_top_nav_target
 from rwa_league.widgets import show_rwa_participants_networks_widget
 
+_MCKINSEY_TOKENIZATION_URL = (
+    "https://www.mckinsey.com/industries/financial-services/our-insights/"
+    "from-ripples-to-waves-the-transformational-power-of-tokenizing-assets"
+)
+
 
 def main() -> None:
     st.set_page_config(
@@ -56,8 +61,11 @@ def main() -> None:
         'margin:0.1rem 0 0.55rem;background:#ffffff;box-shadow:0 1px 3px rgba(15,23,42,0.06);">'
         '<p style="margin:0 0 0.28rem 0;font-size:0.9rem;font-weight:700;color:#021D41;">Key Observation</p>'
         '<ul style="margin:0.1rem 0 0 1.05rem;padding:0;color:#1F4C67;font-size:0.9rem;line-height:1.4;">'
-        '<li>RWA growth remains <strong>network-concentrated</strong>, so institutions often balance scale on leading '
-        'chains with interoperability, governance, and counterparty-risk controls before broad multi-chain expansion.</li>'
+        '<li><strong>RWA issuance remains network-concentrated.</strong> The live ranking below makes concentration and '
+        'share-shift dynamics explicit via distributed value and market-share changes.</li>'
+        '<li><strong>That concentration profile is consistent with “wave” adoption patterns.</strong> '
+        '<a href="' + _MCKINSEY_TOKENIZATION_URL + '">McKinsey</a> describes phased institutional rollout, where a few '
+        'networks capture scale first before broader multi-chain distribution follows.</li>'
         "</ul></div>",
         unsafe_allow_html=True,
     )

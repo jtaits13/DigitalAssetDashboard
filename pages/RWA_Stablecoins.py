@@ -24,6 +24,10 @@ from price_ticker import show_price_ticker
 from rwa_league.explore_nav import set_rwa_explore_top_nav_target
 from rwa_league.widgets import STABLECOIN_RWA_CAPTION, show_rwa_stablecoins_widget
 
+_CITI_GPS_STABLECOINS_2030_URL = (
+    "https://www.citigroup.com/rcs/citigpa/storage/public/GPS_Report_Stablecoins_2030.pdf"
+)
+
 
 def main() -> None:
     st.set_page_config(
@@ -57,9 +61,13 @@ def main() -> None:
         'margin:0.1rem 0 0.55rem;background:#ffffff;box-shadow:0 1px 3px rgba(15,23,42,0.06);">'
         '<p style="margin:0 0 0.28rem 0;font-size:0.9rem;font-weight:700;color:#021D41;">Key Observation</p>'
         '<ul style="margin:0.1rem 0 0 1.05rem;padding:0;color:#1F4C67;font-size:0.9rem;line-height:1.4;">'
-        '<li>This page is most useful as a <strong>concentration monitor</strong>: when leading platforms post both rising '
-        '<strong>market cap</strong> and positive <strong>30D share change</strong>, issuance is consolidating; when '
-        'market cap rises but share falls, growth is broadening.</li>'
+        '<li><strong>Issuer concentration remains the core market-structure signal.</strong> In the RWA.xyz platform table '
+        'below, pairing <strong>market cap</strong> levels with <strong>30D share change</strong> helps distinguish '
+        'consolidation from broadening competition.</li>'
+        '<li><strong>Policy and bank-integration pathways are now a demand driver.</strong> External scenario work such as '
+        '<a href="' + _CITI_GPS_STABLECOINS_2030_URL + '">Citi GPS (Stablecoins 2030)</a> frames stablecoins as part of '
+        'mainstream payment and treasury infrastructure, which is consistent with institutions tracking issuer quality and '
+        'distribution depth, not only headline size.</li>'
         "</ul></div>",
         unsafe_allow_html=True,
     )

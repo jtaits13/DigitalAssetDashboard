@@ -24,6 +24,10 @@ from price_ticker import show_price_ticker
 from rwa_league.explore_nav import set_rwa_explore_top_nav_target
 from rwa_league.widgets import TOKENIZED_STOCKS_RWA_CAPTION, show_rwa_tokenized_stocks_widget
 
+_WEF_ASSET_TOKENIZATION_2025_URL = (
+    "https://reports.weforum.org/docs/WEF_Asset_Tokenization_in_Financial_Markets_2025.pdf"
+)
+
 
 def main() -> None:
     st.set_page_config(
@@ -56,8 +60,12 @@ def main() -> None:
         'margin:0.1rem 0 0.55rem;background:#ffffff;box-shadow:0 1px 3px rgba(15,23,42,0.06);">'
         '<p style="margin:0 0 0.28rem 0;font-size:0.9rem;font-weight:700;color:#021D41;">Key Observation</p>'
         '<ul style="margin:0.1rem 0 0 1.05rem;padding:0;color:#1F4C67;font-size:0.9rem;line-height:1.4;">'
-        '<li>Tokenized stocks remain an <strong>early-stage access format</strong> where liquidity and scale are still '
-        'concentrated, so growth depends on tighter alignment between brokers, venues, and custody rails.</li>'
+        '<li><strong>Tokenized stocks are still an early adoption lane.</strong> The platform and network rankings below '
+        'show where limited liquidity is concentrating, which matters more than raw listing count.</li>'
+        '<li><strong>Longer-term equity tokenization potential is large but scenario-based.</strong> '
+        '<a href="' + _WEF_ASSET_TOKENIZATION_2025_URL + '">WEF (2025)</a> cites industry projections for private-market '
+        'tokenization by 2030; this page is useful for tracking how much of that thesis is translating into live '
+        'distributed value today.</li>'
         "</ul></div>",
         unsafe_allow_html=True,
     )
