@@ -22,10 +22,32 @@ from news_feeds import (
 )
 from price_ticker import show_price_ticker
 from rwa_league.widgets import STABLECOIN_RWA_CAPTION, show_rwa_stablecoins_widget
+from rwa_league.widgets import load_rwa_stablecoins_cached
 
-_CITI_GPS_STABLECOINS_2030_URL = (
-    "https://www.citigroup.com/rcs/citigpa/storage/public/GPS_Report_Stablecoins_2030.pdf"
-)
+
+def _stablecoins_takeaway_html() -> str:
+    rows, _kpis, _err = load_rwa_stablecoins_cached()
+    if not rows:
+        bullet = "Live stablecoin platform snapshot is unavailable right now."
+    else:
+        ranked = sorted(rows, key=lambda r: float(r.total_value_usd), reverse=True)
+        leader = ranked[0]
+        top3_share = sum(float(r.market_share_raw) for r in ranked[:3]) * 100.0
+        leader_share = float(leader.market_share_raw) * 100.0
+        leader_val_b = float(leader.total_value_usd) / 1e9
+        bullet = (
+            f"Live snapshot: <strong>{leader.platform}</strong> leads with <strong>${leader_val_b:.1f}B</strong> "
+            f"and <strong>{leader_share:.1f}%</strong> share; the top 3 platforms now represent "
+            f"<strong>{top3_share:.1f}%</strong> of tracked stablecoin market cap on this page."
+        )
+    return (
+        '<div style="border:1px solid #C7D8E8;border-radius:10px;padding:0.75rem 0.95rem;'
+        'margin:0.1rem 0 0.55rem;background:#ffffff;box-shadow:0 1px 3px rgba(15,23,42,0.06);">'
+        '<p style="margin:0 0 0.28rem 0;font-size:0.9rem;font-weight:700;color:#021D41;">Key Observation</p>'
+        '<ul style="margin:0.1rem 0 0 1.05rem;padding:0;color:#1F4C67;font-size:0.9rem;line-height:1.4;">'
+        f"<li>{bullet}</li>"
+        "</ul></div>"
+    )
 
 
 def main() -> None:
@@ -54,21 +76,7 @@ def main() -> None:
         "is a level.</p>",
         unsafe_allow_html=True,
     )
-    st.markdown(
-        '<div style="border:1px solid #C7D8E8;border-radius:10px;padding:0.75rem 0.95rem;'
-        'margin:0.1rem 0 0.55rem;background:#ffffff;box-shadow:0 1px 3px rgba(15,23,42,0.06);">'
-        '<p style="margin:0 0 0.28rem 0;font-size:0.9rem;font-weight:700;color:#021D41;">Key Observation</p>'
-        '<ul style="margin:0.1rem 0 0 1.05rem;padding:0;color:#1F4C67;font-size:0.9rem;line-height:1.4;">'
-        '<li><strong>Issuer concentration remains the core market-structure signal.</strong> In the RWA.xyz platform table '
-        'below, pairing <strong>market cap</strong> levels with <strong>30D share change</strong> helps distinguish '
-        'consolidation from broadening competition.</li>'
-        '<li><strong>Policy and bank-integration pathways are now a demand driver.</strong> External scenario work such as '
-        '<a href="' + _CITI_GPS_STABLECOINS_2030_URL + '">Citi GPS (Stablecoins 2030)</a> frames stablecoins as part of '
-        'mainstream payment and treasury infrastructure, which is consistent with institutions tracking issuer quality and '
-        'distribution depth, not only headline size.</li>'
-        "</ul></div>",
-        unsafe_allow_html=True,
-    )
+    st.markdown(_stablecoins_takeaway_html(), unsafe_allow_html=True)
     st.divider()
 
     show_rwa_stablecoins_widget(home_preview=False, full_page_header=True)

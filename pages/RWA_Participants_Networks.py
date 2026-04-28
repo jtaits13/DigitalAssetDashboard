@@ -22,11 +22,31 @@ from news_feeds import (
 )
 from price_ticker import show_price_ticker
 from rwa_league.widgets import show_rwa_participants_networks_widget
+from rwa_league.widgets import load_rwa_league_cached
 
-_MCKINSEY_TOKENIZATION_URL = (
-    "https://www.mckinsey.com/industries/financial-services/our-insights/"
-    "from-ripples-to-waves-the-transformational-power-of-tokenizing-assets"
-)
+
+def _participants_networks_takeaway_html() -> str:
+    rows, _kpis, _err = load_rwa_league_cached()
+    if not rows:
+        bullet = "Live network concentration snapshot is unavailable right now."
+    else:
+        ranked = sorted(rows, key=lambda r: float(r.distributed_usd), reverse=True)
+        leader = ranked[0]
+        top3_share = sum(float(r.market_share_raw) for r in ranked[:3]) * 100.0
+        leader_share = float(leader.market_share_raw) * 100.0
+        bullet = (
+            f"Live snapshot: <strong>{leader.network}</strong> leads distributed value with "
+            f"<strong>{leader_share:.1f}%</strong> share; the top 3 networks represent "
+            f"<strong>{top3_share:.1f}%</strong> of tracked distributed RWA value."
+        )
+    return (
+        '<div style="border:1px solid #C7D8E8;border-radius:10px;padding:0.75rem 0.95rem;'
+        'margin:0.1rem 0 0.55rem;background:#ffffff;box-shadow:0 1px 3px rgba(15,23,42,0.06);">'
+        '<p style="margin:0 0 0.28rem 0;font-size:0.9rem;font-weight:700;color:#021D41;">Key Observation</p>'
+        '<ul style="margin:0.1rem 0 0 1.05rem;padding:0;color:#1F4C67;font-size:0.9rem;line-height:1.4;">'
+        f"<li>{bullet}</li>"
+        "</ul></div>"
+    )
 
 
 def main() -> None:
@@ -54,19 +74,7 @@ def main() -> None:
         "Top-line <strong>30D</strong> % changes and per-network <strong>transferability</strong> / share columns match the live site for the same view.</p>",
         unsafe_allow_html=True,
     )
-    st.markdown(
-        '<div style="border:1px solid #C7D8E8;border-radius:10px;padding:0.75rem 0.95rem;'
-        'margin:0.1rem 0 0.55rem;background:#ffffff;box-shadow:0 1px 3px rgba(15,23,42,0.06);">'
-        '<p style="margin:0 0 0.28rem 0;font-size:0.9rem;font-weight:700;color:#021D41;">Key Observation</p>'
-        '<ul style="margin:0.1rem 0 0 1.05rem;padding:0;color:#1F4C67;font-size:0.9rem;line-height:1.4;">'
-        '<li><strong>RWA issuance remains network-concentrated.</strong> The live ranking below makes concentration and '
-        'share-shift dynamics explicit via distributed value and market-share changes.</li>'
-        '<li><strong>That concentration profile is consistent with “wave” adoption patterns.</strong> '
-        '<a href="' + _MCKINSEY_TOKENIZATION_URL + '">McKinsey</a> describes phased institutional rollout, where a few '
-        'networks capture scale first before broader multi-chain distribution follows.</li>'
-        "</ul></div>",
-        unsafe_allow_html=True,
-    )
+    st.markdown(_participants_networks_takeaway_html(), unsafe_allow_html=True)
     st.divider()
 
     show_rwa_participants_networks_widget(home_preview=False, full_page_header=False)

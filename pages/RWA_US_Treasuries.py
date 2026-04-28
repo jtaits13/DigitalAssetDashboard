@@ -22,11 +22,38 @@ from news_feeds import (
 )
 from price_ticker import show_price_ticker
 from rwa_league.widgets import TREASURY_RWA_CAPTION, show_rwa_treasuries_widget
+from rwa_league.widgets import load_rwa_treasuries_cached
 
-_MCKINSEY_TOKENIZATION_URL = (
-    "https://www.mckinsey.com/industries/financial-services/our-insights/"
-    "from-ripples-to-waves-the-transformational-power-of-tokenizing-assets"
-)
+
+def _treasuries_takeaway_html() -> str:
+    nets, plats, _kpis, _err = load_rwa_treasuries_cached()
+    if not nets:
+        bullet = "Live Treasuries network snapshot is unavailable right now."
+    else:
+        ranked_n = sorted(nets, key=lambda r: float(r.total_value_usd), reverse=True)
+        leader_n = ranked_n[0]
+        total_b = sum(float(r.total_value_usd) for r in ranked_n) / 1e9
+        leader_share = float(leader_n.market_share_raw) * 100.0
+        if plats:
+            leader_p = max(plats, key=lambda r: float(r.total_value_usd))
+            bullet = (
+                f"Live snapshot: distributed Treasury value is <strong>${total_b:.1f}B</strong>; "
+                f"<strong>{leader_n.network}</strong> leads networks at <strong>{leader_share:.1f}%</strong> share, "
+                f"while <strong>{leader_p.platform}</strong> is the top platform by distributed value."
+            )
+        else:
+            bullet = (
+                f"Live snapshot: distributed Treasury value is <strong>${total_b:.1f}B</strong>; "
+                f"<strong>{leader_n.network}</strong> leads networks at <strong>{leader_share:.1f}%</strong> share."
+            )
+    return (
+        '<div style="border:1px solid #C7D8E8;border-radius:10px;padding:0.75rem 0.95rem;'
+        'margin:0.1rem 0 0.55rem;background:#ffffff;box-shadow:0 1px 3px rgba(15,23,42,0.06);">'
+        '<p style="margin:0 0 0.28rem 0;font-size:0.9rem;font-weight:700;color:#021D41;">Key Observation</p>'
+        '<ul style="margin:0.1rem 0 0 1.05rem;padding:0;color:#1F4C67;font-size:0.9rem;line-height:1.4;">'
+        f"<li>{bullet}</li>"
+        "</ul></div>"
+    )
 
 
 def main() -> None:
@@ -54,20 +81,7 @@ def main() -> None:
         'are levels — <a href="https://app.rwa.xyz/treasuries">RWA.xyz US Treasuries</a>.</p>',
         unsafe_allow_html=True,
     )
-    st.markdown(
-        '<div style="border:1px solid #C7D8E8;border-radius:10px;padding:0.75rem 0.95rem;'
-        'margin:0.1rem 0 0.55rem;background:#ffffff;box-shadow:0 1px 3px rgba(15,23,42,0.06);">'
-        '<p style="margin:0 0 0.28rem 0;font-size:0.9rem;font-weight:700;color:#021D41;">Key Observation</p>'
-        '<ul style="margin:0.1rem 0 0 1.05rem;padding:0;color:#1F4C67;font-size:0.9rem;line-height:1.4;">'
-        '<li><strong>Tokenized U.S. Treasuries remain the institutional on-ramp to RWAs.</strong> The distributed '
-        '<strong>Networks</strong> and <strong>Platforms</strong> tables below track where that collateral is being issued '
-        'and concentrated in practice.</li>'
-        '<li><strong>This aligns with broader “first-wave” tokenization research.</strong> '
-        '<a href="' + _MCKINSEY_TOKENIZATION_URL + '">McKinsey</a> highlights cash-like instruments and fixed income as '
-        'early scalable lanes, matching how Treasuries are used today for on-chain liquidity and collateral workflows.</li>'
-        "</ul></div>",
-        unsafe_allow_html=True,
-    )
+    st.markdown(_treasuries_takeaway_html(), unsafe_allow_html=True)
     st.divider()
 
     show_rwa_treasuries_widget(home_preview=False, full_page_header=True)
