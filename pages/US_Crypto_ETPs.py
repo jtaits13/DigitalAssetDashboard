@@ -76,13 +76,6 @@ ETP_KEY_OBSERVATIONS_HTML = f"""
   background: #ffffff;
   box-shadow: 0 1px 3px rgba(15,23,42,0.06);
 }}
-.etp-takeaways h3 {{
-  margin: 0 0 0.55rem 0;
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #021D41;
-  letter-spacing: 0.01em;
-}}
 .etp-takeaways ul {{
   margin: 0.35rem 0 0.2rem 1.1rem;
   padding: 0;
@@ -101,7 +94,6 @@ ETP_KEY_OBSERVATIONS_HTML = f"""
 }}
 </style>
 <div class="etp-takeaways">
-  <h3>ETF Market - Key Observations</h3>
   <ul>
     <li><strong>Product access expanded quickly, then concentrated.</strong> After U.S. spot Bitcoin ETP approvals in
     2024 (see <a href="{_SEC_SPOT_BTC_ETPS_ORDER_URL}">SEC order</a>), listed access broadened quickly, but assets still
@@ -190,6 +182,7 @@ def main() -> None:
         unsafe_allow_html=True,
     )
     render_etp_summary_kpi_row(rows, include_styles=False)
+    st.markdown(hub_subsection_heading_html("Key Observations"), unsafe_allow_html=True)
     st.markdown(ETP_KEY_OBSERVATIONS_HTML, unsafe_allow_html=True)
 
     # border=True: same as home News & Regulatory row — stretch columns and pin Explore CTA under the hub panel.

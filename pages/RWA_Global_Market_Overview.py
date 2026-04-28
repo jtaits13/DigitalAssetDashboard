@@ -48,13 +48,6 @@ RWA_GLOBAL_MARKET_MACRO_CONTEXT_HTML = f"""
   background: #ffffff;
   box-shadow: 0 1px 3px rgba(15,23,42,0.06);
 }}
-.rwa-gmo-takeaways h3 {{
-  margin: 0 0 0.55rem 0;
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #021D41;
-  letter-spacing: 0.01em;
-}}
 .rwa-gmo-takeaways ul {{
   margin: 0.35rem 0 0.25rem 1.1rem;
   padding: 0;
@@ -81,7 +74,6 @@ RWA_GLOBAL_MARKET_MACRO_CONTEXT_HTML = f"""
 }}
 </style>
 <div class="rwa-gmo-takeaways">
-  <h3>RWA Market - Key Observations</h3>
   <ul>
     <li><strong>Institutional momentum.</strong> Large asset managers, banks, and market utilities are scaling tokenized
     cash funds, bonds, and repo-style workflows—often on permissioned networks first—while public-ledger RWA issuance

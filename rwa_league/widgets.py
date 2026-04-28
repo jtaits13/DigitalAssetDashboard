@@ -1924,6 +1924,10 @@ def show_rwa_participants_networks_widget(
             tight_bottom=global_market_observations_html is None,
         )
         if global_market_observations_html is not None:
+            st.markdown(
+                hub_subsection_heading_html("Key Observations"),
+                unsafe_allow_html=True,
+            )
             st.markdown(global_market_observations_html, unsafe_allow_html=True)
             st.markdown(
                 '<hr class="jd-rwa-gmo-soft-rule" aria-hidden="true"/>',
