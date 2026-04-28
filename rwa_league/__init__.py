@@ -1,65 +1,8 @@
-"""RWA.xyz league table widgets (data aligned with the public RWA.xyz web app)."""
+"""RWA League package.
 
-from rwa_league.client import (
-    RwaAssetManagersTabRow,
-    RwaGlobalKpi,
-    RwaNetworkLeagueRow,
-    RwaNetworksTabRow,
-    RwaPlatformsTabRow,
-    RwaTokenizedStockNetworkRow,
-    RwaStablecoinPlatformRow,
-    RwaTokenizedStockPlatformRow,
-    RwaTreasuryDistributedNetworkRow,
-    RwaTreasuryPlatformRow,
-    fetch_rwa_home_data,
-    fetch_rwa_network_league,
-    fetch_rwa_asset_managers_page_data,
-    fetch_rwa_networks_page_data,
-    fetch_rwa_platforms_page_data,
-    fetch_rwa_stablecoins_data,
-    fetch_rwa_tokenized_stocks_data,
-    fetch_rwa_treasuries_data,
-)
-from rwa_league.widgets import (
-    clear_rwa_league_cache,
-    show_rwa_explore_by_asset_type_widget,
-    show_rwa_explore_by_market_participant_widget,
-    show_rwa_league_widget,
-    show_rwa_participants_networks_widget,
-    show_rwa_participants_asset_managers_widget,
-    show_rwa_participants_platforms_widget,
-    show_rwa_stablecoins_widget,
-    show_rwa_tokenized_stocks_widget,
-    show_rwa_treasuries_widget,
-)
+Keep package import side effects minimal so submodules such as
+``rwa_league.explore_nav`` can be imported without triggering the full data stack.
+Import symbols from ``rwa_league.client`` or ``rwa_league.widgets`` directly.
+"""
 
-__all__ = [
-    "RwaGlobalKpi",
-    "RwaNetworkLeagueRow",
-    "RwaAssetManagersTabRow",
-    "RwaNetworksTabRow",
-    "RwaPlatformsTabRow",
-    "RwaTokenizedStockNetworkRow",
-    "RwaStablecoinPlatformRow",
-    "RwaTokenizedStockPlatformRow",
-    "RwaTreasuryDistributedNetworkRow",
-    "RwaTreasuryPlatformRow",
-    "clear_rwa_league_cache",
-    "fetch_rwa_home_data",
-    "fetch_rwa_network_league",
-    "fetch_rwa_asset_managers_page_data",
-    "fetch_rwa_networks_page_data",
-    "fetch_rwa_platforms_page_data",
-    "fetch_rwa_stablecoins_data",
-    "fetch_rwa_tokenized_stocks_data",
-    "fetch_rwa_treasuries_data",
-    "show_rwa_explore_by_asset_type_widget",
-    "show_rwa_explore_by_market_participant_widget",
-    "show_rwa_league_widget",
-    "show_rwa_participants_networks_widget",
-    "show_rwa_participants_asset_managers_widget",
-    "show_rwa_participants_platforms_widget",
-    "show_rwa_stablecoins_widget",
-    "show_rwa_tokenized_stocks_widget",
-    "show_rwa_treasuries_widget",
-]
+__all__: list[str] = []
