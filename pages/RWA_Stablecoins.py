@@ -24,6 +24,15 @@ from price_ticker import show_price_ticker
 from rwa_league.explore_nav import set_rwa_explore_top_nav_target
 from rwa_league.widgets import STABLECOIN_RWA_CAPTION, show_rwa_stablecoins_widget
 
+RWA_STABLECOINS_TAKEAWAY_HTML = """
+<div style="border:1px solid #C7D8E8;border-radius:10px;padding:0.7rem 0.95rem;margin:0.1rem 0 0.55rem;background:#fff;box-shadow:0 1px 3px rgba(15,23,42,0.06);">
+  <p style="margin:0 0 0.25rem 0;font-size:0.9rem;font-weight:700;color:#021D41;">Key Observation</p>
+  <ul style="margin:0.15rem 0 0 1.05rem;padding:0;color:#1F4C67;font-size:0.9rem;line-height:1.4;">
+    <li>Stablecoins are increasingly used as a <strong>cash-like settlement layer</strong> across tokenized assets, which raises the strategic value of issuer quality, reserve transparency, and platform distribution reach.</li>
+  </ul>
+</div>
+"""
+
 
 def main() -> None:
     st.set_page_config(
@@ -52,6 +61,7 @@ def main() -> None:
         "is a level.</p>",
         unsafe_allow_html=True,
     )
+    st.markdown(RWA_STABLECOINS_TAKEAWAY_HTML, unsafe_allow_html=True)
     st.divider()
 
     show_rwa_stablecoins_widget(home_preview=False, full_page_header=True)
