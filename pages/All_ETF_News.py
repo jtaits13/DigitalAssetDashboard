@@ -39,7 +39,7 @@ PER_PAGE = 20
 
 def main() -> None:
     st.set_page_config(
-        page_title="ETF & ETP market news — JPM Digital",
+        page_title="ETF & ETP Market News — JPM Digital",
         page_icon="◆",
         layout="wide",
         initial_sidebar_state="expanded",
@@ -70,7 +70,7 @@ div[data-testid="stColumn"]:has(.jd-etf-pager-r) div[data-testid="stVerticalBloc
     render_subpage_sidebar(key_prefix="all_etf_news", current="etf_news")
 
     st.markdown(
-        section_label_teal("ETF & ETP market news", placement="first"),
+        section_label_teal("ETF & ETP Market News", placement="first"),
         unsafe_allow_html=True,
     )
     _feed_name_list = ", ".join(n for n, _ in ETP_NEWS_FEEDS)

@@ -51,8 +51,8 @@ p.jd-hub-dek.jd-hub-dek-fullbleed {
     max-width: 100%;
     width: 100%;
     box-sizing: border-box;
-    margin-top: 0.2rem;
-    margin-bottom: 0.85rem;
+    margin-top: 0.1rem;
+    margin-bottom: 0.7rem;
     line-height: 1.55;
 }
 /* Hub Explore gateway cards: short intro + bullet list (home + index heroes).
@@ -61,7 +61,7 @@ div.jd-hub-dek.jd-hub-dek-fullbleed.jd-hub-explore-blurb {
     max-width: 100%;
     width: 100%;
     box-sizing: border-box;
-    margin: 0.15rem 0 0.95rem 0;
+    margin: 0.1rem 0 0.8rem 0;
     line-height: 1.45;
     font-size: calc(0.875rem * 1.15);
     color: #3E6A7A;

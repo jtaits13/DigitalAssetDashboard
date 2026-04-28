@@ -184,7 +184,7 @@ def main() -> None:
 
     st.markdown(
         hub_subsection_heading_html(
-            "Top-line market snapshot",
+            "Top-Line Market Snapshot",
             element_id="jd-etp-summary",
         ),
         unsafe_allow_html=True,
