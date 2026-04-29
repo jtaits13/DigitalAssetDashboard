@@ -1139,7 +1139,7 @@ def article_styles_markdown() -> str:
         min-height: 0 !important;
         align-self: flex-start;
         width: 100%;
-        max-width: min(52rem, 100%);
+        max-width: 100%;
     }
     .jd-hub-news-feed-page .day-label {
         margin-top: 0.65rem;
