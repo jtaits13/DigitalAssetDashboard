@@ -146,13 +146,13 @@ div[data-testid="stColumn"]:has(.jd-etf-pager-r) div[data-testid="stVerticalBloc
     st.markdown(subpage_footer_heading_html("Pages"), unsafe_allow_html=True)
     c_prev, c_mid, c_next = st.columns([1, 4, 1])
     with c_prev:
-        go_prev = st.button("← Prev", disabled=page <= 1, key="etf_news_prev")
+        go_prev = st.button("← Prev", disabled=page <= 1, key="etf_news_prev", use_container_width=True)
     with c_next:
         st.markdown(
             '<div class="jd-etf-pager-r" aria-hidden="true"></div>',
             unsafe_allow_html=True,
         )
-        go_next = st.button("Next →", disabled=page >= total_pages, key="etf_news_next")
+        go_next = st.button("Next →", disabled=page >= total_pages, key="etf_news_next", use_container_width=True)
 
     if go_prev:
         st.session_state.etf_news_page = page - 1
