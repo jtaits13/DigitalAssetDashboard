@@ -53,6 +53,10 @@ WIDGET_CSS = """
 .etp-kpi-wrap {
     margin: 0.35rem 0 0.85rem 0;
 }
+/* Footnote follows the numeric row inside the panel */
+.etp-kpi-wrap .jd-kpi-window-note {
+    margin: 0.35rem 0 0 0;
+}
 .etp-kpi-row {
     display: flex;
     flex-wrap: wrap;
@@ -269,15 +273,15 @@ def _render_etp_home_kpi_row(
         )
     kpi_html = (
         f'<div class="etp-kpi-wrap" style="{_ETP_KPI_PANEL_INLINE_STYLE}">'
+        "<div class='etp-kpi-row'>"
+        f"{''.join(parts)}"
+        "</div>"
         "<p class=\"jd-kpi-window-note\">"
         "All % changes in this row are <strong>30-day (30D)</strong> (<strong>Yahoo Finance</strong>). "
         "Headline totals are listed AUM from <strong>StockAnalysis</strong> "
         "(crypto ETF list and detail pages; scraped; not affiliated). "
         "That list may not include every live U.S. product, so totals here can differ from broader market estimates."
         "</p>"
-        "<div class='etp-kpi-row'>"
-        f"{''.join(parts)}"
-        "</div>"
         "</div>"
     )
     st.html(kpi_html)
