@@ -22,6 +22,7 @@ from home_layout import (
 from news_feeds import (
     DEFAULT_FEEDS,
     app_shared_layout_css,
+    article_styles_markdown,
     build_full_page_market_news_feed_html,
     dedupe_articles,
     filter_headlines_by_keyword,
