@@ -1928,9 +1928,47 @@ def show_rwa_tokenized_stocks_widget(
                 st.caption(
                     f"Showing all {len(working_n)} networks (Tokenized Stocks · Distributed · Networks), sorted by #."
                 )
-            table_hn = rwa_table_height(len(working_n), max_h=900)
+            chart_rows_n = sorted(
+                working_n,
+                key=lambda r: r.total_value_usd,
+                reverse=True,
+            )[:RWA_TOKENIZED_STOCKS_CHART_MAX_BARS]
+            n_sync_n = (
+                min(RWA_TOKENIZED_STOCKS_CHART_MAX_BARS, len(working_n))
+                if working_n
+                else max(1, len(working_n))
+            )
+            split_hn = rwa_table_height(max(1, n_sync_n), max_h=560)
             df_n = build_tokenized_stock_network_dataframe(working_n)
-            _show_tokenized_stock_network_dataframe(df_n, height=table_hn)
+            col_ntbl, col_nchart = st.columns([1, 1], gap="large", border=True)
+            with col_ntbl:
+                st.markdown(
+                    hub_subsection_heading_html("Networks table"),
+                    unsafe_allow_html=True,
+                )
+                _show_tokenized_stock_network_dataframe(df_n, height=split_hn)
+            with col_nchart:
+                st.markdown(
+                    hub_subsection_heading_html("Top networks by value"),
+                    unsafe_allow_html=True,
+                )
+                if chart_rows_n:
+                    fig_bar_n = _rwa_global_market_top_networks_bar_figure(
+                        chart_rows_n,
+                        height=split_hn,
+                    )
+                    st.plotly_chart(
+                        fig_bar_n,
+                        use_container_width=True,
+                        config={"scrollZoom": False, "displayModeBar": False},
+                    )
+                else:
+                    st.caption("No networks match this filter; there is nothing to chart.")
+            st.markdown(
+                '<p class="jd-hub-cta-note jd-rwa-gmo-split-note">The chart lists the top <strong>12</strong> '
+                "networks by total value (labels include market share). Scroll the table for the full filtered list.</p>",
+                unsafe_allow_html=True,
+            )
         else:
             st.info("No Tokenized Stocks Distributed · Networks rows were returned.")
 
