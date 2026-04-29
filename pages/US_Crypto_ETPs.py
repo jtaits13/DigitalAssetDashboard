@@ -121,6 +121,22 @@ ETP_KEY_OBSERVATIONS_HTML = f"""
 """
 
 
+def _monthly_review_note_html(*, year: int = 2026, month: int = 4) -> str:
+    last_review = datetime(year, month, 1, tzinfo=timezone.utc)
+    label = last_review.strftime("%b %Y")
+    age_days = max(0, (datetime.now(timezone.utc) - last_review).days)
+    if age_days > 31:
+        return (
+            '<p style="margin:0.1rem 0 0.55rem 0;color:#b91c1c;font-size:0.78rem;">'
+            f"<strong>Review due:</strong> last reviewed {label} ({age_days} days ago)."
+            "</p>"
+        )
+    return (
+        '<p style="margin:0.1rem 0 0.55rem 0;color:#3E6A7A;font-size:0.78rem;">'
+        f"Reviewed monthly · Last reviewed: {label}</p>"
+    )
+
+
 def main() -> None:
     st.set_page_config(
         page_title="U.S. Digital Asset ETPs — JPM Digital",
@@ -184,6 +200,7 @@ def main() -> None:
     render_etp_summary_kpi_row(rows, include_styles=False)
     st.markdown(hub_subsection_heading_html("Key Observations"), unsafe_allow_html=True)
     st.markdown(ETP_KEY_OBSERVATIONS_HTML, unsafe_allow_html=True)
+    st.markdown(_monthly_review_note_html(), unsafe_allow_html=True)
 
     # border=True: same as home News & Regulatory row — stretch columns and pin Explore CTA under the hub panel.
     col_aum, col_pulse = st.columns([1, 1], gap="medium", border=True)
