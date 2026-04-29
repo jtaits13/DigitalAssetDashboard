@@ -242,9 +242,25 @@ def enrich_crypto_etps_rows(
             )
         )
 
+    # Filing lookup can also be network-heavy (SEC); resolve in parallel and then
+    # reassemble rows in original order for stable rendering.
+    filing_by_symbol: dict[str, str] = {}
+    filing_workers = max(1, min(8, max_workers))
+    with ThreadPoolExecutor(max_workers=filing_workers) as ex:
+        futures = {
+            ex.submit(resolve_fund_filing_url, r.symbol, ua): r.symbol
+            for r in enriched
+        }
+        for fut in as_completed(futures):
+            sym = futures[fut]
+            try:
+                filing_by_symbol[sym] = fut.result()
+            except Exception as e:
+                logger.debug("resolve filing %s: %s", sym, e)
+                filing_by_symbol[sym] = ""
+
     out: list[CryptoEtpRow] = []
     for r in enriched:
-        fund = resolve_fund_filing_url(r.symbol, ua)
         out.append(
             CryptoEtpRow(
                 symbol=r.symbol,
@@ -256,7 +272,7 @@ def enrich_crypto_etps_rows(
                 issuer=r.issuer,
                 inception=r.inception,
                 pct_52w=r.pct_52w,
-                fund_filing_url=fund,
+                fund_filing_url=filing_by_symbol.get(r.symbol, ""),
                 custodian=resolve_custodian(r.symbol),
             )
         )

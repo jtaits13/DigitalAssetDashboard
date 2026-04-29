@@ -18,6 +18,8 @@ from dataclasses import asdict, dataclass
 from typing import Any
 
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 logger = logging.getLogger(__name__)
 
@@ -29,6 +31,7 @@ APP_TREASURIES = "https://app.rwa.xyz/treasuries"
 APP_STOCKS = "https://app.rwa.xyz/stocks"
 APP_ASSET_MANAGERS = "https://app.rwa.xyz/asset-managers"
 USER_AGENT = "JPM-Digital/1.0 (RWA league widget; contact via app maintainer)"
+_HTTP_TIMEOUT = (8, 30)
 
 # Defensive registration for runtimes/loaders where dataclasses may inspect this module
 # before the import system exposes it through sys.modules.
@@ -36,6 +39,33 @@ if sys.modules.get(__name__) is None:
     _m = types.ModuleType(__name__)
     _m.__dict__.update(globals())
     sys.modules[__name__] = _m
+
+
+def _rwa_session() -> requests.Session:
+    s = requests.Session()
+    retry = Retry(
+        total=2,
+        connect=2,
+        read=2,
+        backoff_factor=0.25,
+        status_forcelist=(429, 500, 502, 503, 504),
+        allowed_methods=frozenset(["GET"]),
+        raise_on_status=False,
+    )
+    adapter = HTTPAdapter(pool_connections=12, pool_maxsize=12, max_retries=retry)
+    s.mount("https://", adapter)
+    s.mount("http://", adapter)
+    return s
+
+
+_SESSION = _rwa_session()
+
+
+def _http_get_text(url: str) -> requests.Response:
+    headers = {"User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml"}
+    r = _SESSION.get(url, headers=headers, timeout=_HTTP_TIMEOUT)
+    r.raise_for_status()
+    return r
 
 
 def format_usd_compact(n: float) -> str:
@@ -965,10 +995,8 @@ def _rows_from_networks_list_results(raw: list[dict[str, Any]]) -> list[RwaNetwo
 
 
 def _fetch_networks_props_payload() -> tuple[dict[str, Any] | None, str | None]:
-    headers = {"User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml"}
     try:
-        r = requests.get(APP_NETWORKS, headers=headers, timeout=60)
-        r.raise_for_status()
+        r = _http_get_text(APP_NETWORKS)
     except (requests.RequestException, OSError) as e:
         logger.debug("RWA /networks fetch: %s", e)
         return None, str(e)
@@ -1010,10 +1038,8 @@ def fetch_rwa_networks_page_data() -> tuple[list[RwaNetworksTabRow], list[RwaGlo
 
 
 def _fetch_platforms_props_payload() -> tuple[dict[str, Any] | None, str | None]:
-    headers = {"User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml"}
     try:
-        r = requests.get(APP_PLATFORMS, headers=headers, timeout=60)
-        r.raise_for_status()
+        r = _http_get_text(APP_PLATFORMS)
     except (requests.RequestException, OSError) as e:
         logger.debug("RWA /platforms fetch: %s", e)
         return None, str(e)
@@ -1056,10 +1082,8 @@ def fetch_rwa_platforms_page_data() -> tuple[list[RwaPlatformsTabRow], list[RwaG
 
 
 def _fetch_asset_managers_props_payload() -> tuple[dict[str, Any] | None, str | None]:
-    headers = {"User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml"}
     try:
-        r = requests.get(APP_ASSET_MANAGERS, headers=headers, timeout=60)
-        r.raise_for_status()
+        r = _http_get_text(APP_ASSET_MANAGERS)
     except (requests.RequestException, OSError) as e:
         logger.debug("RWA /asset-managers fetch: %s", e)
         return None, str(e)
@@ -1103,10 +1127,8 @@ def fetch_rwa_asset_managers_page_data() -> tuple[list[RwaAssetManagersTabRow], 
 
 
 def _fetch_props_payload() -> tuple[dict[str, Any] | None, str | None]:
-    headers = {"User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml"}
     try:
-        r = requests.get(APP_HOME, headers=headers, timeout=60)
-        r.raise_for_status()
+        r = _http_get_text(APP_HOME)
     except (requests.RequestException, OSError) as e:
         logger.debug("RWA fetch: %s", e)
         return None, str(e)
@@ -1148,10 +1170,8 @@ def fetch_rwa_network_league() -> tuple[list[RwaNetworksTabRow], str | None]:
 
 
 def _fetch_stablecoins_props_payload() -> tuple[dict[str, Any] | None, str | None]:
-    headers = {"User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml"}
     try:
-        r = requests.get(APP_STABLECOINS, headers=headers, timeout=60)
-        r.raise_for_status()
+        r = _http_get_text(APP_STABLECOINS)
     except (requests.RequestException, OSError) as e:
         logger.debug("RWA stablecoins fetch: %s", e)
         return None, str(e)
@@ -1166,10 +1186,8 @@ def _fetch_stablecoins_props_payload() -> tuple[dict[str, Any] | None, str | Non
 
 
 def _fetch_treasuries_props_payload() -> tuple[dict[str, Any] | None, str | None]:
-    headers = {"User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml"}
     try:
-        r = requests.get(APP_TREASURIES, headers=headers, timeout=60)
-        r.raise_for_status()
+        r = _http_get_text(APP_TREASURIES)
     except (requests.RequestException, OSError) as e:
         logger.debug("RWA treasuries fetch: %s", e)
         return None, str(e)
@@ -1188,10 +1206,8 @@ def _fetch_treasuries_props_payload() -> tuple[dict[str, Any] | None, str | None
 
 
 def _fetch_stocks_props_payload() -> tuple[dict[str, Any] | None, str | None]:
-    headers = {"User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml"}
     try:
-        r = requests.get(APP_STOCKS, headers=headers, timeout=60)
-        r.raise_for_status()
+        r = _http_get_text(APP_STOCKS)
     except (requests.RequestException, OSError) as e:
         logger.debug("RWA tokenized stocks fetch: %s", e)
         return None, str(e)
