@@ -54,8 +54,9 @@ def main() -> None:
         unsafe_allow_html=True,
     )
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">Browse digital-asset regulatory and legal stories '
-        "from aggregated RSS feeds. Use search and pagination to navigate the full list.</p>",
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">'
+        "Aggregated regulatory and legal headlines for digital assets. "
+        "Each search token must appear somewhere in the title, summary, source, or region (all tokens required); pagination walks through results.</p>",
         unsafe_allow_html=True,
     )
     st.divider()
@@ -69,7 +70,7 @@ def main() -> None:
     st.text_input(
         "Search headlines",
         key="all_regulatory_search_input",
-        placeholder="Keywords in title, summary, source, or region — separate with spaces (all must match)",
+        placeholder="Keywords in title, summary, source, or region — all must match",
     )
     search_q = (st.session_state.get("all_regulatory_search_input") or "").strip()
     if "_all_regulatory_search_q_tracked" not in st.session_state:
@@ -151,7 +152,7 @@ def main() -> None:
     st.markdown(
         subpage_footnote_html(
             f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
-            f"Page {page} of {total_pages} · Regulatory RSS feeds"
+            f"Page {page} of {total_pages} · Regulatory RSS index"
         ),
         unsafe_allow_html=True,
     )

@@ -92,7 +92,7 @@ def main() -> None:
     st.text_input(
         "Search headlines",
         key="etf_news_search_input",
-        placeholder="Keywords in title, summary, or source — separate with spaces (all must match)",
+        placeholder="Keywords in title, summary, or source — all must match",
     )
     search_q = (st.session_state.get("etf_news_search_input") or "").strip()
     if "_etf_news_search_q_tracked" not in st.session_state:

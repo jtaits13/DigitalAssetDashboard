@@ -166,16 +166,17 @@ def main() -> None:
         unsafe_allow_html=True,
     )
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">A clear view of U.S. digital asset ETPs, combining market context, aggregate '
-        'AUM trend signals, and fund-level reference data in one place. Data from '
-        '<a href="https://stockanalysis.com/list/crypto-etfs/">StockAnalysis.com</a> and each fund’s detail page '
-        "(issuer, inception, past-year return as <strong>52W %</strong>).</p>",
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">'
+        "<strong>U.S. crypto-related exchange-traded products</strong>: KPI strip, estimated aggregate AUM trend, searchable "
+        "fund table, and a short ETF headline teaser. Reference columns come from "
+        '<a href="https://stockanalysis.com/list/crypto-etfs/">StockAnalysis.com</a> '
+        "(issuer, inception, <strong>52W %</strong>).</p>",
         unsafe_allow_html=True,
     )
     st.divider()
 
     ua = resolve_etp_user_agent(get_etp_user_agent_from_secrets())
-    with st.spinner("Loading U.S. digital asset ETPs + ETF / ETP headlines…"):
+    with st.spinner("Loading funds and headline teaser…"):
         with ThreadPoolExecutor(max_workers=2) as _pool:
             _f_etp_rows = _pool.submit(load_crypto_etps_cached, ua)
             _f_etp_news = _pool.submit(load_all_etf_etp_news_cached)
@@ -190,7 +191,7 @@ def main() -> None:
 
     etp_pulse = etp_all_news[:ETP_PULSE_PREVIEW_COUNT]
     if _etp_feed_errors:
-        with st.expander("Some ETF/ETP RSS feeds could not be loaded", expanded=False):
+        with st.expander("Some headline feeds could not be loaded", expanded=False):
             for err in _etp_feed_errors:
                 st.warning(err)
 
@@ -223,9 +224,8 @@ def main() -> None:
         )
         st.markdown(
             subpage_footnote_markup_html(
-                "Estimated from <strong>Yahoo Finance</strong> weekly closes: each fund’s latest reported AUM from StockAnalysis "
-                "is scaled by its price path (constant-shares approximation), then summed. Covers the full list below — "
-                "not official fund AUM filings."
+                "<strong>Yahoo Finance</strong> weekly closes × each fund’s latest StockAnalysis AUM (constant-share "
+                "approximation), summed across the table below. Illustrative only—not filings."
             ),
             unsafe_allow_html=True,
         )
@@ -249,9 +249,8 @@ def main() -> None:
             )
             st.markdown(
                 subpage_footnote_markup_html(
-                    "Vertical axis: total estimated AUM, <strong>billions USD</strong> (weekly points). "
-                    "Default view is the last <strong>12 months</strong> (month labels on the x-axis); scroll or use the "
-                    "mode bar to zoom and pan the full history."
+                    "Vertical axis: estimated aggregate AUM (<strong>billions USD</strong>; weekly points). "
+                    "Default last <strong>12 months</strong>; use the Plotly toolbar to zoom or pan."
                 ),
                 unsafe_allow_html=True,
             )
@@ -272,7 +271,7 @@ def main() -> None:
             ):
                 st.switch_page("pages/All_ETF_News.py")
             st.markdown(
-                '<p class="jd-hub-cta-note">Full ETF headline list (~last <strong>three months</strong>, UTC): search, pagination, and daily caps on the next page.</p>',
+                '<p class="jd-hub-cta-note">Next page: full ETF headline list (~3 months UTC), search, pagination, daily caps.</p>',
                 unsafe_allow_html=True,
             )
 
@@ -319,7 +318,7 @@ def main() -> None:
     st.markdown(
         subpage_footnote_markup_html(
             f"{escape(datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S'))} UTC · "
-            "StockAnalysis · Cached up to one hour · Use <strong>Refresh all data</strong> on the home page to reload."
+            "StockAnalysis snapshot · Cached up to ~1 hour · Reload via <strong>Refresh all data</strong> on Home."
         ),
         unsafe_allow_html=True,
     )

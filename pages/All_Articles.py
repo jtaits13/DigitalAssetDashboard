@@ -62,8 +62,9 @@ def main() -> None:
         unsafe_allow_html=True,
     )
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">Browse all headlines from aggregated RSS feeds. '
-        "Use search, keyword filters, and pagination to navigate the full list.</p>",
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">'
+        "Aggregated RSS headlines for digital assets. "
+        "Each search token must appear somewhere in the title, summary, or source (all tokens required); pagination walks through results.</p>",
         unsafe_allow_html=True,
     )
     st.divider()
@@ -77,7 +78,7 @@ def main() -> None:
     st.text_input(
         "Search headlines",
         key="all_news_search_input",
-        placeholder="Keywords in title, summary, or source — separate with spaces (all must match)",
+        placeholder="Keywords in title, summary, or source — all must match",
     )
     search_q = (st.session_state.get("all_news_search_input") or "").strip()
     if "_all_news_search_q_tracked" not in st.session_state:
@@ -162,7 +163,7 @@ def main() -> None:
     st.markdown(
         subpage_footnote_html(
             f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
-            f"Page {page} of {total_pages} · RSS aggregated feeds"
+            f"Page {page} of {total_pages} · All-news RSS index"
         ),
         unsafe_allow_html=True,
     )
