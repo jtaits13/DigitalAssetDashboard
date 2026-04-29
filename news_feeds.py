@@ -1532,9 +1532,8 @@ def build_etp_market_news_box_html(articles: list[dict[str, Any]]) -> str:
         out.append("</ol>")
     out.append(
         '<p class="jd-hub-news-footnote">'
-        "Items favor <strong>ETF / ETP / exchange-traded</strong> and flow language (AUM, inflows) in the <strong>digital-asset</strong> "
-        "title and summary — not general crypto policy unless it also ties to those products. Same pool as <strong>All ETF news</strong>. "
-        "Only the <strong>last three calendar months</strong> (UTC) are shown. Feeds are still RSS / capped Google News, not a full archive."
+        "ETF-focused digital-asset headlines from the same pool as <strong>All ETF news</strong>. "
+        "Shows the <strong>last three calendar months</strong> (UTC) from RSS and Google News feeds."
         "</p>"
     )
     out.append("</section></div>")
