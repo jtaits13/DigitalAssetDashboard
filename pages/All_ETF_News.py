@@ -32,7 +32,11 @@ from news_feeds import (
     render_subpage_sidebar,
     render_subpage_top_bar,
 )
-from price_ticker import show_price_ticker
+try:
+    from price_ticker import show_price_ticker
+except Exception:
+    def show_price_ticker() -> None:
+        return
 
 PER_PAGE = 20
 
@@ -50,22 +54,6 @@ def main() -> None:
         st.switch_page("pages/US_Crypto_ETPs.py")
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
     st.markdown(app_shared_layout_css(), unsafe_allow_html=True)
-    st.markdown(
-        """
-<style>
-/* Prev | (spacer) | Next — right-align Next with the .news-card column edge. */
-.jd-etf-pager-r { display: none !important; }
-div[data-testid="stColumn"]:has(.jd-etf-pager-r) div[data-testid="stVerticalBlock"] {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    width: 100%;
-    box-sizing: border-box;
-}
-</style>
-""",
-        unsafe_allow_html=True,
-    )
     show_price_ticker()
     render_subpage_sidebar(key_prefix="all_etf_news", current="etf_news")
 
@@ -144,22 +132,6 @@ div[data-testid="stColumn"]:has(.jd-etf-pager-r) div[data-testid="stVerticalBloc
 
     st.divider()
     st.markdown(subpage_footer_heading_html("Pages"), unsafe_allow_html=True)
-    c_prev, c_mid, c_next = st.columns([1, 4, 1])
-    with c_prev:
-        go_prev = st.button("← Prev", disabled=page <= 1, key="etf_news_prev", use_container_width=True)
-    with c_next:
-        st.markdown(
-            '<div class="jd-etf-pager-r" aria-hidden="true"></div>',
-            unsafe_allow_html=True,
-        )
-        go_next = st.button("Next →", disabled=page >= total_pages, key="etf_news_next", use_container_width=True)
-
-    if go_prev:
-        st.session_state.etf_news_page = page - 1
-        st.rerun()
-    if go_next:
-        st.session_state.etf_news_page = page + 1
-        st.rerun()
 
     if total_pages <= 18:
         num_cols = st.columns(total_pages)
@@ -185,6 +157,19 @@ div[data-testid="stColumn"]:has(.jd-etf-pager-r) div[data-testid="stVerticalBloc
         if new_pg != page:
             st.session_state.etf_news_page = new_pg
             st.rerun()
+
+    c_prev, c_mid, c_next = st.columns([1, 4, 1])
+    with c_prev:
+        go_prev = st.button("← Prev", disabled=page <= 1, key="etf_news_prev", use_container_width=True)
+    with c_next:
+        go_next = st.button("Next →", disabled=page >= total_pages, key="etf_news_next", use_container_width=True)
+
+    if go_prev:
+        st.session_state.etf_news_page = page - 1
+        st.rerun()
+    if go_next:
+        st.session_state.etf_news_page = page + 1
+        st.rerun()
 
     st.divider()
     st.markdown(
