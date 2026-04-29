@@ -34,12 +34,14 @@ from price_ticker import fetch_top_crypto_tickers, show_price_ticker
 from crypto_etps.widgets import (
     clear_crypto_etp_cache,
     get_etp_user_agent_from_secrets,
+    load_crypto_etps_cached,
+    resolve_etp_user_agent,
     show_us_crypto_etps_widget,
 )
 from regulatory_news.client import load_regulatory_articles
 from regulatory_news.widgets import build_home_regulatory_lane_body_html, clear_regulatory_cache
 from rwa_league.explore_nav import set_rwa_explore_top_nav_target
-from rwa_league.widgets import clear_rwa_league_cache, show_rwa_league_widget
+from rwa_league.widgets import clear_rwa_league_cache, load_rwa_global_market_cached, show_rwa_league_widget
 
 HOME_HEADLINE_COUNT = 3
 HOME_REGULATORY_PREVIEW = 3
@@ -238,11 +240,20 @@ def main() -> None:
         clear_rwa_league_cache()
         st.rerun()
 
-    with ThreadPoolExecutor(max_workers=2) as _pool:
+    etp_ua = resolve_etp_user_agent(get_etp_user_agent_from_secrets())
+    with ThreadPoolExecutor(max_workers=4) as _pool:
         _f_news = _pool.submit(load_all_feeds, DEFAULT_FEEDS)
         _f_reg = _pool.submit(load_regulatory_articles)
+        _f_etp = _pool.submit(load_crypto_etps_cached, etp_ua)
+        _f_rwa = _pool.submit(load_rwa_global_market_cached)
         articles, feed_errors = _f_news.result()
         regulatory_articles, regulatory_errors = _f_reg.result()
+        # Best-effort cache warmers for lower latency in later sections.
+        for _f in (_f_etp, _f_rwa):
+            try:
+                _f.result()
+            except Exception:
+                pass
 
     _feed_status_expanders(feed_errors, regulatory_errors)
 
@@ -297,10 +308,7 @@ def main() -> None:
             '<p class="jd-hub-dek jd-hub-dek--large">U.S. listed digital asset ETFs and ETPs — preview below; open the full list for search and fund details.</p>',
             unsafe_allow_html=True,
         )
-        show_us_crypto_etps_widget(
-            get_etp_user_agent_from_secrets(),
-            home_preview=True,
-        )
+        show_us_crypto_etps_widget(etp_ua, home_preview=True)
 
         st.divider()
         st.markdown(hub_section_anchor("jd-section-onchain"), unsafe_allow_html=True)
@@ -318,7 +326,7 @@ def main() -> None:
         _jd_inject_scroll_to_section()
         return
 
-    unique = dedupe_articles(articles, max_items=None)
+    unique = dedupe_articles(articles, max_items=HOME_HEADLINE_COUNT + 1)
     top = unique[:HOME_HEADLINE_COUNT]
     needs_news_btn = len(unique) > HOME_HEADLINE_COUNT
     needs_reg_btn = len(regulatory_articles) > HOME_REGULATORY_PREVIEW
@@ -380,10 +388,7 @@ def main() -> None:
         '<p class="jd-hub-dek jd-hub-dek--large">U.S. listed digital asset ETFs and ETPs — preview below; open the full list for search and fund details.</p>',
         unsafe_allow_html=True,
     )
-    show_us_crypto_etps_widget(
-        get_etp_user_agent_from_secrets(),
-        home_preview=True,
-    )
+    show_us_crypto_etps_widget(etp_ua, home_preview=True)
 
     st.divider()
     st.markdown(hub_section_anchor("jd-section-onchain"), unsafe_allow_html=True)

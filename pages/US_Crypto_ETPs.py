@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import sys
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 _REPO = Path(__file__).resolve().parent.parent
@@ -173,8 +174,13 @@ def main() -> None:
     )
     st.divider()
 
-    with st.spinner("Loading U.S. digital asset ETPs (list + profile pages)…"):
-        data = load_crypto_etps_cached(resolve_etp_user_agent(get_etp_user_agent_from_secrets()))
+    ua = resolve_etp_user_agent(get_etp_user_agent_from_secrets())
+    with st.spinner("Loading U.S. digital asset ETPs + ETF / ETP headlines…"):
+        with ThreadPoolExecutor(max_workers=2) as _pool:
+            _f_etp_rows = _pool.submit(load_crypto_etps_cached, ua)
+            _f_etp_news = _pool.submit(load_all_etf_etp_news_cached)
+            data = _f_etp_rows.result()
+            etp_all_news, _etp_feed_errors = _f_etp_news.result()
 
     if data.error and not data.rows:
         st.warning(escape(data.error))
@@ -182,8 +188,6 @@ def main() -> None:
 
     rows = data.rows
 
-    with st.spinner("Loading crypto ETF / ETP headlines (RSS)…"):
-        etp_all_news, _etp_feed_errors = load_all_etf_etp_news_cached()
     etp_pulse = etp_all_news[:ETP_PULSE_PREVIEW_COUNT]
     if _etp_feed_errors:
         with st.expander("Some ETF/ETP RSS feeds could not be loaded", expanded=False):
