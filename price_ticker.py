@@ -7,7 +7,11 @@ from typing import Any
 
 import requests
 import streamlit as st
-import streamlit.components.v1 as components
+
+try:
+    import streamlit.components.v1 as components
+except Exception:  # noqa: BLE001
+    components = None
 
 COINGECKO_MARKETS_URL = "https://api.coingecko.com/api/v3/coins/markets"
 COINCAP_ASSETS_URL = "https://api.coincap.io/v2/assets"
@@ -320,4 +324,5 @@ def show_price_ticker() -> None:
     st.markdown(TICKER_STYLES_MARKDOWN, unsafe_allow_html=True)
     rows, err, src = fetch_top_crypto_tickers(TICKER_COUNT)
     st.markdown(render_price_ticker_html(rows, err, src), unsafe_allow_html=True)
-    components.html(NAV_TICKER_ALIGN_SCRIPT, height=0, width=0)
+    if components is not None:
+        components.html(NAV_TICKER_ALIGN_SCRIPT, height=0, width=0)
