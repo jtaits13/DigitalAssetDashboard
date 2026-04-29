@@ -201,6 +201,7 @@ def main() -> None:
     st.markdown(hub_subsection_heading_html("Key Observations"), unsafe_allow_html=True)
     st.markdown(ETP_KEY_OBSERVATIONS_HTML, unsafe_allow_html=True)
     st.markdown(_monthly_review_note_html(), unsafe_allow_html=True)
+    st.divider()
 
     # border=True: same as home News & Regulatory row — stretch columns and pin Explore CTA under the hub panel.
     col_aum, col_pulse = st.columns([1, 1], gap="medium", border=True)
