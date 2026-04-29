@@ -11,11 +11,12 @@ import streamlit as st
 from home_layout import (
     KPI_WINDOW_NOTE_CSS,
     STREAMLIT_TABLE_UNIFY_CSS,
+    RwaExploreTopNavTarget,
     hub_section_anchor,
     hub_subsection_heading_html,
+    set_rwa_explore_top_nav_target,
 )
 from news_feeds import hub_news_panel_header_html
-from rwa_league.explore_nav import RwaExploreTopNavTarget, set_rwa_explore_top_nav_target
 
 if TYPE_CHECKING:
     from rwa_league.client import (

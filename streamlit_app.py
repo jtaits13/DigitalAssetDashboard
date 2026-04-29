@@ -19,7 +19,7 @@ from datetime import datetime, timezone
 import streamlit as st
 import streamlit.components.v1 as components
 
-from home_layout import hub_section_anchor, section_label_teal
+from home_layout import hub_section_anchor, section_label_teal, set_rwa_explore_top_nav_target
 from news_feeds import (
     DEFAULT_FEEDS,
     app_shared_layout_css,
@@ -40,7 +40,6 @@ from crypto_etps.widgets import (
 )
 from regulatory_news.client import load_regulatory_articles
 from regulatory_news.widgets import build_home_regulatory_lane_body_html, clear_regulatory_cache
-from rwa_league.explore_nav import set_rwa_explore_top_nav_target
 from rwa_league.widgets import clear_rwa_league_cache, load_rwa_global_market_cached, show_rwa_league_widget
 
 HOME_HEADLINE_COUNT = 3
