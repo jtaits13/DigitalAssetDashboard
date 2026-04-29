@@ -628,8 +628,9 @@ def _show_stablecoin_platform_dataframe(df, *, height: int) -> None:
         ],
         column_config={
             "#": st.column_config.NumberColumn(
-                _rank_column_label(by_metric="Market cap"),
+                "#",
                 format="%.0f",
+                width="small",
                 help="Rank on RWA.xyz Platforms tab (by aggregate stablecoin market cap)",
             ),
             "Platform": st.column_config.TextColumn(
@@ -1027,8 +1028,9 @@ def _show_us_treasury_platform_dataframe(df, *, height: int) -> None:
         ],
         column_config={
             "#": st.column_config.NumberColumn(
-                _rank_column_label(by_metric="Total Value"),
+                "#",
                 format="%.0f",
+                width="small",
                 help="Rank on RWA.xyz Distributed · Platforms tab (by Total Value, USD)",
             ),
             "Platform": st.column_config.TextColumn(
@@ -1094,8 +1096,9 @@ def _show_us_treasury_network_dataframe(df, *, height: int) -> None:
         ],
         column_config={
             "#": st.column_config.NumberColumn(
-                _rank_column_label(by_metric="Distributed Value"),
+                "#",
                 format="%.0f",
+                width="small",
                 help="Rank order from RWA.xyz (by Distributed Value on this network, USD)",
             ),
             "Network": st.column_config.TextColumn(
@@ -1161,8 +1164,9 @@ def _show_tokenized_stock_platform_dataframe(df, *, height: int) -> None:
         ],
         column_config={
             "#": st.column_config.NumberColumn(
-                _rank_column_label(by_metric="Distributed Value"),
+                "#",
                 format="%.0f",
+                width="small",
                 help="Rank on RWA.xyz Distributed · Platforms tab (by Distributed Value, USD)",
             ),
             "Platform": st.column_config.TextColumn(
@@ -1228,8 +1232,9 @@ def _show_tokenized_stock_network_dataframe(df, *, height: int) -> None:
         ],
         column_config={
             "#": st.column_config.NumberColumn(
-                _rank_column_label(by_metric="Distributed Value"),
+                "#",
                 format="%.0f",
+                width="small",
                 help="Rank on RWA.xyz Distributed · Networks tab (by Distributed Value, USD)",
             ),
             "Network": st.column_config.TextColumn(
