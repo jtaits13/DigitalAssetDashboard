@@ -375,11 +375,6 @@ def _render_rwa_treasuries_overview(
 _SORT = "\u2195"
 
 
-def _rank_column_label(*, by_metric: str) -> str:
-    """Rank column header: '# by <primary sort metric>' then the sort affordance (matches RWA.xyz ordering)."""
-    return f"# by {by_metric} {_SORT}"
-
-
 _LINK_ARROW = "\u2197"  # Northeast arrow for RWA.xyz LinkColumn (Unicode U+2197)
 STABLECOINS_RWA_LINK_LABEL = "See Stablecoins on RWA.xyz"
 RWA_GLOBAL_MARKET_OVERVIEW_HEADING = "RWA Global Market Overview"
@@ -403,6 +398,8 @@ def rwa_table_height(num_rows: int, *, max_h: int = 520) -> int:
 
 # Global Market split row: chart shows at most this many bars; table height uses the same row budget.
 RWA_GMO_CHART_MAX_BARS = 12
+# Participants — Networks / Platforms / Asset Managers embedded league charts match this cap.
+RWA_PARTICIPANTS_CHART_MAX_BARS = RWA_GMO_CHART_MAX_BARS
 RWA_STABLECOINS_CHART_MAX_BARS = 12
 RWA_TREASURIES_CHART_MAX_BARS = 12
 RWA_TOKENIZED_STOCKS_CHART_MAX_BARS = 12
@@ -448,6 +445,165 @@ def _rwa_global_market_top_networks_bar_figure(
         showlegend=False,
         xaxis=dict(
             title=dict(text="Total value (USD)", font=dict(size=12, color="#1F4C67")),
+            tickprefix="$",
+            separatethousands=True,
+        ),
+        yaxis=dict(
+            type="category",
+            categoryorder="array",
+            categoryarray=y_labels,
+            showticklabels=True,
+        ),
+    )
+    return fig
+
+
+def _rwa_participants_networks_tab_bar_figure(
+    rows: list[RwaNetworksTabRow],
+    *,
+    height: int,
+) -> go.Figure:
+    """Horizontal bar: Participants — Networks league by RWA value (distributed) (USD)."""
+    top_n = min(RWA_PARTICIPANTS_CHART_MAX_BARS, len(rows))
+    top = sorted(rows, key=lambda r: r.distributed_usd, reverse=True)[:top_n]
+    asc = sorted(top, key=lambda r: r.distributed_usd)
+    y_labels = [str(r.network).strip() or "—" for r in asc]
+    x_vals = [float(r.distributed_usd) for r in asc]
+    share_pct = [float(r.market_share_raw) * 100.0 for r in asc]
+    share_text = [f"{s:.2f}% share" for s in share_pct]
+    fig = go.Figure(
+        go.Bar(
+            x=x_vals,
+            y=y_labels,
+            orientation="h",
+            marker_color="#25809C",
+            marker_line_color="#1F4C67",
+            marker_line_width=0.5,
+            showlegend=False,
+            text=share_text,
+            textposition="outside",
+            textfont=dict(size=11, color="#3E6A7A"),
+            cliponaxis=False,
+            hovertemplate=(
+                "<b>%{y}</b><br>RWA value (distributed): %{x:$,.0f}<br>Market share: %{text}<extra></extra>"
+            ),
+        )
+    )
+    fig.update_layout(
+        height=int(height),
+        margin=dict(l=8, r=100, t=14, b=36),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="#f8fafc",
+        font=dict(size=12, color="#1F4C67"),
+        showlegend=False,
+        xaxis=dict(
+            title=dict(text="Distributed (USD)", font=dict(size=12, color="#1F4C67")),
+            tickprefix="$",
+            separatethousands=True,
+        ),
+        yaxis=dict(
+            type="category",
+            categoryorder="array",
+            categoryarray=y_labels,
+            showticklabels=True,
+        ),
+    )
+    return fig
+
+
+def _rwa_participants_platforms_tab_bar_figure(
+    rows: list[RwaPlatformsTabRow],
+    *,
+    height: int,
+) -> go.Figure:
+    """Horizontal bar: Participants — Platforms issuer league by RWA value (distributed)."""
+    top_n = min(RWA_PARTICIPANTS_CHART_MAX_BARS, len(rows))
+    top = sorted(rows, key=lambda r: r.distributed_usd, reverse=True)[:top_n]
+    asc = sorted(top, key=lambda r: r.distributed_usd)
+    y_labels = [str(r.platform).strip() or "—" for r in asc]
+    x_vals = [float(r.distributed_usd) for r in asc]
+    share_pct = [float(r.market_share_raw) * 100.0 for r in asc]
+    share_text = [f"{s:.2f}% share" for s in share_pct]
+    fig = go.Figure(
+        go.Bar(
+            x=x_vals,
+            y=y_labels,
+            orientation="h",
+            marker_color="#25809C",
+            marker_line_color="#1F4C67",
+            marker_line_width=0.5,
+            showlegend=False,
+            text=share_text,
+            textposition="outside",
+            textfont=dict(size=11, color="#3E6A7A"),
+            cliponaxis=False,
+            hovertemplate=(
+                "<b>%{y}</b><br>RWA value (distributed): %{x:$,.0f}<br>Market share: %{text}<extra></extra>"
+            ),
+        )
+    )
+    fig.update_layout(
+        height=int(height),
+        margin=dict(l=8, r=100, t=14, b=36),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="#f8fafc",
+        font=dict(size=12, color="#1F4C67"),
+        showlegend=False,
+        xaxis=dict(
+            title=dict(text="Distributed (USD)", font=dict(size=12, color="#1F4C67")),
+            tickprefix="$",
+            separatethousands=True,
+        ),
+        yaxis=dict(
+            type="category",
+            categoryorder="array",
+            categoryarray=y_labels,
+            showticklabels=True,
+        ),
+    )
+    return fig
+
+
+def _rwa_participants_asset_managers_tab_bar_figure(
+    rows: list[RwaAssetManagersTabRow],
+    *,
+    height: int,
+) -> go.Figure:
+    """Horizontal bar: Participants — Asset Managers league by distributed value."""
+    top_n = min(RWA_PARTICIPANTS_CHART_MAX_BARS, len(rows))
+    top = sorted(rows, key=lambda r: r.distributed_usd, reverse=True)[:top_n]
+    asc = sorted(top, key=lambda r: r.distributed_usd)
+    y_labels = [str(r.manager).strip() or "—" for r in asc]
+    x_vals = [float(r.distributed_usd) for r in asc]
+    share_pct = [float(r.market_share_raw) * 100.0 for r in asc]
+    share_text = [f"{s:.2f}% share" for s in share_pct]
+    fig = go.Figure(
+        go.Bar(
+            x=x_vals,
+            y=y_labels,
+            orientation="h",
+            marker_color="#25809C",
+            marker_line_color="#1F4C67",
+            marker_line_width=0.5,
+            showlegend=False,
+            text=share_text,
+            textposition="outside",
+            textfont=dict(size=11, color="#3E6A7A"),
+            cliponaxis=False,
+            hovertemplate=(
+                "<b>%{y}</b><br>RWA value (distributed): %{x:$,.0f}<br>Market share: %{text}<extra></extra>"
+            ),
+        )
+    )
+    fig.update_layout(
+        height=int(height),
+        margin=dict(l=8, r=100, t=14, b=36),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="#f8fafc",
+        font=dict(size=12, color="#1F4C67"),
+        showlegend=False,
+        xaxis=dict(
+            title=dict(text="Distributed (USD)", font=dict(size=12, color="#1F4C67")),
             tickprefix="$",
             separatethousands=True,
         ),
@@ -696,7 +852,7 @@ def _show_rwa_dataframe(df, *, height: int) -> None:
         ],
         column_config={
             "#": st.column_config.NumberColumn(
-                f"# {_SORT}",
+                "#",
                 format="%.0f",
                 width="small",
                 help="Rank on the RWA.xyz homepage league (by Total Value, USD). Cells are integers; the site uses "
@@ -770,8 +926,9 @@ def _show_rwa_networks_page_dataframe(df, *, height: int) -> None:
         ],
         column_config={
             "#": st.column_config.NumberColumn(
-                _rank_column_label(by_metric="RWA value (distributed)"),
+                "#",
                 format="%.0f",
+                width="small",
                 help="Rank by RWA value (distributed), largest first (transferability.transferable, USD).",
             ),
             "Network": st.column_config.TextColumn(
@@ -857,8 +1014,9 @@ def _show_rwa_platforms_page_dataframe(df, *, height: int) -> None:
         ],
         column_config={
             "#": st.column_config.NumberColumn(
-                _rank_column_label(by_metric="RWA value (distributed)"),
+                "#",
                 format="%.0f",
+                width="small",
                 help="Rank by RWA value (distributed), largest first (Σ non-stable bridged value, USD).",
             ),
             "Platform": st.column_config.TextColumn(
@@ -944,8 +1102,9 @@ def _show_rwa_asset_managers_page_dataframe(df, *, height: int) -> None:
         ],
         column_config={
             "#": st.column_config.NumberColumn(
-                _rank_column_label(by_metric="RWA value (distributed)"),
+                "#",
                 format="%.0f",
+                width="small",
                 help="Rank by RWA value (distributed), largest first (USD from distributed_value on RWA.xyz).",
             ),
             "Asset manager": st.column_config.TextColumn(
@@ -2426,13 +2585,45 @@ def show_rwa_participants_networks_widget(
             f"Showing all {len(working)} networks. Headline KPI **%** are **30D**; see the table caption for column definitions."
         )
 
+    df = build_rwa_networks_page_dataframe(working)
+    chart_rows = sorted(
+        working,
+        key=lambda r: r.distributed_usd,
+        reverse=True,
+    )[:RWA_PARTICIPANTS_CHART_MAX_BARS]
+    n_sync = (
+        min(RWA_PARTICIPANTS_CHART_MAX_BARS, len(working))
+        if working
+        else max(1, len(df))
+    )
+    split_h = rwa_table_height(max(1, n_sync), max_h=560)
+    col_tbl, col_chart = st.columns([1, 1], gap="large", border=True)
+    with col_tbl:
+        st.markdown(
+            hub_subsection_heading_html("Networks table"),
+            unsafe_allow_html=True,
+        )
+        _show_rwa_networks_page_dataframe(df, height=split_h)
+    with col_chart:
+        st.markdown(
+            hub_subsection_heading_html("Top networks by value"),
+            unsafe_allow_html=True,
+        )
+        if chart_rows:
+            fig_bar = _rwa_participants_networks_tab_bar_figure(chart_rows, height=split_h)
+            st.plotly_chart(
+                fig_bar,
+                use_container_width=True,
+                config={"scrollZoom": False, "displayModeBar": False},
+            )
+        else:
+            st.caption("No networks match this filter; there is nothing to chart.")
     st.markdown(
-        '<div class="jd-hub-subsection-head">'
-        '<h2 class="home-main-heading">Networks Table</h2></div>',
+        '<p class="jd-hub-cta-note jd-rwa-gmo-split-note">The chart lists the top <strong>12</strong> '
+        "networks by RWA value (distributed); labels include market share. Scroll the table for the full filtered "
+        "list.</p>",
         unsafe_allow_html=True,
     )
-    df = build_rwa_networks_page_dataframe(working)
-    _show_rwa_networks_page_dataframe(df, height=rwa_table_height(len(df), max_h=900))
     st.caption(RWA_DATA_SOURCE_CAPTION)
 
     st.link_button(
@@ -2520,13 +2711,44 @@ def show_rwa_participants_platforms_widget(
             f"Showing all {len(working)} platforms. Headline KPI **%** are **30D**; see the table caption for columns."
         )
 
+    df = build_rwa_platforms_page_dataframe(working)
+    chart_rows = sorted(
+        working,
+        key=lambda r: r.distributed_usd,
+        reverse=True,
+    )[:RWA_PARTICIPANTS_CHART_MAX_BARS]
+    n_sync = (
+        min(RWA_PARTICIPANTS_CHART_MAX_BARS, len(working))
+        if working
+        else max(1, len(df))
+    )
+    split_h = rwa_table_height(max(1, n_sync), max_h=560)
+    col_tbl, col_chart = st.columns([1, 1], gap="large", border=True)
+    with col_tbl:
+        st.markdown(
+            hub_subsection_heading_html("Platforms table"),
+            unsafe_allow_html=True,
+        )
+        _show_rwa_platforms_page_dataframe(df, height=split_h)
+    with col_chart:
+        st.markdown(
+            hub_subsection_heading_html("Top platforms by value"),
+            unsafe_allow_html=True,
+        )
+        if chart_rows:
+            fig_bar = _rwa_participants_platforms_tab_bar_figure(chart_rows, height=split_h)
+            st.plotly_chart(
+                fig_bar,
+                use_container_width=True,
+                config={"scrollZoom": False, "displayModeBar": False},
+            )
+        else:
+            st.caption("No platforms match this filter; there is nothing to chart.")
     st.markdown(
-        '<div class="jd-hub-subsection-head">'
-        '<h2 class="home-main-heading">Platforms Table</h2></div>',
+        '<p class="jd-hub-cta-note jd-rwa-gmo-split-note">The chart lists the top <strong>12</strong> '
+        "issuers by distributed value; labels include market share. Scroll the table for the full filtered list.</p>",
         unsafe_allow_html=True,
     )
-    df = build_rwa_platforms_page_dataframe(working)
-    _show_rwa_platforms_page_dataframe(df, height=rwa_table_height(len(df), max_h=900))
     st.caption(RWA_PLATFORMS_DATA_SOURCE_CAPTION)
 
     st.link_button(
@@ -2615,13 +2837,45 @@ def show_rwa_participants_asset_managers_widget(
             f"Showing all {len(working)} asset managers. Headline KPI **%** are **30D**; see the table caption for columns."
         )
 
+    df = build_rwa_asset_managers_page_dataframe(working)
+    chart_rows = sorted(
+        working,
+        key=lambda r: r.distributed_usd,
+        reverse=True,
+    )[:RWA_PARTICIPANTS_CHART_MAX_BARS]
+    n_sync = (
+        min(RWA_PARTICIPANTS_CHART_MAX_BARS, len(working))
+        if working
+        else max(1, len(df))
+    )
+    split_h = rwa_table_height(max(1, n_sync), max_h=560)
+    col_tbl, col_chart = st.columns([1, 1], gap="large", border=True)
+    with col_tbl:
+        st.markdown(
+            hub_subsection_heading_html("Asset Managers table"),
+            unsafe_allow_html=True,
+        )
+        _show_rwa_asset_managers_page_dataframe(df, height=split_h)
+    with col_chart:
+        st.markdown(
+            hub_subsection_heading_html("Top asset managers by value"),
+            unsafe_allow_html=True,
+        )
+        if chart_rows:
+            fig_bar = _rwa_participants_asset_managers_tab_bar_figure(chart_rows, height=split_h)
+            st.plotly_chart(
+                fig_bar,
+                use_container_width=True,
+                config={"scrollZoom": False, "displayModeBar": False},
+            )
+        else:
+            st.caption("No managers match this filter; there is nothing to chart.")
     st.markdown(
-        '<div class="jd-hub-subsection-head">'
-        '<h2 class="home-main-heading">Asset Managers Table</h2></div>',
+        '<p class="jd-hub-cta-note jd-rwa-gmo-split-note">The chart lists the top <strong>12</strong> '
+        "asset managers by distributed value; labels include market share. Scroll the table for the full filtered "
+        "list.</p>",
         unsafe_allow_html=True,
     )
-    df = build_rwa_asset_managers_page_dataframe(working)
-    _show_rwa_asset_managers_page_dataframe(df, height=rwa_table_height(len(df), max_h=900))
     st.caption(RWA_ASSET_MANAGERS_DATA_SOURCE_CAPTION)
 
     st.link_button(
