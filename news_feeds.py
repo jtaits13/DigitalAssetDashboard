@@ -506,6 +506,20 @@ ETP_SUPPLEMENT_FEEDS: list[tuple[str, str]] = [
 
 ETP_NEWS_FEEDS: list[tuple[str, str]] = list(DEFAULT_FEEDS) + ETP_SUPPLEMENT_FEEDS
 
+# Broader market-news sources used on All Articles (not home) to improve day coverage.
+ALL_ARTICLES_SUPPLEMENT_FEEDS: list[tuple[str, str]] = [
+    (
+        "Google News (digital assets)",
+        "https://news.google.com/rss/search?q=digital+asset+crypto&hl=en-US&gl=US&ceid=US:en",
+    ),
+    (
+        "Google News (bitcoin ethereum markets)",
+        "https://news.google.com/rss/search?q=bitcoin+ethereum+crypto+markets&hl=en-US&gl=US&ceid=US:en",
+    ),
+]
+
+ALL_ARTICLES_FEEDS: list[tuple[str, str]] = list(DEFAULT_FEEDS) + ALL_ARTICLES_SUPPLEMENT_FEEDS
+
 
 def parse_entry_date(entry: Any) -> Optional[datetime]:
     """Parse published/updated date from a feedparser entry (UTC)."""

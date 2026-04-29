@@ -20,7 +20,7 @@ from home_layout import (
     subpage_toolbar_note_html,
 )
 from news_feeds import (
-    DEFAULT_FEEDS,
+    ALL_ARTICLES_FEEDS,
     app_shared_layout_css,
     article_styles_markdown,
     build_full_page_market_news_feed_html,
@@ -64,7 +64,7 @@ def main() -> None:
     )
     st.divider()
 
-    articles, feed_errors = load_all_feeds(DEFAULT_FEEDS)
+    articles, feed_errors = load_all_feeds(ALL_ARTICLES_FEEDS)
     if feed_errors:
         with st.expander("Some feeds could not be loaded", expanded=False):
             for err in feed_errors:
