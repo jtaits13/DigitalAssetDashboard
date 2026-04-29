@@ -10,7 +10,6 @@ if str(_REPO) not in sys.path:
     sys.path.insert(0, str(_REPO))
 
 from datetime import datetime, timezone
-from html import escape
 
 import streamlit as st
 
@@ -22,16 +21,14 @@ from home_layout import (
 )
 from news_feeds import (
     app_shared_layout_css,
-    article_day_key,
     article_styles_markdown,
+    build_full_page_regulatory_feed_html,
     filter_headlines_by_keyword,
-    format_article_day_label,
     render_subpage_sidebar,
     render_subpage_top_bar,
 )
 from price_ticker import show_price_ticker
 from regulatory_news.client import load_regulatory_articles
-from regulatory_news.widgets import render_regulatory_card_html
 
 PER_PAGE = 20
 
@@ -108,18 +105,7 @@ def main() -> None:
         cap_parts.append(f"(filtered from {len(articles)} total)")
     st.markdown(subpage_toolbar_note_html(" · ".join(cap_parts)), unsafe_allow_html=True)
 
-    prev_day_key = None
-    for item in page_items:
-        pub = item.get("published")
-        dk = article_day_key(pub if isinstance(pub, datetime) else None)
-        if dk != prev_day_key:
-            if prev_day_key is not None:
-                st.markdown('<div class="day-sep"></div>', unsafe_allow_html=True)
-            label = format_article_day_label(pub if isinstance(pub, datetime) else None)
-            st.markdown(f'<p class="day-label">{escape(label)}</p>', unsafe_allow_html=True)
-            prev_day_key = dk
-
-        st.markdown(render_regulatory_card_html(item), unsafe_allow_html=True)
+    st.markdown(build_full_page_regulatory_feed_html(page_items), unsafe_allow_html=True)
 
     st.divider()
     st.markdown(subpage_footer_heading_html("Pages"), unsafe_allow_html=True)

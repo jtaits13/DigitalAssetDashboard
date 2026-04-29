@@ -1134,6 +1134,25 @@ def article_styles_markdown() -> str:
     [data-testid="column"]:has(.jd-hub-explore-card) .stElementContainer:has(.stButton) button {
         font-weight: 700 !important;
     }
+    /* All Articles / All Regulatory full pages — match home hub lane widgets (no fixed hub-column min-height). */
+    .jd-hub-news-feed-page {
+        min-height: 0 !important;
+        align-self: flex-start;
+        width: 100%;
+        max-width: min(52rem, 100%);
+    }
+    .jd-hub-news-feed-page .day-label {
+        margin-top: 0.65rem;
+        margin-bottom: 0.35rem;
+    }
+    .jd-hub-news-feed-page .day-label:first-of-type {
+        margin-top: 0.1rem;
+    }
+    .jd-hub-news-feed-day-sep {
+        margin: 0.55rem 0 0.35rem 0;
+        border-top: 1px solid #dce7f0;
+        height: 0;
+    }
     </style>
     """
 
@@ -1180,6 +1199,87 @@ def build_home_news_lane_body_html(
         parts.append(
             '<p class="jd-hub-news-footnote">Most recent stories from the combined RSS list.</p>'
         )
+    parts.append("</section>")
+    return "".join(parts)
+
+
+def build_full_page_market_news_feed_html(page_items: list[dict[str, Any]]) -> str:
+    """All Articles: same hub panel + numbered lane rows as home (grouped by calendar day)."""
+    hid = "jd-all-news-feed-title"
+    parts: list[str] = [
+        f'<section class="jd-hub-news-panel jd-hub-news-feed-page" aria-labelledby="{hid}">',
+        hub_news_panel_header_html(
+            eyebrow="Market feed",
+            title="Latest Digital Asset News",
+            heading_id=hid,
+        ),
+    ]
+    prev_day_key: Optional[date] = None
+    row_idx = 1
+    ol_open = False
+
+    for item in page_items:
+        pub = item.get("published")
+        dk = article_day_key(pub if isinstance(pub, datetime) else None)
+        if dk != prev_day_key:
+            if ol_open:
+                parts.append("</ol>")
+                parts.append('<div class="jd-hub-news-feed-day-sep" aria-hidden="true"></div>')
+            label = format_article_day_label(pub if isinstance(pub, datetime) else None)
+            parts.append(f'<p class="day-label">{escape(label)}</p>')
+            parts.append('<ol class="jd-hub-news-list" role="list">')
+            ol_open = True
+            prev_day_key = dk
+
+        parts.append(
+            render_hub_news_lane_item_html(
+                item,
+                row_idx,
+                show_country=False,
+                topic_chip=infer_digital_news_lane_topic(item),
+            )
+        )
+        row_idx += 1
+
+    if ol_open:
+        parts.append("</ol>")
+    parts.append("</section>")
+    return "".join(parts)
+
+
+def build_full_page_regulatory_feed_html(page_items: list[dict[str, Any]]) -> str:
+    """All Regulatory: same hub panel + numbered lane rows as home (grouped by calendar day)."""
+    hid = "jd-all-reg-feed-title"
+    parts: list[str] = [
+        f'<section class="jd-hub-news-panel jd-hub-news-feed-page" aria-labelledby="{hid}">',
+        hub_news_panel_header_html(
+            eyebrow="Regulatory wire",
+            title="Regulatory & Legal Headlines",
+            heading_id=hid,
+        ),
+    ]
+    prev_day_key: Optional[date] = None
+    row_idx = 1
+    ol_open = False
+
+    for item in page_items:
+        pub = item.get("published")
+        dk = article_day_key(pub if isinstance(pub, datetime) else None)
+        if dk != prev_day_key:
+            if ol_open:
+                parts.append("</ol>")
+                parts.append('<div class="jd-hub-news-feed-day-sep" aria-hidden="true"></div>')
+            label = format_article_day_label(pub if isinstance(pub, datetime) else None)
+            parts.append(f'<p class="day-label">{escape(label)}</p>')
+            parts.append('<ol class="jd-hub-news-list" role="list">')
+            ol_open = True
+            prev_day_key = dk
+
+        parts.append(render_hub_news_lane_item_html(item, row_idx, show_country=True))
+        row_idx += 1
+
+    if ol_open:
+        parts.append("</ol>")
     parts.append("</section>")
     return "".join(parts)
 
