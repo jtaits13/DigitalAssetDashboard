@@ -2,8 +2,17 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from html import escape
 from typing import Optional
+
+
+def rwa_xyz_mirror_footer_text() -> str:
+    """Timestamp + cache/refresh hint for pages that mirror RWA.xyz (single wording everywhere)."""
+    return (
+        f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
+        "RWA.xyz data · Cached up to one hour · Use **Refresh all data** on the home page to reload."
+    )
 
 # Section rhythm: soft labels, ticker spacing, teal accent aligned with primaryColor.
 # Streamlit st.dataframe: unify header/body font + color (sortable tables on home).

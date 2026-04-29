@@ -13,7 +13,12 @@ from datetime import datetime, timezone
 
 import streamlit as st
 
-from home_layout import ETP_FULLPAGE_AUM_LINE_CSS, STREAMLIT_TABLE_UNIFY_CSS, section_label_teal
+from home_layout import (
+    ETP_FULLPAGE_AUM_LINE_CSS,
+    STREAMLIT_TABLE_UNIFY_CSS,
+    rwa_xyz_mirror_footer_text,
+    section_label_teal,
+)
 from news_feeds import (
     app_shared_layout_css,
     article_styles_markdown,
@@ -152,10 +157,7 @@ def main() -> None:
         global_market_observations_html=RWA_GLOBAL_MARKET_MACRO_CONTEXT_HTML + _monthly_review_note_html(),
     )
 
-    st.caption(
-        f"As of {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC. "
-        "RWA.xyz data in the section above is cached up to one hour; use **Refresh all data** on the home page to reload."
-    )
+    st.caption(rwa_xyz_mirror_footer_text())
 
 
 main()

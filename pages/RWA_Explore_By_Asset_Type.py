@@ -9,11 +9,14 @@ _REPO = Path(__file__).resolve().parent.parent
 if str(_REPO) not in sys.path:
     sys.path.insert(0, str(_REPO))
 
-from datetime import datetime, timezone
-
 import streamlit as st
 
-from home_layout import ETP_FULLPAGE_AUM_LINE_CSS, STREAMLIT_TABLE_UNIFY_CSS, section_label_teal
+from home_layout import (
+    ETP_FULLPAGE_AUM_LINE_CSS,
+    STREAMLIT_TABLE_UNIFY_CSS,
+    rwa_xyz_mirror_footer_text,
+    section_label_teal,
+)
 from news_feeds import (
     app_shared_layout_css,
     article_styles_markdown,
@@ -44,25 +47,20 @@ def main() -> None:
     st.markdown(section_label_teal("Explore by Asset Type", placement="first"), unsafe_allow_html=True)
     st.markdown(
         '<div class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-explore-blurb jd-hub-dek--large">'
-        "<p>Data from <strong>RWA.xyz</strong>. Below are three areas covered on this page:</p>"
+        "<p><strong>RWA.xyz</strong> live data. Below are three asset areas—each card is a preview; open it for the full table.</p>"
         "<ul>"
         "<li>Stablecoins</li>"
         "<li>US Treasuries</li>"
         "<li>Tokenized Stocks</li>"
         "</ul>"
-        '<p class="jd-hub-explore-blurb--tail">'
-        "Each section is a quick preview. Use the links inside when you want the full RWA view."
-        "</p></div>",
+        "</div>",
         unsafe_allow_html=True,
     )
 
     show_rwa_explore_by_asset_type_widget(preview_rows=8)
 
     st.divider()
-    st.caption(
-        f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
-        "RWA.xyz data · Cached up to one hour · Use **Refresh all data** on the home page to reload."
-    )
+    st.caption(rwa_xyz_mirror_footer_text())
 
 
 main()

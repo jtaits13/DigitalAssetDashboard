@@ -443,7 +443,7 @@ def render_subpage_sidebar(*, key_prefix: str, current: str) -> None:
             ("All articles", "pages/All_Articles.py", "articles"),
             ("Regulatory headlines", "pages/All_Regulatory.py", "regulatory"),
             ("U.S. Digital Asset ETPs", "pages/US_Crypto_ETPs.py", "etp"),
-            ("ETF & ETP market news", "pages/All_ETF_News.py", "etf_news"),
+            ("ETF market news", "pages/All_ETF_News.py", "etf_news"),
             ("RWA Stablecoins", "pages/RWA_Stablecoins.py", "rwa_stablecoins"),
             ("RWA US Treasuries", "pages/RWA_US_Treasuries.py", "rwa_treasuries"),
             ("RWA Tokenized Stocks", "pages/RWA_Tokenized_Stocks.py", "rwa_tokenized_stocks"),

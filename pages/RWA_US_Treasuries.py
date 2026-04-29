@@ -16,6 +16,7 @@ import streamlit as st
 from home_layout import (
     ETP_FULLPAGE_AUM_LINE_CSS,
     STREAMLIT_TABLE_UNIFY_CSS,
+    rwa_xyz_mirror_footer_text,
     section_label_teal,
 )
 from price_ticker import show_price_ticker
@@ -52,7 +53,7 @@ def _treasuries_takeaway_html() -> str:
 
 
 def main() -> None:
-    from rwa_league.widgets import TREASURY_RWA_CAPTION, show_rwa_treasuries_widget
+    from rwa_league.widgets import show_rwa_treasuries_widget
     from news_feeds import (
         app_shared_layout_css,
         article_styles_markdown,
@@ -94,11 +95,7 @@ def main() -> None:
     )
 
     st.divider()
-    st.caption(TREASURY_RWA_CAPTION)
-    st.caption(
-        f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
-        "RWA.xyz data · Cached up to one hour · Use **Refresh all data** on the home page to reload."
-    )
+    st.caption(rwa_xyz_mirror_footer_text())
 
 
 main()

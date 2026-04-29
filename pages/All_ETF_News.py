@@ -11,7 +11,6 @@ if str(_REPO) not in sys.path:
     sys.path.insert(0, str(_REPO))
 
 from datetime import datetime, timezone
-from html import escape
 
 import streamlit as st
 
@@ -22,7 +21,6 @@ from home_layout import (
     subpage_toolbar_note_html,
 )
 from news_feeds import (
-    ETP_NEWS_FEEDS,
     app_shared_layout_css,
     article_styles_markdown,
     build_full_page_market_news_feed_html,
@@ -75,13 +73,12 @@ def main() -> None:
         section_label_teal("ETF & ETP Market News", placement="first"),
         unsafe_allow_html=True,
     )
-    _feed_name_list = ", ".join(n for n, _ in ETP_NEWS_FEEDS)
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">Headlines from major crypto RSS sources plus ETF/issuer feeds, '
-        "filtered for <strong>ETF/ETP-focused</strong> stories. "
-        "Use search and pagination to browse results. The list covers the <strong>last three calendar months</strong> (UTC). "
-        "RSS feeds typically publish only recent posts, and <strong>Google News</strong> adds coverage but is still not a complete archive. "
-        f"Sources: {escape(_feed_name_list)}.</p>",
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">'
+        "Stories whose title or summary mention an <strong>ETF</strong> or <strong>exchange-traded fund</strong> "
+        "(digital-asset context). After filtering, up to <strong>seven headlines per UTC calendar day</strong>; "
+        "rolling window about the <strong>last three months</strong>. "
+        "Use search to narrow further. RSS is recent-only; Google News helps fill gaps but is not an archive.</p>",
         unsafe_allow_html=True,
     )
     st.divider()
@@ -111,7 +108,7 @@ def main() -> None:
     n = len(filtered)
     if n == 0:
         if len(etf_only_articles) == 0:
-            st.info("No matching ETF/ETP headlines yet. Check your network or use **Refresh all data** on the home page.")
+            st.info("No ETF headlines loaded yet. Check your network or use **Refresh all data** on the home page.")
         else:
             st.info("No articles match your search. Try different keywords or clear the search box.")
         return
@@ -181,7 +178,7 @@ def main() -> None:
     st.markdown(
         subpage_footnote_html(
             f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
-            f"Page {page} of {total_pages} · ETF/ETP RSS (filtered)"
+            f"Page {page} of {total_pages} · ETF headlines (filtered)"
         ),
         unsafe_allow_html=True,
     )

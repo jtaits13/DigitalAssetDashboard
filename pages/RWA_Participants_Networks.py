@@ -16,6 +16,7 @@ import streamlit as st
 from home_layout import (
     ETP_FULLPAGE_AUM_LINE_CSS,
     STREAMLIT_TABLE_UNIFY_CSS,
+    rwa_xyz_mirror_footer_text,
     section_label_teal,
 )
 from price_ticker import show_price_ticker
@@ -93,10 +94,7 @@ def main() -> None:
     )
 
     st.divider()
-    st.caption(
-        f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
-        "RWA.xyz data · Cached up to one hour · Use **Refresh all data** on the home page to reload."
-    )
+    st.caption(rwa_xyz_mirror_footer_text())
 
 
 main()
