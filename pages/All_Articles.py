@@ -31,7 +31,11 @@ from news_feeds import (
     render_subpage_sidebar,
     render_subpage_top_bar,
 )
-from price_ticker import show_price_ticker
+try:
+    from price_ticker import show_price_ticker
+except Exception:
+    def show_price_ticker() -> None:
+        return
 
 PER_PAGE = 20
 MAX_ARTICLES_PER_DAY = 7
