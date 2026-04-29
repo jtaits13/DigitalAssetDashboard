@@ -119,18 +119,6 @@ def main() -> None:
 
     st.divider()
     st.markdown(subpage_footer_heading_html("Pages"), unsafe_allow_html=True)
-    c_prev, c_mid, c_next = st.columns([1, 4, 1])
-    with c_prev:
-        go_prev = st.button("← Prev", disabled=page <= 1, key="all_prev", use_container_width=True)
-    with c_next:
-        go_next = st.button("Next →", disabled=page >= total_pages, key="all_next", use_container_width=True)
-
-    if go_prev:
-        st.session_state.all_news_page = page - 1
-        st.rerun()
-    if go_next:
-        st.session_state.all_news_page = page + 1
-        st.rerun()
 
     if total_pages <= 18:
         num_cols = st.columns(total_pages)
@@ -156,6 +144,19 @@ def main() -> None:
         if new_pg != page:
             st.session_state.all_news_page = new_pg
             st.rerun()
+
+    c_prev, c_mid, c_next = st.columns([1, 4, 1])
+    with c_prev:
+        go_prev = st.button("← Prev", disabled=page <= 1, key="all_prev", use_container_width=True)
+    with c_next:
+        go_next = st.button("Next →", disabled=page >= total_pages, key="all_next", use_container_width=True)
+
+    if go_prev:
+        st.session_state.all_news_page = page - 1
+        st.rerun()
+    if go_next:
+        st.session_state.all_news_page = page + 1
+        st.rerun()
 
     st.divider()
     st.markdown(
