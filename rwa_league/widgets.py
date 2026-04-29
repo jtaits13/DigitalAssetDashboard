@@ -72,6 +72,11 @@ def _inject_full_page_key_observations(html: str | None) -> None:
         return
     st.markdown(hub_subsection_heading_html("Key Observations"), unsafe_allow_html=True)
     st.markdown(html, unsafe_allow_html=True)
+    # Match RWA Global Market Overview: soft rule + margins before the next block (search / tables).
+    st.markdown(
+        '<hr class="jd-rwa-gmo-soft-rule" aria-hidden="true"/>',
+        unsafe_allow_html=True,
+    )
 
 
 WIDGET_CSS = """
