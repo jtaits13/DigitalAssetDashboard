@@ -65,6 +65,15 @@ APP_STOCKS = "https://app.rwa.xyz/stocks"
 APP_TREASURIES = "https://app.rwa.xyz/treasuries"
 APP_ASSET_MANAGERS = "https://app.rwa.xyz/asset-managers"
 
+
+def _inject_full_page_key_observations(html: str | None) -> None:
+    """Render Key Observations after Top-Line Market Snapshot when ``html`` is provided (full asset pages)."""
+    if not html:
+        return
+    st.markdown(hub_subsection_heading_html("Key Observations"), unsafe_allow_html=True)
+    st.markdown(html, unsafe_allow_html=True)
+
+
 WIDGET_CSS = """
 <style>
 .jd-hub-subsection-head {
@@ -1208,6 +1217,7 @@ def show_rwa_stablecoins_widget(
     home_preview: bool = True,
     preview_rows: int = 8,
     full_page_header: bool = False,
+    full_page_key_observations_html: str | None = None,
 ) -> None:
     """
     RWA.xyz Stablecoins embed: four overview KPIs + **Platforms** league.
@@ -1216,6 +1226,7 @@ def show_rwa_stablecoins_widget(
     ``home_preview=False``: full searchable table (use from ``pages/RWA_Stablecoins.py``).
     ``full_page_header=True``: page supplies the teal major title; use a hub-style overview subsection
     (``hub_subsection_heading_html``) instead of repeating the asset name + long caption.
+    ``full_page_key_observations_html``: when set on the full page, rendered after the KPI overview and before tables.
     """
     h2_sub = "home-widget-heading" if home_preview else "home-main-heading"
     if home_preview:
@@ -1249,6 +1260,7 @@ def show_rwa_stablecoins_widget(
     if err_sc and not rows_sc:
         st.warning(escape(err_sc))
         _render_rwa_stablecoin_overview(kpis_sc)
+        _inject_full_page_key_observations(full_page_key_observations_html)
         st.link_button(
             STABLECOINS_RWA_LINK_LABEL,
             "https://app.rwa.xyz/stablecoins",
@@ -1260,6 +1272,7 @@ def show_rwa_stablecoins_widget(
     if not rows_sc:
         st.info("No platform rows returned for Stablecoins.")
         _render_rwa_stablecoin_overview(kpis_sc)
+        _inject_full_page_key_observations(full_page_key_observations_html)
         st.link_button(
             STABLECOINS_RWA_LINK_LABEL,
             "https://app.rwa.xyz/stablecoins",
@@ -1274,6 +1287,7 @@ def show_rwa_stablecoins_widget(
             unsafe_allow_html=True,
         )
     _render_rwa_stablecoin_overview(kpis_sc)
+    _inject_full_page_key_observations(full_page_key_observations_html)
 
     if home_preview:
         n = max(1, min(preview_rows, len(rows_sc)))
@@ -1328,6 +1342,7 @@ def show_rwa_treasuries_widget(
     home_preview: bool = True,
     preview_rows: int = 8,
     full_page_header: bool = False,
+    full_page_key_observations_html: str | None = None,
 ) -> None:
     """
     RWA.xyz US Treasuries embed: overview KPIs + **Distributed** · **Networks** league (Distributed Value).
@@ -1336,6 +1351,7 @@ def show_rwa_treasuries_widget(
     (``pages/RWA_US_Treasuries.py``).
     ``full_page_header=True``: page supplies the teal major title; use an overview subsection instead of
     repeating the asset name + long caption.
+    ``full_page_key_observations_html``: when set on the full page, rendered after the KPI overview and before tables.
     """
     h2_sub = "home-widget-heading" if home_preview else "home-main-heading"
     if home_preview:
@@ -1369,6 +1385,7 @@ def show_rwa_treasuries_widget(
     if err_tr and not rows_tr and not plat_tr:
         st.warning(escape(err_tr))
         _render_rwa_treasuries_overview(kpis_tr)
+        _inject_full_page_key_observations(full_page_key_observations_html)
         st.link_button(
             TREASURIES_RWA_LINK_LABEL,
             APP_TREASURIES,
@@ -1380,6 +1397,7 @@ def show_rwa_treasuries_widget(
     if not rows_tr and not plat_tr:
         st.info("No US Treasuries league rows returned.")
         _render_rwa_treasuries_overview(kpis_tr)
+        _inject_full_page_key_observations(full_page_key_observations_html)
         st.link_button(
             TREASURIES_RWA_LINK_LABEL,
             APP_TREASURIES,
@@ -1394,6 +1412,7 @@ def show_rwa_treasuries_widget(
             unsafe_allow_html=True,
         )
     _render_rwa_treasuries_overview(kpis_tr)
+    _inject_full_page_key_observations(full_page_key_observations_html)
 
     if rows_tr:
         if home_preview:
@@ -1496,6 +1515,7 @@ def show_rwa_tokenized_stocks_widget(
     home_preview: bool = True,
     preview_rows: int = 8,
     full_page_header: bool = False,
+    full_page_key_observations_html: str | None = None,
 ) -> None:
     """
     RWA.xyz Tokenized Stocks embed: overview KPIs + **Distributed** · **Platforms** league.
@@ -1504,6 +1524,7 @@ def show_rwa_tokenized_stocks_widget(
     (``pages/RWA_Tokenized_Stocks.py``).
     ``full_page_header=True``: page supplies the teal major title; use an overview subsection instead of
     repeating the asset name + long caption.
+    ``full_page_key_observations_html``: when set on the full page, rendered after the KPI overview and before tables.
     """
     h2_sub = "home-widget-heading" if home_preview else "home-main-heading"
     if home_preview:
@@ -1540,6 +1561,7 @@ def show_rwa_tokenized_stocks_widget(
             kpis_st,
             overview_title="Tokenized Stocks",
         )
+        _inject_full_page_key_observations(full_page_key_observations_html)
         st.link_button(
             TOKENIZED_STOCKS_RWA_LINK_LABEL,
             APP_STOCKS,
@@ -1554,6 +1576,7 @@ def show_rwa_tokenized_stocks_widget(
             kpis_st,
             overview_title="Tokenized Stocks",
         )
+        _inject_full_page_key_observations(full_page_key_observations_html)
         st.link_button(
             TOKENIZED_STOCKS_RWA_LINK_LABEL,
             APP_STOCKS,
@@ -1571,6 +1594,7 @@ def show_rwa_tokenized_stocks_widget(
         kpis_st,
         overview_title="Tokenized Stocks",
     )
+    _inject_full_page_key_observations(full_page_key_observations_html)
 
     if rows_st_plat and home_preview:
         n = max(1, min(preview_rows, len(rows_st_plat)))
@@ -1896,6 +1920,7 @@ def show_rwa_participants_networks_widget(
     home_preview: bool = False,
     full_page_header: bool = False,
     global_market_observations_html: str | None = None,
+    full_page_key_observations_html: str | None = None,
 ) -> None:
     """
     **Full page only** (``home_preview=False``): **Participants — Networks** with Global Market KPIs + league table.
@@ -1906,6 +1931,8 @@ def show_rwa_participants_networks_widget(
     ``global_market_observations_html``: when set with ``full_page_header=True`` (Global Market Overview page), render
     observations full-width under the KPI row, then Explore gateways and search, then a two-column **Networks table |
     top-networks chart** row.
+    ``full_page_key_observations_html``: when ``full_page_header=False`` (standalone Participants — Networks page),
+    rendered after the KPI overview and before search/tables.
     """
     if home_preview:
         raise ValueError("show_rwa_participants_networks_widget is only for full pages; use show_rwa_league_widget on the hub.")
@@ -2038,6 +2065,7 @@ def show_rwa_participants_networks_widget(
             unsafe_allow_html=True,
         )
         _render_rwa_global_overview(kpis, kpi_legend_name="Networks")
+        _inject_full_page_key_observations(full_page_key_observations_html)
         st.link_button(
             GLOBAL_MARKET_RWA_LINK_LABEL,
             GLOBAL_MARKET_RWA_URL,
@@ -2066,6 +2094,7 @@ def show_rwa_participants_networks_widget(
         unsafe_allow_html=True,
     )
     _render_rwa_global_overview(kpis, kpi_legend_name="Networks")
+    _inject_full_page_key_observations(full_page_key_observations_html)
 
     q = st.text_input(
         "Search network table",
@@ -2104,9 +2133,12 @@ def show_rwa_participants_platforms_widget(
     *,
     home_preview: bool = False,
     full_page_header: bool = False,
+    full_page_key_observations_html: str | None = None,
 ) -> None:
     """
     **Full page only**: **Participants — Platforms** with the /platforms overview KPIs + issuer table.
+
+    ``full_page_key_observations_html``: optional takeaway block after Top-Line KPIs and before search/tables.
     """
     if home_preview:
         raise ValueError(
@@ -2128,6 +2160,7 @@ def show_rwa_participants_platforms_widget(
             unsafe_allow_html=True,
         )
         _render_rwa_global_overview(kpis, kpi_legend_name="Platforms")
+        _inject_full_page_key_observations(full_page_key_observations_html)
         st.link_button(
             PLATFORMS_RWA_LINK_LABEL,
             PLATFORMS_RWA_URL,
@@ -2155,6 +2188,7 @@ def show_rwa_participants_platforms_widget(
         unsafe_allow_html=True,
     )
     _render_rwa_global_overview(kpis, kpi_legend_name="Platforms")
+    _inject_full_page_key_observations(full_page_key_observations_html)
 
     q = st.text_input(
         "Search platform",
@@ -2193,9 +2227,12 @@ def show_rwa_participants_asset_managers_widget(
     *,
     home_preview: bool = False,
     full_page_header: bool = False,
+    full_page_key_observations_html: str | None = None,
 ) -> None:
     """
     **Full page only**: **Participants — Asset Managers** with /asset-managers overview KPIs + Distributed table.
+
+    ``full_page_key_observations_html``: optional takeaway block after Top-Line KPIs and before search/tables.
     """
     if home_preview:
         raise ValueError(
@@ -2217,6 +2254,7 @@ def show_rwa_participants_asset_managers_widget(
             unsafe_allow_html=True,
         )
         _render_rwa_global_overview(kpis, kpi_legend_name="Asset Managers")
+        _inject_full_page_key_observations(full_page_key_observations_html)
         st.link_button(
             ASSET_MANAGERS_RWA_LINK_LABEL,
             ASSET_MANAGERS_RWA_URL,
@@ -2245,6 +2283,7 @@ def show_rwa_participants_asset_managers_widget(
         unsafe_allow_html=True,
     )
     _render_rwa_global_overview(kpis, kpi_legend_name="Asset Managers")
+    _inject_full_page_key_observations(full_page_key_observations_html)
 
     q = st.text_input(
         "Search asset manager",

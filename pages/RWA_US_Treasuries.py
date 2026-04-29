@@ -16,7 +16,6 @@ import streamlit as st
 from home_layout import (
     ETP_FULLPAGE_AUM_LINE_CSS,
     STREAMLIT_TABLE_UNIFY_CSS,
-    hub_subsection_heading_html,
     section_label_teal,
 )
 from price_ticker import show_price_ticker
@@ -86,11 +85,13 @@ def main() -> None:
         "shown as current levels.</p>",
         unsafe_allow_html=True,
     )
-    st.markdown(hub_subsection_heading_html("Key Observations"), unsafe_allow_html=True)
-    st.markdown(_treasuries_takeaway_html(), unsafe_allow_html=True)
     st.divider()
 
-    show_rwa_treasuries_widget(home_preview=False, full_page_header=True)
+    show_rwa_treasuries_widget(
+        home_preview=False,
+        full_page_header=True,
+        full_page_key_observations_html=_treasuries_takeaway_html(),
+    )
 
     st.divider()
     st.caption(TREASURY_RWA_CAPTION)

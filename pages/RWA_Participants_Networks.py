@@ -16,7 +16,6 @@ import streamlit as st
 from home_layout import (
     ETP_FULLPAGE_AUM_LINE_CSS,
     STREAMLIT_TABLE_UNIFY_CSS,
-    hub_subsection_heading_html,
     section_label_teal,
 )
 from price_ticker import show_price_ticker
@@ -85,11 +84,13 @@ def main() -> None:
         "<strong>transferability</strong> and share columns match the live page.</p>",
         unsafe_allow_html=True,
     )
-    st.markdown(hub_subsection_heading_html("Key Observations"), unsafe_allow_html=True)
-    st.markdown(_participants_networks_takeaway_html(), unsafe_allow_html=True)
     st.divider()
 
-    show_rwa_participants_networks_widget(home_preview=False, full_page_header=False)
+    show_rwa_participants_networks_widget(
+        home_preview=False,
+        full_page_header=False,
+        full_page_key_observations_html=_participants_networks_takeaway_html(),
+    )
 
     st.divider()
     st.caption(
