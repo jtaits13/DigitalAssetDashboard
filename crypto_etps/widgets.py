@@ -53,8 +53,8 @@ WIDGET_CSS = """
 .etp-kpi-wrap {
     margin: 0.35rem 0 0.85rem 0;
 }
-/* Footnote follows the numeric row inside the panel */
-.etp-kpi-wrap .jd-kpi-window-note {
+/* Full ETP list page only: methodology note sits under the figures */
+.etp-kpi-wrap--metrics-first .jd-kpi-window-note {
     margin: 0.35rem 0 0 0;
 }
 .etp-kpi-row {
@@ -203,10 +203,14 @@ def render_etp_summary_kpi_row(
     rows: list[CryptoEtpRow],
     *,
     include_styles: bool = True,
+    metrics_above_methodology_note: bool = False,
 ) -> None:
     """
     Home-style KPI strip: total listed AUM (with aggregate 30D % from Yahoo-scaled history),
     IBIT and ETHA AUM with 30D %. Used on the hub preview and the full ETP list page.
+
+    On the full list page, pass ``metrics_above_methodology_note=True`` so the figure row
+    appears above the 30D / data-source footnote (hub preview keeps the footnote on top).
     """
     if include_styles:
         st.markdown(WIDGET_CSS + KPI_WINDOW_NOTE_CSS, unsafe_allow_html=True)
@@ -222,6 +226,7 @@ def render_etp_summary_kpi_row(
         agg_pct=agg_pct,
         ibit_row=ibit_r,
         etha_row=etha_r,
+        metrics_above_methodology_note=metrics_above_methodology_note,
     )
 
 
@@ -231,6 +236,7 @@ def _render_etp_home_kpi_row(
     agg_pct: float | None,
     ibit_row: CryptoEtpRow | None,
     etha_row: CryptoEtpRow | None,
+    metrics_above_methodology_note: bool = False,
 ) -> None:
     ibit_aum = (
         format_usd_compact(ibit_row.assets_usd)
@@ -271,17 +277,24 @@ def _render_etp_home_kpi_row(
             f"{delta_html}"
             "</div>"
         )
-    kpi_html = (
-        f'<div class="etp-kpi-wrap" style="{_ETP_KPI_PANEL_INLINE_STYLE}">'
-        "<div class='etp-kpi-row'>"
-        f"{''.join(parts)}"
-        "</div>"
+    note_block = (
         "<p class=\"jd-kpi-window-note\">"
         "All % changes in this row are <strong>30-day (30D)</strong> (<strong>Yahoo Finance</strong>). "
         "Headline totals are listed AUM from <strong>StockAnalysis</strong> "
         "(crypto ETF list and detail pages; scraped; not affiliated). "
         "That list may not include every live U.S. product, so totals here can differ from broader market estimates."
         "</p>"
+    )
+    row_block = f"<div class='etp-kpi-row'>{''.join(parts)}</div>"
+    wrap_class = (
+        "etp-kpi-wrap etp-kpi-wrap--metrics-first"
+        if metrics_above_methodology_note
+        else "etp-kpi-wrap"
+    )
+    inner = row_block + note_block if metrics_above_methodology_note else note_block + row_block
+    kpi_html = (
+        f'<div class="{wrap_class}" style="{_ETP_KPI_PANEL_INLINE_STYLE}">'
+        f"{inner}"
         "</div>"
     )
     st.html(kpi_html)

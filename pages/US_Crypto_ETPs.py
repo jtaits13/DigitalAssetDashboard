@@ -190,10 +190,6 @@ def main() -> None:
             for err in _etp_feed_errors:
                 st.warning(err)
 
-    st.markdown(hub_subsection_heading_html("Key Observations"), unsafe_allow_html=True)
-    st.markdown(ETP_KEY_OBSERVATIONS_HTML, unsafe_allow_html=True)
-    st.markdown(_monthly_review_note_html(), unsafe_allow_html=True)
-    st.divider()
     st.markdown(
         hub_subsection_heading_html(
             "Top-Line Market Snapshot",
@@ -201,7 +197,15 @@ def main() -> None:
         ),
         unsafe_allow_html=True,
     )
-    render_etp_summary_kpi_row(rows, include_styles=False)
+    render_etp_summary_kpi_row(
+        rows,
+        include_styles=False,
+        metrics_above_methodology_note=True,
+    )
+    st.markdown(hub_subsection_heading_html("Key Observations"), unsafe_allow_html=True)
+    st.markdown(ETP_KEY_OBSERVATIONS_HTML, unsafe_allow_html=True)
+    st.markdown(_monthly_review_note_html(), unsafe_allow_html=True)
+    st.divider()
 
     # border=True: same as home News & Regulatory row — stretch columns and pin Explore CTA under the hub panel.
     col_aum, col_pulse = st.columns([1, 1], gap="medium", border=True)
