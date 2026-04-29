@@ -661,6 +661,81 @@ def dedupe_articles(articles: list[dict[str, Any]], max_items: Optional[int] = N
     return unique
 
 
+_MARKET_NEWS_SOURCE_PRIORITY: dict[str, int] = {
+    "coindesk": 5,
+    "cointelegraph": 4,
+    "the block": 4,
+    "decrypt": 3,
+}
+
+_MARKET_NEWS_IMPORTANCE_KW: tuple[tuple[re.Pattern[str], int], ...] = (
+    (re.compile(r"\b(etf|etp|sec|cftc|lawsuit|court|approval|reject(?:ed|ion)?)\b", re.I), 4),
+    (re.compile(r"\b(bitcoin|ethereum|eth\b|btc\b|stablecoin|rwa|tokeni[sz]ed)\b", re.I), 3),
+    (re.compile(r"\b(hack|exploit|breach|bankruptcy|liquidation|inflow|outflow)\b", re.I), 2),
+)
+
+
+def market_news_importance_score(item: dict[str, Any]) -> int:
+    """
+    Heuristic score for daily headline ranking (higher = more important).
+
+    Mixes source priority + major market/policy keywords + tiny freshness tie-breaker.
+    """
+    title = str(item.get("title") or "")
+    summary = str(item.get("summary") or "")
+    blob = f"{title} {summary}"
+    source = str(item.get("source") or "").strip().lower()
+
+    score = _MARKET_NEWS_SOURCE_PRIORITY.get(source, 1) * 100
+    for rx, weight in _MARKET_NEWS_IMPORTANCE_KW:
+        if rx.search(blob):
+            score += weight * 10
+
+    pub = item.get("published")
+    if isinstance(pub, datetime):
+        # Keep recency as a tie-breaker inside same day bucket.
+        score += int(pub.astimezone(timezone.utc).hour)
+    return score
+
+
+def cap_market_news_per_day(
+    articles: list[dict[str, Any]],
+    *,
+    max_per_day: int = 7,
+) -> list[dict[str, Any]]:
+    """Keep at most ``max_per_day`` items per UTC calendar day using importance ranking."""
+    if max_per_day < 1:
+        return []
+
+    by_day: dict[date, list[dict[str, Any]]] = {}
+    no_date: list[dict[str, Any]] = []
+    for item in articles:
+        pub = item.get("published")
+        if isinstance(pub, datetime):
+            dk = pub.astimezone(timezone.utc).date()
+            by_day.setdefault(dk, []).append(item)
+        else:
+            no_date.append(item)
+
+    out: list[dict[str, Any]] = []
+    for dk in sorted(by_day.keys(), reverse=True):
+        day_items = by_day[dk]
+        day_items = sorted(
+            day_items,
+            key=lambda x: (
+                market_news_importance_score(x),
+                x.get("published") or datetime.min.replace(tzinfo=timezone.utc),
+            ),
+            reverse=True,
+        )
+        out.extend(day_items[:max_per_day])
+
+    if no_date:
+        out.extend(no_date[:max_per_day])
+
+    return out
+
+
 def filter_headlines_by_keyword(articles: list[dict[str, Any]], query: str) -> list[dict[str, Any]]:
     """
     Keep items where every whitespace-separated token appears in title, summary,

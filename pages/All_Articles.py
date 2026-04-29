@@ -24,6 +24,7 @@ from news_feeds import (
     app_shared_layout_css,
     article_styles_markdown,
     build_full_page_market_news_feed_html,
+    cap_market_news_per_day,
     dedupe_articles,
     filter_headlines_by_keyword,
     load_all_feeds,
@@ -33,6 +34,7 @@ from news_feeds import (
 from price_ticker import show_price_ticker
 
 PER_PAGE = 20
+MAX_ARTICLES_PER_DAY = 7
 
 
 def main() -> None:
@@ -81,6 +83,7 @@ def main() -> None:
         st.session_state.all_news_page = 1
 
     unique = dedupe_articles(articles, max_items=None)
+    unique = cap_market_news_per_day(unique, max_per_day=MAX_ARTICLES_PER_DAY)
     filtered = filter_headlines_by_keyword(unique, search_q)
     n = len(filtered)
     if n == 0:
