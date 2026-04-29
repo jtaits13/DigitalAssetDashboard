@@ -404,6 +404,8 @@ def rwa_table_height(num_rows: int, *, max_h: int = 520) -> int:
 # Global Market split row: chart shows at most this many bars; table height uses the same row budget.
 RWA_GMO_CHART_MAX_BARS = 12
 RWA_STABLECOINS_CHART_MAX_BARS = 12
+RWA_TREASURIES_CHART_MAX_BARS = 12
+RWA_TOKENIZED_STOCKS_CHART_MAX_BARS = 12
 
 
 def _rwa_global_market_top_networks_bar_figure(
@@ -508,6 +510,102 @@ def _rwa_stablecoins_top_platforms_bar_figure(
             categoryarray=y_labels,
             showticklabels=True,
         ),
+    )
+    return fig
+
+
+def _rwa_treasuries_top_networks_bar_figure(
+    rows: list[RwaTreasuryDistributedNetworkRow],
+    *,
+    height: int,
+) -> go.Figure:
+    """Horizontal bar: top US Treasuries networks by distributed value (USD)."""
+    top_n = min(RWA_TREASURIES_CHART_MAX_BARS, len(rows))
+    top = sorted(rows, key=lambda r: r.total_value_usd, reverse=True)[:top_n]
+    asc = sorted(top, key=lambda r: r.total_value_usd)
+    y_labels = [str(r.network).strip() or "—" for r in asc]
+    x_vals = [float(r.total_value_usd) for r in asc]
+    share_pct = [float(r.market_share_raw) * 100.0 for r in asc]
+    share_text = [f"{s:.2f}% share" for s in share_pct]
+    fig = go.Figure(
+        go.Bar(
+            x=x_vals,
+            y=y_labels,
+            orientation="h",
+            marker_color="#25809C",
+            marker_line_color="#1F4C67",
+            marker_line_width=0.5,
+            showlegend=False,
+            text=share_text,
+            textposition="outside",
+            textfont=dict(size=11, color="#3E6A7A"),
+            cliponaxis=False,
+            hovertemplate=(
+                "<b>%{y}</b><br>Distributed value: %{x:$,.0f}<br>Market share: %{text}<extra></extra>"
+            ),
+        )
+    )
+    fig.update_layout(
+        height=int(height),
+        margin=dict(l=8, r=100, t=14, b=36),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="#f8fafc",
+        font=dict(size=12, color="#1F4C67"),
+        showlegend=False,
+        xaxis=dict(
+            title=dict(text="Distributed value (USD)", font=dict(size=12, color="#1F4C67")),
+            tickprefix="$",
+            separatethousands=True,
+        ),
+        yaxis=dict(type="category", categoryorder="array", categoryarray=y_labels, showticklabels=True),
+    )
+    return fig
+
+
+def _rwa_tokenized_stocks_top_platforms_bar_figure(
+    rows: list[RwaTokenizedStockPlatformRow],
+    *,
+    height: int,
+) -> go.Figure:
+    """Horizontal bar: top tokenized-stock platforms by distributed value (USD)."""
+    top_n = min(RWA_TOKENIZED_STOCKS_CHART_MAX_BARS, len(rows))
+    top = sorted(rows, key=lambda r: r.total_value_usd, reverse=True)[:top_n]
+    asc = sorted(top, key=lambda r: r.total_value_usd)
+    y_labels = [str(r.platform).strip() or "—" for r in asc]
+    x_vals = [float(r.total_value_usd) for r in asc]
+    share_pct = [float(r.market_share_raw) * 100.0 for r in asc]
+    share_text = [f"{s:.2f}% share" for s in share_pct]
+    fig = go.Figure(
+        go.Bar(
+            x=x_vals,
+            y=y_labels,
+            orientation="h",
+            marker_color="#25809C",
+            marker_line_color="#1F4C67",
+            marker_line_width=0.5,
+            showlegend=False,
+            text=share_text,
+            textposition="outside",
+            textfont=dict(size=11, color="#3E6A7A"),
+            cliponaxis=False,
+            hovertemplate=(
+                "<b>%{y}</b><br>Distributed value: %{x:$,.0f}<br>Market share: %{text}<extra></extra>"
+            ),
+        )
+    )
+    fig.update_layout(
+        height=int(height),
+        margin=dict(l=8, r=100, t=14, b=36),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="#f8fafc",
+        font=dict(size=12, color="#1F4C67"),
+        showlegend=False,
+        xaxis=dict(
+            title=dict(text="Distributed value (USD)", font=dict(size=12, color="#1F4C67")),
+            tickprefix="$",
+            separatethousands=True,
+        ),
+        yaxis=dict(type="category", categoryorder="array", categoryarray=y_labels, showticklabels=True),
     )
     return fig
 
@@ -1542,7 +1640,46 @@ def show_rwa_treasuries_widget(
             unsafe_allow_html=True,
         )
         df_tr = build_us_treasury_network_dataframe(working)
-        _show_us_treasury_network_dataframe(df_tr, height=table_h)
+        if home_preview:
+            _show_us_treasury_network_dataframe(df_tr, height=table_h)
+        else:
+            chart_rows = sorted(
+                working,
+                key=lambda r: r.total_value_usd,
+                reverse=True,
+            )[:RWA_TREASURIES_CHART_MAX_BARS]
+            n_sync = (
+                min(RWA_TREASURIES_CHART_MAX_BARS, len(working))
+                if working
+                else max(1, len(df_tr))
+            )
+            split_h = rwa_table_height(max(1, n_sync), max_h=560)
+            col_tbl, col_chart = st.columns([1, 1], gap="large", border=True)
+            with col_tbl:
+                st.markdown(
+                    hub_subsection_heading_html("Networks table"),
+                    unsafe_allow_html=True,
+                )
+                _show_us_treasury_network_dataframe(df_tr, height=split_h)
+            with col_chart:
+                st.markdown(
+                    hub_subsection_heading_html("Top networks by value"),
+                    unsafe_allow_html=True,
+                )
+                if chart_rows:
+                    fig_bar = _rwa_treasuries_top_networks_bar_figure(chart_rows, height=split_h)
+                    st.plotly_chart(
+                        fig_bar,
+                        use_container_width=True,
+                        config={"scrollZoom": False, "displayModeBar": False},
+                    )
+                else:
+                    st.caption("No networks match this filter; there is nothing to chart.")
+            st.markdown(
+                '<p class="jd-hub-cta-note jd-rwa-gmo-split-note">The chart lists the top <strong>12</strong> '
+                "networks by distributed value (labels include market share). Scroll the table for the full filtered list.</p>",
+                unsafe_allow_html=True,
+            )
         if not home_preview:
             st.caption(TREASURY_RWA_CAPTION)
     elif not home_preview:
@@ -1725,7 +1862,43 @@ def show_rwa_tokenized_stocks_widget(
             unsafe_allow_html=True,
         )
         df_st = build_tokenized_stock_platform_dataframe(working)
-        _show_tokenized_stock_platform_dataframe(df_st, height=table_h)
+        chart_rows = sorted(
+            working,
+            key=lambda r: r.total_value_usd,
+            reverse=True,
+        )[:RWA_TOKENIZED_STOCKS_CHART_MAX_BARS]
+        n_sync = (
+            min(RWA_TOKENIZED_STOCKS_CHART_MAX_BARS, len(working))
+            if working
+            else max(1, len(df_st))
+        )
+        split_h = rwa_table_height(max(1, n_sync), max_h=560)
+        col_tbl, col_chart = st.columns([1, 1], gap="large", border=True)
+        with col_tbl:
+            st.markdown(
+                hub_subsection_heading_html("Platforms table"),
+                unsafe_allow_html=True,
+            )
+            _show_tokenized_stock_platform_dataframe(df_st, height=split_h)
+        with col_chart:
+            st.markdown(
+                hub_subsection_heading_html("Top platforms by value"),
+                unsafe_allow_html=True,
+            )
+            if chart_rows:
+                fig_bar = _rwa_tokenized_stocks_top_platforms_bar_figure(chart_rows, height=split_h)
+                st.plotly_chart(
+                    fig_bar,
+                    use_container_width=True,
+                    config={"scrollZoom": False, "displayModeBar": False},
+                )
+            else:
+                st.caption("No platforms match this filter; there is nothing to chart.")
+        st.markdown(
+            '<p class="jd-hub-cta-note jd-rwa-gmo-split-note">The chart lists the top <strong>12</strong> '
+            "platforms by distributed value (labels include market share). Scroll the table for the full filtered list.</p>",
+            unsafe_allow_html=True,
+        )
     elif home_preview:
         st.info("No Tokenized Stocks platform rows returned.")
     else:
