@@ -225,14 +225,13 @@ def main() -> None:
     st.markdown(
         '<div class="jd-home-hero">'
         '<h1 class="home-main-heading" id="jd-page-top">JPM Digital Assets Dashboard</h1>'
-        '<span class="jd-home-hero__accent" aria-hidden="true"></span>'
-        "<p class=\"jd-home-hero__dek\">This dashboard pulls together <strong>digital-asset news</strong>, "
-        "<strong>global regulatory headlines</strong>, and <strong>U.S. listed crypto ETPs</strong> "
-        "in one place.</p>"
-        "<p class=\"jd-home-hero__dek\">It mirrors <strong>RWA.xyz</strong> for on-chain <strong>RWA</strong> data "
-        "(networks, platforms, participants, stablecoins, treasuries, and tokenized stocks). Together, "
-        "the hub helps you scan <strong>market direction</strong>, <strong>policy signals</strong>, and where "
-        "<strong>activity and issuance</strong> cluster.</p>"
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">This dashboard pulls together '
+        "<strong>digital-asset news</strong>, <strong>global regulatory headlines</strong>, and "
+        "<strong>U.S. listed crypto ETPs</strong> in one place.</p>"
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">It mirrors <strong>RWA.xyz</strong> for '
+        "on-chain <strong>RWA</strong> data (networks, platforms, participants, stablecoins, treasuries, and "
+        "tokenized stocks). Together, the hub helps you scan <strong>market direction</strong>, "
+        "<strong>policy signals</strong>, and where <strong>activity and issuance</strong> cluster.</p>"
         "</div>",
         unsafe_allow_html=True,
     )
