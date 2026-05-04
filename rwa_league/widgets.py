@@ -2393,6 +2393,7 @@ def show_rwa_participants_networks_widget(
     *,
     home_preview: bool = False,
     full_page_header: bool = False,
+    hide_subsection_title: bool = False,
     global_market_observations_html: str | None = None,
     full_page_key_observations_html: str | None = None,
 ) -> None:
@@ -2407,6 +2408,9 @@ def show_rwa_participants_networks_widget(
     top-networks chart** row.
     ``full_page_key_observations_html``: when ``full_page_header=False`` (standalone Participants — Networks page),
     rendered after the KPI overview and before search/tables.
+    ``hide_subsection_title``: when ``True`` with ``full_page_header=False``, skip the redundant **Networks** ``h2``;
+    the caller already rendered the page title (e.g. **Participants — Networks**). Scroll target ``#jd-rwa-participants-networks``
+    is still emitted via ``hub_section_anchor``.
     """
     if home_preview:
         raise ValueError("show_rwa_participants_networks_widget is only for full pages; use show_rwa_league_widget on the hub.")
@@ -2553,11 +2557,14 @@ def show_rwa_participants_networks_widget(
         st.info("No network rows returned.")
         return
 
-    st.markdown(
-        '<div class="jd-hub-subsection-head" id="jd-rwa-participants-networks">'
-        '<h2 class="home-main-heading">Networks</h2></div>',
-        unsafe_allow_html=True,
-    )
+    if hide_subsection_title:
+        st.markdown(hub_section_anchor("jd-rwa-participants-networks"), unsafe_allow_html=True)
+    else:
+        st.markdown(
+            '<div class="jd-hub-subsection-head" id="jd-rwa-participants-networks">'
+            '<h2 class="home-main-heading">Networks</h2></div>',
+            unsafe_allow_html=True,
+        )
     st.caption(
         "Searchable table from [RWA.xyz Networks](https://app.rwa.xyz/networks). "
         "RWA value columns use the same **transferability** fields as the on-site list; top-line **%** are **30D**."

@@ -90,6 +90,7 @@ def main() -> None:
     show_rwa_participants_networks_widget(
         home_preview=False,
         full_page_header=False,
+        hide_subsection_title=True,
         full_page_key_observations_html=_participants_networks_takeaway_html(),
     )
 
