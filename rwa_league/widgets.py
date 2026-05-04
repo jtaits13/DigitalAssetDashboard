@@ -719,6 +719,54 @@ def _rwa_treasuries_top_networks_bar_figure(
     return fig
 
 
+def _rwa_treasuries_top_platforms_bar_figure(
+    rows: list[RwaTreasuryPlatformRow],
+    *,
+    height: int,
+) -> go.Figure:
+    """Horizontal bar: top US Treasuries platforms (Tokenized Treasury league) by total value (USD)."""
+    top_n = min(RWA_TREASURIES_CHART_MAX_BARS, len(rows))
+    top = sorted(rows, key=lambda r: r.total_value_usd, reverse=True)[:top_n]
+    asc = sorted(top, key=lambda r: r.total_value_usd)
+    y_labels = [str(r.platform).strip() or "—" for r in asc]
+    x_vals = [float(r.total_value_usd) for r in asc]
+    share_pct = [float(r.market_share_raw) * 100.0 for r in asc]
+    share_text = [f"{s:.2f}% share" for s in share_pct]
+    fig = go.Figure(
+        go.Bar(
+            x=x_vals,
+            y=y_labels,
+            orientation="h",
+            marker_color="#25809C",
+            marker_line_color="#1F4C67",
+            marker_line_width=0.5,
+            showlegend=False,
+            text=share_text,
+            textposition="outside",
+            textfont=dict(size=11, color="#3E6A7A"),
+            cliponaxis=False,
+            hovertemplate=(
+                "<b>%{y}</b><br>Total value: %{x:$,.0f}<br>Market share: %{text}<extra></extra>"
+            ),
+        )
+    )
+    fig.update_layout(
+        height=int(height),
+        margin=dict(l=8, r=100, t=14, b=36),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="#f8fafc",
+        font=dict(size=12, color="#1F4C67"),
+        showlegend=False,
+        xaxis=dict(
+            title=dict(text="Total value (USD)", font=dict(size=12, color="#1F4C67")),
+            tickprefix="$",
+            separatethousands=True,
+        ),
+        yaxis=dict(type="category", categoryorder="array", categoryarray=y_labels, showticklabels=True),
+    )
+    return fig
+
+
 def _rwa_tokenized_stocks_top_platforms_bar_figure(
     rows: list[RwaTokenizedStockPlatformRow],
     *,
@@ -1879,9 +1927,44 @@ def show_rwa_treasuries_widget(
             st.caption(
                 f"Showing all {len(working_p)} platforms (US Treasuries · Distributed · Platforms)."
             )
-        table_ph = rwa_table_height(len(working_p), max_h=900)
         df_p = build_us_treasury_platform_dataframe(working_p)
-        _show_us_treasury_platform_dataframe(df_p, height=table_ph)
+        chart_rows_p = sorted(
+            working_p,
+            key=lambda r: r.total_value_usd,
+            reverse=True,
+        )[:RWA_TREASURIES_CHART_MAX_BARS]
+        n_sync_p = (
+            min(RWA_TREASURIES_CHART_MAX_BARS, len(working_p))
+            if working_p
+            else max(1, len(df_p))
+        )
+        split_h_p = rwa_table_height(max(1, n_sync_p), max_h=560)
+        col_ptbl, col_pchart = st.columns([1, 1], gap="large", border=True)
+        with col_ptbl:
+            st.markdown(
+                hub_subsection_heading_html("Platforms table"),
+                unsafe_allow_html=True,
+            )
+            _show_us_treasury_platform_dataframe(df_p, height=split_h_p)
+        with col_pchart:
+            st.markdown(
+                hub_subsection_heading_html("Top platforms by value"),
+                unsafe_allow_html=True,
+            )
+            if chart_rows_p:
+                fig_plat = _rwa_treasuries_top_platforms_bar_figure(chart_rows_p, height=split_h_p)
+                st.plotly_chart(
+                    fig_plat,
+                    use_container_width=True,
+                    config={"scrollZoom": False, "displayModeBar": False},
+                )
+            else:
+                st.caption("No platforms match this filter; there is nothing to chart.")
+        st.markdown(
+            '<p class="jd-hub-cta-note jd-rwa-gmo-split-note">The chart lists the top <strong>12</strong> '
+            "platforms by total value (labels include market share). Scroll the table for the full filtered list.</p>",
+            unsafe_allow_html=True,
+        )
         st.caption(TREASURY_PLATFORM_CAPTION)
     elif not home_preview and not plat_tr:
         st.divider()
