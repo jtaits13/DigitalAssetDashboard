@@ -1,4 +1,4 @@
-"""Full RWA.xyz Tokenized Stocks page: overview KPIs + Distributed · Platforms league."""
+"""Full RWA.xyz Tokenized Stocks page: overview KPIs + Distributed · Networks then Platforms leagues."""
 
 from __future__ import annotations
 
@@ -81,8 +81,9 @@ def main() -> None:
     st.markdown(
         '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">This page mirrors the '
         '<a href="https://app.rwa.xyz/stocks">RWA.xyz Tokenized Stocks</a> view, including headline '
-        "<strong>30-day (30D)</strong> % changes and the searchable <strong>Distributed Platforms</strong> table. "
-        "<strong>Distributed Value</strong> columns are shown as current levels.</p>",
+        "<strong>30-day (30D)</strong> % changes and searchable <strong>Distributed Networks</strong> "
+        "and <strong>Platforms</strong> tables (Networks first). <strong>Distributed Value</strong> columns are "
+        "current levels.</p>",
         unsafe_allow_html=True,
     )
     st.divider()

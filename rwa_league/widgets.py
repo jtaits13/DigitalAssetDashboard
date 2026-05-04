@@ -238,7 +238,7 @@ TREASURY_PLATFORM_CAPTION = (
 )
 TOKENIZED_STOCKS_RWA_CAPTION = (
     "Source: [RWA.xyz Tokenized Stocks](https://app.rwa.xyz/stocks). "
-    "This page mirrors the live **Distributed Platforms** view. "
+    "This page mirrors the live **Distributed** · **Networks** and **Platforms** views. "
     "Top-line **% changes** are **30-day (30D)**; **Distributed Value** is shown as current levels."
 )
 
@@ -2218,10 +2218,10 @@ def show_rwa_tokenized_stocks_widget(
     full_page_key_observations_html: str | None = None,
 ) -> None:
     """
-    RWA.xyz Tokenized Stocks embed: overview KPIs + **Distributed** · **Platforms** league.
+    RWA.xyz Tokenized Stocks embed: overview KPIs + **Distributed** · **Networks** then **Platforms** leagues.
 
-    ``home_preview=True``: teaser on home page. ``home_preview=False``: full searchable table
-    (``pages/RWA_Tokenized_Stocks.py``).
+    ``home_preview=True``: teaser on home page (**Platforms** table). ``home_preview=False``: full searchable
+    **Networks** block first, then **Platforms** (``pages/RWA_Tokenized_Stocks.py``).
     ``full_page_header=True``: page supplies the teal major title; use an overview subsection instead of
     repeating the asset name + long caption.
     ``full_page_key_observations_html``: when set on the full page, rendered after the KPI overview and before tables.
@@ -2244,7 +2244,7 @@ def show_rwa_tokenized_stocks_widget(
                 unsafe_allow_html=True,
             )
             st.caption(
-                "Full **Distributed** · **Platforms** league with search. "
+                "Full **Distributed** · **Networks** then **Platforms** leagues with search. "
                 f"Overview **% changes** are **30-day (30D)**; **Distributed Value** columns are levels — "
                 f"[RWA.xyz Tokenized Stocks]({APP_STOCKS})."
             )
@@ -2302,75 +2302,10 @@ def show_rwa_tokenized_stocks_widget(
         table_h = rwa_table_height(len(working))
         df_st = build_tokenized_stock_platform_dataframe(working)
         _show_tokenized_stock_platform_dataframe(df_st, height=table_h)
-    elif rows_st_plat and not home_preview:
-        q = st.text_input(
-            "Search platform",
-            "",
-            key="rwa_tokenized_stocks_search_full",
-            placeholder="Filter by platform name…",
-        )
-        working = filter_tokenized_stock_platform_rows(rows_st_plat, q)
-        # Keep full-page order aligned with the on-screen rank column.
-        working = sorted(working, key=lambda r: int(r.rank))
-        if q.strip():
-            st.caption(
-                f"Showing {len(working)} of {len(rows_st_plat)} platforms matching “{escape(q.strip())}”."
-            )
-        else:
-            st.caption(
-                f"Showing all {len(working)} platforms (Tokenized Stocks · Distributed · Platforms), sorted by #."
-            )
-        table_h = rwa_table_height(len(working), max_h=900)
-        st.markdown(
-            '<div class="jd-hub-subsection-head">'
-            '<h2 class="home-main-heading">By Platform (Distributed · Platforms)</h2></div>',
-            unsafe_allow_html=True,
-        )
-        df_st = build_tokenized_stock_platform_dataframe(working)
-        chart_rows = sorted(
-            working,
-            key=lambda r: r.total_value_usd,
-            reverse=True,
-        )[:RWA_TOKENIZED_STOCKS_CHART_MAX_BARS]
-        n_sync = (
-            min(RWA_TOKENIZED_STOCKS_CHART_MAX_BARS, len(working))
-            if working
-            else max(1, len(df_st))
-        )
-        split_h = rwa_table_height(max(1, n_sync), max_h=560)
-        col_tbl, col_chart = st.columns([1, 1], gap="large", border=True)
-        with col_tbl:
-            st.markdown(
-                hub_subsection_heading_html("Platforms table"),
-                unsafe_allow_html=True,
-            )
-            _show_tokenized_stock_platform_dataframe(df_st, height=split_h)
-        with col_chart:
-            st.markdown(
-                hub_subsection_heading_html("Top platforms by value"),
-                unsafe_allow_html=True,
-            )
-            if chart_rows:
-                fig_bar = _rwa_tokenized_stocks_top_platforms_bar_figure(chart_rows, height=split_h)
-                st.plotly_chart(
-                    fig_bar,
-                    use_container_width=True,
-                    config={"scrollZoom": False, "displayModeBar": False},
-                )
-            else:
-                st.caption("No platforms match this filter; there is nothing to chart.")
-        st.markdown(
-            '<p class="jd-hub-cta-note jd-rwa-gmo-split-note">The chart lists the top <strong>12</strong> '
-            "platforms by distributed value (labels include market share). Scroll the table for the full filtered list.</p>",
-            unsafe_allow_html=True,
-        )
     elif home_preview:
         st.info("No Tokenized Stocks platform rows returned.")
-    else:
-        st.info("No Tokenized Stocks Distributed · Platforms rows were returned.")
 
     if not home_preview:
-        st.divider()
         st.markdown(
             '<div class="jd-hub-subsection-head">'
             '<h2 class="home-main-heading">By Network (Distributed · Networks)</h2></div>',
@@ -2436,6 +2371,71 @@ def show_rwa_tokenized_stocks_widget(
             )
         else:
             st.info("No Tokenized Stocks Distributed · Networks rows were returned.")
+
+        if rows_st_plat:
+            st.divider()
+            st.markdown(
+                '<div class="jd-hub-subsection-head">'
+                '<h2 class="home-main-heading">By Platform (Distributed · Platforms)</h2></div>',
+                unsafe_allow_html=True,
+            )
+            q = st.text_input(
+                "Search platform",
+                "",
+                key="rwa_tokenized_stocks_search_full",
+                placeholder="Filter by platform name…",
+            )
+            working = filter_tokenized_stock_platform_rows(rows_st_plat, q)
+            working = sorted(working, key=lambda r: int(r.rank))
+            if q.strip():
+                st.caption(
+                    f"Showing {len(working)} of {len(rows_st_plat)} platforms matching “{escape(q.strip())}”."
+                )
+            else:
+                st.caption(
+                    f"Showing all {len(working)} platforms (Tokenized Stocks · Distributed · Platforms), sorted by #."
+                )
+            df_st = build_tokenized_stock_platform_dataframe(working)
+            chart_rows = sorted(
+                working,
+                key=lambda r: r.total_value_usd,
+                reverse=True,
+            )[:RWA_TOKENIZED_STOCKS_CHART_MAX_BARS]
+            n_sync = (
+                min(RWA_TOKENIZED_STOCKS_CHART_MAX_BARS, len(working))
+                if working
+                else max(1, len(df_st))
+            )
+            split_h = rwa_table_height(max(1, n_sync), max_h=560)
+            col_tbl, col_chart = st.columns([1, 1], gap="large", border=True)
+            with col_tbl:
+                st.markdown(
+                    hub_subsection_heading_html("Platforms table"),
+                    unsafe_allow_html=True,
+                )
+                _show_tokenized_stock_platform_dataframe(df_st, height=split_h)
+            with col_chart:
+                st.markdown(
+                    hub_subsection_heading_html("Top platforms by value"),
+                    unsafe_allow_html=True,
+                )
+                if chart_rows:
+                    fig_bar = _rwa_tokenized_stocks_top_platforms_bar_figure(chart_rows, height=split_h)
+                    st.plotly_chart(
+                        fig_bar,
+                        use_container_width=True,
+                        config={"scrollZoom": False, "displayModeBar": False},
+                    )
+                else:
+                    st.caption("No platforms match this filter; there is nothing to chart.")
+            st.markdown(
+                '<p class="jd-hub-cta-note jd-rwa-gmo-split-note">The chart lists the top <strong>12</strong> '
+                "platforms by distributed value (labels include market share). Scroll the table for the full filtered list.</p>",
+                unsafe_allow_html=True,
+            )
+        else:
+            st.divider()
+            st.info("No Tokenized Stocks Distributed · Platforms rows were returned.")
 
     if not home_preview:
         st.caption(TOKENIZED_STOCKS_RWA_CAPTION)
