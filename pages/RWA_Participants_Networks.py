@@ -14,6 +14,7 @@ import streamlit as st
 from home_layout import (
     ETP_FULLPAGE_AUM_LINE_CSS,
     STREAMLIT_TABLE_UNIFY_CSS,
+    monthly_review_note_html,
     rwa_xyz_mirror_footer_text,
     section_label_teal,
 )
@@ -30,6 +31,7 @@ def _participants_networks_takeaway_html() -> str:
         '<li><strong>Institutional expansion is likely staged:</strong> large-scale adoption typically lands on proven '
         'networks first, then broadens as compliance, interoperability, and liquidity deepen.</li>'
         "</ul></div>"
+        + monthly_review_note_html()
     )
 
 
