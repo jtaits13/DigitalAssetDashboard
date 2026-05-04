@@ -2408,8 +2408,8 @@ def show_rwa_participants_networks_widget(
     top-networks chart** row.
     ``full_page_key_observations_html``: when ``full_page_header=False`` (standalone Participants — Networks page),
     rendered after the KPI overview and before search/tables.
-    ``hide_subsection_title``: when ``True`` with ``full_page_header=False``, skip the redundant **Networks** ``h2``;
-    the caller already rendered the page title (e.g. **Participants — Networks**). Scroll target ``#jd-rwa-participants-networks``
+    ``hide_subsection_title``: when ``True`` with ``full_page_header=False``, skip the redundant **Networks** ``h2`` and the
+    lead ``st.caption`` (the page dek already describes the data source). Scroll target ``#jd-rwa-participants-networks``
     is still emitted via ``hub_section_anchor``.
     """
     if home_preview:
@@ -2565,10 +2565,10 @@ def show_rwa_participants_networks_widget(
             '<h2 class="home-main-heading">Networks</h2></div>',
             unsafe_allow_html=True,
         )
-    st.caption(
-        "Searchable table from [RWA.xyz Networks](https://app.rwa.xyz/networks). "
-        "RWA value columns use the same **transferability** fields as the on-site list; top-line **%** are **30D**."
-    )
+        st.caption(
+            "Searchable table from [RWA.xyz Networks](https://app.rwa.xyz/networks). "
+            "RWA value columns use the same **transferability** fields as the on-site list; top-line **%** are **30D**."
+        )
 
     st.markdown(
         hub_subsection_heading_html("Top-Line Market Snapshot"),
