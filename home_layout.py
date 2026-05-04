@@ -19,6 +19,39 @@ def rwa_xyz_mirror_footer_text() -> str:
         "RWA.xyz data · Cached up to one hour · Use **Refresh all data** on the home page to reload."
     )
 
+
+def _add_calendar_months(year: int, month: int, delta: int) -> tuple[int, int]:
+    """Return ``(year, month)`` after adding ``delta`` months (``month`` is 1–12)."""
+    zero_based = month - 1 + delta
+    adj_year = year + zero_based // 12
+    adj_month = zero_based % 12 + 1
+    return adj_year, adj_month
+
+
+def monthly_review_note_html(*, year: int = 2026, month: int = 4) -> str:
+    """
+    Footnote HTML for keyed headline / observations blocks.
+
+    Shows **Review due** (red) only once **three** full calendar months have passed since ``year``–``month``
+    (treated as the first day of that month in UTC); otherwise shows a neutral last-reviewed line.
+    """
+    last_review = datetime(year, month, 1, tzinfo=timezone.utc)
+    now = datetime.now(timezone.utc)
+    label = last_review.strftime("%b %Y")
+    overdue_year, overdue_month = _add_calendar_months(year, month, 3)
+    overdue_threshold = datetime(overdue_year, overdue_month, 1, tzinfo=timezone.utc)
+    if now >= overdue_threshold:
+        age_days = max(0, (now - last_review).days)
+        return (
+            '<p style="margin:0.1rem 0 0.55rem 0;color:#b91c1c;font-size:0.78rem;">'
+            f"<strong>Review due:</strong> last reviewed {label} ({age_days} days ago).</p>"
+        )
+    return (
+        '<p style="margin:0.1rem 0 0.55rem 0;color:#3E6A7A;font-size:0.78rem;">'
+        f"Reviewed monthly · Last reviewed: {label}</p>"
+    )
+
+
 # Section rhythm: soft labels, ticker spacing, teal accent aligned with primaryColor.
 # Streamlit st.dataframe: unify header/body font + color (sortable tables on home).
 # KPI tile legends (RWA + ETP): one size/color everywhere.
