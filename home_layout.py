@@ -213,6 +213,57 @@ p.home-band-label.teal.jd-home-band-first {
 p.home-band-label.teal.jd-home-band-after-rule {
     margin-top: 0.3rem;
 }
+/* Landing page: title + intro blurb (``streamlit_app`` only — ``.jd-home-hero`` wrapper) */
+.jd-home-hero {
+    margin: 0.35rem 0 1.05rem 0;
+    padding: 1.1rem 1.35rem 1.25rem;
+    box-sizing: border-box;
+    background: linear-gradient(165deg, #fbfdfe 0%, #f4f9fb 45%, #f7fafc 100%);
+    border: 1px solid #c5d9e4;
+    border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.05);
+}
+.jd-home-hero h1.home-main-heading#jd-page-top {
+    margin: 0 0 0.5rem 0;
+    padding: 0;
+    font-size: clamp(1.32rem, 2.65vw, 1.74rem);
+    line-height: 1.17;
+    letter-spacing: -0.035em;
+}
+.jd-home-hero .jd-home-hero__accent {
+    display: block;
+    height: 3px;
+    width: min(5.25rem, 28%);
+    margin: 0 0 0.92rem 0;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #25809C 0%, #6aa9b9 72%, rgba(140, 185, 201, 0.35) 100%);
+}
+.jd-home-hero .jd-home-hero__dek {
+    margin: 0 0 0.52rem 0;
+    padding: 0;
+    font-size: 0.9375rem;
+    font-weight: 400;
+    line-height: 1.55;
+    color: #3e6a7a;
+    max-width: 44rem;
+    letter-spacing: 0.009em;
+}
+.jd-home-hero .jd-home-hero__dek:last-child {
+    margin-bottom: 0;
+}
+.jd-home-hero strong {
+    color: #1f4c67;
+    font-weight: 650;
+}
+[data-testid="stMarkdownContainer"] .jd-home-hero p.jd-home-hero__dek {
+    font-size: 0.9375rem !important;
+    line-height: 1.55 !important;
+    margin: 0 0 0.52rem 0 !important;
+}
+[data-testid="stMarkdownContainer"] .jd-home-hero p.jd-home-hero__dek:last-child {
+    margin-bottom: 0 !important;
+}
+
 /* Full-bleed dividers between major hub blocks */
 [data-testid="stAppViewContainer"] hr {
     margin: 1.25rem 0 !important;

@@ -223,16 +223,17 @@ def main() -> None:
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
     st.markdown(app_shared_layout_css(), unsafe_allow_html=True)
     st.markdown(
-        '<h1 class="home-main-heading" id="jd-page-top">JPM Digital Assets Dashboard</h1>',
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large" style="margin-top:0;margin-bottom:0.85rem;">'
-        "This dashboard pulls together <strong>digital-asset news</strong>, <strong>global regulatory headlines</strong>, "
-        "and <strong>U.S. listed crypto ETPs</strong> into one layout. "
-        "It also mirrors <strong>RWA.xyz</strong> for on-chain <strong>RWA</strong> data—networks, platforms, participants, "
-        "stablecoins, treasuries, and tokenized stocks. "
-        "Together, the hub supports scanning market direction, policy signals, and where activity and issuance cluster.</p>",
+        '<div class="jd-home-hero">'
+        '<h1 class="home-main-heading" id="jd-page-top">JPM Digital Assets Dashboard</h1>'
+        '<span class="jd-home-hero__accent" aria-hidden="true"></span>'
+        "<p class=\"jd-home-hero__dek\">This dashboard pulls together <strong>digital-asset news</strong>, "
+        "<strong>global regulatory headlines</strong>, and <strong>U.S. listed crypto ETPs</strong> "
+        "in one place.</p>"
+        "<p class=\"jd-home-hero__dek\">It mirrors <strong>RWA.xyz</strong> for on-chain <strong>RWA</strong> data "
+        "(networks, platforms, participants, stablecoins, treasuries, and tokenized stocks). Together, "
+        "the hub helps you scan <strong>market direction</strong>, <strong>policy signals</strong>, and where "
+        "<strong>activity and issuance</strong> cluster.</p>"
+        "</div>",
         unsafe_allow_html=True,
     )
     show_price_ticker()
