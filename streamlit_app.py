@@ -228,9 +228,9 @@ def main() -> None:
     )
     st.markdown(
         '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large" style="margin-top:0;margin-bottom:0.85rem;">'
-        "<strong>JPM Digital</strong> pulls <strong>digital-asset news</strong>, <strong>global regulatory headlines</strong>, "
+        "<strong>JPM Digital Assets Dashboard</strong> pulls <strong>digital-asset news</strong>, <strong>global regulatory headlines</strong>, "
         "and <strong>U.S. listed crypto ETPs</strong> into one layout. "
-        "It also mirrors <strong>RWA.xyz</strong> for on-chain <strong>RWA league</strong> views—networks, platforms, participants, "
+        "It also mirrors <strong>RWA.xyz</strong> for on-chain <strong>RWA</strong> data—networks, platforms, participants, "
         "stablecoins, treasuries, and tokenized stocks. "
         "Together, the hub supports scanning market direction, policy signals, and where activity and issuance cluster.</p>",
         unsafe_allow_html=True,
