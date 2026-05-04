@@ -1,5 +1,5 @@
 """
-JPM Digital — crypto & digital asset news (RSS aggregation).
+JPM Digital Assets Dashboard — crypto & digital asset news and market views (RSS aggregation).
 Deploy on Streamlit Community Cloud with this file as the main entrypoint.
 """
 
@@ -163,7 +163,7 @@ def _feed_status_expanders(feed_errors: list[str], regulatory_errors: list[str])
 def _sidebar() -> bool:
     """Returns True if refresh clicked."""
     with st.sidebar:
-        st.markdown("### JPM Digital")
+        st.markdown("### JPM Digital Assets Dashboard")
         st.caption("Markets, policy, and on-chain market data.")
         st.divider()
         st.markdown("**Pages**")
@@ -208,7 +208,7 @@ def _footer_line() -> None:
 
 def main() -> None:
     st.set_page_config(
-        page_title="JPM Digital",
+        page_title="JPM Digital Assets Dashboard",
         page_icon="◆",
         layout="wide",
         initial_sidebar_state="expanded",
@@ -223,12 +223,12 @@ def main() -> None:
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
     st.markdown(app_shared_layout_css(), unsafe_allow_html=True)
     st.markdown(
-        '<h1 class="home-main-heading" id="jd-page-top">Digital Assets Dashboard</h1>',
+        '<h1 class="home-main-heading" id="jd-page-top">JPM Digital Assets Dashboard</h1>',
         unsafe_allow_html=True,
     )
     st.markdown(
         '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large" style="margin-top:0;margin-bottom:0.85rem;">'
-        "<strong>JPM Digital Assets Dashboard</strong> pulls <strong>digital-asset news</strong>, <strong>global regulatory headlines</strong>, "
+        "This dashboard pulls together <strong>digital-asset news</strong>, <strong>global regulatory headlines</strong>, "
         "and <strong>U.S. listed crypto ETPs</strong> into one layout. "
         "It also mirrors <strong>RWA.xyz</strong> for on-chain <strong>RWA</strong> data—networks, platforms, participants, "
         "stablecoins, treasuries, and tokenized stocks. "
