@@ -226,6 +226,15 @@ def main() -> None:
         '<h1 class="home-main-heading" id="jd-page-top">Digital Assets Dashboard</h1>',
         unsafe_allow_html=True,
     )
+    st.markdown(
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large" style="margin-top:0;margin-bottom:0.85rem;">'
+        "<strong>JPM Digital</strong> is a working view for the firm’s <strong>Digital Assets</strong> team: one screen to scan "
+        "the ecosystem—<strong>digital-asset market headlines</strong> and <strong>global regulatory wires</strong>, "
+        "<strong>U.S. listed crypto ETPs</strong>, and <strong>on-chain / RWA league data</strong> (via RWA.xyz) for networks, "
+        "platforms, participants, stablecoins, treasuries, and tokenized-stock-style lanes—so you can spot trends, policy "
+        "signals, and where activity and issuance are concentrating.</p>",
+        unsafe_allow_html=True,
+    )
     show_price_ticker()
 
     refresh = _sidebar()
