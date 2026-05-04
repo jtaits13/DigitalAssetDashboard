@@ -82,8 +82,8 @@ def main() -> None:
     st.markdown(
         '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">This page mirrors the '
         '<a href="https://app.rwa.xyz/stablecoins">RWA.xyz Stablecoins</a> view, including headline '
-        "<strong>30-day (30D)</strong> % changes and the <strong>Platforms</strong> table by issuer market cap. "
-        "Market-cap columns are shown as current levels.</p>",
+        "<strong>30-day (30D)</strong> % changes plus <strong>Networks</strong> and <strong>Platforms</strong> "
+        "tables (aggregate stablecoin market cap by chain and by issuer). Level columns are market-cap amounts.</p>",
         unsafe_allow_html=True,
     )
     st.divider()

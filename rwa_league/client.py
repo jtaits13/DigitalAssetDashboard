@@ -118,6 +118,20 @@ class RwaTreasuryPlatformRow:
 
 
 @dataclass(frozen=True)
+class RwaStablecoinNetworkRow:
+    """One row from the Stablecoins page league table **Networks** tab."""
+
+    rank: int
+    network: str
+    network_href: str | None
+    stablecoin_count: int
+    total_value_usd: float
+    value_change_7d_raw: float | None
+    market_share_raw: float
+    market_share_change_30d_raw: float | None
+
+
+@dataclass(frozen=True)
 class RwaStablecoinPlatformRow:
     """One row from the Stablecoins page league table **Platforms** tab."""
 
@@ -411,6 +425,20 @@ def _stablecoin_platform_rows_from_props(props: dict[str, Any]) -> list[dict[str
     return None
 
 
+def _stablecoin_network_rows_from_props(props: dict[str, Any]) -> list[dict[str, Any]] | None:
+    """Networks tab rows on ``/stablecoins`` (same league list shape as Platforms)."""
+    lt = props.get("pageProps", {}).get("leagueTableTabs")
+    if not isinstance(lt, list):
+        return None
+    for item in lt:
+        if isinstance(item, dict) and item.get("key") == "networks":
+            data = item.get("data") or {}
+            rows = data.get("rows")
+            if isinstance(rows, list):
+                return rows
+    return None
+
+
 def _stablecoin_platform_rows_from_raw(raw_rows: list[dict[str, Any]]) -> list[RwaStablecoinPlatformRow]:
     out: list[RwaStablecoinPlatformRow] = []
     for row in raw_rows:
@@ -448,6 +476,53 @@ def _stablecoin_platform_rows_from_raw(raw_rows: list[dict[str, Any]]) -> list[R
                 rank=rank,
                 platform=name,
                 platform_href=platform_href,
+                stablecoin_count=n_coins,
+                total_value_usd=total,
+                value_change_7d_raw=v7f,
+                market_share_raw=msf,
+                market_share_change_30d_raw=ms30f,
+            )
+        )
+    return out
+
+
+def _stablecoin_network_rows_from_raw(raw_rows: list[dict[str, Any]]) -> list[RwaStablecoinNetworkRow]:
+    out: list[RwaStablecoinNetworkRow] = []
+    for row in raw_rows:
+        if not isinstance(row, dict):
+            continue
+        group = row.get("group") or {}
+        name = str(group.get("name") or "").strip() or "—"
+        link = group.get("linkTo") or {}
+        href = link.get("href") if isinstance(link, dict) else None
+        if isinstance(href, str) and href.strip():
+            network_href = href.strip()
+        else:
+            network_href = None
+
+        ri = row.get("rowIndex")
+        rank = int(ri) + 1 if isinstance(ri, int) else len(out) + 1
+
+        ac = row.get("asset_count")
+        n_coins = int(ac) if isinstance(ac, (int, float)) else 0
+
+        val = row.get("value")
+        total = float(val) if isinstance(val, (int, float)) else 0.0
+
+        ms = row.get("market_share_pct")
+        msf = float(ms) if isinstance(ms, (int, float)) else 0.0
+
+        ms30 = row.get("market_share_pct_30d_change")
+        ms30f = float(ms30) if isinstance(ms30, (int, float)) else None
+
+        v7 = row.get("value_7d_change")
+        v7f = float(v7) if isinstance(v7, (int, float)) else None
+
+        out.append(
+            RwaStablecoinNetworkRow(
+                rank=rank,
+                network=name,
+                network_href=network_href,
                 stablecoin_count=n_coins,
                 total_value_usd=total,
                 value_change_7d_raw=v7f,
@@ -1264,23 +1339,32 @@ def fetch_rwa_treasuries_data() -> tuple[
     return net_out, plat_out, kpis, None
 
 
-def fetch_rwa_stablecoins_data() -> tuple[list[RwaStablecoinPlatformRow], list[RwaGlobalKpi], str | None]:
+def fetch_rwa_stablecoins_data() -> tuple[
+    list[RwaStablecoinNetworkRow],
+    list[RwaStablecoinPlatformRow],
+    list[RwaGlobalKpi],
+    str | None,
+]:
     """
-    Stablecoins dashboard: overview aggregates + **Platforms** league tab (not Networks).
+    Stablecoins dashboard: overview aggregates + **Networks** and **Platforms** league tabs.
 
-    Row value is platform stablecoin **market cap** (same as RWA.xyz table). ``percentChange``
+    Row **value** is stablecoin **market cap** aggregate for that chain or issuer (same as RWA.xyz). ``percentChange``
     on aggregates uses the interval in the payload (typically **30d**).
     """
     props, err = _fetch_stablecoins_props_payload()
     if err:
-        return [], [], err
+        return [], [], [], err
     assert props is not None
 
-    raw_rows = _stablecoin_platform_rows_from_props(props)
+    raw_net = _stablecoin_network_rows_from_props(props)
+    raw_plat = _stablecoin_platform_rows_from_props(props)
     kpis = _parse_aggregates(props)
-    if not raw_rows:
-        return [], kpis, "Stablecoins Platforms league table not found in page data."
-    return _stablecoin_platform_rows_from_raw(raw_rows), kpis, None
+    if not raw_net and not raw_plat:
+        return [], [], kpis, "Stablecoins Networks / Platforms league data not found in page data."
+
+    net_out = _stablecoin_network_rows_from_raw(raw_net or [])
+    plat_out = _stablecoin_platform_rows_from_raw(raw_plat or [])
+    return net_out, plat_out, kpis, None
 
 
 def fetch_rwa_tokenized_stocks_data() -> tuple[

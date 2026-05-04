@@ -26,6 +26,7 @@ if TYPE_CHECKING:
         RwaNetworksTabRow,
         RwaPlatformsTabRow,
         RwaTokenizedStockNetworkRow,
+        RwaStablecoinNetworkRow,
         RwaStablecoinPlatformRow,
         RwaTokenizedStockPlatformRow,
         RwaTreasuryDistributedNetworkRow,
@@ -37,6 +38,7 @@ from rwa_league.dataframe_table import (
     build_rwa_networks_page_dataframe,
     build_rwa_platforms_page_dataframe,
     build_tokenized_stock_network_dataframe,
+    build_stablecoin_network_dataframe,
     build_stablecoin_platform_dataframe,
     build_tokenized_stock_platform_dataframe,
     build_us_treasury_network_dataframe,
@@ -45,6 +47,7 @@ from rwa_league.dataframe_table import (
     filter_asset_managers_tab_rows,
     filter_platforms_tab_rows,
     filter_tokenized_stock_network_rows,
+    filter_stablecoin_network_rows,
     filter_stablecoin_platform_rows,
     filter_tokenized_stock_platform_rows,
     filter_treasury_network_rows,
@@ -54,6 +57,7 @@ from rwa_league.dataframe_table import (
     style_rwa_asset_managers_page_dataframe,
     style_rwa_platforms_page_dataframe,
     style_tokenized_stock_network_dataframe,
+    style_stablecoin_network_dataframe,
     style_stablecoin_platform_dataframe,
     style_tokenized_stock_platform_dataframe,
     style_us_treasury_network_dataframe,
@@ -209,10 +213,16 @@ RWA_ASSET_MANAGERS_DATA_SOURCE_CAPTION = (
     "Top-line **% changes** are **30-day (30D)**; table values are current levels."
 )
 
-STABLECOIN_RWA_CAPTION = (
-    "Source: [RWA.xyz Stablecoins](https://app.rwa.xyz/stablecoins). "
-    "This page mirrors the live **Platforms** view by issuer market cap. "
-    "Top-line **% changes** are **30-day (30D)**; **market cap** values are current levels."
+STABLECOIN_NETWORK_CAPTION = (
+    "Stablecoins — **Networks** tab on [RWA.xyz Stablecoins](https://app.rwa.xyz/stablecoins). "
+    "**Total Value** is aggregate stablecoin market cap on that network (current level); **7-day** % change uses "
+    "the embed field `value_7d_change`. Top-line KPI **% changes** are typically **30-day (30D)**."
+)
+
+STABLECOIN_PLATFORM_CAPTION = (
+    "Stablecoins — **Platforms** tab on [RWA.xyz Stablecoins](https://app.rwa.xyz/stablecoins). "
+    "**Total Value** is issuer-level aggregate market cap (current level). Same **7-day** / **30-day** conventions "
+    "as the Networks table above."
 )
 
 TREASURY_RWA_CAPTION = (
@@ -671,6 +681,59 @@ def _rwa_stablecoins_top_platforms_bar_figure(
     return fig
 
 
+def _rwa_stablecoins_top_networks_bar_figure(
+    rows: list[RwaStablecoinNetworkRow],
+    *,
+    height: int,
+) -> go.Figure:
+    """Horizontal bar: top stablecoin Networks-tab chains by aggregate market cap (USD)."""
+    top_n = min(RWA_STABLECOINS_CHART_MAX_BARS, len(rows))
+    top = sorted(rows, key=lambda r: r.total_value_usd, reverse=True)[:top_n]
+    asc = sorted(top, key=lambda r: r.total_value_usd)
+    y_labels = [str(r.network).strip() or "—" for r in asc]
+    x_vals = [float(r.total_value_usd) for r in asc]
+    share_pct = [float(r.market_share_raw) * 100.0 for r in asc]
+    share_text = [f"{s:.2f}% share" for s in share_pct]
+    fig = go.Figure(
+        go.Bar(
+            x=x_vals,
+            y=y_labels,
+            orientation="h",
+            marker_color="#25809C",
+            marker_line_color="#1F4C67",
+            marker_line_width=0.5,
+            showlegend=False,
+            text=share_text,
+            textposition="outside",
+            textfont=dict(size=11, color="#3E6A7A"),
+            cliponaxis=False,
+            hovertemplate=(
+                "<b>%{y}</b><br>Total value: %{x:$,.0f}<br>Market share: %{text}<extra></extra>"
+            ),
+        )
+    )
+    fig.update_layout(
+        height=int(height),
+        margin=dict(l=8, r=100, t=14, b=36),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="#f8fafc",
+        font=dict(size=12, color="#1F4C67"),
+        showlegend=False,
+        xaxis=dict(
+            title=dict(text="Total value (USD)", font=dict(size=12, color="#1F4C67")),
+            tickprefix="$",
+            separatethousands=True,
+        ),
+        yaxis=dict(
+            type="category",
+            categoryorder="array",
+            categoryarray=y_labels,
+            showticklabels=True,
+        ),
+    )
+    return fig
+
+
 def _rwa_treasuries_top_networks_bar_figure(
     rows: list[RwaTreasuryDistributedNetworkRow],
     *,
@@ -871,6 +934,73 @@ def _show_stablecoin_platform_dataframe(df, *, height: int) -> None:
                 f"Share {_SORT}",
                 format=None,
                 help="Share of total stablecoin market cap (%)",
+            ),
+            "30D Δ share": st.column_config.NumberColumn(
+                f"30D Δ share {_SORT}",
+                format=None,
+                width=100,
+                help="Change in market share vs 30 days ago (pts)",
+            ),
+        },
+    )
+
+
+def _show_stablecoin_network_dataframe(df, *, height: int) -> None:
+    st.dataframe(
+        style_stablecoin_network_dataframe(df),
+        use_container_width=True,
+        height=height,
+        hide_index=True,
+        column_order=[
+            "#",
+            "Network",
+            "Link",
+            "Stablecoins",
+            "Total Value",
+            "7D Δ value",
+            "Market Share",
+            "30D Δ share",
+        ],
+        column_config={
+            "#": st.column_config.NumberColumn(
+                "#",
+                format="%.0f",
+                width="small",
+                help="Rank on RWA.xyz Stablecoins · Networks tab (by aggregate stablecoin market cap)",
+            ),
+            "Network": st.column_config.TextColumn(
+                f"Network {_SORT}",
+                width="medium",
+                help="Blockchain / parent network name",
+            ),
+            "Link": st.column_config.LinkColumn(
+                f"RWA Page {_SORT}",
+                display_text=_LINK_ARROW,
+                validate=r"^https://",
+                width="small",
+                help="Open this network on RWA.xyz",
+            ),
+            "Stablecoins": st.column_config.NumberColumn(
+                f"Stablecoins {_SORT}",
+                format="%.0f",
+                help="Number of tracked stablecoin assets on this network",
+            ),
+            "Total Value": st.column_config.NumberColumn(
+                f"Market cap {_SORT}",
+                format=None,
+                width=140,
+                help="Aggregate stablecoin market cap (USD) on this network",
+            ),
+            "7D Δ value": st.column_config.NumberColumn(
+                f"7D Δ cap {_SORT}",
+                format=None,
+                width=100,
+                help="7-day change in aggregate market cap (%)",
+            ),
+            "Market Share": st.column_config.NumberColumn(
+                f"Share {_SORT}",
+                format=None,
+                help="Share of global stablecoin market cap (%)",
             ),
             "30D Δ share": st.column_config.NumberColumn(
                 f"30D Δ share {_SORT}",
@@ -1531,8 +1661,13 @@ def load_rwa_asset_managers_cached(
 
 @st.cache_data(ttl=3600, show_spinner=False)
 def load_rwa_stablecoins_cached(
-    *, _stable_schema: int = 1
-) -> tuple[list[RwaStablecoinPlatformRow], list[RwaGlobalKpi], str | None]:
+    *, _stable_schema: int = 2
+) -> tuple[
+    list[RwaStablecoinNetworkRow],
+    list[RwaStablecoinPlatformRow],
+    list[RwaGlobalKpi],
+    str | None,
+]:
     """Bump ``_stable_schema`` when ``/stablecoins`` embed shape changes."""
     _ = _stable_schema
     from rwa_league.client import fetch_rwa_stablecoins_data
@@ -1590,13 +1725,12 @@ def show_rwa_stablecoins_widget(
     full_page_key_observations_html: str | None = None,
 ) -> None:
     """
-    RWA.xyz Stablecoins embed: four overview KPIs + **Platforms** league.
+    RWA.xyz Stablecoins embed: overview KPIs + **Networks** and **Platforms** leagues (same pattern as US Treasuries).
 
-    ``home_preview=True`` (under **On-chain Data** on the hub): short preview + link to full page.
-    ``home_preview=False``: full searchable table (use from ``pages/RWA_Stablecoins.py``).
-    ``full_page_header=True``: page supplies the teal major title; use a hub-style overview subsection
-    (``hub_subsection_heading_html``) instead of repeating the asset name + long caption.
-    ``full_page_key_observations_html``: when set on the full page, rendered after the KPI overview and before tables.
+    ``home_preview=True`` (hub): **Platforms** table preview only. ``home_preview=False``: full page with searchable
+    **Networks** then **Platforms** blocks (table + bar chart columns each).
+    ``full_page_header=True``: teal title lives on ``pages/RWA_Stablecoins.py``.
+    ``full_page_key_observations_html``: rendered after KPI row on the full page.
     """
     h2_sub = "home-widget-heading" if home_preview else "home-main-heading"
     if home_preview:
@@ -1616,18 +1750,16 @@ def show_rwa_stablecoins_widget(
                 unsafe_allow_html=True,
             )
             st.caption(
-                "Full **Platforms** league with search from the "
+                "Full **Networks** then **Platforms** leagues with search from the "
                 "[RWA.xyz Stablecoins](https://app.rwa.xyz/stablecoins) embed. "
-                "Overview **% changes** are **30-day (30D)**; each row’s **market cap** is a level."
+                "Overview **% changes** are **30-day (30D)** where shown; league **market cap** values are levels."
             )
         else:
-            # Full page already renders the primary section title/description.
-            # Avoid repeating a second overview heading before KPI tiles.
             pass
 
-    rows_sc, kpis_sc, err_sc = load_rwa_stablecoins_cached()
+    rows_net_sc, rows_plat_sc, kpis_sc, err_sc = load_rwa_stablecoins_cached()
 
-    if err_sc and not rows_sc:
+    if err_sc and not rows_net_sc and not rows_plat_sc:
         st.warning(escape(err_sc))
         _render_rwa_stablecoin_overview(kpis_sc)
         _inject_full_page_key_observations(full_page_key_observations_html)
@@ -1639,8 +1771,8 @@ def show_rwa_stablecoins_widget(
         )
         return
 
-    if not rows_sc:
-        st.info("No platform rows returned for Stablecoins.")
+    if not rows_net_sc and not rows_plat_sc:
+        st.info("No Stablecoins league rows returned.")
         _render_rwa_stablecoin_overview(kpis_sc)
         _inject_full_page_key_observations(full_page_key_observations_html)
         st.link_button(
@@ -1659,69 +1791,154 @@ def show_rwa_stablecoins_widget(
     _render_rwa_stablecoin_overview(kpis_sc)
     _inject_full_page_key_observations(full_page_key_observations_html)
 
-    if home_preview:
-        n = max(1, min(preview_rows, len(rows_sc)))
-        working = rows_sc[:n]
-        table_h = rwa_table_height(len(working))
-    else:
-        q = st.text_input(
-            "Search platform",
-            "",
-            key="rwa_stablecoin_search_full",
-            placeholder="Filter by platform name…",
-        )
-        working = filter_stablecoin_platform_rows(rows_sc, q)
-        if q.strip():
+    if rows_net_sc:
+        if not home_preview:
+            st.markdown(
+                '<div class="jd-hub-subsection-head">'
+                '<h2 class="home-main-heading">By network (Stablecoins · Networks)</h2></div>',
+                unsafe_allow_html=True,
+            )
             st.caption(
-                f"Showing {len(working)} of {len(rows_sc)} platforms matching “{escape(q.strip())}”."
+                "**Networks** league — aggregate stablecoin market cap by chain. "
+                "**7-day** % change follows the numeric field from **RWA.xyz** (see table column help)."
             )
-        else:
-            st.caption(f"Showing all {len(working)} platforms (Stablecoins · Platforms tab).")
-        table_h = rwa_table_height(len(working), max_h=900)
-
-    df_sc = build_stablecoin_platform_dataframe(working)
-    if home_preview:
-        _show_stablecoin_platform_dataframe(df_sc, height=table_h)
-    else:
-        chart_rows = sorted(
-            working,
-            key=lambda r: r.total_value_usd,
-            reverse=True,
-        )[:RWA_STABLECOINS_CHART_MAX_BARS]
-        n_sync = (
-            min(RWA_STABLECOINS_CHART_MAX_BARS, len(working))
-            if working
-            else max(1, len(df_sc))
-        )
-        split_h = rwa_table_height(max(1, n_sync), max_h=560)
-        col_tbl, col_chart = st.columns([1, 1], gap="large", border=True)
-        with col_tbl:
-            st.markdown(
-                hub_subsection_heading_html("Platforms table"),
-                unsafe_allow_html=True,
+            qn = st.text_input(
+                "Search network table",
+                "",
+                key="rwa_stablecoin_network_search_full",
+                placeholder="Filter by network name…",
             )
-            _show_stablecoin_platform_dataframe(df_sc, height=split_h)
-        with col_chart:
-            st.markdown(
-                hub_subsection_heading_html("Top platforms by value"),
-                unsafe_allow_html=True,
-            )
-            if chart_rows:
-                fig_bar = _rwa_stablecoins_top_platforms_bar_figure(chart_rows, height=split_h)
-                st.plotly_chart(
-                    fig_bar,
-                    use_container_width=True,
-                    config={"scrollZoom": False, "displayModeBar": False},
+            working_n = filter_stablecoin_network_rows(rows_net_sc, qn)
+            if qn.strip():
+                st.caption(
+                    f"Showing {len(working_n)} of {len(rows_net_sc)} networks matching “{escape(qn.strip())}”."
                 )
             else:
-                st.caption("No platforms match this filter; there is nothing to chart.")
-        st.markdown(
-            '<p class="jd-hub-cta-note jd-rwa-gmo-split-note">The chart lists the top <strong>12</strong> '
-            "platforms by total value (labels include market share). Scroll the table for the full filtered list.</p>",
-            unsafe_allow_html=True,
+                st.caption(
+                    f"Showing all {len(working_n)} networks (Stablecoins · Networks)."
+                )
+            df_n = build_stablecoin_network_dataframe(working_n)
+            chart_rows_n = sorted(
+                working_n,
+                key=lambda r: r.total_value_usd,
+                reverse=True,
+            )[:RWA_STABLECOINS_CHART_MAX_BARS]
+            n_sync_n = (
+                min(RWA_STABLECOINS_CHART_MAX_BARS, len(working_n))
+                if working_n
+                else max(1, len(df_n))
+            )
+            split_h_n = rwa_table_height(max(1, n_sync_n), max_h=560)
+            col_ntbl, col_nchart = st.columns([1, 1], gap="large", border=True)
+            with col_ntbl:
+                st.markdown(
+                    hub_subsection_heading_html("Networks table"),
+                    unsafe_allow_html=True,
+                )
+                _show_stablecoin_network_dataframe(df_n, height=split_h_n)
+            with col_nchart:
+                st.markdown(
+                    hub_subsection_heading_html("Top networks by value"),
+                    unsafe_allow_html=True,
+                )
+                if chart_rows_n:
+                    fig_n = _rwa_stablecoins_top_networks_bar_figure(chart_rows_n, height=split_h_n)
+                    st.plotly_chart(
+                        fig_n,
+                        use_container_width=True,
+                        config={"scrollZoom": False, "displayModeBar": False},
+                    )
+                else:
+                    st.caption("No networks match this filter; there is nothing to chart.")
+            st.markdown(
+                '<p class="jd-hub-cta-note jd-rwa-gmo-split-note">The chart lists the top <strong>12</strong> '
+                "networks by total value (labels include market share). Scroll the table for the full filtered "
+                "list.</p>",
+                unsafe_allow_html=True,
+            )
+            st.caption(STABLECOIN_NETWORK_CAPTION)
+    elif not home_preview:
+        st.info(
+            "The **Networks** league was not present in the Stablecoins embed; the **Platforms** section below "
+            "may still load."
         )
-    if not home_preview:
-        st.caption(STABLECOIN_RWA_CAPTION)
+
+    if rows_plat_sc:
+        if not home_preview and rows_net_sc:
+            st.divider()
+        if not home_preview:
+            st.markdown(
+                '<div class="jd-hub-subsection-head">'
+                '<h2 class="home-main-heading">By platform (Stablecoins · Platforms)</h2></div>',
+                unsafe_allow_html=True,
+            )
+            st.caption(
+                "**Platforms** league — issuer-level aggregate stablecoin market cap from **RWA.xyz** "
+                "(same **7-day** / **market share** fields as Networks)."
+            )
+            q = st.text_input(
+                "Search platform table",
+                "",
+                key="rwa_stablecoin_platform_search_full",
+                placeholder="Filter by platform name…",
+            )
+            working_p = filter_stablecoin_platform_rows(rows_plat_sc, q)
+            if q.strip():
+                st.caption(
+                    f"Showing {len(working_p)} of {len(rows_plat_sc)} platforms matching “{escape(q.strip())}”."
+                )
+            else:
+                st.caption(f"Showing all {len(working_p)} platforms (Stablecoins · Platforms tab).")
+
+            df_p = build_stablecoin_platform_dataframe(working_p)
+            chart_rows_p = sorted(
+                working_p,
+                key=lambda r: r.total_value_usd,
+                reverse=True,
+            )[:RWA_STABLECOINS_CHART_MAX_BARS]
+            n_sync_p = (
+                min(RWA_STABLECOINS_CHART_MAX_BARS, len(working_p))
+                if working_p
+                else max(1, len(df_p))
+            )
+            split_h_p = rwa_table_height(max(1, n_sync_p), max_h=560)
+            col_tbl, col_chart = st.columns([1, 1], gap="large", border=True)
+            with col_tbl:
+                st.markdown(
+                    hub_subsection_heading_html("Platforms table"),
+                    unsafe_allow_html=True,
+                )
+                _show_stablecoin_platform_dataframe(df_p, height=split_h_p)
+            with col_chart:
+                st.markdown(
+                    hub_subsection_heading_html("Top platforms by value"),
+                    unsafe_allow_html=True,
+                )
+                if chart_rows_p:
+                    fig_bar = _rwa_stablecoins_top_platforms_bar_figure(chart_rows_p, height=split_h_p)
+                    st.plotly_chart(
+                        fig_bar,
+                        use_container_width=True,
+                        config={"scrollZoom": False, "displayModeBar": False},
+                    )
+                else:
+                    st.caption("No platforms match this filter; there is nothing to chart.")
+            st.markdown(
+                '<p class="jd-hub-cta-note jd-rwa-gmo-split-note">The chart lists the top <strong>12</strong> '
+                "platforms by total value (labels include market share). Scroll the table for the full filtered "
+                "list.</p>",
+                unsafe_allow_html=True,
+            )
+            st.caption(STABLECOIN_PLATFORM_CAPTION)
+        else:
+            n = max(1, min(preview_rows, len(rows_plat_sc)))
+            working_pv = rows_plat_sc[:n]
+            table_h = rwa_table_height(len(working_pv))
+            df_pv = build_stablecoin_platform_dataframe(working_pv)
+            _show_stablecoin_platform_dataframe(df_pv, height=table_h)
+    elif not home_preview:
+        st.divider()
+        st.info("No **Platforms** league rows were returned for Stablecoins in this embed.")
 
     if home_preview:
         if st.button(
