@@ -235,8 +235,9 @@ def main() -> None:
         "Together, the hub helps you scan <strong>market direction</strong>, "
         "<strong>policy signals</strong>, and where <strong>activity and issuance</strong> cluster.</p>"
         '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">'
+        "For <strong>JPM-specific digital asset</strong> materials (documentation, collateral, product context), see the "
         '<a href="https://confluence.prod.aws.jpmchase.net/confluence/spaces/viewspace.action?key=DIGITALPRODUCTTEAM"'
-        ' target="_blank" rel="noopener noreferrer">DIGITALPRODUCTTEAM (Confluence)</a></p>'
+        ' target="_blank" rel="noopener noreferrer">JPM Digital Custody Product Team</a> space on Confluence (internal).</p>'
         "</div>",
         unsafe_allow_html=True,
     )
