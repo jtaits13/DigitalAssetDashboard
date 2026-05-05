@@ -226,11 +226,13 @@ def main() -> None:
         '<div class="jd-home-hero">'
         '<h1 class="home-main-heading" id="jd-page-top">JPM Digital Assets Dashboard</h1>'
         '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">This dashboard pulls together '
-        "<strong>digital-asset news</strong>, <strong>global regulatory headlines</strong>, and "
-        "<strong>U.S. listed crypto ETPs</strong> in one place.</p>"
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">It mirrors <strong>RWA.xyz</strong> for '
-        "on-chain <strong>RWA</strong> data (networks, platforms, participants, stablecoins, treasuries, and "
-        "tokenized stocks). Together, the hub helps you scan <strong>market direction</strong>, "
+        "<strong>digital-asset news</strong>, <strong>global regulatory headlines</strong>, "
+        "<strong>U.S. listed crypto ETPs</strong>, and league-style <strong>on-chain RWA</strong> data from "
+        "<strong>RWA.xyz</strong>—in one place.</p>"
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">That RWA layer covers '
+        "<strong>networks</strong>, <strong>platforms</strong>, <strong>participants</strong>, "
+        "<strong>stablecoins</strong>, <strong>treasuries</strong>, and <strong>tokenized stocks</strong>. "
+        "Together, the hub helps you scan <strong>market direction</strong>, "
         "<strong>policy signals</strong>, and where <strong>activity and issuance</strong> cluster.</p>"
         "</div>",
         unsafe_allow_html=True,
