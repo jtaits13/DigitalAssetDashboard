@@ -234,6 +234,9 @@ def main() -> None:
         "<strong>stablecoins</strong>, <strong>treasuries</strong>, and <strong>tokenized stocks</strong>. "
         "Together, the hub helps you scan <strong>market direction</strong>, "
         "<strong>policy signals</strong>, and where <strong>activity and issuance</strong> cluster.</p>"
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">'
+        '<a href="https://confluence.prod.aws.jpmchase.net/confluence/spaces/viewspace.action?key=DIGITALPRODUCTTEAM"'
+        ' target="_blank" rel="noopener noreferrer">DIGITALPRODUCTTEAM (Confluence)</a></p>'
         "</div>",
         unsafe_allow_html=True,
     )
