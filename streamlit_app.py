@@ -227,7 +227,7 @@ def main() -> None:
         '<h1 class="home-main-heading" id="jd-page-top">JPM Digital Assets Dashboard</h1>'
         '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">This dashboard pulls together '
         "<strong>digital-asset news</strong>, <strong>global regulatory headlines</strong>, "
-        "<strong>U.S. listed crypto ETPs</strong>, and league-style <strong>on-chain RWA</strong> data from "
+        "<strong>U.S. listed crypto ETPs</strong>, and <strong>on-chain RWA</strong> data from "
         "<strong>RWA.xyz</strong>—in one place.</p>"
         '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">That RWA layer covers '
         "<strong>networks</strong>, <strong>platforms</strong>, <strong>participants</strong>, "
