@@ -141,11 +141,9 @@ SITE_NAV_CSS = """
     z-index: 999999;
     box-sizing: border-box;
     padding: 0.3rem 1rem 0.4rem 1rem;
-    background: rgba(255, 255, 255, 0.86);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: #F3F7FB;
     border-bottom: 1px solid #C7D8E8;
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset, 0 2px 8px rgba(15, 23, 42, 0.06);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
 }
 .jd-site-nav-inner {
     max-width: min(1200px, 100%);

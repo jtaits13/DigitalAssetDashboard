@@ -224,9 +224,6 @@ def main() -> None:
     st.markdown(app_shared_layout_css(), unsafe_allow_html=True)
     st.markdown(
         '<div class="jd-home-hero">'
-        '<div class="jd-home-hero__inner">'
-        '<div class="jd-home-hero__copy">'
-        '<p class="jd-home-hero__eyebrow">Market pulse</p>'
         '<h1 class="home-main-heading" id="jd-page-top">JPM Digital Assets Dashboard</h1>'
         '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">This dashboard pulls together '
         "<strong>digital-asset news</strong>, <strong>global regulatory headlines</strong>, "
@@ -242,18 +239,7 @@ def main() -> None:
         "(documentation, collateral, product context, key contacts), see the "
         '<a href="https://confluence.prod.aws.jpmchase.net/confluence/spaces/viewspace.action?key=DIGITALPRODUCTTEAM"'
         ' target="_blank" rel="noopener noreferrer">JPM Digital Custody Product Team</a> space on Confluence (internal).</p>'
-        "</div>"
-        '<aside class="jd-home-hero__aside" aria-label="What this hub contains">'
-        '<div class="jd-home-hero__card">'
-        '<h2 class="jd-home-hero__card-title">What lives here</h2>'
-        "<p class=\"jd-home-hero__card-dek\">RSS news lanes, regulatory wires, ETP snapshots, "
-        "and RWA.xyz–aligned views—interactive tables and charts below.</p>"
-        '<div class="jd-home-hero__tags" aria-hidden="true">'
-        '<span class="jd-home-hero__tag">News</span>'
-        '<span class="jd-home-hero__tag">Policy</span>'
-        '<span class="jd-home-hero__tag">Funds</span>'
-        '<span class="jd-home-hero__tag">On-chain</span>'
-        "</div></div></aside></div></div>",
+        "</div>",
         unsafe_allow_html=True,
     )
     show_price_ticker()
