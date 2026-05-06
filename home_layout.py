@@ -99,6 +99,7 @@ ETP_FULLPAGE_AUM_LINE_CSS = """
 
 HOME_PAGE_LAYOUT_CSS = """
 <style>
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;780&display=swap");
 /* Hub hierarchy: h1 → major section band (largest body heading) → lane/widget (smaller) → dek (smallest) */
 h1.home-main-heading {
     font-size: clamp(1.45rem, 2.8vw, 1.85rem);
@@ -213,16 +214,133 @@ p.home-band-label.teal.jd-home-band-first {
 p.home-band-label.teal.jd-home-band-after-rule {
     margin-top: 0.3rem;
 }
-/* Landing title + intro: spacing + reading width only (no card chrome) */
+/* Landing hero: mirrors static_home — gradient wash, grid texture, two-column + aside card */
+section[data-testid="stMain"] {
+    overflow-x: clip;
+}
 .jd-home-hero {
-    margin: 0 0 0.75rem 0;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    width: 100vw;
+    max-width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    margin-bottom: 0.85rem;
     padding: 0;
+    font-family: "Outfit", "Segoe UI", system-ui, sans-serif;
+}
+.jd-home-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background:
+        radial-gradient(ellipse 80% 55% at 15% 20%, rgba(37, 128, 156, 0.12), transparent 55%),
+        radial-gradient(ellipse 60% 40% at 90% 0%, rgba(2, 29, 65, 0.06), transparent 50%),
+        linear-gradient(180deg, #fafcfd 0%, #f0f6f9 45%, #e8f1f5 100%);
+    pointer-events: none;
+}
+.jd-home-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.35;
+    background-image: linear-gradient(rgba(199, 216, 232, 0.35) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(199, 216, 232, 0.35) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: linear-gradient(180deg, black 0%, transparent 85%);
+    pointer-events: none;
+}
+.jd-home-hero__inner {
+    position: relative;
+    z-index: 1;
+    max-width: 72rem;
+    margin: 0 auto;
+    display: grid;
+    gap: clamp(1.25rem, 3vw, 2rem);
+    align-items: start;
+    padding: clamp(1.35rem, 4vw, 2.5rem) clamp(1.25rem, 4vw, 2rem)
+        clamp(1.5rem, 4vw, 2.75rem);
+    grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 960px) {
+    .jd-home-hero__inner {
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem 2.5rem;
+    }
+    .jd-home-hero__aside {
+        border-left: 1px solid rgba(199, 216, 232, 0.85);
+        padding-left: clamp(1.25rem, 3vw, 2rem);
+    }
+}
+.jd-home-hero__eyebrow {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #25809c;
+    margin: 0 0 0.55rem 0;
+    font-family: "Outfit", "Segoe UI", system-ui, sans-serif;
+}
+.jd-home-hero__card {
+    background: #ffffff;
+    border: 1px solid #c7d8e8;
+    border-radius: 12px;
+    padding: 1.2rem 1.3rem 1.15rem;
+    box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+    box-sizing: border-box;
+}
+.jd-home-hero h2.jd-home-hero__card-title,
+[data-testid="stMarkdownContainer"] .jd-home-hero h2.jd-home-hero__card-title {
+    margin: 0 0 0.45rem 0 !important;
+    font-size: 0.95rem !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.02em !important;
+    line-height: 1.3 !important;
+    color: #021d41 !important;
+    border: none !important;
+    font-family: "Outfit", "Segoe UI", system-ui, sans-serif !important;
+}
+.jd-home-hero p.jd-home-hero__card-dek,
+[data-testid="stMarkdownContainer"] .jd-home-hero p.jd-home-hero__card-dek {
+    margin: 0 !important;
+    font-size: 0.88rem !important;
+    line-height: 1.5 !important;
+    font-weight: 400 !important;
+    color: #3e6a7a !important;
+    font-family: "Outfit", "Segoe UI", system-ui, sans-serif !important;
+}
+.jd-home-hero__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.95rem;
+}
+.jd-home-hero__tag {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #25809c;
+    background: rgba(37, 128, 156, 0.1);
+    padding: 0.28rem 0.55rem;
+    border-radius: 6px;
+    font-family: "Outfit", "Segoe UI", system-ui, sans-serif;
 }
 .jd-home-hero h1.home-main-heading#jd-page-top {
-    margin: 0.12rem 0 0.4rem 0;
+    margin: 0 0 0.5rem 0;
+    font-size: clamp(1.85rem, 3.8vw, 2.45rem);
+    font-weight: 780;
+    letter-spacing: -0.035em;
+    line-height: 1.12;
+    font-family: "Outfit", "Segoe UI", system-ui, sans-serif;
 }
 .jd-home-hero .jd-hub-dek {
     max-width: min(42rem, 100%);
+    font-family: "Outfit", "Segoe UI", system-ui, sans-serif;
 }
 [data-testid="stMarkdownContainer"] .jd-home-hero p.jd-hub-dek {
     margin: 0 0 0.42rem 0 !important;
