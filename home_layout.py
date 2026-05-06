@@ -227,7 +227,34 @@ p.home-band-label.teal.jd-home-band-after-rule {
 [data-testid="stMarkdownContainer"] .jd-home-hero p.jd-hub-dek {
     margin: 0 0 0.42rem 0 !important;
 }
-[data-testid="stMarkdownContainer"] .jd-home-hero p.jd-hub-dek:last-child {
+[data-testid="stMarkdownContainer"] .jd-home-hero p.jd-hub-dek:last-child:not(.jd-home-hero__jpm-callout) {
+    margin-bottom: 0.15rem !important;
+}
+/* JPM / Confluence callout line (teal, same family as major teal section headers) */
+.jd-home-hero p.jd-home-hero__jpm-callout {
+    margin-top: 0.15rem !important;
+    font-weight: 600;
+    color: #25809c;
+    letter-spacing: 0.012em;
+}
+.jd-home-hero p.jd-home-hero__jpm-callout strong {
+    font-weight: 700;
+    color: #1f4c67;
+}
+.jd-home-hero p.jd-home-hero__jpm-callout a {
+    color: #1f4c67;
+    font-weight: 650;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+.jd-home-hero p.jd-home-hero__jpm-callout a:hover {
+    color: #25809c;
+}
+[data-testid="stMarkdownContainer"] .jd-home-hero p.jd-home-hero__jpm-callout.jd-hub-dek {
+    font-size: 0.9375rem !important;
+    line-height: 1.55 !important;
+    font-weight: 600 !important;
+    color: #25809c !important;
     margin-bottom: 0.15rem !important;
 }
 
