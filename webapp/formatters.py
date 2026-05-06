@@ -119,6 +119,19 @@ def _fund_trailing_pct(symbol: str, row: CryptoEtpRow | None) -> tuple[float | N
     return None, ""
 
 
+def _etp_kpi_window_caption(yahoo_or_agg_lbl: str) -> str:
+    """Human-readable tag under each KPI % (matches Yahoo / aggregate lookback labels)."""
+    if not yahoo_or_agg_lbl:
+        return ""
+    if yahoo_or_agg_lbl == "1M":
+        return "1 mo"
+    if yahoo_or_agg_lbl == "1Y":
+        return "1 yr"
+    if yahoo_or_agg_lbl == "1Y*":
+        return "1 yr*"
+    return yahoo_or_agg_lbl
+
+
 def etp_summary_kpi_row_html(
     rows: list[CryptoEtpRow],
     *,
@@ -129,7 +142,7 @@ def etp_summary_kpi_row_html(
     aum_s = format_usd_compact(total) if total > 0 else "—"
     pairs = etp_rows_to_fund_pairs(rows)
     hist_df, _hist_err = load_aggregate_aum_history_cached(pairs)
-    agg_pct, _ = aggregate_aum_pct_from_history(hist_df)
+    agg_pct, agg_win = aggregate_aum_pct_from_history(hist_df)
     ibit_r = _row_by_symbol(rows, "IBIT")
     etha_r = _row_by_symbol(rows, "ETHA")
     ibit_aum = (
@@ -142,13 +155,13 @@ def etp_summary_kpi_row_html(
         if etha_r and etha_r.assets_usd is not None and etha_r.assets_usd > 0
         else "—"
     )
-    ip, _ = _fund_trailing_pct("IBIT", ibit_r)
-    ep, _ = _fund_trailing_pct("ETHA", etha_r)
+    ip, ip_win = _fund_trailing_pct("IBIT", ibit_r)
+    ep, ep_win = _fund_trailing_pct("ETHA", etha_r)
 
     cells: list[tuple[str, str, str]] = [
-        ("Total AUM (listed)", escape(aum_s), _etf_delta_html(agg_pct, "")),
-        ("IBIT · AUM", escape(ibit_aum), _etf_delta_html(ip, "")),
-        ("ETHA · AUM", escape(etha_aum), _etf_delta_html(ep, "")),
+        ("Total AUM (listed)", escape(aum_s), _etf_delta_html(agg_pct, _etp_kpi_window_caption(agg_win))),
+        ("IBIT · AUM", escape(ibit_aum), _etf_delta_html(ip, _etp_kpi_window_caption(ip_win))),
+        ("ETHA · AUM", escape(etha_aum), _etf_delta_html(ep, _etp_kpi_window_caption(ep_win))),
     ]
     parts: list[str] = []
     for label, val_html, delta_html in cells:
@@ -161,10 +174,11 @@ def etp_summary_kpi_row_html(
         )
     note_block = (
         '<p class="jd-kpi-window-note">'
-        "All % changes in this row are <strong>30-day (30D)</strong> (<strong>Yahoo Finance</strong>). "
-        "Headline totals are listed AUM from <strong>StockAnalysis</strong> "
-        "(crypto ETF list and detail pages; scraped; not affiliated). "
-        "That list may not include every live U.S. product, so totals here can differ from broader market estimates."
+        "Each <strong>%</strong> shows its lookback in parentheses — typically "
+        "<strong>1 mo</strong> (~30 calendar days) on estimated aggregate AUM and fund prices when Yahoo data allows, "
+        "with <strong>1 yr</strong> or <strong>52W</strong> fallbacks when a one-month window is not available. "
+        "Headline AUM amounts are listed assets from <strong>StockAnalysis</strong> "
+        "(crypto ETF list and detail pages; scraped; not affiliated)."
         "</p>"
     )
     row_block = f"<div class='etp-kpi-row'>{''.join(parts)}</div>"

@@ -179,6 +179,19 @@ def _row_by_symbol(rows: list[CryptoEtpRow], symbol: str) -> CryptoEtpRow | None
     return None
 
 
+def _etp_kpi_window_caption(yahoo_or_agg_lbl: str) -> str:
+    """Short label for the KPI % lookback (shown in parentheses next to each value)."""
+    if not yahoo_or_agg_lbl:
+        return ""
+    if yahoo_or_agg_lbl == "1M":
+        return "1 mo"
+    if yahoo_or_agg_lbl == "1Y":
+        return "1 yr"
+    if yahoo_or_agg_lbl == "1Y*":
+        return "1 yr*"
+    return yahoo_or_agg_lbl
+
+
 def _etf_delta_html(pct: float | None, window_lbl: str) -> str:
     if pct is None or not isinstance(pct, (int, float)):
         return "<span class='etp-kpi-delta neutral'>—</span>"
@@ -206,11 +219,11 @@ def render_etp_summary_kpi_row(
     metrics_above_methodology_note: bool = False,
 ) -> None:
     """
-    Home-style KPI strip: total listed AUM (with aggregate 30D % from Yahoo-scaled history),
-    IBIT and ETHA AUM with 30D %. Used on the hub preview and the full ETP list page.
+    Home-style KPI strip: total listed AUM, IBIT, and ETHA with % moves tagged by lookback
+    (typically ~1 month on Yahoo when available; 1 yr / 52W fallbacks).
 
     On the full list page, pass ``metrics_above_methodology_note=True`` so the figure row
-    appears above the 30D / data-source footnote (hub preview keeps the footnote on top).
+    appears above the methodology footnote (hub preview keeps the footnote on top).
     """
     if include_styles:
         st.markdown(WIDGET_CSS + KPI_WINDOW_NOTE_CSS, unsafe_allow_html=True)
@@ -218,12 +231,13 @@ def render_etp_summary_kpi_row(
     aum_s = format_usd_compact(total) if total > 0 else "—"
     pairs = etp_rows_to_fund_pairs(rows)
     hist_df, _hist_err = load_aggregate_aum_history_cached(pairs)
-    agg_pct, _ = aggregate_aum_pct_from_history(hist_df)
+    agg_pct, agg_win = aggregate_aum_pct_from_history(hist_df)
     ibit_r = _row_by_symbol(rows, "IBIT")
     etha_r = _row_by_symbol(rows, "ETHA")
     _render_etp_home_kpi_row(
         total_aum_display=aum_s,
         agg_pct=agg_pct,
+        agg_window=agg_win,
         ibit_row=ibit_r,
         etha_row=etha_r,
         metrics_above_methodology_note=metrics_above_methodology_note,
@@ -234,6 +248,7 @@ def _render_etp_home_kpi_row(
     *,
     total_aum_display: str,
     agg_pct: float | None,
+    agg_window: str = "",
     ibit_row: CryptoEtpRow | None,
     etha_row: CryptoEtpRow | None,
     metrics_above_methodology_note: bool = False,
@@ -248,24 +263,24 @@ def _render_etp_home_kpi_row(
         if etha_row and etha_row.assets_usd is not None and etha_row.assets_usd > 0
         else "—"
     )
-    ip, _ = _fund_trailing_pct("IBIT", ibit_row)
-    ep, _ = _fund_trailing_pct("ETHA", etha_row)
+    ip, ip_win = _fund_trailing_pct("IBIT", ibit_row)
+    ep, ep_win = _fund_trailing_pct("ETHA", etha_row)
 
     cells = [
         (
             "Total AUM (listed)",
             escape(total_aum_display),
-            _etf_delta_html(agg_pct, ""),
+            _etf_delta_html(agg_pct, _etp_kpi_window_caption(agg_window)),
         ),
         (
             "IBIT · AUM",
             escape(ibit_aum),
-            _etf_delta_html(ip, ""),
+            _etf_delta_html(ip, _etp_kpi_window_caption(ip_win)),
         ),
         (
             "ETHA · AUM",
             escape(etha_aum),
-            _etf_delta_html(ep, ""),
+            _etf_delta_html(ep, _etp_kpi_window_caption(ep_win)),
         ),
     ]
     parts = []
@@ -279,10 +294,11 @@ def _render_etp_home_kpi_row(
         )
     note_block = (
         "<p class=\"jd-kpi-window-note\">"
-        "All % changes in this row are <strong>30-day (30D)</strong> (<strong>Yahoo Finance</strong>). "
-        "Headline totals are listed AUM from <strong>StockAnalysis</strong> "
-        "(crypto ETF list and detail pages; scraped; not affiliated). "
-        "That list may not include every live U.S. product, so totals here can differ from broader market estimates."
+        "Each <strong>%</strong> shows its lookback in parentheses — typically "
+        "<strong>1 mo</strong> (~30 calendar days) on estimated aggregate AUM and fund prices when Yahoo data allows, "
+        "with <strong>1 yr</strong> or <strong>52W</strong> fallbacks when a one-month window is not available. "
+        "Headline AUM amounts are listed assets from <strong>StockAnalysis</strong> "
+        "(crypto ETF list and detail pages; scraped; not affiliated)."
         "</p>"
     )
     row_block = f"<div class='etp-kpi-row'>{''.join(parts)}</div>"

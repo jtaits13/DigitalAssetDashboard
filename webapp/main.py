@@ -431,6 +431,8 @@ async def us_crypto_etps(request: Request, q: str = "") -> HTMLResponse:
         filtered = filter_rows_by_fund_name(rows, search_q)
         sorted_rows = sorted_by_assets(filtered)
         df = build_etp_dataframe(sorted_rows)
+        if not df.empty and "Assets (B)" in df.columns:
+            df = df.sort_values("Assets (B)", ascending=False, na_position="last").reset_index(drop=True)
         if search_q:
             body_parts.append(
                 subpage_toolbar_note_html(
@@ -439,6 +441,11 @@ async def us_crypto_etps(request: Request, q: str = "") -> HTMLResponse:
             )
         else:
             body_parts.append(subpage_toolbar_note_html(f"Showing all {len(sorted_rows)} funds."))
+        body_parts.append(
+            subpage_toolbar_note_html(
+                "Sorted by listed assets (USD), largest to smallest."
+            )
+        )
         body_parts.append(
             styled_dataframe_to_html(
                 style_etp_dataframe(df),
