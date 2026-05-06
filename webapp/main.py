@@ -432,7 +432,17 @@ async def us_crypto_etps(request: Request, q: str = "") -> HTMLResponse:
         sorted_rows = sorted_by_assets(filtered)
         df = build_etp_dataframe(sorted_rows)
         if not df.empty and "Assets (B)" in df.columns:
-            df = df.sort_values("Assets (B)", ascending=False, na_position="last").reset_index(drop=True)
+            has_assets = df["Assets (B)"].notna() & (df["Assets (B)"] > 0)
+            df = (
+                df.assign(_has_assets=has_assets)
+                .sort_values(
+                    by=["_has_assets", "Assets (B)"],
+                    ascending=[False, False],
+                    na_position="last",
+                )
+                .drop(columns=["_has_assets"])
+                .reset_index(drop=True)
+            )
         if search_q:
             body_parts.append(
                 subpage_toolbar_note_html(
@@ -443,7 +453,7 @@ async def us_crypto_etps(request: Request, q: str = "") -> HTMLResponse:
             body_parts.append(subpage_toolbar_note_html(f"Showing all {len(sorted_rows)} funds."))
         body_parts.append(
             subpage_toolbar_note_html(
-                "Sorted by listed assets (USD), largest to smallest."
+                "Sorted by listed assets (USD), largest to smallest; funds with no AUM shown (—) are listed last."
             )
         )
         body_parts.append(

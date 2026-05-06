@@ -313,7 +313,15 @@ def format_usd_compact(n: float) -> str:
 
 
 def sorted_by_assets(rows: list[CryptoEtpRow]) -> list[CryptoEtpRow]:
-    return sorted(
-        rows,
-        key=lambda r: (r.assets_usd is None, -(r.assets_usd or 0.0)),
-    )
+    """
+    Largest **positive** listed AUM first; funds with no assets (``None``, zero, or negative)
+    are grouped at the bottom (same order as a table showing "—" for assets).
+    """
+
+    def key(r: CryptoEtpRow) -> tuple[int, float]:
+        a = r.assets_usd
+        if a is None or a <= 0:
+            return (1, 0.0)
+        return (0, -float(a))
+
+    return sorted(rows, key=key)
