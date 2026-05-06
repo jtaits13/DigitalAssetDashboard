@@ -16,7 +16,7 @@ from typing import Any
 import pandas as pd
 import streamlit as st
 
-from crypto_etps.client import CryptoEtpRow
+from crypto_etps.client import CryptoEtpRow, has_listed_aum_usd
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +32,7 @@ def etp_rows_to_fund_pairs(rows: list[CryptoEtpRow]) -> tuple[tuple[str, float],
     """Stable cache key + input for AUM history (symbol, latest reported AUM USD)."""
     agg: dict[str, float] = {}
     for r in rows:
-        if r.assets_usd is None or r.assets_usd <= 0:
+        if not has_listed_aum_usd(r.assets_usd):
             continue
         sym = _clean_symbol(r.symbol)
         if not sym:

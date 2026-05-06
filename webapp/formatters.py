@@ -15,7 +15,12 @@ from crypto_etps.aum_history import (
     etp_symbol_price_change_cached,
     load_aggregate_aum_history_cached,
 )
-from crypto_etps.client import CryptoEtpRow, format_usd_compact, total_aum_usd
+from crypto_etps.client import (
+    CryptoEtpRow,
+    format_usd_compact,
+    has_listed_aum_usd,
+    total_aum_usd,
+)
 from crypto_etps.widgets import (
     _ETP_KPI_PANEL_INLINE_STYLE,
     _etf_delta_html,
@@ -147,12 +152,12 @@ def etp_summary_kpi_row_html(
     etha_r = _row_by_symbol(rows, "ETHA")
     ibit_aum = (
         format_usd_compact(ibit_r.assets_usd)
-        if ibit_r and ibit_r.assets_usd is not None and ibit_r.assets_usd > 0
+        if ibit_r and has_listed_aum_usd(ibit_r.assets_usd)
         else "—"
     )
     etha_aum = (
         format_usd_compact(etha_r.assets_usd)
-        if etha_r and etha_r.assets_usd is not None and etha_r.assets_usd > 0
+        if etha_r and has_listed_aum_usd(etha_r.assets_usd)
         else "—"
     )
     ip, ip_win = _fund_trailing_pct("IBIT", ibit_r)

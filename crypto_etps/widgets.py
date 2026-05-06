@@ -11,6 +11,7 @@ from crypto_etps.client import (
     CryptoEtpsResult,
     fetch_crypto_etps_enriched,
     format_usd_compact,
+    has_listed_aum_usd,
     sorted_by_assets,
     total_aum_usd,
 )
@@ -255,12 +256,12 @@ def _render_etp_home_kpi_row(
 ) -> None:
     ibit_aum = (
         format_usd_compact(ibit_row.assets_usd)
-        if ibit_row and ibit_row.assets_usd is not None and ibit_row.assets_usd > 0
+        if ibit_row and has_listed_aum_usd(ibit_row.assets_usd)
         else "—"
     )
     etha_aum = (
         format_usd_compact(etha_row.assets_usd)
-        if etha_row and etha_row.assets_usd is not None and etha_row.assets_usd > 0
+        if etha_row and has_listed_aum_usd(etha_row.assets_usd)
         else "—"
     )
     ip, ip_win = _fund_trailing_pct("IBIT", ibit_row)

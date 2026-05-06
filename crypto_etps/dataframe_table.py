@@ -11,7 +11,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from crypto_etps.client import CryptoEtpRow, format_usd_compact
+from crypto_etps.client import CryptoEtpRow, format_usd_compact, has_listed_aum_usd
 from crypto_etps.custodian import resolve_custodian
 from crypto_etps.sec_prospectus import edgar_s1_fallback_url
 
@@ -62,7 +62,7 @@ def build_etp_dataframe(rows: list[CryptoEtpRow]) -> pd.DataFrame:
                 "Fund Name": r.name,
                 "Price": _parse_price(r.price),
                 "52W %": r.pct_52w if r.pct_52w is not None else np.nan,
-                "Assets (B)": (r.assets_usd / 1e9) if r.assets_usd is not None else np.nan,
+                "Assets (B)": (r.assets_usd / 1e9) if has_listed_aum_usd(r.assets_usd) else np.nan,
                 "Issuer": issuer,
                 "Custodian": cust,
                 "Inception": inc,

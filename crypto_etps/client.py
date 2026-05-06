@@ -9,6 +9,7 @@ No API key; HTML parsing only. Respect site terms of use and rate limits.
 from __future__ import annotations
 
 import logging
+import math
 import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
@@ -296,8 +297,19 @@ def fetch_crypto_etps_enriched(
     return CryptoEtpsResult(rows=rows, error=base.error)
 
 
+def has_listed_aum_usd(assets_usd: float | None) -> bool:
+    """True when AUM is a finite positive USD amount (sort, totals, table column)."""
+    if assets_usd is None:
+        return False
+    try:
+        x = float(assets_usd)
+    except (TypeError, ValueError):
+        return False
+    return math.isfinite(x) and x > 0
+
+
 def total_aum_usd(rows: list[CryptoEtpRow]) -> float:
-    return sum(r.assets_usd for r in rows if r.assets_usd is not None)
+    return sum(float(r.assets_usd) for r in rows if has_listed_aum_usd(r.assets_usd))
 
 
 def format_usd_compact(n: float) -> str:
@@ -314,14 +326,14 @@ def format_usd_compact(n: float) -> str:
 
 def sorted_by_assets(rows: list[CryptoEtpRow]) -> list[CryptoEtpRow]:
     """
-    Largest **positive** listed AUM first; funds with no assets (``None``, zero, or negative)
-    are grouped at the bottom (same order as a table showing "—" for assets).
+    Largest **positive** listed AUM first; funds with no assets (``None``, NaN, non-finite,
+    zero, or negative) are grouped at the bottom (same order as a table showing "—" for assets).
     """
 
-    def key(r: CryptoEtpRow) -> tuple[int, float]:
-        a = r.assets_usd
-        if a is None or a <= 0:
-            return (1, 0.0)
-        return (0, -float(a))
+    def key(r: CryptoEtpRow) -> tuple[int, float, str]:
+        sym = (r.symbol or "").strip().upper()
+        if not has_listed_aum_usd(r.assets_usd):
+            return (1, 0.0, sym)
+        return (0, -float(r.assets_usd), sym)
 
     return sorted(rows, key=key)
