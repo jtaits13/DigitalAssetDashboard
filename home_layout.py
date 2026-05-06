@@ -230,12 +230,15 @@ p.home-band-label.teal.jd-home-band-after-rule {
 [data-testid="stMarkdownContainer"] .jd-home-hero p.jd-hub-dek:last-child:not(.jd-home-hero__jpm-callout) {
     margin-bottom: 0.15rem !important;
 }
-/* JPM / Confluence callout line (teal, same family as major teal section headers) */
+/* JPM / Confluence callout: same blurb band, slightly stronger type + slim left rule (no box) */
 .jd-home-hero p.jd-home-hero__jpm-callout {
-    margin-top: 0.15rem !important;
+    margin-top: 0.35rem !important;
+    padding-left: 0.7rem;
+    border-left: 3px solid #25809c;
     font-weight: 600;
     color: #25809c;
-    letter-spacing: 0.012em;
+    letter-spacing: 0.015em;
+    box-sizing: border-box;
 }
 .jd-home-hero p.jd-home-hero__jpm-callout strong {
     font-weight: 700;
@@ -251,11 +254,14 @@ p.home-band-label.teal.jd-home-band-after-rule {
     color: #1a6b7e;
 }
 [data-testid="stMarkdownContainer"] .jd-home-hero p.jd-home-hero__jpm-callout.jd-hub-dek {
-    font-size: 0.9375rem !important;
-    line-height: 1.55 !important;
+    font-size: 1rem !important;
+    line-height: 1.48 !important;
     font-weight: 600 !important;
     color: #25809c !important;
     margin-bottom: 0.15rem !important;
+    padding-left: 0.7rem !important;
+    border-left: 3px solid #25809c !important;
+    margin-top: 0.35rem !important;
 }
 [data-testid="stMarkdownContainer"] .jd-home-hero p.jd-home-hero__jpm-callout strong {
     color: #25809c !important;
