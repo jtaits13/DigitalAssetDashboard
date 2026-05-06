@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-intro">
+  {{ head_block | safe }}
+  <div class="ticker-slot">{{ ticker_inner | safe }}</div>
+  {% if etp_feed_errors %}
+  <details class="feed-status"><summary>Some headline feeds could not be loaded</summary>
+    {% for err in etp_feed_errors %}<p class="alert warn">{{ err }}</p>{% endfor %}
+  </details>
+  {% endif %}
+  <form class="inline-search row" method="get" action="/etps">
+    <label for="eq">Search by fund name or ticker</label>
+    <input id="eq" name="q" type="search" placeholder="Filter…" value="{{ search_q | e }}" />
+    <button type="submit" class="btn">Filter</button>
+    <a class="btn secondary" href="/etps">Clear</a>
+  </form>
+</div>
+<div class="etp-body panel">{{ body_html | safe }}</div>
+{{ footnote | safe }}
+{% endblock %}

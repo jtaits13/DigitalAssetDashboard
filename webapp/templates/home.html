@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="jd-home-hero">
+  <h1 class="home-main-heading" id="jd-page-top">JPM Digital Assets Dashboard</h1>
+  <p class="jd-hub-dek jd-hub-dek-large">This dashboard pulls together <strong>digital-asset news</strong>,
+    <strong>global regulatory headlines</strong>, <strong>U.S. listed crypto ETPs</strong>, and
+    <strong>on-chain RWA</strong> data from <strong>RWA.xyz</strong>.</p>
+</div>
+<div class="ticker-slot">{{ ticker_inner | safe }}</div>
+
+{% if feed_errors or regulatory_errors %}
+<details class="feed-status">
+  <summary>Feed status</summary>
+  {% for err in feed_errors %}<p class="alert warn">{{ err }}</p>{% endfor %}
+  {% for err in regulatory_errors %}<p class="alert warn">{{ err }}</p>{% endfor %}
+</details>
+{% endif %}
+
+<div id="jd-section-news" class="jd-hub-section-anchor" aria-hidden="true"></div>
+{{ news_section_label | safe }}
+<p class="jd-hub-dek jd-hub-dek-large">Crypto RSS headlines and global regulatory wires — full feeds on the next pages.</p>
+
+<div class="two-col">
+  <div class="col panel">
+    {{ news_lane_html | safe }}
+    {% if need_news_btn %}
+    <p class="jd-hub-cta-note"><a class="btn primary" href="/articles">Explore all articles →</a></p>
+    {% endif %}
+  </div>
+  <div class="col panel">
+    {{ reg_lane_html | safe }}
+    {% if need_reg_btn %}
+    <p class="jd-hub-cta-note"><a class="btn primary" href="/regulatory">Explore all regulatory headlines →</a></p>
+    {% endif %}
+  </div>
+</div>
+
+<hr class="jd-divider" />
+
+<div id="jd-section-markets-funds" class="jd-hub-section-anchor" aria-hidden="true"></div>
+{{ etp_section_label | safe }}
+<p class="jd-hub-dek jd-hub-dek-large">U.S. listed digital asset ETFs and ETPs — preview below; open the full list for search and fund details.</p>
+<div class="panel">
+  {{ etp_section_html | safe }}
+</div>
+
+<hr class="jd-divider" />
+
+<div id="jd-section-onchain" class="jd-hub-section-anchor" aria-hidden="true"></div>
+{{ rwa_section_label | safe }}
+<p class="jd-hub-dek jd-hub-dek-large">A <strong>global RWA</strong> snapshot from RWA.xyz, then entry points into the same league tables as the Streamlit app.</p>
+<div class="panel">
+  {{ rwa_section_html | safe }}
+</div>
+
+<p class="jd-hub-cta-note">{{ footer_utc }} UTC · CoinGecko/CoinCap · RSS · StockAnalysis · RWA.xyz</p>
+{% endblock %}

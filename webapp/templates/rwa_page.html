@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-intro rwa-intro">
+  {{ head_block | safe }}
+  <div class="ticker-slot">{{ ticker_inner | safe }}</div>
+</div>
+<div class="rwa-body panel">{{ body_html | safe }}</div>
+<p class="jd-hub-cta-note">{{ footer_note }}</p>
+{% endblock %}

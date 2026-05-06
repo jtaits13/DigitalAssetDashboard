@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% if page_title %}{{ page_title }} — {% endif %}JPM Digital Assets</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/static/app.css" />
+  {{ article_css | safe }}
+  {{ layout_css | safe }}
+  {{ ticker_css | safe }}
+  {% if etp_widget_css %}{{ etp_widget_css | safe }}{% endif %}
+  {% if rwa_widget_css %}{{ rwa_widget_css | safe }}{% endif %}
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="brand" href="/">JPM Digital Assets</a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="/">Home</a>
+        <a href="/articles">Articles</a>
+        <a href="/regulatory">Regulatory</a>
+        <a href="/etps">ETPs</a>
+        <a href="/etf-news">ETF news</a>
+        <a href="/rwa/global">RWA global</a>
+        <a href="/rwa/explore/asset-type">RWA · assets</a>
+        <a href="/rwa/explore/participant">RWA · participants</a>
+        <a href="/refresh" class="nav-refresh">Refresh data</a>
+      </nav>
+    </div>
+  </header>
+  <main class="main-shell">
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="site-footer">
+    <p>CoinGecko/CoinCap · RSS · StockAnalysis · RWA.xyz · <a href="/refresh">Reload cached data</a></p>
+  </footer>
+</body>
+</html>

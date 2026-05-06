@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-intro">
+  {{ headline | safe }}
+  {{ subhead | safe }}
+  <div class="ticker-slot">{{ ticker_inner | safe }}</div>
+  {% if feed_errors %}
+  <details class="feed-status"><summary>Some feeds could not be loaded</summary>
+    {% for err in feed_errors %}<p class="alert warn">{{ err }}</p>{% endfor %}
+  </details>
+  {% endif %}
+  <form class="inline-search row" method="get" action="">
+    <label for="sq">Search headlines</label>
+    <input id="sq" name="q" type="search" placeholder="Keywords (all tokens must match)" value="{{ search_q | e }}" />
+    <button type="submit" class="btn">Search</button>
+    <a class="btn secondary" href="?">Clear</a>
+  </form>
+  {{ toolbar_note | safe }}
+</div>
+<div class="feed-body panel">{{ body_html | safe }}</div>
+{% if has_results and total_pages > 1 %}
+<div class="pagination">
+  {{ subpage_footer | safe }}
+  <div class="pager">
+    {% if page > 1 %}
+    <a class="btn" href="?q={{ search_q | urlencode }}&page={{ page - 1 }}">← Prev</a>
+    {% endif %}
+    <span class="pager__pos">Page {{ page }} of {{ total_pages }}</span>
+    {% if page < total_pages %}
+    <a class="btn" href="?q={{ search_q | urlencode }}&page={{ page + 1 }}">Next →</a>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+{{ footnote | safe }}
+{% endblock %}
