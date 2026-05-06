@@ -60,22 +60,20 @@ WIDGET_CSS = """
     margin: 0.35rem 0 0 0;
 }
 .etp-kpi-row {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 0.65rem 0.5rem;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 0.65rem;
+    row-gap: 0.5rem;
+    align-items: start;
     padding: 0.5rem 0 0.85rem 0;
     border-bottom: 1px solid #C7D8E8;
 }
-@media (max-width: 720px) {
+@media (max-width: 520px) {
     .etp-kpi-row {
-        flex-wrap: wrap;
+        grid-template-columns: 1fr;
     }
 }
 .etp-kpi-cell {
-    flex: 1 1 0;
     min-width: 0;
     max-width: 100%;
     text-align: center;

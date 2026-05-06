@@ -676,16 +676,18 @@ body {
   border-bottom: 1px solid var(--line);
 }
 
-/* ETP snapshot: keep three tiles on one row on typical desktop widths */
-.kpi-row--etp-snapshot {
-  flex-direction: row;
-  flex-wrap: nowrap;
-  align-items: flex-start;
+/* ETP snapshot: three columns (grid overrides flex from .kpi-row — more reliable than flex-wrap) */
+.kpi-row.kpi-row--etp-snapshot {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 0.65rem;
+  row-gap: 0.5rem;
+  align-items: start;
 }
 
-@media (max-width: 720px) {
-  .kpi-row--etp-snapshot {
-    flex-wrap: wrap;
+@media (max-width: 520px) {
+  .kpi-row.kpi-row--etp-snapshot {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -698,6 +700,8 @@ body {
 .kpi-row--etp-snapshot .kpi-cell {
   flex: 1 1 0;
   min-width: 0;
+  width: 100%;
+  max-width: 100%;
 }
 
 .kpi-label {
