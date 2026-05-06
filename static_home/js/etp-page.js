@@ -41,7 +41,9 @@
 
   function fmtAssets(usd) {
     if (usd == null) return "—";
-    return (Number(usd) / 1e9).toFixed(2);
+    var n = Number(usd);
+    if (!isFinite(n)) return "—";
+    return (n / 1e9).toFixed(2);
   }
 
   function filingCell(url) {
@@ -77,10 +79,29 @@
     var k = state.sortKey;
     if (k === "price") k = "price_num";
     var d = state.sortDir;
-    var out = arr.slice().sort(function (a, b) {
-      return d * cmp(a, b, k);
+    // Descending numeric sorts used to multiply cmp() by d, which inverted "nulls last"
+    // and put missing AUM/price at the top. Always park missing/non-finite values last,
+    // then apply asc/desc only to comparable numbers.
+    if (k === "assets_usd" || k === "price_num") {
+      return arr.slice().sort(function (a, b) {
+        var va = k === "assets_usd" ? a.assets_usd : a.price_num;
+        var vb = k === "assets_usd" ? b.assets_usd : b.price_num;
+        var aBad = va == null || (typeof va === "number" && !isFinite(va));
+        var bBad = vb == null || (typeof vb === "number" && !isFinite(vb));
+        if (aBad && bBad) {
+          return String(a.symbol || "").localeCompare(String(b.symbol || ""));
+        }
+        if (aBad) return 1;
+        if (bBad) return -1;
+        var na = Number(va);
+        var nb = Number(vb);
+        if (d < 0) return nb - na;
+        return na - nb;
+      });
+    }
+    return arr.slice().sort(function (a2, b2) {
+      return d * cmp(a2, b2, k);
     });
-    return out;
   }
 
   function applyFilter() {

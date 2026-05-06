@@ -23,6 +23,7 @@ from crypto_etps.client import (
     CryptoEtpRow,
     fetch_crypto_etps_enriched,
     format_usd_compact,
+    has_listed_aum_usd,
     sorted_by_assets,
     total_aum_usd,
 )
@@ -81,12 +82,13 @@ def _article_json(a: dict) -> dict:
 def _etp_row_json(r: CryptoEtpRow) -> dict:
     inc = (r.inception or "").strip()
     filing = (r.fund_filing_url or "").strip()
+    assets = float(r.assets_usd) if has_listed_aum_usd(r.assets_usd) else None
     return {
         "symbol": r.symbol,
         "name": r.name,
         "price": r.price,
         "pct_52w": r.pct_52w,
-        "assets_usd": r.assets_usd,
+        "assets_usd": assets,
         "issuer": (r.issuer or "").strip(),
         "custodian": resolve_custodian(r.symbol).strip(),
         "inception": inc,
