@@ -200,6 +200,12 @@ RWA_GLOBAL_MARKET_DATA_SOURCE_CAPTION = (
     "Source: [RWA.xyz homepage](https://app.rwa.xyz/)—the same **Global Market Overview** headline figures and "
     "**Networks** league (Distributed / parent networks) shown on the live site, not RWA.xyz’s separate public API."
 )
+# FastAPI / static HTML (``st.caption`` accepts Markdown; HTML routes need pre-rendered links).
+RWA_GLOBAL_MARKET_DATA_SOURCE_CAPTION_HTML = (
+    'Source: <a href="https://app.rwa.xyz/">RWA.xyz homepage</a>—the same <strong>Global Market Overview</strong> '
+    "headline figures and <strong>Networks</strong> league (Distributed / parent networks) shown on the live site, "
+    "not RWA.xyz’s separate public API."
+)
 
 RWA_PLATFORMS_DATA_SOURCE_CAPTION = (
     "Source: [RWA.xyz Platforms](https://app.rwa.xyz/platforms). "

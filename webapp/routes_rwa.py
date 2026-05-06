@@ -16,6 +16,7 @@ from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 
 from home_layout import (
+    hub_section_anchor,
     hub_subsection_heading_html,
     monthly_review_note_html,
     rwa_xyz_mirror_footer_text,
@@ -64,7 +65,7 @@ from rwa_league.widgets import (
     PLATFORMS_RWA_LINK_LABEL,
     RWA_ASSET_MANAGERS_DATA_SOURCE_CAPTION,
     RWA_DATA_SOURCE_CAPTION,
-    RWA_GLOBAL_MARKET_DATA_SOURCE_CAPTION,
+    RWA_GLOBAL_MARKET_DATA_SOURCE_CAPTION_HTML,
     RWA_GMO_CHART_MAX_BARS,
     RWA_PARTICIPANTS_CHART_MAX_BARS,
     RWA_PLATFORMS_DATA_SOURCE_CAPTION,
@@ -154,19 +155,10 @@ async def rwa_global_market(request: Request, q: str = "") -> HTMLResponse:
             f'target="_blank" rel="noopener noreferrer">{escape(GLOBAL_MARKET_RWA_LINK_LABEL)}</a></p>'
         )
     elif not rows:
+        body_parts.append(hub_section_anchor("jd-rwa-market"))
         body_parts.append('<p class="alert info">No network rows returned.</p>')
-        body_parts.append(rwa_global_kpi_block_html(kpis, kpi_legend_name="Global Market"))
     else:
         working = filter_rows_by_network(rows, search_q)
-        if search_q:
-            body_parts.append(
-                f'<p class="toolbar-note">Showing {len(working)} of {len(rows)} networks matching '
-                f'"{escape(search_q)}".</p>'
-            )
-        else:
-            body_parts.append(
-                f'<p class="toolbar-note">Showing all {len(working)} networks from the Global Market Overview table.</p>'
-            )
         body_parts.append(
             hub_subsection_heading_html("Top-Line Market Snapshot", element_id="jd-rwa-gmo-kpis")
         )
@@ -184,6 +176,16 @@ async def rwa_global_market(request: Request, q: str = "") -> HTMLResponse:
             '<a class="btn secondary" href="/rwa/global">Clear</a>'
             "</form>"
         )
+        if search_q:
+            body_parts.append(
+                f'<p class="toolbar-note">Showing {len(working)} of {len(rows)} networks matching '
+                f'"{escape(search_q)}".</p>'
+            )
+        else:
+            body_parts.append(
+                f'<p class="toolbar-note">Showing all {len(working)} networks from the homepage '
+                "Global Market table.</p>"
+            )
         df = build_rwa_dataframe(working)
         chart_rows = sorted(working, key=lambda r: r.total_value_usd, reverse=True)[:RWA_GMO_CHART_MAX_BARS]
         n_sync = min(RWA_GMO_CHART_MAX_BARS, len(working)) if working else max(1, len(df))
@@ -204,15 +206,20 @@ async def rwa_global_market(request: Request, q: str = "") -> HTMLResponse:
             hub_subsection_heading_html("Top networks by value", element_id="jd-rwa-gmo-bar")
         )
         if fig:
-            body_parts.append(plotly_figure_to_div(fig))
+            body_parts.append(
+                plotly_figure_to_div(
+                    fig,
+                    plotly_config={"displayModeBar": False, "scrollZoom": False},
+                )
+            )
         else:
             body_parts.append('<p class="muted">No networks match this filter; there is nothing to chart.</p>')
         body_parts.append("</div></div>")
         body_parts.append(
-            '<p class="jd-hub-cta-note">The chart lists the top <strong>12</strong> networks by total value '
-            "(labels include market share). Scroll the table for the full filtered list.</p>"
+            '<p class="jd-hub-cta-note jd-rwa-gmo-split-note">The chart lists the top <strong>12</strong> networks '
+            "by total value (labels include market share). Scroll the table for the full filtered list.</p>"
         )
-        body_parts.append(f'<p class="caption">{RWA_GLOBAL_MARKET_DATA_SOURCE_CAPTION}</p>')
+        body_parts.append(f'<p class="caption">{RWA_GLOBAL_MARKET_DATA_SOURCE_CAPTION_HTML}</p>')
         body_parts.append(
             f'<p><a class="btn" href="{escape(GLOBAL_MARKET_RWA_URL, quote=True)}" '
             f'target="_blank" rel="noopener noreferrer">{escape(GLOBAL_MARKET_RWA_LINK_LABEL)}</a></p>'
@@ -224,8 +231,10 @@ async def rwa_global_market(request: Request, q: str = "") -> HTMLResponse:
         head_block=_rwa_std_head(
             title="RWA Global Market Overview",
             subtitle=(
-                'RWA <strong>Global Market Overview</strong>: the same headline metrics and <strong>Networks</strong> '
-                'table as the <a href="https://app.rwa.xyz/">RWA.xyz</a> <strong>Market Overview</strong> tab.'
+                "RWA <strong>Global Market Overview</strong>: the same <strong>headline metrics</strong> and "
+                '<strong>Networks</strong> table as the <a href="https://app.rwa.xyz/">RWA.xyz</a> '
+                "<strong>Market Overview</strong> tab on the live site. Top-line <strong>30D</strong> % changes and "
+                "table values are read from that page so they stay in sync with what visitors see."
             ),
         ),
         body_html="".join(body_parts),

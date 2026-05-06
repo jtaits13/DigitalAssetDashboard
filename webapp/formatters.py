@@ -180,14 +180,17 @@ def etp_summary_kpi_row_html(
     )
 
 
-def plotly_figure_to_div(fig: Any) -> str:
+def plotly_figure_to_div(fig: Any, *, plotly_config: dict[str, Any] | None = None) -> str:
     import plotly.io as pio
 
+    cfg: dict[str, Any] = {"displayModeBar": True, "scrollZoom": True}
+    if plotly_config:
+        cfg.update(plotly_config)
     return pio.to_html(
         fig,
         full_html=False,
         include_plotlyjs="cdn",
-        config={"displayModeBar": True, "scrollZoom": True},
+        config=cfg,
     )
 
 
