@@ -15,11 +15,7 @@ from crypto_etps.aum_history import (
     etp_symbol_price_change_cached,
     load_aggregate_aum_history_cached,
 )
-from crypto_etps.kpi_labels import (
-    etp_delta_window_caption,
-    etp_kpi_methodology_footnote_html,
-    etp_kpi_pct_legend_html,
-)
+from crypto_etps.kpi_labels import etp_delta_window_caption, etp_kpi_methodology_footnote_html
 from crypto_etps.client import (
     CryptoEtpRow,
     format_usd_compact,
@@ -169,7 +165,6 @@ def etp_summary_kpi_row_html(
             f"{delta_html}"
             "</div>"
         )
-    pct_legend = etp_kpi_pct_legend_html()
     note_block = etp_kpi_methodology_footnote_html()
     row_block = f"<div class='etp-kpi-row'>{''.join(parts)}</div>"
     wrap_class = (
@@ -177,7 +172,7 @@ def etp_summary_kpi_row_html(
         if metrics_above_methodology_note
         else "etp-kpi-wrap"
     )
-    inner = pct_legend + row_block + note_block
+    inner = row_block + note_block
     return (
         f'<div class="{wrap_class}" style="{_ETP_KPI_PANEL_INLINE_STYLE}">'
         f"{inner}"

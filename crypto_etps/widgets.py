@@ -28,11 +28,7 @@ from crypto_etps.dataframe_table import (
     filter_rows_by_fund_name,
     style_etp_dataframe,
 )
-from crypto_etps.kpi_labels import (
-    etp_delta_window_caption,
-    etp_kpi_methodology_footnote_html,
-    etp_kpi_pct_legend_html,
-)
+from crypto_etps.kpi_labels import etp_delta_window_caption, etp_kpi_methodology_footnote_html
 from home_layout import KPI_WINDOW_NOTE_CSS, STREAMLIT_TABLE_UNIFY_CSS
 from news_feeds import load_all_etf_etp_news_cached
 
@@ -59,30 +55,28 @@ WIDGET_CSS = """
 .etp-kpi-wrap {
     margin: 0.35rem 0 0.85rem 0;
 }
-.jd-etp-snapshot-pct-legend {
-    font-size: 0.72rem;
-    font-weight: 500;
-    color: #021D41;
-    margin: 0 0 0.45rem 0;
-    line-height: 1.45;
-    max-width: 52rem;
-}
 /* Full ETP list page only: methodology note sits under the figures */
 .etp-kpi-wrap--metrics-first .jd-kpi-window-note {
     margin: 0.35rem 0 0 0;
 }
 .etp-kpi-row {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: row;
+    flex-wrap: nowrap;
     justify-content: space-between;
     align-items: flex-start;
     gap: 0.65rem 0.5rem;
     padding: 0.5rem 0 0.85rem 0;
     border-bottom: 1px solid #C7D8E8;
 }
+@media (max-width: 720px) {
+    .etp-kpi-row {
+        flex-wrap: wrap;
+    }
+}
 .etp-kpi-cell {
     flex: 1 1 0;
-    min-width: 8.5rem;
+    min-width: 0;
     max-width: 100%;
     text-align: center;
 }
@@ -293,7 +287,6 @@ def _render_etp_home_kpi_row(
             f"{delta_html}"
             "</div>"
         )
-    pct_legend = etp_kpi_pct_legend_html()
     note_block = etp_kpi_methodology_footnote_html()
     row_block = f"<div class='etp-kpi-row'>{''.join(parts)}</div>"
     wrap_class = (
@@ -301,7 +294,7 @@ def _render_etp_home_kpi_row(
         if metrics_above_methodology_note
         else "etp-kpi-wrap"
     )
-    inner = pct_legend + row_block + note_block
+    inner = row_block + note_block
     kpi_html = (
         f'<div class="{wrap_class}" style="{_ETP_KPI_PANEL_INLINE_STYLE}">'
         f"{inner}"

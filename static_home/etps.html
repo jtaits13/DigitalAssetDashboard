@@ -58,12 +58,11 @@
 
       <section class="hub-section" aria-labelledby="snapshot-heading">
         <h2 class="subsection-head" id="snapshot-heading">Top-Line Market Snapshot</h2>
-        <div class="etp-kpi-panel" id="js-etp-kpi" aria-label="KPI strip from data export">
+        <div class="kpi-row kpi-row--etp-snapshot" id="js-etp-kpi" aria-label="KPI strip from data export">
           <div class="kpi-cell"><span class="kpi-label">Loading…</span></div>
         </div>
         <p class="kpi-footnote kpi-footnote--block">
-          Figure sources and fallbacks are summarized under the KPI row in the Streamlit / FastAPI build; export JSON is the
-          same pipeline.
+          The colored <strong>% figures</strong> are normally approximately <strong>one-month</strong> changes (~30 calendar days); parentheses next to each percent note the exact window when it differs (<strong>1 mo</strong>, <strong>1 yr</strong>, or <strong>52W</strong>). Dollar totals from StockAnalysis; aggregate % from estimated weekly AUM; IBIT/ETHA % from Yahoo when available (same pipeline as Streamlit/FastAPI).
         </p>
       </section>
 

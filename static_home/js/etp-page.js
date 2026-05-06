@@ -122,7 +122,6 @@
   function renderKpi(k) {
     if (!els.kpi || !k) return;
     var K = window.__ETP_KPI || {};
-    var legend = typeof K.etpKpiPctLegendHtml === "function" ? K.etpKpiPctLegendHtml() : "";
     var fmtDelta =
       typeof K.fmtPctDelta === "function"
         ? K.fmtPctDelta
@@ -133,8 +132,6 @@
             return '<span class="kpi-delta ' + cls + '">' + (n > 0 ? "+" : "") + n.toFixed(2) + "%</span>";
           };
     els.kpi.innerHTML =
-      legend +
-      '<div class="kpi-row kpi-row--etp-strip">' +
       '<div class="kpi-cell">' +
       '<span class="kpi-label">Total AUM (listed)</span>' +
       '<span class="kpi-val">' +
@@ -155,7 +152,6 @@
       escapeHtml(k.etha && k.etha.aum_display) +
       "</span>" +
       (k.etha && k.etha.delta ? fmtDelta(k.etha.delta.pct, k.etha.delta.window) : "") +
-      "</div>" +
       "</div>";
   }
 

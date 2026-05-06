@@ -667,19 +667,6 @@ body {
 }
 
 /* —— KPI row —— */
-.jd-etp-snapshot-pct-legend {
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: var(--ink-soft);
-  margin: 0 0 0.55rem 0;
-  line-height: 1.42;
-  max-width: 52rem;
-}
-
-.etp-kpi-panel {
-  margin: 0 0 0.25rem 0;
-}
-
 .kpi-row {
   display: flex;
   flex-wrap: wrap;
@@ -689,10 +676,28 @@ body {
   border-bottom: 1px solid var(--line);
 }
 
+/* ETP snapshot: keep three tiles on one row on typical desktop widths */
+.kpi-row--etp-snapshot {
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+}
+
+@media (max-width: 720px) {
+  .kpi-row--etp-snapshot {
+    flex-wrap: wrap;
+  }
+}
+
 .kpi-cell {
   flex: 1 1 8.5rem;
-  min-width: 7rem;
+  min-width: 0;
   text-align: center;
+}
+
+.kpi-row--etp-snapshot .kpi-cell {
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .kpi-label {
