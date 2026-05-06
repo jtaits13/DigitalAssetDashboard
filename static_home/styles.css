@@ -737,6 +737,7 @@ body {
 .table-wrap--scroll {
   overflow: auto;
   max-width: 100%;
+  max-height: min(70vh, 900px);
 }
 
 .data-table {
@@ -1110,4 +1111,144 @@ body {
 
 .back-link a:hover {
   text-decoration: underline;
+}
+
+/* —— Live data / Plotly / ETF news —— */
+.data-banner {
+  max-width: var(--max);
+  margin: 0 auto 1rem;
+  padding: 0.65rem 1rem;
+  border-radius: var(--radius);
+  border: 1px solid #fbbf24;
+  background: #fffbeb;
+  color: #92400e;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.data-banner[hidden] {
+  display: none !important;
+}
+
+.kpi-win {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.aum-chart-host {
+  min-height: 420px;
+  width: 100%;
+}
+
+.chart-fallback {
+  margin: 0;
+  padding: 2rem;
+  text-align: center;
+  color: var(--muted);
+  background: #f4f7fa;
+  border-radius: 8px;
+}
+
+.th-sortable {
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.th-sortable:hover {
+  color: var(--teal);
+}
+
+#js-etp-thead th.is-sorted {
+  color: var(--teal);
+}
+
+.headline-list__loading,
+.headline-list__empty,
+.pulse-list__loading,
+.pulse-list__empty {
+  list-style: none;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+.search-field__input:not(:disabled) {
+  background: #fff;
+  color: var(--ink-soft);
+}
+
+.etf-news-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.etf-news-item {
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.etf-news-title {
+  font-size: 0.95rem;
+  font-weight: 650;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.etf-news-title:hover {
+  color: var(--teal);
+}
+
+.etf-news-meta {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 0.25rem;
+}
+
+.etf-news-sum {
+  margin: 0.45rem 0 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.etf-news-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.25rem 0 0;
+  flex-wrap: wrap;
+}
+
+.btn-nav {
+  font-family: var(--font);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.4rem 0.9rem;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.btn-nav:hover:not(:disabled) {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+.btn-nav:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.etf-news-page-num {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.cta-note a {
+  font-weight: 600;
+  color: var(--teal);
 }

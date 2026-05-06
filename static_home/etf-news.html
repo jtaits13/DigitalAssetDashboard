@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ETF &amp; ETP headlines — JPM Digital</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header" role="banner">
+      <div class="site-header__inner">
+        <a class="site-brand" href="index.html">JPM Digital Assets Dashboard</a>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="index.html">Home</a>
+          <a href="etps.html">U.S. ETPs</a>
+          <a href="etf-news.html" class="is-active">ETF news</a>
+          <a href="index.html#section-news">News</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <header class="page-intro">
+        <h1 class="page-intro__title">ETF / ETP market headlines</h1>
+        <p class="page-intro__dek">
+          Same filtered RSS + Google News pool as Streamlit (<strong>last three calendar months</strong>, UTC). Search
+          and page through the export; open any headline for the original article.
+        </p>
+      </header>
+
+      <div class="data-banner" id="js-data-banner" role="status" hidden></div>
+
+      <label class="search-field">
+        <span class="search-field__label">Search headlines</span>
+        <input type="search" class="search-field__input" id="js-etf-news-search" placeholder="Keyword in title or summary…" />
+      </label>
+      <p class="toolbar-note" id="js-etf-news-meta">Loading…</p>
+
+      <ul class="etf-news-list" id="js-etf-news-list"></ul>
+      <div class="etf-news-nav" id="js-etf-news-nav"></div>
+
+      <p class="back-link">
+        <a href="etps.html">← Back to U.S. ETPs</a>
+      </p>
+    </main>
+
+    <footer class="site-footer">ETF headlines · same filters as Streamlit All ETF news · May 2026</footer>
+    <script src="js/static-base.js"></script>
+    <script src="js/etf-news-page.js"></script>
+  </body>
+</html>

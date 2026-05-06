@@ -5,3 +5,6 @@ __pycache__/
 .streamlit/secrets.toml
 .env
 .DS_Store
+
+# Generated for GitHub Pages (rebuilt in CI via scripts/export_static_site_data.py)
+static_home/data/*.json

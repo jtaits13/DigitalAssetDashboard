@@ -1,8 +1,6 @@
-# Publishes `static_home/` to GitHub Pages (static HTML/CSS).
-# Before the first deploy succeeds: Repo → Settings → Pages → Build and deployment →
-# Source → GitHub Actions (not “Deploy from a branch”). We intentionally omit
-# actions/configure-pages here: it calls the Pages API and fails with 404 until Pages
-# is enabled, which blocks the upload/deploy steps that would otherwise work.
+# Publishes `static_home/` to GitHub Pages.
+# Runs the same Python fetch pipelines as Streamlit, writes JSON under static_home/data/, then deploys.
+# One-time: Repo → Settings → Pages → Source → GitHub Actions.
 name: Deploy static home to GitHub Pages
 
 on:
@@ -11,6 +9,12 @@ on:
     paths:
       - "static_home/**"
       - ".github/workflows/deploy-static-home.yml"
+      - "scripts/export_static_site_data.py"
+      - "requirements.txt"
+      - "news_feeds.py"
+      - "regulatory_news/**"
+      - "crypto_etps/**"
+      - "home_layout.py"
   workflow_dispatch:
 
 permissions:
@@ -31,6 +35,20 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Export RSS + ETP JSON for static site
+        run: python scripts/export_static_site_data.py
+        env:
+          STOCKANALYSIS_USER_AGENT: ${{ secrets.STOCKANALYSIS_USER_AGENT }}
 
       - name: Upload static_home as site root
         uses: actions/upload-pages-artifact@v3
