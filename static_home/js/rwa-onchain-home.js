@@ -202,7 +202,17 @@
     renderTable(theadRow, tbody, data.columns || [], data.rows || []);
 
     var links = data.links || {};
-    if (openFull && links.open_full_overview) openFull.setAttribute("href", links.open_full_overview);
+    if (openFull) {
+      var rawOpen = (links.open_full_overview || "rwa-global.html").trim();
+      // FastAPI route — not deployed on GitHub Pages; older exports used ``/rwa/global``.
+      var low = rawOpen.split("?")[0].toLowerCase();
+      if (low === "/rwa/global" || low.indexOf("/rwa/global") === 0) rawOpen = "rwa-global.html";
+      var au =
+        global.__STATIC && typeof global.__STATIC.assetUrl === "function"
+          ? global.__STATIC.assetUrl(rawOpen)
+          : rawOpen;
+      openFull.setAttribute("href", au);
+    }
     if (seeNetworks && links.see_networks_on_rwa_xyz) seeNetworks.setAttribute("href", links.see_networks_on_rwa_xyz);
 
     if (captionEl) captionEl.textContent = data.caption || "";
