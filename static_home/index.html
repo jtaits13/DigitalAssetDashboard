@@ -137,14 +137,13 @@
             KPI strip and table preview use the same StockAnalysis + Yahoo methodology as the hub (values from the latest
             export).
           </p>
-          <div class="kpi-row" id="js-home-kpi" aria-label="KPI strip from data export">
+          <div class="etp-kpi-panel" id="js-home-kpi" aria-label="KPI strip from data export">
             <div class="kpi-cell">
               <span class="kpi-label">Loading…</span>
             </div>
           </div>
           <p class="kpi-footnote">
-            Aggregate % uses estimated AUM history (weekly); IBIT/ETHA use Yahoo trailing returns when available (same
-            as Streamlit).
+            Same data as Streamlit / API; see the % legend above for lookback tags.
           </p>
           <div class="table-wrap">
             <table class="data-table">
@@ -224,6 +223,7 @@
       <time datetime="2026-05-06">May 2026</time>
     </footer>
     <script src="js/static-base.js"></script>
+    <script src="js/etp-kpi-shared.js"></script>
     <script src="js/home-page.js"></script>
   </body>
 </html>

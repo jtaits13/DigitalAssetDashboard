@@ -58,12 +58,12 @@
 
       <section class="hub-section" aria-labelledby="snapshot-heading">
         <h2 class="subsection-head" id="snapshot-heading">Top-Line Market Snapshot</h2>
-        <div class="kpi-row" id="js-etp-kpi" aria-label="KPI strip from data export">
+        <div class="etp-kpi-panel" id="js-etp-kpi" aria-label="KPI strip from data export">
           <div class="kpi-cell"><span class="kpi-label">Loading…</span></div>
         </div>
         <p class="kpi-footnote kpi-footnote--block">
-          KPI methodology matches the Streamlit hub: aggregate AUM % from estimated weekly history; IBIT/ETHA from Yahoo
-          trailing returns where available. Totals from StockAnalysis scrape.
+          Figure sources and fallbacks are summarized under the KPI row in the Streamlit / FastAPI build; export JSON is the
+          same pipeline.
         </p>
       </section>
 
@@ -176,6 +176,7 @@
     <footer class="site-footer">U.S. ETP · live data from export · May 2026</footer>
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
     <script src="js/static-base.js"></script>
+    <script src="js/etp-kpi-shared.js"></script>
     <script src="js/etp-page.js"></script>
   </body>
 </html>

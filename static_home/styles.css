@@ -667,6 +667,19 @@ body {
 }
 
 /* —— KPI row —— */
+.jd-etp-snapshot-pct-legend {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+  margin: 0 0 0.55rem 0;
+  line-height: 1.42;
+  max-width: 52rem;
+}
+
+.etp-kpi-panel {
+  margin: 0 0 0.25rem 0;
+}
+
 .kpi-row {
   display: flex;
   flex-wrap: wrap;

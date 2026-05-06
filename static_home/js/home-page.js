@@ -50,41 +50,43 @@
     });
   }
 
-  function fmtPct(p) {
-    if (p == null || p === "") return '<span class="kpi-delta neutral">—</span>';
-    var n = Number(p);
-    var sign = n > 0 ? "+" : "";
-    var cls = n > 0 ? "up" : n < 0 ? "down" : "neutral";
-    return '<span class="kpi-delta ' + cls + '">' + sign + n.toFixed(2) + "%</span>";
-  }
-
   function renderKpi(k) {
     if (!kpiEl || !k) return;
-    var winNote = k.aggregate_window
-      ? '<span class="kpi-win"> (' + escapeHtml(k.aggregate_window) + " est.)</span>"
-      : "";
+    var K = window.__ETP_KPI || {};
+    var legend = typeof K.etpKpiPctLegendHtml === "function" ? K.etpKpiPctLegendHtml() : "";
+    var fmtDelta =
+      typeof K.fmtPctDelta === "function"
+        ? K.fmtPctDelta
+        : function (p) {
+            if (p == null || p === "") return '<span class="kpi-delta neutral">—</span>';
+            var n = Number(p);
+            var cls = n > 0 ? "up" : n < 0 ? "down" : "neutral";
+            return '<span class="kpi-delta ' + cls + '">' + (n > 0 ? "+" : "") + n.toFixed(2) + "%</span>";
+          };
     kpiEl.innerHTML =
+      legend +
+      '<div class="kpi-row kpi-row--etp-strip">' +
       '<div class="kpi-cell">' +
       '<span class="kpi-label">Total AUM (listed)</span>' +
       '<span class="kpi-val">' +
       escapeHtml(k.total_aum_display || "—") +
       "</span>" +
-      fmtPct(k.aggregate_pct) +
-      winNote +
+      fmtDelta(k.aggregate_pct, k.aggregate_window) +
       "</div>" +
       '<div class="kpi-cell">' +
       '<span class="kpi-label">IBIT · AUM</span>' +
       '<span class="kpi-val">' +
       escapeHtml(k.ibit && k.ibit.aum_display) +
       "</span>" +
-      (k.ibit && k.ibit.delta ? fmtPct(k.ibit.delta.pct) : "") +
+      (k.ibit && k.ibit.delta ? fmtDelta(k.ibit.delta.pct, k.ibit.delta.window) : "") +
       "</div>" +
       '<div class="kpi-cell">' +
       '<span class="kpi-label">ETHA · AUM</span>' +
       '<span class="kpi-val">' +
       escapeHtml(k.etha && k.etha.aum_display) +
       "</span>" +
-      (k.etha && k.etha.delta ? fmtPct(k.etha.delta.pct) : "") +
+      (k.etha && k.etha.delta ? fmtDelta(k.etha.delta.pct, k.etha.delta.window) : "") +
+      "</div>" +
       "</div>";
   }
 

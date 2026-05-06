@@ -28,6 +28,11 @@ from crypto_etps.dataframe_table import (
     filter_rows_by_fund_name,
     style_etp_dataframe,
 )
+from crypto_etps.kpi_labels import (
+    etp_delta_window_caption,
+    etp_kpi_methodology_footnote_html,
+    etp_kpi_pct_legend_html,
+)
 from home_layout import KPI_WINDOW_NOTE_CSS, STREAMLIT_TABLE_UNIFY_CSS
 from news_feeds import load_all_etf_etp_news_cached
 
@@ -53,6 +58,14 @@ WIDGET_CSS = """
 }
 .etp-kpi-wrap {
     margin: 0.35rem 0 0.85rem 0;
+}
+.jd-etp-snapshot-pct-legend {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: #021D41;
+    margin: 0 0 0.45rem 0;
+    line-height: 1.45;
+    max-width: 52rem;
 }
 /* Full ETP list page only: methodology note sits under the figures */
 .etp-kpi-wrap--metrics-first .jd-kpi-window-note {
@@ -180,19 +193,6 @@ def _row_by_symbol(rows: list[CryptoEtpRow], symbol: str) -> CryptoEtpRow | None
     return None
 
 
-def _etp_kpi_window_caption(yahoo_or_agg_lbl: str) -> str:
-    """Short label for the KPI % lookback (shown in parentheses next to each value)."""
-    if not yahoo_or_agg_lbl:
-        return ""
-    if yahoo_or_agg_lbl == "1M":
-        return "1 mo"
-    if yahoo_or_agg_lbl == "1Y":
-        return "1 yr"
-    if yahoo_or_agg_lbl == "1Y*":
-        return "1 yr*"
-    return yahoo_or_agg_lbl
-
-
 def _etf_delta_html(pct: float | None, window_lbl: str) -> str:
     if pct is None or not isinstance(pct, (int, float)):
         return "<span class='etp-kpi-delta neutral'>—</span>"
@@ -223,8 +223,8 @@ def render_etp_summary_kpi_row(
     Home-style KPI strip: total listed AUM, IBIT, and ETHA with % moves tagged by lookback
     (typically ~1 month on Yahoo when available; 1 yr / 52W fallbacks).
 
-    On the full list page, pass ``metrics_above_methodology_note=True`` so the figure row
-    appears above the methodology footnote (hub preview keeps the footnote on top).
+    Pass ``metrics_above_methodology_note=True`` on the full ETP list for spacing tweaks
+    (legend + figures always appear before the methodology footnote).
     """
     if include_styles:
         st.markdown(WIDGET_CSS + KPI_WINDOW_NOTE_CSS, unsafe_allow_html=True)
@@ -271,17 +271,17 @@ def _render_etp_home_kpi_row(
         (
             "Total AUM (listed)",
             escape(total_aum_display),
-            _etf_delta_html(agg_pct, _etp_kpi_window_caption(agg_window)),
+            _etf_delta_html(agg_pct, etp_delta_window_caption(agg_window)),
         ),
         (
             "IBIT · AUM",
             escape(ibit_aum),
-            _etf_delta_html(ip, _etp_kpi_window_caption(ip_win)),
+            _etf_delta_html(ip, etp_delta_window_caption(ip_win)),
         ),
         (
             "ETHA · AUM",
             escape(etha_aum),
-            _etf_delta_html(ep, _etp_kpi_window_caption(ep_win)),
+            _etf_delta_html(ep, etp_delta_window_caption(ep_win)),
         ),
     ]
     parts = []
@@ -293,22 +293,15 @@ def _render_etp_home_kpi_row(
             f"{delta_html}"
             "</div>"
         )
-    note_block = (
-        "<p class=\"jd-kpi-window-note\">"
-        "Each <strong>%</strong> shows its lookback in parentheses — typically "
-        "<strong>1 mo</strong> (~30 calendar days) on estimated aggregate AUM and fund prices when Yahoo data allows, "
-        "with <strong>1 yr</strong> or <strong>52W</strong> fallbacks when a one-month window is not available. "
-        "Headline AUM amounts are listed assets from <strong>StockAnalysis</strong> "
-        "(crypto ETF list and detail pages; scraped; not affiliated)."
-        "</p>"
-    )
+    pct_legend = etp_kpi_pct_legend_html()
+    note_block = etp_kpi_methodology_footnote_html()
     row_block = f"<div class='etp-kpi-row'>{''.join(parts)}</div>"
     wrap_class = (
         "etp-kpi-wrap etp-kpi-wrap--metrics-first"
         if metrics_above_methodology_note
         else "etp-kpi-wrap"
     )
-    inner = row_block + note_block if metrics_above_methodology_note else note_block + row_block
+    inner = pct_legend + row_block + note_block
     kpi_html = (
         f'<div class="{wrap_class}" style="{_ETP_KPI_PANEL_INLINE_STYLE}">'
         f"{inner}"

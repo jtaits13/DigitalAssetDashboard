@@ -99,7 +99,7 @@ def _etp_row_json(r: CryptoEtpRow) -> dict:
 def _kpi_delta(symbol: str, row: CryptoEtpRow | None) -> dict:
     p, lbl = etp_symbol_price_change_cached(symbol)
     if p is not None:
-        return {"pct": round(float(p), 4), "window": lbl or "30D"}
+        return {"pct": round(float(p), 4), "window": lbl or ""}
     if row is not None and row.pct_52w is not None:
         return {"pct": round(float(row.pct_52w), 4), "window": "52W"}
     return {"pct": None, "window": ""}
@@ -142,8 +142,16 @@ def main() -> None:
 
     ibit_r = _row_by_symbol(rows, "IBIT")
     etha_r = _row_by_symbol(rows, "ETHA")
-    ibit_aum = format_usd_compact(ibit_r.assets_usd) if ibit_r and ibit_r.assets_usd else "—"
-    etha_aum = format_usd_compact(etha_r.assets_usd) if etha_r and etha_r.assets_usd else "—"
+    ibit_aum = (
+        format_usd_compact(ibit_r.assets_usd)
+        if ibit_r and has_listed_aum_usd(ibit_r.assets_usd)
+        else "—"
+    )
+    etha_aum = (
+        format_usd_compact(etha_r.assets_usd)
+        if etha_r and has_listed_aum_usd(etha_r.assets_usd)
+        else "—"
+    )
 
     kpis = {
         "total_aum_display": aum_s,
