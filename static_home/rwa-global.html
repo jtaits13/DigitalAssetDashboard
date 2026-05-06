@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>RWA Global Market Overview — JPM Digital</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="page-rwa-global">
+    <header class="site-header" role="banner">
+      <div class="site-header__inner">
+        <a class="site-brand" href="index.html">JPM Digital Assets Dashboard</a>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="index.html">Home</a>
+          <a href="etps.html">U.S. ETPs</a>
+          <a href="etf-news.html">ETF news</a>
+          <a href="rwa-global.html" class="is-active">RWA Market</a>
+          <a href="index.html#section-news">News</a>
+          <a href="index.html#section-markets">Markets</a>
+          <a href="index.html#section-onchain">On-chain</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="ticker-strip" aria-label="Sample price strip (illustrative)">
+      <div class="ticker-strip__layout">
+        <span class="ticker-strip__label">Top cryptocurrencies</span>
+        <div class="ticker-strip__chips">
+          <span class="ticker-chip"><strong>BTC</strong> <span class="ticker-usd">$97,240</span> <span class="up">+1.2%</span></span>
+          <span class="ticker-chip"><strong>ETH</strong> <span class="ticker-usd">$3,412</span> <span class="up">+0.8%</span></span>
+          <span class="ticker-chip"><strong>SOL</strong> <span class="ticker-usd">$178</span> <span class="down">−0.4%</span></span>
+          <span class="ticker-chip"><strong>XRP</strong> <span class="ticker-usd">$2.21</span> <span class="up">+2.1%</span></span>
+        </div>
+      </div>
+    </div>
+
+    <main class="page-shell page-shell--wide">
+      <header class="page-intro">
+        <h1 class="page-intro__title">RWA Global Market Overview</h1>
+        <div class="page-intro__dek" id="js-rwa-global-dek"></div>
+      </header>
+
+      <div class="data-banner" id="js-rwa-global-banner" role="status" hidden></div>
+
+      <p id="js-rwa-global-empty" class="alert info" hidden></p>
+
+      <div id="js-rwa-global-snapshot">
+        <section class="hub-section" aria-labelledby="rwa-gmo-snapshot-heading">
+          <h2 class="subsection-head" id="rwa-gmo-snapshot-heading">Top-Line Market Snapshot</h2>
+          <div id="js-rwa-global-kpis" aria-label="RWA Global Market KPI strip"></div>
+          <div id="js-rwa-global-error-cta" class="cta-row" hidden></div>
+        </section>
+      </div>
+
+      <div id="js-rwa-global-detail-stack" hidden>
+        <section class="hub-section" aria-labelledby="rwa-gmo-ko-heading">
+          <h2 class="subsection-head" id="rwa-gmo-ko-heading">Key Observations</h2>
+          <div id="js-rwa-global-macro" class="macro-obs-static"></div>
+        </section>
+
+        <hr class="jd-rwa-gmo-soft-rule" aria-hidden="true" />
+
+        <div id="js-rwa-global-explore"></div>
+
+        <div id="js-rwa-global-search-block">
+          <div class="inline-search rwa-global-search" role="search">
+            <label for="rwa-global-q">Search network table</label>
+            <input
+              id="rwa-global-q"
+              type="search"
+              name="q"
+              autocomplete="off"
+              placeholder="Filter by network name…"
+            />
+            <button type="button" class="btn btn-secondary" id="rwa-global-clear">Clear</button>
+          </div>
+          <p class="toolbar-note" id="rwa-global-toolbar-note"></p>
+        </div>
+
+        <div class="split-two" id="js-rwa-global-split">
+          <div>
+            <h2 class="subsection-head">Networks table</h2>
+            <div class="table-scroll">
+              <table class="data-table data-table--dense">
+                <thead>
+                  <tr id="js-rwa-gmo-thead-row"></tr>
+                </thead>
+                <tbody id="js-rwa-gmo-tbody">
+                  <tr>
+                    <td>Loading…</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div>
+            <h2 class="subsection-head">Top networks by value</h2>
+            <div id="js-rwa-gmo-chart" class="aum-chart-host"></div>
+            <p class="muted" id="js-rwa-gmo-chart-empty" hidden>No networks match this filter; there is nothing to chart.</p>
+            <p class="jd-hub-cta-note jd-rwa-gmo-split-note" id="js-rwa-global-chart-note"></p>
+          </div>
+        </div>
+
+        <div id="js-rwa-global-caption" class="rwa-caption-html"></div>
+        <div id="js-rwa-global-bottom-cta" class="cta-row" hidden></div>
+      </div>
+
+      <p class="back-link">
+        <a href="index.html">← Back to hub layout</a>
+      </p>
+    </main>
+
+    <footer class="site-footer">
+      <span id="js-rwa-global-footer-note"></span>
+      <span class="timestamp-foot"> · GitHub Pages · JSON export mirrors Streamlit pipelines · May 2026</span>
+    </footer>
+
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
+    <script src="js/static-base.js"></script>
+    <script src="js/rwa-onchain-home.js"></script>
+    <script src="js/rwa-global-page.js"></script>
+  </body>
+</html>

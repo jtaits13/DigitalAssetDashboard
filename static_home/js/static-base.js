@@ -7,6 +7,7 @@
     if (p.endsWith("/index.html")) return p.slice(0, -"index.html".length);
     if (p.endsWith("/etf-news.html")) return p.slice(0, -"etf-news.html".length);
     if (p.endsWith("/etps.html")) return p.slice(0, -"etps.html".length);
+    if (p.endsWith("/rwa-global.html")) return p.slice(0, -"rwa-global.html".length);
     if (p.endsWith("/")) return p;
     return p.replace(/\/[^/]+$/, "/");
   }

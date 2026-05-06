@@ -6,15 +6,16 @@ Run in CI:    before upload-pages-artifact (see .github/workflows).
 
 Uses the same RSS / StockAnalysis / yfinance / RWA.xyz logic as the Streamlit app (no Streamlit UI).
 
-Optional env ``STATIC_WEBAPP_BASE``: absolute origin for FastAPI links in ``rwa_onchain_home.json`` (e.g. when the
-static hub is on GitHub Pages but the API lives elsewhere).
+Optional env ``STATIC_WEBAPP_BASE``: absolute origin for FastAPI-only links (e.g. ``/rwa/explore/...``) embedded in JSON when the static hub is on GitHub Pages but the API lives elsewhere. The full RWA Global overview is served as ``static_home/rwa-global.html`` (not ``/rwa/global``).
 """
 
 from __future__ import annotations
 
 import json
 import os
+import re
 import sys
+from html import escape as html_escape
 from typing import Any
 from datetime import datetime, timezone
 from pathlib import Path
@@ -107,6 +108,34 @@ def _webapp_href(path: str) -> str:
     base = (os.environ.get("STATIC_WEBAPP_BASE") or "").strip().rstrip("/")
     p = path if path.startswith("/") else "/" + path
     return base + p if base else p
+
+
+def _rwa_explore_gateways_static_html(at_href: str, mp_href: str) -> str:
+    """Two Explore cards for static pages (classes align with ``static_home/styles.css``)."""
+    ae = html_escape(at_href, quote=True)
+    pe = html_escape(mp_href, quote=True)
+    return (
+        '<section class="rwa-explore-row" aria-label="Explore gateways">'
+        '<div class="rwa-explore-card">'
+        '<p class="eyebrow">On-chain</p>'
+        '<h3>Explore by Asset Type</h3>'
+        '<ul class="rwa-explore-list">'
+        "<li>Stablecoins</li><li>US Treasuries</li><li>Tokenized Stocks</li>"
+        "</ul>"
+        '<p class="rwa-explore-tail">Use <strong>Explore</strong> to open the hub and go deeper on the next pages.</p>'
+        f'<a class="btn btn-primary" href="{ae}">Explore</a>'
+        "</div>"
+        '<div class="rwa-explore-card">'
+        '<p class="eyebrow">On-chain</p>'
+        '<h3>Explore by Market Participant</h3>'
+        '<ul class="rwa-explore-list">'
+        "<li>Networks</li><li>Platforms</li><li>Asset Managers</li>"
+        "</ul>"
+        '<p class="rwa-explore-tail">Use <strong>Explore</strong> to open the hub and go deeper on the next pages.</p>'
+        f'<a class="btn btn-primary" href="{pe}">Explore</a>'
+        "</div>"
+        "</section>"
+    )
 
 
 def _rwa_kpi_to_dict(k: object) -> dict[str, object]:
@@ -273,6 +302,9 @@ def main() -> None:
     rwa_df = build_rwa_dataframe(rwa_preview) if rwa_preview else pd.DataFrame()
     rwa_table_rows, rwa_columns = _dataframe_json_records(rwa_df)
 
+    explore_at = _webapp_href("/rwa/explore/asset-type")
+    explore_mp = _webapp_href("/rwa/explore/participant")
+
     rwa_onchain_payload = {
         "heading": "RWA Global Market Overview",
         "error": rwa_err,
@@ -290,10 +322,11 @@ def main() -> None:
             "Networks league (Distributed / parent networks) shown on the live site."
         ),
         "links": {
-            "open_full_overview": _webapp_href("/rwa/global"),
+            # Static full overview (GitHub Pages has no ``/rwa/global`` route).
+            "open_full_overview": "rwa-global.html",
             "see_networks_on_rwa_xyz": APP_RWA_NETWORKS_URL,
-            "explore_asset_type": _webapp_href("/rwa/explore/asset-type"),
-            "explore_market_participant": _webapp_href("/rwa/explore/participant"),
+            "explore_asset_type": explore_at,
+            "explore_market_participant": explore_mp,
         },
     }
 
@@ -302,10 +335,83 @@ def main() -> None:
         encoding="utf-8",
     )
 
+    # --- Full static RWA Global Market Overview (mirrors Streamlit / FastAPI ``/rwa/global``) ---
+    from home_layout import monthly_review_note_html, rwa_xyz_mirror_footer_text
+    from rwa_league.widgets import (
+        GLOBAL_MARKET_RWA_LINK_LABEL,
+        GLOBAL_MARKET_RWA_URL,
+        RWA_GLOBAL_MARKET_DATA_SOURCE_CAPTION_HTML,
+        RWA_GMO_CHART_MAX_BARS,
+        rwa_table_height,
+    )
+
+    try:
+        from pages.RWA_Global_Market_Overview import RWA_GLOBAL_MARKET_MACRO_CONTEXT_HTML
+    except Exception:
+        RWA_GLOBAL_MARKET_MACRO_CONTEXT_HTML = ""
+
+    macro_html = (RWA_GLOBAL_MARKET_MACRO_CONTEXT_HTML or "") + monthly_review_note_html()
+
+    rwa_full_df = build_rwa_dataframe(list(rwa_rows)) if rwa_rows else pd.DataFrame()
+    rwa_full_rows, rwa_full_cols = _dataframe_json_records(rwa_full_df)
+
+    n_sync = min(RWA_GMO_CHART_MAX_BARS, len(rwa_rows)) if rwa_rows else 1
+    chart_h = rwa_table_height(max(1, n_sync), max_h=560)
+
+    chart_note_html = (
+        f"The chart lists the top <strong>{RWA_GMO_CHART_MAX_BARS}</strong> networks "
+        "by total value (labels include market share). Scroll the table for the full filtered list."
+    )
+
+    rwa_global_payload: dict[str, Any] = {
+        "page_title": "RWA Global Market Overview",
+        "page_subtitle_html": (
+            "RWA <strong>Global Market Overview</strong>: the same <strong>headline metrics</strong> and "
+            '<strong>Networks</strong> table as the <a href="https://app.rwa.xyz/">RWA.xyz</a> '
+            "<strong>Market Overview</strong> tab on the live site. Top-line <strong>30D</strong> % changes and "
+            "table values are read from that page so they stay in sync with what visitors see."
+        ),
+        "error": rwa_err,
+        "kpis": [_rwa_kpi_to_dict(k) for k in rwa_kpis],
+        "kpi_window_note": rwa_onchain_payload["kpi_window_note"],
+        "columns": rwa_full_cols,
+        "rows": rwa_full_rows,
+        "total_networks": len(rwa_rows),
+        "macro_observations_html": "",
+        "explore_gateways_html": "",
+        "caption_html": "",
+        "chart_max_bars": RWA_GMO_CHART_MAX_BARS,
+        "chart_height_px": int(chart_h),
+        "chart_note_html": chart_note_html,
+        "links": {
+            "home": "index.html",
+            "see_networks_on_rwa_xyz": APP_RWA_NETWORKS_URL,
+            "global_market_on_rwa_xyz": GLOBAL_MARKET_RWA_URL,
+            "global_market_link_label": GLOBAL_MARKET_RWA_LINK_LABEL,
+            "explore_asset_type": explore_at,
+            "explore_market_participant": explore_mp,
+        },
+        "footer_note": re.sub(r"\*\*", "", rwa_xyz_mirror_footer_text()),
+    }
+
+    if rwa_err and not rwa_rows:
+        pass
+    elif not rwa_rows:
+        rwa_global_payload["empty_message"] = "No network rows returned."
+    else:
+        rwa_global_payload["macro_observations_html"] = macro_html
+        rwa_global_payload["explore_gateways_html"] = _rwa_explore_gateways_static_html(explore_at, explore_mp)
+        rwa_global_payload["caption_html"] = RWA_GLOBAL_MARKET_DATA_SOURCE_CAPTION_HTML
+
+    (OUT / "rwa_global_market.json").write_text(
+        json.dumps(rwa_global_payload, indent=2),
+        encoding="utf-8",
+    )
+
     (OUT / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     print(
         f"Wrote static data to {OUT} ({len(rows_payload)} ETPs, {len(etf_items)} ETF headlines, "
-        f"{len(rwa_rows)} RWA networks)."
+        f"{len(rwa_rows)} RWA networks; rwa_global_market.json + rwa_onchain_home.json)."
     )
 
 

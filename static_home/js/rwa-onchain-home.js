@@ -211,4 +211,10 @@
   }
 
   global.renderRwaOnchainHome = renderRwaOnchainHome;
+
+  /** Shared KPI/table formatters for ``rwa-global-page.js``. */
+  global.__RWA_STATIC_HELPERS = {
+    renderKpis: renderKpis,
+    renderTable: renderTable,
+  };
 })(typeof window !== "undefined" ? window : this);

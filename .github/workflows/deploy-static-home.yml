@@ -16,6 +16,7 @@ on:
       - "crypto_etps/**"
       - "rwa_league/**"
       - "home_layout.py"
+      - "pages/**"
   workflow_dispatch:
 
 permissions:
