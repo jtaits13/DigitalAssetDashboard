@@ -844,6 +844,33 @@ body {
   color: #fff;
 }
 
+.btn-secondary {
+  background: var(--surface);
+  color: var(--ink-soft);
+  border: 1px solid var(--line);
+  margin-left: 0.5rem;
+}
+
+.btn-secondary:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+@media (max-width: 540px) {
+  .btn-secondary {
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
+}
+
+.jd-kpi-window-note {
+  font-size: 0.64rem;
+  font-weight: 400;
+  color: var(--muted);
+  margin: 0 0 0.5rem 0;
+  line-height: 1.32;
+}
+
 /* —— RWA strip + explore —— */
 .rwa-kpi-strip {
   display: flex;
@@ -931,6 +958,157 @@ body {
   letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--teal);
+}
+
+/* —— On-chain hub (Streamlit parity, JSON-driven) —— */
+.rwa-market-head {
+  margin: 0.35rem 0 0.5rem;
+  padding: 0 0 0.35rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.rwa-market-overview-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 780;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.rwa-kpi-panel-static {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+  padding: 0.65rem 0.9rem 0.55rem;
+  margin: 0.35rem 0 0.75rem;
+}
+
+.rwa-kpi-row--home-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
+  gap: 0.55rem 0.65rem;
+  align-items: start;
+}
+
+.rwa-kpi-panel-static .rwa-kpi-label {
+  display: block;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  margin-bottom: 0.3rem;
+}
+
+.rwa-kpi-panel-static .rwa-kpi-val {
+  display: block;
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--teal);
+  line-height: 1.2;
+}
+
+.rwa-kpi-panel-static .rwa-kpi-delta {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-top: 0.15rem;
+  line-height: 1.2;
+}
+
+.rwa-kpi-panel-static .rwa-kpi-delta.up {
+  color: #28794e;
+}
+
+.rwa-kpi-panel-static .rwa-kpi-delta.down {
+  color: #dc2626;
+}
+
+.rwa-kpi-panel-static .rwa-kpi-delta.neutral {
+  color: var(--muted);
+}
+
+.rwa-onchain-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.rwa-explore-rule {
+  margin: 1.25rem 0 1rem;
+}
+
+.onchain-explore-split {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 800px) {
+  .onchain-explore-split {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    align-items: stretch;
+  }
+}
+
+.jd-hub-explore-card-static {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1rem 1.15rem 1.15rem;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.jd-hub-explore-card-static h4 {
+  margin: 0 0 0.45rem;
+  font-size: 1rem;
+  font-weight: 750;
+  color: var(--ink);
+}
+
+.jd-hub-explore-eyebrow {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin: 0 0 0.35rem;
+}
+
+.jd-hub-explore-blurb {
+  flex: 1;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.jd-hub-explore-blurb ul {
+  margin: 0.35rem 0 0.65rem 1.1rem;
+  padding: 0;
+}
+
+.jd-hub-explore-blurb-tail {
+  margin: 0 0 0.85rem;
+  font-size: 0.86rem;
+}
+
+.jd-hub-explore-card-static .btn-primary {
+  margin-top: auto;
+  align-self: flex-start;
+}
+
+.rwa-table-link {
+  text-decoration: none;
+  font-weight: 700;
+  color: var(--teal);
+}
+
+.rwa-table-link:hover {
+  text-decoration: underline;
 }
 
 /* —— ETP page specifics —— */

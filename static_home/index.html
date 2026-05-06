@@ -171,49 +171,41 @@
         <section class="hub-section hub-section--panel" id="section-onchain" aria-labelledby="onchain-heading">
           <h2 class="band-label teal" id="onchain-heading">On-chain Data</h2>
           <p class="section-dek section-dek--wide">
-            A <strong>global RWA</strong> snapshot from RWA.xyz, then explore cards. In Streamlit, each card opens
-            searchable hubs and full tables.
+            Same layout as the Streamlit hub: <strong>RWA Global Market Overview</strong> KPIs and a <strong>Networks</strong>
+            preview from RWA.xyz, then <strong>Explore</strong> gateways (stablecoins / treasuries / stocks · networks /
+            platforms / managers). Values load from the export JSON.
           </p>
-          <div class="rwa-kpi-strip">
-            <div class="rwa-kpi-pill">
-              <span class="rwa-kpi-pill__label">Tokenized credit</span>
-              <span class="rwa-kpi-pill__val">illustr.</span>
-            </div>
-            <div class="rwa-kpi-pill">
-              <span class="rwa-kpi-pill__label">Treasuries TVL</span>
-              <span class="rwa-kpi-pill__val">illustr.</span>
-            </div>
-            <div class="rwa-kpi-pill">
-              <span class="rwa-kpi-pill__label">Stablecoins</span>
-              <span class="rwa-kpi-pill__val">illustr.</span>
-            </div>
-            <div class="rwa-kpi-pill">
-              <span class="rwa-kpi-pill__label">Tokenized stocks</span>
-              <span class="rwa-kpi-pill__val">illustr.</span>
-            </div>
+          <div class="data-banner" id="js-rwa-onchain-banner" role="status" hidden></div>
+          <div class="jd-hub-subsection-head rwa-market-head" id="jd-rwa-market">
+            <h3 class="rwa-market-overview-title">RWA Global Market Overview</h3>
           </div>
-          <div class="explore-grid">
-            <article class="explore-card">
-              <div class="explore-card__icon" aria-hidden="true">◎</div>
-              <h3 class="explore-card__title">Stablecoins · Networks</h3>
-              <p class="explore-card__dek">League tables by network and platform—preview rows on the hub in Streamlit.</p>
-              <span class="explore-card__tag">RWA.xyz mirror</span>
-            </article>
-            <article class="explore-card">
-              <div class="explore-card__icon" aria-hidden="true">◇</div>
-              <h3 class="explore-card__title">Global Market Overview</h3>
-              <p class="explore-card__dek">
-                Networks table and KPIs for the full on-chain section—this card is a layout stand-in.
-              </p>
-              <span class="explore-card__tag">RWA.xyz mirror</span>
-            </article>
-            <article class="explore-card">
-              <div class="explore-card__icon" aria-hidden="true">◈</div>
-              <h3 class="explore-card__title">Explore gateways</h3>
-              <p class="explore-card__dek">By asset type and by market participant—dropdowns in the app top bar.</p>
-              <span class="explore-card__tag">Navigation</span>
-            </article>
+          <div id="js-rwa-kpi-host"></div>
+          <p class="toolbar-note" id="js-rwa-preview-note"></p>
+          <div class="table-wrap">
+            <table class="data-table data-table--dense" aria-label="RWA networks preview">
+              <thead>
+                <tr id="js-rwa-thead-row"></tr>
+              </thead>
+              <tbody id="js-rwa-tbody">
+                <tr>
+                  <td>Loading on-chain preview…</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
+          <div class="cta-row rwa-onchain-cta">
+            <a class="btn btn-primary" id="js-rwa-open-full" href="/rwa/global">Open full RWA Market Overview</a>
+            <a
+              class="btn btn-secondary"
+              id="js-rwa-see-networks"
+              href="https://app.rwa.xyz/networks"
+              target="_blank"
+              rel="noopener noreferrer"
+              >See RWA Networks on RWA.xyz</a>
+          </div>
+          <p class="source-cap" id="js-rwa-caption"></p>
+          <hr class="section-rule rwa-explore-rule" />
+          <div id="js-rwa-explore-split"></div>
         </section>
       </div>
     </main>
@@ -224,6 +216,7 @@
     </footer>
     <script src="js/static-base.js"></script>
     <script src="js/etp-kpi-shared.js"></script>
+    <script src="js/rwa-onchain-home.js"></script>
     <script src="js/home-page.js"></script>
   </body>
 </html>

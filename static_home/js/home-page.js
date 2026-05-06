@@ -143,6 +143,9 @@
     loadJson("etps.json").catch(function () {
       return { rows: [] };
     }),
+    loadJson("rwa_onchain_home.json").catch(function () {
+      return null;
+    }),
   ])
     .then(function (results) {
       var manifest = results[0];
@@ -150,6 +153,7 @@
       var reg = results[2];
       var kpis = results[3];
       var etps = results[4];
+      var rwaOnchain = results[5];
 
       if (manifest.errors && manifest.errors.length && banner) {
         banner.hidden = false;
@@ -161,6 +165,9 @@
       renderList(regEl, reg.items || [], true, true);
       renderKpi(kpis);
       renderPreview(etps.rows || []);
+      if (typeof renderRwaOnchainHome === "function") {
+        renderRwaOnchainHome(rwaOnchain || {});
+      }
     })
     .catch(function (e) {
       showErr(

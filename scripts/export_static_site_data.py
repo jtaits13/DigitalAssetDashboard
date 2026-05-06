@@ -4,7 +4,10 @@ Build JSON payloads under static_home/data/ for the GitHub Pages mirror.
 Run locally:  python scripts/export_static_site_data.py
 Run in CI:    before upload-pages-artifact (see .github/workflows).
 
-Uses the same RSS / StockAnalysis / yfinance logic as the Streamlit app (no Streamlit UI).
+Uses the same RSS / StockAnalysis / yfinance / RWA.xyz logic as the Streamlit app (no Streamlit UI).
+
+Optional env ``STATIC_WEBAPP_BASE``: absolute origin for FastAPI links in ``rwa_onchain_home.json`` (e.g. when the
+static hub is on GitHub Pages but the API lives elsewhere).
 """
 
 from __future__ import annotations
@@ -12,6 +15,7 @@ from __future__ import annotations
 import json
 import os
 import sys
+from typing import Any
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -46,6 +50,8 @@ from regulatory_news.client import load_regulatory_articles
 OUT = _REPO / "static_home" / "data"
 HOME_NEWS_N = 3
 REG_N = 3
+HOME_RWA_PREVIEW_ROWS = 8
+APP_RWA_NETWORKS_URL = "https://app.rwa.xyz/networks"
 
 DEFAULT_UA = os.environ.get(
     "STOCKANALYSIS_USER_AGENT",
@@ -94,6 +100,54 @@ def _etp_row_json(r: CryptoEtpRow) -> dict:
         "inception": inc,
         "fund_filing_url": filing,
     }
+
+
+def _webapp_href(path: str) -> str:
+    """Prefix FastAPI paths when STATIC_WEBAPP_BASE is set (absolute hub links from GitHub Pages)."""
+    base = (os.environ.get("STATIC_WEBAPP_BASE") or "").strip().rstrip("/")
+    p = path if path.startswith("/") else "/" + path
+    return base + p if base else p
+
+
+def _rwa_kpi_to_dict(k: object) -> dict[str, object]:
+    delta = getattr(k, "delta_30d_pct", None)
+    return {
+        "label": str(getattr(k, "label", "")),
+        "value_display": str(getattr(k, "value_display", "")),
+        "delta_30d_pct": float(delta) if delta is not None else None,
+    }
+
+
+def _dataframe_json_records(df: Any) -> tuple[list[dict[str, object]], list[str]]:
+    """Serialize RWA preview DataFrame rows for static JSON (no NaN / numpy scalars)."""
+    import numpy as np
+
+    if df is None or getattr(df, "empty", True):
+        return [], []
+    cols = [str(c) for c in df.columns]
+    rows_out: list[dict[str, object]] = []
+    for rec in df.to_dict(orient="records"):
+        row: dict[str, object] = {}
+        for key, val in rec.items():
+            k = str(key)
+            if val is None:
+                row[k] = None
+                continue
+            if isinstance(val, np.integer):
+                row[k] = int(val)
+            elif isinstance(val, np.floating):
+                fv = float(val)
+                row[k] = None if np.isnan(fv) or np.isinf(fv) else fv
+            elif isinstance(val, float):
+                row[k] = None if np.isnan(val) or np.isinf(val) else val
+            elif isinstance(val, bool):
+                row[k] = val
+            elif isinstance(val, int):
+                row[k] = val
+            else:
+                row[k] = val
+        rows_out.append(row)
+    return rows_out, cols
 
 
 def _kpi_delta(symbol: str, row: CryptoEtpRow | None) -> dict:
@@ -202,8 +256,57 @@ def main() -> None:
     pulse = etf_items[:ETP_PULSE_PREVIEW_COUNT]
     (OUT / "etf_pulse.json").write_text(json.dumps({"items": pulse}, indent=2), encoding="utf-8")
 
+    # --- On-chain hub (Streamlit home): RWA Global Market KPIs + Networks preview + explore hrefs ---
+    import pandas as pd
+    from rwa_league.client import fetch_rwa_home_data
+    from rwa_league.dataframe_table import build_rwa_dataframe
+
+    try:
+        rwa_rows, rwa_kpis, rwa_err = fetch_rwa_home_data()
+    except Exception as exc:
+        rwa_rows, rwa_kpis, rwa_err = [], [], str(exc)
+
+    if rwa_err:
+        manifest["errors"].append(f"RWA home overview: {rwa_err}")
+
+    rwa_preview = list(rwa_rows)[:HOME_RWA_PREVIEW_ROWS]
+    rwa_df = build_rwa_dataframe(rwa_preview) if rwa_preview else pd.DataFrame()
+    rwa_table_rows, rwa_columns = _dataframe_json_records(rwa_df)
+
+    rwa_onchain_payload = {
+        "heading": "RWA Global Market Overview",
+        "error": rwa_err,
+        "kpis": [_rwa_kpi_to_dict(k) for k in rwa_kpis],
+        "kpi_window_note": (
+            "All % changes in this row are 30-day (30D) (RWA.xyz). "
+            "Headline totals from the RWA.xyz Global Market Overview."
+        ),
+        "columns": rwa_columns,
+        "rows": rwa_table_rows,
+        "preview_count": len(rwa_table_rows),
+        "total_networks": len(rwa_rows),
+        "caption": (
+            "Source: RWA.xyz homepage (https://app.rwa.xyz/)—the same Global Market Overview headline figures and "
+            "Networks league (Distributed / parent networks) shown on the live site."
+        ),
+        "links": {
+            "open_full_overview": _webapp_href("/rwa/global"),
+            "see_networks_on_rwa_xyz": APP_RWA_NETWORKS_URL,
+            "explore_asset_type": _webapp_href("/rwa/explore/asset-type"),
+            "explore_market_participant": _webapp_href("/rwa/explore/participant"),
+        },
+    }
+
+    (OUT / "rwa_onchain_home.json").write_text(
+        json.dumps(rwa_onchain_payload, indent=2),
+        encoding="utf-8",
+    )
+
     (OUT / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
-    print(f"Wrote static data to {OUT} ({len(rows_payload)} ETPs, {len(etf_items)} ETF headlines).")
+    print(
+        f"Wrote static data to {OUT} ({len(rows_payload)} ETPs, {len(etf_items)} ETF headlines, "
+        f"{len(rwa_rows)} RWA networks)."
+    )
 
 
 if __name__ == "__main__":

@@ -14,6 +14,7 @@ on:
       - "news_feeds.py"
       - "regulatory_news/**"
       - "crypto_etps/**"
+      - "rwa_league/**"
       - "home_layout.py"
   workflow_dispatch:
 
