@@ -239,16 +239,16 @@ p.home-band-label.teal.jd-home-band-after-rule {
 }
 .jd-home-hero p.jd-home-hero__jpm-callout strong {
     font-weight: 700;
-    color: #1f4c67;
+    color: #25809c;
 }
 .jd-home-hero p.jd-home-hero__jpm-callout a {
-    color: #1f4c67;
+    color: #25809c;
     font-weight: 650;
     text-decoration: underline;
     text-underline-offset: 2px;
 }
 .jd-home-hero p.jd-home-hero__jpm-callout a:hover {
-    color: #25809c;
+    color: #1a6b7e;
 }
 [data-testid="stMarkdownContainer"] .jd-home-hero p.jd-home-hero__jpm-callout.jd-hub-dek {
     font-size: 0.9375rem !important;
@@ -256,6 +256,15 @@ p.home-band-label.teal.jd-home-band-after-rule {
     font-weight: 600 !important;
     color: #25809c !important;
     margin-bottom: 0.15rem !important;
+}
+[data-testid="stMarkdownContainer"] .jd-home-hero p.jd-home-hero__jpm-callout strong {
+    color: #25809c !important;
+}
+[data-testid="stMarkdownContainer"] .jd-home-hero p.jd-home-hero__jpm-callout a {
+    color: #25809c !important;
+}
+[data-testid="stMarkdownContainer"] .jd-home-hero p.jd-home-hero__jpm-callout a:hover {
+    color: #1a6b7e !important;
 }
 
 /* Full-bleed dividers between major hub blocks */
