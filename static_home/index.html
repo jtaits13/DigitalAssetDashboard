@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>JPM Digital Assets Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;780&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header" role="banner">
+      <div class="site-brand">JPM Digital Assets Dashboard</div>
+      <nav class="site-nav" aria-label="Primary">
+        <a href="#top">Home</a>
+        <a href="#zones">Hub</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-inner">
+          <div class="hero-copy">
+            <p class="hero-eyebrow">Market pulse</p>
+            <h1 id="page-title">JPM Digital Assets Dashboard</h1>
+            <p class="hero-dek">
+              This dashboard pulls together <strong>digital-asset news</strong>,
+              <strong>global regulatory headlines</strong>, <strong>U.S. listed crypto ETPs</strong>, and
+              <strong>on-chain RWA</strong> data from <strong>RWA.xyz</strong>—in one place.
+            </p>
+            <p class="hero-dek">
+              That RWA layer covers <strong>networks</strong>, <strong>platforms</strong>,
+              <strong>participants</strong>, <strong>stablecoins</strong>, <strong>treasuries</strong>, and
+              <strong>tokenized stocks</strong>. Together, the hub helps you scan
+              <strong>market direction</strong>, <strong>policy signals</strong>, and where
+              <strong>activity and issuance</strong> cluster.
+            </p>
+            <p class="hero-dek callout">
+              For <strong>JPM-specific digital asset</strong> materials (documentation, collateral, product context,
+              key contacts), see the
+              <a
+                href="https://confluence.prod.aws.jpmchase.net/confluence/spaces/viewspace.action?key=DIGITALPRODUCTTEAM"
+                target="_blank"
+                rel="noopener noreferrer"
+                >JPM Digital Custody Product Team</a
+              >
+              space on Confluence (internal).
+            </p>
+          </div>
+          <aside class="hero-aside" aria-label="What this hub contains">
+            <div class="hero-aside-card">
+              <h2>What lives here</h2>
+              <p>
+                RSS news lanes, regulatory wires, ETP snapshots, and RWA.xyz–aligned league views—all wired in the
+                Streamlit app. This page is a layout experiment: typography and grid only; no live data.
+              </p>
+              <div class="hero-aside-tags" aria-hidden="true">
+                <span class="tag">News</span>
+                <span class="tag">Policy</span>
+                <span class="tag">Funds</span>
+                <span class="tag">On-chain</span>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <div class="note-strip">
+        <div class="note-strip-inner">
+          <strong>Static preview.</strong> Open the Streamlit deployment for interactive tables, charts, filters, and
+          cached RWA.xyz pulls. This HTML is for typography and layout exploration only.
+        </div>
+      </div>
+
+      <section class="hub" id="zones" aria-labelledby="hub-heading">
+        <h2 id="hub-heading">Same hub as the app</h2>
+        <div class="zone-grid">
+          <article class="zone-card">
+            <div class="zone-icon" aria-hidden="true">◇</div>
+            <h3>News &amp; Regulatory</h3>
+            <p>RSS headlines alongside global regulatory wires—full feeds in the app.</p>
+            <span class="zone-meta">Streamlit · All articles</span>
+          </article>
+          <article class="zone-card">
+            <div class="zone-icon" aria-hidden="true">◈</div>
+            <h3>Markets &amp; Funds</h3>
+            <p>U.S. listed digital asset ETPs—searchable table and context in the app.</p>
+            <span class="zone-meta">Streamlit · ETP page</span>
+          </article>
+          <article class="zone-card">
+            <div class="zone-icon" aria-hidden="true">◎</div>
+            <h3>On-chain Data</h3>
+            <p>Global RWA snapshot, Explore cards, stablecoins, treasuries, tokenized stocks, participants.</p>
+            <span class="zone-meta">Streamlit · RWA hub</span>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      Layout experiment · same palette as the JPM Digital Streamlit hub · not production data
+    </footer>
+  </body>
+</html>
