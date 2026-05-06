@@ -7,19 +7,50 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;780&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <header class="site-header" role="banner">
-      <div class="site-brand">JPM Digital Assets Dashboard</div>
+      <a class="site-brand" href="index.html">JPM Digital Assets Dashboard</a>
       <nav class="site-nav" aria-label="Primary">
-        <a href="#top">Home</a>
-        <a href="#zones">Hub</a>
+        <a href="index.html" class="is-active">Home</a>
+        <a href="etps.html">U.S. ETPs</a>
+        <a href="#section-news">News</a>
+        <a href="#section-markets">Markets</a>
+        <a href="#section-onchain">On-chain</a>
       </nav>
     </header>
+
+    <div class="ticker-strip" aria-label="Sample price strip (illustrative)">
+      <span class="ticker-strip__label">Top cryptocurrencies</span>
+      <div class="ticker-strip__marquee">
+        <div class="ticker-strip__inner">
+          <div class="ticker-strip__track">
+            <span class="ticker-chip"><strong>BTC</strong> <span class="ticker-usd">$97,240</span> <span class="up">+1.2%</span></span>
+            <span class="ticker-chip"><strong>ETH</strong> <span class="ticker-usd">$3,412</span> <span class="up">+0.8%</span></span>
+            <span class="ticker-chip"><strong>SOL</strong> <span class="ticker-usd">$178</span> <span class="down">−0.4%</span></span>
+            <span class="ticker-chip"><strong>XRP</strong> <span class="ticker-usd">$2.21</span> <span class="up">+2.1%</span></span>
+            <span class="ticker-chip"><strong>ADA</strong> <span class="ticker-usd">$0.72</span> <span class="up">+0.3%</span></span>
+            <span class="ticker-chip"><strong>AVAX</strong> <span class="ticker-usd">$36.50</span> <span class="down">−1.0%</span></span>
+            <span class="ticker-chip"><strong>DOGE</strong> <span class="ticker-usd">$0.16</span> <span class="up">+0.6%</span></span>
+            <span class="ticker-chip"><strong>LINK</strong> <span class="ticker-usd">$17.90</span> <span class="up">+1.5%</span></span>
+          </div>
+          <div class="ticker-strip__track" aria-hidden="true">
+            <span class="ticker-chip"><strong>BTC</strong> <span class="ticker-usd">$97,240</span> <span class="up">+1.2%</span></span>
+            <span class="ticker-chip"><strong>ETH</strong> <span class="ticker-usd">$3,412</span> <span class="up">+0.8%</span></span>
+            <span class="ticker-chip"><strong>SOL</strong> <span class="ticker-usd">$178</span> <span class="down">−0.4%</span></span>
+            <span class="ticker-chip"><strong>XRP</strong> <span class="ticker-usd">$2.21</span> <span class="up">+2.1%</span></span>
+            <span class="ticker-chip"><strong>ADA</strong> <span class="ticker-usd">$0.72</span> <span class="up">+0.3%</span></span>
+            <span class="ticker-chip"><strong>AVAX</strong> <span class="ticker-usd">$36.50</span> <span class="down">−1.0%</span></span>
+            <span class="ticker-chip"><strong>DOGE</strong> <span class="ticker-usd">$0.16</span> <span class="up">+0.6%</span></span>
+            <span class="ticker-chip"><strong>LINK</strong> <span class="ticker-usd">$17.90</span> <span class="up">+1.5%</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <main id="top">
       <section class="hero" aria-labelledby="page-title">
@@ -52,11 +83,11 @@
             </p>
           </div>
           <aside class="hero-aside" aria-label="What this hub contains">
-            <div class="hero-aside-card">
-              <h2>What lives here</h2>
+            <div class="hero-aside-card hero-aside-card--accent">
+              <h2>Live app vs this preview</h2>
               <p>
-                RSS news lanes, regulatory wires, ETP snapshots, and RWA.xyz–aligned league views—all wired in the
-                Streamlit app. This page is a layout experiment: typography and grid only; no live data.
+                The Streamlit hub loads RSS feeds, regulatory wires, live ETP tables, and cached RWA.xyz pulls. This site
+                mirrors layout and hierarchy only—numbers and headlines below are <strong>illustrative</strong>.
               </p>
               <div class="hero-aside-tags" aria-hidden="true">
                 <span class="tag">News</span>
@@ -71,38 +102,195 @@
 
       <div class="note-strip">
         <div class="note-strip-inner">
-          <strong>Static preview.</strong> Open the Streamlit deployment for interactive tables, charts, filters, and
-          cached RWA.xyz pulls. This HTML is for typography and layout exploration only.
+          <strong>Static mirror.</strong> Open your Streamlit deployment for real data, filters, pagination, and Plotly
+          charts. Links on this preview go to section anchors or the ETP layout page unless noted.
         </div>
       </div>
 
-      <section class="hub" id="zones" aria-labelledby="hub-heading">
-        <h2 id="hub-heading">Same hub as the app</h2>
-        <div class="zone-grid">
-          <article class="zone-card">
-            <div class="zone-icon" aria-hidden="true">◇</div>
-            <h3>News &amp; Regulatory</h3>
-            <p>RSS headlines alongside global regulatory wires—full feeds in the app.</p>
-            <span class="zone-meta">Streamlit · All articles</span>
-          </article>
-          <article class="zone-card">
-            <div class="zone-icon" aria-hidden="true">◈</div>
-            <h3>Markets &amp; Funds</h3>
-            <p>U.S. listed digital asset ETPs—searchable table and context in the app.</p>
-            <span class="zone-meta">Streamlit · ETP page</span>
-          </article>
-          <article class="zone-card">
-            <div class="zone-icon" aria-hidden="true">◎</div>
-            <h3>On-chain Data</h3>
-            <p>Global RWA snapshot, Explore cards, stablecoins, treasuries, tokenized stocks, participants.</p>
-            <span class="zone-meta">Streamlit · RWA hub</span>
-          </article>
-        </div>
-      </section>
+      <div class="page-shell">
+        <section class="hub-section" id="section-news" aria-labelledby="news-heading">
+          <h2 class="band-label teal" id="news-heading">News &amp; Regulatory</h2>
+          <p class="section-dek">
+            Crypto RSS headlines and global regulatory wires—use a lane below for the full feed in Streamlit.
+          </p>
+          <div class="lane-row">
+            <article class="lane-panel">
+              <header class="lane-panel__head">
+                <span class="lane-panel__eyebrow">Market feed</span>
+                <h3 class="lane-panel__title">Latest Digital Asset News</h3>
+              </header>
+              <ul class="headline-list">
+                <li>
+                  <a href="#" class="headline-list__link"
+                    >ETF flows show rotation toward large-cap baskets as volatility compresses</a
+                  >
+                  <span class="headline-list__meta">CoinDesk · 2h ago</span>
+                </li>
+                <li>
+                  <a href="#" class="headline-list__link">Stablecoin bill draft draws comment from clearing groups</a>
+                  <span class="headline-list__meta">The Block · 5h ago</span>
+                </li>
+                <li>
+                  <a href="#" class="headline-list__link">Custody standards update debated ahead of quarter close</a>
+                  <span class="headline-list__meta">Bloomberg Crypto · 8h ago</span>
+                </li>
+              </ul>
+            </article>
+            <article class="lane-panel lane-panel--reg">
+              <header class="lane-panel__head">
+                <span class="lane-panel__eyebrow">Regulatory wires</span>
+                <h3 class="lane-panel__title">Policy &amp; filings</h3>
+              </header>
+              <ul class="headline-list headline-list--compact">
+                <li>
+                  <span class="headline-list__link headline-list__link--plain"
+                    >Agency schedules roundtable on market-structure disclosures</span
+                  >
+                  <span class="headline-list__meta">Global feed · Today</span>
+                </li>
+                <li>
+                  <span class="headline-list__link headline-list__link--plain"
+                    >Cross-border sandbox extension under consultation</span
+                  >
+                  <span class="headline-list__meta">Global feed · Yesterday</span>
+                </li>
+                <li>
+                  <span class="headline-list__link headline-list__link--plain"
+                    >Prudential guidance draft references tokenized collateral</span
+                  >
+                  <span class="headline-list__meta">Global feed · 2d ago</span>
+                </li>
+              </ul>
+            </article>
+          </div>
+          <p class="cta-note">Full feeds with filters and pagination live in the Streamlit app.</p>
+        </section>
+
+        <hr class="section-rule" />
+
+        <section class="hub-section" id="section-markets" aria-labelledby="markets-heading">
+          <h2 class="band-label teal" id="markets-heading">Markets &amp; Funds</h2>
+          <p class="section-dek">
+            U.S. listed digital asset ETFs and ETPs—preview below; open the full static ETP page for KPIs, chart shell,
+            and table styling.
+          </p>
+          <div class="kpi-row" aria-label="Illustrative KPI strip">
+            <div class="kpi-cell">
+              <span class="kpi-label">Total AUM (listed)</span>
+              <span class="kpi-val">~$186B</span>
+              <span class="kpi-delta up">30D +3.2%</span>
+            </div>
+            <div class="kpi-cell">
+              <span class="kpi-label">IBIT · AUM</span>
+              <span class="kpi-val">~$76B</span>
+              <span class="kpi-delta up">30D +2.8%</span>
+            </div>
+            <div class="kpi-cell">
+              <span class="kpi-label">ETHA · AUM</span>
+              <span class="kpi-val">~$13B</span>
+              <span class="kpi-delta down">30D −1.1%</span>
+            </div>
+          </div>
+          <p class="kpi-footnote">
+            All % changes in this row are illustrative. In the app they are <strong>30D</strong> from Yahoo + headline
+            totals from StockAnalysis methodology.
+          </p>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Symbol</th>
+                  <th>Fund Name</th>
+                  <th class="num">Price</th>
+                  <th class="num">52W %</th>
+                  <th class="num">Assets (B)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="sym">IBIT</span></td>
+                  <td>iShares Bitcoin Trust</td>
+                  <td class="num">52.40</td>
+                  <td class="num pct up">+42.1%</td>
+                  <td class="num">75.8</td>
+                </tr>
+                <tr>
+                  <td><span class="sym">FBTC</span></td>
+                  <td>Fidelity Wise Origin Bitcoin Fund</td>
+                  <td class="num">68.20</td>
+                  <td class="num pct up">+38.6%</td>
+                  <td class="num">18.2</td>
+                </tr>
+                <tr>
+                  <td><span class="sym">ETHA</span></td>
+                  <td>iShares Ethereum Trust</td>
+                  <td class="num">24.15</td>
+                  <td class="num pct down">−6.2%</td>
+                  <td class="num">12.9</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="etps.html">Open full U.S. ETP layout (static)</a>
+          </div>
+        </section>
+
+        <hr class="section-rule" />
+
+        <section class="hub-section" id="section-onchain" aria-labelledby="onchain-heading">
+          <h2 class="band-label teal" id="onchain-heading">On-chain Data</h2>
+          <p class="section-dek">
+            A <strong>global RWA</strong> snapshot from RWA.xyz, then explore cards. In Streamlit, each card opens
+            searchable hubs and full tables.
+          </p>
+          <div class="rwa-kpi-strip">
+            <div class="rwa-kpi-pill">
+              <span class="rwa-kpi-pill__label">Tokenized credit</span>
+              <span class="rwa-kpi-pill__val">illustr.</span>
+            </div>
+            <div class="rwa-kpi-pill">
+              <span class="rwa-kpi-pill__label">Treasuries TVL</span>
+              <span class="rwa-kpi-pill__val">illustr.</span>
+            </div>
+            <div class="rwa-kpi-pill">
+              <span class="rwa-kpi-pill__label">Stablecoins</span>
+              <span class="rwa-kpi-pill__val">illustr.</span>
+            </div>
+            <div class="rwa-kpi-pill">
+              <span class="rwa-kpi-pill__label">Tokenized stocks</span>
+              <span class="rwa-kpi-pill__val">illustr.</span>
+            </div>
+          </div>
+          <div class="explore-grid">
+            <article class="explore-card">
+              <div class="explore-card__icon" aria-hidden="true">◎</div>
+              <h3 class="explore-card__title">Stablecoins · Networks</h3>
+              <p class="explore-card__dek">League tables by network and platform—preview rows on the hub in Streamlit.</p>
+              <span class="explore-card__tag">RWA.xyz mirror</span>
+            </article>
+            <article class="explore-card">
+              <div class="explore-card__icon" aria-hidden="true">◇</div>
+              <h3 class="explore-card__title">Global Market Overview</h3>
+              <p class="explore-card__dek">
+                Networks table and KPIs for the full on-chain section—this card is a layout stand-in.
+              </p>
+              <span class="explore-card__tag">RWA.xyz mirror</span>
+            </article>
+            <article class="explore-card">
+              <div class="explore-card__icon" aria-hidden="true">◈</div>
+              <h3 class="explore-card__title">Explore gateways</h3>
+              <p class="explore-card__dek">By asset type and by market participant—dropdowns in the app top bar.</p>
+              <span class="explore-card__tag">Navigation</span>
+            </article>
+          </div>
+        </section>
+      </div>
     </main>
 
     <footer class="site-footer">
-      Layout experiment · same palette as the JPM Digital Streamlit hub · not production data
+      Static layout mirror · illustrative market data ·
+      <time datetime="2026-05-06">May 2026</time>
     </footer>
   </body>
 </html>

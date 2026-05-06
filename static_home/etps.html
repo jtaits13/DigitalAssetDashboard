@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>U.S. Digital Asset ETPs — JPM Digital</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="page-etp">
+    <header class="site-header" role="banner">
+      <a class="site-brand" href="index.html">JPM Digital Assets Dashboard</a>
+      <nav class="site-nav" aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="etps.html" class="is-active">U.S. ETPs</a>
+        <a href="index.html#section-news">News</a>
+        <a href="index.html#section-markets">Markets</a>
+        <a href="index.html#section-onchain">On-chain</a>
+      </nav>
+    </header>
+
+    <div class="ticker-strip" aria-label="Sample price strip (illustrative)">
+      <span class="ticker-strip__label">Top cryptocurrencies</span>
+      <div class="ticker-strip__marquee">
+        <div class="ticker-strip__inner">
+          <div class="ticker-strip__track">
+            <span class="ticker-chip"><strong>BTC</strong> <span class="ticker-usd">$97,240</span> <span class="up">+1.2%</span></span>
+            <span class="ticker-chip"><strong>ETH</strong> <span class="ticker-usd">$3,412</span> <span class="up">+0.8%</span></span>
+            <span class="ticker-chip"><strong>SOL</strong> <span class="ticker-usd">$178</span> <span class="down">−0.4%</span></span>
+            <span class="ticker-chip"><strong>XRP</strong> <span class="ticker-usd">$2.21</span> <span class="up">+2.1%</span></span>
+          </div>
+          <div class="ticker-strip__track" aria-hidden="true">
+            <span class="ticker-chip"><strong>BTC</strong> <span class="ticker-usd">$97,240</span> <span class="up">+1.2%</span></span>
+            <span class="ticker-chip"><strong>ETH</strong> <span class="ticker-usd">$3,412</span> <span class="up">+0.8%</span></span>
+            <span class="ticker-chip"><strong>SOL</strong> <span class="ticker-usd">$178</span> <span class="down">−0.4%</span></span>
+            <span class="ticker-chip"><strong>XRP</strong> <span class="ticker-usd">$2.21</span> <span class="up">+2.1%</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <main class="page-shell page-shell--wide">
+      <header class="page-intro">
+        <h1 class="page-intro__title">U.S. Digital Asset ETPs — Full List</h1>
+        <p class="page-intro__dek">
+          <strong>U.S. crypto-related exchange-traded products</strong>: KPI strip, estimated aggregate AUM trend, searchable
+          fund table, and ETF headline teaser. Reference columns come from
+          <a href="https://stockanalysis.com/list/crypto-etfs/" target="_blank" rel="noopener noreferrer">StockAnalysis.com</a>
+          (issuer, inception, <strong>52W %</strong>). Values in this HTML preview are <strong>illustrative</strong>.
+        </p>
+      </header>
+
+      <hr class="section-rule" />
+
+      <section class="hub-section" aria-labelledby="snapshot-heading">
+        <h2 class="subsection-head" id="snapshot-heading">Top-Line Market Snapshot</h2>
+        <div class="kpi-row" aria-label="Illustrative KPI strip (matches app labels)">
+          <div class="kpi-cell">
+            <span class="kpi-label">Total AUM (listed)</span>
+            <span class="kpi-val">~$186B</span>
+            <span class="kpi-delta up">30D +3.2%</span>
+          </div>
+          <div class="kpi-cell">
+            <span class="kpi-label">IBIT · AUM</span>
+            <span class="kpi-val">~$76B</span>
+            <span class="kpi-delta up">30D +2.8%</span>
+          </div>
+          <div class="kpi-cell">
+            <span class="kpi-label">ETHA · AUM</span>
+            <span class="kpi-val">~$13B</span>
+            <span class="kpi-delta down">30D −1.1%</span>
+          </div>
+        </div>
+        <p class="kpi-footnote kpi-footnote--block">
+          All % changes in this row are <strong>30-day (30D)</strong> (<strong>Yahoo Finance</strong>) in the live app.
+          Headline totals are listed AUM from <strong>StockAnalysis</strong>. Illustrative numbers here only.
+        </p>
+      </section>
+
+      <section class="hub-section" aria-labelledby="obs-heading">
+        <h2 class="subsection-head" id="obs-heading">Key Observations</h2>
+        <div class="takeaways">
+          <ul>
+            <li>
+              <strong>Product access expanded quickly, then concentrated.</strong> After U.S. spot Bitcoin ETP approvals in
+              2024 (see
+              <a href="https://www.sec.gov/files/rules/sro/nysearca/2024/34-99306.pdf" target="_blank" rel="noopener noreferrer">SEC order</a>), listed access broadened quickly, but assets still cluster in a few large funds.
+            </li>
+            <li>
+              <strong>Forward market-size scenarios are large, but still assumptions-driven.</strong> For example, one widely
+              cited 2026 scenario set discussed in market coverage points to roughly <strong>$180B–$220B</strong> for Bitcoin
+              ETF assets vs. roughly <strong>~$145B</strong> in that same discussion context (see
+              <a href="https://www.dlnews.com/articles/markets/bitcoin-etfs-to-top-180-billion-usd-in-2026-say-analysts/" target="_blank" rel="noopener noreferrer">DL News summary</a>). Treat as directional ranges, not a forecast.
+            </li>
+            <li>
+              <strong>The launch pipeline is crowded.</strong> Industry filing trackers indicate
+              <strong>120+ crypto ETP filings</strong> in the U.S. queue (example:
+              <a href="https://www.cfbenchmarks.com/blog/what-a-huge-wall-of-filings-tells-us-about-the-next-wave-of-us-crypto-etfs" target="_blank" rel="noopener noreferrer">CF Benchmarks</a>). Filing volume does <strong>not</strong> mean all products launch or scale.
+            </li>
+            <li>
+              <strong>Market structure is maturing around liquidity tools.</strong> U.S. exchange-listed spot Bitcoin options
+              (
+              <a href="https://www.sec.gov/files/rules/sro/cboebzx/2024/34-101224.pdf" target="_blank" rel="noopener noreferrer">SEC approval order</a>) improve hedging and risk transfer around spot ETPs.
+            </li>
+          </ul>
+          <p class="takeaways__note">
+            Context for strategy only (not investment advice). The KPI row, chart, and table below use the StockAnalysis +
+            Yahoo process in the Streamlit app.
+          </p>
+        </div>
+        <p class="review-note">Reviewed monthly · Last reviewed: <strong>Apr 2026</strong> (static mirror)</p>
+      </section>
+
+      <hr class="section-rule" />
+
+      <div class="split-panels">
+        <section class="split-panels__col" aria-labelledby="aum-heading">
+          <h2 class="subsection-head" id="aum-heading">Aggregate AUM trend (12 months)</h2>
+          <p class="method-note">
+            <strong>Yahoo Finance</strong> weekly closes × each fund’s latest StockAnalysis AUM (constant-share approximation),
+            summed across the table. Illustrative only—not filings.
+          </p>
+          <figure class="chart-placeholder">
+            <svg viewBox="0 0 560 260" class="chart-placeholder__svg" role="img" aria-label="Decorative AUM trend curve">
+              <defs>
+                <linearGradient id="aumFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="rgba(37,128,156,0.35)" />
+                  <stop offset="100%" stop-color="rgba(37,128,156,0)" />
+                </linearGradient>
+              </defs>
+              <rect x="48" y="20" width="492" height="196" fill="#f8fafc" rx="6" />
+              <text x="56" y="42" fill="#3e6a7a" font-size="12" font-family="Outfit, sans-serif">Est. aggregate AUM ($B)</text>
+              <polyline
+                fill="url(#aumFill)"
+                stroke="none"
+                points="64,200 120,175 176,160 232,148 288,120 344,112 400,95 456,88 512,82 520,82 520,208 64,208"
+              />
+              <polyline
+                fill="none"
+                stroke="#25809c"
+                stroke-width="2.5"
+                stroke-linejoin="round"
+                points="64,200 120,175 176,160 232,148 288,120 344,112 400,95 456,88 512,82"
+              />
+              <line x1="64" y1="208" x2="520" y2="208" stroke="#c7d8e8" stroke-width="1" />
+              <text x="64" y="228" fill="#3e6a7a" font-size="11" font-family="Outfit, sans-serif">−12 mo</text>
+              <text x="470" y="228" fill="#3e6a7a" font-size="11" font-family="Outfit, sans-serif">now</text>
+            </svg>
+            <figcaption class="chart-placeholder__cap">
+              Vertical axis: estimated aggregate AUM (<strong>billions USD</strong>; weekly points). In the app: interactive
+              Plotly with zoom and pan.
+            </figcaption>
+          </figure>
+        </section>
+
+        <section class="split-panels__col split-panels__col--pulse" aria-labelledby="pulse-heading">
+          <h2 class="subsection-head" id="pulse-heading">ETF / ETP headline teaser</h2>
+          <div class="pulse-box">
+            <ul class="pulse-list">
+              <li>
+                <a href="#" class="pulse-list__a">Issuers file updated summaries ahead of reporting window</a>
+                <span class="pulse-list__src">ETF.com RSS · sample</span>
+              </li>
+              <li>
+                <a href="#" class="pulse-list__a">Flows into spot complex slow but positive for the week</a>
+                <span class="pulse-list__src">Yahoo Finance · sample</span>
+              </li>
+              <li>
+                <a href="#" class="pulse-list__a">Ethereum products see rotation as basis trades adjust</a>
+                <span class="pulse-list__src">Reuters · sample</span>
+              </li>
+            </ul>
+          </div>
+          <p class="cta-note">In Streamlit: full list (~3 months UTC), search, pagination, daily caps.</p>
+        </section>
+      </div>
+
+      <hr class="section-rule" />
+
+      <section class="hub-section" aria-labelledby="table-heading">
+        <h2 class="subsection-head u-vh" id="table-heading">Fund table</h2>
+        <label class="search-field">
+          <span class="search-field__label">Search by fund name or ticker</span>
+          <input type="search" class="search-field__input" placeholder="Filter by name or ticker…" disabled />
+        </label>
+        <p class="toolbar-note">Showing <strong>8</strong> illustrative funds (interactive search in Streamlit).</p>
+
+        <div class="table-wrap table-wrap--scroll">
+          <table class="data-table data-table--dense">
+            <thead>
+              <tr>
+                <th>Symbol</th>
+                <th>Fund Name</th>
+                <th class="num">Price</th>
+                <th class="num">52W %</th>
+                <th class="num">Assets (B)</th>
+                <th>Issuer</th>
+                <th>Custodian</th>
+                <th>Inception</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="sym">IBIT</span></td>
+                <td>iShares Bitcoin Trust</td>
+                <td class="num">52.40</td>
+                <td class="num pct up">+42.1%</td>
+                <td class="num">75.80</td>
+                <td>BlackRock</td>
+                <td>Coinbase Custody</td>
+                <td>2024-01-11</td>
+              </tr>
+              <tr>
+                <td><span class="sym">FBTC</span></td>
+                <td>Fidelity Wise Origin Bitcoin Fund</td>
+                <td class="num">68.20</td>
+                <td class="num pct up">+38.6%</td>
+                <td class="num">18.20</td>
+                <td>Fidelity</td>
+                <td>Coinbase Custody</td>
+                <td>2024-01-11</td>
+              </tr>
+              <tr>
+                <td><span class="sym">BITB</span></td>
+                <td>Bitwise Bitcoin ETF</td>
+                <td class="num">41.85</td>
+                <td class="num pct up">+41.0%</td>
+                <td class="num">7.40</td>
+                <td>Bitwise</td>
+                <td>Coinbase Custody</td>
+                <td>2024-01-11</td>
+              </tr>
+              <tr>
+                <td><span class="sym">ARKB</span></td>
+                <td>ARK 21Shares Bitcoin ETF</td>
+                <td class="num">59.10</td>
+                <td class="num pct up">+39.8%</td>
+                <td class="num">6.10</td>
+                <td>21Shares / ARK</td>
+                <td>Coinbase Custody</td>
+                <td>2024-01-11</td>
+              </tr>
+              <tr>
+                <td><span class="sym">ETHA</span></td>
+                <td>iShares Ethereum Trust</td>
+                <td class="num">24.15</td>
+                <td class="num pct down">−6.2%</td>
+                <td class="num">12.90</td>
+                <td>BlackRock</td>
+                <td>Coinbase Custody</td>
+                <td>2024-07-23</td>
+              </tr>
+              <tr>
+                <td><span class="sym">ETHE</span></td>
+                <td>Grayscale Ethereum Mini Trust</td>
+                <td class="num">31.02</td>
+                <td class="num pct up">+4.5%</td>
+                <td class="num">4.85</td>
+                <td>Grayscale</td>
+                <td>Coinbase Custody</td>
+                <td>2024-07-18</td>
+              </tr>
+              <tr>
+                <td><span class="sym">EZBC</span></td>
+                <td>Franklin Bitcoin ETF</td>
+                <td class="num">48.90</td>
+                <td class="num pct up">+35.2%</td>
+                <td class="num">0.42</td>
+                <td>Franklin Templeton</td>
+                <td>Coinbase Custody</td>
+                <td>2024-02-06</td>
+              </tr>
+              <tr>
+                <td><span class="sym">HODL</span></td>
+                <td>VanEck Bitcoin Trust</td>
+                <td class="num">118.40</td>
+                <td class="num pct up">+40.5%</td>
+                <td class="num">1.05</td>
+                <td>VanEck</td>
+                <td>Gemini</td>
+                <td>2024-01-11</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="source-cap">
+          StockAnalysis snapshot · Cached up to ~1 hour in the app · Reload via <strong>Refresh all data</strong> on Home.
+        </p>
+        <p class="timestamp-foot">2026-05-06 00:00:00 UTC · static preview timestamp</p>
+      </section>
+
+      <p class="back-link">
+        <a href="index.html">← Back to hub layout</a>
+      </p>
+    </main>
+
+    <footer class="site-footer">
+      U.S. ETP static layout · illustrative table · May 2026
+    </footer>
+  </body>
+</html>
