@@ -1,5 +1,8 @@
 # Publishes `static_home/` to GitHub Pages (static HTML/CSS).
-# One-time: Repo → Settings → Pages → Build and deployment → Source: GitHub Actions.
+# Before the first deploy succeeds: Repo → Settings → Pages → Build and deployment →
+# Source → GitHub Actions (not “Deploy from a branch”). We intentionally omit
+# actions/configure-pages here: it calls the Pages API and fails with 404 until Pages
+# is enabled, which blocks the upload/deploy steps that would otherwise work.
 name: Deploy static home to GitHub Pages
 
 on:
@@ -28,9 +31,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
 
       - name: Upload static_home as site root
         uses: actions/upload-pages-artifact@v3
