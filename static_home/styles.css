@@ -409,12 +409,16 @@ body {
 }
 
 .ticker-strip__viewport .ticker-strip__drum.ticker-strip__chips {
+  /* Column gap matches Streamlit ticker track; trailing padding aligns splice (#25→#1) without breaking -50% loop. */
+  --ticker-chip-column-gap: 2.25rem;
   display: inline-flex;
   flex-shrink: 0;
   flex-wrap: nowrap;
   align-items: baseline;
-  gap: 0.75rem 2.25rem;
+  gap: 0.75rem var(--ticker-chip-column-gap);
   justify-content: flex-start;
+  box-sizing: border-box;
+  padding-inline-end: var(--ticker-chip-column-gap);
 }
 
 .ticker-strip__chips.ticker-strip__chips--marquee-clone {
@@ -447,6 +451,7 @@ body {
   .ticker-strip__viewport .ticker-strip__drum.ticker-strip__chips {
     flex-wrap: wrap;
     justify-content: center;
+    padding-inline-end: 0;
   }
 }
 
