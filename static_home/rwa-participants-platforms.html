@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Tokenized Stocks — JPM Digital</title>
+    <title>Participants — Platforms — JPM Digital</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -12,7 +12,7 @@
     />
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body class="page-rwa-deep page-rwa-deep-stocks" data-rwa-deep-json="rwa_tokenized_stocks.json">
+  <body class="page-rwa-deep page-rwa-deep-participants-platforms" data-rwa-deep-json="rwa_participants_platforms.json">
     <header class="site-header" role="banner">
       <div class="site-header__inner">
         <a class="site-brand" href="index.html">JPM Digital Assets Dashboard</a>
@@ -21,8 +21,8 @@
           <a href="etps.html">U.S. ETPs</a>
           <a href="etf-news.html">ETF news</a>
           <a href="rwa-global.html">RWA Market</a>
-          <a href="rwa-explore-asset-type.html" class="is-active">RWA · Assets</a>
-          <a href="rwa-explore-market-participant.html">RWA · Participants</a>
+          <a href="rwa-explore-asset-type.html">RWA · Assets</a>
+          <a href="rwa-explore-market-participant.html" class="is-active">RWA · Participants</a>
           <a href="index.html#section-onchain">On-chain</a>
         </nav>
       </div>
@@ -48,7 +48,7 @@
 
       <section class="hub-section" id="js-deep-snapshot" aria-labelledby="js-deep-snap-h">
         <h2 class="subsection-head" id="js-deep-snap-h">Top-Line Market Snapshot</h2>
-        <div id="js-deep-kpis" aria-label="Tokenized Stocks headline KPI strip"></div>
+        <div id="js-deep-kpis" aria-label="Participants headline KPI strip"></div>
       </section>
 
       <section class="hub-section" id="js-deep-ko-section" hidden aria-labelledby="js-deep-ko-h">
@@ -58,7 +58,11 @@
 
       <hr class="jd-rwa-gmo-soft-rule" id="js-deep-rule-after-ko" hidden aria-hidden="true" />
 
+      <div id="js-deep-extra-before-leagues" class="rwa-deep-optional-msg" hidden></div>
+
       <div id="deep-net-wrap"></div>
+
+      <div id="js-deep-extra-after-network" class="rwa-deep-optional-msg" hidden></div>
 
       <hr class="jd-divider" id="js-deep-rule-mid" hidden aria-hidden="true" />
 
@@ -67,7 +71,7 @@
       <div id="js-deep-bottom-cta" class="cta-row rwa-deep-page-cta"></div>
 
       <p class="back-link">
-        <a id="js-deep-back-explore" href="rwa-explore-asset-type.html">← Explore by Asset Type</a>
+        <a id="js-deep-back-explore" href="rwa-explore-market-participant.html">← Explore by Market Participant</a>
       </p>
     </main>
 

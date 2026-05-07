@@ -1700,8 +1700,9 @@ body {
   font-weight: 600;
 }
 
-/* Explore by Asset Type — static index (`rwa-explore-asset-type.html`) */
-.page-rwa-explore-at .page-intro .page-intro__dek {
+/* Explore by Asset Type / Market Participant — static index pages */
+.page-rwa-explore-at .page-intro .page-intro__dek,
+.page-rwa-explore-mp .page-intro .page-intro__dek {
   margin-top: 0.5rem;
 }
 
@@ -1720,6 +1721,11 @@ body {
 
 .rwa-exat-kpi-host {
   margin: 0.25rem 0 0.75rem;
+}
+
+.rwa-exat-preview-caption {
+  margin: 0.35rem 0 0.75rem;
+  max-width: 52rem;
 }
 
 .rwa-exat-subhead {

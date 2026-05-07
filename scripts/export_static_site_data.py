@@ -6,7 +6,7 @@ Run in CI:    before upload-pages-artifact (see .github/workflows).
 
 Uses the same RSS / StockAnalysis / yfinance / RWA.xyz logic as the Streamlit app (no Streamlit UI).
 
-Optional env ``STATIC_WEBAPP_BASE``: absolute origin for FastAPI-only links (e.g. ``/rwa/explore/participant``) when the hub is on GitHub Pages but the API lives elsewhere. Served as HTML in ``static_home/``: Global overview ``rwa-global.html``, Explore by Asset Type ``rwa-explore-asset-type.html``, Stablecoins ``rwa-stablecoins.html``, US Treasuries ``rwa-us-treasuries.html``, Tokenized Stocks ``rwa-tokenized-stocks.html``.
+Optional env ``STATIC_WEBAPP_BASE``: absolute origin for FastAPI-only routes when needed. Served as HTML in ``static_home/``: Global overview ``rwa-global.html``, Explore by Asset Type ``rwa-explore-asset-type.html``, Explore by Market Participant ``rwa-explore-market-participant.html``, participant deep pages ``rwa-participants-*.html``, Stablecoins ``rwa-stablecoins.html``, US Treasuries ``rwa-us-treasuries.html``, Tokenized Stocks ``rwa-tokenized-stocks.html``.
 """
 
 from __future__ import annotations
@@ -54,6 +54,10 @@ REG_N = 3
 HOME_RWA_PREVIEW_ROWS = 8
 EXPLORE_ASSET_PREVIEW_ROWS = 8
 STATIC_RWA_EXPLORE_ASSET_TYPE_PAGE = "rwa-explore-asset-type.html"
+STATIC_RWA_EXPLORE_MARKET_PARTICIPANT_PAGE = "rwa-explore-market-participant.html"
+STATIC_RWA_PARTICIPANTS_NETWORKS_PAGE = "rwa-participants-networks.html"
+STATIC_RWA_PARTICIPANTS_PLATFORMS_PAGE = "rwa-participants-platforms.html"
+STATIC_RWA_PARTICIPANTS_ASSET_MANAGERS_PAGE = "rwa-participants-asset-managers.html"
 STATIC_RWA_STABLECOINS_PAGE = "rwa-stablecoins.html"
 STATIC_RWA_US_TREASURIES_PAGE = "rwa-us-treasuries.html"
 STATIC_RWA_TOKENIZED_STOCKS_PAGE = "rwa-tokenized-stocks.html"
@@ -237,6 +241,9 @@ def _league_split_payload(
     chart_note_below_split: bool = False,
     filter_note_suffix_all: str | None = None,
     filter_note_entity_plural: str | None = None,
+    search_label: str | None = None,
+    search_placeholder: str | None = None,
+    chart_entity_plural: str | None = None,
 ) -> dict[str, Any] | None:
     """Serialize one Networks or Platforms league block for deep static pages."""
     from rwa_league.widgets import rwa_table_height
@@ -245,7 +252,15 @@ def _league_split_payload(
         return None
     df = build_df(rows)
     rj, cj = _dataframe_json_records(df)
-    plural = "networks" if search_entity.lower() == "network" else "platforms"
+    ent = search_entity.strip().lower()
+    if chart_entity_plural:
+        plural = chart_entity_plural
+    elif ent == "network":
+        plural = "networks"
+    elif ent == "platform":
+        plural = "platforms"
+    else:
+        plural = "rows"
     n_sync = min(chart_max_bars, len(rows)) if rows else 1
     split_h = rwa_table_height(max(1, n_sync), max_h=560)
     chart_note = (
@@ -259,13 +274,14 @@ def _league_split_payload(
     else:
         chart_note_inner = chart_note
 
-    ent = search_entity.lower()
-    label = "Search network table" if ent == "network" else "Search platform table"
-    ph = (
-        "Filter by network name…"
-        if ent == "network"
-        else "Filter by platform name…"
-    )
+    if search_label and search_placeholder:
+        label, ph = search_label, search_placeholder
+    elif ent == "network":
+        label, ph = "Search network table", "Filter by network name…"
+    elif ent == "platform":
+        label, ph = "Search platform table", "Filter by platform name…"
+    else:
+        label, ph = "Search table", "Filter…"
 
     cap_html = _caption_markdownish_to_html(caption_md) if caption_md else ""
     section_intro_html = _caption_markdownish_to_html(section_intro_md) if section_intro_md else ""
@@ -776,6 +792,429 @@ def _build_rwa_explore_asset_type_payload(
     }
 
 
+def _build_rwa_explore_market_participant_payload(
+    manifest: dict,
+    net_pack: tuple[list[Any], list[Any], Any],
+    plat_pack: tuple[list[Any], list[Any], Any],
+    am_pack: tuple[list[Any], list[Any], Any],
+) -> dict[str, Any]:
+    """Preview sections aligned with Streamlit ``show_rwa_explore_by_market_participant_widget``."""
+    from home_layout import rwa_xyz_mirror_footer_text
+    from rwa_league.client import APP_ASSET_MANAGERS, APP_NETWORKS, APP_PLATFORMS
+    from rwa_league.dataframe_table import (
+        build_rwa_asset_managers_page_dataframe,
+        build_rwa_networks_page_dataframe,
+        build_rwa_platforms_page_dataframe,
+    )
+    from rwa_league.widgets import (
+        ASSET_MANAGERS_RWA_LINK_LABEL,
+        ASSET_MANAGERS_RWA_URL,
+        GLOBAL_MARKET_RWA_LINK_LABEL,
+        GLOBAL_MARKET_RWA_URL,
+        PLATFORMS_RWA_LINK_LABEL,
+        PLATFORMS_RWA_URL,
+    )
+
+    sections: list[dict[str, Any]] = []
+
+    pnet_rows, pnet_kpis, pnet_err = net_pack
+    sec_net: dict[str, Any] = {
+        "id": "participant_networks",
+        "title": "Networks",
+        "anchor_id": "jd-rwa-participants-networks",
+        "kpi_window_note": _kpi_legend_for_asset("Networks"),
+        "kpis": [_rwa_kpi_to_dict(k) for k in pnet_kpis],
+        "table_subheading": None,
+        "info_html_preview": "",
+        "columns": [],
+        "rows": [],
+        "preview_note": "",
+        "info_html": "",
+        "warn_html": "",
+        "cta": [
+            {
+                "href": STATIC_RWA_PARTICIPANTS_NETWORKS_PAGE,
+                "label": "Open full Participants — Networks page",
+                "variant": "primary",
+                "internal": True,
+            },
+            {"href": GLOBAL_MARKET_RWA_URL, "label": GLOBAL_MARKET_RWA_LINK_LABEL, "variant": "secondary"},
+        ],
+    }
+    if pnet_err and not pnet_rows:
+        sec_net["warn_html"] = f'<p class="alert warn">{html_escape(str(pnet_err))}</p>'
+    elif not pnet_rows:
+        sec_net["info_html"] = '<p class="alert info">No Networks league rows returned.</p>'
+    else:
+        sec_net["info_html_preview"] = (
+            '<p class="muted">Preview of the <strong>Networks</strong> table from '
+            f'<a href="{html_escape(APP_NETWORKS, quote=True)}" target="_blank" rel="noopener noreferrer">RWA.xyz Networks</a> '
+            "(same KPI totals formatted under <strong>Participants — Networks</strong>).</p>"
+        )
+        prev = list(pnet_rows)[:EXPLORE_ASSET_PREVIEW_ROWS]
+        df_n = build_rwa_networks_page_dataframe(prev)
+        rj, cj = _dataframe_json_records(df_n)
+        sec_net["columns"], sec_net["rows"] = cj, rj
+        sec_net["preview_note"] = (
+            f"Preview: first {len(prev)} of {len(pnet_rows)} networks (Distributed · Networks)."
+        )
+    sections.append(sec_net)
+
+    pplat_rows, pplat_kpis, pplat_err = plat_pack
+    sec_plat: dict[str, Any] = {
+        "id": "participant_platforms",
+        "title": "Platforms",
+        "anchor_id": "jd-rwa-participants-platforms",
+        "kpi_window_note": _kpi_legend_for_asset("Platforms"),
+        "kpis": [_rwa_kpi_to_dict(k) for k in pplat_kpis],
+        "table_subheading": None,
+        "info_html_preview": "",
+        "columns": [],
+        "rows": [],
+        "preview_note": "",
+        "info_html": "",
+        "warn_html": "",
+        "cta": [
+            {
+                "href": STATIC_RWA_PARTICIPANTS_PLATFORMS_PAGE,
+                "label": "Open full Participants — Platforms page",
+                "variant": "primary",
+                "internal": True,
+            },
+            {"href": PLATFORMS_RWA_URL, "label": PLATFORMS_RWA_LINK_LABEL, "variant": "secondary"},
+        ],
+    }
+    if pplat_err and not pplat_rows:
+        sec_plat["warn_html"] = f'<p class="alert warn">{html_escape(str(pplat_err))}</p>'
+    elif not pplat_rows:
+        sec_plat["info_html"] = '<p class="alert info">No Platforms league rows returned.</p>'
+    else:
+        sec_plat[
+            "info_html_preview"
+        ] = f'<p class="muted">Preview of the <strong>Distributed</strong> Platforms issuer table from <a href="{html_escape(APP_PLATFORMS, quote=True)}" target="_blank" rel="noopener noreferrer">RWA.xyz Platforms</a>.</p>'
+        prev = list(pplat_rows)[:EXPLORE_ASSET_PREVIEW_ROWS]
+        df_p = build_rwa_platforms_page_dataframe(prev)
+        rj, cj = _dataframe_json_records(df_p)
+        sec_plat["columns"], sec_plat["rows"] = cj, rj
+        sec_plat["preview_note"] = (
+            f"Preview: first {len(prev)} of {len(pplat_rows)} platforms (Distributed · Platforms)."
+        )
+    sections.append(sec_plat)
+
+    pam_rows, pam_kpis, pam_err = am_pack
+    sec_am: dict[str, Any] = {
+        "id": "participant_asset_managers",
+        "title": "Asset Managers",
+        "anchor_id": "jd-rwa-participants-asset-managers",
+        "kpi_window_note": _kpi_legend_for_asset("Asset Managers"),
+        "kpis": [_rwa_kpi_to_dict(k) for k in pam_kpis],
+        "table_subheading": None,
+        "info_html_preview": "",
+        "columns": [],
+        "rows": [],
+        "preview_note": "",
+        "info_html": "",
+        "warn_html": "",
+        "cta": [
+            {
+                "href": STATIC_RWA_PARTICIPANTS_ASSET_MANAGERS_PAGE,
+                "label": "Open full Participants — Asset Managers page",
+                "variant": "primary",
+                "internal": True,
+            },
+            {"href": ASSET_MANAGERS_RWA_URL, "label": ASSET_MANAGERS_RWA_LINK_LABEL, "variant": "secondary"},
+        ],
+    }
+    if pam_err and not pam_rows:
+        sec_am["warn_html"] = f'<p class="alert warn">{html_escape(str(pam_err))}</p>'
+    elif not pam_rows:
+        sec_am["info_html"] = '<p class="alert info">No Asset Managers league rows returned.</p>'
+    else:
+        sec_am[
+            "info_html_preview"
+        ] = f'<p class="muted">Preview of the <strong>Distributed</strong> Asset Managers table from <a href="{html_escape(APP_ASSET_MANAGERS, quote=True)}" target="_blank" rel="noopener noreferrer">RWA.xyz Asset Managers</a>.</p>'
+        prev = list(pam_rows)[:EXPLORE_ASSET_PREVIEW_ROWS]
+        df_a = build_rwa_asset_managers_page_dataframe(prev)
+        rj, cj = _dataframe_json_records(df_a)
+        sec_am["columns"], sec_am["rows"] = cj, rj
+        sec_am["preview_note"] = (
+            f"Preview: first {len(prev)} of {len(pam_rows)} asset managers (Distributed · Asset Managers)."
+        )
+    sections.append(sec_am)
+
+    intro_html = (
+        "<p><strong>RWA.xyz</strong> live data. Each block below is a short preview from the same pipeline as the "
+        "Streamlit <strong>Explore by Market Participant</strong> page.</p>"
+        "<p>Use <strong>Open full Participants — … page</strong> for the extended static view (search, full tables, and "
+        "charts), or the second button to open the live app on RWA.xyz.</p>"
+        "<ul>"
+        "<li>Networks</li><li>Platforms</li><li>Asset Managers</li>"
+        "</ul>"
+    )
+
+    return {
+        "page_title": "Explore by Market Participant — JPM Digital",
+        "page_subtitle_html": (
+            "Hub previews — same <strong>Networks / Platforms / Asset Managers</strong> teasers as the Streamlit "
+            "<strong>Explore by Market Participant</strong> page "
+            f"(first {EXPLORE_ASSET_PREVIEW_ROWS} rows per league where applicable)."
+        ),
+        "intro_html": intro_html,
+        "sections": sections,
+        "footer_note": re.sub(r"\*\*", "", rwa_xyz_mirror_footer_text()),
+        "links": {
+            "rwa_global": "rwa-global.html",
+            "hub_home": "index.html",
+            "explore_asset_type": STATIC_RWA_EXPLORE_ASSET_TYPE_PAGE,
+        },
+    }
+
+
+def _build_rwa_participants_networks_deep_payload(
+    pack: tuple[list[Any], list[Any], Any],
+    manifest: dict[str, Any],
+) -> dict[str, Any]:
+    from home_layout import rwa_xyz_mirror_footer_text
+    from rwa_league.client import APP_NETWORKS
+    from rwa_league.dataframe_table import build_rwa_networks_page_dataframe
+    from rwa_league.widgets import (
+        GLOBAL_MARKET_RWA_LINK_LABEL,
+        GLOBAL_MARKET_RWA_URL,
+        RWA_DATA_SOURCE_CAPTION,
+        RWA_PARTICIPANTS_CHART_MAX_BARS,
+    )
+
+    rows: list[Any] = list(pack[0])
+    kpis: list[Any] = list(pack[1])
+    err_any = pack[2]
+    err_s = "" if err_any is None else str(err_any)
+
+    def _seed() -> dict[str, Any]:
+        return {
+            "page_title": "Participants — Networks — JPM Digital",
+            "band_label": "Participants — Networks",
+            "page_subtitle_html": (
+                f'Mirrors <a href="{html_escape(APP_NETWORKS, quote=True)}">RWA.xyz Networks</a> '
+                "— Distributed Networks league."
+            ),
+            "kpi_window_note": _kpi_legend_for_asset("Networks"),
+            "kpis": [_rwa_kpi_to_dict(k) for k in kpis],
+            "chart_max_bars": RWA_PARTICIPANTS_CHART_MAX_BARS,
+            "back_href": STATIC_RWA_EXPLORE_MARKET_PARTICIPANT_PAGE,
+            "footer_note": re.sub(r"\*\*", "", rwa_xyz_mirror_footer_text()),
+            "bottom_cta": {"href": GLOBAL_MARKET_RWA_URL, "label": GLOBAL_MARKET_RWA_LINK_LABEL},
+        }
+
+    if err_s.strip() and not rows:
+        b = _seed()
+        b["error_mode"] = "warn_total"
+        b["error_detail"] = err_s
+        b["key_observations_html"] = ""
+        b["networks"] = None
+        b["platforms"] = None
+        return b
+    if not rows:
+        b = _seed()
+        b["error_mode"] = "empty_total"
+        b["empty_message"] = "No network rows returned."
+        b["key_observations_html"] = ""
+        b["networks"] = None
+        b["platforms"] = None
+        return b
+
+    try:
+        from pages.RWA_Participants_Networks import (
+            _participants_networks_takeaway_html as _ko,
+        )
+
+        ko_html = _ko()
+    except Exception as exc:
+        manifest["errors"].append(f"Participants Networks takeaway HTML export: {exc}")
+        ko_html = ""
+
+    b = _seed()
+    b["error_mode"] = ""
+    b["key_observations_html"] = ko_html
+    b["networks"] = _league_split_payload(
+        sorted(rows, key=lambda r: int(getattr(r, "rank", 0) or 0)),
+        build_df=build_rwa_networks_page_dataframe,
+        block_heading="By network (Distributed · Networks)",
+        table_heading="Networks table",
+        chart_heading="Top networks by distributed value",
+        name_column="Network",
+        value_column="RWA value (distributed)",
+        chart_max_bars=RWA_PARTICIPANTS_CHART_MAX_BARS,
+        caption_md=RWA_DATA_SOURCE_CAPTION,
+        search_entity="network",
+    )
+    b["platforms"] = None
+    return b
+
+
+def _build_rwa_participants_platforms_deep_payload(
+    pack: tuple[list[Any], list[Any], Any],
+    manifest: dict[str, Any],
+) -> dict[str, Any]:
+    from home_layout import rwa_xyz_mirror_footer_text
+    from rwa_league.client import APP_PLATFORMS
+    from rwa_league.dataframe_table import build_rwa_platforms_page_dataframe
+    from rwa_league.widgets import (
+        PLATFORMS_RWA_LINK_LABEL,
+        PLATFORMS_RWA_URL,
+        RWA_PARTICIPANTS_CHART_MAX_BARS,
+        RWA_PLATFORMS_DATA_SOURCE_CAPTION,
+    )
+
+    rows_l: list[Any] = list(pack[0])
+    kpis: list[Any] = list(pack[1])
+    err_any = pack[2]
+    err_s = "" if err_any is None else str(err_any)
+
+    def _seed() -> dict[str, Any]:
+        return {
+            "page_title": "Participants — Platforms — JPM Digital",
+            "band_label": "Participants — Platforms",
+            "page_subtitle_html": (
+                f'Mirrors <a href="{html_escape(APP_PLATFORMS, quote=True)}">RWA.xyz Platforms</a> '
+                "— Distributed Platforms league."
+            ),
+            "kpi_window_note": _kpi_legend_for_asset("Platforms"),
+            "kpis": [_rwa_kpi_to_dict(k) for k in kpis],
+            "chart_max_bars": RWA_PARTICIPANTS_CHART_MAX_BARS,
+            "back_href": STATIC_RWA_EXPLORE_MARKET_PARTICIPANT_PAGE,
+            "footer_note": re.sub(r"\*\*", "", rwa_xyz_mirror_footer_text()),
+            "bottom_cta": {"href": PLATFORMS_RWA_URL, "label": PLATFORMS_RWA_LINK_LABEL},
+        }
+
+    if err_s.strip() and not rows_l:
+        b = _seed()
+        b["error_mode"] = "warn_total"
+        b["error_detail"] = err_s
+        b["key_observations_html"] = ""
+        b["networks"] = None
+        b["platforms"] = None
+        return b
+    if not rows_l:
+        b = _seed()
+        b["error_mode"] = "empty_total"
+        b["empty_message"] = "No platform rows returned."
+        b["key_observations_html"] = ""
+        b["networks"] = None
+        b["platforms"] = None
+        return b
+
+    try:
+        from pages.RWA_Participants_Platforms import (
+            _participants_platforms_takeaway_html as _ko,
+        )
+
+        ko_html = _ko()
+    except Exception as exc:
+        manifest["errors"].append(f"Participants Platforms takeaway HTML export: {exc}")
+        ko_html = ""
+
+    b = _seed()
+    b["error_mode"] = ""
+    b["key_observations_html"] = ko_html
+    b["networks"] = _league_split_payload(
+        list(rows_l),
+        build_df=build_rwa_platforms_page_dataframe,
+        block_heading="By platform (Distributed · Platforms)",
+        table_heading="Platforms table",
+        chart_heading="Top platforms by value",
+        name_column="Platform",
+        value_column="RWA value (distributed)",
+        chart_max_bars=RWA_PARTICIPANTS_CHART_MAX_BARS,
+        caption_md=RWA_PLATFORMS_DATA_SOURCE_CAPTION,
+        search_entity="platform",
+    )
+    b["platforms"] = None
+    return b
+
+
+def _build_rwa_participants_asset_managers_deep_payload(
+    pack: tuple[list[Any], list[Any], Any],
+    manifest: dict[str, Any],
+) -> dict[str, Any]:
+    from home_layout import rwa_xyz_mirror_footer_text
+    from rwa_league.client import APP_ASSET_MANAGERS
+    from rwa_league.dataframe_table import build_rwa_asset_managers_page_dataframe
+    from rwa_league.widgets import (
+        ASSET_MANAGERS_RWA_LINK_LABEL,
+        ASSET_MANAGERS_RWA_URL,
+        RWA_ASSET_MANAGERS_DATA_SOURCE_CAPTION,
+        RWA_PARTICIPANTS_CHART_MAX_BARS,
+    )
+
+    rows_l: list[Any] = list(pack[0])
+    kpis: list[Any] = list(pack[1])
+    err_any = pack[2]
+    err_s = "" if err_any is None else str(err_any)
+
+    def _seed() -> dict[str, Any]:
+        return {
+            "page_title": "Participants — Asset Managers — JPM Digital",
+            "band_label": "Participants — Asset Managers",
+            "page_subtitle_html": (
+                f'Mirrors <a href="{html_escape(APP_ASSET_MANAGERS, quote=True)}">RWA.xyz Asset Managers</a>.'
+            ),
+            "kpi_window_note": _kpi_legend_for_asset("Asset Managers"),
+            "kpis": [_rwa_kpi_to_dict(k) for k in kpis],
+            "chart_max_bars": RWA_PARTICIPANTS_CHART_MAX_BARS,
+            "back_href": STATIC_RWA_EXPLORE_MARKET_PARTICIPANT_PAGE,
+            "footer_note": re.sub(r"\*\*", "", rwa_xyz_mirror_footer_text()),
+            "bottom_cta": {"href": ASSET_MANAGERS_RWA_URL, "label": ASSET_MANAGERS_RWA_LINK_LABEL},
+        }
+
+    if err_s.strip() and not rows_l:
+        b = _seed()
+        b["error_mode"] = "warn_total"
+        b["error_detail"] = err_s
+        b["key_observations_html"] = ""
+        b["networks"] = None
+        b["platforms"] = None
+        return b
+    if not rows_l:
+        b = _seed()
+        b["error_mode"] = "empty_total"
+        b["empty_message"] = "No asset manager rows returned."
+        b["key_observations_html"] = ""
+        b["networks"] = None
+        b["platforms"] = None
+        return b
+
+    try:
+        from pages.RWA_Participants_Asset_Managers import (
+            _participants_asset_managers_takeaway_html as _ko,
+        )
+
+        ko_html = _ko()
+    except Exception as exc:
+        manifest["errors"].append(f"Participants Asset Managers takeaway HTML export: {exc}")
+        ko_html = ""
+
+    b = _seed()
+    b["error_mode"] = ""
+    b["key_observations_html"] = ko_html
+    b["networks"] = _league_split_payload(
+        list(rows_l),
+        build_df=build_rwa_asset_managers_page_dataframe,
+        block_heading="By asset manager (Distributed · Asset Managers)",
+        table_heading="Asset Managers table",
+        chart_heading="Top asset managers by value",
+        name_column="Asset manager",
+        value_column="RWA value (distributed)",
+        chart_max_bars=RWA_PARTICIPANTS_CHART_MAX_BARS,
+        caption_md=RWA_ASSET_MANAGERS_DATA_SOURCE_CAPTION,
+        search_entity="platform",
+        search_label="Search asset managers table",
+        search_placeholder="Filter by asset manager name…",
+        chart_entity_plural="asset managers",
+    )
+    b["platforms"] = None
+    return b
+
+
 def _kpi_delta(symbol: str, row: CryptoEtpRow | None) -> dict:
     p, lbl = etp_symbol_price_change_cached(symbol)
     if p is not None:
@@ -900,7 +1339,7 @@ def main() -> None:
     rwa_table_rows, rwa_columns = _dataframe_json_records(rwa_df)
 
     explore_at = STATIC_RWA_EXPLORE_ASSET_TYPE_PAGE
-    explore_mp = _webapp_href("/rwa/explore/participant")
+    explore_mp = STATIC_RWA_EXPLORE_MARKET_PARTICIPANT_PAGE
 
     rwa_onchain_payload = {
         "heading": "RWA Global Market Overview",
@@ -1006,6 +1445,9 @@ def main() -> None:
     )
 
     from rwa_league.client import (
+        fetch_rwa_asset_managers_page_data,
+        fetch_rwa_networks_page_data,
+        fetch_rwa_platforms_page_data,
         fetch_rwa_stablecoins_data,
         fetch_rwa_treasuries_data,
         fetch_rwa_tokenized_stocks_data,
@@ -1029,9 +1471,46 @@ def main() -> None:
         manifest["errors"].append(f"RWA Tokenized Stocks snapshot (Explore + asset pages): {exc}")
         st_pack = ([], [], [], str(exc))
 
+    try:
+        p_net_pack = fetch_rwa_networks_page_data()
+    except Exception as exc:
+        manifest["errors"].append(f"RWA Participants Networks snapshot: {exc}")
+        p_net_pack = ([], [], str(exc))
+
+    try:
+        p_plat_pack = fetch_rwa_platforms_page_data()
+    except Exception as exc:
+        manifest["errors"].append(f"RWA Participants Platforms snapshot: {exc}")
+        p_plat_pack = ([], [], str(exc))
+
+    try:
+        p_am_pack = fetch_rwa_asset_managers_page_data()
+    except Exception as exc:
+        manifest["errors"].append(f"RWA Participants Asset Managers snapshot: {exc}")
+        p_am_pack = ([], [], str(exc))
+
     explore_at_payload = _build_rwa_explore_asset_type_payload(manifest, sc_pack, tr_pack, st_pack)
     (OUT / "rwa_explore_asset_type.json").write_text(
         json.dumps(explore_at_payload, indent=2),
+        encoding="utf-8",
+    )
+
+    explore_mp_payload = _build_rwa_explore_market_participant_payload(manifest, p_net_pack, p_plat_pack, p_am_pack)
+    (OUT / "rwa_explore_market_participant.json").write_text(
+        json.dumps(explore_mp_payload, indent=2),
+        encoding="utf-8",
+    )
+
+    (OUT / "rwa_participants_networks.json").write_text(
+        json.dumps(_build_rwa_participants_networks_deep_payload(p_net_pack, manifest), indent=2),
+        encoding="utf-8",
+    )
+    (OUT / "rwa_participants_platforms.json").write_text(
+        json.dumps(_build_rwa_participants_platforms_deep_payload(p_plat_pack, manifest), indent=2),
+        encoding="utf-8",
+    )
+    (OUT / "rwa_participants_asset_managers.json").write_text(
+        json.dumps(_build_rwa_participants_asset_managers_deep_payload(p_am_pack, manifest), indent=2),
         encoding="utf-8",
     )
 
@@ -1052,7 +1531,9 @@ def main() -> None:
     print(
         f"Wrote static data to {OUT} ({len(rows_payload)} ETPs, {len(etf_items)} ETF headlines, "
         f"{len(rwa_rows)} RWA networks; rwa_global_market.json, rwa_explore_asset_type.json, "
-        "rwa_stablecoins.json, rwa_us_treasuries.json, rwa_tokenized_stocks.json, rwa_onchain_home.json)."
+        "rwa_explore_market_participant.json, rwa_participants_networks.json, rwa_participants_platforms.json, "
+        "rwa_participants_asset_managers.json, rwa_stablecoins.json, rwa_us_treasuries.json, "
+        "rwa_tokenized_stocks.json, rwa_onchain_home.json)."
     )
 
 

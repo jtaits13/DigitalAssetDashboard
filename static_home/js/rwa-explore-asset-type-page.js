@@ -33,8 +33,17 @@
     var L = data.links || {};
     var bg = $("js-exat-back-global");
     var bh = $("js-exat-back-hub");
+    var bx = $("js-exat-back-asset-type");
     if (bg && L.rwa_global) bg.setAttribute("href", assetPath(L.rwa_global));
     if (bh && L.hub_home) bh.setAttribute("href", assetPath(L.hub_home));
+    if (bx) {
+      if (L.explore_asset_type) {
+        bx.setAttribute("href", assetPath(L.explore_asset_type));
+        bx.hidden = false;
+      } else {
+        bx.hidden = true;
+      }
+    }
 
     var root = $("js-exat-sections");
     if (!root) return;
@@ -61,6 +70,13 @@
       section.appendChild(kpiHost);
 
       renderKpis(kpiHost, sec.kpis || [], sec.kpi_window_note || "", { hideIfEmpty: true });
+
+      if (sec.info_html_preview) {
+        var iprev = document.createElement("div");
+        iprev.className = "rwa-exat-preview-caption";
+        iprev.innerHTML = sec.info_html_preview;
+        section.appendChild(iprev);
+      }
 
       if (sec.warn_html) {
         var w = document.createElement("div");
@@ -144,7 +160,9 @@
   }
 
   function boot() {
-    loadJson("rwa_explore_asset_type.json")
+    var name =
+      (document.body.getAttribute("data-explore-json") || "rwa_explore_asset_type.json").trim();
+    loadJson(name)
       .then(renderExploreAssetTypePage)
       .catch(function (e) {
         var b = $("js-exat-banner");

@@ -93,7 +93,7 @@
     theadRow.innerHTML = (columns || [])
       .map(function (c) {
         var label = c === "Link" ? "↗" : esc(c);
-        var isName = c === "Network" || c === "Platform";
+        var isName = c === "Network" || c === "Platform" || c === "Asset manager";
         return "<th" + (isName || c === "Link" ? "" : ' class="num"') + ">" + label + "</th>";
       })
       .join("");
@@ -113,7 +113,7 @@
       var tds = [];
       (columns || []).forEach(function (col) {
         var v = row[col];
-        if (col === "Network" || col === "Platform") {
+        if (col === "Network" || col === "Platform" || col === "Asset manager") {
           var href = row.Link ? esc(row.Link) : "#";
           tds.push(
             "<td><strong><a href=\"" +
@@ -131,10 +131,18 @@
               esc(linkAria) +
               '">↗</a></td>'
           );
-        } else if (col === "Total Value" || col === "Distributed Value") {
+        } else if (
+          col === "Total Value" ||
+          col === "Distributed Value" ||
+          col === "RWA value (distributed)" ||
+          col === "RWA value (represented)" ||
+          col === "RWA total (excl. stablecoins)"
+        ) {
           tds.push('<td class="num">' + fmtUsdCompact(v) + "</td>");
         } else if (col === "7D Δ value") {
           tds.push('<td class="num' + pctCellCls(v) + '">' + fmtPctPts(v, 2) + "</td>");
+        } else if (col === "% distributed") {
+          tds.push('<td class="num">' + fmtPctPts(v, 2) + "</td>");
         } else if (col === "Market Share" || col === "30D Δ share") {
           tds.push('<td class="num">' + fmtPctPts(v, 2) + "</td>");
         } else if (col === "#" || col === "RWA Count" || col === "Stablecoins") {
@@ -151,7 +159,7 @@
   function exploreSplitHtml(links) {
     var L = links || {};
     var at = L.explore_asset_type || "rwa-explore-asset-type.html";
-    var mp = L.explore_market_participant || "/rwa/explore/participant";
+    var mp = L.explore_market_participant || "rwa-explore-market-participant.html";
     var card = function (title, items, href) {
       return (
         '<article class="jd-hub-explore-card-static">' +

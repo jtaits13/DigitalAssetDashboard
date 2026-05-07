@@ -31,7 +31,12 @@
     if (p.endsWith("/etf-news.html")) return p.slice(0, -"etf-news.html".length);
     if (p.endsWith("/etps.html")) return p.slice(0, -"etps.html".length);
     if (p.endsWith("/rwa-global.html")) return p.slice(0, -"rwa-global.html".length);
-    if (p.endsWith("/rwa-explore-asset-type.html")) return p.slice(0, -"rwa-explore-asset-type.html".length);
+    if (p.endsWith("/rwa-explore-market-participant.html"))
+      return p.slice(0, -"rwa-explore-market-participant.html".length);
+    if (p.endsWith("/rwa-participants-networks.html")) return p.slice(0, -"rwa-participants-networks.html".length);
+    if (p.endsWith("/rwa-participants-platforms.html")) return p.slice(0, -"rwa-participants-platforms.html".length);
+    if (p.endsWith("/rwa-participants-asset-managers.html"))
+      return p.slice(0, -"rwa-participants-asset-managers.html".length);
     if (p.endsWith("/rwa-stablecoins.html")) return p.slice(0, -"rwa-stablecoins.html".length);
     if (p.endsWith("/rwa-us-treasuries.html")) return p.slice(0, -"rwa-us-treasuries.html".length);
     if (p.endsWith("/rwa-tokenized-stocks.html")) return p.slice(0, -"rwa-tokenized-stocks.html".length);
@@ -89,6 +94,10 @@
       var pairs = [
         ["rwa-global.html", "rwa-global.html"],
         ["rwa-explore-asset-type.html", "rwa-explore-asset-type.html"],
+        ["rwa-explore-market-participant.html", "rwa-explore-market-participant.html"],
+        ["rwa-participants-networks.html", "rwa-participants-networks.html"],
+        ["rwa-participants-platforms.html", "rwa-participants-platforms.html"],
+        ["rwa-participants-asset-managers.html", "rwa-participants-asset-managers.html"],
         ["rwa-stablecoins.html", "rwa-stablecoins.html"],
         ["rwa-us-treasuries.html", "rwa-us-treasuries.html"],
         ["rwa-tokenized-stocks.html", "rwa-tokenized-stocks.html"],
