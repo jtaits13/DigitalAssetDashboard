@@ -392,35 +392,29 @@ body {
   background: rgba(37, 128, 156, 0.14);
 }
 
-/* —— Ticker: marquee scroll right → left —— */
+/* —— Ticker: marquee scroll (matches Streamlit price_ticker: two tracks + translateX(-50%)) —— */
 .ticker-strip__viewport {
   overflow: hidden;
   width: 100%;
-  mask-image: linear-gradient(90deg, transparent 0%, #000 1.75%, #000 98.25%, transparent 100%);
-  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 1.75%, #000 98.25%, transparent 100%);
 }
 
-.ticker-strip__track {
-  display: inline-flex;
-  flex-wrap: nowrap;
-  align-items: center;
-  gap: 0;
+.ticker-strip__move {
+  display: flex;
   width: max-content;
-  will-change: transform;
-  animation-name: jd-ticker-marquee-rtl;
-  animation-duration: 42s;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
+  animation: jd-ticker-marquee-rtl 120s linear infinite;
 }
 
-.ticker-strip__track .ticker-strip__chips {
+.ticker-strip__move:hover {
+  animation-play-state: paused;
+}
+
+.ticker-strip__viewport .ticker-strip__drum.ticker-strip__chips {
   display: inline-flex;
-  flex-wrap: nowrap;
-  align-items: center;
-  gap: 0.45rem 1.1rem;
-  justify-content: flex-start;
-  padding-right: 2.75rem;
   flex-shrink: 0;
+  flex-wrap: nowrap;
+  align-items: baseline;
+  gap: 0.75rem 2.25rem;
+  justify-content: flex-start;
 }
 
 .ticker-strip__chips.ticker-strip__chips--marquee-clone {
@@ -429,39 +423,39 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .ticker-strip__viewport {
-    overflow: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
     mask-image: none;
     -webkit-mask-image: none;
   }
 
-  .ticker-strip__track {
+  .ticker-strip__move {
     animation: none !important;
-    transform: translate3d(0, 0, 0);
-    gap: 0.45rem 1.1rem;
+    transform: translateX(0);
     flex-wrap: wrap;
     width: auto;
     max-width: 100%;
     justify-content: center;
-    will-change: auto;
   }
 
-  .ticker-strip__track .ticker-strip__chips--marquee-clone {
+  .ticker-strip__move .ticker-strip__chips--marquee-clone {
     display: none !important;
   }
 
-  .ticker-strip__track .ticker-strip__chips {
+  .ticker-strip__viewport .ticker-strip__drum.ticker-strip__chips {
     flex-wrap: wrap;
     justify-content: center;
-    padding-right: 0;
   }
 }
 
 @keyframes jd-ticker-marquee-rtl {
-  from {
-    transform: translate3d(0, 0, 0);
+  0% {
+    transform: translateX(0);
   }
-  to {
-    transform: translate3d(calc(-1 * var(--ticker-shift, 400px)), 0, 0);
+  100% {
+    transform: translateX(-50%);
   }
 }
 

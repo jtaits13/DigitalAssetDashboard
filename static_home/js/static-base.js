@@ -136,46 +136,19 @@
 
       strip.setAttribute("data-ticker-marquee", "1");
 
+      chips.classList.add("ticker-strip__drum");
+
       var viewport = document.createElement("div");
       viewport.className = "ticker-strip__viewport";
-      var track = document.createElement("div");
-      track.className = "ticker-strip__track";
-
-      track.appendChild(chips);
-      var clone = chips.cloneNode(true);
-      clone.setAttribute("aria-hidden", "true");
-      clone.classList.add("ticker-strip__chips--marquee-clone");
-      track.appendChild(clone);
-      viewport.appendChild(track);
+      var move = document.createElement("div");
+      move.className = "ticker-strip__move";
+      move.appendChild(chips);
+      var drumB = chips.cloneNode(true);
+      drumB.setAttribute("aria-hidden", "true");
+      drumB.classList.add("ticker-strip__chips--marquee-clone");
+      move.appendChild(drumB);
+      viewport.appendChild(move);
       layout.appendChild(viewport);
-
-      function applyShiftAndDuration() {
-        var w = chips.offsetWidth;
-        if (!w || w < 40) return;
-        track.style.setProperty("--ticker-shift", w + "px");
-        var pxPerSec = 50;
-        var sec = Math.max(18, Math.min(92, w / pxPerSec));
-        track.style.animationDuration = sec + "s";
-      }
-
-      applyShiftAndDuration();
-      window.addEventListener(
-        "resize",
-        function () {
-          applyShiftAndDuration();
-        },
-        { passive: true }
-      );
-
-      try {
-        if (typeof ResizeObserver !== "undefined") {
-          var ro = new ResizeObserver(function () {
-            applyShiftAndDuration();
-          });
-          ro.observe(strip);
-          ro.observe(chips);
-        }
-      } catch (eRo) {}
     }
   }
 
