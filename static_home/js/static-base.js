@@ -8,6 +8,7 @@
     if (p.endsWith("/etf-news.html")) return p.slice(0, -"etf-news.html".length);
     if (p.endsWith("/etps.html")) return p.slice(0, -"etps.html".length);
     if (p.endsWith("/rwa-global.html")) return p.slice(0, -"rwa-global.html".length);
+    if (p.endsWith("/rwa-explore-asset-type.html")) return p.slice(0, -"rwa-explore-asset-type.html".length);
     if (p.endsWith("/")) return p;
     // ``/repo-name`` with no trailing slash: treat as directory so ``rwa-global.html`` does not resolve to site root.
     if (/^\/[^/]+$/.test(p)) return p + "/";
@@ -29,19 +30,25 @@
 
   global.__STATIC = { basePath: basePath, assetUrl: assetUrl, dataUrl: dataUrl };
 
-  /** Rewrite bare ``rwa-global.html`` anchors so they work when the page URL is ``/repo`` (no trailing slash). */
-  function fixRwaGlobalNavLinks() {
+  /** Rewrite bare ``*.html`` hub links for GitHub project Pages (``/repo`` without trailing slash). */
+  function fixStaticHubHtmlAnchors() {
     if (typeof document === "undefined") return;
     var run = function () {
-      var abs = assetUrl("rwa-global.html");
-      document.querySelectorAll('a[href="rwa-global.html"]').forEach(function (a) {
-        a.setAttribute("href", abs);
+      var pairs = [
+        ["rwa-global.html", "rwa-global.html"],
+        ["rwa-explore-asset-type.html", "rwa-explore-asset-type.html"],
+      ];
+      pairs.forEach(function (p) {
+        var abs = assetUrl(p[1]);
+        document.querySelectorAll('a[href="' + p[0] + '"]').forEach(function (a) {
+          a.setAttribute("href", abs);
+        });
       });
     };
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
     else run();
   }
-  fixRwaGlobalNavLinks();
+  fixStaticHubHtmlAnchors();
 
   global.loadJson = function (name) {
     return fetch(dataUrl(name), { credentials: "same-origin" }).then(function (r) {

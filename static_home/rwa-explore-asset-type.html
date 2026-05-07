@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Explore by Asset Type — JPM Digital</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="page-rwa-explore-at">
+    <header class="site-header" role="banner">
+      <div class="site-header__inner">
+        <a class="site-brand" href="index.html">JPM Digital Assets Dashboard</a>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="index.html">Home</a>
+          <a href="etps.html">U.S. ETPs</a>
+          <a href="etf-news.html">ETF news</a>
+          <a href="rwa-global.html">RWA Market</a>
+          <a href="rwa-explore-asset-type.html" class="is-active">RWA · Assets</a>
+          <a href="index.html#section-onchain">On-chain</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="ticker-strip" aria-label="Sample price strip (illustrative)">
+      <div class="ticker-strip__layout">
+        <span class="ticker-strip__label">Top cryptocurrencies</span>
+        <div class="ticker-strip__chips">
+          <span class="ticker-chip"><strong>BTC</strong> <span class="ticker-usd">$97,240</span> <span class="up">+1.2%</span></span>
+          <span class="ticker-chip"><strong>ETH</strong> <span class="ticker-usd">$3,412</span> <span class="up">+0.8%</span></span>
+        </div>
+      </div>
+    </div>
+
+    <main class="page-shell page-shell--wide">
+      <header class="page-intro">
+        <p class="band-label teal">Explore by Asset Type</p>
+        <div class="page-intro__dek" id="js-exat-subtitle"></div>
+        <div class="rwa-exat-intro takeaways" id="js-exat-intro"></div>
+      </header>
+
+      <hr class="section-rule" />
+
+      <div class="data-banner" id="js-exat-banner" role="status" hidden></div>
+
+      <div id="js-exat-sections" class="rwa-exat-sections"></div>
+
+      <p class="back-link rwa-exat-back">
+        <a id="js-exat-back-global" href="rwa-global.html">← RWA Global Market Overview</a>
+        <span class="rwa-exat-back-sep"> · </span>
+        <a id="js-exat-back-hub" href="index.html">Hub home</a>
+      </p>
+    </main>
+
+    <footer class="site-footer">
+      <span id="js-exat-footer-note"></span>
+      <span class="timestamp-foot"> · GitHub Pages · JSON export mirrors Streamlit pipelines · May 2026</span>
+    </footer>
+
+    <script src="js/static-base.js"></script>
+    <script src="js/rwa-onchain-home.js"></script>
+    <script src="js/rwa-explore-asset-type-page.js"></script>
+  </body>
+</html>

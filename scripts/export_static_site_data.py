@@ -6,7 +6,7 @@ Run in CI:    before upload-pages-artifact (see .github/workflows).
 
 Uses the same RSS / StockAnalysis / yfinance / RWA.xyz logic as the Streamlit app (no Streamlit UI).
 
-Optional env ``STATIC_WEBAPP_BASE``: absolute origin for FastAPI-only links (e.g. ``/rwa/explore/...``) embedded in JSON when the static hub is on GitHub Pages but the API lives elsewhere. The full RWA Global overview is served as ``static_home/rwa-global.html`` (not ``/rwa/global``).
+Optional env ``STATIC_WEBAPP_BASE``: absolute origin for FastAPI-only links (e.g. ``/rwa/explore/participant``) when the hub is on GitHub Pages but the API lives elsewhere. Served as HTML in ``static_home/``: Global overview ``rwa-global.html``, Explore by Asset Type ``rwa-explore-asset-type.html`` (not ``/rwa/global`` nor ``/rwa/explore/asset-type``).
 """
 
 from __future__ import annotations
@@ -52,6 +52,8 @@ OUT = _REPO / "static_home" / "data"
 HOME_NEWS_N = 3
 REG_N = 3
 HOME_RWA_PREVIEW_ROWS = 8
+EXPLORE_ASSET_PREVIEW_ROWS = 8
+STATIC_RWA_EXPLORE_ASSET_TYPE_PAGE = "rwa-explore-asset-type.html"
 APP_RWA_NETWORKS_URL = "https://app.rwa.xyz/networks"
 
 DEFAULT_UA = os.environ.get(
@@ -179,6 +181,170 @@ def _dataframe_json_records(df: Any) -> tuple[list[dict[str, object]], list[str]
     return rows_out, cols
 
 
+def _kpi_legend_for_asset(overview_title: str) -> str:
+    return (
+        "All % changes in this row are 30-day (30D) (RWA.xyz). "
+        f"Headline totals from the RWA.xyz {overview_title} Overview."
+    )
+
+
+def _build_rwa_explore_asset_type_payload(manifest: dict) -> dict[str, Any]:
+    """Preview sections aligned with Streamlit ``show_rwa_explore_by_asset_type_widget`` (+ FastAPI hub index)."""
+    from home_layout import rwa_xyz_mirror_footer_text
+    from rwa_league.client import (
+        APP_STABLECOINS,
+        APP_STOCKS,
+        APP_TREASURIES,
+        fetch_rwa_stablecoins_data,
+        fetch_rwa_treasuries_data,
+        fetch_rwa_tokenized_stocks_data,
+    )
+    from rwa_league.dataframe_table import (
+        build_stablecoin_platform_dataframe,
+        build_tokenized_stock_platform_dataframe,
+        build_us_treasury_network_dataframe,
+    )
+    from rwa_league.widgets import (
+        STABLECOINS_RWA_LINK_LABEL,
+        TREASURIES_RWA_LINK_LABEL,
+        TOKENIZED_STOCKS_RWA_LINK_LABEL,
+    )
+
+    sections: list[dict[str, Any]] = []
+
+    try:
+        sc_net, sc_plat, sc_kpis, sc_err = fetch_rwa_stablecoins_data()
+    except Exception as exc:
+        manifest["errors"].append(f"RWA explore Stablecoins fetch: {exc}")
+        sc_net, sc_plat, sc_kpis, sc_err = [], [], [], str(exc)
+
+    sec_sc: dict[str, Any] = {
+        "id": "stablecoins",
+        "title": "Stablecoins",
+        "anchor_id": "jd-rwa-stablecoins",
+        "kpi_window_note": _kpi_legend_for_asset("Stablecoins"),
+        "kpis": [_rwa_kpi_to_dict(k) for k in sc_kpis],
+        "table_subheading": None,
+        "columns": [],
+        "rows": [],
+        "preview_note": "",
+        "info_html": "",
+        "warn_html": "",
+        "cta": [{"href": APP_STABLECOINS, "label": STABLECOINS_RWA_LINK_LABEL, "variant": "primary"}],
+    }
+    if sc_err and not sc_net and not sc_plat:
+        sec_sc["warn_html"] = f'<p class="alert warn">{html_escape(str(sc_err))}</p>'
+    elif not sc_net and not sc_plat:
+        sec_sc["info_html"] = '<p class="alert info">No Stablecoins league rows returned.</p>'
+    elif sc_plat:
+        prev = list(sc_plat)[:EXPLORE_ASSET_PREVIEW_ROWS]
+        df_sc = build_stablecoin_platform_dataframe(prev)
+        rj, cj = _dataframe_json_records(df_sc)
+        sec_sc["columns"], sec_sc["rows"] = cj, rj
+        sec_sc["preview_note"] = (
+            f"Preview: first {len(prev)} of {len(sc_plat)} platforms (Stablecoins · Platforms)."
+        )
+    else:
+        sec_sc["info_html"] = '<p class="muted"><em>No platform rows.</em></p>'
+    sections.append(sec_sc)
+
+    try:
+        tr_rows, tr_plat, tr_kpis, tr_err = fetch_rwa_treasuries_data()
+    except Exception as exc:
+        manifest["errors"].append(f"RWA explore Treasuries fetch: {exc}")
+        tr_rows, tr_plat, tr_kpis, tr_err = [], [], [], str(exc)
+
+    sec_tr: dict[str, Any] = {
+        "id": "treasuries",
+        "title": "US Treasuries",
+        "anchor_id": "jd-rwa-treasuries",
+        "kpi_window_note": _kpi_legend_for_asset("US Treasuries"),
+        "kpis": [_rwa_kpi_to_dict(k) for k in tr_kpis],
+        "table_subheading": "By network (Distributed · Networks)",
+        "columns": [],
+        "rows": [],
+        "preview_note": "",
+        "info_html": "",
+        "warn_html": "",
+        "cta": [{"href": APP_TREASURIES, "label": TREASURIES_RWA_LINK_LABEL, "variant": "primary"}],
+    }
+    if tr_err and not tr_rows and not tr_plat:
+        sec_tr["warn_html"] = f'<p class="alert warn">{html_escape(str(tr_err))}</p>'
+    elif not tr_rows and not tr_plat:
+        sec_tr["info_html"] = '<p class="alert info">No US Treasuries league rows returned.</p>'
+    elif tr_rows:
+        prev = list(tr_rows)[:EXPLORE_ASSET_PREVIEW_ROWS]
+        df_tr = build_us_treasury_network_dataframe(prev)
+        rj, cj = _dataframe_json_records(df_tr)
+        sec_tr["columns"], sec_tr["rows"] = cj, rj
+        sec_tr["preview_note"] = (
+            f"Preview: first {len(prev)} of {len(tr_rows)} networks (US Treasuries · Distributed · Networks)."
+        )
+    else:
+        sec_tr["info_html"] = '<p class="muted"><em>No treasury network rows.</em></p>'
+    sections.append(sec_tr)
+
+    try:
+        st_net, st_plat, st_kpis, st_err = fetch_rwa_tokenized_stocks_data()
+    except Exception as exc:
+        manifest["errors"].append(f"RWA explore Tokenized Stocks fetch: {exc}")
+        st_net, st_plat, st_kpis, st_err = [], [], [], str(exc)
+
+    sec_st: dict[str, Any] = {
+        "id": "tokenized_stocks",
+        "title": "Tokenized Stocks",
+        "anchor_id": "jd-rwa-tokenized-stocks",
+        "kpi_window_note": _kpi_legend_for_asset("Tokenized Stocks"),
+        "kpis": [_rwa_kpi_to_dict(k) for k in st_kpis],
+        "table_subheading": None,
+        "columns": [],
+        "rows": [],
+        "preview_note": "",
+        "info_html": "",
+        "warn_html": "",
+        "cta": [{"href": APP_STOCKS, "label": TOKENIZED_STOCKS_RWA_LINK_LABEL, "variant": "primary"}],
+    }
+    if st_err and not st_net and not st_plat:
+        sec_st["warn_html"] = f'<p class="alert warn">{html_escape(str(st_err))}</p>'
+    elif not st_net and not st_plat:
+        sec_st["info_html"] = '<p class="alert info">No Tokenized Stocks league rows returned.</p>'
+    elif st_plat:
+        prev = list(st_plat)[:EXPLORE_ASSET_PREVIEW_ROWS]
+        df_st = build_tokenized_stock_platform_dataframe(prev)
+        rj, cj = _dataframe_json_records(df_st)
+        sec_st["columns"], sec_st["rows"] = cj, rj
+        sec_st["preview_note"] = (
+            f"Preview: first {len(prev)} of {len(st_plat)} platforms (Tokenized Stocks · Distributed · Platforms)."
+        )
+    else:
+        sec_st["info_html"] = '<p class="alert info">No Tokenized Stocks platform rows returned.</p>'
+    sections.append(sec_st)
+
+    intro_html = (
+        "<p><strong>RWA.xyz</strong> live data. Below are three asset areas—each block is a preview "
+        "matching the Streamlit <strong>Explore by Asset Type</strong> page; open the RWA.xyz link for the full league.</p>"
+        "<ul>"
+        "<li>Stablecoins</li><li>US Treasuries</li><li>Tokenized Stocks</li>"
+        "</ul>"
+    )
+
+    return {
+        "page_title": "Explore by Asset Type — JPM Digital",
+        "page_subtitle_html": (
+            "Hub previews — same <strong>Platforms / Networks</strong> teasers as the Streamlit "
+            "<strong>Explore by Asset Type</strong> page "
+            f"(first {EXPLORE_ASSET_PREVIEW_ROWS} rows per league where applicable)."
+        ),
+        "intro_html": intro_html,
+        "sections": sections,
+        "footer_note": re.sub(r"\*\*", "", rwa_xyz_mirror_footer_text()),
+        "links": {
+            "rwa_global": "rwa-global.html",
+            "hub_home": "index.html",
+        },
+    }
+
+
 def _kpi_delta(symbol: str, row: CryptoEtpRow | None) -> dict:
     p, lbl = etp_symbol_price_change_cached(symbol)
     if p is not None:
@@ -302,7 +468,7 @@ def main() -> None:
     rwa_df = build_rwa_dataframe(rwa_preview) if rwa_preview else pd.DataFrame()
     rwa_table_rows, rwa_columns = _dataframe_json_records(rwa_df)
 
-    explore_at = _webapp_href("/rwa/explore/asset-type")
+    explore_at = STATIC_RWA_EXPLORE_ASSET_TYPE_PAGE
     explore_mp = _webapp_href("/rwa/explore/participant")
 
     rwa_onchain_payload = {
@@ -408,10 +574,16 @@ def main() -> None:
         encoding="utf-8",
     )
 
+    explore_at_payload = _build_rwa_explore_asset_type_payload(manifest)
+    (OUT / "rwa_explore_asset_type.json").write_text(
+        json.dumps(explore_at_payload, indent=2),
+        encoding="utf-8",
+    )
+
     (OUT / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     print(
         f"Wrote static data to {OUT} ({len(rows_payload)} ETPs, {len(etf_items)} ETF headlines, "
-        f"{len(rwa_rows)} RWA networks; rwa_global_market.json + rwa_onchain_home.json)."
+        f"{len(rwa_rows)} RWA networks; rwa_global_market.json, rwa_explore_asset_type.json, rwa_onchain_home.json)."
     )
 
 

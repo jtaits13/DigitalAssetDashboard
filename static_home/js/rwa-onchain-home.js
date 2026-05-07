@@ -41,12 +41,19 @@
     return typeof fn === "function" ? fn(String(s == null ? "" : s)) : String(s == null ? "" : s);
   }
 
-  function renderKpis(host, kpis, legendText) {
+  function renderKpis(host, kpis, legendText, kpiOpts) {
+    var ko = kpiOpts || {};
     if (!host) return;
     if (!kpis || !kpis.length) {
-      host.innerHTML = '<p class="toolbar-note">No Global Market headline KPIs returned.</p>';
+      if (ko.hideIfEmpty) {
+        host.innerHTML = "";
+        host.style.display = "none";
+        return;
+      }
+      host.innerHTML = '<p class="toolbar-note">No headline KPIs returned for this block.</p>';
       return;
     }
+    host.style.display = "";
     var cells = kpis
       .map(function (k) {
         return (
@@ -72,7 +79,10 @@
       "</div></div>";
   }
 
-  function renderTable(theadRow, tbody, columns, rows) {
+  function renderTable(theadRow, tbody, columns, rows, tableOpts) {
+    var opts = typeof tableOpts === "string" ? { emptyMsg: tableOpts } : tableOpts || {};
+    var emptyMsg = opts.emptyMsg;
+    var linkAria = opts.linkAria || "Open link";
     if (!theadRow || !tbody) return;
     if (!columns || !columns.length) {
       theadRow.innerHTML = "";
@@ -83,14 +93,19 @@
     theadRow.innerHTML = (columns || [])
       .map(function (c) {
         var label = c === "Link" ? "↗" : esc(c);
-        return "<th" + (c !== "Network" && c !== "Link" ? ' class="num"' : "") + ">" + label + "</th>";
+        var isName = c === "Network" || c === "Platform";
+        return "<th" + (isName || c === "Link" ? "" : ' class="num"') + ">" + label + "</th>";
       })
       .join("");
     tbody.innerHTML = "";
     if (!rows || !rows.length) {
       var colspan = columns && columns.length ? columns.length : 1;
       tbody.innerHTML =
-        '<tr><td colspan="' + colspan + '">No network preview rows. Run export or check RWA fetch.</td></tr>';
+        '<tr><td colspan="' +
+        colspan +
+        '">' +
+        esc(emptyMsg || "No preview rows. Run export or check RWA fetch.") +
+        "</td></tr>";
       return;
     }
     rows.forEach(function (row) {
@@ -98,7 +113,7 @@
       var tds = [];
       (columns || []).forEach(function (col) {
         var v = row[col];
-        if (col === "Network") {
+        if (col === "Network" || col === "Platform") {
           var href = row.Link ? esc(row.Link) : "#";
           tds.push(
             "<td><strong><a href=\"" +
@@ -112,15 +127,17 @@
           tds.push(
             '<td class="num"><a class="rwa-table-link" href="' +
               h +
-              '" target="_blank" rel="noopener noreferrer" aria-label="Open network">↗</a></td>'
+              '" target="_blank" rel="noopener noreferrer" aria-label="' +
+              esc(linkAria) +
+              '">↗</a></td>'
           );
-        } else if (col === "Total Value") {
+        } else if (col === "Total Value" || col === "Distributed Value") {
           tds.push('<td class="num">' + fmtUsdCompact(v) + "</td>");
         } else if (col === "7D Δ value") {
           tds.push('<td class="num' + pctCellCls(v) + '">' + fmtPctPts(v, 2) + "</td>");
         } else if (col === "Market Share" || col === "30D Δ share") {
           tds.push('<td class="num">' + fmtPctPts(v, 2) + "</td>");
-        } else if (col === "#" || col === "RWA Count") {
+        } else if (col === "#" || col === "RWA Count" || col === "Stablecoins") {
           tds.push('<td class="num">' + (v != null ? esc(String(v)) : "—") + "</td>");
         } else {
           tds.push("<td>" + (v != null ? esc(String(v)) : "—") + "</td>");
