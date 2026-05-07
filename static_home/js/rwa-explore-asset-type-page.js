@@ -115,15 +115,29 @@
       var ctaRow = document.createElement("div");
       ctaRow.className = "cta-row rwa-exat-cta-row";
       (sec.cta || []).forEach(function (c) {
+        var hrefRaw = String(c.href != null ? c.href : "").trim();
         var a = document.createElement("a");
-        a.href = c.href || "#";
-        a.target = "_blank";
-        a.rel = "noopener noreferrer";
         a.textContent = c.label || "Open";
         a.className = c.variant === "primary" ? "btn btn-primary" : "btn btn-secondary";
+        if (c.internal) {
+          var rel = hrefRaw.replace(/^\.\//, "");
+          a.href =
+            global.__STATIC && typeof global.__STATIC.assetUrl === "function"
+              ? global.__STATIC.assetUrl(rel)
+              : rel;
+          a.removeAttribute("target");
+          a.removeAttribute("rel");
+        } else {
+          a.href = hrefRaw || "#";
+          a.target = "_blank";
+          a.rel = "noopener noreferrer";
+        }
         ctaRow.appendChild(a);
       });
       section.appendChild(ctaRow);
+      if (typeof global.finalizeHubAnchors === "function") {
+        global.finalizeHubAnchors(section);
+      }
 
       root.appendChild(section);
     });

@@ -6,7 +6,7 @@ Run in CI:    before upload-pages-artifact (see .github/workflows).
 
 Uses the same RSS / StockAnalysis / yfinance / RWA.xyz logic as the Streamlit app (no Streamlit UI).
 
-Optional env ``STATIC_WEBAPP_BASE``: absolute origin for FastAPI-only links (e.g. ``/rwa/explore/participant``) when the hub is on GitHub Pages but the API lives elsewhere. Served as HTML in ``static_home/``: Global overview ``rwa-global.html``, Explore by Asset Type ``rwa-explore-asset-type.html`` (not ``/rwa/global`` nor ``/rwa/explore/asset-type``).
+Optional env ``STATIC_WEBAPP_BASE``: absolute origin for FastAPI-only links (e.g. ``/rwa/explore/participant``) when the hub is on GitHub Pages but the API lives elsewhere. Served as HTML in ``static_home/``: Global overview ``rwa-global.html``, Explore by Asset Type ``rwa-explore-asset-type.html``, Stablecoins ``rwa-stablecoins.html``, US Treasuries ``rwa-us-treasuries.html``, Tokenized Stocks ``rwa-tokenized-stocks.html``.
 """
 
 from __future__ import annotations
@@ -54,7 +54,12 @@ REG_N = 3
 HOME_RWA_PREVIEW_ROWS = 8
 EXPLORE_ASSET_PREVIEW_ROWS = 8
 STATIC_RWA_EXPLORE_ASSET_TYPE_PAGE = "rwa-explore-asset-type.html"
+STATIC_RWA_STABLECOINS_PAGE = "rwa-stablecoins.html"
+STATIC_RWA_US_TREASURIES_PAGE = "rwa-us-treasuries.html"
+STATIC_RWA_TOKENIZED_STOCKS_PAGE = "rwa-tokenized-stocks.html"
 APP_RWA_NETWORKS_URL = "https://app.rwa.xyz/networks"
+
+_CAPTION_INLINE_LINK_RE = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
 
 DEFAULT_UA = os.environ.get(
     "STOCKANALYSIS_USER_AGENT",
@@ -188,17 +193,368 @@ def _kpi_legend_for_asset(overview_title: str) -> str:
     )
 
 
-def _build_rwa_explore_asset_type_payload(manifest: dict) -> dict[str, Any]:
+def _html_escape_segment_with_bold(seg: str) -> str:
+    if not seg:
+        return ""
+    parts = seg.split("**")
+    out: list[str] = []
+    for i, p in enumerate(parts):
+        esc_p = html_escape(p)
+        out.append(f"<strong>{esc_p}</strong>" if i % 2 == 1 else esc_p)
+    return "".join(out)
+
+
+def _caption_markdownish_to_html(text: str) -> str:
+    """Turn ``**bold**`` and ``[lab](url)`` (no nested links) into safe HTML for static captions."""
+    if not text:
+        return ""
+    chunks: list[str] = []
+    i = 0
+    for m in _CAPTION_INLINE_LINK_RE.finditer(text):
+        chunks.append(_html_escape_segment_with_bold(text[i : m.start()]))
+        chunks.append(
+            f'<a href="{html_escape(m.group(2).strip(), quote=True)}" target="_blank" rel="noopener noreferrer">'
+            f"{html_escape(m.group(1))}</a>"
+        )
+        i = m.end()
+    chunks.append(_html_escape_segment_with_bold(text[i:]))
+    return "".join(chunks)
+
+
+def _league_split_payload(
+    rows: list[Any],
+    *,
+    build_df: Any,
+    block_heading: str,
+    table_heading: str,
+    chart_heading: str,
+    name_column: str,
+    value_column: str,
+    chart_max_bars: int,
+    caption_md: str | None,
+    search_entity: str,
+) -> dict[str, Any] | None:
+    from rwa_league.widgets import rwa_table_height
+
+    if not rows:
+        return None
+    df = build_df(rows)
+    rj, cj = _dataframe_json_records(df)
+    plural = "networks" if search_entity.lower() == "network" else "platforms"
+    n_sync = min(chart_max_bars, len(rows)) if rows else 1
+    split_h = rwa_table_height(max(1, n_sync), max_h=560)
+    chart_note = (
+        f"The chart lists the top <strong>{chart_max_bars}</strong> {plural} "
+        "by total value (labels include market share). Scroll the table for the full filtered list."
+    )
+    ent = search_entity.lower()
+    label = "Search network table" if ent == "network" else "Search platform table"
+    ph = (
+        "Filter by network name…"
+        if ent == "network"
+        else "Filter by platform name…"
+    )
+
+    cap_html = _caption_markdownish_to_html(caption_md) if caption_md else ""
+    return {
+        "block_heading": block_heading,
+        "table_heading": table_heading,
+        "chart_heading": chart_heading,
+        "search_label": label,
+        "search_placeholder": ph,
+        "name_column": name_column,
+        "value_column": value_column,
+        "columns": cj,
+        "rows_full": rj,
+        "caption_html": cap_html,
+        "chart_note_html": chart_note,
+        "split_body_height_px": int(split_h),
+    }
+
+
+def _build_rwa_stablecoins_deep_payload(sc_pack: tuple[Any, Any, Any, Any], manifest: dict[str, Any]) -> dict[str, Any]:
+    from home_layout import rwa_xyz_mirror_footer_text
+    from rwa_league.client import APP_STABLECOINS
+    from rwa_league.dataframe_table import (
+        build_stablecoin_network_dataframe,
+        build_stablecoin_platform_dataframe,
+    )
+    from rwa_league.widgets import (
+        RWA_STABLECOINS_CHART_MAX_BARS,
+        STABLECOIN_NETWORK_CAPTION,
+        STABLECOIN_PLATFORM_CAPTION,
+        STABLECOINS_RWA_LINK_LABEL,
+    )
+
+    rows_net: list[Any] = list(sc_pack[0])
+    rows_plat: list[Any] = list(sc_pack[1])
+    kpis: list[Any] = list(sc_pack[2])
+    err_any = sc_pack[3]
+    err_s = "" if err_any is None else str(err_any)
+
+    def _seed() -> dict[str, Any]:
+        return {
+            "page_title": "Stablecoins — JPM Digital",
+            "band_label": "Stablecoins",
+            "page_subtitle_html": (
+                f'Mirrors <a href="{html_escape(APP_STABLECOINS, quote=True)}">RWA.xyz Stablecoins</a> — '
+                "<strong>30D</strong> % changes plus Networks and Platforms tables."
+            ),
+            "kpi_window_note": _kpi_legend_for_asset("Stablecoins"),
+            "kpis": [_rwa_kpi_to_dict(k) for k in kpis],
+            "chart_max_bars": RWA_STABLECOINS_CHART_MAX_BARS,
+            "back_href": STATIC_RWA_EXPLORE_ASSET_TYPE_PAGE,
+            "footer_note": re.sub(r"\*\*", "", rwa_xyz_mirror_footer_text()),
+            "bottom_cta": {"href": APP_STABLECOINS, "label": STABLECOINS_RWA_LINK_LABEL},
+        }
+
+    if err_s.strip() and not rows_net and not rows_plat:
+        b = _seed()
+        b["error_mode"] = "warn_total"
+        b["error_detail"] = err_s
+        b["key_observations_html"] = ""
+        b["networks"] = None
+        b["platforms"] = None
+        return b
+    if not rows_net and not rows_plat:
+        b = _seed()
+        b["error_mode"] = "empty_total"
+        b["empty_message"] = "No Stablecoins league rows returned."
+        b["key_observations_html"] = ""
+        b["networks"] = None
+        b["platforms"] = None
+        return b
+
+    try:
+        from pages.RWA_Stablecoins import _stablecoins_takeaway_html as _ko_sc
+
+        ko_html = _ko_sc()
+    except Exception as exc:  # pragma: no cover - export-only
+        manifest["errors"].append(f"Stablecoins takeaway HTML export: {exc}")
+        ko_html = ""
+
+    b = _seed()
+    b["error_mode"] = ""
+    b["key_observations_html"] = ko_html
+    b["networks"] = _league_split_payload(
+        rows_net,
+        build_df=build_stablecoin_network_dataframe,
+        block_heading="By network (Stablecoins · Networks)",
+        table_heading="Networks table",
+        chart_heading="Top networks by value",
+        name_column="Network",
+        value_column="Total Value",
+        chart_max_bars=RWA_STABLECOINS_CHART_MAX_BARS,
+        caption_md=STABLECOIN_NETWORK_CAPTION,
+        search_entity="network",
+    )
+    b["platforms"] = _league_split_payload(
+        rows_plat,
+        build_df=build_stablecoin_platform_dataframe,
+        block_heading="By platform (Stablecoins · Platforms)",
+        table_heading="Platforms table",
+        chart_heading="Top platforms by value",
+        name_column="Platform",
+        value_column="Total Value",
+        chart_max_bars=RWA_STABLECOINS_CHART_MAX_BARS,
+        caption_md=STABLECOIN_PLATFORM_CAPTION,
+        search_entity="platform",
+    )
+    return b
+
+
+def _build_rwa_us_treasuries_deep_payload(tr_pack: tuple[Any, Any, Any, Any], manifest: dict[str, Any]) -> dict[str, Any]:
+    from home_layout import rwa_xyz_mirror_footer_text
+    from rwa_league.client import APP_TREASURIES
+    from rwa_league.dataframe_table import (
+        build_us_treasury_network_dataframe,
+        build_us_treasury_platform_dataframe,
+    )
+    from rwa_league.widgets import (
+        RWA_TREASURIES_CHART_MAX_BARS,
+        TREASURIES_RWA_LINK_LABEL,
+        TREASURY_PLATFORM_CAPTION,
+        TREASURY_RWA_CAPTION,
+    )
+
+    rows_net: list[Any] = list(tr_pack[0])
+    rows_plat: list[Any] = list(tr_pack[1])
+    kpis: list[Any] = list(tr_pack[2])
+    err_any = tr_pack[3]
+    err_s = "" if err_any is None else str(err_any)
+
+    def _seed() -> dict[str, Any]:
+        return {
+            "page_title": "US Treasuries — JPM Digital",
+            "band_label": "US Treasuries",
+            "page_subtitle_html": (
+                f'Mirrors <a href="{html_escape(APP_TREASURIES, quote=True)}">'
+                "RWA.xyz US Treasuries</a> — Distributed Networks and Platforms."
+            ),
+            "kpi_window_note": _kpi_legend_for_asset("US Treasuries"),
+            "kpis": [_rwa_kpi_to_dict(k) for k in kpis],
+            "chart_max_bars": RWA_TREASURIES_CHART_MAX_BARS,
+            "back_href": STATIC_RWA_EXPLORE_ASSET_TYPE_PAGE,
+            "footer_note": re.sub(r"\*\*", "", rwa_xyz_mirror_footer_text()),
+            "bottom_cta": {"href": APP_TREASURIES, "label": TREASURIES_RWA_LINK_LABEL},
+        }
+
+    if err_s.strip() and not rows_net and not rows_plat:
+        b = _seed()
+        b["error_mode"] = "warn_total"
+        b["error_detail"] = err_s
+        b["key_observations_html"] = ""
+        b["networks"] = None
+        b["platforms"] = None
+        return b
+    if not rows_net and not rows_plat:
+        b = _seed()
+        b["error_mode"] = "empty_total"
+        b["empty_message"] = "No US Treasuries league rows returned."
+        b["key_observations_html"] = ""
+        b["networks"] = None
+        b["platforms"] = None
+        return b
+
+    try:
+        from pages.RWA_US_Treasuries import _treasuries_takeaway_html as _ko_tr
+
+        ko_html = _ko_tr()
+    except Exception as exc:
+        manifest["errors"].append(f"US Treasuries takeaway HTML export: {exc}")
+        ko_html = ""
+
+    b = _seed()
+    b["error_mode"] = ""
+    b["key_observations_html"] = ko_html
+    b["networks"] = _league_split_payload(
+        rows_net,
+        build_df=build_us_treasury_network_dataframe,
+        block_heading="By network (Distributed · Networks)",
+        table_heading="Networks table",
+        chart_heading="Top networks by value",
+        name_column="Network",
+        value_column="Distributed Value",
+        chart_max_bars=RWA_TREASURIES_CHART_MAX_BARS,
+        caption_md=TREASURY_RWA_CAPTION,
+        search_entity="network",
+    )
+    b["platforms"] = _league_split_payload(
+        rows_plat,
+        build_df=build_us_treasury_platform_dataframe,
+        block_heading="By platform (Distributed · Platforms)",
+        table_heading="Platforms table",
+        chart_heading="Top platforms by value",
+        name_column="Platform",
+        value_column="Total Value",
+        chart_max_bars=RWA_TREASURIES_CHART_MAX_BARS,
+        caption_md=TREASURY_PLATFORM_CAPTION,
+        search_entity="platform",
+    )
+    return b
+
+
+def _build_rwa_tokenized_stocks_deep_payload(st_pack: tuple[Any, Any, Any, Any], manifest: dict[str, Any]) -> dict[str, Any]:
+    from home_layout import rwa_xyz_mirror_footer_text
+    from rwa_league.client import APP_STOCKS
+    from rwa_league.dataframe_table import (
+        build_tokenized_stock_network_dataframe,
+        build_tokenized_stock_platform_dataframe,
+    )
+    from rwa_league.widgets import (
+        RWA_TOKENIZED_STOCKS_CHART_MAX_BARS,
+        TOKENIZED_STOCKS_RWA_CAPTION,
+        TOKENIZED_STOCKS_RWA_LINK_LABEL,
+    )
+
+    rows_net_raw: list[Any] = list(st_pack[0])
+    rows_plat: list[Any] = list(st_pack[1])
+    kpis: list[Any] = list(st_pack[2])
+    err_any = st_pack[3]
+    err_s = "" if err_any is None else str(err_any)
+
+    rows_net_sorted = sorted(rows_net_raw, key=lambda r: int(getattr(r, "rank", 0) or 0))
+
+    def _seed() -> dict[str, Any]:
+        return {
+            "page_title": "Tokenized Stocks — JPM Digital",
+            "band_label": "Tokenized Stocks",
+            "page_subtitle_html": (
+                f'Mirrors <a href="{html_escape(APP_STOCKS, quote=True)}">RWA.xyz Tokenized Stocks</a>'
+                " — Networks and Platforms."
+            ),
+            "kpi_window_note": _kpi_legend_for_asset("Tokenized Stocks"),
+            "kpis": [_rwa_kpi_to_dict(k) for k in kpis],
+            "chart_max_bars": RWA_TOKENIZED_STOCKS_CHART_MAX_BARS,
+            "back_href": STATIC_RWA_EXPLORE_ASSET_TYPE_PAGE,
+            "footer_note": re.sub(r"\*\*", "", rwa_xyz_mirror_footer_text()),
+            "bottom_cta": {"href": APP_STOCKS, "label": TOKENIZED_STOCKS_RWA_LINK_LABEL},
+        }
+
+    if err_s.strip() and not rows_net_raw and not rows_plat:
+        b = _seed()
+        b["error_mode"] = "warn_total"
+        b["error_detail"] = err_s
+        b["key_observations_html"] = ""
+        b["networks"] = None
+        b["platforms"] = None
+        return b
+    if not rows_net_raw and not rows_plat:
+        b = _seed()
+        b["error_mode"] = "empty_total"
+        b["empty_message"] = "No Tokenized Stocks league rows returned."
+        b["key_observations_html"] = ""
+        b["networks"] = None
+        b["platforms"] = None
+        return b
+
+    try:
+        from pages.RWA_Tokenized_Stocks import _tokenized_stocks_takeaway_html as _ko_st
+
+        ko_html = _ko_st()
+    except Exception as exc:
+        manifest["errors"].append(f"Tokenized Stocks takeaway HTML export: {exc}")
+        ko_html = ""
+
+    b = _seed()
+    b["error_mode"] = ""
+    b["key_observations_html"] = ko_html
+    b["networks"] = _league_split_payload(
+        rows_net_sorted,
+        build_df=build_tokenized_stock_network_dataframe,
+        block_heading="By Network (Distributed · Networks)",
+        table_heading="Networks table",
+        chart_heading="Top networks by value",
+        name_column="Network",
+        value_column="Distributed Value",
+        chart_max_bars=RWA_TOKENIZED_STOCKS_CHART_MAX_BARS,
+        caption_md=None,
+        search_entity="network",
+    )
+    b["platforms"] = _league_split_payload(
+        rows_plat,
+        build_df=build_tokenized_stock_platform_dataframe,
+        block_heading="By Platform (Distributed · Platforms)",
+        table_heading="Platforms table",
+        chart_heading="Top platforms by value",
+        name_column="Platform",
+        value_column="Distributed Value",
+        chart_max_bars=RWA_TOKENIZED_STOCKS_CHART_MAX_BARS,
+        caption_md=TOKENIZED_STOCKS_RWA_CAPTION,
+        search_entity="platform",
+    )
+    return b
+
+
+def _build_rwa_explore_asset_type_payload(
+    manifest: dict,
+    sc_pack: tuple[Any, Any, Any, Any],
+    tr_pack: tuple[Any, Any, Any, Any],
+    st_pack: tuple[Any, Any, Any, Any],
+) -> dict[str, Any]:
     """Preview sections aligned with Streamlit ``show_rwa_explore_by_asset_type_widget`` (+ FastAPI hub index)."""
     from home_layout import rwa_xyz_mirror_footer_text
-    from rwa_league.client import (
-        APP_STABLECOINS,
-        APP_STOCKS,
-        APP_TREASURIES,
-        fetch_rwa_stablecoins_data,
-        fetch_rwa_treasuries_data,
-        fetch_rwa_tokenized_stocks_data,
-    )
+    from rwa_league.client import APP_STABLECOINS, APP_STOCKS, APP_TREASURIES
     from rwa_league.dataframe_table import (
         build_stablecoin_platform_dataframe,
         build_tokenized_stock_platform_dataframe,
@@ -212,11 +568,7 @@ def _build_rwa_explore_asset_type_payload(manifest: dict) -> dict[str, Any]:
 
     sections: list[dict[str, Any]] = []
 
-    try:
-        sc_net, sc_plat, sc_kpis, sc_err = fetch_rwa_stablecoins_data()
-    except Exception as exc:
-        manifest["errors"].append(f"RWA explore Stablecoins fetch: {exc}")
-        sc_net, sc_plat, sc_kpis, sc_err = [], [], [], str(exc)
+    sc_net, sc_plat, sc_kpis, sc_err = sc_pack
 
     sec_sc: dict[str, Any] = {
         "id": "stablecoins",
@@ -230,7 +582,15 @@ def _build_rwa_explore_asset_type_payload(manifest: dict) -> dict[str, Any]:
         "preview_note": "",
         "info_html": "",
         "warn_html": "",
-        "cta": [{"href": APP_STABLECOINS, "label": STABLECOINS_RWA_LINK_LABEL, "variant": "primary"}],
+        "cta": [
+            {
+                "href": STATIC_RWA_STABLECOINS_PAGE,
+                "label": "Open full Stablecoins table",
+                "variant": "primary",
+                "internal": True,
+            },
+            {"href": APP_STABLECOINS, "label": STABLECOINS_RWA_LINK_LABEL, "variant": "secondary"},
+        ],
     }
     if sc_err and not sc_net and not sc_plat:
         sec_sc["warn_html"] = f'<p class="alert warn">{html_escape(str(sc_err))}</p>'
@@ -248,11 +608,7 @@ def _build_rwa_explore_asset_type_payload(manifest: dict) -> dict[str, Any]:
         sec_sc["info_html"] = '<p class="muted"><em>No platform rows.</em></p>'
     sections.append(sec_sc)
 
-    try:
-        tr_rows, tr_plat, tr_kpis, tr_err = fetch_rwa_treasuries_data()
-    except Exception as exc:
-        manifest["errors"].append(f"RWA explore Treasuries fetch: {exc}")
-        tr_rows, tr_plat, tr_kpis, tr_err = [], [], [], str(exc)
+    tr_rows, tr_plat, tr_kpis, tr_err = tr_pack
 
     sec_tr: dict[str, Any] = {
         "id": "treasuries",
@@ -266,7 +622,15 @@ def _build_rwa_explore_asset_type_payload(manifest: dict) -> dict[str, Any]:
         "preview_note": "",
         "info_html": "",
         "warn_html": "",
-        "cta": [{"href": APP_TREASURIES, "label": TREASURIES_RWA_LINK_LABEL, "variant": "primary"}],
+        "cta": [
+            {
+                "href": STATIC_RWA_US_TREASURIES_PAGE,
+                "label": "Open full US Treasuries table",
+                "variant": "primary",
+                "internal": True,
+            },
+            {"href": APP_TREASURIES, "label": TREASURIES_RWA_LINK_LABEL, "variant": "secondary"},
+        ],
     }
     if tr_err and not tr_rows and not tr_plat:
         sec_tr["warn_html"] = f'<p class="alert warn">{html_escape(str(tr_err))}</p>'
@@ -284,11 +648,7 @@ def _build_rwa_explore_asset_type_payload(manifest: dict) -> dict[str, Any]:
         sec_tr["info_html"] = '<p class="muted"><em>No treasury network rows.</em></p>'
     sections.append(sec_tr)
 
-    try:
-        st_net, st_plat, st_kpis, st_err = fetch_rwa_tokenized_stocks_data()
-    except Exception as exc:
-        manifest["errors"].append(f"RWA explore Tokenized Stocks fetch: {exc}")
-        st_net, st_plat, st_kpis, st_err = [], [], [], str(exc)
+    st_net, st_plat, st_kpis, st_err = st_pack
 
     sec_st: dict[str, Any] = {
         "id": "tokenized_stocks",
@@ -302,7 +662,15 @@ def _build_rwa_explore_asset_type_payload(manifest: dict) -> dict[str, Any]:
         "preview_note": "",
         "info_html": "",
         "warn_html": "",
-        "cta": [{"href": APP_STOCKS, "label": TOKENIZED_STOCKS_RWA_LINK_LABEL, "variant": "primary"}],
+        "cta": [
+            {
+                "href": STATIC_RWA_TOKENIZED_STOCKS_PAGE,
+                "label": "Open full Tokenized Stocks table",
+                "variant": "primary",
+                "internal": True,
+            },
+            {"href": APP_STOCKS, "label": TOKENIZED_STOCKS_RWA_LINK_LABEL, "variant": "secondary"},
+        ],
     }
     if st_err and not st_net and not st_plat:
         sec_st["warn_html"] = f'<p class="alert warn">{html_escape(str(st_err))}</p>'
@@ -321,8 +689,10 @@ def _build_rwa_explore_asset_type_payload(manifest: dict) -> dict[str, Any]:
     sections.append(sec_st)
 
     intro_html = (
-        "<p><strong>RWA.xyz</strong> live data. Below are three asset areas—each block is a preview "
-        "matching the Streamlit <strong>Explore by Asset Type</strong> page; open the RWA.xyz link for the full league.</p>"
+        "<p><strong>RWA.xyz</strong> live data. Each block below is a short preview from the same pipeline as the "
+        "Streamlit <strong>Explore by Asset Type</strong> page.</p>"
+        "<p>Use <strong>Open full … table</strong> for the extended static view (search, full tables, and charts), "
+        "or the second button to open the live app on RWA.xyz.</p>"
         "<ul>"
         "<li>Stablecoins</li><li>US Treasuries</li><li>Tokenized Stocks</li>"
         "</ul>"
@@ -574,16 +944,54 @@ def main() -> None:
         encoding="utf-8",
     )
 
-    explore_at_payload = _build_rwa_explore_asset_type_payload(manifest)
+    from rwa_league.client import (
+        fetch_rwa_stablecoins_data,
+        fetch_rwa_treasuries_data,
+        fetch_rwa_tokenized_stocks_data,
+    )
+
+    try:
+        sc_pack = fetch_rwa_stablecoins_data()
+    except Exception as exc:
+        manifest["errors"].append(f"RWA Stablecoins snapshot (Explore + asset pages): {exc}")
+        sc_pack = ([], [], [], str(exc))
+
+    try:
+        tr_pack = fetch_rwa_treasuries_data()
+    except Exception as exc:
+        manifest["errors"].append(f"RWA US Treasuries snapshot (Explore + asset pages): {exc}")
+        tr_pack = ([], [], [], str(exc))
+
+    try:
+        st_pack = fetch_rwa_tokenized_stocks_data()
+    except Exception as exc:
+        manifest["errors"].append(f"RWA Tokenized Stocks snapshot (Explore + asset pages): {exc}")
+        st_pack = ([], [], [], str(exc))
+
+    explore_at_payload = _build_rwa_explore_asset_type_payload(manifest, sc_pack, tr_pack, st_pack)
     (OUT / "rwa_explore_asset_type.json").write_text(
         json.dumps(explore_at_payload, indent=2),
+        encoding="utf-8",
+    )
+
+    (OUT / "rwa_stablecoins.json").write_text(
+        json.dumps(_build_rwa_stablecoins_deep_payload(sc_pack, manifest), indent=2),
+        encoding="utf-8",
+    )
+    (OUT / "rwa_us_treasuries.json").write_text(
+        json.dumps(_build_rwa_us_treasuries_deep_payload(tr_pack, manifest), indent=2),
+        encoding="utf-8",
+    )
+    (OUT / "rwa_tokenized_stocks.json").write_text(
+        json.dumps(_build_rwa_tokenized_stocks_deep_payload(st_pack, manifest), indent=2),
         encoding="utf-8",
     )
 
     (OUT / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     print(
         f"Wrote static data to {OUT} ({len(rows_payload)} ETPs, {len(etf_items)} ETF headlines, "
-        f"{len(rwa_rows)} RWA networks; rwa_global_market.json, rwa_explore_asset_type.json, rwa_onchain_home.json)."
+        f"{len(rwa_rows)} RWA networks; rwa_global_market.json, rwa_explore_asset_type.json, "
+        "rwa_stablecoins.json, rwa_us_treasuries.json, rwa_tokenized_stocks.json, rwa_onchain_home.json)."
     )
 
 

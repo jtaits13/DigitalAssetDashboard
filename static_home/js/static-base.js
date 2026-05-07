@@ -9,6 +9,9 @@
     if (p.endsWith("/etps.html")) return p.slice(0, -"etps.html".length);
     if (p.endsWith("/rwa-global.html")) return p.slice(0, -"rwa-global.html".length);
     if (p.endsWith("/rwa-explore-asset-type.html")) return p.slice(0, -"rwa-explore-asset-type.html".length);
+    if (p.endsWith("/rwa-stablecoins.html")) return p.slice(0, -"rwa-stablecoins.html".length);
+    if (p.endsWith("/rwa-us-treasuries.html")) return p.slice(0, -"rwa-us-treasuries.html".length);
+    if (p.endsWith("/rwa-tokenized-stocks.html")) return p.slice(0, -"rwa-tokenized-stocks.html".length);
     if (p.endsWith("/")) return p;
     // ``/repo-name`` with no trailing slash: treat as directory so ``rwa-global.html`` does not resolve to site root.
     if (/^\/[^/]+$/.test(p)) return p + "/";
@@ -60,6 +63,9 @@
       var pairs = [
         ["rwa-global.html", "rwa-global.html"],
         ["rwa-explore-asset-type.html", "rwa-explore-asset-type.html"],
+        ["rwa-stablecoins.html", "rwa-stablecoins.html"],
+        ["rwa-us-treasuries.html", "rwa-us-treasuries.html"],
+        ["rwa-tokenized-stocks.html", "rwa-tokenized-stocks.html"],
       ];
       pairs.forEach(function (p) {
         var abs = assetUrl(p[1]);

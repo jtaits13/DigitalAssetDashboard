@@ -1722,10 +1722,14 @@ body {
 
 .rwa-exat-cta-row {
   margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .rwa-exat-cta-row .btn-secondary {
-  margin-left: 0.25rem;
+  margin-left: 0;
 }
 
 .rwa-exat-back-sep {

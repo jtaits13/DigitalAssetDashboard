@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>US Treasuries — JPM Digital</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="page-rwa-deep page-rwa-deep-treasuries" data-rwa-deep-json="rwa_us_treasuries.json">
+    <header class="site-header" role="banner">
+      <div class="site-header__inner">
+        <a class="site-brand" href="index.html">JPM Digital Assets Dashboard</a>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="index.html">Home</a>
+          <a href="etps.html">U.S. ETPs</a>
+          <a href="etf-news.html">ETF news</a>
+          <a href="rwa-global.html">RWA Market</a>
+          <a href="rwa-explore-asset-type.html" class="is-active">RWA · Assets</a>
+          <a href="index.html#section-onchain">On-chain</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="ticker-strip" aria-label="Sample price strip (illustrative)">
+      <div class="ticker-strip__layout">
+        <span class="ticker-strip__label">Top cryptocurrencies</span>
+        <div class="ticker-strip__chips">
+          <span class="ticker-chip"><strong>BTC</strong> <span class="ticker-usd">$97,240</span> <span class="up">+1.2%</span></span>
+          <span class="ticker-chip"><strong>ETH</strong> <span class="ticker-usd">$3,412</span> <span class="up">+0.8%</span></span>
+        </div>
+      </div>
+    </div>
+
+    <main class="page-shell page-shell--wide">
+      <header class="page-intro">
+        <p class="band-label teal" id="js-deep-band"></p>
+        <div class="page-intro__dek" id="js-deep-subtitle"></div>
+      </header>
+
+      <div class="data-banner" id="js-deep-banner" role="status" hidden></div>
+
+      <section class="hub-section" id="js-deep-snapshot" aria-labelledby="js-deep-snap-h">
+        <h2 class="subsection-head" id="js-deep-snap-h">Top-Line Market Snapshot</h2>
+        <div id="js-deep-kpis" aria-label="US Treasuries headline KPI strip"></div>
+      </section>
+
+      <section class="hub-section" id="js-deep-ko-section" hidden aria-labelledby="js-deep-ko-h">
+        <h2 class="subsection-head" id="js-deep-ko-h">Key Observations</h2>
+        <div id="js-deep-ko" class="takeaways macro-obs-static"></div>
+      </section>
+
+      <hr class="jd-rwa-gmo-soft-rule" id="js-deep-rule-after-ko" hidden aria-hidden="true" />
+
+      <div id="js-deep-net-wrap"></div>
+
+      <hr class="jd-divider" id="js-deep-rule-mid" hidden aria-hidden="true" />
+
+      <div id="js-deep-plat-wrap"></div>
+
+      <div id="js-deep-bottom-cta" class="cta-row rwa-deep-page-cta"></div>
+
+      <p class="back-link">
+        <a id="js-deep-back-explore" href="rwa-explore-asset-type.html">← Explore by Asset Type</a>
+      </p>
+    </main>
+
+    <footer class="site-footer">
+      <span id="js-deep-footer-note"></span>
+      <span class="timestamp-foot"> · GitHub Pages · JSON export mirrors Streamlit pipelines · May 2026</span>
+    </footer>
+
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
+    <script src="js/static-base.js"></script>
+    <script src="js/rwa-onchain-home.js"></script>
+    <script src="js/rwa-asset-deep-page.js"></script>
+  </body>
+</html>
