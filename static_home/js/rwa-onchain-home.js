@@ -150,7 +150,7 @@
 
   function exploreSplitHtml(links) {
     var L = links || {};
-    var at = L.explore_asset_type || "/rwa/explore/asset-type";
+    var at = L.explore_asset_type || "rwa-explore-asset-type.html";
     var mp = L.explore_market_participant || "/rwa/explore/participant";
     var card = function (title, items, href) {
       return (
@@ -234,7 +234,12 @@
 
     if (captionEl) captionEl.textContent = data.caption || "";
 
-    if (exploreHost) exploreHost.innerHTML = exploreSplitHtml(links);
+    if (exploreHost) {
+      exploreHost.innerHTML = exploreSplitHtml(links);
+      if (typeof global.finalizeHubAnchors === "function") {
+        global.finalizeHubAnchors(exploreHost);
+      }
+    }
   }
 
   global.renderRwaOnchainHome = renderRwaOnchainHome;

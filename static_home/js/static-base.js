@@ -30,7 +30,30 @@
 
   global.__STATIC = { basePath: basePath, assetUrl: assetUrl, dataUrl: dataUrl };
 
-  /** Rewrite bare ``*.html`` hub links for GitHub project Pages (``/repo`` without trailing slash). */
+  /**
+   * Fix relative hub ``*.html`` links under a subtree (injected HTML runs after DOMContentLoaded,
+   * so Project Pages ``/repo`` without trailing slash would otherwise resolve beside the hostname).
+   */
+  function finalizeHubAnchors(scope) {
+    var fn =
+      global.__STATIC && typeof global.__STATIC.assetUrl === "function"
+        ? global.__STATIC.assetUrl
+        : null;
+    if (!fn || typeof scope.querySelectorAll !== "function") return;
+    scope.querySelectorAll("a[href]").forEach(function (a) {
+      var raw = (a.getAttribute("href") || "").trim();
+      if (!raw || /^https?:\/\//i.test(raw) || raw.charAt(0) === "#") return;
+      var hashIx = raw.indexOf("#");
+      var pathPart = hashIx >= 0 ? raw.slice(0, hashIx) : raw;
+      var hashPart = hashIx >= 0 ? raw.slice(hashIx) : "";
+      pathPart = pathPart.replace(/^\.\//, "");
+      if (pathPart.indexOf("/") !== -1 || pathPart.indexOf(":") !== -1) return;
+      if (!/\.html$/i.test(pathPart)) return;
+      a.setAttribute("href", fn(pathPart) + hashPart);
+    });
+  }
+
+  global.finalizeHubAnchors = finalizeHubAnchors;
   function fixStaticHubHtmlAnchors() {
     if (typeof document === "undefined") return;
     var run = function () {

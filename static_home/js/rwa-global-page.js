@@ -314,7 +314,12 @@
     if (macroHost) macroHost.innerHTML = data.macro_observations_html || "";
 
     var exploreHost = $("js-rwa-global-explore");
-    if (exploreHost) exploreHost.innerHTML = data.explore_gateways_html || "";
+    if (exploreHost) {
+      exploreHost.innerHTML = data.explore_gateways_html || "";
+      if (typeof global.finalizeHubAnchors === "function") {
+        global.finalizeHubAnchors(exploreHost);
+      }
+    }
 
     var captionHost = $("js-rwa-global-caption");
     if (captionHost) captionHost.innerHTML = data.caption_html || "";
