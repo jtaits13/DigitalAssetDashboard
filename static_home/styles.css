@@ -1569,6 +1569,21 @@ body {
   display: none !important;
 }
 
+.rwa-deep-section-intro {
+  margin: -0.15rem 0 0.55rem;
+  font-size: 0.92rem;
+  line-height: 1.48;
+}
+
+.rwa-deep-chart-wide-note {
+  margin-top: 0.35rem;
+  margin-bottom: 0;
+}
+
+.rwa-deep-optional-msg {
+  margin: 0.5rem 0;
+}
+
 @media (max-width: 960px) {
   .split-two {
     grid-template-columns: 1fr;

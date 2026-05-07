@@ -233,7 +233,12 @@ def _league_split_payload(
     chart_max_bars: int,
     caption_md: str | None,
     search_entity: str,
+    section_intro_md: str | None = None,
+    chart_note_below_split: bool = False,
+    filter_note_suffix_all: str | None = None,
+    filter_note_entity_plural: str | None = None,
 ) -> dict[str, Any] | None:
+    """Serialize one Networks or Platforms league block for deep static pages."""
     from rwa_league.widgets import rwa_table_height
 
     if not rows:
@@ -247,6 +252,13 @@ def _league_split_payload(
         f"The chart lists the top <strong>{chart_max_bars}</strong> {plural} "
         "by total value (labels include market share). Scroll the table for the full filtered list."
     )
+    chart_note_inner = ""
+    chart_note_wide = ""
+    if chart_note_below_split:
+        chart_note_wide = chart_note
+    else:
+        chart_note_inner = chart_note
+
     ent = search_entity.lower()
     label = "Search network table" if ent == "network" else "Search platform table"
     ph = (
@@ -256,7 +268,9 @@ def _league_split_payload(
     )
 
     cap_html = _caption_markdownish_to_html(caption_md) if caption_md else ""
-    return {
+    section_intro_html = _caption_markdownish_to_html(section_intro_md) if section_intro_md else ""
+
+    out: dict[str, Any] = {
         "block_heading": block_heading,
         "table_heading": table_heading,
         "chart_heading": chart_heading,
@@ -267,9 +281,18 @@ def _league_split_payload(
         "columns": cj,
         "rows_full": rj,
         "caption_html": cap_html,
-        "chart_note_html": chart_note,
+        "chart_note_html": chart_note_inner,
+        "wide_chart_note_html": chart_note_wide,
         "split_body_height_px": int(split_h),
+        "chart_empty_filtered_entity_plural": plural,
     }
+    if section_intro_html:
+        out["section_intro_html"] = section_intro_html
+    if filter_note_suffix_all:
+        out["filter_note_suffix_all"] = filter_note_suffix_all
+    if filter_note_entity_plural:
+        out["filter_note_entity_plural"] = filter_note_entity_plural
+    return out
 
 
 def _build_rwa_stablecoins_deep_payload(sc_pack: tuple[Any, Any, Any, Any], manifest: dict[str, Any]) -> dict[str, Any]:
@@ -297,8 +320,11 @@ def _build_rwa_stablecoins_deep_payload(sc_pack: tuple[Any, Any, Any, Any], mani
             "page_title": "Stablecoins — JPM Digital",
             "band_label": "Stablecoins",
             "page_subtitle_html": (
-                f'Mirrors <a href="{html_escape(APP_STABLECOINS, quote=True)}">RWA.xyz Stablecoins</a> — '
-                "<strong>30D</strong> % changes plus Networks and Platforms tables."
+                "This page mirrors the "
+                f'<a href="{html_escape(APP_STABLECOINS, quote=True)}">RWA.xyz Stablecoins</a> view, including '
+                "headline <strong>30-day (30D)</strong> % changes plus <strong>Networks</strong> and "
+                "<strong>Platforms</strong> tables (aggregate stablecoin market cap by chain and by issuer). "
+                "Level columns are market-cap amounts."
             ),
             "kpi_window_note": _kpi_legend_for_asset("Stablecoins"),
             "kpis": [_rwa_kpi_to_dict(k) for k in kpis],
@@ -336,29 +362,64 @@ def _build_rwa_stablecoins_deep_payload(sc_pack: tuple[Any, Any, Any, Any], mani
     b = _seed()
     b["error_mode"] = ""
     b["key_observations_html"] = ko_html
-    b["networks"] = _league_split_payload(
-        rows_net,
-        build_df=build_stablecoin_network_dataframe,
-        block_heading="By network (Stablecoins · Networks)",
-        table_heading="Networks table",
-        chart_heading="Top networks by value",
-        name_column="Network",
-        value_column="Total Value",
-        chart_max_bars=RWA_STABLECOINS_CHART_MAX_BARS,
-        caption_md=STABLECOIN_NETWORK_CAPTION,
-        search_entity="network",
+    b["between_ko_and_leagues_html"] = ""
+    if not rows_net and rows_plat:
+        b["between_ko_and_leagues_html"] = (
+            '<p class="alert info">The <strong>Networks</strong> league was not present in the Stablecoins embed; '
+            "the <strong>Platforms</strong> section below may still load.</p>"
+        )
+    b["after_network_block_html"] = ""
+    if rows_net and not rows_plat:
+        b["after_network_block_html"] = (
+            '<p class="alert info">No <strong>Platforms</strong> league rows were returned for Stablecoins in this '
+            "embed.</p>"
+        )
+
+    b["networks"] = (
+        _league_split_payload(
+            rows_net,
+            build_df=build_stablecoin_network_dataframe,
+            block_heading="By network (Stablecoins · Networks)",
+            table_heading="Networks table",
+            chart_heading="Top networks by value",
+            name_column="Network",
+            value_column="Total Value",
+            chart_max_bars=RWA_STABLECOINS_CHART_MAX_BARS,
+            caption_md=STABLECOIN_NETWORK_CAPTION,
+            search_entity="network",
+            section_intro_md=(
+                "**Networks** league — aggregate stablecoin market cap by chain. "
+                "**7-day** % change follows the numeric field from **RWA.xyz** (see table column help)."
+            ),
+            chart_note_below_split=True,
+            filter_note_suffix_all="networks (Stablecoins · Networks).",
+            filter_note_entity_plural="networks",
+        )
+        if rows_net
+        else None
     )
-    b["platforms"] = _league_split_payload(
-        rows_plat,
-        build_df=build_stablecoin_platform_dataframe,
-        block_heading="By platform (Stablecoins · Platforms)",
-        table_heading="Platforms table",
-        chart_heading="Top platforms by value",
-        name_column="Platform",
-        value_column="Total Value",
-        chart_max_bars=RWA_STABLECOINS_CHART_MAX_BARS,
-        caption_md=STABLECOIN_PLATFORM_CAPTION,
-        search_entity="platform",
+    b["platforms"] = (
+        _league_split_payload(
+            rows_plat,
+            build_df=build_stablecoin_platform_dataframe,
+            block_heading="By platform (Stablecoins · Platforms)",
+            table_heading="Platforms table",
+            chart_heading="Top platforms by value",
+            name_column="Platform",
+            value_column="Total Value",
+            chart_max_bars=RWA_STABLECOINS_CHART_MAX_BARS,
+            caption_md=STABLECOIN_PLATFORM_CAPTION,
+            search_entity="platform",
+            section_intro_md=(
+                "**Platforms** league — issuer-level aggregate stablecoin market cap from **RWA.xyz** "
+                "(same **7-day** / **market share** fields as Networks)."
+            ),
+            chart_note_below_split=True,
+            filter_note_suffix_all="platforms (Stablecoins · Platforms tab).",
+            filter_note_entity_plural="platforms",
+        )
+        if rows_plat
+        else None
     )
     return b
 

@@ -187,6 +187,19 @@
     var mode = payload.error_mode || "";
     var errMsg = payload.error_detail || "";
 
+    function setOptionalDeepHtml(idS, html) {
+      var el = $(idS);
+      if (!el) return;
+      var raw = html == null ? "" : String(html);
+      if (!raw.trim()) {
+        el.innerHTML = "";
+        el.hidden = true;
+        return;
+      }
+      el.innerHTML = raw;
+      el.hidden = false;
+    }
+
     function wireLeague(league, prefix, data) {
       var host = $(prefix + "-wrap");
       if (!host || !league || !league.columns || !league.columns.length) {
@@ -196,10 +209,18 @@
 
       host.hidden = false;
 
+      var wideNote = league.wide_chart_note_html != null ? String(league.wide_chart_note_html) : "";
+      var colNote =
+        league.chart_note_html != null && String(league.chart_note_html).trim()
+          ? '<p class="jd-hub-cta-note">' + league.chart_note_html + "</p>"
+          : "";
       host.innerHTML =
         '<h2 class="subsection-head">' +
         esc(league.block_heading || "") +
         "</h2>" +
+        (league.section_intro_html
+          ? '<div class="muted rwa-deep-section-intro">' + league.section_intro_html + "</div>"
+          : "") +
         '<div class="inline-search" role="search">' +
         '<label for="' +
         prefix +
@@ -242,13 +263,19 @@
         esc(league.chart_heading || "Top by value") +
         "</h3>" +
         '<div class="rwa-split-chart-shell">' +
+        '<p class="muted rwa-split-chart-empty" id="' +
+        prefix +
+        '-chart-empty" hidden></p>' +
         '<div id="' +
         prefix +
         '-chart" class="aum-chart-host rwa-split-chart-host"></div></div>' +
-        '<p class="jd-hub-cta-note">' +
-        (league.chart_note_html || "") +
-        "</p>" +
-        "</div></div>";
+        colNote +
+        "</div></div>" +
+        (wideNote.trim()
+          ? '<p class="jd-hub-cta-note jd-rwa-gmo-split-note rwa-deep-chart-wide-note">' +
+            wideNote +
+            "</p>"
+          : "");
 
       var inp = $(prefix + "-q");
       var clr = $(prefix + "-clear");
@@ -263,9 +290,26 @@
         var noteEl = $(prefix + "-note");
         if (noteEl) {
           var tot = all.length;
+          var qp = league.filter_note_entity_plural || "";
+          var qall = league.filter_note_suffix_all || "";
           if (tot <= 0) noteEl.textContent = "";
           else if (!String(q || "").trim()) {
-            noteEl.textContent = "Showing all " + filt.length + " rows.";
+            if (qp && qall) {
+              noteEl.textContent = "Showing all " + filt.length + " " + qall;
+            } else {
+              noteEl.textContent = "Showing all " + filt.length + " rows.";
+            }
+          } else if (qp) {
+            noteEl.textContent =
+              "Showing " +
+              filt.length +
+              " of " +
+              tot +
+              " " +
+              qp +
+              ' matching "' +
+              esc(String(q || "").trim()) +
+              '".';
           } else {
             noteEl.textContent =
               "Showing " +
@@ -286,7 +330,37 @@
         });
 
         var cel = $(prefix + "-chart");
-        drawHorizontalBar(cel, filt, league, data);
+        var emptyEl = $(prefix + "-chart-empty");
+        var qpEntity = league.chart_empty_filtered_entity_plural || "rows";
+
+        var noRowsAtAll = all.length === 0;
+        var filterExcludesAll =
+          q.trim().length > 0 && filt.length === 0 && all.length > 0;
+
+        if (emptyEl) {
+          if (noRowsAtAll) {
+            emptyEl.textContent = "No rows loaded for this chart.";
+            emptyEl.hidden = false;
+          } else if (filterExcludesAll) {
+            emptyEl.textContent =
+              "No " + qpEntity + " match this filter; there is nothing to chart.";
+            emptyEl.hidden = false;
+          } else {
+            emptyEl.textContent = "";
+            emptyEl.hidden = true;
+          }
+        }
+
+        if (noRowsAtAll || filterExcludesAll) {
+          if (cel) {
+            try {
+              Plotly.purge(cel);
+            } catch (ePurge) {}
+            cel.innerHTML = "";
+          }
+        } else {
+          drawHorizontalBar(cel, filt, league, data);
+        }
       }
 
       if (inp)
@@ -351,8 +425,10 @@
       }
       if (koSec) koSec.hidden = true;
       if (ruleKo) ruleKo.hidden = true;
-      $("js-deep-net-wrap").hidden = true;
-      $("js-deep-plat-wrap").hidden = true;
+      setOptionalDeepHtml("js-deep-extra-before-leagues", "");
+      setOptionalDeepHtml("js-deep-extra-after-network", "");
+      $("deep-net-wrap").hidden = true;
+      $("deep-plat-wrap").hidden = true;
       $("js-deep-rule-mid").hidden = true;
       applyBottomCta();
       if (typeof global.finalizeHubAnchors === "function") global.finalizeHubAnchors(document.body);
@@ -367,8 +443,10 @@
       }
       if (koSec) koSec.hidden = true;
       if (ruleKo) ruleKo.hidden = true;
-      $("js-deep-net-wrap").hidden = true;
-      $("js-deep-plat-wrap").hidden = true;
+      setOptionalDeepHtml("js-deep-extra-before-leagues", "");
+      setOptionalDeepHtml("js-deep-extra-after-network", "");
+      $("deep-net-wrap").hidden = true;
+      $("deep-plat-wrap").hidden = true;
       $("js-deep-rule-mid").hidden = true;
       applyBottomCta();
       if (typeof global.finalizeHubAnchors === "function") global.finalizeHubAnchors(document.body);
@@ -388,12 +466,16 @@
       ruleKo.hidden = !payload.key_observations_html;
     }
 
+    setOptionalDeepHtml("js-deep-extra-before-leagues", payload.between_ko_and_leagues_html);
+
     wireLeague(payload.networks || null, "deep-net", payload);
 
     var hasNet = !!(payload.networks && payload.networks.columns && payload.networks.columns.length);
     var hasPlat = !!(payload.platforms && payload.platforms.columns && payload.platforms.columns.length);
 
     $("js-deep-rule-mid").hidden = !(hasNet && hasPlat);
+
+    setOptionalDeepHtml("js-deep-extra-after-network", payload.after_network_block_html);
 
     wireLeague(payload.platforms || null, "deep-plat", payload);
 
