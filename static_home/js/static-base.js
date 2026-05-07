@@ -1,9 +1,32 @@
 /**
  * Resolve /repo/ base for GitHub project pages and load JSON from static_home/data/.
+ * Also resolves ``data/*.json`` and assets from the deployed ``js/static-base.js`` URL when possible,
+ * so JSON loads even when ``location.pathname`` is wrong (trailing slashes, pretty URLs).
  */
 (function (global) {
+  /** e.g. ``data/rwa_stablecoins.json`` → absolute URL sibling to ``js/static-base.js``. */
+  function resolvedUrlAgainstStaticHome(relFromSiteRoot) {
+    var r = relFromSiteRoot != null ? String(relFromSiteRoot).replace(/^\.\//, "").trim() : "";
+    if (!r || /^https?:\/\//i.test(r) || r.charAt(0) === "/") return "";
+    var scripts = document.getElementsByTagName("script");
+    for (var i = scripts.length - 1; i >= 0; i--) {
+      var raw = (scripts[i].src || "").replace(/\\/g, "/");
+      if (!/\/static-base\.js(\?|#|$)/i.test(raw)) continue;
+      try {
+        var baseDir = raw.slice(0, raw.lastIndexOf("/") + 1);
+        return new URL("../" + r.replace(/^\/+/, ""), baseDir).href;
+      } catch (e) {
+        continue;
+      }
+    }
+    return "";
+  }
+
   function basePath() {
-    var p = window.location.pathname;
+    var p = window.location.pathname || "/";
+    while (p.length > 1 && p.endsWith("/")) {
+      p = p.slice(0, -1);
+    }
     if (p.endsWith("/index.html")) return p.slice(0, -"index.html".length);
     if (p.endsWith("/etf-news.html")) return p.slice(0, -"etf-news.html".length);
     if (p.endsWith("/etps.html")) return p.slice(0, -"etps.html".length);
@@ -24,11 +47,14 @@
     if (!s) return s;
     if (/^https?:\/\//i.test(s)) return s;
     if (s.charAt(0) === "/") return s;
-    return basePath() + s.replace(/^\.\//, "");
+    var abs = resolvedUrlAgainstStaticHome(s.replace(/^\.\//, ""));
+    return abs || basePath() + s.replace(/^\.\//, "");
   }
 
   function dataUrl(name) {
-    return basePath() + "data/" + name;
+    var n = String(name || "").trim().replace(/^\/+/, "");
+    var abs = resolvedUrlAgainstStaticHome("data/" + n);
+    return abs || basePath() + "data/" + n;
   }
 
   global.__STATIC = { basePath: basePath, assetUrl: assetUrl, dataUrl: dataUrl };
@@ -80,8 +106,9 @@
   fixStaticHubHtmlAnchors();
 
   global.loadJson = function (name) {
-    return fetch(dataUrl(name), { credentials: "same-origin" }).then(function (r) {
-      if (!r.ok) throw new Error("Failed to load " + name + ": " + r.status);
+    var url = dataUrl(name);
+    return fetch(url, { credentials: "same-origin" }).then(function (r) {
+      if (!r.ok) throw new Error("Failed to load " + name + " (" + url + "): " + r.status);
       return r.json();
     });
   };

@@ -157,7 +157,24 @@
     var H = global.__RWA_STATIC_HELPERS || {};
     var renderKpis = H.renderKpis;
     var renderTable = H.renderTable;
-    if (!renderKpis || !renderTable) return;
+    if (!renderKpis || !renderTable) {
+      var b0 = $("js-deep-banner");
+      if (b0) {
+        b0.hidden = false;
+        b0.textContent =
+          "Dashboard scripts did not initialize (missing table/KPI helpers). Check the browser Network tab that js/static-base.js and js/rwa-onchain-home.js return 200, then hard refresh.";
+      }
+      return;
+    }
+
+    if (!global.loadJson) {
+      var bl = $("js-deep-banner");
+      if (bl) {
+        bl.hidden = false;
+        bl.textContent = "Could not load JSON utilities (js/static-base.js). Check the Network tab and hard refresh.";
+      }
+      return;
+    }
 
     if (payload.page_title) document.title = payload.page_title;
 
