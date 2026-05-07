@@ -1531,6 +1531,19 @@ body {
   overflow: visible;
   border-radius: 8px;
   background: #f8fafc;
+  padding-left: 2px;
+  box-sizing: border-box;
+}
+
+/* Plotly defaults clip overflow; y-axis category labels sit in the left margin. */
+.rwa-split-chart-shell .plotly,
+.rwa-split-chart-shell .plot-container,
+.rwa-split-chart-shell .svg-container {
+  overflow: visible !important;
+}
+
+.rwa-split-chart-shell .svg-container > svg {
+  overflow: visible;
 }
 
 .rwa-split-chart-host {

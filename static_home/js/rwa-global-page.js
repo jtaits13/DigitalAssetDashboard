@@ -11,6 +11,33 @@
     return document.getElementById(id);
   }
 
+  function estimateChartMargins(yLabels, textLabels, shellWidth) {
+    var i;
+    var maxLab = 4;
+    for (i = 0; i < yLabels.length; i++) {
+      maxLab = Math.max(maxLab, String(yLabels[i] || "").length);
+    }
+    var maxPct = 6;
+    for (i = 0; i < textLabels.length; i++) {
+      maxPct = Math.max(maxPct, String(textLabels[i] || "").length);
+    }
+
+    var sw = typeof shellWidth === "number" && shellWidth > 0 ? shellWidth : 560;
+
+    var perCharLeft = 7.5;
+    var basePad = 76;
+    var fromText = Math.round(maxLab * perCharLeft + basePad);
+    var minByWidth = Math.round(sw * 0.44);
+    var marginLeft = Math.min(440, Math.max(176, Math.max(fromText, minByWidth)));
+
+    var marginRight = Math.min(
+      210,
+      Math.max(118, Math.round(maxPct * 6 + 84))
+    );
+
+    return { l: marginLeft, r: marginRight };
+  }
+
   function renderPrimaryCta(host, data) {
     if (!host) return;
     var L = data.links || {};
@@ -31,6 +58,16 @@
     if (!el || typeof Plotly === "undefined") return;
 
     if (!rows || !rows.length) {
+      if (el._rwaResizeMarginTimer) {
+        clearTimeout(el._rwaResizeMarginTimer);
+        el._rwaResizeMarginTimer = null;
+      }
+      if (el._rwaResizeObs) {
+        try {
+          el._rwaResizeObs.disconnect();
+        } catch (eD) {}
+        el._rwaResizeObs = null;
+      }
       try {
         Plotly.purge(el);
       } catch (e) {}
@@ -61,12 +98,9 @@
       return Number(s).toFixed(2) + "% share";
     });
 
-    var maxLab = 10;
-    for (var li = 0; li < y.length; li++) {
-      maxLab = Math.max(maxLab, String(y[li]).length);
-    }
-    var marginLeft = Math.round(Math.min(288, Math.max(104, maxLab * 6.8 + 56)));
-    var marginRight = 124;
+    var shell = el.closest ? el.closest(".rwa-split-chart-shell") : el.parentElement;
+    var shellW = shell && shell.clientWidth ? shell.clientWidth : el.offsetParent ? el.offsetWidth : 0;
+    var m = estimateChartMargins(y, text, shellW);
 
     var trace = {
       type: "bar",
@@ -87,7 +121,8 @@
 
     var layout = {
       height: heightPx,
-      margin: { l: marginLeft, r: marginRight, t: 14, b: 40 },
+      autosize: true,
+      margin: { l: m.l, r: m.r, t: 14, b: 40, pad: 4 },
       paper_bgcolor: "rgba(0,0,0,0)",
       plot_bgcolor: "#f8fafc",
       font: { size: 12, color: "#1F4C67" },
@@ -102,17 +137,59 @@
         categoryorder: "array",
         categoryarray: y,
         showticklabels: true,
-        automargin: true,
       },
     };
 
-    var config = { displayModeBar: false, responsive: true };
+    var config = { displayModeBar: false, responsive: true, scrollZoom: false };
     Plotly.react(el, [trace], layout, config);
-    setTimeout(function () {
+    function relayoutMargins() {
+      try {
+        var wLate =
+          shell && shell.clientWidth
+            ? shell.clientWidth
+            : el.offsetWidth > 0
+              ? el.offsetWidth
+              : shellW || 560;
+        var m2 = estimateChartMargins(y, text, wLate);
+        Plotly.relayout(el, {
+          margin: { l: m2.l, r: m2.r, t: 14, b: 40, pad: 4 },
+        });
+      } catch (e3) {}
       try {
         Plotly.Plots.resize(el);
       } catch (e2) {}
+    }
+
+    setTimeout(function () {
+      requestAnimationFrame(function () {
+        relayoutMargins();
+      });
     }, 0);
+
+    if (shell && typeof ResizeObserver !== "undefined") {
+      if (el._rwaResizeMarginTimer) {
+        clearTimeout(el._rwaResizeMarginTimer);
+        el._rwaResizeMarginTimer = null;
+      }
+      if (el._rwaResizeObs) {
+        try {
+          el._rwaResizeObs.disconnect();
+        } catch (eDC) {}
+        el._rwaResizeObs = null;
+      }
+      try {
+        el._rwaResizeObs = new ResizeObserver(function () {
+          if (el._rwaResizeMarginTimer) {
+            clearTimeout(el._rwaResizeMarginTimer);
+          }
+          el._rwaResizeMarginTimer = setTimeout(function () {
+            el._rwaResizeMarginTimer = null;
+            relayoutMargins();
+          }, 64);
+        });
+        el._rwaResizeObs.observe(shell);
+      } catch (eOb) {}
+    }
   }
 
   function applyFilter(state, renderTable) {
