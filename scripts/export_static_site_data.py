@@ -4,7 +4,7 @@ Build JSON payloads under static_home/data/ for the GitHub Pages mirror.
 Run locally:  python scripts/export_static_site_data.py
 Run in CI:    before upload-pages-artifact (see .github/workflows).
 
-Uses the same RSS / StockAnalysis / yfinance / RWA.xyz logic as the Streamlit app (no Streamlit UI).
+Uses the same RSS / StockAnalysis / yfinance / RWA.xyz logic as the Streamlit app (no Streamlit UI), plus ``price_ticker.fetch_top_crypto_tickers`` for ``crypto_ticker.json`` (GitHub Pages marquee).
 
 Optional env ``STATIC_WEBAPP_BASE``: absolute origin for FastAPI-only routes when needed. Served as HTML in ``static_home/``: Global overview ``rwa-global.html``, Explore by Asset Type ``rwa-explore-asset-type.html``, Explore by Market Participant ``rwa-explore-market-participant.html``, participant deep pages ``rwa-participants-*.html``, Stablecoins ``rwa-stablecoins.html``, US Treasuries ``rwa-us-treasuries.html``, Tokenized Stocks ``rwa-tokenized-stocks.html``.
 """
@@ -1287,6 +1287,28 @@ def main() -> None:
     (OUT / "aum_series.json").write_text(json.dumps({"series": series}, indent=2), encoding="utf-8")
     (OUT / "etp_kpis.json").write_text(json.dumps(kpis, indent=2), encoding="utf-8")
 
+    # --- Crypto price ticker marquee (same CoinGecko→CoinCap pipeline as ``price_ticker`` / Streamlit) ---
+    try:
+        from price_ticker import TICKER_COUNT, fetch_top_crypto_tickers, hub_ticker_static_json_payload
+
+        t_rows, t_err, t_src = fetch_top_crypto_tickers(TICKER_COUNT)
+        crypto_payload = hub_ticker_static_json_payload(t_rows, t_err, t_src)
+        crypto_payload["generated_at"] = datetime.now(timezone.utc).isoformat()
+    except Exception as exc:
+        manifest["errors"].append(f"Crypto ticker export: {exc}")
+        crypto_payload = {
+            "banner_title": "Top 25 Cryptocurrencies",
+            "chips_inner_html": f'<span class="ticker-chip ticker-chip--error">{html_escape(str(exc))}</span>',
+            "source": "",
+            "error": str(exc),
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+        }
+
+    (OUT / "crypto_ticker.json").write_text(
+        json.dumps(crypto_payload, indent=2),
+        encoding="utf-8",
+    )
+
     # --- Home RSS lanes ---
     articles, feed_errs = load_all_feeds(DEFAULT_FEEDS)
     for e in feed_errs:
@@ -1530,7 +1552,7 @@ def main() -> None:
     (OUT / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     print(
         f"Wrote static data to {OUT} ({len(rows_payload)} ETPs, {len(etf_items)} ETF headlines, "
-        f"{len(rwa_rows)} RWA networks; rwa_global_market.json, rwa_explore_asset_type.json, "
+        f"{len(rwa_rows)} RWA networks; crypto_ticker.json, rwa_global_market.json, rwa_explore_asset_type.json, "
         "rwa_explore_market_participant.json, rwa_participants_networks.json, rwa_participants_platforms.json, "
         "rwa_participants_asset_managers.json, rwa_stablecoins.json, rwa_us_treasuries.json, "
         "rwa_tokenized_stocks.json, rwa_onchain_home.json)."

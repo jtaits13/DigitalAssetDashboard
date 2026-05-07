@@ -244,6 +244,52 @@ def _format_usd(price: float) -> str:
     return f"${price:.6g}"
 
 
+def hub_ticker_chip_html(r: dict[str, Any]) -> str:
+    """One static-hub row: classes ``ticker-chip`` / ``ticker-usd`` / ``up`` · ``down`` (GitHub Pages)."""
+    sym = escape(str(r["symbol"]))
+    price_s = escape(_format_usd(float(r["price_usd"])))
+    pct = r.get("pct_24h")
+    if pct is None:
+        pct_html = '<span class="ticker-pct ticker-pct--na">—</span>'
+    else:
+        p = float(pct)
+        arrow = "▲" if p >= 0 else "▼"
+        cls = "up" if p >= 0 else "down"
+        sign = "+" if p > 0 else ""
+        pct_html = f'<span class="{cls}">{arrow} {sign}{p:.2f}%</span>'
+    inner = (
+        f'<span class="ticker-chip"><strong>{sym}</strong> '
+        f'<span class="ticker-usd">{price_s}</span> {pct_html}</span>'
+    )
+    href = r.get("detail_url")
+    if isinstance(href, str) and href.startswith(("https://www.coingecko.com/", "https://coincap.io/")):
+        h = escape(href, quote=True)
+        return (
+            f'<a class="ticker-chip ticker-chip-link" href="{h}" target="_blank" rel="noopener noreferrer">'
+            f"{inner}</a>"
+        )
+    return inner
+
+
+def hub_ticker_inner_html(rows: list[dict[str, Any]], error: str | None) -> str:
+    """Concatenated inner HTML for ``.ticker-strip__chips`` (segments already escaped per row)."""
+    if error:
+        return f'<span class="ticker-chip ticker-chip--error">{escape(error)}</span>'
+    if not rows:
+        return '<span class="ticker-chip ticker-chip--muted">No price data.</span>'
+    return "".join(hub_ticker_chip_html(r) for r in rows)
+
+
+def hub_ticker_static_json_payload(rows: list[dict[str, Any]], error: str | None, source_label: str) -> dict[str, Any]:
+    """Payload written to ``static_home/data/crypto_ticker.json`` for the Pages marquee."""
+    return {
+        "banner_title": PRICE_TICKER_BANNER_TITLE,
+        "chips_inner_html": hub_ticker_inner_html(rows, error),
+        "source": source_label or "",
+        "error": error or "",
+    }
+
+
 def render_price_ticker_html(
     rows: list[dict[str, Any]],
     error: str | None,

@@ -114,6 +114,49 @@
   }
   fixStaticHubHtmlAnchors();
 
+  global.loadJson = function (name) {
+    var url = dataUrl(name);
+    return fetch(url, { credentials: "same-origin" }).then(function (r) {
+      if (!r.ok) throw new Error("Failed to load " + name + " (" + url + "): " + r.status);
+      return r.json();
+    });
+  };
+
+  global.escapeHtml = function (s) {
+    if (s == null) return "";
+    var d = document.createElement("div");
+    d.textContent = s;
+    return d.innerHTML;
+  };
+
+  /** Fill ``.ticker-strip`` from export ``crypto_ticker.json`` (Streamlit / CoinGecko pipeline). */
+  function hydrateStaticCryptoTicker(payload) {
+    if (!payload || typeof document === "undefined") return;
+    var strips = document.querySelectorAll(".ticker-strip");
+    var si = 0;
+    for (; si < strips.length; si++) {
+      var strip = strips[si];
+      var layout = strip.querySelector(".ticker-strip__layout");
+      if (!layout) continue;
+      var lab = strip.querySelector(".ticker-strip__label");
+      var chips = null;
+      var k = 0;
+      var kids = layout.children;
+      for (; k < kids.length; k++) {
+        if (kids[k].classList && kids[k].classList.contains("ticker-strip__chips")) {
+          chips = kids[k];
+          break;
+        }
+      }
+      if (!chips) continue;
+      if (lab && payload.banner_title) lab.textContent = payload.banner_title;
+      if (payload.chips_inner_html) chips.innerHTML = payload.chips_inner_html;
+      if (typeof global.finalizeHubAnchors === "function") {
+        global.finalizeHubAnchors(strip);
+      }
+    }
+  }
+
   function initCryptoTickerMarquee() {
     if (typeof document === "undefined") return;
     var strips = document.querySelectorAll(".ticker-strip");
@@ -152,21 +195,23 @@
     }
   }
 
-  if (typeof document !== "undefined") {
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", initCryptoTickerMarquee);
-    } else {
-      initCryptoTickerMarquee();
-    }
+  function bootStaticCryptoTicker() {
+    if (typeof document === "undefined") return;
+    var run = function () {
+      global
+        .loadJson("crypto_ticker.json")
+        .then(function (data) {
+          hydrateStaticCryptoTicker(data);
+          initCryptoTickerMarquee();
+        })
+        .catch(function () {
+          initCryptoTickerMarquee();
+        });
+    };
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
+    else run();
   }
-
-  global.loadJson = function (name) {
-    var url = dataUrl(name);
-    return fetch(url, { credentials: "same-origin" }).then(function (r) {
-      if (!r.ok) throw new Error("Failed to load " + name + " (" + url + "): " + r.status);
-      return r.json();
-    });
-  };
+  bootStaticCryptoTicker();
 
   global.fmtDate = function (iso) {
     if (!iso) return "—";
@@ -182,12 +227,5 @@
     } catch (e) {
       return iso;
     }
-  };
-
-  global.escapeHtml = function (s) {
-    if (s == null) return "";
-    var d = document.createElement("div");
-    d.textContent = s;
-    return d.innerHTML;
   };
 })(typeof window !== "undefined" ? window : this);

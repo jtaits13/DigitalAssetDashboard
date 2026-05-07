@@ -401,7 +401,7 @@ body {
 .ticker-strip__move {
   display: flex;
   width: max-content;
-  animation: jd-ticker-marquee-rtl 120s linear infinite;
+  animation: jd-ticker-marquee-rtl 72s linear infinite;
 }
 
 .ticker-strip__move:hover {
@@ -541,6 +541,40 @@ body {
   font-weight: 600;
   font-size: 0.82rem;
   margin-left: 0.35rem;
+}
+
+.ticker-pct--na {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.82rem;
+  margin-left: 0.35rem;
+}
+
+.ticker-chip--muted {
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.ticker-chip--error {
+  color: #b91c1c;
+  font-weight: 600;
+  font-size: 0.84rem;
+}
+
+a.ticker-chip-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+a.ticker-chip-link .ticker-chip {
+  border-radius: 6px;
+  padding: 0.15rem 0.35rem;
+  margin: 0 -0.12rem;
+  transition: background 0.15s ease;
+}
+
+a.ticker-chip-link:hover .ticker-chip {
+  background: rgba(37, 128, 156, 0.12);
 }
 
 /* —— Page shell & hub sections —— */
