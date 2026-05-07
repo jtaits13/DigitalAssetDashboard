@@ -83,11 +83,11 @@
           <p class="toolbar-note" id="rwa-global-toolbar-note"></p>
         </div>
 
-        <div class="split-two" id="js-rwa-global-split">
-          <div>
-            <h2 class="subsection-head">Networks table</h2>
-            <div class="table-scroll">
-              <table class="data-table data-table--dense">
+        <div class="split-two rwa-split" id="js-rwa-global-split" style="--rwa-split-body-height: 420px">
+          <div class="rwa-split-pane">
+            <h2 class="subsection-head rwa-split-heading">Networks table</h2>
+            <div class="rwa-split-table-scroll">
+              <table class="data-table data-table--dense rwa-split-data-table">
                 <thead>
                   <tr id="js-rwa-gmo-thead-row"></tr>
                 </thead>
@@ -99,10 +99,14 @@
               </table>
             </div>
           </div>
-          <div>
-            <h2 class="subsection-head">Top networks by value</h2>
-            <div id="js-rwa-gmo-chart" class="aum-chart-host"></div>
-            <p class="muted" id="js-rwa-gmo-chart-empty" hidden>No networks match this filter; there is nothing to chart.</p>
+          <div class="rwa-split-pane rwa-split-pane--chart">
+            <h2 class="subsection-head rwa-split-heading">Top networks by value</h2>
+            <div class="rwa-split-chart-shell">
+              <div id="js-rwa-gmo-chart" class="aum-chart-host rwa-split-chart-host"></div>
+              <p class="muted rwa-split-chart-empty" id="js-rwa-gmo-chart-empty" hidden>
+                No networks match this filter; there is nothing to chart.
+              </p>
+            </div>
             <p class="jd-hub-cta-note jd-rwa-gmo-split-note" id="js-rwa-global-chart-note"></p>
           </div>
         </div>

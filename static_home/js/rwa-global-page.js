@@ -61,6 +61,13 @@
       return Number(s).toFixed(2) + "% share";
     });
 
+    var maxLab = 10;
+    for (var li = 0; li < y.length; li++) {
+      maxLab = Math.max(maxLab, String(y[li]).length);
+    }
+    var marginLeft = Math.round(Math.min(288, Math.max(104, maxLab * 6.8 + 56)));
+    var marginRight = 124;
+
     var trace = {
       type: "bar",
       x: x,
@@ -80,7 +87,7 @@
 
     var layout = {
       height: heightPx,
-      margin: { l: 8, r: 100, t: 14, b: 36 },
+      margin: { l: marginLeft, r: marginRight, t: 14, b: 40 },
       paper_bgcolor: "rgba(0,0,0,0)",
       plot_bgcolor: "#f8fafc",
       font: { size: 12, color: "#1F4C67" },
@@ -95,11 +102,17 @@
         categoryorder: "array",
         categoryarray: y,
         showticklabels: true,
+        automargin: true,
       },
     };
 
     var config = { displayModeBar: false, responsive: true };
     Plotly.react(el, [trace], layout, config);
+    setTimeout(function () {
+      try {
+        Plotly.Plots.resize(el);
+      } catch (e2) {}
+    }, 0);
   }
 
   function applyFilter(state, renderTable) {
@@ -237,6 +250,9 @@
 
     var chartMax = data.chart_max_bars != null ? Number(data.chart_max_bars) : 12;
     var chartHeight = data.chart_height_px != null ? Number(data.chart_height_px) : 420;
+
+    var splitRoot = $("js-rwa-global-split");
+    if (splitRoot) splitRoot.style.setProperty("--rwa-split-body-height", String(chartHeight) + "px");
 
     var state = {
       allRows: rows,

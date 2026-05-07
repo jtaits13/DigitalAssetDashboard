@@ -1341,6 +1341,10 @@ body {
   width: 100%;
 }
 
+.rwa-split-chart-shell > .aum-chart-host {
+  min-height: 0;
+}
+
 .chart-fallback {
   margin: 0;
   padding: 2rem;
@@ -1473,9 +1477,93 @@ body {
   margin: 0.75rem 0;
 }
 
+/* RWA overview: paired table + Plotly chart — same viewport height; extra gap for chart y-axis labels. */
+.split-two.rwa-split {
+  gap: 1.35rem;
+  align-items: start;
+}
+
+.rwa-split-pane {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.rwa-split-pane--chart {
+  overflow: visible;
+}
+
+.rwa-split-heading {
+  flex: 0 0 auto;
+  margin-bottom: 0.5rem;
+}
+
+.rwa-split-table-scroll {
+  flex: 0 0 auto;
+  height: var(--rwa-split-body-height, 420px);
+  max-height: var(--rwa-split-body-height, 420px);
+  overflow-x: auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.rwa-split-table-scroll .rwa-split-data-table {
+  margin: 0;
+}
+
+.rwa-split-table-scroll thead th {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: #f0f6fa;
+  box-shadow: 0 1px 0 rgba(199, 216, 232, 0.9);
+}
+
+.rwa-split-chart-shell {
+  flex: 0 0 auto;
+  position: relative;
+  height: var(--rwa-split-body-height, 420px);
+  max-height: var(--rwa-split-body-height, 420px);
+  width: 100%;
+  overflow: visible;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.rwa-split-chart-host {
+  min-height: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.rwa-split-chart-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 1rem;
+  background: rgba(248, 250, 252, 0.96);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.rwa-split-chart-empty[hidden] {
+  display: none !important;
+}
+
 @media (max-width: 960px) {
   .split-two {
     grid-template-columns: 1fr;
+  }
+
+  /* Match chart column min width so Plotly retains room for axis labels before wrap. */
+  .split-two.rwa-split .rwa-split-pane--chart {
+    min-width: min(100%, 20rem);
   }
 }
 
