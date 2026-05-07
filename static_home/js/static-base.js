@@ -114,6 +114,79 @@
   }
   fixStaticHubHtmlAnchors();
 
+  function initCryptoTickerMarquee() {
+    if (typeof document === "undefined") return;
+    var strips = document.querySelectorAll(".ticker-strip");
+    var si = 0;
+    for (; si < strips.length; si++) {
+      var strip = strips[si];
+      if (!strip || strip.getAttribute("data-ticker-marquee") === "1") continue;
+      var layout = strip.querySelector(".ticker-strip__layout");
+      if (!layout) continue;
+      var chips = null;
+      var k = 0;
+      var kids = layout.children;
+      for (; k < kids.length; k++) {
+        if (kids[k].classList && kids[k].classList.contains("ticker-strip__chips")) {
+          chips = kids[k];
+          break;
+        }
+      }
+      if (!chips) continue;
+
+      strip.setAttribute("data-ticker-marquee", "1");
+
+      var viewport = document.createElement("div");
+      viewport.className = "ticker-strip__viewport";
+      var track = document.createElement("div");
+      track.className = "ticker-strip__track";
+
+      track.appendChild(chips);
+      var clone = chips.cloneNode(true);
+      clone.setAttribute("aria-hidden", "true");
+      clone.classList.add("ticker-strip__chips--marquee-clone");
+      track.appendChild(clone);
+      viewport.appendChild(track);
+      layout.appendChild(viewport);
+
+      function applyShiftAndDuration() {
+        var w = chips.offsetWidth;
+        if (!w || w < 40) return;
+        track.style.setProperty("--ticker-shift", w + "px");
+        var pxPerSec = 50;
+        var sec = Math.max(18, Math.min(92, w / pxPerSec));
+        track.style.animationDuration = sec + "s";
+      }
+
+      applyShiftAndDuration();
+      window.addEventListener(
+        "resize",
+        function () {
+          applyShiftAndDuration();
+        },
+        { passive: true }
+      );
+
+      try {
+        if (typeof ResizeObserver !== "undefined") {
+          var ro = new ResizeObserver(function () {
+            applyShiftAndDuration();
+          });
+          ro.observe(strip);
+          ro.observe(chips);
+        }
+      } catch (eRo) {}
+    }
+  }
+
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initCryptoTickerMarquee);
+    } else {
+      initCryptoTickerMarquee();
+    }
+  }
+
   global.loadJson = function (name) {
     var url = dataUrl(name);
     return fetch(url, { credentials: "same-origin" }).then(function (r) {
