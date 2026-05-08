@@ -469,7 +469,7 @@ async def us_crypto_etps(request: Request, q: str = "") -> HTMLResponse:
             "etp_feed_errors": etp_feed_errors,
             "search_q": search_q,
             "head_block": section_label_teal("U.S. Digital Asset ETPs — Full List", placement="first")
-            + '<p class="jd-hub-dek jd-hub-dek-large">U.S. crypto-related exchange-traded products: KPIs, aggregate AUM trend, fund table, ETF News Feed.</p><hr class="jd-divider" />',
+            + '<p class="jd-hub-dek jd-hub-dek-large">U.S. crypto-related exchange-traded products: KPIs, aggregate AUM trend, fund table, ETF headline teaser.</p><hr class="jd-divider" />',
             "body_html": "".join(body_parts),
             "footnote": subpage_footnote_html(
                 f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · StockAnalysis snapshot"
