@@ -45,7 +45,7 @@ def main() -> None:
     )
 
     st.set_page_config(
-        page_title="Tokenized Stocks — JPM Digital",
+        page_title="Tokenized Stocks — Digital Assets Dashboard",
         page_icon="◆",
         layout="wide",
         initial_sidebar_state="expanded",

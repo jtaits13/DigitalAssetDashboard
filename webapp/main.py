@@ -88,7 +88,7 @@ MAX_ETF_HEADLINES_PER_DAY = 7
 ETP_PREVIEW_ROWS = 5
 RWA_HOME_PREVIEW = 8
 
-app = FastAPI(title="JPM Digital Assets Dashboard")
+app = FastAPI(title="Digital Assets Dashboard")
 app.include_router(rwa_router)
 if STATIC_DIR.is_dir():
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
@@ -205,7 +205,7 @@ async def home(request: Request) -> HTMLResponse:
     rwa_block_parts.append(rwa_explore_gateways_html("home"))
     rwa_block = "".join(rwa_block_parts)
 
-    ctx = html_shell_context(request, page_title="JPM Digital Assets Dashboard")
+    ctx = html_shell_context(request, page_title="Digital Assets Dashboard")
     ctx.update(
         {
             "feed_errors": feed_errors,

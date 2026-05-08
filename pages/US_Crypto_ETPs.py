@@ -125,7 +125,7 @@ ETP_KEY_OBSERVATIONS_HTML = f"""
 
 def main() -> None:
     st.set_page_config(
-        page_title="U.S. Digital Asset ETPs — JPM Digital",
+        page_title="U.S. Digital Asset ETPs — Digital Assets Dashboard",
         page_icon="◆",
         layout="wide",
         initial_sidebar_state="expanded",

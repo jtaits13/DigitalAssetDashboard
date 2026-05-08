@@ -67,7 +67,7 @@ _CAPTION_INLINE_LINK_RE = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
 
 DEFAULT_UA = os.environ.get(
     "STOCKANALYSIS_USER_AGENT",
-    "JPM-Digital/1.0 (static site export; contact per StockAnalysis terms)",
+    "Digital-Assets-Dashboard/1.0 (static site export; contact per StockAnalysis terms)",
 ).strip()
 
 
@@ -333,7 +333,7 @@ def _build_rwa_stablecoins_deep_payload(sc_pack: tuple[Any, Any, Any, Any], mani
 
     def _seed() -> dict[str, Any]:
         return {
-            "page_title": "Stablecoins — JPM Digital",
+            "page_title": "Stablecoins — Digital Assets Dashboard",
             "band_label": "Stablecoins",
             "page_subtitle_html": (
                 "This page mirrors the "
@@ -462,7 +462,7 @@ def _build_rwa_us_treasuries_deep_payload(tr_pack: tuple[Any, Any, Any, Any], ma
 
     def _seed() -> dict[str, Any]:
         return {
-            "page_title": "US Treasuries — JPM Digital",
+            "page_title": "US Treasuries — Digital Assets Dashboard",
             "band_label": "US Treasuries",
             "page_subtitle_html": (
                 f'Mirrors <a href="{html_escape(APP_TREASURIES, quote=True)}">'
@@ -554,7 +554,7 @@ def _build_rwa_tokenized_stocks_deep_payload(st_pack: tuple[Any, Any, Any, Any],
 
     def _seed() -> dict[str, Any]:
         return {
-            "page_title": "Tokenized Stocks — JPM Digital",
+            "page_title": "Tokenized Stocks — Digital Assets Dashboard",
             "band_label": "Tokenized Stocks",
             "page_subtitle_html": (
                 f'Mirrors <a href="{html_escape(APP_STOCKS, quote=True)}">RWA.xyz Tokenized Stocks</a>'
@@ -776,7 +776,7 @@ def _build_rwa_explore_asset_type_payload(
     )
 
     return {
-        "page_title": "Explore by Asset Type — JPM Digital",
+        "page_title": "Explore by Asset Type — Digital Assets Dashboard",
         "page_subtitle_html": (
             "Hub previews — same <strong>Platforms / Networks</strong> teasers as the Streamlit "
             "<strong>Explore by Asset Type</strong> page "
@@ -953,7 +953,7 @@ def _build_rwa_explore_market_participant_payload(
     )
 
     return {
-        "page_title": "Explore by Market Participant — JPM Digital",
+        "page_title": "Explore by Market Participant — Digital Assets Dashboard",
         "page_subtitle_html": (
             "Hub previews — same <strong>Networks / Platforms / Asset Managers</strong> teasers as the Streamlit "
             "<strong>Explore by Market Participant</strong> page "
@@ -991,7 +991,7 @@ def _build_rwa_participants_networks_deep_payload(
 
     def _seed() -> dict[str, Any]:
         return {
-            "page_title": "Participants — Networks — JPM Digital",
+            "page_title": "Participants — Networks — Digital Assets Dashboard",
             "band_label": "Participants — Networks",
             "page_subtitle_html": (
                 f'Mirrors <a href="{html_escape(APP_NETWORKS, quote=True)}">RWA.xyz Networks</a> '
@@ -1072,7 +1072,7 @@ def _build_rwa_participants_platforms_deep_payload(
 
     def _seed() -> dict[str, Any]:
         return {
-            "page_title": "Participants — Platforms — JPM Digital",
+            "page_title": "Participants — Platforms — Digital Assets Dashboard",
             "band_label": "Participants — Platforms",
             "page_subtitle_html": (
                 f'Mirrors <a href="{html_escape(APP_PLATFORMS, quote=True)}">RWA.xyz Platforms</a> '
@@ -1153,7 +1153,7 @@ def _build_rwa_participants_asset_managers_deep_payload(
 
     def _seed() -> dict[str, Any]:
         return {
-            "page_title": "Participants — Asset Managers — JPM Digital",
+            "page_title": "Participants — Asset Managers — Digital Assets Dashboard",
             "band_label": "Participants — Asset Managers",
             "page_subtitle_html": (
                 f'Mirrors <a href="{html_escape(APP_ASSET_MANAGERS, quote=True)}">RWA.xyz Asset Managers</a>.'
@@ -1422,7 +1422,7 @@ def main() -> None:
     )
 
     rwa_global_payload: dict[str, Any] = {
-        "page_title": "RWA Global Market Overview",
+        "page_title": "RWA Global Market Overview — Digital Assets Dashboard",
         "page_subtitle_html": (
             "RWA <strong>Global Market Overview</strong>: the same <strong>headline metrics</strong> and "
             '<strong>Networks</strong> table as the <a href="https://app.rwa.xyz/">RWA.xyz</a> '

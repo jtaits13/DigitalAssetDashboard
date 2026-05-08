@@ -30,7 +30,7 @@ APP_STABLECOINS = "https://app.rwa.xyz/stablecoins"
 APP_TREASURIES = "https://app.rwa.xyz/treasuries"
 APP_STOCKS = "https://app.rwa.xyz/stocks"
 APP_ASSET_MANAGERS = "https://app.rwa.xyz/asset-managers"
-USER_AGENT = "JPM-Digital/1.0 (RWA league widget; contact via app maintainer)"
+USER_AGENT = "Digital-Assets-Dashboard/1.0 (RWA league widget; contact via app maintainer)"
 _HTTP_TIMEOUT = (8, 30)
 
 # Defensive registration for runtimes/loaders where dataclasses may inspect this module

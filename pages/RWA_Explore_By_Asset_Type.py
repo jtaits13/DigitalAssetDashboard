@@ -30,7 +30,7 @@ from rwa_league.widgets import show_rwa_explore_by_asset_type_widget
 
 def main() -> None:
     st.set_page_config(
-        page_title="Explore by Asset Type — JPM Digital",
+        page_title="Explore by Asset Type — Digital Assets Dashboard",
         page_icon="◆",
         layout="wide",
         initial_sidebar_state="expanded",

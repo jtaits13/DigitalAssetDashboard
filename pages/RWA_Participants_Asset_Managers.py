@@ -45,7 +45,7 @@ def main() -> None:
     )
 
     st.set_page_config(
-        page_title="Participants — Asset Managers — JPM Digital",
+        page_title="Participants — Asset Managers — Digital Assets Dashboard",
         page_icon="◆",
         layout="wide",
         initial_sidebar_state="expanded",

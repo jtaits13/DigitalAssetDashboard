@@ -312,7 +312,7 @@ def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -
 <div class="jd-site-nav-fixed-wrap">
   <div class="jd-site-nav-inner">
     <nav class="jd-site-nav" aria-label="Page sections">
-      <span class="jd-site-brand">JPM Digital Assets Dashboard</span>
+      <span class="jd-site-brand">Digital Assets Dashboard</span>
       <a class="jd-site-link" href="/?jd_scroll=top">Home</a>
       <a class="jd-site-link" href="#jd-section-news">News</a>
       <a class="jd-site-link" href="#jd-section-markets-funds">Markets &amp; Funds</a>
@@ -364,7 +364,7 @@ def render_subpage_top_bar() -> None:
 <div class="jd-site-nav-fixed-wrap">
   <div class="jd-site-nav-inner">
     <nav class="jd-site-nav" aria-label="Page sections">
-      <span class="jd-site-brand">JPM Digital Assets Dashboard</span>
+      <span class="jd-site-brand">Digital Assets Dashboard</span>
       <a class="jd-site-link" href="/?jd_scroll=top">Home</a>
       <a class="jd-site-link" href="/?jd_scroll=news">News</a>
       <a class="jd-site-link" href="/?jd_scroll=markets_funds">Markets &amp; Funds</a>
@@ -430,7 +430,7 @@ def render_subpage_sidebar(*, key_prefix: str, current: str) -> None:
     from rwa_league.explore_nav import set_rwa_explore_top_nav_target
 
     with st.sidebar:
-        st.markdown("### JPM Digital Assets Dashboard")
+        st.markdown("### Digital Assets Dashboard")
         st.caption("Markets, policy, and on-chain market data.")
         st.divider()
         st.markdown("**Pages**")

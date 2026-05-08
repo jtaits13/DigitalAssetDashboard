@@ -155,7 +155,7 @@ def clear_crypto_etp_cache() -> None:
 
 def _default_ua() -> str:
     return (
-        "JPM-Digital/1.0 (crypto ETP list; set STOCKANALYSIS_USER_AGENT in secrets with contact email)"
+        "Digital-Assets-Dashboard/1.0 (crypto ETP list; set STOCKANALYSIS_USER_AGENT in secrets with contact email)"
     )
 
 

@@ -193,7 +193,7 @@ def fetch_top_crypto_tickers(limit: int = TICKER_COUNT) -> tuple[list[dict[str, 
     """Top ~25 by market cap: CoinGecko, then CoinCap."""
     lim = max(min(limit, 250), 1)
     headers = {
-        "User-Agent": "Mozilla/5.0 (compatible; JPM-Digital-News/1.0)",
+        "User-Agent": "Mozilla/5.0 (compatible; Digital-Assets-Dashboard-News/1.0)",
         "Accept": "application/json",
     }
     cg_err: str | None = None

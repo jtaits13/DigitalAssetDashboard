@@ -55,7 +55,7 @@ def _is_etf_only_item(item: dict) -> bool:
 
 def main() -> None:
     st.set_page_config(
-        page_title="ETF & ETP Market News — JPM Digital",
+        page_title="ETF & ETP Market News — Digital Assets Dashboard",
         page_icon="◆",
         layout="wide",
         initial_sidebar_state="expanded",

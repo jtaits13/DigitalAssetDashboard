@@ -230,7 +230,7 @@ p.home-band-label.teal.jd-home-band-after-rule {
 [data-testid="stMarkdownContainer"] .jd-home-hero p.jd-hub-dek:last-child:not(.jd-home-hero__jpm-callout) {
     margin-bottom: 0.15rem !important;
 }
-/* JPM / Confluence callout: same blurb band, slightly stronger type + slim left rule (no box) */
+/* Confluence / internal callout: same blurb band, slightly stronger type + slim left rule (no box) */
 .jd-home-hero p.jd-home-hero__jpm-callout {
     margin-top: 0.35rem !important;
     padding-left: 0.7rem;

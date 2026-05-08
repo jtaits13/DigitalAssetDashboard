@@ -1,1 +1,1 @@
-"""FastAPI front-end for the JPM Digital Assets Dashboard (same data pipeline as Streamlit)."""
+"""FastAPI front-end for the Digital Assets Dashboard (same data pipeline as Streamlit)."""

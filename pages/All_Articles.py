@@ -43,7 +43,7 @@ MAX_ARTICLES_PER_DAY = 7
 
 def main() -> None:
     st.set_page_config(
-        page_title="All articles — JPM Digital",
+        page_title="All articles — Digital Assets Dashboard",
         page_icon="◆",
         layout="wide",
         initial_sidebar_state="expanded",

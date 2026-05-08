@@ -35,7 +35,7 @@ PER_PAGE = 20
 
 def main() -> None:
     st.set_page_config(
-        page_title="Regulatory headlines — JPM Digital",
+        page_title="Regulatory headlines — Digital Assets Dashboard",
         page_icon="◆",
         layout="wide",
         initial_sidebar_state="expanded",

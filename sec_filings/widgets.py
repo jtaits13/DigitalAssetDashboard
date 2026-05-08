@@ -45,7 +45,7 @@ a.sec-filing-link:hover { text-decoration: underline; color: #25809C; }
 
 
 def _default_user_agent() -> str:
-    return "JPM-Digital/1.0 (SEC EDGAR widget; set SEC_EDGAR_USER_AGENT in secrets with your contact email per sec.gov)"
+    return "Digital-Assets-Dashboard/1.0 (SEC EDGAR widget; set SEC_EDGAR_USER_AGENT in secrets with your contact email per sec.gov)"
 
 
 @st.cache_data(ttl=3600, show_spinner=False)

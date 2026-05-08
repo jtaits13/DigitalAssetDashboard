@@ -26,7 +26,7 @@ LIST_URL = "https://stockanalysis.com/list/crypto-etfs/"
 ETF_PAGE_TMPL = "https://stockanalysis.com/etf/{symbol}/"
 
 DEFAULT_USER_AGENT = (
-    "JPM-Digital/1.0 (U.S. crypto ETP widget; contact per site terms; "
+    "Digital-Assets-Dashboard/1.0 (U.S. crypto ETP widget; contact per site terms; "
     "set a custom User-Agent in app secrets if needed)"
 )
 

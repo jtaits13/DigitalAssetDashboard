@@ -1,5 +1,5 @@
 """
-JPM Digital Assets Dashboard — crypto & digital asset news and market views (RSS aggregation).
+Digital Assets Dashboard — crypto & digital asset news and market views (RSS aggregation).
 Deploy on Streamlit Community Cloud with this file as the main entrypoint.
 """
 
@@ -163,7 +163,7 @@ def _feed_status_expanders(feed_errors: list[str], regulatory_errors: list[str])
 def _sidebar() -> bool:
     """Returns True if refresh clicked."""
     with st.sidebar:
-        st.markdown("### JPM Digital Assets Dashboard")
+        st.markdown("### Digital Assets Dashboard")
         st.caption("Markets, policy, and on-chain market data.")
         st.divider()
         st.markdown("**Pages**")
@@ -208,7 +208,7 @@ def _footer_line() -> None:
 
 def main() -> None:
     st.set_page_config(
-        page_title="JPM Digital Assets Dashboard",
+        page_title="Digital Assets Dashboard",
         page_icon="◆",
         layout="wide",
         initial_sidebar_state="expanded",
@@ -224,7 +224,7 @@ def main() -> None:
     st.markdown(app_shared_layout_css(), unsafe_allow_html=True)
     st.markdown(
         '<div class="jd-home-hero">'
-        '<h1 class="home-main-heading" id="jd-page-top">JPM Digital Assets Dashboard</h1>'
+        '<h1 class="home-main-heading" id="jd-page-top">Digital Assets Dashboard</h1>'
         '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">This dashboard pulls together '
         "<strong>digital-asset news</strong>, <strong>global regulatory headlines</strong>, "
         "<strong>U.S. listed crypto ETPs</strong>, and <strong>on-chain RWA</strong> data from "
@@ -235,10 +235,10 @@ def main() -> None:
         "Together, the hub helps you scan <strong>market direction</strong>, "
         "<strong>policy signals</strong>, and where <strong>activity and issuance</strong> cluster.</p>"
         '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large jd-home-hero__jpm-callout">'
-        "For <strong>JPM-specific digital asset</strong> materials "
+        "For <strong>internal digital asset</strong> materials "
         "(documentation, collateral, product context, key contacts), see the "
         '<a href="https://confluence.prod.aws.jpmchase.net/confluence/spaces/viewspace.action?key=DIGITALPRODUCTTEAM"'
-        ' target="_blank" rel="noopener noreferrer">JPM Digital Custody Product Team</a> space on Confluence (internal).</p>'
+        ' target="_blank" rel="noopener noreferrer">Digital Custody Product Team</a> space on Confluence (internal).</p>'
         "</div>",
         unsafe_allow_html=True,
     )
