@@ -1430,25 +1430,34 @@ a.ticker-chip-link:hover .ticker-chip {
   margin-bottom: 0;
 }
 
+/* News feed box hugs headline list height (avoids a tall empty band under the last item). */
 .split-panels--etp-equal .pulse-box--etp-split {
-  flex: 1 1 auto;
-  min-height: 0;
+  flex: 0 1 auto;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  padding-bottom: 0.55rem;
 }
 
 .split-panels--etp-equal .pulse-box--etp-split .pulse-list {
-  flex: 1 1 auto;
-  min-height: 0;
+  flex: 0 1 auto;
+  max-height: min(42vh, 22rem);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-.split-panels--etp-equal .split-panels__cta-note {
+.split-panels--etp-equal .split-panels__widget--pulse {
+  justify-content: flex-start;
+}
+
+.split-panels--etp-equal .cta-row--etp-feed {
   margin-top: 0.65rem;
   margin-bottom: 0;
-  flex-shrink: 0;
+}
+
+.split-panels--etp-equal .cta-note--etp-feed-hint {
+  margin: 0.45rem 0 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
 }
 
 .method-note {
