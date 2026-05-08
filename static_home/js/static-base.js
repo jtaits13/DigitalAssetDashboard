@@ -120,7 +120,10 @@
 
   global.loadJson = function (name) {
     var url = dataUrl(name);
-    return fetch(url, { credentials: "same-origin" }).then(function (r) {
+    return fetch(url, {
+      credentials: "same-origin",
+      cache: "no-store",
+    }).then(function (r) {
       if (!r.ok) throw new Error("Failed to load " + name + " (" + url + "): " + r.status);
       return r.json();
     });

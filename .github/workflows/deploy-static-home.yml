@@ -18,6 +18,10 @@ on:
       - "home_layout.py"
       - "pages/**"
   workflow_dispatch:
+  # Re-export JSON from primary sources and redeploy so a normal browser reload sees newer data
+  # (without a new git push). Adjust cadence as needed; times are UTC.
+  schedule:
+    - cron: "25 */6 * * *"
 
 permissions:
   contents: read
