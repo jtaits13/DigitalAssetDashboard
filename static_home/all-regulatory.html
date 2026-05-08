@@ -10,9 +10,13 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=4" />
+    <link rel="stylesheet" href="styles.css?v=5" />
   </head>
-  <body class="page-full-feed" data-article-feed="all_regulatory.json" data-article-feed-country="1">
+  <body
+    class="page-full-feed page-article-feed"
+    data-article-feed="all_regulatory.json"
+    data-article-feed-country="1"
+  >
     <header class="site-header" role="banner">
       <div class="site-header__inner">
         <a class="site-brand" href="index.html">Digital Assets Dashboard</a>
@@ -50,18 +54,20 @@
 
       <div class="data-banner" id="js-data-banner" role="status" hidden></div>
 
-      <label class="search-field">
-        <span class="search-field__label">Search headlines</span>
-        <input
-          type="search"
-          class="search-field__input"
-          id="js-article-feed-search"
-          placeholder="Keyword in title, summary, source, or country…"
-        />
-      </label>
-      <p class="toolbar-note" id="js-article-feed-meta">Loading…</p>
+      <div class="article-feed-toolbar">
+        <label class="search-field">
+          <span class="search-field__label">Search headlines</span>
+          <input
+            type="search"
+            class="search-field__input"
+            id="js-article-feed-search"
+            placeholder="Keyword in title, summary, source, or country…"
+          />
+        </label>
+        <p class="toolbar-note" id="js-article-feed-meta">Loading…</p>
+      </div>
 
-      <ul class="etf-news-list" id="js-article-feed-list"></ul>
+      <div class="article-feed-stream" id="js-article-feed-list"></div>
       <div class="etf-news-nav" id="js-article-feed-nav"></div>
 
       <p class="back-link">

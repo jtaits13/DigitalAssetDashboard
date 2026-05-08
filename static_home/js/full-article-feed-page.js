@@ -1,5 +1,5 @@
 /**
- * Full article list UI (mirrors etf-news-page.js): load JSON export, search, paginate.
+ * Full article list UI: load JSON export, search, paginate, group by local calendar day.
  * Configure via body: data-article-feed="all_articles.json" | "all_regulatory.json"
  * and optional data-article-feed-country="1" to show country in meta + search.
  */
@@ -39,60 +39,33 @@
     render();
   }
 
-  function metaLine(a) {
-    var c = cfg();
-    var parts = [a.source || "", c.includeCountry && a.country ? a.country : "", fmtDate(a.published) || ""].filter(
-      Boolean
-    );
-    return parts.join(" · ");
-  }
-
   function render() {
     var listEl = document.getElementById("js-article-feed-list");
     var metaEl = document.getElementById("js-article-feed-meta");
     var navEl = document.getElementById("js-article-feed-nav");
     if (!listEl) return;
+    var sorted = sortArticlesByPublishedDesc(filtered);
     var start = page * PAGE;
-    var slice = filtered.slice(start, start + PAGE);
-    listEl.innerHTML = "";
-    if (!slice.length) {
-      listEl.innerHTML =
-        '<li class="etf-news-empty">No headlines match. Clear search or re-run data export.</li>';
-    } else {
-      slice.forEach(function (a) {
-        var li = document.createElement("li");
-        li.className = "etf-news-item";
-        var href = a.link || "#";
-        li.innerHTML =
-          '<a class="etf-news-title" href="' +
-          escapeHtml(href) +
-          '" target="_blank" rel="noopener noreferrer">' +
-          escapeHtml(a.title || "Untitled") +
-          "</a>" +
-          '<div class="etf-news-meta">' +
-          escapeHtml(metaLine(a)) +
-          "</div>";
-        if (a.summary) {
-          li.innerHTML +=
-            '<p class="etf-news-sum">' + escapeHtml(a.summary.substring(0, 280)) + "</p>";
-        }
-        listEl.appendChild(li);
-      });
-    }
+    var slice = sorted.slice(start, start + PAGE);
+    renderArticleFeedByDay(listEl, slice, {
+      includeCountry: cfg().includeCountry,
+      emptyMessage: "No headlines match. Clear search or re-run data export.",
+      emptyClass: "article-feed-empty",
+    });
     if (metaEl) {
       metaEl.textContent =
         "Showing " +
-        (filtered.length ? start + 1 : 0) +
+        (sorted.length ? start + 1 : 0) +
         "–" +
-        Math.min(start + slice.length, filtered.length) +
+        Math.min(start + slice.length, sorted.length) +
         " of " +
-        filtered.length +
-        " (filtered from " +
+        sorted.length +
+        " (grouped by day · filtered from " +
         all.length +
         " in export)";
     }
     if (navEl) {
-      var np = Math.max(1, Math.ceil(filtered.length / PAGE));
+      var np = Math.max(1, Math.ceil(sorted.length / PAGE));
       navEl.innerHTML =
         '<button type="button" class="btn btn-nav" id="article-feed-prev" ' +
         (page <= 0 ? "disabled" : "") +

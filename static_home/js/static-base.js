@@ -232,4 +232,130 @@
       return iso;
     }
   };
+
+  /** Time of day only (date is shown in the day group heading on full feed pages). */
+  global.fmtTimeOnly = function (iso) {
+    if (!iso) return "";
+    try {
+      var d = new Date(iso);
+      if (isNaN(d.getTime())) return "";
+      return d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
+    } catch (e) {
+      return "";
+    }
+  };
+
+  /** Local calendar day key for grouping (YYYY-MM-DD), or ``_none`` if unparsable. */
+  global.articleDateKey = function (iso) {
+    if (!iso) return "_none";
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return "_none";
+    var y = d.getFullYear();
+    var m = String(d.getMonth() + 1);
+    if (m.length === 1) m = "0" + m;
+    var day = String(d.getDate());
+    if (day.length === 1) day = "0" + day;
+    return y + "-" + m + "-" + day;
+  };
+
+  /** Section title: Today / Yesterday / full weekday date / Date unknown. */
+  global.articleDayHeading = function (iso) {
+    if (!iso) return "Date unknown";
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return "Date unknown";
+    var today = new Date();
+    var startToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    var startThat = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    var diffDays = Math.round((startToday - startThat) / 86400000);
+    if (diffDays === 0) return "Today";
+    if (diffDays === 1) return "Yesterday";
+    return d.toLocaleDateString(undefined, {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
+  global.sortArticlesByPublishedDesc = function (items) {
+    if (!items || !items.length) return [];
+    return items.slice().sort(function (a, b) {
+      var ta = new Date(a && a.published).getTime();
+      var tb = new Date(b && b.published).getTime();
+      if (isNaN(ta)) ta = 0;
+      if (isNaN(tb)) tb = 0;
+      return tb - ta;
+    });
+  };
+
+  /**
+   * Full feed pages: render items grouped by local day, with card layout.
+   * ``options.includeCountry``: regulatory meta. ``options.emptyMessage`` / ``emptyClass`` for zero state.
+   */
+  global.renderArticleFeedByDay = function (container, items, options) {
+    options = options || {};
+    var emptyMsg =
+      options.emptyMessage != null
+        ? options.emptyMessage
+        : "No headlines match. Clear search or re-run data export.";
+    var emptyClass = options.emptyClass || "article-feed-empty";
+    var includeCountry = !!options.includeCountry;
+    var esc = global.escapeHtml;
+    if (!container) return;
+    container.innerHTML = "";
+    if (!items || !items.length) {
+      var p = document.createElement("p");
+      p.className = emptyClass;
+      p.textContent = emptyMsg;
+      container.appendChild(p);
+      return;
+    }
+    var prevKey = null;
+    var ul = null;
+    var section = null;
+    var nDay = 0;
+    items.forEach(function (a) {
+      var key = global.articleDateKey(a.published);
+      if (key !== prevKey) {
+        prevKey = key;
+        nDay++;
+        section = document.createElement("section");
+        section.className = "article-feed-day";
+        var h = document.createElement("h2");
+        h.className = "article-feed-day__label";
+        h.id = "article-feed-day-" + nDay + "-" + String(key).replace(/[^a-z0-9-]/gi, "");
+        h.textContent = global.articleDayHeading(a.published);
+        section.appendChild(h);
+        ul = document.createElement("ul");
+        ul.className = "article-feed-cards";
+        section.appendChild(ul);
+        container.appendChild(section);
+      }
+      var li = document.createElement("li");
+      li.className = "article-feed-card";
+      var href = a.link || "#";
+      var metaParts = [
+        a.source || "",
+        includeCountry && a.country ? a.country : "",
+        global.fmtTimeOnly(a.published) || "",
+      ].filter(Boolean);
+      var metaStr = metaParts.join(" · ");
+      var sumHtml = "";
+      if (a.summary) {
+        var snip = a.summary.length > 280 ? a.summary.substring(0, 280) + "…" : a.summary;
+        sumHtml = '<p class="article-feed-card__sum">' + esc(snip) + "</p>";
+      }
+      li.innerHTML =
+        '<a class="article-feed-card__title" href="' +
+        esc(href) +
+        '" target="_blank" rel="noopener noreferrer">' +
+        esc(a.title || "Untitled") +
+        "</a>" +
+        '<div class="article-feed-card__meta">' +
+        esc(metaStr) +
+        "</div>" +
+        sumHtml;
+      ul.appendChild(li);
+    });
+  };
 })(typeof window !== "undefined" ? window : this);

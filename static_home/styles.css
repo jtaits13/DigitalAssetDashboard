@@ -1724,6 +1724,131 @@ a.ticker-chip-link:hover .ticker-chip {
   color: var(--muted);
 }
 
+/* —— Full headline feeds: all digital news, regulatory, ETF news (grouped by day) —— */
+body.page-article-feed .page-intro__title {
+  font-size: clamp(1.35rem, 2.8vw, 1.75rem);
+  font-weight: 780;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.35rem;
+}
+
+body.page-article-feed .page-intro__dek {
+  font-size: 0.95rem;
+  line-height: 1.55;
+  max-width: 42rem;
+  color: var(--ink-soft);
+  margin: 0.5rem 0 0;
+}
+
+.article-feed-toolbar {
+  margin: 1.35rem 0 0.4rem;
+  padding: 0.95rem 1.1rem 1.05rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+
+.article-feed-toolbar .search-field {
+  margin: 0;
+}
+
+body.page-article-feed .toolbar-note {
+  margin: 0.6rem 0 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.article-feed-stream {
+  margin: 1.5rem 0 0;
+}
+
+.article-feed-day {
+  margin-bottom: 2rem;
+}
+
+.article-feed-day:last-of-type {
+  margin-bottom: 0.5rem;
+}
+
+.article-feed-day__label {
+  font-size: 0.7rem;
+  font-weight: 750;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin: 0 0 0.75rem;
+  padding: 0 0.05rem 0.45rem;
+  border-bottom: 2px solid rgba(37, 128, 156, 0.35);
+}
+
+.article-feed-cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.article-feed-card {
+  margin: 0;
+  padding: 1rem 1.15rem;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.article-feed-card:hover {
+  border-color: rgba(37, 128, 156, 0.45);
+  box-shadow: 0 3px 10px rgba(15, 23, 42, 0.07);
+}
+
+.article-feed-card__title {
+  display: block;
+  font-size: 1rem;
+  font-weight: 650;
+  line-height: 1.4;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.article-feed-card__title:hover {
+  color: var(--teal);
+}
+
+.article-feed-card__meta {
+  margin-top: 0.45rem;
+  font-size: 0.76rem;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.article-feed-card__sum {
+  margin: 0.55rem 0 0;
+  font-size: 0.84rem;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+.article-feed-empty,
+.etf-news-empty {
+  list-style: none;
+  margin: 0;
+  padding: 1.25rem 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+body.page-article-feed .etf-news-nav {
+  margin-top: 1.75rem;
+  padding-top: 0.25rem;
+}
+
 .cta-note a {
   font-weight: 600;
   color: var(--teal);

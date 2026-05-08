@@ -10,9 +10,9 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=4" />
+    <link rel="stylesheet" href="styles.css?v=5" />
   </head>
-  <body>
+  <body class="page-full-feed page-article-feed">
     <header class="site-header" role="banner">
       <div class="site-header__inner">
         <a class="site-brand" href="index.html">Digital Assets Dashboard</a>
@@ -49,13 +49,15 @@
 
       <div class="data-banner" id="js-data-banner" role="status" hidden></div>
 
-      <label class="search-field">
-        <span class="search-field__label">Search headlines</span>
-        <input type="search" class="search-field__input" id="js-etf-news-search" placeholder="Keyword in title or summary…" />
-      </label>
-      <p class="toolbar-note" id="js-etf-news-meta">Loading…</p>
+      <div class="article-feed-toolbar">
+        <label class="search-field">
+          <span class="search-field__label">Search headlines</span>
+          <input type="search" class="search-field__input" id="js-etf-news-search" placeholder="Keyword in title or summary…" />
+        </label>
+        <p class="toolbar-note" id="js-etf-news-meta">Loading…</p>
+      </div>
 
-      <ul class="etf-news-list" id="js-etf-news-list"></ul>
+      <div class="article-feed-stream" id="js-etf-news-list"></div>
       <div class="etf-news-nav" id="js-etf-news-nav"></div>
 
       <p class="back-link">
