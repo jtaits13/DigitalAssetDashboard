@@ -99,6 +99,103 @@ body {
   background: rgba(37, 128, 156, 0.1);
 }
 
+/* Primary nav — hover dropdowns (U.S. ETPs, RWA Market) */
+.site-nav__dropdown {
+  position: relative;
+}
+
+.site-nav__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  padding: 0.42rem 0.75rem;
+  border-radius: 8px;
+  cursor: default;
+  user-select: none;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.site-nav__trigger::after {
+  content: "";
+  width: 0.36rem;
+  height: 0.36rem;
+  margin-top: 0.06rem;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg);
+  opacity: 0.75;
+}
+
+.site-nav__dropdown:hover > .site-nav__trigger,
+.site-nav__dropdown:focus-within > .site-nav__trigger {
+  color: var(--teal);
+  background: rgba(37, 128, 156, 0.1);
+}
+
+.site-nav__sub {
+  display: none;
+  list-style: none;
+  margin: 0.2rem 0 0;
+  padding: 0.35rem 0;
+  min-width: 12.5rem;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 60;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.site-nav__dropdown:hover .site-nav__sub,
+.site-nav__dropdown:focus-within .site-nav__sub {
+  display: block;
+}
+
+.site-nav__sub li {
+  margin: 0;
+}
+
+.site-nav__sub a {
+  display: block;
+  padding: 0.45rem 1rem;
+  font-size: 0.8rem;
+  border-radius: 0;
+}
+
+.site-nav__sub a:hover {
+  background: rgba(37, 128, 156, 0.08);
+}
+
+.site-nav a.is-active,
+.site-nav__dropdown:has(.site-nav__sub a.is-active) > .site-nav__trigger {
+  color: var(--teal);
+  background: rgba(37, 128, 156, 0.14);
+}
+
+@media (max-width: 719px) {
+  .site-header__inner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .site-nav {
+    margin-left: 0;
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .site-nav__sub {
+    left: auto;
+    right: 0;
+    min-width: 11rem;
+  }
+}
+
 /* —— Hero —— */
 .hero {
   position: relative;
