@@ -30,8 +30,8 @@ def make_nav(
           <div class="site-nav__dropdown">
             <span class="site-nav__trigger">U.S. ETPs</span>
             <ul class="site-nav__sub">
+              <li><a href="etps.html"{_ia(etf_data)}>ETF Overview</a></li>
               <li><a href="etf-news.html"{_ia(etf_news)}>ETF News</a></li>
-              <li><a href="etps.html"{_ia(etf_data)}>ETF Data</a></li>
             </ul>
           </div>
           <div class="site-nav__dropdown">

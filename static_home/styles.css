@@ -240,18 +240,36 @@ body {
   grid-template-columns: minmax(0, 1fr);
 }
 
+/* Home hub: single column lead (no aside card) */
+.hero-inner--single {
+  max-width: 52rem;
+}
+
+.hero-copy--lead .hero-lead {
+  margin: 0 0 1.15rem;
+  font-size: 1.08rem;
+  line-height: 1.62;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.hero-copy--lead .hero-lead strong {
+  color: var(--ink-soft);
+  font-weight: 650;
+}
+
 @media (min-width: 960px) {
-  .hero-inner {
+  .hero-inner:not(.hero-inner--single) {
     grid-template-columns: 1fr 1fr;
     align-items: start;
     gap: 2.5rem 3rem;
   }
 
-  .hero-copy {
+  .hero-inner:not(.hero-inner--single) .hero-copy {
     padding-top: 0.5rem;
   }
 
-  .hero-aside {
+  .hero-inner:not(.hero-inner--single) .hero-aside {
     border-left: 1px solid rgba(199, 216, 232, 0.85);
     padding-left: clamp(1.5rem, 3vw, 2.25rem);
   }
