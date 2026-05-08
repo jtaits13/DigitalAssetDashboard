@@ -49,7 +49,7 @@ def main() -> None:
         '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">'
         "<strong>On-chain RWA</strong> by asset: short <strong>RWA.xyz</strong> previews for "
         "<strong>Stablecoins</strong>, <strong>US Treasuries</strong>, and <strong>Tokenized Stocks</strong>. "
-        "Use <strong>Open full … table</strong> in each section for search, charts, and the full league views.</p>",
+        "Use <strong>Open full table</strong> in each section for search, charts, and the full league views.</p>",
         unsafe_allow_html=True,
     )
 

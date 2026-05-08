@@ -791,7 +791,7 @@ def _build_rwa_explore_asset_type_payload(
     intro_html = (
         "<p><strong>On-chain RWA</strong> by asset—short previews for "
         "<strong>Stablecoins</strong>, <strong>US Treasuries</strong>, and <strong>Tokenized Stocks</strong> "
-        "(<strong>RWA.xyz</strong>). Use <strong>Open full … table</strong> for search, charts, and full leagues; "
+        "(<strong>RWA.xyz</strong>). Use <strong>Open full table</strong> for search, charts, and full leagues; "
         "use the second button to open the live app.</p>"
     )
 
@@ -952,7 +952,7 @@ def _build_rwa_explore_market_participant_payload(
     intro_html = (
         "<p><strong>On-chain RWA</strong> by participant—short previews for "
         "<strong>Networks</strong>, <strong>Platforms</strong>, and <strong>Asset Managers</strong> "
-        "(<strong>RWA.xyz</strong>). Use <strong>Open full … page</strong> for search, charts, and full tables; "
+        "(<strong>RWA.xyz</strong>). Use <strong>Open full page</strong> for search, charts, and full tables; "
         "use the second button to open the live app.</p>"
     )
 

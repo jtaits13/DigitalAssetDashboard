@@ -52,7 +52,7 @@ def main() -> None:
         '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">'
         "<strong>On-chain RWA</strong> by participant: short <strong>RWA.xyz</strong> previews for "
         "<strong>Networks</strong>, <strong>Platforms</strong>, and <strong>Asset Managers</strong>. "
-        "Use <strong>Open full … page</strong> in each section for search, charts, and full tables.</p>",
+        "Use <strong>Open full page</strong> in each section for search, charts, and full tables.</p>",
         unsafe_allow_html=True,
     )
 
