@@ -1733,8 +1733,8 @@ def show_rwa_stablecoins_widget(
     """
     RWA.xyz Stablecoins embed: overview KPIs + **Networks** and **Platforms** leagues (same pattern as US Treasuries).
 
-    ``home_preview=True`` (hub): **Platforms** table preview only. ``home_preview=False``: full page with searchable
-    **Networks** then **Platforms** blocks (table + bar chart columns each).
+    ``home_preview=True`` (hub): **Networks** table preview when available (else **Platforms**). ``home_preview=False``:
+    full page with searchable **Networks** then **Platforms** blocks (table + bar chart columns each).
     ``full_page_header=True``: teal title lives on ``pages/RWA_Stablecoins.py``.
     ``full_page_key_observations_html``: rendered after KPI row on the full page.
     """
@@ -1796,6 +1796,39 @@ def show_rwa_stablecoins_widget(
         )
     _render_rwa_stablecoin_overview(kpis_sc)
     _inject_full_page_key_observations(full_page_key_observations_html)
+
+    if home_preview:
+        if rows_net_sc:
+            n = max(1, min(preview_rows, len(rows_net_sc)))
+            working_nv = rows_net_sc[:n]
+            table_h = rwa_table_height(len(working_nv))
+            st.markdown(
+                '<div class="jd-hub-subsection-head">'
+                '<h2 class="home-widget-heading">By network (Stablecoins · Networks)</h2></div>',
+                unsafe_allow_html=True,
+            )
+            df_nv = build_stablecoin_network_dataframe(working_nv)
+            _show_stablecoin_network_dataframe(df_nv, height=table_h)
+        elif rows_plat_sc:
+            n = max(1, min(preview_rows, len(rows_plat_sc)))
+            working_pv = rows_plat_sc[:n]
+            table_h = rwa_table_height(len(working_pv))
+            df_pv = build_stablecoin_platform_dataframe(working_pv)
+            _show_stablecoin_platform_dataframe(df_pv, height=table_h)
+        if st.button(
+            "Open full Stablecoins table",
+            key="see_full_rwa_stablecoins",
+            use_container_width=True,
+            type="primary",
+        ):
+            st.switch_page("pages/RWA_Stablecoins.py")
+        st.link_button(
+            STABLECOINS_RWA_LINK_LABEL,
+            "https://app.rwa.xyz/stablecoins",
+            use_container_width=True,
+            key="rwa_sc_rwa_link_home",
+        )
+        return
 
     if rows_net_sc:
         if not home_preview:
@@ -1936,37 +1969,16 @@ def show_rwa_stablecoins_widget(
                 unsafe_allow_html=True,
             )
             st.caption(STABLECOIN_PLATFORM_CAPTION)
-        else:
-            n = max(1, min(preview_rows, len(rows_plat_sc)))
-            working_pv = rows_plat_sc[:n]
-            table_h = rwa_table_height(len(working_pv))
-            df_pv = build_stablecoin_platform_dataframe(working_pv)
-            _show_stablecoin_platform_dataframe(df_pv, height=table_h)
     elif not home_preview:
         st.divider()
         st.info("No **Platforms** league rows were returned for Stablecoins in this embed.")
 
-    if home_preview:
-        if st.button(
-            "Open full Stablecoins table",
-            key="see_full_rwa_stablecoins",
-            use_container_width=True,
-            type="primary",
-        ):
-            st.switch_page("pages/RWA_Stablecoins.py")
-        st.link_button(
-            STABLECOINS_RWA_LINK_LABEL,
-            "https://app.rwa.xyz/stablecoins",
-            use_container_width=True,
-            key="rwa_sc_rwa_link_home",
-        )
-    else:
-        st.link_button(
-            STABLECOINS_RWA_LINK_LABEL,
-            "https://app.rwa.xyz/stablecoins",
-            use_container_width=True,
-            key="rwa_sc_rwa_link_full",
-        )
+    st.link_button(
+        STABLECOINS_RWA_LINK_LABEL,
+        "https://app.rwa.xyz/stablecoins",
+        use_container_width=True,
+        key="rwa_sc_rwa_link_full",
+    )
 
 
 def show_rwa_treasuries_widget(
@@ -2226,8 +2238,8 @@ def show_rwa_tokenized_stocks_widget(
     """
     RWA.xyz Tokenized Stocks embed: overview KPIs + **Distributed** · **Networks** then **Platforms** leagues.
 
-    ``home_preview=True``: teaser on home page (**Platforms** table). ``home_preview=False``: full searchable
-    **Networks** block first, then **Platforms** (``pages/RWA_Tokenized_Stocks.py``).
+    ``home_preview=True``: teaser on hub (**Networks** table when available, else **Platforms**).
+    ``home_preview=False``: full searchable **Networks** block first, then **Platforms** (``pages/RWA_Tokenized_Stocks.py``).
     ``full_page_header=True``: page supplies the teal major title; use an overview subsection instead of
     repeating the asset name + long caption.
     ``full_page_key_observations_html``: when set on the full page, rendered after the KPI overview and before tables.
@@ -2302,14 +2314,41 @@ def show_rwa_tokenized_stocks_widget(
     )
     _inject_full_page_key_observations(full_page_key_observations_html)
 
-    if rows_st_plat and home_preview:
-        n = max(1, min(preview_rows, len(rows_st_plat)))
-        working = rows_st_plat[:n]
-        table_h = rwa_table_height(len(working))
-        df_st = build_tokenized_stock_platform_dataframe(working)
-        _show_tokenized_stock_platform_dataframe(df_st, height=table_h)
-    elif home_preview:
-        st.info("No Tokenized Stocks platform rows returned.")
+    if home_preview:
+        if rows_st_net:
+            ordered_n = sorted(rows_st_net, key=lambda r: int(r.rank))
+            n = max(1, min(preview_rows, len(ordered_n)))
+            working = ordered_n[:n]
+            table_h = rwa_table_height(len(working))
+            st.markdown(
+                '<div class="jd-hub-subsection-head">'
+                '<h2 class="home-widget-heading">By Network (Distributed · Networks)</h2></div>',
+                unsafe_allow_html=True,
+            )
+            df_st = build_tokenized_stock_network_dataframe(working)
+            _show_tokenized_stock_network_dataframe(df_st, height=table_h)
+        elif rows_st_plat:
+            n = max(1, min(preview_rows, len(rows_st_plat)))
+            working = rows_st_plat[:n]
+            table_h = rwa_table_height(len(working))
+            df_st = build_tokenized_stock_platform_dataframe(working)
+            _show_tokenized_stock_platform_dataframe(df_st, height=table_h)
+        else:
+            st.info("No Tokenized Stocks network or platform rows returned.")
+        if st.button(
+            "Open full Tokenized Stocks table",
+            key="see_full_rwa_tokenized_stocks",
+            use_container_width=True,
+            type="primary",
+        ):
+            st.switch_page("pages/RWA_Tokenized_Stocks.py")
+        st.link_button(
+            TOKENIZED_STOCKS_RWA_LINK_LABEL,
+            APP_STOCKS,
+            use_container_width=True,
+            key="rwa_stocks_rwa_link_home",
+        )
+        return
 
     if not home_preview:
         st.markdown(
@@ -2446,27 +2485,12 @@ def show_rwa_tokenized_stocks_widget(
     if not home_preview:
         st.caption(TOKENIZED_STOCKS_RWA_CAPTION)
 
-    if home_preview:
-        if st.button(
-            "Open full Tokenized Stocks table",
-            key="see_full_rwa_tokenized_stocks",
-            use_container_width=True,
-            type="primary",
-        ):
-            st.switch_page("pages/RWA_Tokenized_Stocks.py")
-        st.link_button(
-            TOKENIZED_STOCKS_RWA_LINK_LABEL,
-            APP_STOCKS,
-            use_container_width=True,
-            key="rwa_stocks_rwa_link_home",
-        )
-    else:
-        st.link_button(
-            TOKENIZED_STOCKS_RWA_LINK_LABEL,
-            APP_STOCKS,
-            use_container_width=True,
-            key="rwa_stocks_rwa_link_full",
-        )
+    st.link_button(
+        TOKENIZED_STOCKS_RWA_LINK_LABEL,
+        APP_STOCKS,
+        use_container_width=True,
+        key="rwa_stocks_rwa_link_full",
+    )
 
 
 def _rwa_global_market_status(

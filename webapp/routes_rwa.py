@@ -794,16 +794,20 @@ async def rwa_explore_asset_type(request: Request) -> HTMLResponse:
     tr_rows, tr_plat, tr_kpis, tr_err = load_rwa_treasuries_cached()
     st_net, st_plat, st_kpis, st_err = load_rwa_tokenized_stocks_cached()
     blocks: list[str] = []
-    # Stablecoins — platforms preview (matches Streamlit hub)
+    # Stablecoins — networks preview when available (matches Streamlit hub)
     blocks.append("<h3>Stablecoins</h3>")
-    if sc_err and not sc_plat:
+    if sc_err and not sc_net and not sc_plat:
         blocks.append(f'<p class="alert warn">{escape(sc_err)}</p>')
+    elif sc_net:
+        prev = sc_net[:_PREVIEW]
+        df = build_stablecoin_network_dataframe(prev)
+        blocks.append(styled_dataframe_to_html(style_stablecoin_network_dataframe(df)))
     elif sc_plat:
         prev = sc_plat[:_PREVIEW]
         df = build_stablecoin_platform_dataframe(prev)
         blocks.append(styled_dataframe_to_html(style_stablecoin_platform_dataframe(df)))
     else:
-        blocks.append('<p class="muted"><em>No platform rows.</em></p>')
+        blocks.append('<p class="muted"><em>No stablecoin league rows.</em></p>')
     blocks.append('<p><a class="btn primary" href="/rwa/stablecoins">Full Stablecoins view</a></p>')
     # Treasuries — networks preview
     blocks.append("<h3>US Treasuries</h3>")
@@ -816,16 +820,21 @@ async def rwa_explore_asset_type(request: Request) -> HTMLResponse:
     else:
         blocks.append("<p><em>No treasury network rows.</em></p>")
     blocks.append('<p><a class="btn primary" href="/rwa/treasuries">Full US Treasuries view</a></p>')
-    # Tokenized stocks — platforms preview
+    # Tokenized stocks — networks preview when available (matches Streamlit hub)
     blocks.append("<h3>Tokenized Stocks</h3>")
-    if st_err and not st_plat:
+    if st_err and not st_net and not st_plat:
         blocks.append(f'<p class="alert warn">{escape(st_err)}</p>')
+    elif st_net:
+        ordered_n = sorted(st_net, key=lambda r: int(r.rank))
+        prev = ordered_n[:_PREVIEW]
+        df = build_tokenized_stock_network_dataframe(prev)
+        blocks.append(styled_dataframe_to_html(style_tokenized_stock_network_dataframe(df)))
     elif st_plat:
         prev = st_plat[:_PREVIEW]
         df = build_tokenized_stock_platform_dataframe(prev)
         blocks.append(styled_dataframe_to_html(style_tokenized_stock_platform_dataframe(df)))
     else:
-        blocks.append("<p><em>No tokenized stock platform rows.</em></p>")
+        blocks.append("<p><em>No tokenized stock network or platform rows.</em></p>")
     blocks.append('<p><a class="btn primary" href="/rwa/tokenized-stocks">Full Tokenized Stocks view</a></p>')
     return _rwa_response(
         request,

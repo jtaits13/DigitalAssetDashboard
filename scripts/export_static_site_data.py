@@ -633,7 +633,9 @@ def _build_rwa_explore_asset_type_payload(
     from home_layout import rwa_xyz_mirror_footer_text
     from rwa_league.client import APP_STABLECOINS, APP_STOCKS, APP_TREASURIES
     from rwa_league.dataframe_table import (
+        build_stablecoin_network_dataframe,
         build_stablecoin_platform_dataframe,
+        build_tokenized_stock_network_dataframe,
         build_tokenized_stock_platform_dataframe,
         build_us_treasury_network_dataframe,
     )
@@ -673,6 +675,15 @@ def _build_rwa_explore_asset_type_payload(
         sec_sc["warn_html"] = f'<p class="alert warn">{html_escape(str(sc_err))}</p>'
     elif not sc_net and not sc_plat:
         sec_sc["info_html"] = '<p class="alert info">No Stablecoins league rows returned.</p>'
+    elif sc_net:
+        prev = list(sc_net)[:EXPLORE_ASSET_PREVIEW_ROWS]
+        df_sc = build_stablecoin_network_dataframe(prev)
+        rj, cj = _dataframe_json_records(df_sc)
+        sec_sc["columns"], sec_sc["rows"] = cj, rj
+        sec_sc["table_subheading"] = "By network (Stablecoins · Networks)"
+        sec_sc["preview_note"] = (
+            f"Preview: first {len(prev)} of {len(sc_net)} networks (Stablecoins · Networks)."
+        )
     elif sc_plat:
         prev = list(sc_plat)[:EXPLORE_ASSET_PREVIEW_ROWS]
         df_sc = build_stablecoin_platform_dataframe(prev)
@@ -682,7 +693,7 @@ def _build_rwa_explore_asset_type_payload(
             f"Preview: first {len(prev)} of {len(sc_plat)} platforms (Stablecoins · Platforms)."
         )
     else:
-        sec_sc["info_html"] = '<p class="muted"><em>No platform rows.</em></p>'
+        sec_sc["info_html"] = '<p class="muted"><em>No stablecoin league rows.</em></p>'
     sections.append(sec_sc)
 
     tr_rows, tr_plat, tr_kpis, tr_err = tr_pack
@@ -753,16 +764,28 @@ def _build_rwa_explore_asset_type_payload(
         sec_st["warn_html"] = f'<p class="alert warn">{html_escape(str(st_err))}</p>'
     elif not st_net and not st_plat:
         sec_st["info_html"] = '<p class="alert info">No Tokenized Stocks league rows returned.</p>'
+    elif st_net:
+        ordered_n = sorted(st_net, key=lambda r: int(r.rank))
+        prev = ordered_n[:EXPLORE_ASSET_PREVIEW_ROWS]
+        df_st = build_tokenized_stock_network_dataframe(prev)
+        rj, cj = _dataframe_json_records(df_st)
+        sec_st["columns"], sec_st["rows"] = cj, rj
+        sec_st["table_subheading"] = "By Network (Distributed · Networks)"
+        sec_st["preview_note"] = (
+            f"Preview: first {len(prev)} of {len(st_net)} networks "
+            "(Tokenized Stocks · Distributed · Networks), sorted by #."
+        )
     elif st_plat:
         prev = list(st_plat)[:EXPLORE_ASSET_PREVIEW_ROWS]
         df_st = build_tokenized_stock_platform_dataframe(prev)
         rj, cj = _dataframe_json_records(df_st)
         sec_st["columns"], sec_st["rows"] = cj, rj
         sec_st["preview_note"] = (
-            f"Preview: first {len(prev)} of {len(st_plat)} platforms (Tokenized Stocks · Distributed · Platforms)."
+            f"Preview: first {len(prev)} of {len(st_plat)} platforms "
+            "(Tokenized Stocks · Distributed · Platforms)."
         )
     else:
-        sec_st["info_html"] = '<p class="alert info">No Tokenized Stocks platform rows returned.</p>'
+        sec_st["info_html"] = '<p class="alert info">No Tokenized Stocks network or platform rows returned.</p>'
     sections.append(sec_st)
 
     intro_html = (
@@ -778,9 +801,8 @@ def _build_rwa_explore_asset_type_payload(
     return {
         "page_title": "Explore by Asset Type — Digital Assets Dashboard",
         "page_subtitle_html": (
-            "Hub previews — same <strong>Platforms / Networks</strong> teasers as the Streamlit "
-            "<strong>Explore by Asset Type</strong> page "
-            f"(first {EXPLORE_ASSET_PREVIEW_ROWS} rows per league where applicable)."
+            "Hub previews — same league teasers as the Streamlit <strong>Explore by Asset Type</strong> page "
+            f"(network tables where available, otherwise platforms; first {EXPLORE_ASSET_PREVIEW_ROWS} rows per preview)."
         ),
         "intro_html": intro_html,
         "sections": sections,
