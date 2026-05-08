@@ -113,30 +113,34 @@
 
       <hr class="section-rule" />
 
-      <div class="split-panels">
-        <section class="split-panels__col" aria-labelledby="aum-heading">
+      <div class="split-panels split-panels--etp-equal">
+        <section class="split-panels__col split-panels__col--chart" aria-labelledby="aum-heading">
           <h2 class="subsection-head" id="aum-heading">Aggregate AUM trend (12 months)</h2>
-          <p class="method-note">
-            <strong>Yahoo Finance</strong> weekly closes × each fund’s latest StockAnalysis AUM (constant-share approximation),
-            summed across the table. Use the Plotly toolbar to zoom, pan, and reset.
-          </p>
-          <div id="aum-chart" class="aum-chart-host" role="img" aria-label="Aggregate estimated AUM chart"></div>
-          <p class="chart-placeholder__cap">
-            Vertical axis: estimated aggregate AUM (<strong>billions USD</strong>; weekly points). Same construction as
-            Streamlit.
-          </p>
+          <div class="split-panels__widget split-panels__widget--chart">
+            <div id="aum-chart" class="aum-chart-host" role="img" aria-label="Aggregate estimated AUM chart"></div>
+            <p class="chart-placeholder__cap">
+              Vertical axis: estimated aggregate AUM (<strong>billions USD</strong>; weekly points). Same construction as
+              Streamlit.
+            </p>
+            <p class="method-note split-panels__method-note">
+              <strong>Yahoo Finance</strong> weekly closes × each fund’s latest StockAnalysis AUM (constant-share approximation),
+              summed across the table. Use the Plotly toolbar to zoom, pan, and reset.
+            </p>
+          </div>
         </section>
 
         <section class="split-panels__col split-panels__col--pulse" aria-labelledby="pulse-heading">
-          <h2 class="subsection-head" id="pulse-heading">ETF / ETP headline teaser</h2>
-          <div class="pulse-box">
-            <ul class="pulse-list" id="js-etf-pulse">
-              <li class="pulse-list__loading">Loading headlines…</li>
-            </ul>
+          <h2 class="subsection-head" id="pulse-heading">ETF News Feed</h2>
+          <div class="split-panels__widget split-panels__widget--pulse">
+            <div class="pulse-box pulse-box--etp-split">
+              <ul class="pulse-list" id="js-etf-pulse">
+                <li class="pulse-list__loading">Loading headlines…</li>
+              </ul>
+            </div>
+            <p class="cta-note split-panels__cta-note">
+              <a href="etf-news.html">All ETF headlines →</a> — full filtered list (~3 months UTC), search, and pagination.
+            </p>
           </div>
-          <p class="cta-note">
-            <a href="etf-news.html">All ETF headlines →</a> — full filtered list (~3 months UTC), search, and pagination.
-          </p>
         </section>
       </div>
 

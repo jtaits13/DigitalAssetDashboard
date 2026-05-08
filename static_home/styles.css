@@ -1393,6 +1393,62 @@ a.ticker-chip-link:hover .ticker-chip {
     grid-template-columns: 1fr 1fr;
     align-items: start;
   }
+
+  /* ETF Data page: paired chart + news feed columns share one row height (top/bottom aligned). */
+  .split-panels.split-panels--etp-equal {
+    align-items: stretch;
+  }
+}
+
+/* —— ETF Data page (etps.html): equal-height widget columns —— */
+.split-panels--etp-equal .split-panels__col {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.split-panels--etp-equal .split-panels__widget {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.split-panels--etp-equal .split-panels__widget--chart .aum-chart-host {
+  flex: 1 1 auto;
+  min-height: 420px;
+  width: 100%;
+}
+
+.split-panels--etp-equal .split-panels__widget--chart .chart-placeholder__cap,
+.split-panels--etp-equal .split-panels__method-note {
+  flex-shrink: 0;
+}
+
+.split-panels--etp-equal .split-panels__method-note {
+  margin-top: 0.65rem;
+  margin-bottom: 0;
+}
+
+.split-panels--etp-equal .pulse-box--etp-split {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.split-panels--etp-equal .pulse-box--etp-split .pulse-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.split-panels--etp-equal .split-panels__cta-note {
+  margin-top: 0.65rem;
+  margin-bottom: 0;
+  flex-shrink: 0;
 }
 
 .method-note {
@@ -1662,6 +1718,18 @@ a.ticker-chip-link:hover .ticker-chip {
 .cta-note a {
   font-weight: 600;
   color: var(--teal);
+}
+
+.cta-note--news-hub-top {
+  margin: 0 0 1rem;
+  font-size: 0.92rem;
+}
+
+.cta-note__sep {
+  display: inline-block;
+  margin: 0 0.35rem;
+  color: var(--muted);
+  font-weight: 500;
 }
 
 /* —— RWA Global static page (mirrors FastAPI / Streamlit layout) —— */
