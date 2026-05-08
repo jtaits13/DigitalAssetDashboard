@@ -962,21 +962,17 @@ def _build_rwa_explore_market_participant_payload(
     sections.append(sec_am)
 
     intro_html = (
-        "<p><strong>RWA.xyz</strong> live data. Each block below is a short preview from the same pipeline as the "
-        "Streamlit <strong>Explore by Market Participant</strong> page.</p>"
-        "<p>Use <strong>Open full Participants — … page</strong> for the extended static view (search, full tables, and "
-        "charts), or the second button to open the live app on RWA.xyz.</p>"
-        "<ul>"
-        "<li>Networks</li><li>Platforms</li><li>Asset Managers</li>"
-        "</ul>"
+        "<p><strong>RWA market participants</strong>—previews for "
+        "<strong>Networks</strong>, <strong>Platforms</strong> (issuers), and <strong>Asset Managers</strong> "
+        "(<strong>RWA.xyz</strong>). Use <strong>Open full … page</strong> for search, charts, and full tables; "
+        "use the second button for the live app.</p>"
     )
 
     return {
         "page_title": "Explore by Market Participant — Digital Assets Dashboard",
         "page_subtitle_html": (
-            "Hub previews — same <strong>Networks / Platforms / Asset Managers</strong> teasers as the Streamlit "
-            "<strong>Explore by Market Participant</strong> page "
-            f"(first {EXPLORE_ASSET_PREVIEW_ROWS} rows per league where applicable)."
+            f"First {EXPLORE_ASSET_PREVIEW_ROWS} rows per preview—aligned with Streamlit "
+            "<strong>Explore by Market Participant</strong>."
         ),
         "intro_html": intro_html,
         "sections": sections,

@@ -49,14 +49,10 @@ def main() -> None:
         unsafe_allow_html=True,
     )
     st.markdown(
-        '<div class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-explore-blurb jd-hub-dek--large">'
-        "<p><strong>RWA.xyz</strong> live data. Below are three participant views—each card is a preview; open it for the full table.</p>"
-        "<ul>"
-        "<li>Networks</li>"
-        "<li>Platforms</li>"
-        "<li>Asset Managers</li>"
-        "</ul>"
-        "</div>",
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">'
+        "<strong>RWA market participants</strong> from <strong>RWA.xyz</strong>: previews for "
+        "<strong>Networks</strong>, <strong>Platforms</strong> (issuers), and <strong>Asset Managers</strong>. "
+        "Use <strong>Open full … page</strong> in each section for search, charts, and full tables.</p>",
         unsafe_allow_html=True,
     )
 

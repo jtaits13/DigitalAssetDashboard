@@ -20,6 +20,12 @@
     return sign + x.toFixed(digits != null ? digits : 2) + "%";
   }
 
+  /** Level / ratio as percent (no leading +), for **% distributed** vs signed deltas (7D, share changes). */
+  function fmtPctLevel(v, digits) {
+    if (v == null || !isFinite(Number(v))) return "—";
+    return Number(v).toFixed(digits != null ? digits : 2) + "%";
+  }
+
   function pctCellCls(v) {
     if (v == null || !isFinite(Number(v))) return "";
     var x = Number(v);
@@ -142,7 +148,7 @@
         } else if (col === "7D Δ value") {
           tds.push('<td class="num' + pctCellCls(v) + '">' + fmtPctPts(v, 2) + "</td>");
         } else if (col === "% distributed") {
-          tds.push('<td class="num">' + fmtPctPts(v, 2) + "</td>");
+          tds.push('<td class="num">' + fmtPctLevel(v, 2) + "</td>");
         } else if (col === "Market Share" || col === "30D Δ share") {
           tds.push('<td class="num">' + fmtPctPts(v, 2) + "</td>");
         } else if (col === "#" || col === "RWA Count" || col === "Stablecoins") {
