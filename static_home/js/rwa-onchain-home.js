@@ -47,62 +47,63 @@
     return typeof fn === "function" ? fn(String(s == null ? "" : s)) : String(s == null ? "" : s);
   }
 
-  function renderKpis(host, kpis, legendText, kpiOpts) {
-    var ko = kpiOpts || {};
-    if (!host) return;
-    if (!kpis || !kpis.length) {
-      if (ko.hideIfEmpty) {
-        host.innerHTML = "";
-        host.style.display = "none";
-        return;
-      }
-      host.innerHTML = '<p class="toolbar-note">No headline KPIs returned for this block.</p>';
-      return;
+  /** Column keys whose raw JSON values sort numerically (all RWA / export table shapes). */
+  var RWA_NUMERIC_SORT = {
+    "#": 1,
+    "RWA Count": 1,
+    Stablecoins: 1,
+    "Total Value": 1,
+    "Distributed Value": 1,
+    "RWA value (distributed)": 1,
+    "RWA value (represented)": 1,
+    "RWA total (excl. stablecoins)": 1,
+    "7D Δ value": 1,
+    "% distributed": 1,
+    "Market Share": 1,
+    "30D Δ share": 1,
+  };
+
+  function compareRwaRows(a, b, col, dir) {
+    var va = a[col];
+    var vb = b[col];
+    if (RWA_NUMERIC_SORT[col]) {
+      var na = va == null || va === "" ? NaN : Number(va);
+      var nb = vb == null || vb === "" ? NaN : Number(vb);
+      var aBad = !isFinite(na);
+      var bBad = !isFinite(nb);
+      if (aBad && bBad) return 0;
+      if (aBad) return 1;
+      if (bBad) return -1;
+      return dir * (na - nb);
     }
-    host.style.display = "";
-    var cells = kpis
-      .map(function (k) {
-        return (
-          '<div class="rwa-kpi-cell">' +
-          '<span class="rwa-kpi-label">' +
-          esc(k.label) +
-          "</span>" +
-          '<span class="rwa-kpi-val">' +
-          esc(k.value_display) +
-          "</span>" +
-          delta30Html(k.delta_30d_pct) +
-          "</div>"
-        );
-      })
-      .join("");
-    host.innerHTML =
-      '<div class="rwa-kpi-panel-static">' +
-      (legendText
-        ? '<p class="jd-kpi-window-note rwa-onchain-kpi-legend">' + esc(legendText) + "</p>"
-        : "") +
-      '<div class="rwa-kpi-row rwa-kpi-row--home-grid">' +
-      cells +
-      "</div></div>";
+    var sa = va == null ? "" : String(va);
+    var sb = vb == null ? "" : String(vb);
+    if (!sa && !sb) return 0;
+    if (!sa) return 1;
+    if (!sb) return -1;
+    return dir * sa.localeCompare(sb, undefined, { sensitivity: "base" });
   }
 
-  function renderTable(theadRow, tbody, columns, rows, tableOpts) {
-    var opts = typeof tableOpts === "string" ? { emptyMsg: tableOpts } : tableOpts || {};
+  function clearTheadSortClasses(theadRow) {
+    if (!theadRow) return;
+    theadRow.querySelectorAll("th").forEach(function (th) {
+      th.classList.remove("is-sorted", "is-sorted-asc", "is-sorted-desc");
+      th.removeAttribute("aria-sort");
+    });
+  }
+
+  function setTheadSortClasses(theadRow, colIndex, dir) {
+    clearTheadSortClasses(theadRow);
+    var ths = theadRow.querySelectorAll("th");
+    var th = ths[colIndex];
+    if (!th) return;
+    th.classList.add("is-sorted", dir > 0 ? "is-sorted-asc" : "is-sorted-desc");
+    th.setAttribute("aria-sort", dir > 0 ? "ascending" : "descending");
+  }
+
+  function fillRwaTableBody(tbody, columns, rows, opts) {
     var emptyMsg = opts.emptyMsg;
     var linkAria = opts.linkAria || "Open link";
-    if (!theadRow || !tbody) return;
-    if (!columns || !columns.length) {
-      theadRow.innerHTML = "";
-      tbody.innerHTML =
-        '<tr><td colspan="1">On-chain JSON missing or export not run. Run <code>python scripts/export_static_site_data.py</code> to populate <code>data/rwa_onchain_home.json</code>.</td></tr>';
-      return;
-    }
-    theadRow.innerHTML = (columns || [])
-      .map(function (c) {
-        var label = c === "Link" ? "↗" : esc(c);
-        var isName = c === "Network" || c === "Platform" || c === "Asset manager";
-        return "<th" + (isName || c === "Link" ? "" : ' class="num"') + ">" + label + "</th>";
-      })
-      .join("");
     tbody.innerHTML = "";
     if (!rows || !rows.length) {
       var colspan = columns && columns.length ? columns.length : 1;
@@ -160,6 +161,125 @@
       tr.innerHTML = tds.join("");
       tbody.appendChild(tr);
     });
+  }
+
+  function applyRwaTableSort(theadRow, tbody, colIndex) {
+    var st = tbody._rwaTableSort;
+    if (!st || !st.rows || !st.rows.length || !st.columns) return;
+    if (colIndex < 0 || colIndex >= st.columns.length) return;
+    var colName = st.columns[colIndex];
+    if (st.sortCol === colIndex) {
+      st.sortDir *= -1;
+    } else {
+      st.sortCol = colIndex;
+      st.sortDir = 1;
+    }
+    var dir = st.sortDir;
+    st.rows = st.rows.slice().sort(function (a, b) {
+      return compareRwaRows(a, b, colName, dir);
+    });
+    setTheadSortClasses(theadRow, colIndex, dir);
+    fillRwaTableBody(tbody, st.columns, st.rows, st.opts);
+  }
+
+  function wireRwaTableSortDelegate(theadRow, tbody) {
+    var thead = theadRow && theadRow.parentNode;
+    if (!thead || thead._rwaSortDelegated) return;
+    thead._rwaSortDelegated = true;
+    thead.addEventListener("click", function (ev) {
+      var th = ev.target.closest("th.th-sortable");
+      if (!th) return;
+      var idx = parseInt(th.getAttribute("data-sort-col"), 10);
+      if (isNaN(idx)) return;
+      applyRwaTableSort(theadRow, tbody, idx);
+    });
+    thead.addEventListener("keydown", function (ev) {
+      if (ev.key !== "Enter" && ev.key !== " ") return;
+      var th = ev.target.closest && ev.target.closest("th.th-sortable");
+      if (!th) return;
+      ev.preventDefault();
+      var idx = parseInt(th.getAttribute("data-sort-col"), 10);
+      if (!isNaN(idx)) applyRwaTableSort(theadRow, tbody, idx);
+    });
+  }
+
+  function renderKpis(host, kpis, legendText, kpiOpts) {
+    var ko = kpiOpts || {};
+    if (!host) return;
+    if (!kpis || !kpis.length) {
+      if (ko.hideIfEmpty) {
+        host.innerHTML = "";
+        host.style.display = "none";
+        return;
+      }
+      host.innerHTML = '<p class="toolbar-note">No headline KPIs returned for this block.</p>';
+      return;
+    }
+    host.style.display = "";
+    var cells = kpis
+      .map(function (k) {
+        return (
+          '<div class="rwa-kpi-cell">' +
+          '<span class="rwa-kpi-label">' +
+          esc(k.label) +
+          "</span>" +
+          '<span class="rwa-kpi-val">' +
+          esc(k.value_display) +
+          "</span>" +
+          delta30Html(k.delta_30d_pct) +
+          "</div>"
+        );
+      })
+      .join("");
+    host.innerHTML =
+      '<div class="rwa-kpi-panel-static">' +
+      (legendText
+        ? '<p class="jd-kpi-window-note rwa-onchain-kpi-legend">' + esc(legendText) + "</p>"
+        : "") +
+      '<div class="rwa-kpi-row rwa-kpi-row--home-grid">' +
+      cells +
+      "</div></div>";
+  }
+
+  function renderTable(theadRow, tbody, columns, rows, tableOpts) {
+    var opts = typeof tableOpts === "string" ? { emptyMsg: tableOpts } : tableOpts || {};
+    if (!theadRow || !tbody) return;
+    if (!columns || !columns.length) {
+      theadRow.innerHTML = "";
+      tbody.innerHTML =
+        '<tr><td colspan="1">On-chain JSON missing or export not run. Run <code>python scripts/export_static_site_data.py</code> to populate <code>data/rwa_onchain_home.json</code>.</td></tr>';
+      tbody._rwaTableSort = null;
+      return;
+    }
+    theadRow.innerHTML = (columns || [])
+      .map(function (c, idx) {
+        var label = c === "Link" ? "↗" : esc(c);
+        var isName = c === "Network" || c === "Platform" || c === "Asset manager";
+        var cls = [];
+        if (!(isName || c === "Link")) cls.push("num");
+        cls.push("th-sortable");
+        return (
+          '<th scope="col" class="' +
+          cls.join(" ") +
+          '" data-sort-col="' +
+          idx +
+          '" tabindex="0">' +
+          label +
+          "</th>"
+        );
+      })
+      .join("");
+    clearTheadSortClasses(theadRow);
+    var rowsCopy = rows && rows.length ? rows.slice() : [];
+    tbody._rwaTableSort = {
+      rows: rowsCopy,
+      columns: columns.slice(),
+      opts: opts,
+      sortCol: null,
+      sortDir: 1,
+    };
+    fillRwaTableBody(tbody, columns, rowsCopy, opts);
+    wireRwaTableSortDelegate(theadRow, tbody);
   }
 
   function exploreSplitHtml(links) {

@@ -1636,7 +1636,9 @@ a.ticker-chip-link:hover .ticker-chip {
   color: var(--teal);
 }
 
-#js-etp-thead th.is-sorted {
+#js-etp-thead th.is-sorted,
+.data-table thead th.th-sortable.is-sorted,
+#js-home-etp-thead th.is-sorted {
   color: var(--teal);
 }
 

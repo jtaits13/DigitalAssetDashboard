@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=4" />
+    <link rel="stylesheet" href="styles.css?v=6" />
   </head>
   <body>
     <header class="site-header" role="banner">
@@ -167,13 +167,13 @@
           </p>
           <div class="table-wrap">
             <table class="data-table">
-              <thead>
+              <thead id="js-home-etp-thead">
                 <tr>
-                  <th>Symbol</th>
-                  <th>Fund Name</th>
-                  <th class="num">Price</th>
-                  <th class="num">52W %</th>
-                  <th class="num">Assets (B)</th>
+                  <th data-sort="symbol" class="th-sortable" scope="col">Symbol</th>
+                  <th data-sort="name" class="th-sortable" scope="col">Fund Name</th>
+                  <th class="num th-sortable" data-sort="price" scope="col">Price</th>
+                  <th class="num th-sortable" data-sort="pct_52w" scope="col">52W %</th>
+                  <th class="num th-sortable" data-sort="assets_usd" scope="col">Assets (B)</th>
                 </tr>
               </thead>
               <tbody id="js-home-etp-preview">
@@ -237,6 +237,6 @@
     <script src="js/static-base.js"></script>
     <script src="js/etp-kpi-shared.js"></script>
     <script src="js/rwa-onchain-home.js"></script>
-    <script src="js/home-page.js"></script>
+    <script src="js/home-page.js?v=1"></script>
   </body>
 </html>
