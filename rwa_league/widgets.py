@@ -2608,10 +2608,6 @@ def _show_rwa_participants_networks_home_footer(
         kpi_legend_name="Networks",
         hub_kpi_emphasis=True,
     )
-    st.caption(
-        "Preview of the **Networks** table from [RWA.xyz Networks](https://app.rwa.xyz/networks) "
-        "(same totals as **RWA Global Market** above, formatted here under **Participants**)."
-    )
     n = max(1, min(preview_rows, len(rows)))
     working = list(rows)[:n]
     df = build_rwa_networks_page_dataframe(working)
@@ -2652,9 +2648,6 @@ def _show_rwa_participants_platforms_home_footer(
         kpi_legend_name="Platforms",
         hub_kpi_emphasis=True,
     )
-    st.caption(
-        "Preview of the **Distributed** Platforms issuer table from [RWA.xyz Platforms](https://app.rwa.xyz/platforms)."
-    )
     n = max(1, min(preview_rows, len(rows)))
     working = list(rows)[:n]
     df = build_rwa_platforms_page_dataframe(working)
@@ -2694,10 +2687,6 @@ def _show_rwa_participants_asset_managers_home_footer(
         kpis,
         kpi_legend_name="Asset Managers",
         hub_kpi_emphasis=True,
-    )
-    st.caption(
-        "Preview of the **Distributed** Asset Managers table from the "
-        "[RWA.xyz Asset Managers](https://app.rwa.xyz/asset-managers)."
     )
     n = max(1, min(preview_rows, len(rows)))
     working = list(rows)[:n]

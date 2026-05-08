@@ -819,7 +819,6 @@ def _build_rwa_explore_market_participant_payload(
 ) -> dict[str, Any]:
     """Preview sections aligned with Streamlit ``show_rwa_explore_by_market_participant_widget``."""
     from home_layout import rwa_xyz_mirror_footer_text
-    from rwa_league.client import APP_ASSET_MANAGERS, APP_NETWORKS, APP_PLATFORMS
     from rwa_league.dataframe_table import (
         build_rwa_asset_managers_page_dataframe,
         build_rwa_networks_page_dataframe,
@@ -865,11 +864,6 @@ def _build_rwa_explore_market_participant_payload(
     elif not pnet_rows:
         sec_net["info_html"] = '<p class="alert info">No Networks league rows returned.</p>'
     else:
-        sec_net["info_html_preview"] = (
-            '<p class="muted">Preview of the <strong>Networks</strong> table from '
-            f'<a href="{html_escape(APP_NETWORKS, quote=True)}" target="_blank" rel="noopener noreferrer">RWA.xyz Networks</a> '
-            "(same KPI totals formatted under <strong>Participants — Networks</strong>).</p>"
-        )
         prev = list(pnet_rows)[:EXPLORE_ASSET_PREVIEW_ROWS]
         df_n = build_rwa_networks_page_dataframe(prev)
         rj, cj = _dataframe_json_records(df_n)
@@ -908,9 +902,6 @@ def _build_rwa_explore_market_participant_payload(
     elif not pplat_rows:
         sec_plat["info_html"] = '<p class="alert info">No Platforms league rows returned.</p>'
     else:
-        sec_plat[
-            "info_html_preview"
-        ] = f'<p class="muted">Preview of the <strong>Distributed</strong> Platforms issuer table from <a href="{html_escape(APP_PLATFORMS, quote=True)}" target="_blank" rel="noopener noreferrer">RWA.xyz Platforms</a>.</p>'
         prev = list(pplat_rows)[:EXPLORE_ASSET_PREVIEW_ROWS]
         df_p = build_rwa_platforms_page_dataframe(prev)
         rj, cj = _dataframe_json_records(df_p)
@@ -949,9 +940,6 @@ def _build_rwa_explore_market_participant_payload(
     elif not pam_rows:
         sec_am["info_html"] = '<p class="alert info">No Asset Managers league rows returned.</p>'
     else:
-        sec_am[
-            "info_html_preview"
-        ] = f'<p class="muted">Preview of the <strong>Distributed</strong> Asset Managers table from <a href="{html_escape(APP_ASSET_MANAGERS, quote=True)}" target="_blank" rel="noopener noreferrer">RWA.xyz Asset Managers</a>.</p>'
         prev = list(pam_rows)[:EXPLORE_ASSET_PREVIEW_ROWS]
         df_a = build_rwa_asset_managers_page_dataframe(prev)
         rj, cj = _dataframe_json_records(df_a)
@@ -962,17 +950,17 @@ def _build_rwa_explore_market_participant_payload(
     sections.append(sec_am)
 
     intro_html = (
-        "<p><strong>RWA market participants</strong>—previews for "
-        "<strong>Networks</strong>, <strong>Platforms</strong> (issuers), and <strong>Asset Managers</strong> "
+        "<p><strong>On-chain RWA</strong> by participant—short previews for "
+        "<strong>Networks</strong>, <strong>Platforms</strong>, and <strong>Asset Managers</strong> "
         "(<strong>RWA.xyz</strong>). Use <strong>Open full … page</strong> for search, charts, and full tables; "
-        "use the second button for the live app.</p>"
+        "use the second button to open the live app.</p>"
     )
 
     return {
         "page_title": "Explore by Market Participant — Digital Assets Dashboard",
         "page_subtitle_html": (
-            f"First {EXPLORE_ASSET_PREVIEW_ROWS} rows per preview—aligned with Streamlit "
-            "<strong>Explore by Market Participant</strong>."
+            f"Networks, platforms, and asset managers (first {EXPLORE_ASSET_PREVIEW_ROWS} rows each)—aligned with "
+            'Streamlit <strong>Explore by Market Participant</strong>.'
         ),
         "intro_html": intro_html,
         "sections": sections,
