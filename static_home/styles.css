@@ -1018,6 +1018,14 @@ a.ticker-chip-link:hover .ticker-chip {
   margin-top: 0.5rem;
 }
 
+.cta-row--news-full {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  align-items: center;
+  margin-top: 0.85rem;
+}
+
 .btn {
   display: inline-flex;
   align-items: center;

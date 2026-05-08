@@ -1329,6 +1329,15 @@ def main() -> None:
         json.dumps({"items": [_article_json(a) for a in reg_top]}, indent=2),
         encoding="utf-8",
     )
+    # Full lists for static GitHub Pages (search + pagination); same pools as Streamlit All articles / Regulatory.
+    (OUT / "all_articles.json").write_text(
+        json.dumps({"items": [_article_json(a) for a in unique]}, indent=2),
+        encoding="utf-8",
+    )
+    (OUT / "all_regulatory.json").write_text(
+        json.dumps({"items": [_article_json(a) for a in reg_articles]}, indent=2),
+        encoding="utf-8",
+    )
 
     # --- ETF / ETP headline pool (same filter + 3-month window as app) ---
     etf_all, etf_feed_errs = load_all_etf_etp_news_cached()
