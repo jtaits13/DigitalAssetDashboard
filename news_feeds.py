@@ -755,11 +755,13 @@ def filter_headlines_by_keyword(articles: list[dict[str, Any]], query: str) -> l
 
 
 def hub_news_panel_header_html(*, eyebrow: str, title: str, heading_id: Optional[str] = None) -> str:
-    """Shared lane chrome: eyebrow label + panel title (both hub columns use this)."""
+    """Shared lane chrome: optional eyebrow label + panel title (both hub columns use this)."""
     id_attr = f' id="{escape(heading_id)}"' if heading_id else ""
+    eb = (eyebrow or "").strip()
+    eyebrow_html = f'<span class="jd-hub-news-eyebrow">{escape(eb)}</span>' if eb else ""
     return (
         '<header class="jd-hub-news-panel-header">'
-        f'<span class="jd-hub-news-eyebrow">{escape(eyebrow)}</span>'
+        f"{eyebrow_html}"
         f'<p class="jd-hub-news-panel-title" role="heading" aria-level="2"{id_attr}>{escape(title)}</p>'
         "</header>"
     )
@@ -1162,13 +1164,43 @@ def article_styles_markdown() -> str:
         .stElementContainer:has([data-testid="stMarkdownContainer"]) {
         margin-bottom: 0 !important;
     }
-    /* U.S. crypto ETP full page: half-width column — do not force hub panel min height */
+    /* U.S. crypto ETP full page — right column stretches next to ~420px Plotly aggregate AUM chart */
+    div[data-testid="stHorizontalBlock"]:has(.jd-etp-pulse-rail) {
+        align-items: stretch !important;
+    }
+    div[data-testid="column"]:has(.jd-etp-pulse-rail) {
+        display: flex !important;
+        flex-direction: column !important;
+        align-self: stretch !important;
+    }
     .jd-etp-pulse-rail {
         width: 100%;
         min-width: 0;
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        min-height: clamp(360px, 52vh, 640px);
+    }
+    @media (max-width: 900px) {
+        .jd-etp-pulse-rail {
+            min-height: 0;
+        }
     }
     .jd-etp-pulse-rail .jd-hub-news-panel {
+        flex: 1 1 auto;
         min-height: 0;
+        display: flex;
+        flex-direction: column;
+    }
+    .jd-etp-pulse-rail .jd-hub-news-list {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .jd-etp-pulse-rail .jd-hub-news-footnote {
+        flex-shrink: 0;
+        margin-top: 0.5rem;
     }
     /* On-chain Explore gateways — stronger card than default column chrome so CTAs are easy to spot */
     section.jd-hub-explore-card {
@@ -1496,7 +1528,7 @@ def build_etp_market_news_box_html(articles: list[dict[str, Any]]) -> str:
     out: list[str] = [
         '<div class="jd-etp-pulse-rail">',
         f'<section class="{panel_cls}" aria-labelledby="{escape(hid)}">',
-        hub_news_panel_header_html(eyebrow="ETF & ETP", title="Market Pulse", heading_id=hid),
+        hub_news_panel_header_html(eyebrow="", title="ETF News Feed", heading_id=hid),
     ]
     if not articles:
         out.append(
