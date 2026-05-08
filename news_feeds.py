@@ -314,32 +314,20 @@ def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -
     <nav class="jd-site-nav" aria-label="Page sections">
       <span class="jd-site-brand">Digital Assets Dashboard</span>
       <a class="jd-site-link" href="/?jd_scroll=top">Home</a>
-      <a class="jd-site-link" href="#jd-section-news">News</a>
-      <a class="jd-site-link" href="#jd-section-markets-funds">Markets &amp; Funds</a>
-      <div class="jd-nav-dd" role="group" aria-label="On-chain Data subsections">
-        <a class="jd-site-link jd-nav-dd-head" href="#jd-section-onchain">On-chain Data <span class="jd-nav-dd-caret" aria-hidden="true">▾</span></a>
+      <a class="jd-site-link" href="#jd-section-news">Digital Asset News</a>
+      <div class="jd-nav-dd" role="group" aria-label="U.S. ETPs">
+        <a class="jd-site-link jd-nav-dd-head" href="/US_Crypto_ETPs">U.S. ETPs <span class="jd-nav-dd-caret" aria-hidden="true">▾</span></a>
         <ul class="jd-nav-dd-menu" role="menu">
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-market">Global Market Overview</a></li>
-          <li role="none">
-            <div class="jd-nav-dd-flyout-trigger">
-              <a class="jd-nav-dd-item jd-nav-dd-with-flyout" role="menuitem" href="#jd-rwa-explore-asset-type" aria-haspopup="true">Explore by Asset Type <span class="jd-nav-dd-flyout-caret" aria-hidden="true">▸</span></a>
-              <ul class="jd-nav-dd-submenu" role="menu" aria-label="Asset type pages">
-                <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="/RWA_Stablecoins">Stablecoins</a></li>
-                <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="/RWA_US_Treasuries">US Treasuries</a></li>
-                <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="/RWA_Tokenized_Stocks">Tokenized Stocks</a></li>
-              </ul>
-            </div>
-          </li>
-          <li role="none">
-            <div class="jd-nav-dd-flyout-trigger">
-              <a class="jd-nav-dd-item jd-nav-dd-with-flyout" role="menuitem" href="#jd-rwa-explore-market-participant" aria-haspopup="true">Explore by Market Participant <span class="jd-nav-dd-flyout-caret" aria-hidden="true">▸</span></a>
-              <ul class="jd-nav-dd-submenu" role="menu" aria-label="Market participant pages">
-                <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="/RWA_Participants_Networks">Networks</a></li>
-                <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="/RWA_Participants_Platforms">Platforms</a></li>
-                <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="/RWA_Participants_Asset_Managers">Asset Managers</a></li>
-              </ul>
-            </div>
-          </li>
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/All_ETF_News">ETF News</a></li>
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/US_Crypto_ETPs">ETF Data</a></li>
+        </ul>
+      </div>
+      <div class="jd-nav-dd" role="group" aria-label="RWA Market">
+        <a class="jd-site-link jd-nav-dd-head" href="/RWA_Global_Market_Overview">RWA Market <span class="jd-nav-dd-caret" aria-hidden="true">▾</span></a>
+        <ul class="jd-nav-dd-menu" role="menu">
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-market">Market Overview</a></li>
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-explore-asset-type">RWA · Assets</a></li>
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-explore-market-participant">RWA · Participants</a></li>
         </ul>
       </div>
     </nav>
@@ -353,10 +341,9 @@ def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -
 
 def render_subpage_top_bar() -> None:
     """
-    Same fixed banner as the home page. ``Home``, ``News``, and ``Markets & Funds`` use ``?jd_scroll=`` so the landing
-    page scrolls after load. **On-chain Data** mirrors the home hub: **Explore by Asset Type** and **Explore by Market
-    Participant** each use a hover flyout to full RWA pages; the parent row scrolls the landing page to the matching hub
-    Explore cards.
+    Same fixed banner as the home page. **Home**, **Digital Asset News**, and **RWA Market** subsection links use
+    ``?jd_scroll=`` so returning to the landing page scrolls to the right hub anchor. **U.S. ETPs** and **RWA Market**
+    expose hover submenus (ETF News / ETF Data; Market Overview / Assets / Participants).
     """
     st.markdown(SITE_NAV_CSS, unsafe_allow_html=True)
     st.markdown(
@@ -366,32 +353,20 @@ def render_subpage_top_bar() -> None:
     <nav class="jd-site-nav" aria-label="Page sections">
       <span class="jd-site-brand">Digital Assets Dashboard</span>
       <a class="jd-site-link" href="/?jd_scroll=top">Home</a>
-      <a class="jd-site-link" href="/?jd_scroll=news">News</a>
-      <a class="jd-site-link" href="/?jd_scroll=markets_funds">Markets &amp; Funds</a>
-      <div class="jd-nav-dd" role="group" aria-label="On-chain Data subsections">
-        <a class="jd-site-link jd-nav-dd-head" href="/?jd_scroll=onchain">On-chain Data <span class="jd-nav-dd-caret" aria-hidden="true">▾</span></a>
+      <a class="jd-site-link" href="/?jd_scroll=news">Digital Asset News</a>
+      <div class="jd-nav-dd" role="group" aria-label="U.S. ETPs">
+        <a class="jd-site-link jd-nav-dd-head" href="/US_Crypto_ETPs">U.S. ETPs <span class="jd-nav-dd-caret" aria-hidden="true">▾</span></a>
         <ul class="jd-nav-dd-menu" role="menu">
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/?jd_scroll=rwa_global_market">Global Market Overview</a></li>
-          <li role="none">
-            <div class="jd-nav-dd-flyout-trigger">
-              <a class="jd-nav-dd-item jd-nav-dd-with-flyout" role="menuitem" href="/?jd_scroll=rwa_explore_asset_type" aria-haspopup="true">Explore by Asset Type <span class="jd-nav-dd-flyout-caret" aria-hidden="true">▸</span></a>
-              <ul class="jd-nav-dd-submenu" role="menu" aria-label="Asset type pages">
-                <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="/RWA_Stablecoins">Stablecoins</a></li>
-                <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="/RWA_US_Treasuries">US Treasuries</a></li>
-                <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="/RWA_Tokenized_Stocks">Tokenized Stocks</a></li>
-              </ul>
-            </div>
-          </li>
-          <li role="none">
-            <div class="jd-nav-dd-flyout-trigger">
-              <a class="jd-nav-dd-item jd-nav-dd-with-flyout" role="menuitem" href="/?jd_scroll=rwa_explore_market_participant" aria-haspopup="true">Explore by Market Participant <span class="jd-nav-dd-flyout-caret" aria-hidden="true">▸</span></a>
-              <ul class="jd-nav-dd-submenu" role="menu" aria-label="Market participant pages">
-                <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="/RWA_Participants_Networks">Networks</a></li>
-                <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="/RWA_Participants_Platforms">Platforms</a></li>
-                <li role="none"><a class="jd-nav-dd-item jd-nav-dd-sub" role="menuitem" href="/RWA_Participants_Asset_Managers">Asset Managers</a></li>
-              </ul>
-            </div>
-          </li>
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/All_ETF_News">ETF News</a></li>
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/US_Crypto_ETPs">ETF Data</a></li>
+        </ul>
+      </div>
+      <div class="jd-nav-dd" role="group" aria-label="RWA Market">
+        <a class="jd-site-link jd-nav-dd-head" href="/RWA_Global_Market_Overview">RWA Market <span class="jd-nav-dd-caret" aria-hidden="true">▾</span></a>
+        <ul class="jd-nav-dd-menu" role="menu">
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/?jd_scroll=rwa_global_market">Market Overview</a></li>
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/?jd_scroll=rwa_explore_asset_type">RWA · Assets</a></li>
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/?jd_scroll=rwa_explore_market_participant">RWA · Participants</a></li>
         </ul>
       </div>
     </nav>

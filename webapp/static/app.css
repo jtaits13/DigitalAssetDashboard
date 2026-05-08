@@ -23,6 +23,7 @@ body {
   position: sticky;
   top: 0;
   z-index: 30;
+  overflow: visible;
 }
 .site-header__inner {
   max-width: 1180px;
@@ -43,16 +44,84 @@ body {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem 1rem;
-  font-size: 0.92rem;
+  gap: 0.35rem 0.6rem;
+  font-size: 0.85rem;
+  margin-left: auto;
+  overflow: visible;
 }
 .site-nav a {
   color: var(--slate);
   text-decoration: none;
   font-weight: 600;
+  padding: 0.38rem 0.7rem;
+  border-radius: 8px;
 }
-.site-nav a:hover { color: var(--teal); }
+.site-nav a:hover {
+  color: var(--teal);
+  background: rgba(37, 128, 156, 0.1);
+}
 .nav-refresh { color: var(--teal) !important; }
+
+/* Primary nav — hover dropdowns (aligned with static_home) */
+.site-nav__dropdown {
+  position: relative;
+}
+.site-nav__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--slate);
+  padding: 0.38rem 0.7rem;
+  border-radius: 8px;
+  cursor: default;
+  user-select: none;
+}
+.site-nav__trigger::after {
+  content: "";
+  width: 0.36rem;
+  height: 0.36rem;
+  margin-top: 0.06rem;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg);
+  opacity: 0.75;
+}
+.site-nav__dropdown:hover > .site-nav__trigger,
+.site-nav__dropdown:focus-within > .site-nav__trigger {
+  color: var(--teal);
+  background: rgba(37, 128, 156, 0.1);
+}
+.site-nav__sub {
+  display: none;
+  list-style: none;
+  margin: 0.2rem 0 0;
+  padding: 0.35rem 0;
+  min-width: 12rem;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 50;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.12);
+}
+.site-nav__dropdown:hover .site-nav__sub,
+.site-nav__dropdown:focus-within .site-nav__sub {
+  display: block;
+}
+.site-nav__sub li { margin: 0; }
+.site-nav__sub a {
+  display: block;
+  padding: 0.45rem 1rem;
+  font-size: 0.82rem;
+  border-radius: 0;
+}
+.site-nav__sub a:hover {
+  background: rgba(37, 128, 156, 0.08);
+}
 
 .main-shell {
   max-width: 1180px;
