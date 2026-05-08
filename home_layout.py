@@ -289,6 +289,18 @@ section[data-testid="stMain"] [data-testid="stCaptionContainer"] p {
     font-size: inherit !important;
     line-height: inherit;
 }
+/* Wide layout stretches past the fixed nav + price ticker; cap main column to the same 1200px as .jd-site-nav-inner */
+section[data-testid="stMain"] > div[data-testid="stMainBlockContainer"] {
+    max-width: min(1200px, 100%) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+/* Older Streamlit: block-container on main wrapper */
+section[data-testid="stMain"] > div.block-container {
+    max-width: min(1200px, 100%) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
 </style>
 """
 
