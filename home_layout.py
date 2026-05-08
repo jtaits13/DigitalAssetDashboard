@@ -227,11 +227,11 @@ p.home-band-label.teal.jd-home-band-after-rule {
 [data-testid="stMarkdownContainer"] .jd-home-hero p.jd-hub-dek {
     margin: 0 0 0.42rem 0 !important;
 }
-[data-testid="stMarkdownContainer"] .jd-home-hero p.jd-hub-dek:last-child:not(.jd-home-hero__jpm-callout) {
+[data-testid="stMarkdownContainer"] .jd-home-hero p.jd-hub-dek:last-child:not(.jd-home-hero__internal-callout) {
     margin-bottom: 0.15rem !important;
 }
 /* Confluence / internal callout: same blurb band, slightly stronger type + slim left rule (no box) */
-.jd-home-hero p.jd-home-hero__jpm-callout {
+.jd-home-hero p.jd-home-hero__internal-callout {
     margin-top: 0.35rem !important;
     padding-left: 0.7rem;
     border-left: 3px solid #25809c;
@@ -240,20 +240,20 @@ p.home-band-label.teal.jd-home-band-after-rule {
     letter-spacing: 0.015em;
     box-sizing: border-box;
 }
-.jd-home-hero p.jd-home-hero__jpm-callout strong {
+.jd-home-hero p.jd-home-hero__internal-callout strong {
     font-weight: 700;
     color: #25809c;
 }
-.jd-home-hero p.jd-home-hero__jpm-callout a {
+.jd-home-hero p.jd-home-hero__internal-callout a {
     color: #25809c;
     font-weight: 650;
     text-decoration: underline;
     text-underline-offset: 2px;
 }
-.jd-home-hero p.jd-home-hero__jpm-callout a:hover {
+.jd-home-hero p.jd-home-hero__internal-callout a:hover {
     color: #1a6b7e;
 }
-[data-testid="stMarkdownContainer"] .jd-home-hero p.jd-home-hero__jpm-callout.jd-hub-dek {
+[data-testid="stMarkdownContainer"] .jd-home-hero p.jd-home-hero__internal-callout.jd-hub-dek {
     font-size: 1rem !important;
     line-height: 1.48 !important;
     font-weight: 600 !important;
@@ -263,13 +263,13 @@ p.home-band-label.teal.jd-home-band-after-rule {
     border-left: 3px solid #25809c !important;
     margin-top: 0.35rem !important;
 }
-[data-testid="stMarkdownContainer"] .jd-home-hero p.jd-home-hero__jpm-callout strong {
+[data-testid="stMarkdownContainer"] .jd-home-hero p.jd-home-hero__internal-callout strong {
     color: #25809c !important;
 }
-[data-testid="stMarkdownContainer"] .jd-home-hero p.jd-home-hero__jpm-callout a {
+[data-testid="stMarkdownContainer"] .jd-home-hero p.jd-home-hero__internal-callout a {
     color: #25809c !important;
 }
-[data-testid="stMarkdownContainer"] .jd-home-hero p.jd-home-hero__jpm-callout a:hover {
+[data-testid="stMarkdownContainer"] .jd-home-hero p.jd-home-hero__internal-callout a:hover {
     color: #1a6b7e !important;
 }
 
