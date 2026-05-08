@@ -116,7 +116,7 @@
           banner.textContent =
             "Could not load " +
             c.feed +
-            ". Deploy from CI (export script) or run scripts/export_static_site_data.py locally.";
+            ". Open the published site after deploy, or run scripts/export_static_site_data.py locally.";
         }
       });
   }

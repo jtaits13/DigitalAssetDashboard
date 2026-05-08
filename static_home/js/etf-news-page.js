@@ -98,7 +98,7 @@
         if (banner) {
           banner.hidden = false;
           banner.textContent =
-            "Could not load etf_news.json. Deploy GitHub Pages from CI (runs export) or run scripts/export_static_site_data.py locally.";
+            "Could not load etf_news.json. Use the published site after deploy, or run scripts/export_static_site_data.py locally.";
         }
       });
   }

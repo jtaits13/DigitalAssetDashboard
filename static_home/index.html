@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=10" />
+    <link rel="stylesheet" href="styles.css?v=12" />
   </head>
   <body>
     <header class="site-header" role="banner">
@@ -38,7 +38,7 @@
       </div>
     </header>
 
-    <div class="ticker-strip" aria-label="Sample price strip (illustrative)">
+    <div class="ticker-strip" aria-label="Cryptocurrency prices (latest export)">
       <div class="ticker-strip__layout">
         <span class="ticker-strip__label">Top cryptocurrencies</span>
         <div class="ticker-strip__chips">
@@ -60,7 +60,7 @@
           <div class="hero-copy hero-copy--lead">
             <h1 id="page-title">Digital Assets Dashboard</h1>
             <p class="hero-lead">
-              Digital-asset <strong>news</strong>, global <strong>regulatory</strong> wires, U.S. listed
+              Digital-asset <strong>news</strong>, global <strong>regulatory</strong> wires, U.S.-listed
               <strong>crypto ETPs</strong>, and <strong>on-chain RWA</strong> context from <strong>RWA.xyz</strong>—in one
               hub. Scan market direction, policy signals, and where activity clusters across
               <strong>networks</strong>, <strong>platforms</strong>, <strong>participants</strong>,
@@ -87,7 +87,8 @@
         <section class="hub-section hub-section--panel" id="section-news" aria-labelledby="news-heading">
           <h2 class="band-label teal" id="news-heading">News &amp; Regulatory</h2>
           <p class="section-dek section-dek--wide">
-            RSS lanes use live headlines from the same default sources as the hub (top items per lane on each deploy).
+            Headlines come from the configured RSS feeds; each lane shows the most recent items from the latest site
+            export.
           </p>
           <p class="cta-note cta-note--news-hub-top">
             <a href="all-articles.html">All digital asset headlines →</a>
@@ -123,8 +124,8 @@
         <section class="hub-section hub-section--panel" id="section-markets" aria-labelledby="markets-heading">
           <h2 class="band-label teal" id="markets-heading">Markets &amp; Funds</h2>
           <p class="section-dek section-dek--wide">
-            KPI strip and table preview use the same StockAnalysis + Yahoo methodology as the hub (values from the latest
-            export).
+            The KPI strip and preview table use StockAnalysis and Yahoo Finance inputs, consistent with the full U.S. ETP
+            page (values from the latest export).
           </p>
           <div class="kpi-row kpi-row--etp-snapshot" id="js-home-kpi" aria-label="KPI strip from data export">
             <div class="kpi-cell">
@@ -132,7 +133,9 @@
             </div>
           </div>
           <p class="kpi-footnote">
-            The colored <strong>% figures</strong> are normally approximately <strong>one-month</strong> changes; parentheses next to each percent note <strong>1 mo</strong>, <strong>1 yr</strong>, or <strong>52W</strong>.
+            The colored <strong>% figures</strong> are usually approximately <strong>one-month</strong> changes; parentheses
+            next to each percent indicate the window when it differs (<strong>1 mo</strong>, <strong>1 yr</strong>, or
+            <strong>52W</strong>).
           </p>
           <div class="table-wrap">
             <table class="data-table">
@@ -153,7 +156,7 @@
             </table>
           </div>
           <div class="cta-row">
-            <a class="btn btn-primary" href="etps.html">Open full U.S. ETP page (chart + table)</a>
+            <a class="btn btn-primary" href="etps.html">Open full U.S. ETP page (chart and table)</a>
           </div>
         </section>
 
@@ -161,8 +164,8 @@
           <h2 class="band-label teal" id="onchain-heading">On-chain Data</h2>
           <p class="section-dek section-dek--wide">
             <strong>RWA Global Market Overview</strong> KPIs and a <strong>Networks</strong> preview from RWA.xyz, plus
-            <strong>Explore</strong> gateways (stablecoins / treasuries / stocks · networks / platforms / managers).
-            Values load from the export JSON.
+            <strong>Explore</strong> gateways (stablecoins, treasuries, and tokenized stocks; networks, platforms, and asset
+            managers). Values load from the exported JSON.
           </p>
           <div class="data-banner" id="js-rwa-onchain-banner" role="status" hidden></div>
           <div class="jd-hub-subsection-head rwa-market-head" id="jd-rwa-market">
@@ -206,6 +209,6 @@
     <script src="js/static-base.js"></script>
     <script src="js/etp-kpi-shared.js"></script>
     <script src="js/rwa-onchain-home.js"></script>
-    <script src="js/home-page.js?v=1"></script>
+    <script src="js/home-page.js?v=2"></script>
   </body>
 </html>

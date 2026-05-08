@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=10" />
+    <link rel="stylesheet" href="styles.css?v=12" />
   </head>
   <body class="page-etp">
     <header class="site-header" role="banner">
@@ -40,11 +40,11 @@
 
     <div class="page-back-below-header">
       <p class="back-link back-link--below-header">
-        <a href="index.html">← Back to hub layout</a>
+        <a href="index.html">← Back to home</a>
       </p>
     </div>
 
-    <div class="ticker-strip" aria-label="Sample price strip (illustrative)">
+    <div class="ticker-strip" aria-label="Cryptocurrency prices (latest export)">
       <div class="ticker-strip__layout">
         <span class="ticker-strip__label">Top cryptocurrencies</span>
         <div class="ticker-strip__chips">
@@ -63,7 +63,7 @@
         <h1 class="page-intro__title">U.S. Digital Asset ETPs — Full List</h1>
         <p class="page-intro__dek">
           <strong>U.S. crypto-related exchange-traded products</strong>: KPI strip, estimated aggregate AUM trend (Plotly),
-          searchable fund table, and ETF headline teaser—fed by the same export as Streamlit. Reference:
+          a searchable fund table, and an ETF headline teaser—all from the same JSON export as the hub. Reference:
           <a href="https://stockanalysis.com/list/crypto-etfs/" target="_blank" rel="noopener noreferrer">StockAnalysis.com</a>
           (issuer, inception, <strong>52W %</strong>).
         </p>
@@ -79,7 +79,7 @@
           <div class="kpi-cell"><span class="kpi-label">Loading…</span></div>
         </div>
         <p class="kpi-footnote kpi-footnote--block">
-          The colored <strong>% figures</strong> are normally approximately <strong>one-month</strong> changes (~30 calendar days); parentheses next to each percent note the exact window when it differs (<strong>1 mo</strong>, <strong>1 yr</strong>, or <strong>52W</strong>). Dollar totals from StockAnalysis; aggregate % from estimated weekly AUM; IBIT/ETHA % from Yahoo when available (same pipeline as Streamlit/FastAPI).
+          The colored <strong>% figures</strong> are normally approximately <strong>one-month</strong> changes (~30 calendar days); parentheses next to each percent note the exact window when it differs (<strong>1 mo</strong>, <strong>1 yr</strong>, or <strong>52W</strong>). Dollar totals from StockAnalysis; aggregate % from estimated weekly AUM; IBIT and ETHA % deltas from Yahoo Finance when available (same pipeline as the dashboard app and API).
         </p>
       </section>
 
@@ -95,7 +95,7 @@
             <li>
               <strong>Forward market-size scenarios are large, but still assumptions-driven.</strong> For example, one widely
               cited 2026 scenario set discussed in market coverage points to roughly <strong>$180B–$220B</strong> for Bitcoin
-              ETF assets vs. roughly <strong>~$145B</strong> in that same discussion context (see
+              ETF assets vs. roughly <strong>$145B</strong> in that same discussion context (see
               <a href="https://www.dlnews.com/articles/markets/bitcoin-etfs-to-top-180-billion-usd-in-2026-say-analysts/" target="_blank" rel="noopener noreferrer">DL News summary</a>). Treat as directional ranges, not a forecast.
             </li>
             <li>
@@ -110,8 +110,8 @@
             </li>
           </ul>
           <p class="takeaways__note">
-            Context for strategy only (not investment advice). The KPI row, chart, and table below use the StockAnalysis +
-            Yahoo process in the Streamlit app.
+            Context for strategy only (not investment advice). The KPI row, chart, and table below use the StockAnalysis and
+            Yahoo Finance process described above.
           </p>
         </div>
         <p class="review-note">Reviewed monthly · Last reviewed: <strong>Apr 2026</strong> (static mirror)</p>
@@ -125,8 +125,8 @@
           <div class="split-panels__widget split-panels__widget--chart">
             <div id="aum-chart" class="aum-chart-host" role="img" aria-label="Aggregate estimated AUM chart"></div>
             <p class="chart-placeholder__cap">
-              Vertical axis: estimated aggregate AUM (<strong>billions USD</strong>; weekly points). Same construction as
-              Streamlit.
+              Vertical axis: estimated aggregate AUM (<strong>billions USD</strong>; weekly points). Same methodology as the
+              hub aggregate AUM chart.
             </p>
             <p class="method-note split-panels__method-note">
               <strong>Yahoo Finance</strong> weekly closes × each fund’s latest StockAnalysis AUM (constant-share approximation),
@@ -147,7 +147,8 @@
               <a class="btn btn-primary" href="etf-news.html">All ETF headlines →</a>
             </div>
             <p class="cta-note cta-note--etp-feed-hint">
-              Full filtered list (~3 months UTC), search, and pagination — same export as Streamlit.
+              Full filtered list (about three months, UTC), with search and pagination from the same JSON export as this
+              page.
             </p>
           </div>
         </section>
@@ -186,17 +187,17 @@
           </table>
         </div>
         <p class="source-cap">
-          StockAnalysis snapshot · Regenerated each GitHub Pages deploy · Same list as Streamlit after export.
+          StockAnalysis snapshot · Refreshes when the site export runs · Same fund universe as the dashboard export.
         </p>
         <p class="timestamp-foot" id="js-etp-generated">—</p>
       </section>
 
       <p class="back-link">
-        <a href="index.html">← Back to hub layout</a>
+        <a href="index.html">← Back to home</a>
       </p>
     </main>
 
-    <footer class="site-footer">U.S. ETP · live data from export · May 2026</footer>
+    <footer class="site-footer">Digital Assets Dashboard · U.S. ETPs · May 2026</footer>
     <script defer src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
     <script defer src="js/static-base.js"></script>
     <script defer src="js/etp-kpi-shared.js"></script>
