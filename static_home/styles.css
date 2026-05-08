@@ -1585,6 +1585,15 @@ a.ticker-chip-link:hover .ticker-chip {
   text-decoration: underline;
 }
 
+/* Top-of-page back link (paired with footer .back-link) */
+.back-link--top {
+  margin: 0 0 1.25rem;
+}
+
+nav.back-link {
+  display: block;
+}
+
 /* —— Live data / Plotly / ETF news —— */
 .data-banner {
   max-width: var(--max);

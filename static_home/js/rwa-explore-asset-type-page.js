@@ -31,18 +31,22 @@
     if (foot) foot.textContent = data.footer_note || "";
 
     var L = data.links || {};
-    var bg = $("js-exat-back-global");
-    var bh = $("js-exat-back-hub");
-    var bx = $("js-exat-back-asset-type");
-    if (bg && L.rwa_global) bg.setAttribute("href", assetPath(L.rwa_global));
-    if (bh && L.hub_home) bh.setAttribute("href", assetPath(L.hub_home));
-    if (bx) {
-      if (L.explore_asset_type) {
-        bx.setAttribute("href", assetPath(L.explore_asset_type));
-        bx.hidden = false;
-      } else {
-        bx.hidden = true;
-      }
+    document.querySelectorAll('a[data-exat-link="global"]').forEach(function (el) {
+      if (L.rwa_global) el.setAttribute("href", assetPath(L.rwa_global));
+    });
+    document.querySelectorAll('a[data-exat-link="hub"]').forEach(function (el) {
+      if (L.hub_home) el.setAttribute("href", assetPath(L.hub_home));
+    });
+    var assetTypeEls = document.querySelectorAll('a[data-exat-link="asset-type"]');
+    if (L.explore_asset_type) {
+      assetTypeEls.forEach(function (el) {
+        el.setAttribute("href", assetPath(L.explore_asset_type));
+        el.hidden = false;
+      });
+    } else {
+      assetTypeEls.forEach(function (el) {
+        el.hidden = true;
+      });
     }
 
     var root = $("js-exat-sections");

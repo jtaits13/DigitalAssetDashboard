@@ -498,9 +498,11 @@
 
     applyBottomCta();
 
-    var back = $("js-deep-back-explore");
-    if (back && payload.back_href)
-      back.setAttribute("href", assetPath(payload.back_href));
+    if (payload.back_href) {
+      document.querySelectorAll('a[data-deep-back="explore"]').forEach(function (a) {
+        a.setAttribute("href", assetPath(payload.back_href));
+      });
+    }
 
     var foot = $("js-deep-footer-note");
     if (foot) foot.textContent = payload.footer_note || "";

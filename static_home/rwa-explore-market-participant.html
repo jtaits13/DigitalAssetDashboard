@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=4" />
+    <link rel="stylesheet" href="styles.css?v=7" />
   </head>
   <body class="page-rwa-explore-mp" data-explore-json="rwa_explore_market_participant.json">
     <header class="site-header" role="banner">
@@ -49,6 +49,13 @@
     </div>
 
     <main class="page-shell">
+      <nav class="back-link back-link--top rwa-exat-back" aria-label="Back navigation">
+        <a data-exat-link="global" href="rwa-global.html">← RWA Global Market Overview</a>
+        <span class="rwa-exat-back-sep"> · </span>
+        <a data-exat-link="hub" href="index.html">Hub home</a>
+        <span class="rwa-exat-back-sep"> · </span>
+        <a data-exat-link="asset-type" href="rwa-explore-asset-type.html">Explore by Asset Type</a>
+      </nav>
       <header class="page-intro">
         <p class="band-label teal">Explore by Market Participant</p>
         <div class="page-intro__dek" id="js-exat-subtitle"></div>
@@ -62,11 +69,11 @@
       <div id="js-exat-sections" class="rwa-exat-sections"></div>
 
       <p class="back-link rwa-exat-back">
-        <a id="js-exat-back-global" href="rwa-global.html">← RWA Global Market Overview</a>
+        <a data-exat-link="global" href="rwa-global.html">← RWA Global Market Overview</a>
         <span class="rwa-exat-back-sep"> · </span>
-        <a id="js-exat-back-hub" href="index.html">Hub home</a>
+        <a data-exat-link="hub" href="index.html">Hub home</a>
         <span class="rwa-exat-back-sep"> · </span>
-        <a id="js-exat-back-asset-type" href="rwa-explore-asset-type.html">Explore by Asset Type</a>
+        <a data-exat-link="asset-type" href="rwa-explore-asset-type.html">Explore by Asset Type</a>
       </p>
     </main>
 
@@ -77,6 +84,6 @@
 
     <script src="js/static-base.js"></script>
     <script src="js/rwa-onchain-home.js"></script>
-    <script src="js/rwa-explore-asset-type-page.js"></script>
+    <script src="js/rwa-explore-asset-type-page.js?v=1"></script>
   </body>
 </html>
