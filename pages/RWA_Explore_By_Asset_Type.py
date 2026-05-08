@@ -46,14 +46,10 @@ def main() -> None:
 
     st.markdown(section_label_teal("Explore by Asset Type", placement="first"), unsafe_allow_html=True)
     st.markdown(
-        '<div class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-explore-blurb jd-hub-dek--large">'
-        "<p><strong>RWA.xyz</strong> live data. Below are three asset areas—each card is a preview; open it for the full table.</p>"
-        "<ul>"
-        "<li>Stablecoins</li>"
-        "<li>US Treasuries</li>"
-        "<li>Tokenized Stocks</li>"
-        "</ul>"
-        "</div>",
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">'
+        "<strong>On-chain RWA</strong> by asset: short <strong>RWA.xyz</strong> previews for "
+        "<strong>Stablecoins</strong>, <strong>US Treasuries</strong>, and <strong>Tokenized Stocks</strong>. "
+        "Use <strong>Open full … table</strong> in each section for search, charts, and the full league views.</p>",
         unsafe_allow_html=True,
     )
 

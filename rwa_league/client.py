@@ -368,9 +368,22 @@ def _treasury_platform_rows_from_raw(raw_rows: list[dict[str, Any]]) -> list[Rwa
     return out
 
 
-def _format_aggregate_value(raw: dict[str, Any]) -> str:
-    typ = str(raw.get("type") or "")
+def _format_headline_pct_two_decimals(raw_val: float) -> str:
+    """
+    RWA.xyz headline yields (e.g. APY) may be a decimal fraction (0.0412 = 4.12%) or already a percent (4.12).
+    Values with magnitude above 100 are treated as already in percent units.
+    """
+    v = float(raw_val)
+    if abs(v) <= 1.0:
+        v *= 100.0
+    return f"{v:.2f}%"
+
+
+def _format_aggregate_value(raw: dict[str, Any], *, label: str | None = None) -> str:
+    typ = str(raw.get("type") or "").strip().lower()
     val = raw.get("value")
+    lbl = (label or "").lower()
+
     if typ in ("dollar_compact",):
         if isinstance(val, (int, float)):
             return format_usd_compact(float(val))
@@ -379,6 +392,11 @@ def _format_aggregate_value(raw: dict[str, Any]) -> str:
         if isinstance(val, (int, float)):
             return f"{int(round(float(val))):,}"
         return "—"
+
+    # US Treasuries overview (and similar): APY as percent with two decimals.
+    if (typ == "apy" or "apy" in lbl) and isinstance(val, (int, float)):
+        return _format_headline_pct_two_decimals(float(val))
+
     if isinstance(val, (int, float)):
         return f"{val:,.4g}" if isinstance(val, float) and val != int(val) else f"{int(val):,}"
     return str(val) if val is not None else "—"
@@ -400,7 +418,7 @@ def _parse_aggregates(props: dict[str, Any]) -> list[RwaGlobalKpi]:
         if not isinstance(item, dict):
             continue
         label = str(item.get("label") or "").strip() or "—"
-        disp = _format_aggregate_value(item)
+        disp = _format_aggregate_value(item, label=label)
         pc = item.get("percentChange")
         delta: float | None = None
         if isinstance(pc, dict):

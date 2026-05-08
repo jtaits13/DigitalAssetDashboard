@@ -789,20 +789,17 @@ def _build_rwa_explore_asset_type_payload(
     sections.append(sec_st)
 
     intro_html = (
-        "<p><strong>RWA.xyz</strong> live data. Each block below is a short preview from the same pipeline as the "
-        "Streamlit <strong>Explore by Asset Type</strong> page.</p>"
-        "<p>Use <strong>Open full … table</strong> for the extended static view (search, full tables, and charts), "
-        "or the second button to open the live app on RWA.xyz.</p>"
-        "<ul>"
-        "<li>Stablecoins</li><li>US Treasuries</li><li>Tokenized Stocks</li>"
-        "</ul>"
+        "<p><strong>On-chain RWA</strong> by asset—short previews for "
+        "<strong>Stablecoins</strong>, <strong>US Treasuries</strong>, and <strong>Tokenized Stocks</strong> "
+        "(<strong>RWA.xyz</strong>). Use <strong>Open full … table</strong> for search, charts, and full leagues; "
+        "use the second button to open the live app.</p>"
     )
 
     return {
         "page_title": "Explore by Asset Type — Digital Assets Dashboard",
         "page_subtitle_html": (
-            "Hub previews — same league teasers as the Streamlit <strong>Explore by Asset Type</strong> page "
-            f"(network tables where available, otherwise platforms; first {EXPLORE_ASSET_PREVIEW_ROWS} rows per preview)."
+            f"Network or platform previews (first {EXPLORE_ASSET_PREVIEW_ROWS} rows each)—aligned with Streamlit "
+            "<strong>Explore by Asset Type</strong>."
         ),
         "intro_html": intro_html,
         "sections": sections,
