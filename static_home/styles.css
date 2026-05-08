@@ -1255,6 +1255,13 @@ a.ticker-chip-link:hover .ticker-chip {
   color: var(--muted);
 }
 
+/* ETP snapshot KPI (etps.html): same panel shell as RWA overview */
+.rwa-kpi-panel-static > .kpi-row.kpi-row--in-panel {
+  border-bottom: none;
+  padding: 0;
+  margin: 0;
+}
+
 .rwa-onchain-cta {
   display: flex;
   flex-wrap: wrap;
