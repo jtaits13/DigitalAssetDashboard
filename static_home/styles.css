@@ -1594,6 +1594,36 @@ nav.back-link {
   display: block;
 }
 
+/* Full-width back row under the sticky header (above ticker when present) */
+.page-back-strip-wrap {
+  max-width: var(--max);
+  margin: 0 auto 0.65rem;
+  padding: 0.45rem 1.5rem 0;
+}
+
+.page-back-strip {
+  margin: 0;
+  padding: 0.55rem 0.9rem;
+  background: rgba(37, 128, 156, 0.1);
+  border: 1px solid rgba(37, 128, 156, 0.28);
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+}
+
+.page-back-strip a {
+  font-weight: 600;
+  color: var(--teal);
+  text-decoration: none;
+}
+
+.page-back-strip a:hover {
+  text-decoration: underline;
+}
+
+.page-back-strip.rwa-exat-back .rwa-exat-back-sep {
+  color: var(--muted);
+}
+
 /* —— Live data / Plotly / ETF news —— */
 .data-banner {
   max-width: var(--max);
