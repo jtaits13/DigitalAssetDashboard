@@ -21,6 +21,10 @@ from home_layout import (
 )
 from news_feeds import (
     ALL_ARTICLES_FEEDS,
+    ALL_ARTICLES_FEED_DAY_CAP,
+    ALL_ARTICLES_LIST_MAX_ITEMS,
+    ALL_ARTICLES_MAX_PAGES,
+    ALL_ARTICLES_PER_PAGE,
     app_shared_layout_css,
     article_styles_markdown,
     build_full_page_market_news_feed_html,
@@ -36,10 +40,6 @@ try:
 except Exception:
     def show_price_ticker() -> None:
         return
-
-PER_PAGE = 20
-MAX_ARTICLES_PER_DAY = 7
-
 
 def main() -> None:
     st.set_page_config(
@@ -63,8 +63,11 @@ def main() -> None:
     )
     st.markdown(
         '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">'
-        "Aggregated RSS headlines for digital assets. "
-        "Each search token must appear somewhere in the title, summary, or source (all tokens required); pagination walks through results.</p>",
+        "Aggregated RSS from <strong>All articles</strong> feeds (core crypto outlets plus supplemental Google News searches). "
+        f"Up to <strong>{ALL_ARTICLES_FEED_DAY_CAP}</strong> ranked stories per UTC calendar day, then the list is capped at "
+        f"<strong>{ALL_ARTICLES_LIST_MAX_ITEMS}</strong> headlines (<strong>{ALL_ARTICLES_MAX_PAGES}</strong> pages of "
+        f"<strong>{ALL_ARTICLES_PER_PAGE}</strong>). "
+        "Each search token must appear in the title, summary, or source (all tokens required); pagination walks within that cap.</p>",
         unsafe_allow_html=True,
     )
     st.divider()
@@ -88,7 +91,8 @@ def main() -> None:
         st.session_state.all_news_page = 1
 
     unique = dedupe_articles(articles, max_items=None)
-    unique = cap_market_news_per_day(unique, max_per_day=MAX_ARTICLES_PER_DAY)
+    unique = cap_market_news_per_day(unique, max_per_day=ALL_ARTICLES_FEED_DAY_CAP)
+    unique = unique[:ALL_ARTICLES_LIST_MAX_ITEMS]
     filtered = filter_headlines_by_keyword(unique, search_q)
     n = len(filtered)
     if n == 0:
@@ -98,7 +102,10 @@ def main() -> None:
             st.info("No articles match your search. Try different keywords or clear the search box.")
         return
 
-    total_pages = max(1, (n + PER_PAGE - 1) // PER_PAGE)
+    total_pages = min(
+        ALL_ARTICLES_MAX_PAGES,
+        max(1, (n + ALL_ARTICLES_PER_PAGE - 1) // ALL_ARTICLES_PER_PAGE),
+    )
 
     if "all_news_page" not in st.session_state:
         st.session_state.all_news_page = 1
@@ -108,12 +115,22 @@ def main() -> None:
         st.session_state.all_news_page = 1
 
     page = int(st.session_state.all_news_page)
-    start = (page - 1) * PER_PAGE
-    page_items = filtered[start : start + PER_PAGE]
+    item_cap = ALL_ARTICLES_PER_PAGE * total_pages
+    filtered_page = filtered[:item_cap]
 
-    cap_parts = [f"Showing {start + 1}–{min(start + PER_PAGE, n)} of {n} articles"]
+    page = max(1, min(page, total_pages))
+    st.session_state.all_news_page = page
+
+    start = (page - 1) * ALL_ARTICLES_PER_PAGE
+    page_items = filtered_page[start : start + ALL_ARTICLES_PER_PAGE]
+    visible_n = len(filtered_page)
+
+    cap_parts = [
+        f"Showing {start + 1}–{min(start + ALL_ARTICLES_PER_PAGE, visible_n)} of {visible_n} articles"
+        f" ({total_pages} page{'s' if total_pages != 1 else ''} max)",
+    ]
     if search_q:
-        cap_parts.append(f"(filtered from {len(unique)} total)")
+        cap_parts.append(f"(search within {len(unique)} indexed headlines)")
     st.markdown(subpage_toolbar_note_html(" · ".join(cap_parts)), unsafe_allow_html=True)
 
     st.markdown(build_full_page_market_news_feed_html(page_items), unsafe_allow_html=True)
@@ -121,7 +138,7 @@ def main() -> None:
     st.divider()
     st.markdown(subpage_footer_heading_html("Pages"), unsafe_allow_html=True)
 
-    if total_pages <= 18:
+    if total_pages <= ALL_ARTICLES_MAX_PAGES:
         num_cols = st.columns(total_pages)
         for p in range(1, total_pages + 1):
             with num_cols[p - 1]:

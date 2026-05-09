@@ -4,16 +4,20 @@
  * and optional data-article-feed-country="1" to show country in meta + search.
  */
 (function () {
-  var PAGE = 25;
+  var DEFAULT_PAGE_SIZE = 20;
   var all = [];
   var filtered = [];
   var page = 0;
 
   function cfg() {
     var b = document.body;
+    var pz = parseInt((b && b.getAttribute("data-article-feed-page-size")) || String(DEFAULT_PAGE_SIZE), 10);
+    var mp = parseInt((b && b.getAttribute("data-article-feed-max-pages")) || "0", 10);
     return {
       feed: (b && b.getAttribute("data-article-feed") || "all_articles.json").trim(),
       includeCountry: b && b.getAttribute("data-article-feed-country") === "1",
+      pageSize: pz > 0 ? pz : DEFAULT_PAGE_SIZE,
+      maxPages: mp > 0 ? mp : null,
     };
   }
 
@@ -44,28 +48,38 @@
     var metaEl = document.getElementById("js-article-feed-meta");
     var navEl = document.getElementById("js-article-feed-nav");
     if (!listEl) return;
+    var c = cfg();
+    var PAGE = c.pageSize;
     var sorted = sortArticlesByPublishedDesc(filtered);
+    var maxIdx = sorted.length;
+    if (c.maxPages) {
+      maxIdx = Math.min(maxIdx, PAGE * c.maxPages);
+    }
+    var sortedLimited = sorted.slice(0, maxIdx);
     var start = page * PAGE;
-    var slice = sorted.slice(start, start + PAGE);
+    var slice = sortedLimited.slice(start, start + PAGE);
     renderArticleFeedByDay(listEl, slice, {
-      includeCountry: cfg().includeCountry,
+      includeCountry: c.includeCountry,
       emptyMessage: "No headlines match. Clear search or re-run data export.",
       emptyClass: "article-feed-empty",
     });
     if (metaEl) {
+      var denom = sortedLimited.length;
+      var pageNote = c.maxPages ? " · max " + c.maxPages + " pages" : "";
       metaEl.textContent =
         "Showing " +
-        (sorted.length ? start + 1 : 0) +
+        (denom ? start + 1 : 0) +
         "–" +
-        Math.min(start + slice.length, sorted.length) +
+        Math.min(start + slice.length, denom) +
         " of " +
-        sorted.length +
+        denom +
         " (grouped by day · filtered from " +
         all.length +
-        " in export)";
+        " in export)" +
+        pageNote;
     }
     if (navEl) {
-      var np = Math.max(1, Math.ceil(sorted.length / PAGE));
+      var np = Math.max(1, Math.ceil(sortedLimited.length / PAGE));
       navEl.innerHTML =
         '<button type="button" class="btn btn-nav" id="article-feed-prev" ' +
         (page <= 0 ? "disabled" : "") +

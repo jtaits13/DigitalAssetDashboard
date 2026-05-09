@@ -35,6 +35,10 @@ from home_layout import (
 )
 from news_feeds import (
     ALL_ARTICLES_FEEDS,
+    ALL_ARTICLES_FEED_DAY_CAP,
+    ALL_ARTICLES_LIST_MAX_ITEMS,
+    ALL_ARTICLES_MAX_PAGES,
+    ALL_ARTICLES_PER_PAGE,
     DEFAULT_FEEDS,
     ETP_PULSE_PREVIEW_COUNT,
     build_etp_market_news_box_html,
@@ -83,7 +87,6 @@ from webapp.routes_rwa import router as rwa_router
 
 HOME_REGULATORY_PREVIEW = 3
 PER_PAGE = 20
-MAX_ARTICLES_PER_DAY = 7
 MAX_ETF_HEADLINES_PER_DAY = 7
 ETP_PREVIEW_ROWS = 5
 RWA_HOME_PREVIEW = 8
@@ -237,15 +240,23 @@ async def all_articles(
     articles, feed_errors = load_all_feeds(ALL_ARTICLES_FEEDS)
     search_q = (q or "").strip()
     unique = dedupe_articles(articles, max_items=None)
-    unique = cap_market_news_per_day(unique, max_per_day=MAX_ARTICLES_PER_DAY)
+    unique = cap_market_news_per_day(unique, max_per_day=ALL_ARTICLES_FEED_DAY_CAP)
+    unique = unique[:ALL_ARTICLES_LIST_MAX_ITEMS]
     filtered = filter_headlines_by_keyword(unique, search_q)
     n = len(filtered)
-    total_pages = max(1, (n + PER_PAGE - 1) // PER_PAGE) if n else 1
-    page = min(page, total_pages)
-    start = (page - 1) * PER_PAGE
-    page_items = filtered[start : start + PER_PAGE]
+    total_pages_uncapped = max(1, (n + ALL_ARTICLES_PER_PAGE - 1) // ALL_ARTICLES_PER_PAGE) if n else 1
+    total_pages = min(ALL_ARTICLES_MAX_PAGES, total_pages_uncapped)
+    page = max(1, min(page, total_pages))
+    item_cap = ALL_ARTICLES_PER_PAGE * total_pages
+    filtered_page = filtered[:item_cap]
+    visible_n = len(filtered_page)
+    start = (page - 1) * ALL_ARTICLES_PER_PAGE
+    page_items = filtered_page[start : start + ALL_ARTICLES_PER_PAGE]
     cap_parts = (
-        [f"Showing {start + 1}–{min(start + PER_PAGE, n)} of {n} articles"]
+        [
+            f"Showing {start + 1}–{min(start + ALL_ARTICLES_PER_PAGE, visible_n)} "
+            f"of {visible_n} articles ({total_pages} pages max)",
+        ]
         if n
         else ["No articles"]
     )
@@ -265,7 +276,13 @@ async def all_articles(
         {
             "feed_errors": feed_errors,
             "headline": section_label_teal("All News Articles", placement="first"),
-            "subhead": '<p class="jd-hub-dek jd-hub-dek-large">Aggregated RSS headlines for digital assets.</p>',
+            "subhead": (
+                '<p class="jd-hub-dek jd-hub-dek-large">'
+                "Digital asset RSS (same bundles as Streamlit <strong>All articles</strong>): up to "
+                f"<strong>{ALL_ARTICLES_FEED_DAY_CAP}</strong> stories per UTC day, max "
+                f"<strong>{ALL_ARTICLES_LIST_MAX_ITEMS}</strong> headlines indexed "
+                f"({ALL_ARTICLES_MAX_PAGES} pages × {ALL_ARTICLES_PER_PAGE}).</p>"
+            ),
             "search_q": search_q,
             "body_html": body,
             "toolbar_note": subpage_toolbar_note_html(" · ".join(cap_parts)),

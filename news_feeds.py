@@ -671,9 +671,14 @@ _MARKET_NEWS_IMPORTANCE_KW: tuple[tuple[re.Pattern[str], int], ...] = (
     (re.compile(r"\b(hack|exploit|breach|bankruptcy|liquidation|inflow|outflow)\b", re.I), 2),
 )
 
-# Hub home lanes (Streamlit/FastAPI/static JSON): parity with ``pages.All_Articles`` daily cap / ranking.
-HOME_MARKET_NEWS_MAX_PER_DAY = 7
-# Keep items with ``published.date() >= (today UTC − lookback)`` (~31 UTC calendar days inclusive with today).
+# ``All Articles`` / FastAPI ``/articles`` / static ``all_articles.json``: same feeds (``ALL_ARTICLES_FEEDS``), daily ranked cap,
+# paging size, and hard cap on indexed rows (~10 pages × 20).
+ALL_ARTICLES_FEED_DAY_CAP = 5
+ALL_ARTICLES_PER_PAGE = 20
+ALL_ARTICLES_MAX_PAGES = 10
+ALL_ARTICLES_LIST_MAX_ITEMS = ALL_ARTICLES_PER_PAGE * ALL_ARTICLES_MAX_PAGES
+
+# Items with ``published.date() >= (today UTC − lookback)`` (~31 UTC calendar days inclusive with today).
 HOME_MARKET_NEWS_LOOKBACK_DAYS = 30
 
 
@@ -768,11 +773,11 @@ def prepare_home_hub_market_news_lane(
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     """
     Returns ``(lane_items, capped_total)``: dedupe → per-UTC-day cap by importance score (see
-    :func:`cap_market_news_per_day`) → calendar lookback slice for hub display. Matches static export /
-    Streamlit lane behavior.
+    :func:`cap_market_news_per_day`) → calendar lookback slice for hub display. Matches
+    ``ALL_ARTICLES_FEED_DAY_CAP`` used on the ``All Articles`` list.
     """
     base = dedupe_articles(articles, max_items=None)
-    capped = cap_market_news_per_day(base, max_per_day=HOME_MARKET_NEWS_MAX_PER_DAY)
+    capped = cap_market_news_per_day(base, max_per_day=ALL_ARTICLES_FEED_DAY_CAP)
     lane = filter_market_news_calendar_lookback(capped)
     return lane, capped
 

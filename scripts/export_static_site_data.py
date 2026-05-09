@@ -41,9 +41,10 @@ from crypto_etps.aum_history import (
 )
 from news_feeds import (
     ALL_ARTICLES_FEEDS,
+    ALL_ARTICLES_FEED_DAY_CAP,
+    ALL_ARTICLES_LIST_MAX_ITEMS,
     DEFAULT_FEEDS,
     ETP_PULSE_PREVIEW_COUNT,
-    HOME_MARKET_NEWS_MAX_PER_DAY,
     cap_market_news_per_day,
     dedupe_articles,
     filter_market_news_calendar_lookback,
@@ -1328,8 +1329,9 @@ def main() -> None:
     for e in feed_errs_all:
         manifest["errors"].append(f"news RSS (all articles): {e}")
     all_unique = dedupe_articles(articles_all, max_items=None)
-    all_capped_daily = cap_market_news_per_day(all_unique, max_per_day=HOME_MARKET_NEWS_MAX_PER_DAY)
+    all_capped_daily = cap_market_news_per_day(all_unique, max_per_day=ALL_ARTICLES_FEED_DAY_CAP)
     articles_for_all_json = filter_market_news_calendar_lookback(all_capped_daily)
+    articles_for_all_json = articles_for_all_json[:ALL_ARTICLES_LIST_MAX_ITEMS]
 
     reg_articles, reg_errs = load_regulatory_articles()
     for e in reg_errs:
