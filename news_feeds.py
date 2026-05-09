@@ -454,7 +454,7 @@ DEFAULT_FEEDS: list[tuple[str, str]] = [
 ]
 
 # Extra ETF/ETP-dedicated + broader crypto/finance sources (checked with feedparser). Appended to :data:`DEFAULT_FEEDS`
-# for the pulse + All ETF news only (home / All articles still use ``DEFAULT_FEEDS``).
+# for the ETF/ETP headline pool only (Streamlit home still uses ``DEFAULT_FEEDS``).
 #
 # **Why date gaps happen:** each outlet’s RSS is only its latest N posts; older URLs fall off the feed entirely.
 # Google News search RSS returns ~100 headlines per query and often spans more calendar time, which helps fill
@@ -484,7 +484,8 @@ ETP_SUPPLEMENT_FEEDS: list[tuple[str, str]] = [
 
 ETP_NEWS_FEEDS: list[tuple[str, str]] = list(DEFAULT_FEEDS) + ETP_SUPPLEMENT_FEEDS
 
-# Broader market-news sources used on All Articles (not home) to improve day coverage.
+# Broader market-news sources used on Streamlit/FastAPI ``All Articles`` and static ``all_articles.json`` export to
+# stretch calendar coverage beyond each outlet’s short RSS tail (typically ~50–100 items/search).
 ALL_ARTICLES_SUPPLEMENT_FEEDS: list[tuple[str, str]] = [
     (
         "Google News (digital assets)",
@@ -493,6 +494,10 @@ ALL_ARTICLES_SUPPLEMENT_FEEDS: list[tuple[str, str]] = [
     (
         "Google News (bitcoin ethereum markets)",
         "https://news.google.com/rss/search?q=bitcoin+ethereum+crypto+markets&hl=en-US&gl=US&ceid=US:en",
+    ),
+    (
+        "Google News (crypto regulation institutions)",
+        "https://news.google.com/rss/search?q=crypto+regulation+bank+custody&hl=en-US&gl=US&ceid=US:en",
     ),
 ]
 

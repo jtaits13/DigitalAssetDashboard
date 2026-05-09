@@ -845,14 +845,6 @@ a.ticker-chip-link:hover .ticker-chip {
   padding: 0;
 }
 
-/* Longer hub lists (month of ranked headlines): scroll inside the panel */
-.lane-panel .headline-list {
-  max-height: min(52vh, 36rem);
-  overflow-y: auto;
-  padding-right: 0.25rem;
-  scrollbar-gutter: stable;
-}
-
 .headline-list li {
   padding: 0.65rem 0;
   border-bottom: 1px solid rgba(199, 216, 232, 0.55);
