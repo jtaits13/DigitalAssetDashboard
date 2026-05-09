@@ -6,7 +6,7 @@ import calendar
 import html as html_module
 import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from html import escape
 from email.utils import parsedate_to_datetime
 from typing import Any, Optional
@@ -666,6 +666,11 @@ _MARKET_NEWS_IMPORTANCE_KW: tuple[tuple[re.Pattern[str], int], ...] = (
     (re.compile(r"\b(hack|exploit|breach|bankruptcy|liquidation|inflow|outflow)\b", re.I), 2),
 )
 
+# Hub home lanes (Streamlit/FastAPI/static JSON): parity with ``pages.All_Articles`` daily cap / ranking.
+HOME_MARKET_NEWS_MAX_PER_DAY = 7
+# Keep items with ``published.date() >= (today UTC − lookback)`` (~31 UTC calendar days inclusive with today).
+HOME_MARKET_NEWS_LOOKBACK_DAYS = 30
+
 
 def market_news_importance_score(item: dict[str, Any]) -> int:
     """
@@ -726,6 +731,45 @@ def cap_market_news_per_day(
         out.extend(no_date[:max_per_day])
 
     return out
+
+
+def filter_market_news_calendar_lookback(
+    articles: list[dict[str, Any]],
+    *,
+    utc_now: Optional[datetime] = None,
+    lookback_days: int = HOME_MARKET_NEWS_LOOKBACK_DAYS,
+) -> list[dict[str, Any]]:
+    """
+    Preserve input order while dropping dated items strictly older than ``lookback_days`` before today UTC.
+
+    Items without parsed ``published`` are skipped (RSS home lane favors dated grouping).
+    """
+    if lookback_days < 0:
+        lookback_days = 0
+    ref = utc_now.astimezone(timezone.utc) if utc_now else datetime.now(timezone.utc)
+    cutoff = ref.date() - timedelta(days=lookback_days)
+
+    filtered: list[dict[str, Any]] = []
+    for item in articles:
+        pub = item.get("published")
+        if isinstance(pub, datetime):
+            if pub.astimezone(timezone.utc).date() >= cutoff:
+                filtered.append(item)
+    return filtered
+
+
+def prepare_home_hub_market_news_lane(
+    articles: list[dict[str, Any]],
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """
+    Returns ``(lane_items, capped_total)``: dedupe → per-UTC-day cap by importance score (see
+    :func:`cap_market_news_per_day`) → calendar lookback slice for hub display. Matches static export /
+    Streamlit lane behavior.
+    """
+    base = dedupe_articles(articles, max_items=None)
+    capped = cap_market_news_per_day(base, max_per_day=HOME_MARKET_NEWS_MAX_PER_DAY)
+    lane = filter_market_news_calendar_lookback(capped)
+    return lane, capped
 
 
 def filter_headlines_by_keyword(articles: list[dict[str, Any]], query: str) -> list[dict[str, Any]]:
@@ -1264,7 +1308,10 @@ def build_home_news_lane_body_html(
     parts.append("</ol>")
     if show_footnote:
         parts.append(
-            '<p class="jd-hub-news-footnote">Most recent stories from the combined RSS list.</p>'
+            '<p class="jd-hub-news-footnote">Up to '
+            f"{HOME_MARKET_NEWS_MAX_PER_DAY} ranked headlines per UTC day"
+            "; full search and paging on "
+            '<strong>All articles</strong>.</p>'
         )
     parts.append("</section>")
     return "".join(parts)

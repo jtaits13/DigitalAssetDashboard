@@ -41,15 +41,14 @@ from crypto_etps.aum_history import (
 )
 from news_feeds import (
     ETP_PULSE_PREVIEW_COUNT,
-    dedupe_articles,
     load_all_etf_etp_news_cached,
     load_all_feeds,
+    prepare_home_hub_market_news_lane,
 )
 from news_feeds import DEFAULT_FEEDS  # noqa: E402
 from regulatory_news.client import load_regulatory_articles
 
 OUT = _REPO / "static_home" / "data"
-HOME_NEWS_N = 3
 REG_N = 3
 HOME_RWA_PREVIEW_ROWS = 8
 EXPLORE_ASSET_PREVIEW_ROWS = 8
@@ -1316,8 +1315,7 @@ def main() -> None:
     articles, feed_errs = load_all_feeds(DEFAULT_FEEDS)
     for e in feed_errs:
         manifest["errors"].append(f"news RSS: {e}")
-    unique = dedupe_articles(articles, max_items=None)
-    home_top = unique[:HOME_NEWS_N]
+    home_news_items, articles_capped_daily = prepare_home_hub_market_news_lane(articles)
 
     reg_articles, reg_errs = load_regulatory_articles()
     for e in reg_errs:
@@ -1325,16 +1323,16 @@ def main() -> None:
     reg_top = reg_articles[:REG_N]
 
     (OUT / "home_news.json").write_text(
-        json.dumps({"items": [_article_json(a) for a in home_top]}, indent=2),
+        json.dumps({"items": [_article_json(a) for a in home_news_items]}, indent=2),
         encoding="utf-8",
     )
     (OUT / "regulatory.json").write_text(
         json.dumps({"items": [_article_json(a) for a in reg_top]}, indent=2),
         encoding="utf-8",
     )
-    # Full lists for static GitHub Pages (search + pagination); same pools as Streamlit All articles / Regulatory.
+    # Full lists for static GitHub Pages (search + pagination); capped per UTC day like Streamlit All Articles.
     (OUT / "all_articles.json").write_text(
-        json.dumps({"items": [_article_json(a) for a in unique]}, indent=2),
+        json.dumps({"items": [_article_json(a) for a in articles_capped_daily]}, indent=2),
         encoding="utf-8",
     )
     (OUT / "all_regulatory.json").write_text(

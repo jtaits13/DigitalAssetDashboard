@@ -47,6 +47,7 @@ from news_feeds import (
     filter_headlines_by_keyword,
     load_all_feeds,
     load_all_etf_etp_news_cached,
+    prepare_home_hub_market_news_lane,
 )
 from price_ticker import fetch_top_crypto_tickers
 from regulatory_news.client import load_regulatory_articles
@@ -80,7 +81,6 @@ from webapp.formatters import (
 )
 from webapp.routes_rwa import router as rwa_router
 
-HOME_HEADLINE_COUNT = 3
 HOME_REGULATORY_PREVIEW = 3
 PER_PAGE = 20
 MAX_ARTICLES_PER_DAY = 7
@@ -143,6 +143,7 @@ async def home(request: Request) -> HTMLResponse:
 
     news_lane = ""
     reg_lane = ""
+    home_news_capped_total: list = []
     if not articles:
         news_lane = (
             '<section class="jd-hub-news-panel jd-hub-news-panel--empty" aria-labelledby="jd-hub-news-market-h2">'
@@ -150,13 +151,15 @@ async def home(request: Request) -> HTMLResponse:
             "<p class=\"jd-hub-news-empty\">Headlines will appear when RSS feeds load successfully.</p></section>"
         )
     else:
-        unique = dedupe_articles(articles, max_items=HOME_HEADLINE_COUNT + 1)
-        top = unique[:HOME_HEADLINE_COUNT]
-        news_lane = build_home_news_lane_body_html(top, show_footnote=len(unique) <= HOME_HEADLINE_COUNT)
+        home_news_lane, home_news_capped_total = prepare_home_hub_market_news_lane(articles)
+        news_lane = build_home_news_lane_body_html(
+            home_news_lane,
+            show_footnote=len(home_news_lane) == len(home_news_capped_total),
+        )
 
     reg_lane = build_home_regulatory_lane_body_html(regulatory_articles, max_items=HOME_REGULATORY_PREVIEW)
 
-    need_news = bool(articles) and len(dedupe_articles(articles, max_items=None)) > HOME_HEADLINE_COUNT
+    need_news = len(home_news_capped_total) > 0
     need_reg = len(regulatory_articles) > HOME_REGULATORY_PREVIEW
 
     etp_block = ""

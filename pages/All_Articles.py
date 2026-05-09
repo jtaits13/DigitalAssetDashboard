@@ -64,7 +64,8 @@ def main() -> None:
     st.markdown(
         '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">'
         "Aggregated RSS headlines for digital assets. "
-        "Each search token must appear somewhere in the title, summary, or source (all tokens required); pagination walks through results.</p>",
+        "Up to <strong>seven items per UTC calendar day</strong> after importance ranking (same cap as the hub home lane’s daily budget). "
+        "Each search token must appear in the title, summary, or source (all tokens required); pagination walks through results.</p>",
         unsafe_allow_html=True,
     )
     st.divider()
