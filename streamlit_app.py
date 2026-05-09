@@ -25,9 +25,9 @@ from news_feeds import (
     app_shared_layout_css,
     article_styles_markdown,
     build_home_news_lane_body_html,
+    dedupe_articles,
     hub_news_panel_header_html,
     load_all_feeds,
-    prepare_home_hub_market_news_lane,
     render_home_top_bar,
 )
 from price_ticker import fetch_top_crypto_tickers, show_price_ticker
@@ -42,6 +42,7 @@ from regulatory_news.client import load_regulatory_articles
 from regulatory_news.widgets import build_home_regulatory_lane_body_html, clear_regulatory_cache
 from rwa_league.widgets import clear_rwa_league_cache, load_rwa_global_market_cached, show_rwa_league_widget
 
+HOME_HEADLINE_COUNT = 3
 HOME_REGULATORY_PREVIEW = 3
 
 _JD_SCROLL_MAP = {
@@ -340,17 +341,15 @@ def main() -> None:
         _jd_inject_scroll_to_section()
         return
 
-    home_news_lane, home_news_capped_total = prepare_home_hub_market_news_lane(articles)
-    top = home_news_lane
-    needs_news_btn = len(home_news_capped_total) > 0
+    unique = dedupe_articles(articles, max_items=HOME_HEADLINE_COUNT + 1)
+    top = unique[:HOME_HEADLINE_COUNT]
+    needs_news_btn = len(unique) > HOME_HEADLINE_COUNT
     needs_reg_btn = len(regulatory_articles) > HOME_REGULATORY_PREVIEW
 
     st.markdown(hub_section_anchor("jd-section-news"), unsafe_allow_html=True)
     st.markdown(section_label_teal("News & Regulatory", placement="first"), unsafe_allow_html=True)
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek--large">'
-        "Digital asset lane: up to <strong>seven ranked headlines per UTC day</strong> for about the "
-        "<strong>last month</strong>, then regulatory wires. Use <strong>Explore all articles</strong> for search and full pagination.</p>',
+        '<p class="jd-hub-dek jd-hub-dek--large">Crypto RSS headlines and global regulatory wires — use a lane below for the full feed.</p>',
         unsafe_allow_html=True,
     )
     # border=True: Streamlit stretches each column to the row height (Cloud + local).
@@ -359,7 +358,7 @@ def main() -> None:
         st.markdown(
             build_home_news_lane_body_html(
                 top,
-                show_footnote=len(top) == len(home_news_capped_total),
+                show_footnote=len(unique) <= HOME_HEADLINE_COUNT,
             ),
             unsafe_allow_html=True,
         )

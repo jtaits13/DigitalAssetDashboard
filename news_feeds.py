@@ -1308,10 +1308,7 @@ def build_home_news_lane_body_html(
     parts.append("</ol>")
     if show_footnote:
         parts.append(
-            '<p class="jd-hub-news-footnote">Up to '
-            f"{HOME_MARKET_NEWS_MAX_PER_DAY} ranked headlines per UTC day"
-            "; full search and paging on "
-            '<strong>All articles</strong>.</p>'
+            '<p class="jd-hub-news-footnote">Most recent stories from the combined RSS list.</p>'
         )
     parts.append("</section>")
     return "".join(parts)
