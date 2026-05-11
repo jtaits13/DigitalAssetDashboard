@@ -10,14 +10,9 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=16" />
+    <link rel="stylesheet" href="styles.css?v=17" />
   </head>
-  <body
-    class="page-full-feed page-article-feed"
-    data-article-feed="all_articles.json"
-    data-article-feed-page-size="20"
-    data-article-feed-max-pages="10"
-  >
+  <body class="page-full-feed page-article-feed" data-article-feed="all_articles.json" data-article-feed-page-size="20">
     <header class="site-header" role="banner">
       <div class="site-header__inner">
         <a class="site-brand" href="index.html">Digital Assets Dashboard</a>
@@ -53,11 +48,10 @@
       <header class="page-intro">
         <h1 class="page-intro__title">All digital asset headlines</h1>
         <p class="page-intro__dek">
-          Same <strong>All articles</strong> feed bundle as Streamlit (core crypto RSS plus supplemental Google News searches),
-          deduped, then up to <strong>five ranked headlines per UTC calendar day</strong>, a rolling roughly
-          <strong>one-month</strong> window, and at most <strong>200</strong> indexed headlines in the export
-          (<strong>10 pages</strong> of <strong>20</strong> each). Search narrows within that set; open any row for the
-          original article.
+          Same <strong>All articles</strong> feed bundle as Streamlit (core crypto RSS plus supplemental Google News searches):
+          deduped, then up to <strong>five ranked headlines per UTC calendar day</strong>, matching regulatory headline density.
+          Total rows depend on how far back the feeds reach—no fixed monthly cutoff or export ceiling—<strong>20</strong> per page here.
+          Search narrows within the loaded export; open any row for the original article.
         </p>
       </header>
 
@@ -86,6 +80,6 @@
 
     <footer class="site-footer">Digital Assets Dashboard · Digital asset news · May 2026</footer>
     <script src="js/static-base.js"></script>
-    <script src="js/full-article-feed-page.js?v=2"></script>
+    <script src="js/full-article-feed-page.js?v=3"></script>
   </body>
 </html>

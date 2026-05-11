@@ -42,12 +42,10 @@ from crypto_etps.aum_history import (
 from news_feeds import (
     ALL_ARTICLES_FEEDS,
     ALL_ARTICLES_FEED_DAY_CAP,
-    ALL_ARTICLES_LIST_MAX_ITEMS,
     DEFAULT_FEEDS,
     ETP_PULSE_PREVIEW_COUNT,
     cap_market_news_per_day,
     dedupe_articles,
-    filter_market_news_calendar_lookback,
     load_all_etf_etp_news_cached,
     load_all_feeds,
 )
@@ -1324,14 +1322,12 @@ def main() -> None:
     home_unique = dedupe_articles(articles_home, max_items=None)
     home_news_items = home_unique[:HOME_NEWS_N]
 
-    # --- All digital asset headlines: core + supplement feeds (longer calendar tail), 7/day cap, ~1 month UTC window.
+    # --- All digital asset headlines: core + supplement feeds; ranked cap per UTC day (parity with regulatory list volume).
     articles_all, feed_errs_all = load_all_feeds(ALL_ARTICLES_FEEDS)
     for e in feed_errs_all:
         manifest["errors"].append(f"news RSS (all articles): {e}")
     all_unique = dedupe_articles(articles_all, max_items=None)
-    all_capped_daily = cap_market_news_per_day(all_unique, max_per_day=ALL_ARTICLES_FEED_DAY_CAP)
-    articles_for_all_json = filter_market_news_calendar_lookback(all_capped_daily)
-    articles_for_all_json = articles_for_all_json[:ALL_ARTICLES_LIST_MAX_ITEMS]
+    articles_for_all_json = cap_market_news_per_day(all_unique, max_per_day=ALL_ARTICLES_FEED_DAY_CAP)
 
     reg_articles, reg_errs = load_regulatory_articles()
     for e in reg_errs:

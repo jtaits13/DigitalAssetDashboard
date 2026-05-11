@@ -671,12 +671,10 @@ _MARKET_NEWS_IMPORTANCE_KW: tuple[tuple[re.Pattern[str], int], ...] = (
     (re.compile(r"\b(hack|exploit|breach|bankruptcy|liquidation|inflow|outflow)\b", re.I), 2),
 )
 
-# ``All Articles`` / FastAPI ``/articles`` / static ``all_articles.json``: same feeds (``ALL_ARTICLES_FEEDS``), daily ranked cap,
-# paging size, and hard cap on indexed rows (~10 pages × 20).
+# ``All Articles`` / FastAPI ``/articles`` / static ``all_articles.json``: ``ALL_ARTICLES_FEEDS`` plus ranked cap per UTC day
+# (same pattern as regulatory headlines). No separate calendar window or global row cap—volume follows RSS depth × daily cap.
 ALL_ARTICLES_FEED_DAY_CAP = 5
 ALL_ARTICLES_PER_PAGE = 20
-ALL_ARTICLES_MAX_PAGES = 10
-ALL_ARTICLES_LIST_MAX_ITEMS = ALL_ARTICLES_PER_PAGE * ALL_ARTICLES_MAX_PAGES
 
 # Items with ``published.date() >= (today UTC − lookback)`` (~31 UTC calendar days inclusive with today).
 HOME_MARKET_NEWS_LOOKBACK_DAYS = 30

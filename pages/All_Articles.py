@@ -22,8 +22,6 @@ from home_layout import (
 from news_feeds import (
     ALL_ARTICLES_FEEDS,
     ALL_ARTICLES_FEED_DAY_CAP,
-    ALL_ARTICLES_LIST_MAX_ITEMS,
-    ALL_ARTICLES_MAX_PAGES,
     ALL_ARTICLES_PER_PAGE,
     app_shared_layout_css,
     article_styles_markdown,
@@ -40,6 +38,9 @@ try:
 except Exception:
     def show_price_ticker() -> None:
         return
+
+PER_PAGE = ALL_ARTICLES_PER_PAGE
+
 
 def main() -> None:
     st.set_page_config(
@@ -64,10 +65,10 @@ def main() -> None:
     st.markdown(
         '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">'
         "Aggregated RSS from <strong>All articles</strong> feeds (core crypto outlets plus supplemental Google News searches). "
-        f"Up to <strong>{ALL_ARTICLES_FEED_DAY_CAP}</strong> ranked stories per UTC calendar day, then the list is capped at "
-        f"<strong>{ALL_ARTICLES_LIST_MAX_ITEMS}</strong> headlines (<strong>{ALL_ARTICLES_MAX_PAGES}</strong> pages of "
-        f"<strong>{ALL_ARTICLES_PER_PAGE}</strong>). "
-        "Each search token must appear in the title, summary, or source (all tokens required); pagination walks within that cap.</p>",
+        f"Up to <strong>{ALL_ARTICLES_FEED_DAY_CAP}</strong> ranked stories per <strong>UTC calendar day</strong> "
+        f"(same daily density as regulatory headlines); total count grows with how far back the feeds reach—no separate monthly cutoff or fixed headline ceiling. "
+        f"<strong>{PER_PAGE}</strong> stories per page. "
+        "Each search token must appear in the title, summary, or source (all tokens required).</p>",
         unsafe_allow_html=True,
     )
     st.divider()
@@ -92,7 +93,6 @@ def main() -> None:
 
     unique = dedupe_articles(articles, max_items=None)
     unique = cap_market_news_per_day(unique, max_per_day=ALL_ARTICLES_FEED_DAY_CAP)
-    unique = unique[:ALL_ARTICLES_LIST_MAX_ITEMS]
     filtered = filter_headlines_by_keyword(unique, search_q)
     n = len(filtered)
     if n == 0:
@@ -102,10 +102,7 @@ def main() -> None:
             st.info("No articles match your search. Try different keywords or clear the search box.")
         return
 
-    total_pages = min(
-        ALL_ARTICLES_MAX_PAGES,
-        max(1, (n + ALL_ARTICLES_PER_PAGE - 1) // ALL_ARTICLES_PER_PAGE),
-    )
+    total_pages = max(1, (n + PER_PAGE - 1) // PER_PAGE)
 
     if "all_news_page" not in st.session_state:
         st.session_state.all_news_page = 1
@@ -115,22 +112,14 @@ def main() -> None:
         st.session_state.all_news_page = 1
 
     page = int(st.session_state.all_news_page)
-    item_cap = ALL_ARTICLES_PER_PAGE * total_pages
-    filtered_page = filtered[:item_cap]
-
-    page = max(1, min(page, total_pages))
-    st.session_state.all_news_page = page
-
-    start = (page - 1) * ALL_ARTICLES_PER_PAGE
-    page_items = filtered_page[start : start + ALL_ARTICLES_PER_PAGE]
-    visible_n = len(filtered_page)
+    start = (page - 1) * PER_PAGE
+    page_items = filtered[start : start + PER_PAGE]
 
     cap_parts = [
-        f"Showing {start + 1}–{min(start + ALL_ARTICLES_PER_PAGE, visible_n)} of {visible_n} articles"
-        f" ({total_pages} page{'s' if total_pages != 1 else ''} max)",
+        f"Showing {start + 1}–{min(start + PER_PAGE, n)} of {n} articles",
     ]
     if search_q:
-        cap_parts.append(f"(search within {len(unique)} indexed headlines)")
+        cap_parts.append(f"(filtered from {len(unique)} total)")
     st.markdown(subpage_toolbar_note_html(" · ".join(cap_parts)), unsafe_allow_html=True)
 
     st.markdown(build_full_page_market_news_feed_html(page_items), unsafe_allow_html=True)
@@ -138,7 +127,20 @@ def main() -> None:
     st.divider()
     st.markdown(subpage_footer_heading_html("Pages"), unsafe_allow_html=True)
 
-    if total_pages <= ALL_ARTICLES_MAX_PAGES:
+    c_prev, _c_mid, c_next = st.columns([1, 4, 1])
+    with c_prev:
+        go_prev = st.button("← Prev", disabled=page <= 1, key="all_prev", use_container_width=True)
+    with c_next:
+        go_next = st.button("Next →", disabled=page >= total_pages, key="all_next", use_container_width=True)
+
+    if go_prev:
+        st.session_state.all_news_page = page - 1
+        st.rerun()
+    if go_next:
+        st.session_state.all_news_page = page + 1
+        st.rerun()
+
+    if total_pages <= 18:
         num_cols = st.columns(total_pages)
         for p in range(1, total_pages + 1):
             with num_cols[p - 1]:
@@ -162,19 +164,6 @@ def main() -> None:
         if new_pg != page:
             st.session_state.all_news_page = new_pg
             st.rerun()
-
-    c_prev, c_mid, c_next = st.columns([1, 4, 1])
-    with c_prev:
-        go_prev = st.button("← Prev", disabled=page <= 1, key="all_prev", use_container_width=True)
-    with c_next:
-        go_next = st.button("Next →", disabled=page >= total_pages, key="all_next", use_container_width=True)
-
-    if go_prev:
-        st.session_state.all_news_page = page - 1
-        st.rerun()
-    if go_next:
-        st.session_state.all_news_page = page + 1
-        st.rerun()
 
     st.divider()
     st.markdown(

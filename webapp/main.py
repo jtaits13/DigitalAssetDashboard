@@ -36,9 +36,6 @@ from home_layout import (
 from news_feeds import (
     ALL_ARTICLES_FEEDS,
     ALL_ARTICLES_FEED_DAY_CAP,
-    ALL_ARTICLES_LIST_MAX_ITEMS,
-    ALL_ARTICLES_MAX_PAGES,
-    ALL_ARTICLES_PER_PAGE,
     DEFAULT_FEEDS,
     ETP_PULSE_PREVIEW_COUNT,
     build_etp_market_news_box_html,
@@ -241,22 +238,14 @@ async def all_articles(
     search_q = (q or "").strip()
     unique = dedupe_articles(articles, max_items=None)
     unique = cap_market_news_per_day(unique, max_per_day=ALL_ARTICLES_FEED_DAY_CAP)
-    unique = unique[:ALL_ARTICLES_LIST_MAX_ITEMS]
     filtered = filter_headlines_by_keyword(unique, search_q)
     n = len(filtered)
-    total_pages_uncapped = max(1, (n + ALL_ARTICLES_PER_PAGE - 1) // ALL_ARTICLES_PER_PAGE) if n else 1
-    total_pages = min(ALL_ARTICLES_MAX_PAGES, total_pages_uncapped)
-    page = max(1, min(page, total_pages))
-    item_cap = ALL_ARTICLES_PER_PAGE * total_pages
-    filtered_page = filtered[:item_cap]
-    visible_n = len(filtered_page)
-    start = (page - 1) * ALL_ARTICLES_PER_PAGE
-    page_items = filtered_page[start : start + ALL_ARTICLES_PER_PAGE]
+    total_pages = max(1, (n + PER_PAGE - 1) // PER_PAGE) if n else 1
+    page = min(page, total_pages)
+    start = (page - 1) * PER_PAGE
+    page_items = filtered[start : start + PER_PAGE]
     cap_parts = (
-        [
-            f"Showing {start + 1}–{min(start + ALL_ARTICLES_PER_PAGE, visible_n)} "
-            f"of {visible_n} articles ({total_pages} pages max)",
-        ]
+        [f"Showing {start + 1}–{min(start + PER_PAGE, n)} of {n} articles"]
         if n
         else ["No articles"]
     )
@@ -279,9 +268,8 @@ async def all_articles(
             "subhead": (
                 '<p class="jd-hub-dek jd-hub-dek-large">'
                 "Digital asset RSS (same bundles as Streamlit <strong>All articles</strong>): up to "
-                f"<strong>{ALL_ARTICLES_FEED_DAY_CAP}</strong> stories per UTC day, max "
-                f"<strong>{ALL_ARTICLES_LIST_MAX_ITEMS}</strong> headlines indexed "
-                f"({ALL_ARTICLES_MAX_PAGES} pages × {ALL_ARTICLES_PER_PAGE}).</p>"
+                f"<strong>{ALL_ARTICLES_FEED_DAY_CAP}</strong> ranked stories per UTC calendar day—total volume tracks "
+                f"RSS depth, like regulatory headlines ({PER_PAGE} per page).</p>"
             ),
             "search_q": search_q,
             "body_html": body,
