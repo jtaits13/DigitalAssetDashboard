@@ -1973,6 +1973,12 @@ body.page-article-feed .etf-news-nav {
   margin: 0;
 }
 
+.rwa-table-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0.6rem 0 0;
+}
+
 .rwa-split-table-scroll thead th {
   position: sticky;
   top: 0;
@@ -2039,6 +2045,93 @@ body.page-article-feed .etf-news-nav {
   margin-bottom: 0;
 }
 
+.rwa-table-modal-open {
+  overflow: hidden;
+}
+
+.rwa-table-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+}
+
+.rwa-table-modal[hidden] {
+  display: none !important;
+}
+
+.rwa-table-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.62);
+}
+
+.rwa-table-modal__dialog {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: min(96vw, 1400px);
+  max-height: min(92vh, 980px);
+  background: #fff;
+  border: 1px solid #d4e4ef;
+  border-radius: 14px;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.24);
+  overflow: hidden;
+}
+
+.rwa-table-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.1rem 0.9rem;
+  border-bottom: 1px solid #dbe8f2;
+  background: #f8fbfd;
+}
+
+.rwa-table-modal__eyebrow {
+  margin: 0 0 0.2rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.rwa-table-modal__title {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+
+.rwa-table-modal__body {
+  padding: 1rem 1.1rem 1.15rem;
+  overflow: auto;
+  background: #fff;
+}
+
+.rwa-table-modal__table-wrap {
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+.rwa-table-modal__table-wrap table {
+  min-width: max-content;
+  margin: 0;
+}
+
+.rwa-table-modal__table-wrap thead th {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  background: #f0f6fa;
+}
+
 .rwa-deep-optional-msg {
   margin: 0.5rem 0;
 }
@@ -2051,6 +2144,28 @@ body.page-article-feed .etf-news-nav {
   /* Match chart column min width so Plotly retains room for axis labels before wrap. */
   .split-two.rwa-split .rwa-split-pane--chart {
     min-width: min(100%, 20rem);
+  }
+
+  .rwa-table-modal {
+    padding: 0.6rem;
+  }
+
+  .rwa-table-modal__dialog {
+    width: 100%;
+    max-height: 94vh;
+  }
+
+  .rwa-table-modal__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .rwa-table-actions {
+    justify-content: stretch;
+  }
+
+  .rwa-table-actions .btn {
+    width: 100%;
   }
 }
 

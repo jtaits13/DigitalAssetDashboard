@@ -129,6 +129,7 @@
           standoff: 18,
         },
         automargin: true,
+        tickangle: -30,
         tickprefix: "$",
         separatethousands: true,
       },
@@ -159,6 +160,7 @@
     var H = global.__RWA_STATIC_HELPERS || {};
     var renderKpis = H.renderKpis;
     var renderTable = H.renderTable;
+    var attachTableFullscreenButton = H.attachRwaTableFullscreenButton;
     if (!renderKpis || !renderTable) {
       var b0 = $("js-deep-banner");
       if (b0) {
@@ -298,6 +300,13 @@
 
       var inp = $(prefix + "-q");
       var clr = $(prefix + "-clear");
+      var tableWrap = host.querySelector(".rwa-split-table-scroll");
+      var tableEl = tableWrap ? tableWrap.querySelector("table") : null;
+      if (attachTableFullscreenButton) {
+        attachTableFullscreenButton(tableWrap, tableEl, {
+          title: String(league.table_heading || league.block_heading || "RWA table"),
+        });
+      }
 
       function sync() {
         var q = inp && inp.value !== undefined ? String(inp.value) : "";

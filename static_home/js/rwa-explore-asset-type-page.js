@@ -16,6 +16,7 @@
     var H = global.__RWA_STATIC_HELPERS || {};
     var renderKpis = H.renderKpis;
     var renderTable = H.renderTable;
+    var attachTableFullscreenButton = H.attachRwaTableFullscreenButton;
     if (!renderKpis || !renderTable) {
       console.error("rwa-explore-asset-type-page: load rwa-onchain-home.js first.");
       return;
@@ -130,6 +131,11 @@
           emptyMsg: "No preview rows for this section.",
           linkAria: "Open RWA.xyz",
         });
+        if (attachTableFullscreenButton) {
+          attachTableFullscreenButton(wrap, table, {
+            title: String(sec.table_subheading || sec.title || "RWA preview table"),
+          });
+        }
       }
 
       var ctaRow = document.createElement("div");

@@ -203,6 +203,106 @@
     });
   }
 
+  function stripElementIds(node) {
+    if (!node || node.nodeType !== 1) return;
+    node.removeAttribute("id");
+    Array.prototype.forEach.call(node.children || [], stripElementIds);
+  }
+
+  function closeRwaTableModal() {
+    var root = document.getElementById("js-rwa-table-modal");
+    if (!root) return;
+    root.hidden = true;
+    document.body.classList.remove("rwa-table-modal-open");
+    var body = document.getElementById("js-rwa-table-modal-body");
+    if (body) body.innerHTML = "";
+  }
+
+  function ensureRwaTableModal() {
+    var root = document.getElementById("js-rwa-table-modal");
+    if (root) return root;
+
+    root = document.createElement("div");
+    root.id = "js-rwa-table-modal";
+    root.className = "rwa-table-modal";
+    root.hidden = true;
+    root.innerHTML =
+      '<div class="rwa-table-modal__backdrop" data-rwa-table-modal-close="1"></div>' +
+      '<div class="rwa-table-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="js-rwa-table-modal-title">' +
+      '<div class="rwa-table-modal__header">' +
+      '<div>' +
+      '<p class="rwa-table-modal__eyebrow">Full-screen table</p>' +
+      '<h2 class="rwa-table-modal__title" id="js-rwa-table-modal-title">Table</h2>' +
+      "</div>" +
+      '<button type="button" class="btn btn-secondary rwa-table-modal__close" data-rwa-table-modal-close="1">Close</button>' +
+      "</div>" +
+      '<div class="rwa-table-modal__body" id="js-rwa-table-modal-body"></div>' +
+      "</div>";
+    document.body.appendChild(root);
+
+    root.addEventListener("click", function (ev) {
+      var closeEl = ev.target.closest ? ev.target.closest("[data-rwa-table-modal-close]") : null;
+      if (closeEl) closeRwaTableModal();
+    });
+
+    if (!document.body._rwaTableModalKeyBound) {
+      document.body._rwaTableModalKeyBound = true;
+      document.addEventListener("keydown", function (ev) {
+        if (ev.key === "Escape") closeRwaTableModal();
+      });
+    }
+
+    return root;
+  }
+
+  function openRwaTableModal(tableEl, opts) {
+    if (!tableEl) return;
+    var root = ensureRwaTableModal();
+    var titleEl = document.getElementById("js-rwa-table-modal-title");
+    var body = document.getElementById("js-rwa-table-modal-body");
+    if (!root || !titleEl || !body) return;
+
+    titleEl.textContent =
+      (opts && opts.title ? String(opts.title) : "") || "Full-screen table";
+    body.innerHTML = "";
+
+    var wrap = document.createElement("div");
+    wrap.className = "rwa-table-modal__table-wrap";
+
+    var clone = tableEl.cloneNode(true);
+    stripElementIds(clone);
+    wrap.appendChild(clone);
+    body.appendChild(wrap);
+
+    root.hidden = false;
+    document.body.classList.add("rwa-table-modal-open");
+
+    var closeBtn = root.querySelector(".rwa-table-modal__close");
+    if (closeBtn) closeBtn.focus();
+  }
+
+  function attachRwaTableFullscreenButton(tableWrap, tableEl, opts) {
+    if (!tableWrap || !tableEl || tableWrap._rwaFullscreenBound) return;
+    tableWrap._rwaFullscreenBound = true;
+
+    var actions = document.createElement("div");
+    actions.className = "rwa-table-actions";
+
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "btn btn-secondary";
+    btn.textContent =
+      (opts && opts.buttonLabel ? String(opts.buttonLabel) : "") || "View table full screen";
+    btn.addEventListener("click", function () {
+      openRwaTableModal(tableEl, {
+        title: opts && opts.title ? opts.title : "Full-screen table",
+      });
+    });
+
+    actions.appendChild(btn);
+    tableWrap.insertAdjacentElement("afterend", actions);
+  }
+
   function renderKpis(host, kpis, legendText, kpiOpts) {
     var ko = kpiOpts || {};
     if (!host) return;
@@ -351,6 +451,11 @@
     }
 
     renderTable(theadRow, tbody, data.columns || [], data.rows || []);
+    attachRwaTableFullscreenButton(
+      tbody && tbody.closest ? tbody.closest(".table-wrap") : null,
+      tbody && tbody.closest ? tbody.closest("table") : null,
+      { title: "RWA Global Market Overview networks table" }
+    );
 
     var links = data.links || {};
     if (openFull) {
@@ -382,5 +487,6 @@
   global.__RWA_STATIC_HELPERS = {
     renderKpis: renderKpis,
     renderTable: renderTable,
+    attachRwaTableFullscreenButton: attachRwaTableFullscreenButton,
   };
 })(typeof window !== "undefined" ? window : this);

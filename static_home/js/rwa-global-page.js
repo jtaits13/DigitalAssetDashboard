@@ -130,6 +130,7 @@
       xaxis: {
         title: { text: "Total value (USD)", font: { size: 12, color: "#1F4C67" }, standoff: 18 },
         automargin: true,
+        tickangle: -30,
         tickprefix: "$",
         separatethousands: true,
       },
@@ -255,6 +256,7 @@
     var H = global.__RWA_STATIC_HELPERS || {};
     var renderKpis = H.renderKpis;
     var renderTable = H.renderTable;
+    var attachTableFullscreenButton = H.attachRwaTableFullscreenButton;
 
     var banner = $("js-rwa-global-banner");
     if (banner) {
@@ -336,6 +338,13 @@
 
     var splitRoot = $("js-rwa-global-split");
     if (splitRoot) splitRoot.style.setProperty("--rwa-split-body-height", String(chartHeight) + "px");
+    if (attachTableFullscreenButton && splitRoot) {
+      attachTableFullscreenButton(
+        splitRoot.querySelector(".rwa-split-table-scroll"),
+        splitRoot.querySelector("table"),
+        { title: "RWA Global Market Overview networks table" }
+      );
+    }
 
     var state = {
       allRows: rows,
