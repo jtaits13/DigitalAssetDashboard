@@ -1940,7 +1940,6 @@ body.page-article-feed .etf-news-nav {
 .split-two.rwa-split {
   gap: 1.35rem;
   align-items: start;
-  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.85fr);
 }
 
 .rwa-split-pane {

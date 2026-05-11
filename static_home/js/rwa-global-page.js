@@ -122,13 +122,14 @@
     var layout = {
       height: heightPx,
       autosize: true,
-      margin: { l: m.l, r: m.r, t: 14, b: 40, pad: 4 },
+      margin: { l: m.l, r: m.r, t: 14, b: 60, pad: 4 },
       paper_bgcolor: "rgba(0,0,0,0)",
       plot_bgcolor: "#f8fafc",
       font: { size: 12, color: "#1F4C67" },
       showlegend: false,
       xaxis: {
-        title: { text: "Total value (USD)", font: { size: 12, color: "#1F4C67" } },
+        title: { text: "Total value (USD)", font: { size: 12, color: "#1F4C67" }, standoff: 18 },
+        automargin: true,
         tickprefix: "$",
         separatethousands: true,
       },
@@ -152,7 +153,7 @@
               : shellW || 560;
         var m2 = estimateChartMargins(y, text, wLate);
         Plotly.relayout(el, {
-          margin: { l: m2.l, r: m2.r, t: 14, b: 40, pad: 4 },
+          margin: { l: m2.l, r: m2.r, t: 14, b: 60, pad: 4 },
         });
       } catch (e3) {}
       try {
