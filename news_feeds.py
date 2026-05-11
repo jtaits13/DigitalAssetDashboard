@@ -317,8 +317,8 @@ def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -
       <div class="jd-nav-dd" role="group" aria-label="U.S. ETPs">
         <a class="jd-site-link jd-nav-dd-head" href="/US_Crypto_ETPs">U.S. ETPs <span class="jd-nav-dd-caret" aria-hidden="true">▾</span></a>
         <ul class="jd-nav-dd-menu" role="menu">
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/All_ETF_News">ETF News</a></li>
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/US_Crypto_ETPs">ETF Data</a></li>
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/All_ETF_News">ETF/ETP News</a></li>
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/US_Crypto_ETPs">U.S. ETP Overview</a></li>
         </ul>
       </div>
       <div class="jd-nav-dd" role="group" aria-label="RWA Market">
@@ -341,8 +341,9 @@ def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -
 def render_subpage_top_bar() -> None:
     """
     Same fixed banner as the home page. **Home**, **Digital Asset News**, and **RWA Market** subsection links use
-    ``?jd_scroll=`` so returning to the landing page scrolls to the right hub anchor. **U.S. ETPs** and **RWA Market**
-    expose hover submenus (ETF News / ETF Data; Market Overview / Assets / Participants).
+    ``?jd_scroll=`` so returning to the landing page scrolls to the right hub anchor.
+    **U.S. ETPs** and **RWA Market**
+    expose hover submenus (ETF/ETP News / U.S. ETP Overview; Market Overview / Assets / Participants).
     """
     st.markdown(SITE_NAV_CSS, unsafe_allow_html=True)
     st.markdown(
@@ -356,8 +357,8 @@ def render_subpage_top_bar() -> None:
       <div class="jd-nav-dd" role="group" aria-label="U.S. ETPs">
         <a class="jd-site-link jd-nav-dd-head" href="/US_Crypto_ETPs">U.S. ETPs <span class="jd-nav-dd-caret" aria-hidden="true">▾</span></a>
         <ul class="jd-nav-dd-menu" role="menu">
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/All_ETF_News">ETF News</a></li>
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/US_Crypto_ETPs">ETF Data</a></li>
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/All_ETF_News">ETF/ETP News</a></li>
+          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/US_Crypto_ETPs">U.S. ETP Overview</a></li>
         </ul>
       </div>
       <div class="jd-nav-dd" role="group" aria-label="RWA Market">
@@ -417,12 +418,12 @@ def render_subpage_sidebar(*, key_prefix: str, current: str) -> None:
             st.switch_page("streamlit_app.py")
 
         nav: list[tuple[str, str, str]] = [
-            ("All articles", "pages/All_Articles.py", "articles"),
+            ("All digital asset headlines", "pages/All_Articles.py", "articles"),
             ("Regulatory headlines", "pages/All_Regulatory.py", "regulatory"),
             ("U.S. Digital Asset ETPs", "pages/US_Crypto_ETPs.py", "etp"),
-            ("ETF market news", "pages/All_ETF_News.py", "etf_news"),
+            ("ETF/ETP market news", "pages/All_ETF_News.py", "etf_news"),
             ("RWA Stablecoins", "pages/RWA_Stablecoins.py", "rwa_stablecoins"),
-            ("RWA US Treasuries", "pages/RWA_US_Treasuries.py", "rwa_treasuries"),
+            ("RWA U.S. Treasuries", "pages/RWA_US_Treasuries.py", "rwa_treasuries"),
             ("RWA Tokenized Stocks", "pages/RWA_Tokenized_Stocks.py", "rwa_tokenized_stocks"),
             ("Explore by Asset Type", "pages/RWA_Explore_By_Asset_Type.py", "rwa_explore_asset_type"),
             ("Explore by Market Participant", "pages/RWA_Explore_By_Market_Participant.py", "rwa_explore_market_participant"),
@@ -1527,7 +1528,7 @@ def build_etp_market_news_box_html(articles: list[dict[str, Any]]) -> str:
     out: list[str] = [
         '<div class="jd-etp-pulse-rail">',
         f'<section class="{panel_cls}" aria-labelledby="{escape(hid)}">',
-        hub_news_panel_header_html(eyebrow="ETF & ETP", title="Market Pulse", heading_id=hid),
+        hub_news_panel_header_html(eyebrow="U.S. ETPs", title="ETF/ETP News Feed", heading_id=hid),
     ]
     if not articles:
         out.append(
@@ -1541,9 +1542,9 @@ def build_etp_market_news_box_html(articles: list[dict[str, Any]]) -> str:
         out.append("</ol>")
     out.append(
         '<p class="jd-hub-news-footnote">'
-        "ETF-focused digital-asset headlines from the same pool as <strong>All ETF news</strong>. "
+        "ETF/ETP-focused digital-asset headlines from the same pool as <strong>ETF/ETP market news</strong>. "
         f"Up to <strong>{ETF_ETP_NEWS_FEED_DAY_CAP}</strong> ranked stories per <strong>UTC calendar day</strong> "
-        "from RSS and Google News feeds (volume follows how far back those feeds reach)."
+        "from RSS and Google News feeds (breadth depends on how far back those feeds reach)."
         "</p>"
     )
     out.append("</section></div>")

@@ -35,14 +35,14 @@ PER_PAGE = 20
 
 def main() -> None:
     st.set_page_config(
-        page_title="Regulatory headlines — Digital Assets Dashboard",
+        page_title="All regulatory headlines — Digital Assets Dashboard",
         page_icon="◆",
         layout="wide",
         initial_sidebar_state="expanded",
     )
 
     render_subpage_top_bar()
-    if st.button("← Home", key="top_home_regulatory"):
+    if st.button("← Back to home (News & Regulatory)", key="top_home_regulatory"):
         st.switch_page("streamlit_app.py")
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
     st.markdown(app_shared_layout_css(), unsafe_allow_html=True)
@@ -50,15 +50,16 @@ def main() -> None:
     render_subpage_sidebar(key_prefix="all_regulatory", current="regulatory")
 
     st.markdown(
-        section_label_teal("Regulatory & Legal Headlines", placement="first"),
+        section_label_teal("All regulatory headlines", placement="first"),
         unsafe_allow_html=True,
     )
     st.markdown(
         '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">'
-        "Aggregated regulatory and legal headlines for digital assets. "
-        f"After filtering feeds, up to <strong>{REGULATORY_HEADLINES_PER_UTC_DAY}</strong> ranked stories per "
-        "<strong>UTC calendar day</strong> (same importance heuristic as the digital asset news lane). "
-        "Each search token must appear in the title, summary, source, or region (all tokens required); pagination walks through results.</p>",
+        "Same global regulatory wire pool as the <strong>home hub</strong>, with up to "
+        f"<strong>{REGULATORY_HEADLINES_PER_UTC_DAY}</strong> ranked headlines per <strong>UTC calendar day</strong> before listing. "
+        f"This view shows <strong>{PER_PAGE}</strong> headlines per page. "
+        "Each search token must appear in the title, summary, source, or region (all tokens required); "
+        "country or region tags, when present, align with the corresponding hub lane.</p>",
         unsafe_allow_html=True,
     )
     st.divider()
@@ -154,7 +155,7 @@ def main() -> None:
     st.markdown(
         subpage_footnote_html(
             f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
-            f"Page {page} of {total_pages} · Regulatory RSS index"
+            f"Page {page} of {total_pages} · All regulatory headlines"
         ),
         unsafe_allow_html=True,
     )

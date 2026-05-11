@@ -40,14 +40,14 @@ PER_PAGE = 20
 
 def main() -> None:
     st.set_page_config(
-        page_title="ETF & ETP Market News — Digital Assets Dashboard",
+        page_title="ETF & ETP headlines — Digital Assets Dashboard",
         page_icon="◆",
         layout="wide",
         initial_sidebar_state="expanded",
     )
 
     render_subpage_top_bar()
-    if st.button("← Back", key="top_back_etf_news"):
+    if st.button("← Back to U.S. ETP Overview", key="top_back_etf_news"):
         st.switch_page("pages/US_Crypto_ETPs.py")
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
     st.markdown(app_shared_layout_css(), unsafe_allow_html=True)
@@ -55,15 +55,14 @@ def main() -> None:
     render_subpage_sidebar(key_prefix="all_etf_news", current="etf_news")
 
     st.markdown(
-        section_label_teal("ETF & ETP Market News", placement="first"),
+        section_label_teal("ETF and ETP market headlines", placement="first"),
         unsafe_allow_html=True,
     )
     st.markdown(
         '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">'
-        "Digital-asset <strong>ETF / ETP</strong> headlines from the expanded RSS + Google News pool "
-        "(same heuristics as the U.S. ETPs page). After matching, up to "
-        f"<strong>{ETF_ETP_NEWS_FEED_DAY_CAP}</strong> ranked stories per <strong>UTC calendar day</strong>—total volume "
-        "tracks feed depth, like regulatory and All articles lists. Use search to narrow further.</p>",
+        "Same ETF/ETP headline pipeline as the static export: a digital-asset ETF context filter, then up to "
+        f"<strong>{ETF_ETP_NEWS_FEED_DAY_CAP}</strong> ranked stories per <strong>UTC calendar day</strong> from RSS and "
+        "Google News (breadth depends on feed depth). Search and paginate; each row links to the original article.</p>",
         unsafe_allow_html=True,
     )
     st.divider()
@@ -90,7 +89,7 @@ def main() -> None:
     n = len(filtered)
     if n == 0:
         if len(articles) == 0:
-            st.info("No ETF headlines loaded yet. Check your network or use **Refresh all data** on the home page.")
+            st.info("No ETF/ETP headlines loaded yet. Check your network or use **Refresh all data** on the home page.")
         else:
             st.info("No articles match your search. Try different keywords or clear the search box.")
         return
@@ -160,7 +159,7 @@ def main() -> None:
     st.markdown(
         subpage_footnote_html(
             f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
-            f"Page {page} of {total_pages} · ETF headlines (filtered)"
+            f"Page {page} of {total_pages} · ETF/ETP headlines (filtered)"
         ),
         unsafe_allow_html=True,
     )

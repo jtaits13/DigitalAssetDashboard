@@ -259,16 +259,16 @@ async def all_articles(
         )
     else:
         body = build_full_page_market_news_feed_html(page_items)
-    ctx = html_shell_context(request, page_title="All articles")
+    ctx = html_shell_context(request, page_title="All digital asset headlines")
     ctx.update(
         {
             "feed_errors": feed_errors,
-            "headline": section_label_teal("All News Articles", placement="first"),
+            "headline": section_label_teal("All digital asset headlines", placement="first"),
             "subhead": (
                 '<p class="jd-hub-dek jd-hub-dek-large">'
-                "Digital asset RSS (same bundles as Streamlit <strong>All articles</strong>): up to "
-                f"<strong>{ALL_ARTICLES_FEED_DAY_CAP}</strong> ranked stories per UTC calendar day—total volume tracks "
-                f"RSS depth, like regulatory headlines ({PER_PAGE} per page).</p>"
+                "Same <strong>All articles</strong> bundle as Streamlit and the static export; after deduplication, up to "
+                f"<strong>{ALL_ARTICLES_FEED_DAY_CAP}</strong> ranked headlines per UTC calendar day. "
+                f"<strong>{PER_PAGE}</strong> per page.</p>"
             ),
             "search_q": search_q,
             "body_html": body,
@@ -315,15 +315,16 @@ async def all_regulatory(
         )
     else:
         body = build_full_page_regulatory_feed_html(page_items)
-    ctx = html_shell_context(request, page_title="Regulatory headlines")
+    ctx = html_shell_context(request, page_title="All regulatory headlines")
     ctx.update(
         {
             "feed_errors": feed_errors,
-            "headline": section_label_teal("Regulatory & Legal Headlines", placement="first"),
+            "headline": section_label_teal("All regulatory headlines", placement="first"),
             "subhead": (
                 '<p class="jd-hub-dek jd-hub-dek-large">'
-                "Global regulatory and legal headlines for digital assets—up to "
-                f"<strong>{REGULATORY_HEADLINES_PER_UTC_DAY}</strong> ranked items per UTC calendar day.</p>"
+                "Same global regulatory wire pool as the home hub; up to "
+                f"<strong>{REGULATORY_HEADLINES_PER_UTC_DAY}</strong> ranked headlines per UTC calendar day. "
+                f"<strong>{PER_PAGE}</strong> per page.</p>"
             ),
             "search_q": search_q,
             "body_html": body,

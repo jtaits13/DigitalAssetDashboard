@@ -97,10 +97,10 @@ ETP_KEY_OBSERVATIONS_HTML = f"""
 </style>
 <div class="etp-takeaways">
   <ul>
-    <li><strong>Product access expanded quickly, then concentrated.</strong> After U.S. spot Bitcoin ETP approvals in
-    2024 (see <a href="{_SEC_SPOT_BTC_ETPS_ORDER_URL}">SEC order</a>), listed access broadened quickly, but assets still
-    cluster in a few large funds. For allocators and service providers, scale and distribution economics now matter at
-    least as much as first-mover timing.</li>
+    <li><strong>Product access expanded quickly, then concentrated.</strong> U.S. spot Bitcoin ETP approvals in 2024
+    (see <a href="{_SEC_SPOT_BTC_ETPS_ORDER_URL}">SEC order</a>) widened listed access fast—yet assets still cluster in a
+    few large funds. For allocators and service providers, scale and distribution economics now matter at least as much
+    as first-mover timing.</li>
     <li><strong>Forward market-size scenarios are large, but still assumptions-driven.</strong> Public analyst commentary
     continues to frame the next few years in a broad range rather than a single consensus point. For example, one
     widely-cited 2026 scenario set discussed in market coverage points to roughly <strong>$180B-$220B</strong> for Bitcoin
@@ -112,10 +112,9 @@ ETP_KEY_OBSERVATIONS_HTML = f"""
     <a href="{_CF_BENCHMARKS_FILINGS_WAVE_URL}">CF Benchmarks, citing Bloomberg analysts</a>). Filing volume does
     <strong>not</strong> mean all products launch or scale, but it does point to a heavier near-term slate of spot
     and spot-adjacent product attempts.</li>
-    <li><strong>Market structure is maturing around liquidity tools.</strong> Milestones such as U.S. exchange-listed
-    spot Bitcoin options approvals (see <a href="{_SEC_OPTIONS_APPROVAL_URL}">SEC approval order</a>) improve hedging and
-    risk transfer around spot ETPs, which can influence advisor suitability frameworks, institutional implementation,
-    and trading-desk workflow design.</li>
+    <li><strong>Market structure is maturing around liquidity tools.</strong> U.S. exchange-listed spot Bitcoin options
+    (<a href="{_SEC_OPTIONS_APPROVAL_URL}">SEC approval order</a>) improve hedging and risk transfer around spot ETPs,
+    which can influence advisor suitability frameworks, institutional implementation, and trading-desk workflow design.</li>
   </ul>
   <p class="etp-takeaway-note">Context for strategy only (not investment advice). The KPI row, chart, and table below use
   data from the StockAnalysis + Yahoo process described on this page.</p>
@@ -153,7 +152,7 @@ def main() -> None:
     st.markdown(
         '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">'
         "<strong>U.S. crypto-related exchange-traded products</strong>: KPI strip, estimated aggregate AUM trend, searchable "
-        "fund table, and a short ETF headline teaser. Reference columns come from "
+        "fund table, and a short ETF/ETP headline teaser. Reference columns come from "
         '<a href="https://stockanalysis.com/list/crypto-etfs/">StockAnalysis.com</a> '
         "(issuer, inception, <strong>52W %</strong>).</p>",
         unsafe_allow_html=True,
@@ -249,14 +248,15 @@ def main() -> None:
         )
         if len(etp_all_news) > ETP_PULSE_PREVIEW_COUNT:
             if st.button(
-                "Explore all articles →",
+                "All ETF/ETP headlines →",
                 key="etp_explore_all_etf_news",
                 use_container_width=True,
                 type="primary",
             ):
                 st.switch_page("pages/All_ETF_News.py")
             st.markdown(
-                '<p class="jd-hub-cta-note">Next page: full ETF headline list (up to five stories per UTC day), search, and pagination.</p>',
+                '<p class="jd-hub-cta-note">Full list: up to five ranked ETF/ETP headlines per UTC calendar day, '
+                "search, and pagination—same data pipeline as this page.</p>",
                 unsafe_allow_html=True,
             )
 

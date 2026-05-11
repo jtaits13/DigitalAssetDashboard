@@ -456,7 +456,7 @@ def show_us_crypto_etps_widget(
     if not home_preview:
         st.caption(ETP_DATA_SOURCE_CAPTION)
 
-    if st.button("See full ETF list", key="see_full_etf_list", use_container_width=True, type="primary"):
+    if st.button("Open full U.S. ETP page", key="see_full_etf_list", use_container_width=True, type="primary"):
         st.switch_page("pages/US_Crypto_ETPs.py")
 
 

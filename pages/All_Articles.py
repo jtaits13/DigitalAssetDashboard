@@ -44,14 +44,14 @@ PER_PAGE = ALL_ARTICLES_PER_PAGE
 
 def main() -> None:
     st.set_page_config(
-        page_title="All articles — Digital Assets Dashboard",
+        page_title="All digital asset headlines — Digital Assets Dashboard",
         page_icon="◆",
         layout="wide",
         initial_sidebar_state="expanded",
     )
 
     render_subpage_top_bar()
-    if st.button("← Home", key="top_home_articles"):
+    if st.button("← Back to home (News & Regulatory)", key="top_home_articles"):
         st.switch_page("streamlit_app.py")
     st.markdown(article_styles_markdown(), unsafe_allow_html=True)
     st.markdown(app_shared_layout_css(), unsafe_allow_html=True)
@@ -59,15 +59,16 @@ def main() -> None:
     render_subpage_sidebar(key_prefix="all_articles", current="articles")
 
     st.markdown(
-        section_label_teal("All News Articles", placement="first"),
+        section_label_teal("All digital asset headlines", placement="first"),
         unsafe_allow_html=True,
     )
     st.markdown(
         '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">'
-        "Aggregated RSS from <strong>All articles</strong> feeds (core crypto outlets plus supplemental Google News searches). "
-        f"Up to <strong>{ALL_ARTICLES_FEED_DAY_CAP}</strong> ranked stories per <strong>UTC calendar day</strong> "
-        f"(same daily density as regulatory headlines); total count grows with how far back the feeds reach—no separate monthly cutoff or fixed headline ceiling. "
-        f"<strong>{PER_PAGE}</strong> stories per page. "
+        "Same <strong>All articles</strong> feed bundle as the static export (core crypto RSS plus supplemental Google News searches). "
+        f"After deduplication, the session keeps <strong>up to {ALL_ARTICLES_FEED_DAY_CAP}</strong> ranked headlines "
+        "<strong>per UTC calendar day</strong>, "
+        "matching regulatory headline density. How far back the list goes depends on the feeds—there is no fixed monthly cutoff "
+        f"or export ceiling. <strong>{PER_PAGE}</strong> headlines per page. "
         "Each search token must appear in the title, summary, or source (all tokens required).</p>",
         unsafe_allow_html=True,
     )
@@ -169,7 +170,7 @@ def main() -> None:
     st.markdown(
         subpage_footnote_html(
             f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · "
-            f"Page {page} of {total_pages} · All-news RSS index"
+            f"Page {page} of {total_pages} · All digital asset headlines"
         ),
         unsafe_allow_html=True,
     )

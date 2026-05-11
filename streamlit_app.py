@@ -167,7 +167,7 @@ def _sidebar() -> bool:
         st.caption("Markets, policy, and on-chain market data.")
         st.divider()
         st.markdown("**Pages**")
-        if st.button("All articles", use_container_width=True, key="sb_articles"):
+        if st.button("All digital asset headlines", use_container_width=True, key="sb_articles"):
             st.switch_page("pages/All_Articles.py")
         if st.button("Regulatory headlines", use_container_width=True, key="sb_reg"):
             st.switch_page("pages/All_Regulatory.py")
@@ -175,7 +175,7 @@ def _sidebar() -> bool:
             st.switch_page("pages/US_Crypto_ETPs.py")
         if st.button("RWA Stablecoins", use_container_width=True, key="sb_rwa_sc"):
             st.switch_page("pages/RWA_Stablecoins.py")
-        if st.button("RWA US Treasuries", use_container_width=True, key="sb_rwa_tr"):
+        if st.button("RWA U.S. Treasuries", use_container_width=True, key="sb_rwa_tr"):
             st.switch_page("pages/RWA_US_Treasuries.py")
         if st.button("RWA Tokenized Stocks", use_container_width=True, key="sb_rwa_stocks"):
             st.switch_page("pages/RWA_Tokenized_Stocks.py")
@@ -231,7 +231,7 @@ def main() -> None:
         "<strong>RWA.xyz</strong>—in one place.</p>"
         '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">That RWA layer covers '
         "<strong>networks</strong>, <strong>platforms</strong>, <strong>participants</strong>, "
-        "<strong>stablecoins</strong>, <strong>treasuries</strong>, and <strong>tokenized stocks</strong>. "
+        "<strong>stablecoins</strong>, <strong>U.S. Treasuries</strong>, and <strong>tokenized stocks</strong>. "
         "Together, the hub helps you scan <strong>market direction</strong>, "
         "<strong>policy signals</strong>, and where <strong>activity and issuance</strong> cluster.</p>"
         '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large jd-home-hero__internal-callout">'
@@ -277,7 +277,8 @@ def main() -> None:
         st.markdown(hub_section_anchor("jd-section-news"), unsafe_allow_html=True)
         st.markdown(section_label_teal("News & Regulatory", placement="first"), unsafe_allow_html=True)
         st.markdown(
-            '<p class="jd-hub-dek jd-hub-dek--large">Headlines and regulatory wires — open a lane for the full feed.</p>',
+            '<p class="jd-hub-dek jd-hub-dek--large">Headlines come from the configured RSS feeds; each lane shows the most '
+            "recent items loaded in this session (use <strong>Refresh all data</strong> on the home page to reload).</p>",
             unsafe_allow_html=True,
         )
         _needs_reg_btn_empty = len(regulatory_articles) > HOME_REGULATORY_PREVIEW
@@ -305,7 +306,7 @@ def main() -> None:
             )
             if _needs_reg_btn_empty:
                 if st.button(
-                    "Explore all articles →",
+                    "All regulatory headlines →",
                     key="see_more_regulatory_bottom_empty_feed",
                     use_container_width=True,
                     type="primary",
@@ -320,7 +321,9 @@ def main() -> None:
         st.markdown(hub_section_anchor("jd-section-markets-funds"), unsafe_allow_html=True)
         st.markdown(section_label_teal("Markets & Funds", placement="after_divider"), unsafe_allow_html=True)
         st.markdown(
-            '<p class="jd-hub-dek jd-hub-dek--large">U.S. listed digital asset ETFs and ETPs — preview below; open the full list for search and fund details.</p>',
+            '<p class="jd-hub-dek jd-hub-dek--large">The KPI strip and preview table pull from '
+            "<strong>StockAnalysis</strong> and <strong>Yahoo Finance</strong>—the same inputs as the full "
+            "<strong>U.S. ETP</strong> page (values update when you refresh data on the home page).</p>",
             unsafe_allow_html=True,
         )
         show_us_crypto_etps_widget(etp_ua, home_preview=True)
@@ -329,9 +332,10 @@ def main() -> None:
         st.markdown(hub_section_anchor("jd-section-onchain"), unsafe_allow_html=True)
         st.markdown(section_label_teal("On-chain Data", placement="after_divider"), unsafe_allow_html=True)
         st.markdown(
-            '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">A <strong>global RWA</strong> snapshot from RWA.xyz, then two cards '
-            "below. Use <strong>Explore</strong> on a card to open a hub; full tables and detail are on the pages you open "
-            "from there.</p>",
+            '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">'
+            "<strong>RWA Global Market Overview</strong> KPIs and previews from <strong>RWA.xyz</strong>, plus "
+            "<strong>Explore</strong> gateways (stablecoins, <strong>U.S. Treasuries</strong>, and tokenized stocks; "
+            "networks, platforms, and asset managers). Open a card for full tables and detail.</p>",
             unsafe_allow_html=True,
         )
         show_rwa_league_widget(home_preview=True)
@@ -349,7 +353,8 @@ def main() -> None:
     st.markdown(hub_section_anchor("jd-section-news"), unsafe_allow_html=True)
     st.markdown(section_label_teal("News & Regulatory", placement="first"), unsafe_allow_html=True)
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek--large">Crypto RSS headlines and global regulatory wires — use a lane below for the full feed.</p>',
+        '<p class="jd-hub-dek jd-hub-dek--large">Headlines come from the configured RSS feeds; each lane shows the most '
+        "recent items loaded in this session (use <strong>Refresh all data</strong> on the home page to reload).</p>",
         unsafe_allow_html=True,
     )
     # border=True: Streamlit stretches each column to the row height (Cloud + local).
@@ -364,7 +369,7 @@ def main() -> None:
         )
         if needs_news_btn:
             if st.button(
-                "Explore all articles →",
+                "All digital asset headlines →",
                 key="see_more_news_bottom",
                 use_container_width=True,
                 type="primary",
@@ -385,7 +390,7 @@ def main() -> None:
         )
         if needs_reg_btn:
             if st.button(
-                "Explore all articles →",
+                "All regulatory headlines →",
                 key="see_more_regulatory_bottom",
                 use_container_width=True,
                 type="primary",
@@ -400,7 +405,9 @@ def main() -> None:
     st.markdown(hub_section_anchor("jd-section-markets-funds"), unsafe_allow_html=True)
     st.markdown(section_label_teal("Markets & Funds", placement="after_divider"), unsafe_allow_html=True)
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek--large">U.S. listed digital asset ETFs and ETPs — preview below; open the full list for search and fund details.</p>',
+        '<p class="jd-hub-dek jd-hub-dek--large">The KPI strip and preview table pull from '
+        "<strong>StockAnalysis</strong> and <strong>Yahoo Finance</strong>—the same inputs as the full "
+        "<strong>U.S. ETP</strong> page (values update when you refresh data on the home page).</p>",
         unsafe_allow_html=True,
     )
     show_us_crypto_etps_widget(etp_ua, home_preview=True)
@@ -409,9 +416,10 @@ def main() -> None:
     st.markdown(hub_section_anchor("jd-section-onchain"), unsafe_allow_html=True)
     st.markdown(section_label_teal("On-chain Data", placement="after_divider"), unsafe_allow_html=True)
     st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">A <strong>global RWA</strong> snapshot from RWA.xyz, then two cards '
-        "below. Use <strong>Explore</strong> on a card to open a hub; full tables and detail are on the pages you open "
-        "from there.</p>",
+        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">'
+        "<strong>RWA Global Market Overview</strong> KPIs and previews from <strong>RWA.xyz</strong>, plus "
+        "<strong>Explore</strong> gateways (stablecoins, <strong>U.S. Treasuries</strong>, and tokenized stocks; "
+        "networks, platforms, and asset managers). Open a card for full tables and detail.</p>",
         unsafe_allow_html=True,
     )
     show_rwa_league_widget(home_preview=True)
