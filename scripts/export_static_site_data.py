@@ -671,7 +671,7 @@ def _build_rwa_explore_asset_type_payload(
         "cta": [
             {
                 "href": STATIC_RWA_STABLECOINS_PAGE,
-                "label": "Open full Stablecoins table",
+                "label": "Open full Stablecoins overview",
                 "variant": "primary",
                 "internal": True,
             },
@@ -720,7 +720,7 @@ def _build_rwa_explore_asset_type_payload(
         "cta": [
             {
                 "href": STATIC_RWA_US_TREASURIES_PAGE,
-                "label": "Open full US Treasuries table",
+                "label": "Open full US Treasuries overview",
                 "variant": "primary",
                 "internal": True,
             },
@@ -760,7 +760,7 @@ def _build_rwa_explore_asset_type_payload(
         "cta": [
             {
                 "href": STATIC_RWA_TOKENIZED_STOCKS_PAGE,
-                "label": "Open full Tokenized Stocks table",
+                "label": "Open full Tokenized Stocks overview",
                 "variant": "primary",
                 "internal": True,
             },
@@ -798,7 +798,7 @@ def _build_rwa_explore_asset_type_payload(
     intro_html = (
         "<p><strong>On-chain RWA</strong> by asset—short previews for "
         "<strong>Stablecoins</strong>, <strong>US Treasuries</strong>, and <strong>Tokenized Stocks</strong> "
-        "(<strong>RWA.xyz</strong>). Use <strong>Open full table</strong> for search, charts, and full league views.</p>"
+        "(<strong>RWA.xyz</strong>). Use <strong>Open full overview</strong> for search, charts, and full league views.</p>"
     )
 
     return {
@@ -857,7 +857,7 @@ def _build_rwa_explore_market_participant_payload(
         "cta": [
             {
                 "href": STATIC_RWA_PARTICIPANTS_NETWORKS_PAGE,
-                "label": "Open full Participants — Networks page",
+                "label": "Open full Participants — Networks overview",
                 "variant": "primary",
                 "internal": True,
             },
@@ -895,7 +895,7 @@ def _build_rwa_explore_market_participant_payload(
         "cta": [
             {
                 "href": STATIC_RWA_PARTICIPANTS_PLATFORMS_PAGE,
-                "label": "Open full Participants — Platforms page",
+                "label": "Open full Participants — Platforms overview",
                 "variant": "primary",
                 "internal": True,
             },
@@ -933,7 +933,7 @@ def _build_rwa_explore_market_participant_payload(
         "cta": [
             {
                 "href": STATIC_RWA_PARTICIPANTS_ASSET_MANAGERS_PAGE,
-                "label": "Open full Participants — Asset Managers page",
+                "label": "Open full Participants — Asset Managers overview",
                 "variant": "primary",
                 "internal": True,
             },
@@ -957,7 +957,7 @@ def _build_rwa_explore_market_participant_payload(
     intro_html = (
         "<p><strong>On-chain RWA</strong> by participant—short previews for "
         "<strong>Networks</strong>, <strong>Platforms</strong>, and <strong>Asset Managers</strong> "
-        "(<strong>RWA.xyz</strong>). Use <strong>Open full page</strong> for search, charts, and full tables.</p>"
+        "(<strong>RWA.xyz</strong>). Use <strong>Open full overview</strong> for search, charts, and full tables.</p>"
     )
 
     return {

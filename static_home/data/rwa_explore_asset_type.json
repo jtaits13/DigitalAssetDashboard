@@ -1,7 +1,7 @@
 {
   "page_title": "Explore by Asset Type \u2014 Digital Assets Dashboard",
   "page_subtitle_html": "Short previews for the main on-chain RWA asset categories.",
-  "intro_html": "<p><strong>On-chain RWA</strong> by asset, with previews for <strong>Stablecoins</strong>, <strong>US Treasuries</strong>, and <strong>Tokenized Stocks</strong> from <strong>RWA.xyz</strong>. Use <strong>Open full table</strong> for search, charts, and the full league view.</p>",
+  "intro_html": "<p><strong>On-chain RWA</strong> by asset, with previews for <strong>Stablecoins</strong>, <strong>US Treasuries</strong>, and <strong>Tokenized Stocks</strong> from <strong>RWA.xyz</strong>. Use <strong>Open full overview</strong> for search, charts, and the full league view.</p>",
   "sections": [
     {
       "id": "stablecoins",
@@ -129,7 +129,7 @@
       "cta": [
         {
           "href": "rwa-stablecoins.html",
-          "label": "Open full Stablecoins table",
+          "label": "Open full Stablecoins overview",
           "variant": "primary",
           "internal": true
         },
@@ -271,7 +271,7 @@
       "cta": [
         {
           "href": "rwa-us-treasuries.html",
-          "label": "Open full US Treasuries table",
+          "label": "Open full US Treasuries overview",
           "variant": "primary",
           "internal": true
         },
@@ -413,7 +413,7 @@
       "cta": [
         {
           "href": "rwa-tokenized-stocks.html",
-          "label": "Open full Tokenized Stocks table",
+          "label": "Open full Tokenized Stocks overview",
           "variant": "primary",
           "internal": true
         },

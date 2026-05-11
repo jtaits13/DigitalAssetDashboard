@@ -1982,6 +1982,10 @@ body.page-article-feed .etf-news-nav {
   margin: 0.6rem 0 0;
 }
 
+.rwa-table-actions [data-rwa-fullscreen-btn="1"] {
+  margin-left: auto;
+}
+
 .rwa-deep-page-cta {
   display: flex;
   flex-wrap: wrap;
@@ -2172,6 +2176,10 @@ body.page-article-feed .etf-news-nav {
 
   .rwa-table-actions {
     justify-content: stretch;
+  }
+
+  .rwa-table-actions [data-rwa-fullscreen-btn="1"] {
+    margin-left: 0;
   }
 
   .rwa-table-actions .btn {

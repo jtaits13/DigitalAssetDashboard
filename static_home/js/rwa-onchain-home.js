@@ -333,7 +333,9 @@
       external: cfg.external !== false,
     });
     btn.setAttribute("data-rwa-action-key", key);
-    row.appendChild(btn);
+    var fullscreenBtn = row.querySelector('[data-rwa-fullscreen-btn="1"]');
+    if (fullscreenBtn) row.insertBefore(btn, fullscreenBtn);
+    else row.appendChild(btn);
     return btn;
   }
 
@@ -352,17 +354,13 @@
       });
       btn.setAttribute("data-rwa-fullscreen-btn", "1");
       btn.textContent =
-      (opts && opts.buttonLabel ? String(opts.buttonLabel) : "") || "View table full screen";
+        (opts && opts.buttonLabel ? String(opts.buttonLabel) : "") || "View table full screen";
       btn.addEventListener("click", function () {
         openRwaTableModal(tableEl, {
           title: opts && opts.title ? opts.title : "Full-screen table",
         });
       });
-      if (actions.firstChild && opts && opts.prepend !== false) {
-        actions.insertBefore(btn, actions.firstChild);
-      } else {
-        actions.appendChild(btn);
-      }
+      actions.appendChild(btn);
     }
     return actions;
   }
