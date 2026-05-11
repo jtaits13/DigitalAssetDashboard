@@ -53,6 +53,8 @@
           <span class="ticker-chip"><strong>SOL</strong> <span class="ticker-usd">$178</span> <span class="down">−0.4%</span></span>
           <span class="ticker-chip"><strong>XRP</strong> <span class="ticker-usd">$2.21</span> <span class="up">+2.1%</span></span>
           <span class="ticker-chip"><strong>ADA</strong> <span class="ticker-usd">$0.72</span> <span class="up">+0.3%</span></span>
+          <span class="ticker-chip"><strong>AVAX</strong> <span class="ticker-usd">$36.50</span> <span class="down">−1.0%</span></span>
+          <span class="ticker-chip"><strong>DOGE</strong> <span class="ticker-usd">$0.16</span> <span class="up">+0.6%</span></span>
           <span class="ticker-chip"><strong>LINK</strong> <span class="ticker-usd">$17.90</span> <span class="up">+1.5%</span></span>
         </div>
       </div>
@@ -63,7 +65,7 @@
         <h1 class="page-intro__title">U.S. Digital Asset ETPs — Full List</h1>
         <p class="page-intro__dek">
           <strong>U.S. crypto-related exchange-traded products</strong>: KPI strip, estimated aggregate AUM trend (Plotly),
-          a searchable fund table, and an ETF headline teaser—all from the same JSON export as the hub. Reference:
+          a searchable fund table, and an ETF/ETP headline teaser—all from the same JSON export as the hub. Reference:
           <a href="https://stockanalysis.com/list/crypto-etfs/" target="_blank" rel="noopener noreferrer">StockAnalysis.com</a>
           (issuer, inception, <strong>52W %</strong>).
         </p>
@@ -81,7 +83,7 @@
           </div>
         </div>
         <p class="kpi-footnote kpi-footnote--block">
-          The colored <strong>% figures</strong> are normally approximately <strong>one-month</strong> changes (~30 calendar days); parentheses next to each percent note the exact window when it differs (<strong>1 mo</strong>, <strong>1 yr</strong>, or <strong>52W</strong>). Dollar totals from StockAnalysis; aggregate % from estimated weekly AUM; IBIT and ETHA % deltas from Yahoo Finance when available (same pipeline as the dashboard app and API).
+          The colored <strong>% figures</strong> are typically about <strong>one-month</strong> changes (~30 calendar days); parentheses next to each percent note the exact window when it differs (<strong>1 mo</strong>, <strong>1 yr</strong>, or <strong>52W</strong>). Dollar totals from StockAnalysis; aggregate % from estimated weekly AUM; IBIT and ETHA % deltas from Yahoo Finance when available (same pipeline as the dashboard app and API).
         </p>
       </section>
 
@@ -90,9 +92,9 @@
         <div class="takeaways">
           <ul>
             <li>
-              <strong>Product access expanded quickly, then concentrated.</strong> After U.S. spot Bitcoin ETP approvals in
-              2024 (see
-              <a href="https://www.sec.gov/files/rules/sro/nysearca/2024/34-99306.pdf" target="_blank" rel="noopener noreferrer">SEC order</a>), listed access broadened quickly, but assets still cluster in a few large funds.
+              <strong>Product access expanded quickly, then concentrated.</strong> U.S. spot Bitcoin ETP approvals in 2024
+              (see
+              <a href="https://www.sec.gov/files/rules/sro/nysearca/2024/34-99306.pdf" target="_blank" rel="noopener noreferrer">SEC order</a>) widened listed access fast—yet assets still cluster in a few large funds.
             </li>
             <li>
               <strong>Forward market-size scenarios are large, but still assumptions-driven.</strong> For example, one widely
@@ -145,12 +147,12 @@
                 <li class="pulse-list__loading">Loading headlines…</li>
               </ul>
             </div>
-            <div class="cta-row cta-row--news-full cta-row--etp-feed" role="navigation" aria-label="Full ETF headlines">
-              <a class="btn btn-primary" href="etf-news.html">All ETF headlines →</a>
+            <div class="cta-row cta-row--news-full cta-row--etp-feed" role="navigation" aria-label="Full ETF and ETP headlines">
+              <a class="btn btn-primary" href="etf-news.html">All ETF/ETP headlines →</a>
             </div>
             <p class="cta-note cta-note--etp-feed-hint">
-              Full list from the same JSON export as this page: up to five ranked ETF headlines per UTC day (RSS depth sets total span).
-              Opens search and pagination on the ETF headlines page.
+              Same JSON export as this page: up to five ranked ETF/ETP headlines per UTC calendar day (how far back the list goes
+              depends on RSS depth). Open the ETF News page for search and pagination.
             </p>
           </div>
         </section>
@@ -199,7 +201,7 @@
       </p>
     </main>
 
-    <footer class="site-footer">Digital Assets Dashboard · U.S. ETPs · May 2026</footer>
+    <footer class="site-footer">Digital Assets Dashboard · U.S. ETPs · <time datetime="2026-05">May 2026</time></footer>
     <script defer src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
     <script defer src="js/static-base.js"></script>
     <script defer src="js/etp-kpi-shared.js"></script>
