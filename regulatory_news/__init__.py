@@ -1,6 +1,10 @@
 """Regulatory headlines widget (RSS: official + secondary sources)."""
 
-from regulatory_news.client import REGULATORY_FEEDS, load_regulatory_articles
+from regulatory_news.client import (
+    REGULATORY_FEEDS,
+    REGULATORY_HEADLINES_PER_UTC_DAY,
+    load_regulatory_articles,
+)
 from regulatory_news.widgets import (
     REGULATORY_HEADLINE_COUNT,
     build_home_regulatory_column_html,
@@ -10,6 +14,7 @@ from regulatory_news.widgets import (
 
 __all__ = [
     "REGULATORY_FEEDS",
+    "REGULATORY_HEADLINES_PER_UTC_DAY",
     "REGULATORY_HEADLINE_COUNT",
     "build_home_regulatory_column_html",
     "clear_regulatory_cache",

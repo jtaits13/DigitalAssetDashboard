@@ -28,7 +28,7 @@ from news_feeds import (
     render_subpage_top_bar,
 )
 from price_ticker import show_price_ticker
-from regulatory_news.client import load_regulatory_articles
+from regulatory_news.client import REGULATORY_HEADLINES_PER_UTC_DAY, load_regulatory_articles
 
 PER_PAGE = 20
 
@@ -56,7 +56,9 @@ def main() -> None:
     st.markdown(
         '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">'
         "Aggregated regulatory and legal headlines for digital assets. "
-        "Each search token must appear somewhere in the title, summary, source, or region (all tokens required); pagination walks through results.</p>",
+        f"After filtering feeds, up to <strong>{REGULATORY_HEADLINES_PER_UTC_DAY}</strong> ranked stories per "
+        "<strong>UTC calendar day</strong> (same importance heuristic as the digital asset news lane). "
+        "Each search token must appear in the title, summary, source, or region (all tokens required); pagination walks through results.</p>",
         unsafe_allow_html=True,
     )
     st.divider()

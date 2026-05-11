@@ -54,7 +54,7 @@ from news_feeds import (
     prepare_home_hub_market_news_lane,
 )
 from price_ticker import fetch_top_crypto_tickers
-from regulatory_news.client import load_regulatory_articles
+from regulatory_news.client import REGULATORY_HEADLINES_PER_UTC_DAY, load_regulatory_articles
 from regulatory_news.widgets import (
     build_home_regulatory_lane_body_html,
     clear_regulatory_cache,
@@ -333,7 +333,11 @@ async def all_regulatory(
         {
             "feed_errors": feed_errors,
             "headline": section_label_teal("Regulatory & Legal Headlines", placement="first"),
-            "subhead": '<p class="jd-hub-dek jd-hub-dek-large">Global regulatory and legal headlines for digital assets.</p>',
+            "subhead": (
+                '<p class="jd-hub-dek jd-hub-dek-large">'
+                "Global regulatory and legal headlines for digital assets—up to "
+                f"<strong>{REGULATORY_HEADLINES_PER_UTC_DAY}</strong> ranked items per UTC calendar day.</p>"
+            ),
             "search_q": search_q,
             "body_html": body,
             "toolbar_note": subpage_toolbar_note_html(" · ".join(cap_parts)),

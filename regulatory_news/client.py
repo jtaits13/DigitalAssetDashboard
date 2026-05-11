@@ -10,7 +10,10 @@ from typing import Any
 import feedparser
 import streamlit as st
 
-from news_feeds import extract_summary, parse_entry_date
+from news_feeds import cap_market_news_per_day, extract_summary, parse_entry_date
+
+# Ranked cap per UTC calendar day (same scoring heuristic as market-news ``cap_market_news_per_day``).
+REGULATORY_HEADLINES_PER_UTC_DAY = 5
 
 # (display name, rss url, default country/region label, is_official_gov_feed)
 #
@@ -206,7 +209,7 @@ def _load_one_regulatory_source(
 
 @st.cache_data(ttl=300, show_spinner=False)
 def load_regulatory_articles() -> tuple[list[dict[str, Any]], list[str]]:
-    """Load, filter, dedupe, and sort regulatory headlines (newest first)."""
+    """Load, filter, dedupe, cap at ``REGULATORY_HEADLINES_PER_UTC_DAY`` ranked items per UTC day, sort newest first."""
     combined: list[dict[str, Any]] = []
     errors: list[str] = []
     feeds = REGULATORY_FEEDS
@@ -243,4 +246,12 @@ def load_regulatory_articles() -> tuple[list[dict[str, Any]], list[str]]:
             continue
         seen.add(key)
         unique.append(a)
-    return unique, errors
+
+    capped = cap_market_news_per_day(unique, max_per_day=REGULATORY_HEADLINES_PER_UTC_DAY)
+    capped.sort(
+        key=lambda x: x["published"]
+        if isinstance(x["published"], datetime)
+        else datetime.min.replace(tzinfo=timezone.utc),
+        reverse=True,
+    )
+    return capped, errors
