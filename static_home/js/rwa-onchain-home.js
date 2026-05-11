@@ -281,26 +281,90 @@
     if (closeBtn) closeBtn.focus();
   }
 
+  function createRwaActionButton(cfg) {
+    var btn = document.createElement(cfg.tagName === "button" ? "button" : "a");
+    btn.className = cfg.className || "btn btn-secondary";
+    btn.textContent = cfg.label || "Open";
+    if (btn.tagName === "BUTTON") {
+      btn.type = "button";
+    } else {
+      btn.href = cfg.href || "#";
+      if (cfg.external) {
+        btn.target = "_blank";
+        btn.rel = "noopener noreferrer";
+      }
+    }
+    return btn;
+  }
+
+  function ensureRwaActionRow(tableWrap, opts) {
+    var row = opts && opts.actionRow ? opts.actionRow : null;
+    if (!row && tableWrap) {
+      var next = tableWrap.nextElementSibling;
+      if (next && next.classList && next.classList.contains("rwa-table-actions")) {
+        row = next;
+      }
+    }
+    if (!row && tableWrap) {
+      row = document.createElement("div");
+      row.className = "cta-row rwa-table-actions";
+      tableWrap.insertAdjacentElement("afterend", row);
+    }
+    if (row && row.classList) {
+      row.classList.add("rwa-table-actions");
+    }
+    return row;
+  }
+
+  function appendRwaActionLink(row, cfg) {
+    if (!row || !cfg || !cfg.href) return null;
+    var key = String(cfg.href).trim() + "::" + String(cfg.label || "").trim();
+    var existing = null;
+    Array.prototype.forEach.call(row.children || [], function (child) {
+      if (!existing && child.getAttribute && child.getAttribute("data-rwa-action-key") === key) {
+        existing = child;
+      }
+    });
+    if (existing) return existing;
+    var btn = createRwaActionButton({
+      className: cfg.className || "btn btn-primary",
+      label: cfg.label || "RWA.xyz",
+      href: cfg.href,
+      external: cfg.external !== false,
+    });
+    btn.setAttribute("data-rwa-action-key", key);
+    row.appendChild(btn);
+    return btn;
+  }
+
   function attachRwaTableFullscreenButton(tableWrap, tableEl, opts) {
     if (!tableWrap || !tableEl || tableWrap._rwaFullscreenBound) return;
     tableWrap._rwaFullscreenBound = true;
 
-    var actions = document.createElement("div");
-    actions.className = "rwa-table-actions";
+    var actions = ensureRwaActionRow(tableWrap, opts);
+    if (!actions) return null;
 
-    var btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "btn btn-secondary";
-    btn.textContent =
-      (opts && opts.buttonLabel ? String(opts.buttonLabel) : "") || "View table full screen";
-    btn.addEventListener("click", function () {
-      openRwaTableModal(tableEl, {
-        title: opts && opts.title ? opts.title : "Full-screen table",
+    var btn = actions.querySelector('[data-rwa-fullscreen-btn="1"]');
+    if (!btn) {
+      btn = createRwaActionButton({
+        tagName: "button",
+        className: "btn btn-secondary",
       });
-    });
-
-    actions.appendChild(btn);
-    tableWrap.insertAdjacentElement("afterend", actions);
+      btn.setAttribute("data-rwa-fullscreen-btn", "1");
+      btn.textContent =
+      (opts && opts.buttonLabel ? String(opts.buttonLabel) : "") || "View table full screen";
+      btn.addEventListener("click", function () {
+        openRwaTableModal(tableEl, {
+          title: opts && opts.title ? opts.title : "Full-screen table",
+        });
+      });
+      if (actions.firstChild && opts && opts.prepend !== false) {
+        actions.insertBefore(btn, actions.firstChild);
+      } else {
+        actions.appendChild(btn);
+      }
+    }
+    return actions;
   }
 
   function renderKpis(host, kpis, legendText, kpiOpts) {
@@ -488,5 +552,6 @@
     renderKpis: renderKpis,
     renderTable: renderTable,
     attachRwaTableFullscreenButton: attachRwaTableFullscreenButton,
+    appendRwaActionLink: appendRwaActionLink,
   };
 })(typeof window !== "undefined" ? window : this);

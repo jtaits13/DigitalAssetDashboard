@@ -38,6 +38,46 @@
     return { l: marginLeft, r: marginRight };
   }
 
+  function formatUsdAxisTick(v) {
+    var n = Number(v) || 0;
+    var abs = Math.abs(n);
+    if (abs >= 1e9) return "$" + (n / 1e9).toFixed(abs >= 10e9 ? 0 : 1).replace(/\.0$/, "") + "B";
+    if (abs >= 1e6) return "$" + (n / 1e6).toFixed(abs >= 10e6 ? 0 : 1).replace(/\.0$/, "") + "M";
+    if (abs >= 1e3) return "$" + (n / 1e3).toFixed(abs >= 10e3 ? 0 : 1).replace(/\.0$/, "") + "K";
+    return "$" + Math.round(n).toLocaleString();
+  }
+
+  function niceTickStep(rawStep) {
+    if (!(rawStep > 0)) return 1;
+    var pow = Math.pow(10, Math.floor(Math.log(rawStep) / Math.LN10));
+    var base = rawStep / pow;
+    var mult = base <= 1 ? 1 : base <= 2 ? 2 : base <= 5 ? 5 : 10;
+    return mult * pow;
+  }
+
+  function buildCurrencyAxisProps(values, plotWidth) {
+    var maxVal = 0;
+    var i;
+    for (i = 0; i < values.length; i++) {
+      maxVal = Math.max(maxVal, Number(values[i]) || 0);
+    }
+    var width = typeof plotWidth === "number" && plotWidth > 0 ? plotWidth : 260;
+    var tickCount = width < 150 ? 2 : width < 240 ? 3 : width < 360 ? 4 : 5;
+    var step = niceTickStep(maxVal / Math.max(1, tickCount - 1));
+    var maxTick = step * Math.max(1, Math.ceil(maxVal / step));
+    var vals = [];
+    for (i = 0; i <= maxTick + step * 0.2; i += step) {
+      vals.push(i);
+      if (vals.length > 8) break;
+    }
+    return {
+      tickangle: -30,
+      tickvals: vals,
+      ticktext: vals.map(formatUsdAxisTick),
+      tickfont: { size: width < 220 ? 10 : 11 },
+    };
+  }
+
   function renderPrimaryCta(host, data) {
     if (!host) return;
     var L = data.links || {};
@@ -101,6 +141,7 @@
     var shell = el.closest ? el.closest(".rwa-split-chart-shell") : el.parentElement;
     var shellW = shell && shell.clientWidth ? shell.clientWidth : el.offsetParent ? el.offsetWidth : 0;
     var m = estimateChartMargins(y, text, shellW);
+    var axisProps = buildCurrencyAxisProps(x, Math.max(120, (shellW || 560) - m.l - m.r));
 
     var trace = {
       type: "bar",
@@ -130,9 +171,12 @@
       xaxis: {
         title: { text: "Total value (USD)", font: { size: 12, color: "#1F4C67" }, standoff: 18 },
         automargin: true,
-        tickangle: -30,
         tickprefix: "$",
         separatethousands: true,
+        tickangle: axisProps.tickangle,
+        tickvals: axisProps.tickvals,
+        ticktext: axisProps.ticktext,
+        tickfont: axisProps.tickfont,
       },
       yaxis: {
         type: "category",
@@ -153,8 +197,13 @@
               ? el.offsetWidth
               : shellW || 560;
         var m2 = estimateChartMargins(y, text, wLate);
+        var axisProps2 = buildCurrencyAxisProps(x, Math.max(120, wLate - m2.l - m2.r));
         Plotly.relayout(el, {
           margin: { l: m2.l, r: m2.r, t: 14, b: 60, pad: 4 },
+          "xaxis.tickangle": axisProps2.tickangle,
+          "xaxis.tickvals": axisProps2.tickvals,
+          "xaxis.ticktext": axisProps2.ticktext,
+          "xaxis.tickfont.size": axisProps2.tickfont.size,
         });
       } catch (e3) {}
       try {
@@ -257,6 +306,7 @@
     var renderKpis = H.renderKpis;
     var renderTable = H.renderTable;
     var attachTableFullscreenButton = H.attachRwaTableFullscreenButton;
+    var appendRwaActionLink = H.appendRwaActionLink;
 
     var banner = $("js-rwa-global-banner");
     if (banner) {
@@ -330,20 +380,31 @@
     var chartNote = $("js-rwa-global-chart-note");
     if (chartNote) chartNote.innerHTML = data.chart_note_html || "";
 
-    hide(bottomCta, false);
-    renderPrimaryCta(bottomCta, data);
-
     var chartMax = data.chart_max_bars != null ? Number(data.chart_max_bars) : 12;
     var chartHeight = data.chart_height_px != null ? Number(data.chart_height_px) : 420;
 
     var splitRoot = $("js-rwa-global-split");
     if (splitRoot) splitRoot.style.setProperty("--rwa-split-body-height", String(chartHeight) + "px");
     if (attachTableFullscreenButton && splitRoot) {
-      attachTableFullscreenButton(
+      var actionRow = attachTableFullscreenButton(
         splitRoot.querySelector(".rwa-split-table-scroll"),
         splitRoot.querySelector("table"),
         { title: "RWA Global Market Overview networks table" }
       );
+      if (appendRwaActionLink && actionRow) {
+        appendRwaActionLink(actionRow, {
+          href: (data.links && data.links.global_market_on_rwa_xyz) || "https://app.rwa.xyz/networks",
+          label: (data.links && data.links.global_market_link_label) || "Open RWA.xyz Global Market",
+          className: "btn btn-primary",
+        });
+        hide(bottomCta, true);
+      } else {
+        hide(bottomCta, false);
+        renderPrimaryCta(bottomCta, data);
+      }
+    } else {
+      hide(bottomCta, false);
+      renderPrimaryCta(bottomCta, data);
     }
 
     var state = {

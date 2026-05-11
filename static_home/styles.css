@@ -1975,8 +1975,18 @@ body.page-article-feed .etf-news-nav {
 
 .rwa-table-actions {
   display: flex;
-  justify-content: flex-end;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: flex-start;
   margin: 0.6rem 0 0;
+}
+
+.rwa-deep-page-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .rwa-split-table-scroll thead th {

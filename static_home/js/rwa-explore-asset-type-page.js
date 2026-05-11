@@ -131,11 +131,6 @@
           emptyMsg: "No preview rows for this section.",
           linkAria: "Open RWA.xyz",
         });
-        if (attachTableFullscreenButton) {
-          attachTableFullscreenButton(wrap, table, {
-            title: String(sec.table_subheading || sec.title || "RWA preview table"),
-          });
-        }
       }
 
       var ctaRow = document.createElement("div");
@@ -160,6 +155,12 @@
         }
         ctaRow.appendChild(a);
       });
+      if (sec.columns && sec.columns.length && attachTableFullscreenButton) {
+        attachTableFullscreenButton(wrap, table, {
+          title: String(sec.table_subheading || sec.title || "RWA preview table"),
+          actionRow: ctaRow,
+        });
+      }
       section.appendChild(ctaRow);
       if (typeof global.finalizeHubAnchors === "function") {
         global.finalizeHubAnchors(section);

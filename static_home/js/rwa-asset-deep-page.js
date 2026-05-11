@@ -38,6 +38,46 @@
     return { l: marginLeft, r: marginRight };
   }
 
+  function formatUsdAxisTick(v) {
+    var n = Number(v) || 0;
+    var abs = Math.abs(n);
+    if (abs >= 1e9) return "$" + (n / 1e9).toFixed(abs >= 10e9 ? 0 : 1).replace(/\.0$/, "") + "B";
+    if (abs >= 1e6) return "$" + (n / 1e6).toFixed(abs >= 10e6 ? 0 : 1).replace(/\.0$/, "") + "M";
+    if (abs >= 1e3) return "$" + (n / 1e3).toFixed(abs >= 10e3 ? 0 : 1).replace(/\.0$/, "") + "K";
+    return "$" + Math.round(n).toLocaleString();
+  }
+
+  function niceTickStep(rawStep) {
+    if (!(rawStep > 0)) return 1;
+    var pow = Math.pow(10, Math.floor(Math.log(rawStep) / Math.LN10));
+    var base = rawStep / pow;
+    var mult = base <= 1 ? 1 : base <= 2 ? 2 : base <= 5 ? 5 : 10;
+    return mult * pow;
+  }
+
+  function buildCurrencyAxisProps(values, plotWidth) {
+    var maxVal = 0;
+    var i;
+    for (i = 0; i < values.length; i++) {
+      maxVal = Math.max(maxVal, Number(values[i]) || 0);
+    }
+    var width = typeof plotWidth === "number" && plotWidth > 0 ? plotWidth : 260;
+    var tickCount = width < 150 ? 2 : width < 240 ? 3 : width < 360 ? 4 : 5;
+    var step = niceTickStep(maxVal / Math.max(1, tickCount - 1));
+    var maxTick = step * Math.max(1, Math.ceil(maxVal / step));
+    var vals = [];
+    for (i = 0; i <= maxTick + step * 0.2; i += step) {
+      vals.push(i);
+      if (vals.length > 8) break;
+    }
+    return {
+      tickangle: -30,
+      tickvals: vals,
+      ticktext: vals.map(formatUsdAxisTick),
+      tickfont: { size: width < 220 ? 10 : 11 },
+    };
+  }
+
   function filterRows(rows, nameCol, q) {
     var qq = String(q || "")
       .trim()
@@ -92,6 +132,7 @@
         : chartEl.parentElement;
     var shellW = shell && shell.clientWidth ? shell.clientWidth : chartEl.offsetWidth || 560;
     var m = estimateChartMargins(y, text, shellW);
+    var axisProps = buildCurrencyAxisProps(x, Math.max(120, shellW - m.l - m.r));
 
     var trace = {
       type: "bar",
@@ -129,9 +170,12 @@
           standoff: 18,
         },
         automargin: true,
-        tickangle: -30,
         tickprefix: "$",
         separatethousands: true,
+        tickangle: axisProps.tickangle,
+        tickvals: axisProps.tickvals,
+        ticktext: axisProps.ticktext,
+        tickfont: axisProps.tickfont,
       },
       yaxis: {
         type: "category",
@@ -146,8 +190,13 @@
       try {
         var wLate = shell && shell.clientWidth ? shell.clientWidth : chartEl.offsetWidth || shellW || 560;
         var m2 = estimateChartMargins(y, text, wLate);
+        var axisProps2 = buildCurrencyAxisProps(x, Math.max(120, wLate - m2.l - m2.r));
         Plotly.relayout(chartEl, {
           margin: { l: m2.l, r: m2.r, t: 14, b: 60, pad: 4 },
+          "xaxis.tickangle": axisProps2.tickangle,
+          "xaxis.tickvals": axisProps2.tickvals,
+          "xaxis.ticktext": axisProps2.ticktext,
+          "xaxis.tickfont.size": axisProps2.tickfont.size,
         });
       } catch (e3) {}
       try {
@@ -161,6 +210,7 @@
     var renderKpis = H.renderKpis;
     var renderTable = H.renderTable;
     var attachTableFullscreenButton = H.attachRwaTableFullscreenButton;
+    var appendRwaActionLink = H.appendRwaActionLink;
     if (!renderKpis || !renderTable) {
       var b0 = $("js-deep-banner");
       if (b0) {
@@ -225,7 +275,7 @@
       var host = $(prefix + "-wrap");
       if (!host || !league || !league.columns || !league.columns.length) {
         if (host) host.hidden = true;
-        return;
+        return null;
       }
 
       host.hidden = false;
@@ -302,8 +352,9 @@
       var clr = $(prefix + "-clear");
       var tableWrap = host.querySelector(".rwa-split-table-scroll");
       var tableEl = tableWrap ? tableWrap.querySelector("table") : null;
+      var actionRow = null;
       if (attachTableFullscreenButton) {
-        attachTableFullscreenButton(tableWrap, tableEl, {
+        actionRow = attachTableFullscreenButton(tableWrap, tableEl, {
           title: String(league.table_heading || league.block_heading || "RWA table"),
         });
       }
@@ -421,6 +472,7 @@
           cel._rwaRo.observe(shl);
         } catch (eOb) {}
       }
+      return { actionRow: actionRow, host: host };
     }
 
     function applyBottomCta() {
@@ -496,7 +548,7 @@
 
     setOptionalDeepHtml("js-deep-extra-before-leagues", payload.between_ko_and_leagues_html);
 
-    wireLeague(payload.networks || null, "deep-net", payload);
+    var netView = wireLeague(payload.networks || null, "deep-net", payload);
 
     var hasNet = !!(payload.networks && payload.networks.columns && payload.networks.columns.length);
     var hasPlat = !!(payload.platforms && payload.platforms.columns && payload.platforms.columns.length);
@@ -505,9 +557,20 @@
 
     setOptionalDeepHtml("js-deep-extra-after-network", payload.after_network_block_html);
 
-    wireLeague(payload.platforms || null, "deep-plat", payload);
+    var platView = wireLeague(payload.platforms || null, "deep-plat", payload);
 
-    applyBottomCta();
+    var ctaTargetRow = (platView && platView.actionRow) || (netView && netView.actionRow) || null;
+    if (appendRwaActionLink && ctaTargetRow && payload.bottom_cta && payload.bottom_cta.href) {
+      appendRwaActionLink(ctaTargetRow, {
+        href: payload.bottom_cta.href,
+        label: payload.bottom_cta.label || "RWA.xyz",
+        className: "btn btn-primary",
+      });
+      $("js-deep-bottom-cta").hidden = true;
+      $("js-deep-bottom-cta").innerHTML = "";
+    } else {
+      applyBottomCta();
+    }
 
     if (payload.back_href) {
       document.querySelectorAll('a[data-deep-back="explore"]').forEach(function (a) {
