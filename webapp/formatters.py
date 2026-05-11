@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import os
-import re
 from html import escape
 from typing import Any
 
@@ -224,18 +223,3 @@ def rwa_explore_gateways_html(key_prefix: str = "web") -> str:
   </div>
 </section>
 """
-
-
-_RE_ETF = re.compile(r"\b(etf|etfs|exchange[-\s]traded\s+funds?)\b", re.I)
-
-
-def is_etf_only_item(item: dict[str, Any]) -> bool:
-    blob = " ".join(
-        str(x or "")
-        for x in (
-            item.get("title"),
-            item.get("summary"),
-            item.get("source"),
-        )
-    )
-    return _RE_ETF.search(blob) is not None

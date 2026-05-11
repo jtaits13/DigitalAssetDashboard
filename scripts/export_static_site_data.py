@@ -1352,7 +1352,7 @@ def main() -> None:
         encoding="utf-8",
     )
 
-    # --- ETF / ETP headline pool (same filter + 3-month window as app) ---
+    # --- ETF / ETP headline pool (same filter + ranked daily cap as Streamlit / FastAPI) ---
     etf_all, etf_feed_errs = load_all_etf_etp_news_cached()
     for e in etf_feed_errs:
         manifest["errors"].append(f"ETF news RSS: {e}")

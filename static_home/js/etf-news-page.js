@@ -1,5 +1,5 @@
 (function () {
-  var PAGE = 25;
+  var PAGE = 20;
   var all = [];
   var filtered = [];
   var page = 0;

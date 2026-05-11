@@ -256,7 +256,7 @@ def main() -> None:
             ):
                 st.switch_page("pages/All_ETF_News.py")
             st.markdown(
-                '<p class="jd-hub-cta-note">Next page: full ETF headline list (~3 months UTC), search, pagination, daily caps.</p>',
+                '<p class="jd-hub-cta-note">Next page: full ETF headline list (up to five stories per UTC day), search, and pagination.</p>',
                 unsafe_allow_html=True,
             )
 

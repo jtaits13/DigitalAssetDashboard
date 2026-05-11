@@ -37,6 +37,7 @@ from news_feeds import (
     ALL_ARTICLES_FEEDS,
     ALL_ARTICLES_FEED_DAY_CAP,
     DEFAULT_FEEDS,
+    ETF_ETP_NEWS_FEED_DAY_CAP,
     ETP_PULSE_PREVIEW_COUNT,
     build_etp_market_news_box_html,
     build_full_page_market_news_feed_html,
@@ -74,7 +75,6 @@ from webapp.context import html_shell_context
 from webapp.formatters import (
     etp_summary_kpi_row_html,
     etp_user_agent,
-    is_etf_only_item,
     plotly_figure_to_div,
     rwa_explore_gateways_html,
     rwa_global_kpi_block_html,
@@ -84,7 +84,6 @@ from webapp.routes_rwa import router as rwa_router
 
 HOME_REGULATORY_PREVIEW = 3
 PER_PAGE = 20
-MAX_ETF_HEADLINES_PER_DAY = 7
 ETP_PREVIEW_ROWS = 5
 RWA_HOME_PREVIEW = 8
 
@@ -348,10 +347,8 @@ async def etf_news(
     page: int = Query(1, ge=1),
 ) -> HTMLResponse:
     articles, feed_errors = load_all_etf_etp_news_cached()
-    etf_only = [a for a in articles if is_etf_only_item(a)]
-    etf_only = cap_market_news_per_day(etf_only, max_per_day=MAX_ETF_HEADLINES_PER_DAY)
     search_q = (q or "").strip()
-    filtered = filter_headlines_by_keyword(etf_only, search_q)
+    filtered = filter_headlines_by_keyword(articles, search_q)
     n = len(filtered)
     total_pages = max(1, (n + PER_PAGE - 1) // PER_PAGE) if n else 1
     page = min(page, total_pages)
@@ -363,12 +360,12 @@ async def etf_news(
         else ["No articles"]
     )
     if search_q and n:
-        cap_parts.append(f"(filtered from {len(etf_only)} ETF-related headlines)")
+        cap_parts.append(f"(filtered from {len(articles)} ETF-related headlines)")
     body = ""
     if n == 0:
         body = (
             '<p class="alert info">No articles match your search.</p>'
-            if len(etf_only)
+            if len(articles)
             else '<p class="alert info">No ETF headlines loaded yet.</p>'
         )
     else:
@@ -378,7 +375,12 @@ async def etf_news(
         {
             "feed_errors": feed_errors,
             "headline": section_label_teal("ETF & ETP Market News", placement="first"),
-            "subhead": '<p class="jd-hub-dek jd-hub-dek-large">Headlines mentioning ETFs in the digital-asset context.</p>',
+            "subhead": (
+                '<p class="jd-hub-dek jd-hub-dek-large">'
+                "Digital-asset ETF and ETP headlines from the expanded pool—up to "
+                f"<strong>{ETF_ETP_NEWS_FEED_DAY_CAP}</strong> ranked stories per UTC calendar day "
+                "(same pipeline as Streamlit).</p>"
+            ),
             "search_q": search_q,
             "body_html": body,
             "toolbar_note": subpage_toolbar_note_html(" · ".join(cap_parts)),
