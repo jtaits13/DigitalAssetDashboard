@@ -137,27 +137,57 @@
   };
 
   /** Fill ``.ticker-strip`` from ``crypto_ticker.json``. */
+  function getTickerParts(strip) {
+    if (!strip) return null;
+    var layout = strip.querySelector(".ticker-strip__layout");
+    if (!layout) return null;
+    var lab = strip.querySelector(".ticker-strip__label");
+    var viewport = layout.querySelector(".ticker-strip__viewport");
+    var move = viewport ? viewport.querySelector(".ticker-strip__move") : null;
+    var drums = move ? move.querySelectorAll(".ticker-strip__chips") : [];
+    if (drums && drums.length) {
+      return {
+        layout: layout,
+        label: lab,
+        viewport: viewport,
+        move: move,
+        primary: drums[0],
+        clone: drums.length > 1 ? drums[1] : null,
+      };
+    }
+    var chips = null;
+    var k = 0;
+    var kids = layout.children;
+    for (; k < kids.length; k++) {
+      if (kids[k].classList && kids[k].classList.contains("ticker-strip__chips")) {
+        chips = kids[k];
+        break;
+      }
+    }
+    if (!chips) return null;
+    return {
+      layout: layout,
+      label: lab,
+      viewport: null,
+      move: null,
+      primary: chips,
+      clone: null,
+    };
+  }
+
   function hydrateStaticCryptoTicker(payload) {
     if (!payload || typeof document === "undefined") return;
     var strips = document.querySelectorAll(".ticker-strip");
     var si = 0;
     for (; si < strips.length; si++) {
       var strip = strips[si];
-      var layout = strip.querySelector(".ticker-strip__layout");
-      if (!layout) continue;
-      var lab = strip.querySelector(".ticker-strip__label");
-      var chips = null;
-      var k = 0;
-      var kids = layout.children;
-      for (; k < kids.length; k++) {
-        if (kids[k].classList && kids[k].classList.contains("ticker-strip__chips")) {
-          chips = kids[k];
-          break;
-        }
+      var parts = getTickerParts(strip);
+      if (!parts || !parts.primary) continue;
+      if (parts.label && payload.banner_title) parts.label.textContent = payload.banner_title;
+      if (payload.chips_inner_html) {
+        parts.primary.innerHTML = payload.chips_inner_html;
+        if (parts.clone) parts.clone.innerHTML = payload.chips_inner_html;
       }
-      if (!chips) continue;
-      if (lab && payload.banner_title) lab.textContent = payload.banner_title;
-      if (payload.chips_inner_html) chips.innerHTML = payload.chips_inner_html;
       if (typeof global.finalizeHubAnchors === "function") {
         global.finalizeHubAnchors(strip);
       }
@@ -171,34 +201,36 @@
     for (; si < strips.length; si++) {
       var strip = strips[si];
       if (!strip || strip.getAttribute("data-ticker-marquee") === "1") continue;
-      var layout = strip.querySelector(".ticker-strip__layout");
-      if (!layout) continue;
-      var chips = null;
-      var k = 0;
-      var kids = layout.children;
-      for (; k < kids.length; k++) {
-        if (kids[k].classList && kids[k].classList.contains("ticker-strip__chips")) {
-          chips = kids[k];
-          break;
-        }
-      }
-      if (!chips) continue;
+      var parts = getTickerParts(strip);
+      if (!parts || !parts.primary) continue;
 
       strip.setAttribute("data-ticker-marquee", "1");
+      parts.primary.classList.add("ticker-strip__drum");
 
-      chips.classList.add("ticker-strip__drum");
+      if (parts.viewport && parts.move) {
+        if (!parts.clone) {
+          parts.clone = parts.primary.cloneNode(true);
+          parts.clone.setAttribute("aria-hidden", "true");
+          parts.clone.classList.add("ticker-strip__chips--marquee-clone");
+          parts.move.appendChild(parts.clone);
+        } else {
+          parts.clone.setAttribute("aria-hidden", "true");
+          parts.clone.classList.add("ticker-strip__chips--marquee-clone");
+        }
+        continue;
+      }
 
       var viewport = document.createElement("div");
       viewport.className = "ticker-strip__viewport";
       var move = document.createElement("div");
       move.className = "ticker-strip__move";
-      move.appendChild(chips);
-      var drumB = chips.cloneNode(true);
+      move.appendChild(parts.primary);
+      var drumB = parts.primary.cloneNode(true);
       drumB.setAttribute("aria-hidden", "true");
       drumB.classList.add("ticker-strip__chips--marquee-clone");
       move.appendChild(drumB);
       viewport.appendChild(move);
-      layout.appendChild(viewport);
+      parts.layout.appendChild(viewport);
     }
   }
 
