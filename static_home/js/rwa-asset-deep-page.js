@@ -171,7 +171,7 @@
       var bl = $("js-deep-banner");
       if (bl) {
         bl.hidden = false;
-        bl.textContent = "Could not load JSON utilities (js/static-base.js). Check the Network tab and hard refresh.";
+        bl.textContent = "Some page assets could not load. Hard refresh and try again.";
       }
       return;
     }

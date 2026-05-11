@@ -193,6 +193,10 @@ def _dataframe_json_records(df: Any) -> tuple[list[dict[str, object]], list[str]
     return rows_out, cols
 
 
+def _static_rwa_footer_text() -> str:
+    return f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC · Source: RWA.xyz"
+
+
 def _kpi_legend_for_asset(overview_title: str) -> str:
     return (
         "All % changes in this row are 30-day (30D) (RWA.xyz). "
@@ -349,7 +353,7 @@ def _build_rwa_stablecoins_deep_payload(sc_pack: tuple[Any, Any, Any, Any], mani
             "kpis": [_rwa_kpi_to_dict(k) for k in kpis],
             "chart_max_bars": RWA_STABLECOINS_CHART_MAX_BARS,
             "back_href": STATIC_RWA_EXPLORE_ASSET_TYPE_PAGE,
-            "footer_note": re.sub(r"\*\*", "", rwa_xyz_mirror_footer_text()),
+            "footer_note": _static_rwa_footer_text(),
             "bottom_cta": {"href": APP_STABLECOINS, "label": STABLECOINS_RWA_LINK_LABEL},
         }
 
@@ -475,7 +479,7 @@ def _build_rwa_us_treasuries_deep_payload(tr_pack: tuple[Any, Any, Any, Any], ma
             "kpis": [_rwa_kpi_to_dict(k) for k in kpis],
             "chart_max_bars": RWA_TREASURIES_CHART_MAX_BARS,
             "back_href": STATIC_RWA_EXPLORE_ASSET_TYPE_PAGE,
-            "footer_note": re.sub(r"\*\*", "", rwa_xyz_mirror_footer_text()),
+            "footer_note": _static_rwa_footer_text(),
             "bottom_cta": {"href": APP_TREASURIES, "label": TREASURIES_RWA_LINK_LABEL},
         }
 
@@ -567,7 +571,7 @@ def _build_rwa_tokenized_stocks_deep_payload(st_pack: tuple[Any, Any, Any, Any],
             "kpis": [_rwa_kpi_to_dict(k) for k in kpis],
             "chart_max_bars": RWA_TOKENIZED_STOCKS_CHART_MAX_BARS,
             "back_href": STATIC_RWA_EXPLORE_ASSET_TYPE_PAGE,
-            "footer_note": re.sub(r"\*\*", "", rwa_xyz_mirror_footer_text()),
+            "footer_note": _static_rwa_footer_text(),
             "bottom_cta": {"href": APP_STOCKS, "label": TOKENIZED_STOCKS_RWA_LINK_LABEL},
         }
 
@@ -804,7 +808,7 @@ def _build_rwa_explore_asset_type_payload(
         ),
         "intro_html": intro_html,
         "sections": sections,
-        "footer_note": re.sub(r"\*\*", "", rwa_xyz_mirror_footer_text()),
+        "footer_note": _static_rwa_footer_text(),
         "links": {
             "rwa_global": "rwa-global.html",
             "hub_home": "index.html",
@@ -963,7 +967,7 @@ def _build_rwa_explore_market_participant_payload(
         ),
         "intro_html": intro_html,
         "sections": sections,
-        "footer_note": re.sub(r"\*\*", "", rwa_xyz_mirror_footer_text()),
+        "footer_note": _static_rwa_footer_text(),
         "links": {
             "rwa_global": "rwa-global.html",
             "hub_home": "index.html",
@@ -1003,7 +1007,7 @@ def _build_rwa_participants_networks_deep_payload(
             "kpis": [_rwa_kpi_to_dict(k) for k in kpis],
             "chart_max_bars": RWA_PARTICIPANTS_CHART_MAX_BARS,
             "back_href": STATIC_RWA_EXPLORE_MARKET_PARTICIPANT_PAGE,
-            "footer_note": re.sub(r"\*\*", "", rwa_xyz_mirror_footer_text()),
+            "footer_note": _static_rwa_footer_text(),
             "bottom_cta": {"href": GLOBAL_MARKET_RWA_URL, "label": GLOBAL_MARKET_RWA_LINK_LABEL},
         }
 
@@ -1084,7 +1088,7 @@ def _build_rwa_participants_platforms_deep_payload(
             "kpis": [_rwa_kpi_to_dict(k) for k in kpis],
             "chart_max_bars": RWA_PARTICIPANTS_CHART_MAX_BARS,
             "back_href": STATIC_RWA_EXPLORE_MARKET_PARTICIPANT_PAGE,
-            "footer_note": re.sub(r"\*\*", "", rwa_xyz_mirror_footer_text()),
+            "footer_note": _static_rwa_footer_text(),
             "bottom_cta": {"href": PLATFORMS_RWA_URL, "label": PLATFORMS_RWA_LINK_LABEL},
         }
 
@@ -1164,7 +1168,7 @@ def _build_rwa_participants_asset_managers_deep_payload(
             "kpis": [_rwa_kpi_to_dict(k) for k in kpis],
             "chart_max_bars": RWA_PARTICIPANTS_CHART_MAX_BARS,
             "back_href": STATIC_RWA_EXPLORE_MARKET_PARTICIPANT_PAGE,
-            "footer_note": re.sub(r"\*\*", "", rwa_xyz_mirror_footer_text()),
+            "footer_note": _static_rwa_footer_text(),
             "bottom_cta": {"href": ASSET_MANAGERS_RWA_URL, "label": ASSET_MANAGERS_RWA_LINK_LABEL},
         }
 
@@ -1466,7 +1470,7 @@ def main() -> None:
             "explore_asset_type": explore_at,
             "explore_market_participant": explore_mp,
         },
-        "footer_note": re.sub(r"\*\*", "", rwa_xyz_mirror_footer_text()),
+        "footer_note": _static_rwa_footer_text(),
     }
 
     if rwa_err and not rwa_rows:

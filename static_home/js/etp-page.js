@@ -159,7 +159,7 @@
     if (!els.chart || !series || !series.length || typeof Plotly === "undefined") {
       if (els.chart && (!series || !series.length)) {
         els.chart.innerHTML =
-          '<p class="chart-fallback">Chart data unavailable (check export logs).</p>';
+          '<p class="chart-fallback">Chart data is unavailable right now.</p>';
       }
       return;
     }
