@@ -36,7 +36,7 @@
     var slice = sorted.slice(start, start + PAGE);
     renderArticleFeedByDay(listEl, slice, {
       includeCountry: false,
-      emptyMessage: "No headlines match. Clear search or re-run data export.",
+      emptyMessage: "No headlines match. Clear search and try again.",
       emptyClass: "article-feed-empty",
     });
     if (metaEl) {
@@ -49,7 +49,7 @@
         sorted.length +
         " (grouped by day · filtered from " +
         all.length +
-        " in export)";
+        " total)";
     }
     if (navEl) {
       var np = Math.max(1, Math.ceil(sorted.length / PAGE));
@@ -98,7 +98,7 @@
         if (banner) {
           banner.hidden = false;
           banner.textContent =
-            "Could not load etf_news.json. Use the published site after deploy, or run scripts/export_static_site_data.py locally.";
+            "Could not load etf_news.json.";
         }
       });
   }

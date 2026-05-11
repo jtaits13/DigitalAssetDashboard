@@ -1,4 +1,4 @@
-/* Digital Assets Dashboard — static home experiment (palette aligned with Streamlit hub) */
+/* Digital Assets Dashboard static site */
 :root {
   --ink: #021d41;
   --ink-soft: #1f4c67;
@@ -510,7 +510,7 @@ body {
   background: rgba(37, 128, 156, 0.14);
 }
 
-/* —— Ticker: marquee scroll (matches Streamlit price_ticker: two tracks + translateX(-50%)) —— */
+/* —— Ticker: marquee scroll (two tracks + translateX(-50%)) —— */
 .ticker-strip__viewport {
   overflow: hidden;
   width: 100%;
@@ -527,7 +527,7 @@ body {
 }
 
 .ticker-strip__viewport .ticker-strip__drum.ticker-strip__chips {
-  /* Column gap matches Streamlit ticker track; trailing padding aligns splice (#25→#1) without breaking -50% loop. */
+  /* Column gap and trailing padding align the splice (#25→#1) without breaking the -50% loop. */
   --ticker-chip-column-gap: 2.25rem;
   display: inline-flex;
   flex-shrink: 0;
@@ -1188,7 +1188,7 @@ a.ticker-chip-link:hover .ticker-chip {
   color: var(--teal);
 }
 
-/* —— On-chain hub (Streamlit parity, JSON-driven) —— */
+/* —— On-chain hub (JSON-driven) —— */
 .rwa-market-head {
   margin: 0.35rem 0 0.5rem;
   padding: 0 0 0.35rem;
@@ -1916,7 +1916,7 @@ body.page-article-feed .etf-news-nav {
   font-weight: 500;
 }
 
-/* —— RWA Global static page (mirrors FastAPI / Streamlit layout) —— */
+/* —— RWA Global static page —— */
 .jd-hub-cta-note {
   font-size: 0.88rem;
   color: var(--muted);

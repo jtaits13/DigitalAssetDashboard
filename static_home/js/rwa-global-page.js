@@ -366,7 +366,7 @@
           banner.hidden = false;
           banner.textContent =
             (e && e.message) ||
-            "Could not load rwa_global_market.json. Run python scripts/export_static_site_data.py.";
+            "Could not load rwa_global_market.json.";
         }
       });
   }

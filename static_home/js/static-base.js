@@ -136,7 +136,7 @@
     return d.innerHTML;
   };
 
-  /** Fill ``.ticker-strip`` from export ``crypto_ticker.json`` (Streamlit / CoinGecko pipeline). */
+  /** Fill ``.ticker-strip`` from ``crypto_ticker.json``. */
   function hydrateStaticCryptoTicker(payload) {
     if (!payload || typeof document === "undefined") return;
     var strips = document.querySelectorAll(".ticker-strip");
@@ -300,7 +300,7 @@
     var emptyMsg =
       options.emptyMessage != null
         ? options.emptyMessage
-        : "No headlines match. Clear search or re-run data export.";
+        : "No headlines match. Clear search and try again.";
     var emptyClass = options.emptyClass || "article-feed-empty";
     var includeCountry = !!options.includeCountry;
     var esc = global.escapeHtml;

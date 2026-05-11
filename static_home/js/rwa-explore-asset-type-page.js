@@ -1,6 +1,6 @@
 /**
  * Static Explore by Asset Type index — ``static_home/data/rwa_explore_asset_type.json``.
- * Mirrors Streamlit ``show_rwa_explore_by_asset_type_widget`` (preview_rows=8).
+ * Renders the Explore by Asset Type page from JSON data.
  */
 (function (global) {
   function $(id) {
@@ -174,7 +174,7 @@
           b.hidden = false;
           b.textContent =
             (e && e.message) ||
-            "Could not load rwa_explore_asset_type.json. Run python scripts/export_static_site_data.py.";
+            "Could not load rwa_explore_asset_type.json.";
         }
       });
   }

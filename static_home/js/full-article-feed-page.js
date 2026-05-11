@@ -60,7 +60,7 @@
     var slice = sortedLimited.slice(start, start + PAGE);
     renderArticleFeedByDay(listEl, slice, {
       includeCountry: c.includeCountry,
-      emptyMessage: "No headlines match. Clear search or re-run data export.",
+      emptyMessage: "No headlines match. Clear search and try again.",
       emptyClass: "article-feed-empty",
     });
     if (metaEl) {
@@ -75,7 +75,7 @@
         denom +
         " (grouped by day · filtered from " +
         all.length +
-        " in export)" +
+        " total)" +
         pageNote;
     }
     if (navEl) {
@@ -130,7 +130,7 @@
           banner.textContent =
             "Could not load " +
             c.feed +
-            ". Open the published site after deploy, or run scripts/export_static_site_data.py locally.";
+            ".";
         }
       });
   }

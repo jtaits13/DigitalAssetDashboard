@@ -200,7 +200,7 @@
     els.pulse.innerHTML = "";
     if (!items || !items.length) {
       els.pulse.innerHTML =
-        '<li class="pulse-list__empty">No ETF headlines matched filters. Try refreshing data export.</li>';
+        '<li class="pulse-list__empty">No ETF/ETP headlines matched the current filters.</li>';
       return;
     }
     items.forEach(function (a) {

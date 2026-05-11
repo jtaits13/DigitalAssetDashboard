@@ -1,5 +1,5 @@
 /**
- * Static hub: mirror Streamlit On-chain block (Global Market KPIs + Networks preview + Explore gateways).
+ * Static hub: render the On-chain block (Global Market KPIs + Networks preview + Explore gateways).
  * Data from static_home/data/rwa_onchain_home.json (export_static_site_data.py).
  */
 (function (global) {
@@ -111,7 +111,7 @@
         '<tr><td colspan="' +
         colspan +
         '">' +
-        esc(emptyMsg || "No preview rows. Run export or check RWA fetch.") +
+        esc(emptyMsg || "No preview rows are available.") +
         "</td></tr>";
       return;
     }
@@ -247,7 +247,7 @@
     if (!columns || !columns.length) {
       theadRow.innerHTML = "";
       tbody.innerHTML =
-        '<tr><td colspan="1">On-chain JSON missing or export not run. Run <code>python scripts/export_static_site_data.py</code> to populate <code>data/rwa_onchain_home.json</code>.</td></tr>';
+        '<tr><td colspan="1">On-chain data is unavailable.</td></tr>';
       tbody._rwaTableSort = null;
       return;
     }

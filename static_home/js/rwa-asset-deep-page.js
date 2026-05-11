@@ -1,6 +1,6 @@
 /**
  * Full-depth RWA asset pages (Stablecoins, US Treasuries, Tokenized Stocks).
- * Loads JSON named by ``data-rwa-deep-json`` on `<body>`; mirrors FastAPI `/rwa/stablecoins`, etc.
+ * Loads JSON named by ``data-rwa-deep-json`` on ``<body>`` for the RWA deep-dive pages.
  */
 (function (global) {
   function $(id) {
@@ -523,7 +523,7 @@
         if (b) {
           b.hidden = false;
           b.textContent =
-            (e && e.message) || "Could not load " + name + ". Run scripts/export_static_site_data.py.";
+            (e && e.message) || "Could not load " + name + ".";
         }
       });
   }

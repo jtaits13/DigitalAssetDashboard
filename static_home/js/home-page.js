@@ -20,7 +20,7 @@
     el.innerHTML = "";
     if (!items || !items.length) {
       el.innerHTML =
-        '<li class="headline-list__empty">No items loaded. Run <code>python scripts/export_static_site_data.py</code>, or open the published site.</li>';
+        '<li class="headline-list__empty">No items are available right now.</li>';
       return;
     }
     items.forEach(function (a) {
@@ -264,7 +264,7 @@
     })
     .catch(function (e) {
       showErr(
-        "Could not load the hub JSON files. Open the published site, or run the export script locally. " +
+        "Could not load the site data. " +
           (e && e.message ? e.message : "")
       );
     });
