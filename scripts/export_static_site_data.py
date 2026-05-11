@@ -468,8 +468,8 @@ def _build_rwa_us_treasuries_deep_payload(tr_pack: tuple[Any, Any, Any, Any], ma
             "page_title": "US Treasuries — Digital Assets Dashboard",
             "band_label": "US Treasuries",
             "page_subtitle_html": (
-                f'Mirrors <a href="{html_escape(APP_TREASURIES, quote=True)}">'
-                "RWA.xyz US Treasuries</a> — Distributed Networks and Platforms."
+                f'U.S. Treasuries data from <a href="{html_escape(APP_TREASURIES, quote=True)}">'
+                "RWA.xyz US Treasuries</a>, with Distributed Networks and Platforms views."
             ),
             "kpi_window_note": _kpi_legend_for_asset("US Treasuries"),
             "kpis": [_rwa_kpi_to_dict(k) for k in kpis],
@@ -560,8 +560,8 @@ def _build_rwa_tokenized_stocks_deep_payload(st_pack: tuple[Any, Any, Any, Any],
             "page_title": "Tokenized Stocks — Digital Assets Dashboard",
             "band_label": "Tokenized Stocks",
             "page_subtitle_html": (
-                f'Mirrors <a href="{html_escape(APP_STOCKS, quote=True)}">RWA.xyz Tokenized Stocks</a>'
-                " — Networks and Platforms."
+                f'Tokenized stock data from <a href="{html_escape(APP_STOCKS, quote=True)}">RWA.xyz Tokenized Stocks</a>,'
+                " with Networks and Platforms views."
             ),
             "kpi_window_note": _kpi_legend_for_asset("Tokenized Stocks"),
             "kpis": [_rwa_kpi_to_dict(k) for k in kpis],
@@ -632,7 +632,7 @@ def _build_rwa_explore_asset_type_payload(
     tr_pack: tuple[Any, Any, Any, Any],
     st_pack: tuple[Any, Any, Any, Any],
 ) -> dict[str, Any]:
-    """Preview sections aligned with Streamlit ``show_rwa_explore_by_asset_type_widget`` (+ FastAPI hub index)."""
+    """Preview sections for the static Explore by Asset Type page."""
     from home_layout import rwa_xyz_mirror_footer_text
     from rwa_league.client import APP_STABLECOINS, APP_STOCKS, APP_TREASURIES
     from rwa_league.dataframe_table import (
@@ -794,15 +794,13 @@ def _build_rwa_explore_asset_type_payload(
     intro_html = (
         "<p><strong>On-chain RWA</strong> by asset—short previews for "
         "<strong>Stablecoins</strong>, <strong>US Treasuries</strong>, and <strong>Tokenized Stocks</strong> "
-        "(<strong>RWA.xyz</strong>). Use <strong>Open full table</strong> for search, charts, and full leagues; "
-        "use the second button to open the live app.</p>"
+        "(<strong>RWA.xyz</strong>). Use <strong>Open full table</strong> for search, charts, and full league views.</p>"
     )
 
     return {
         "page_title": "Explore by Asset Type — Digital Assets Dashboard",
         "page_subtitle_html": (
-            f"Network or platform previews (first {EXPLORE_ASSET_PREVIEW_ROWS} rows each)—aligned with Streamlit "
-            "<strong>Explore by Asset Type</strong>."
+            f"Network or platform previews (first {EXPLORE_ASSET_PREVIEW_ROWS} rows each) for the main asset categories."
         ),
         "intro_html": intro_html,
         "sections": sections,
@@ -820,7 +818,7 @@ def _build_rwa_explore_market_participant_payload(
     plat_pack: tuple[list[Any], list[Any], Any],
     am_pack: tuple[list[Any], list[Any], Any],
 ) -> dict[str, Any]:
-    """Preview sections aligned with Streamlit ``show_rwa_explore_by_market_participant_widget``."""
+    """Preview sections for the static Explore by Market Participant page."""
     from home_layout import rwa_xyz_mirror_footer_text
     from rwa_league.dataframe_table import (
         build_rwa_asset_managers_page_dataframe,
@@ -955,15 +953,13 @@ def _build_rwa_explore_market_participant_payload(
     intro_html = (
         "<p><strong>On-chain RWA</strong> by participant—short previews for "
         "<strong>Networks</strong>, <strong>Platforms</strong>, and <strong>Asset Managers</strong> "
-        "(<strong>RWA.xyz</strong>). Use <strong>Open full page</strong> for search, charts, and full tables; "
-        "use the second button to open the live app.</p>"
+        "(<strong>RWA.xyz</strong>). Use <strong>Open full page</strong> for search, charts, and full tables.</p>"
     )
 
     return {
         "page_title": "Explore by Market Participant — Digital Assets Dashboard",
         "page_subtitle_html": (
-            f"Networks, platforms, and asset managers (first {EXPLORE_ASSET_PREVIEW_ROWS} rows each)—aligned with "
-            'Streamlit <strong>Explore by Market Participant</strong>.'
+            f"Networks, platforms, and asset managers (first {EXPLORE_ASSET_PREVIEW_ROWS} rows each) for the main participant groups."
         ),
         "intro_html": intro_html,
         "sections": sections,
@@ -1000,8 +996,8 @@ def _build_rwa_participants_networks_deep_payload(
             "page_title": "Participants — Networks — Digital Assets Dashboard",
             "band_label": "Participants — Networks",
             "page_subtitle_html": (
-                f'Mirrors <a href="{html_escape(APP_NETWORKS, quote=True)}">RWA.xyz Networks</a> '
-                "— Distributed Networks league."
+                f'Network data from <a href="{html_escape(APP_NETWORKS, quote=True)}">RWA.xyz Networks</a>, '
+                "focused on the Distributed Networks league."
             ),
             "kpi_window_note": _kpi_legend_for_asset("Networks"),
             "kpis": [_rwa_kpi_to_dict(k) for k in kpis],
@@ -1081,8 +1077,8 @@ def _build_rwa_participants_platforms_deep_payload(
             "page_title": "Participants — Platforms — Digital Assets Dashboard",
             "band_label": "Participants — Platforms",
             "page_subtitle_html": (
-                f'Mirrors <a href="{html_escape(APP_PLATFORMS, quote=True)}">RWA.xyz Platforms</a> '
-                "— Distributed Platforms league."
+                f'Platform data from <a href="{html_escape(APP_PLATFORMS, quote=True)}">RWA.xyz Platforms</a>, '
+                "focused on the Distributed Platforms league."
             ),
             "kpi_window_note": _kpi_legend_for_asset("Platforms"),
             "kpis": [_rwa_kpi_to_dict(k) for k in kpis],
@@ -1162,7 +1158,7 @@ def _build_rwa_participants_asset_managers_deep_payload(
             "page_title": "Participants — Asset Managers — Digital Assets Dashboard",
             "band_label": "Participants — Asset Managers",
             "page_subtitle_html": (
-                f'Mirrors <a href="{html_escape(APP_ASSET_MANAGERS, quote=True)}">RWA.xyz Asset Managers</a>.'
+                f'Asset-manager data from <a href="{html_escape(APP_ASSET_MANAGERS, quote=True)}">RWA.xyz Asset Managers</a>.'
             ),
             "kpi_window_note": _kpi_legend_for_asset("Asset Managers"),
             "kpis": [_rwa_kpi_to_dict(k) for k in kpis],
@@ -1398,8 +1394,8 @@ def main() -> None:
         "preview_count": len(rwa_table_rows),
         "total_networks": len(rwa_rows),
         "caption": (
-            "Source: RWA.xyz homepage (https://app.rwa.xyz/)—the same Global Market Overview headline figures and "
-            "Networks league (Distributed / parent networks) shown on the live site."
+            "Source: RWA.xyz homepage (https://app.rwa.xyz/)—Global Market Overview headline figures and the "
+            "Networks league (Distributed / parent networks)."
         ),
         "links": {
             # Static full overview (GitHub Pages has no ``/rwa/global`` route).
@@ -1446,10 +1442,9 @@ def main() -> None:
     rwa_global_payload: dict[str, Any] = {
         "page_title": "RWA Global Market Overview — Digital Assets Dashboard",
         "page_subtitle_html": (
-            "RWA <strong>Global Market Overview</strong>: the same <strong>headline metrics</strong> and "
-            '<strong>Networks</strong> table as the <a href="https://app.rwa.xyz/">RWA.xyz</a> '
-            "<strong>Market Overview</strong> tab on the live site. Top-line <strong>30D</strong> % changes and "
-            "table values are read from that page so they stay in sync with what visitors see."
+            "RWA <strong>Global Market Overview</strong>: <strong>headline metrics</strong> and a "
+            '<strong>Networks</strong> table sourced from <a href="https://app.rwa.xyz/">RWA.xyz</a>. '
+            "Top-line <strong>30D</strong> % changes and table values reflect RWA.xyz market-overview data."
         ),
         "error": rwa_err,
         "kpis": [_rwa_kpi_to_dict(k) for k in rwa_kpis],
