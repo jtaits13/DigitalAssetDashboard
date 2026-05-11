@@ -373,11 +373,6 @@ def set_rwa_explore_top_nav_target(target: RwaExploreTopNavTarget) -> None:
 
 
 def render_rwa_explore_top_nav_button(*, key: str) -> None:
-    """Top-left control on Explore-by index pages: **Back** to Global Market Overview or **Home** to landing."""
-    target = st.session_state.get(RWA_EXPLORE_TOP_NAV_SESSION_KEY, "home")
-    if target == "global_market":
-        if st.button("← Back", key=key):
-            st.switch_page("pages/RWA_Global_Market_Overview.py")
-    else:
-        if st.button("← Home", key=key):
-            st.switch_page("streamlit_app.py")
+    """Top-left control on Explore index pages: always return to RWA Global Market Overview."""
+    if st.button("← RWA Global Market Overview", key=key):
+        st.switch_page("pages/RWA_Global_Market_Overview.py")
