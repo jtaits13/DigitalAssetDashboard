@@ -142,16 +142,16 @@
     if (!layout) return null;
     var label = strip.querySelector(".ticker-strip__label");
     var mode = (strip.getAttribute("data-ticker-mode") || "").trim();
-    if (mode === "grid") {
-      var gridCount = parseInt(strip.getAttribute("data-grid-count"), 10);
-      if (!isFinite(gridCount) || gridCount < 1) gridCount = 8;
+    if (mode === "pills") {
+      var pillCount = parseInt(strip.getAttribute("data-pill-count"), 10);
+      if (!isFinite(pillCount) || pillCount < 1) pillCount = 8;
       return {
         strip: strip,
         layout: layout,
         label: label,
         mode: mode,
-        primary: layout.querySelector(".ticker-strip__grid"),
-        gridCount: gridCount,
+        primary: layout.querySelector(".ticker-strip__pills"),
+        pillCount: pillCount,
       };
     }
     var viewport = layout.querySelector(".ticker-strip__viewport");
@@ -207,11 +207,11 @@
     return strong && strong.textContent ? String(strong.textContent).trim().toUpperCase() : "";
   }
 
-  function initCryptoTickerGrid(parts) {
-    if (!parts || parts.mode !== "grid" || !parts.primary) return;
-    var gridHost = parts.primary;
-    var limit = parts.gridCount || 8;
-    var items = tickerChildElements(gridHost);
+  function initCryptoTickerPills(parts) {
+    if (!parts || parts.mode !== "pills" || !parts.primary) return;
+    var pillsHost = parts.primary;
+    var limit = parts.pillCount || 8;
+    var items = tickerChildElements(pillsHost);
     var preferred = ["BTC", "ETH", "SOL", "XRP", "ADA", "DOGE", "LINK", "AVAX"];
     var chosenItems = [];
     var remaining = items.slice();
@@ -228,10 +228,10 @@
     while (chosenItems.length < limit && remaining.length) {
       chosenItems.push(remaining.shift());
     }
-    gridHost.innerHTML = "";
+    pillsHost.innerHTML = "";
     chosenItems.forEach(function (item) {
-      if (item.classList) item.classList.add("ticker-strip__grid-item");
-      gridHost.appendChild(item);
+      if (item.classList) item.classList.add("ticker-strip__pill-item");
+      pillsHost.appendChild(item);
     });
   }
 
@@ -261,8 +261,8 @@
     for (; si < strips.length; si++) {
       var parts = getTickerParts(strips[si]);
       if (!parts || !parts.primary) continue;
-      if (parts.mode === "grid") {
-        initCryptoTickerGrid(parts);
+      if (parts.mode === "pills") {
+        initCryptoTickerPills(parts);
         continue;
       }
       if (parts.strip.getAttribute("data-ticker-marquee") === "1") continue;
