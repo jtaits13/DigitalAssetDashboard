@@ -137,57 +137,27 @@
   };
 
   /** Fill ``.ticker-strip`` from ``crypto_ticker.json``. */
-  function getTickerParts(strip) {
-    if (!strip) return null;
-    var layout = strip.querySelector(".ticker-strip__layout");
-    if (!layout) return null;
-    var lab = strip.querySelector(".ticker-strip__label");
-    var viewport = layout.querySelector(".ticker-strip__viewport");
-    var move = viewport ? viewport.querySelector(".ticker-strip__move") : null;
-    var drums = move ? move.querySelectorAll(".ticker-strip__chips") : [];
-    if (drums && drums.length) {
-      return {
-        layout: layout,
-        label: lab,
-        viewport: viewport,
-        move: move,
-        primary: drums[0],
-        clone: drums.length > 1 ? drums[1] : null,
-      };
-    }
-    var chips = null;
-    var k = 0;
-    var kids = layout.children;
-    for (; k < kids.length; k++) {
-      if (kids[k].classList && kids[k].classList.contains("ticker-strip__chips")) {
-        chips = kids[k];
-        break;
-      }
-    }
-    if (!chips) return null;
-    return {
-      layout: layout,
-      label: lab,
-      viewport: null,
-      move: null,
-      primary: chips,
-      clone: null,
-    };
-  }
-
   function hydrateStaticCryptoTicker(payload) {
     if (!payload || typeof document === "undefined") return;
     var strips = document.querySelectorAll(".ticker-strip");
     var si = 0;
     for (; si < strips.length; si++) {
       var strip = strips[si];
-      var parts = getTickerParts(strip);
-      if (!parts || !parts.primary) continue;
-      if (parts.label && payload.banner_title) parts.label.textContent = payload.banner_title;
-      if (payload.chips_inner_html) {
-        parts.primary.innerHTML = payload.chips_inner_html;
-        if (parts.clone) parts.clone.innerHTML = payload.chips_inner_html;
+      var layout = strip.querySelector(".ticker-strip__layout");
+      if (!layout) continue;
+      var lab = strip.querySelector(".ticker-strip__label");
+      var chips = null;
+      var k = 0;
+      var kids = layout.children;
+      for (; k < kids.length; k++) {
+        if (kids[k].classList && kids[k].classList.contains("ticker-strip__chips")) {
+          chips = kids[k];
+          break;
+        }
       }
+      if (!chips) continue;
+      if (lab && payload.banner_title) lab.textContent = payload.banner_title;
+      if (payload.chips_inner_html) chips.innerHTML = payload.chips_inner_html;
       if (typeof global.finalizeHubAnchors === "function") {
         global.finalizeHubAnchors(strip);
       }
@@ -201,272 +171,35 @@
     for (; si < strips.length; si++) {
       var strip = strips[si];
       if (!strip || strip.getAttribute("data-ticker-marquee") === "1") continue;
-      var parts = getTickerParts(strip);
-      if (!parts || !parts.primary) continue;
+      var layout = strip.querySelector(".ticker-strip__layout");
+      if (!layout) continue;
+      var chips = null;
+      var k = 0;
+      var kids = layout.children;
+      for (; k < kids.length; k++) {
+        if (kids[k].classList && kids[k].classList.contains("ticker-strip__chips")) {
+          chips = kids[k];
+          break;
+        }
+      }
+      if (!chips) continue;
 
       strip.setAttribute("data-ticker-marquee", "1");
-      parts.primary.classList.add("ticker-strip__drum");
 
-      if (parts.viewport && parts.move) {
-        if (!parts.clone) {
-          parts.clone = parts.primary.cloneNode(true);
-          parts.clone.setAttribute("aria-hidden", "true");
-          parts.clone.classList.add("ticker-strip__chips--marquee-clone");
-          parts.move.appendChild(parts.clone);
-        } else {
-          parts.clone.setAttribute("aria-hidden", "true");
-          parts.clone.classList.add("ticker-strip__chips--marquee-clone");
-        }
-        continue;
-      }
+      chips.classList.add("ticker-strip__drum");
 
       var viewport = document.createElement("div");
       viewport.className = "ticker-strip__viewport";
       var move = document.createElement("div");
       move.className = "ticker-strip__move";
-      move.appendChild(parts.primary);
-      var drumB = parts.primary.cloneNode(true);
+      move.appendChild(chips);
+      var drumB = chips.cloneNode(true);
       drumB.setAttribute("aria-hidden", "true");
       drumB.classList.add("ticker-strip__chips--marquee-clone");
       move.appendChild(drumB);
       viewport.appendChild(move);
-      parts.layout.appendChild(viewport);
+      layout.appendChild(viewport);
     }
-  }
-
-  function tickerNeedsOverflow(parts) {
-    if (!parts || !parts.viewport || !parts.move) return false;
-    return parts.move.scrollWidth > parts.viewport.clientWidth + 8;
-  }
-
-  function tickerPrefersReducedMotion() {
-    return !!(global.matchMedia && global.matchMedia("(prefers-reduced-motion: reduce)").matches);
-  }
-
-  function tickerAnimationUnavailable(parts) {
-    if (!parts || !parts.move) return true;
-    if (tickerPrefersReducedMotion()) return true;
-    if (typeof global.getComputedStyle !== "function") return false;
-    var style = global.getComputedStyle(parts.move);
-    if (!style) return false;
-    var name = style.animationName || style.webkitAnimationName || "";
-    var duration = style.animationDuration || style.webkitAnimationDuration || "";
-    return !name || name === "none" || !duration || duration === "0s" || duration === "0ms";
-  }
-
-  function tickerTranslateX(node) {
-    if (!node || typeof global.getComputedStyle !== "function") return null;
-    var style = global.getComputedStyle(node);
-    if (!style) return null;
-    var raw = style.transform || style.webkitTransform || "";
-    if (!raw || raw === "none") return 0;
-    var matrix3d = raw.match(/^matrix3d\((.+)\)$/);
-    if (matrix3d) {
-      var vals3d = matrix3d[1].split(",");
-      return vals3d.length > 12 ? parseFloat(vals3d[12]) || 0 : 0;
-    }
-    var matrix2d = raw.match(/^matrix\((.+)\)$/);
-    if (matrix2d) {
-      var vals2d = matrix2d[1].split(",");
-      return vals2d.length > 4 ? parseFloat(vals2d[4]) || 0 : 0;
-    }
-    var translate = raw.match(/translateX\(([-0-9.]+)px\)/i);
-    return translate ? parseFloat(translate[1]) || 0 : null;
-  }
-
-  function clearTickerMotionProbe(strip) {
-    if (!strip) return;
-    if (strip.__tickerMotionProbe && typeof global.clearTimeout === "function") {
-      global.clearTimeout(strip.__tickerMotionProbe);
-    }
-    strip.__tickerMotionProbe = 0;
-  }
-
-  function clearTickerRefreshRetry(strip) {
-    if (!strip) return;
-    if (strip.__tickerRefreshRetry && typeof global.clearTimeout === "function") {
-      global.clearTimeout(strip.__tickerRefreshRetry);
-    }
-    strip.__tickerRefreshRetry = 0;
-  }
-
-  function tickerLoopWidth(parts) {
-    if (!parts || !parts.primary) return 0;
-    if (parts.clone && typeof parts.clone.offsetLeft === "number" && typeof parts.primary.offsetLeft === "number") {
-      var loopWidth = parts.clone.offsetLeft - parts.primary.offsetLeft;
-      if (loopWidth > 0) return loopWidth;
-    }
-    return parts.primary.scrollWidth || 0;
-  }
-
-  function stopJsTicker(strip) {
-    if (!strip) return;
-    clearTickerMotionProbe(strip);
-    clearTickerRefreshRetry(strip);
-    if (strip.classList) strip.classList.remove("ticker-strip--js-marquee");
-    var state = strip.__tickerJsMarquee;
-    if (state) {
-      if (state.timer && typeof global.clearInterval === "function") global.clearInterval(state.timer);
-      if (state.enter && strip.removeEventListener) strip.removeEventListener("mouseenter", state.enter);
-      if (state.leave && strip.removeEventListener) strip.removeEventListener("mouseleave", state.leave);
-      strip.__tickerJsMarquee = null;
-    }
-    var parts = getTickerParts(strip);
-    if (parts && parts.move) parts.move.style.transform = "";
-  }
-
-  function startJsTicker(strip, parts) {
-    if (!strip || !parts || !parts.move || !parts.primary) return;
-    stopJsTicker(strip);
-    if (!strip.classList || typeof global.setInterval !== "function") return;
-    var state = {
-      offset: 0,
-      lastTick: Date.now(),
-      paused: false,
-      timer: 0,
-      enter: null,
-      leave: null,
-    };
-    state.enter = function () {
-      state.paused = true;
-    };
-    state.leave = function () {
-      state.paused = false;
-      state.lastTick = Date.now();
-    };
-    strip.addEventListener("mouseenter", state.enter);
-    strip.addEventListener("mouseleave", state.leave);
-    strip.classList.add("ticker-strip--js-marquee");
-    state.timer = global.setInterval(function () {
-      if (!document.body || !document.body.contains(strip)) {
-        stopJsTicker(strip);
-        return;
-      }
-      var nextParts = getTickerParts(strip);
-      if (!nextParts || !nextParts.viewport || !nextParts.move || !nextParts.primary) {
-        stopJsTicker(strip);
-        return;
-      }
-      var loopWidth = tickerLoopWidth(nextParts);
-      if (!loopWidth) return;
-      if (tickerPrefersReducedMotion() || !tickerNeedsOverflow(nextParts)) {
-        stopJsTicker(strip);
-        return;
-      }
-      var now = Date.now();
-      if (state.paused) {
-        state.lastTick = now;
-        return;
-      }
-      var speed = loopWidth / 72000;
-      if (!isFinite(speed) || speed <= 0) speed = 0.02;
-      state.offset += (now - state.lastTick) * speed;
-      state.lastTick = now;
-      while (state.offset >= loopWidth) state.offset -= loopWidth;
-      nextParts.move.style.transform = "translateX(" + (-state.offset).toFixed(2) + "px)";
-    }, 16);
-    strip.__tickerJsMarquee = state;
-  }
-
-  function scheduleTickerRefreshRetry(strip, delay) {
-    if (!strip || typeof global.setTimeout !== "function") return;
-    clearTickerRefreshRetry(strip);
-    strip.__tickerRefreshRetry = global.setTimeout(function () {
-      strip.__tickerRefreshRetry = 0;
-      if (document.body && document.body.contains(strip)) refreshCryptoTickerLayout(strip);
-    }, delay);
-  }
-
-  function refreshCryptoTickerLayout(strip) {
-    clearTickerMotionProbe(strip);
-    clearTickerRefreshRetry(strip);
-    var parts = getTickerParts(strip);
-    if (!parts || !parts.primary) return;
-    if (!parts.viewport || !parts.move) {
-      stopJsTicker(strip);
-      return;
-    }
-    var forceJsTicker = strip.getAttribute("data-ticker-mode") === "js";
-    if (tickerPrefersReducedMotion()) {
-      stopJsTicker(strip);
-      return;
-    }
-    if (!tickerNeedsOverflow(parts)) {
-      stopJsTicker(strip);
-      scheduleTickerRefreshRetry(strip, 450);
-      return;
-    }
-    if (forceJsTicker) {
-      startJsTicker(strip, parts);
-      return;
-    }
-    if (tickerAnimationUnavailable(parts)) {
-      startJsTicker(strip, parts);
-      return;
-    }
-    stopJsTicker(strip);
-    if (
-      typeof global.setTimeout !== "function" ||
-      typeof global.getComputedStyle !== "function" ||
-      (typeof document !== "undefined" && document.visibilityState === "hidden")
-    ) {
-      return;
-    }
-    var startX = tickerTranslateX(parts.move);
-    strip.__tickerMotionProbe = global.setTimeout(function () {
-      strip.__tickerMotionProbe = 0;
-      if (!document.body || !document.body.contains(strip)) return;
-      var nextParts = getTickerParts(strip);
-      if (!nextParts || !nextParts.viewport || !nextParts.move) return;
-      if (tickerPrefersReducedMotion() || !tickerNeedsOverflow(nextParts)) {
-        return;
-      }
-      var endX = tickerTranslateX(nextParts.move);
-      if (startX == null || endX == null || Math.abs(endX - startX) < 0.5) startJsTicker(strip, nextParts);
-    }, 900);
-  }
-
-  function refreshAllCryptoTickerLayouts() {
-    if (typeof document === "undefined") return;
-    var strips = document.querySelectorAll(".ticker-strip");
-    var si = 0;
-    for (; si < strips.length; si++) {
-      refreshCryptoTickerLayout(strips[si]);
-    }
-  }
-
-  var tickerLayoutRefreshTimer = 0;
-  var tickerBootstrapTimer = 0;
-  var tickerBootstrapPassesRemaining = 0;
-
-  function scheduleCryptoTickerLayoutRefresh() {
-    if (typeof global.setTimeout !== "function") {
-      refreshAllCryptoTickerLayouts();
-      return;
-    }
-    if (tickerLayoutRefreshTimer) global.clearTimeout(tickerLayoutRefreshTimer);
-    tickerLayoutRefreshTimer = global.setTimeout(function () {
-      tickerLayoutRefreshTimer = 0;
-      refreshAllCryptoTickerLayouts();
-    }, 120);
-  }
-
-  function startTickerBootstrapRefreshes() {
-    if (typeof global.setTimeout !== "function") {
-      refreshAllCryptoTickerLayouts();
-      return;
-    }
-    tickerBootstrapPassesRemaining = 12;
-    if (tickerBootstrapTimer) global.clearTimeout(tickerBootstrapTimer);
-    var run = function () {
-      tickerBootstrapTimer = 0;
-      refreshAllCryptoTickerLayouts();
-      tickerBootstrapPassesRemaining -= 1;
-      if (tickerBootstrapPassesRemaining > 0) {
-        tickerBootstrapTimer = global.setTimeout(run, 400);
-      }
-    };
-    tickerBootstrapTimer = global.setTimeout(run, 150);
   }
 
   function bootStaticCryptoTicker() {
@@ -477,47 +210,13 @@
         .then(function (data) {
           hydrateStaticCryptoTicker(data);
           initCryptoTickerMarquee();
-          refreshAllCryptoTickerLayouts();
-          startTickerBootstrapRefreshes();
         })
         .catch(function () {
           initCryptoTickerMarquee();
-          refreshAllCryptoTickerLayouts();
-          startTickerBootstrapRefreshes();
         });
     };
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
     else run();
-    if (typeof global.addEventListener === "function") {
-      global.addEventListener("resize", scheduleCryptoTickerLayoutRefresh);
-      global.addEventListener("load", function () {
-        scheduleCryptoTickerLayoutRefresh();
-        startTickerBootstrapRefreshes();
-      });
-      global.addEventListener("pageshow", function () {
-        scheduleCryptoTickerLayoutRefresh();
-        startTickerBootstrapRefreshes();
-      });
-    }
-    if (typeof document !== "undefined" && typeof document.addEventListener === "function") {
-      document.addEventListener("visibilitychange", function () {
-        if (document.visibilityState === "visible") {
-          scheduleCryptoTickerLayoutRefresh();
-          startTickerBootstrapRefreshes();
-        }
-      });
-    }
-    if (document.fonts && typeof document.fonts.ready === "object" && typeof document.fonts.ready.then === "function") {
-      document.fonts.ready.then(function () {
-        scheduleCryptoTickerLayoutRefresh();
-        startTickerBootstrapRefreshes();
-      }, function () {});
-    }
-    scheduleCryptoTickerLayoutRefresh();
-    if (typeof global.setTimeout === "function") {
-      global.setTimeout(scheduleCryptoTickerLayoutRefresh, 250);
-      global.setTimeout(scheduleCryptoTickerLayoutRefresh, 1000);
-    }
   }
   bootStaticCryptoTicker();
 

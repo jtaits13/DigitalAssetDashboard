@@ -526,11 +526,6 @@ body {
   animation-play-state: paused;
 }
 
-.ticker-strip--js-marquee .ticker-strip__move {
-  animation: none !important;
-  will-change: transform;
-}
-
 .ticker-strip__viewport .ticker-strip__drum.ticker-strip__chips {
   /* Column gap and trailing padding align the splice (#25→#1) without breaking the -50% loop. */
   --ticker-chip-column-gap: 2.25rem;
