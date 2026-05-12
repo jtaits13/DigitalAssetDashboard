@@ -1705,6 +1705,19 @@ p.back-link.back-link--below-header {
   width: 100%;
 }
 
+body.page-crypto #crypto-market-cap-chart {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+
+#js-home-crypto-source:empty,
+#js-crypto-chart-caption:empty,
+#js-crypto-chart-method:empty {
+  display: none;
+}
+
 .rwa-split-chart-shell > .aum-chart-host {
   min-height: 0;
 }

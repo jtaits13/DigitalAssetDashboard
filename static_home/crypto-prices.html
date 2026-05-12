@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Crypto Prices — Digital Assets Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=27" />
+  </head>
+  <body class="page-crypto">
+    <header class="site-header" role="banner">
+      <div class="site-header__inner">
+        <a class="site-brand" href="index.html">Digital Assets Dashboard</a>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="index.html">Home</a>
+          <a href="crypto-prices.html" class="is-active">Crypto Prices</a>
+          <a href="index.html#section-news">Digital Asset News</a>
+          <div class="site-nav__dropdown">
+            <span class="site-nav__trigger">U.S. ETPs</span>
+            <ul class="site-nav__sub">
+              <li><a href="etps.html">U.S. ETP Overview</a></li>
+              <li><a href="etf-news.html">ETF/ETP News</a></li>
+            </ul>
+          </div>
+          <div class="site-nav__dropdown">
+            <span class="site-nav__trigger">RWA Market</span>
+            <ul class="site-nav__sub">
+              <li><a href="rwa-global.html">Market Overview</a></li>
+              <li><a href="rwa-explore-asset-type.html">RWA · Assets</a></li>
+              <li><a href="rwa-explore-market-participant.html">RWA · Participants</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="page-back-below-header">
+      <p class="back-link back-link--below-header">
+        <a href="index.html">← Back to home</a>
+      </p>
+    </div>
+
+    <main class="page-shell">
+      <header class="page-intro">
+        <h1 class="page-intro__title">Crypto Prices — Top 25 Snapshot</h1>
+        <p class="page-intro__dek">
+          A dedicated crypto market page with a KPI strip, a 12-month market-cap trend chart, and a searchable
+          <strong>top 25</strong> spot-price table. Current market data comes from CoinGecko with CoinCap fallback for
+          spot rows when needed.
+        </p>
+      </header>
+
+      <div class="data-banner" id="js-data-banner" role="status" hidden></div>
+
+      <hr class="section-rule" />
+
+      <section class="hub-section" aria-labelledby="crypto-snapshot-heading">
+        <h2 class="subsection-head" id="crypto-snapshot-heading">Top-Line Market Snapshot</h2>
+        <div class="rwa-kpi-panel-static">
+          <div class="kpi-row kpi-row--etp-snapshot kpi-row--in-panel" id="js-crypto-kpi" aria-label="Crypto KPI strip">
+            <div class="kpi-cell"><span class="kpi-label">Loading…</span></div>
+          </div>
+        </div>
+        <p class="kpi-footnote kpi-footnote--block">
+          The colored <strong>% figures</strong> reflect <strong>24-hour</strong> changes for the primary market-cap KPI,
+          Bitcoin, and Ether.
+        </p>
+      </section>
+
+      <section class="hub-section" aria-labelledby="js-crypto-chart-heading">
+        <h2 class="subsection-head" id="js-crypto-chart-heading">Estimated total crypto market cap trend (12 months)</h2>
+        <div id="crypto-market-cap-chart" class="aum-chart-host" role="img" aria-label="Crypto market cap chart"></div>
+        <p class="chart-placeholder__cap" id="js-crypto-chart-caption">
+          Vertical axis: estimated total crypto market cap (trillions USD; daily points).
+        </p>
+        <p class="method-note" id="js-crypto-chart-method">
+          Daily CoinGecko market-cap history for the current top 25 coins, scaled to today's global market cap when that
+          benchmark is available.
+        </p>
+      </section>
+
+      <hr class="section-rule" />
+
+      <section class="hub-section" aria-labelledby="crypto-table-heading">
+        <h2 class="subsection-head u-vh" id="crypto-table-heading">Crypto table</h2>
+        <label class="search-field">
+          <span class="search-field__label">Search by coin name or ticker</span>
+          <input
+            type="search"
+            class="search-field__input"
+            id="js-crypto-search"
+            placeholder="Filter by name or ticker…"
+          />
+        </label>
+        <p class="toolbar-note" id="js-crypto-toolbar">Loading market table…</p>
+
+        <div class="table-wrap table-wrap--scroll">
+          <table class="data-table data-table--dense data-table--sortable" aria-label="Top 25 cryptocurrencies">
+            <thead id="js-crypto-thead">
+              <tr>
+                <th class="num th-sortable" data-sort="rank">Rank</th>
+                <th class="th-sortable" data-sort="symbol">Ticker</th>
+                <th class="th-sortable" data-sort="name">Coin</th>
+                <th class="num th-sortable" data-sort="price_usd">Price</th>
+                <th class="num th-sortable" data-sort="pct_24h">24H %</th>
+                <th class="num th-sortable" data-sort="market_cap_usd">Market Cap</th>
+                <th>Market Page</th>
+              </tr>
+            </thead>
+            <tbody id="js-crypto-tbody">
+              <tr>
+                <td colspan="7">Loading…</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="source-cap">
+          Spot market source: CoinGecko with CoinCap fallback. Historical market-cap series uses CoinGecko market-cap
+          history where available.
+        </p>
+        <p class="timestamp-foot" id="js-crypto-generated">—</p>
+      </section>
+
+      <p class="back-link">
+        <a href="index.html">← Back to home</a>
+      </p>
+    </main>
+
+    <footer class="site-footer">Digital Assets Dashboard · Crypto Prices · <time datetime="2026-05">May 2026</time></footer>
+    <script defer src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
+    <script defer src="js/static-base.js?v=5"></script>
+    <script defer src="js/etp-kpi-shared.js"></script>
+    <script defer src="js/crypto-page.js?v=1"></script>
+  </body>
+</html>

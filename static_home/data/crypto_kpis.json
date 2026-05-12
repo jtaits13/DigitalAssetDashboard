@@ -1,0 +1,30 @@
+{
+  "generated_at": "2026-05-12T12:57:15.226265+00:00",
+  "source": "CoinGecko",
+  "error": "",
+  "primary": {
+    "label": "Total market cap",
+    "value_display": "$2.78T",
+    "delta": {
+      "pct": -0.291,
+      "window": "24H"
+    }
+  },
+  "btc": {
+    "label": "BTC price",
+    "value_display": "$80,865",
+    "delta": {
+      "pct": -0.2235,
+      "window": "24H"
+    }
+  },
+  "eth": {
+    "label": "ETH price",
+    "value_display": "$2,288",
+    "delta": {
+      "pct": -1.7954,
+      "window": "24H"
+    }
+  },
+  "source_note": "Current market-cap totals come from CoinGecko global market data; spot rows use CoinGecko with CoinCap fallback."
+}

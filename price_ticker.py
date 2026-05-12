@@ -121,6 +121,24 @@ def _to_float(v: Any) -> float | None:
     return None
 
 
+def _to_int(v: Any) -> int | None:
+    if v is None:
+        return None
+    if isinstance(v, int):
+        return v
+    if isinstance(v, float):
+        return int(v)
+    if isinstance(v, str):
+        s = v.strip().replace(",", "")
+        if not s:
+            return None
+        try:
+            return int(float(s))
+        except ValueError:
+            return None
+    return None
+
+
 def _parse_coingecko_markets(data: Any, limit: int) -> list[dict[str, Any]]:
     if not isinstance(data, list):
         return []
@@ -141,10 +159,14 @@ def _parse_coingecko_markets(data: Any, limit: int) -> list[dict[str, Any]]:
         )
         out.append(
             {
+                "source": "coingecko",
+                "coin_id": str(cid).strip() if isinstance(cid, str) and cid.strip() else None,
                 "symbol": sym,
                 "name": str(c.get("name", sym))[:48],
                 "price_usd": price,
                 "pct_24h": pct,
+                "market_cap_usd": _to_float(c.get("market_cap")),
+                "market_cap_rank": _to_int(c.get("market_cap_rank")),
                 "detail_url": detail_url,
             }
         )
@@ -176,10 +198,14 @@ def _parse_coincap_assets(payload: Any, limit: int) -> list[dict[str, Any]]:
         )
         out.append(
             {
+                "source": "coincap",
+                "coin_id": None,
                 "symbol": sym,
                 "name": str(c.get("name", sym))[:48],
                 "price_usd": price,
                 "pct_24h": pct,
+                "market_cap_usd": _to_float(c.get("marketCapUsd")),
+                "market_cap_rank": _to_int(c.get("rank")),
                 "detail_url": detail_url,
             }
         )

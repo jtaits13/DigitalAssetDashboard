@@ -29,6 +29,7 @@
     }
     if (p.endsWith("/index.html")) return p.slice(0, -"index.html".length);
     if (p.endsWith("/etf-news.html")) return p.slice(0, -"etf-news.html".length);
+    if (p.endsWith("/crypto-prices.html")) return p.slice(0, -"crypto-prices.html".length);
     if (p.endsWith("/all-articles.html")) return p.slice(0, -"all-articles.html".length);
     if (p.endsWith("/all-regulatory.html")) return p.slice(0, -"all-regulatory.html".length);
     if (p.endsWith("/etps.html")) return p.slice(0, -"etps.html".length);
@@ -105,6 +106,7 @@
         ["rwa-tokenized-stocks.html", "rwa-tokenized-stocks.html"],
         ["all-articles.html", "all-articles.html"],
         ["all-regulatory.html", "all-regulatory.html"],
+        ["crypto-prices.html", "crypto-prices.html"],
       ];
       pairs.forEach(function (p) {
         var abs = assetUrl(p[1]);
