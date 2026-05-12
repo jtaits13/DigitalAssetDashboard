@@ -292,11 +292,10 @@
 
   function tickerLoopWidth(parts) {
     if (!parts || !parts.primary) return 0;
-    if (parts.primary.getBoundingClientRect) {
-      var rectWidth = parts.primary.getBoundingClientRect().width;
-      if (rectWidth > 0) return rectWidth;
+    if (parts.clone && typeof parts.clone.offsetLeft === "number" && typeof parts.primary.offsetLeft === "number") {
+      var loopWidth = parts.clone.offsetLeft - parts.primary.offsetLeft;
+      if (loopWidth > 0) return loopWidth;
     }
-    if (typeof parts.primary.offsetWidth === "number" && parts.primary.offsetWidth > 0) return parts.primary.offsetWidth;
     return parts.primary.scrollWidth || 0;
   }
 
@@ -307,26 +306,23 @@
     if (strip.classList) strip.classList.remove("ticker-strip--js-marquee");
     var state = strip.__tickerJsMarquee;
     if (state) {
-      if (state.raf && typeof global.cancelAnimationFrame === "function") global.cancelAnimationFrame(state.raf);
-      if (state.timer && typeof global.clearTimeout === "function") global.clearTimeout(state.timer);
+      if (state.timer && typeof global.clearInterval === "function") global.clearInterval(state.timer);
       if (state.enter && strip.removeEventListener) strip.removeEventListener("mouseenter", state.enter);
       if (state.leave && strip.removeEventListener) strip.removeEventListener("mouseleave", state.leave);
       strip.__tickerJsMarquee = null;
     }
     var parts = getTickerParts(strip);
     if (parts && parts.move) parts.move.style.transform = "";
-    if (parts && parts.viewport) parts.viewport.scrollLeft = 0;
   }
 
   function startJsTicker(strip, parts) {
-    if (!strip || !parts || !parts.move || !parts.primary || !parts.viewport) return;
+    if (!strip || !parts || !parts.move || !parts.primary) return;
     stopJsTicker(strip);
-    if (!strip.classList) return;
+    if (!strip.classList || typeof global.setInterval !== "function") return;
     var state = {
       offset: 0,
-      lastTick: 0,
+      lastTick: Date.now(),
       paused: false,
-      raf: 0,
       timer: 0,
       enter: null,
       leave: null,
@@ -341,8 +337,7 @@
     strip.addEventListener("mouseenter", state.enter);
     strip.addEventListener("mouseleave", state.leave);
     strip.classList.add("ticker-strip--js-marquee");
-    var step = function (now) {
-      state.raf = 0;
+    state.timer = global.setInterval(function () {
       if (!document.body || !document.body.contains(strip)) {
         stopJsTicker(strip);
         return;
@@ -353,47 +348,23 @@
         return;
       }
       var loopWidth = tickerLoopWidth(nextParts);
-      var viewportWidth = nextParts.viewport.clientWidth || 0;
-      if (!loopWidth || !viewportWidth) {
-        if (typeof global.setTimeout === "function") {
-          state.timer = global.setTimeout(function () {
-            state.timer = 0;
-            queueNextFrame();
-          }, 120);
-        }
-        return;
-      }
-      if (tickerPrefersReducedMotion() || loopWidth <= viewportWidth + 8) {
+      if (!loopWidth) return;
+      if (tickerPrefersReducedMotion() || !tickerNeedsOverflow(nextParts)) {
         stopJsTicker(strip);
         return;
       }
-      nextParts.move.style.transform = "";
+      var now = Date.now();
       if (state.paused) {
         state.lastTick = now;
-        nextParts.viewport.scrollLeft = state.offset;
-        queueNextFrame();
         return;
       }
-      if (!state.lastTick) state.lastTick = now;
       var speed = loopWidth / 72000;
       if (!isFinite(speed) || speed <= 0) speed = 0.02;
       state.offset += (now - state.lastTick) * speed;
       state.lastTick = now;
       while (state.offset >= loopWidth) state.offset -= loopWidth;
-      nextParts.viewport.scrollLeft = state.offset;
-      queueNextFrame();
-    };
-    var queueNextFrame = function () {
-      if (typeof global.requestAnimationFrame === "function") {
-        state.raf = global.requestAnimationFrame(step);
-      } else if (typeof global.setTimeout === "function") {
-        state.timer = global.setTimeout(function () {
-          state.timer = 0;
-          step(Date.now());
-        }, 16);
-      }
-    };
-    queueNextFrame();
+      nextParts.move.style.transform = "translateX(" + (-state.offset).toFixed(2) + "px)";
+    }, 16);
     strip.__tickerJsMarquee = state;
   }
 
@@ -465,6 +436,8 @@
   }
 
   var tickerLayoutRefreshTimer = 0;
+  var tickerBootstrapTimer = 0;
+  var tickerBootstrapPassesRemaining = 0;
 
   function scheduleCryptoTickerLayoutRefresh() {
     if (typeof global.setTimeout !== "function") {
@@ -478,6 +451,24 @@
     }, 120);
   }
 
+  function startTickerBootstrapRefreshes() {
+    if (typeof global.setTimeout !== "function") {
+      refreshAllCryptoTickerLayouts();
+      return;
+    }
+    tickerBootstrapPassesRemaining = 12;
+    if (tickerBootstrapTimer) global.clearTimeout(tickerBootstrapTimer);
+    var run = function () {
+      tickerBootstrapTimer = 0;
+      refreshAllCryptoTickerLayouts();
+      tickerBootstrapPassesRemaining -= 1;
+      if (tickerBootstrapPassesRemaining > 0) {
+        tickerBootstrapTimer = global.setTimeout(run, 400);
+      }
+    };
+    tickerBootstrapTimer = global.setTimeout(run, 150);
+  }
+
   function bootStaticCryptoTicker() {
     if (typeof document === "undefined") return;
     var run = function () {
@@ -487,26 +478,40 @@
           hydrateStaticCryptoTicker(data);
           initCryptoTickerMarquee();
           refreshAllCryptoTickerLayouts();
+          startTickerBootstrapRefreshes();
         })
         .catch(function () {
           initCryptoTickerMarquee();
           refreshAllCryptoTickerLayouts();
+          startTickerBootstrapRefreshes();
         });
     };
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
     else run();
     if (typeof global.addEventListener === "function") {
       global.addEventListener("resize", scheduleCryptoTickerLayoutRefresh);
-      global.addEventListener("load", scheduleCryptoTickerLayoutRefresh);
-      global.addEventListener("pageshow", scheduleCryptoTickerLayoutRefresh);
+      global.addEventListener("load", function () {
+        scheduleCryptoTickerLayoutRefresh();
+        startTickerBootstrapRefreshes();
+      });
+      global.addEventListener("pageshow", function () {
+        scheduleCryptoTickerLayoutRefresh();
+        startTickerBootstrapRefreshes();
+      });
     }
     if (typeof document !== "undefined" && typeof document.addEventListener === "function") {
       document.addEventListener("visibilitychange", function () {
-        if (document.visibilityState === "visible") scheduleCryptoTickerLayoutRefresh();
+        if (document.visibilityState === "visible") {
+          scheduleCryptoTickerLayoutRefresh();
+          startTickerBootstrapRefreshes();
+        }
       });
     }
     if (document.fonts && typeof document.fonts.ready === "object" && typeof document.fonts.ready.then === "function") {
-      document.fonts.ready.then(scheduleCryptoTickerLayoutRefresh, function () {});
+      document.fonts.ready.then(function () {
+        scheduleCryptoTickerLayoutRefresh();
+        startTickerBootstrapRefreshes();
+      }, function () {});
     }
     scheduleCryptoTickerLayoutRefresh();
     if (typeof global.setTimeout === "function") {
