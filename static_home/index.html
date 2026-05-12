@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=24" />
+    <link rel="stylesheet" href="styles.css?v=25" />
   </head>
   <body>
     <header class="site-header" role="banner">
@@ -38,22 +38,13 @@
       </div>
     </header>
 
-    <div class="ticker-strip ticker-strip--summary" aria-label="Cryptocurrency prices" data-ticker-mode="summary" data-summary-count="6">
+    <div class="ticker-strip ticker-strip--grid" aria-label="Cryptocurrency prices" data-ticker-mode="grid" data-grid-count="8">
       <div class="ticker-strip__layout">
-        <div class="ticker-strip__summary-head">
+        <div class="ticker-strip__grid-head">
           <span class="ticker-strip__label">Top cryptocurrencies</span>
-          <button
-            class="ticker-strip__toggle"
-            id="js-home-ticker-toggle"
-            type="button"
-            aria-expanded="false"
-            aria-controls="js-home-ticker-all"
-            hidden
-          >
-            Show all prices
-          </button>
+          <span class="ticker-strip__meta">Price and 24h move</span>
         </div>
-        <div class="ticker-strip__summary ticker-strip__chips" id="js-home-ticker-summary">
+        <div class="ticker-strip__grid ticker-strip__chips" id="js-home-ticker-grid">
           <span class="ticker-chip"><strong>BTC</strong> <span class="ticker-usd">$97,240</span> <span class="up">+1.2%</span></span>
           <span class="ticker-chip"><strong>ETH</strong> <span class="ticker-usd">$3,412</span> <span class="up">+0.8%</span></span>
           <span class="ticker-chip"><strong>SOL</strong> <span class="ticker-usd">$178</span> <span class="down">−0.4%</span></span>
@@ -63,7 +54,6 @@
           <span class="ticker-chip"><strong>DOGE</strong> <span class="ticker-usd">$0.16</span> <span class="up">+0.6%</span></span>
           <span class="ticker-chip"><strong>LINK</strong> <span class="ticker-usd">$17.90</span> <span class="up">+1.5%</span></span>
         </div>
-        <div class="ticker-strip__all ticker-strip__chips" id="js-home-ticker-all" hidden></div>
       </div>
     </div>
 
@@ -217,7 +207,7 @@
     <footer class="site-footer">
       Digital Assets Dashboard · Home · <time datetime="2026-05">May 2026</time>
     </footer>
-    <script src="js/static-base.js?v=2"></script>
+    <script src="js/static-base.js?v=3"></script>
     <script src="js/etp-kpi-shared.js"></script>
     <script src="js/rwa-onchain-home.js?v=4"></script>
     <script src="js/home-page.js?v=2"></script>

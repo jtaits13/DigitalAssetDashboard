@@ -142,18 +142,16 @@
     if (!layout) return null;
     var label = strip.querySelector(".ticker-strip__label");
     var mode = (strip.getAttribute("data-ticker-mode") || "").trim();
-    if (mode === "summary") {
-      var summaryCount = parseInt(strip.getAttribute("data-summary-count"), 10);
-      if (!isFinite(summaryCount) || summaryCount < 1) summaryCount = 6;
+    if (mode === "grid") {
+      var gridCount = parseInt(strip.getAttribute("data-grid-count"), 10);
+      if (!isFinite(gridCount) || gridCount < 1) gridCount = 8;
       return {
         strip: strip,
         layout: layout,
         label: label,
         mode: mode,
-        primary: layout.querySelector(".ticker-strip__summary"),
-        overflow: layout.querySelector(".ticker-strip__all"),
-        toggle: layout.querySelector(".ticker-strip__toggle"),
-        summaryCount: summaryCount,
+        primary: layout.querySelector(".ticker-strip__grid"),
+        gridCount: gridCount,
       };
     }
     var viewport = layout.querySelector(".ticker-strip__viewport");
@@ -209,57 +207,32 @@
     return strong && strong.textContent ? String(strong.textContent).trim().toUpperCase() : "";
   }
 
-  function initCryptoTickerSummary(parts) {
-    if (!parts || parts.mode !== "summary" || !parts.primary) return;
-    var summaryHost = parts.primary;
-    var overflowHost = parts.overflow;
-    var toggle = parts.toggle;
-    var limit = parts.summaryCount || 6;
-    var items = tickerChildElements(summaryHost);
-    var preferred = ["BTC", "ETH", "SOL", "XRP", "ADA", "DOGE"];
-    var preferredItems = [];
+  function initCryptoTickerGrid(parts) {
+    if (!parts || parts.mode !== "grid" || !parts.primary) return;
+    var gridHost = parts.primary;
+    var limit = parts.gridCount || 8;
+    var items = tickerChildElements(gridHost);
+    var preferred = ["BTC", "ETH", "SOL", "XRP", "ADA", "DOGE", "LINK", "AVAX"];
+    var chosenItems = [];
     var remaining = items.slice();
     var pi = 0;
-    for (; pi < preferred.length && preferredItems.length < limit; pi++) {
+    for (; pi < preferred.length && chosenItems.length < limit; pi++) {
       var ri = 0;
       for (; ri < remaining.length; ri++) {
         if (tickerItemSymbol(remaining[ri]) === preferred[pi]) {
-          preferredItems.push(remaining.splice(ri, 1)[0]);
+          chosenItems.push(remaining.splice(ri, 1)[0]);
           break;
         }
       }
     }
-    while (preferredItems.length < limit && remaining.length) {
-      preferredItems.push(remaining.shift());
+    while (chosenItems.length < limit && remaining.length) {
+      chosenItems.push(remaining.shift());
     }
-    summaryHost.innerHTML = "";
-    preferredItems.forEach(function (item) {
-      summaryHost.appendChild(item);
+    gridHost.innerHTML = "";
+    chosenItems.forEach(function (item) {
+      if (item.classList) item.classList.add("ticker-strip__grid-item");
+      gridHost.appendChild(item);
     });
-    if (overflowHost) {
-      overflowHost.innerHTML = "";
-      remaining.forEach(function (item) {
-        overflowHost.appendChild(item);
-      });
-    }
-    var hasOverflow = !!(overflowHost && overflowHost.children.length);
-    if (overflowHost) overflowHost.hidden = !hasOverflow;
-    if (toggle) {
-      toggle.hidden = !hasOverflow;
-      toggle.setAttribute("aria-expanded", "false");
-      toggle.textContent = "Show all prices";
-      if (!toggle.__tickerSummaryBound) {
-        toggle.addEventListener("click", function () {
-          var expanded = toggle.getAttribute("aria-expanded") === "true";
-          expanded = !expanded;
-          toggle.setAttribute("aria-expanded", expanded ? "true" : "false");
-          toggle.textContent = expanded ? "Show fewer prices" : "Show all prices";
-          if (overflowHost) overflowHost.hidden = !expanded;
-        });
-        toggle.__tickerSummaryBound = true;
-      }
-    }
-    if (overflowHost && hasOverflow) overflowHost.hidden = true;
   }
 
   /** Fill ``.ticker-strip`` from ``crypto_ticker.json``. */
@@ -288,8 +261,8 @@
     for (; si < strips.length; si++) {
       var parts = getTickerParts(strips[si]);
       if (!parts || !parts.primary) continue;
-      if (parts.mode === "summary") {
-        initCryptoTickerSummary(parts);
+      if (parts.mode === "grid") {
+        initCryptoTickerGrid(parts);
         continue;
       }
       if (parts.strip.getAttribute("data-ticker-marquee") === "1") continue;
