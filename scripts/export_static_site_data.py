@@ -1433,8 +1433,11 @@ def main() -> None:
         "method_note": "The interactive market-cap chart is rendered client-side from TradingView so the export does not depend on rate-limited historical API calls.",
         "supported_timeframes": ["1M", "6M", "1Y", "5Y"],
     }
+    crypto_banner_title = "Top 50 Cryptocurrencies"
     try:
-        from price_ticker import TICKER_COUNT, fetch_top_crypto_tickers, hub_ticker_static_json_payload
+        from price_ticker import PRICE_TICKER_BANNER_TITLE, TICKER_COUNT, fetch_top_crypto_tickers, hub_ticker_static_json_payload
+
+        crypto_banner_title = PRICE_TICKER_BANNER_TITLE
 
         t_rows, t_err, t_src = fetch_top_crypto_tickers(TICKER_COUNT)
         crypto_payload = hub_ticker_static_json_payload(t_rows, t_err, t_src)
@@ -1497,7 +1500,7 @@ def main() -> None:
     except Exception as exc:
         manifest["errors"].append(f"Crypto export: {exc}")
         crypto_payload = {
-            "banner_title": "Top 25 Cryptocurrencies",
+            "banner_title": crypto_banner_title,
             "chips_inner_html": f'<span class="ticker-chip ticker-chip--error">{html_escape(str(exc))}</span>',
             "source": "",
             "error": str(exc),

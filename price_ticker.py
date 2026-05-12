@@ -15,7 +15,7 @@ except Exception:  # noqa: BLE001
 
 COINGECKO_MARKETS_URL = "https://api.coingecko.com/api/v3/coins/markets"
 COINCAP_ASSETS_URL = "https://api.coincap.io/v2/assets"
-TICKER_COUNT = 25
+TICKER_COUNT = 50
 # Banner title above the scrolling chips (data may be CoinGecko or CoinCap).
 PRICE_TICKER_BANNER_TITLE = f"Top {TICKER_COUNT} Cryptocurrencies"
 
@@ -219,7 +219,7 @@ def _parse_coincap_assets(payload: Any, limit: int) -> list[dict[str, Any]]:
 
 @st.cache_data(ttl=120, show_spinner=False)
 def fetch_top_crypto_tickers(limit: int = TICKER_COUNT) -> tuple[list[dict[str, Any]], str | None, str]:
-    """Top ~25 by market cap: CoinGecko, then CoinCap."""
+    """Top cryptocurrencies by market cap: CoinGecko, then CoinCap."""
     lim = max(min(limit, 250), 1)
     headers = {
         "User-Agent": "Mozilla/5.0 (compatible; Digital-Assets-Dashboard-News/1.0)",
