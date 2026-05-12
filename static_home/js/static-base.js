@@ -358,8 +358,13 @@
       stopJsTicker(strip);
       return;
     }
+    var forceJsTicker = strip.getAttribute("data-ticker-mode") === "js";
     if (tickerPrefersReducedMotion() || !tickerNeedsOverflow(parts)) {
       stopJsTicker(strip);
+      return;
+    }
+    if (forceJsTicker) {
+      startJsTicker(strip, parts);
       return;
     }
     if (tickerAnimationUnavailable(parts)) {
