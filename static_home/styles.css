@@ -526,20 +526,9 @@ body {
   animation-play-state: paused;
 }
 
-.ticker-strip--stacked .ticker-strip__viewport {
-  overflow: visible;
-}
-
-.ticker-strip--stacked .ticker-strip__move {
+.ticker-strip--js-marquee .ticker-strip__move {
   animation: none !important;
-  transform: none !important;
-  display: block;
-  width: auto;
-  max-width: 100%;
-}
-
-.ticker-strip--stacked .ticker-strip__move .ticker-strip__chips--marquee-clone {
-  display: none !important;
+  will-change: transform;
 }
 
 .ticker-strip__viewport .ticker-strip__drum.ticker-strip__chips {
@@ -557,13 +546,6 @@ body {
 
 .ticker-strip__chips.ticker-strip__chips--marquee-clone {
   opacity: inherit;
-}
-
-.ticker-strip--stacked .ticker-strip__viewport .ticker-strip__drum.ticker-strip__chips {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  padding-inline-end: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {

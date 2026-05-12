@@ -234,20 +234,18 @@
     }
   }
 
-  function setTickerStacked(strip, isStacked) {
-    if (!strip || !strip.classList) return;
-    if (isStacked) strip.classList.add("ticker-strip--stacked");
-    else strip.classList.remove("ticker-strip--stacked");
-  }
-
   function tickerNeedsOverflow(parts) {
     if (!parts || !parts.viewport || !parts.move) return false;
     return parts.move.scrollWidth > parts.viewport.clientWidth + 8;
   }
 
+  function tickerPrefersReducedMotion() {
+    return !!(global.matchMedia && global.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }
+
   function tickerAnimationUnavailable(parts) {
     if (!parts || !parts.move) return true;
-    if (global.matchMedia && global.matchMedia("(prefers-reduced-motion: reduce)").matches) return true;
+    if (tickerPrefersReducedMotion()) return true;
     if (typeof global.getComputedStyle !== "function") return false;
     var style = global.getComputedStyle(parts.move);
     if (!style) return false;
@@ -276,42 +274,118 @@
     return translate ? parseFloat(translate[1]) || 0 : null;
   }
 
+  function clearTickerMotionProbe(strip) {
+    if (!strip) return;
+    if (strip.__tickerMotionProbe && typeof global.clearTimeout === "function") {
+      global.clearTimeout(strip.__tickerMotionProbe);
+    }
+    strip.__tickerMotionProbe = 0;
+  }
+
+  function stopJsTicker(strip) {
+    if (!strip) return;
+    clearTickerMotionProbe(strip);
+    if (strip.classList) strip.classList.remove("ticker-strip--js-marquee");
+    var state = strip.__tickerJsMarquee;
+    if (state) {
+      if (state.timer && typeof global.clearInterval === "function") global.clearInterval(state.timer);
+      if (state.enter && strip.removeEventListener) strip.removeEventListener("mouseenter", state.enter);
+      if (state.leave && strip.removeEventListener) strip.removeEventListener("mouseleave", state.leave);
+      strip.__tickerJsMarquee = null;
+    }
+    var parts = getTickerParts(strip);
+    if (parts && parts.move) parts.move.style.transform = "";
+  }
+
+  function startJsTicker(strip, parts) {
+    if (!strip || !parts || !parts.move || !parts.primary) return;
+    stopJsTicker(strip);
+    if (!strip.classList || typeof global.setInterval !== "function") return;
+    var state = {
+      offset: 0,
+      lastTick: Date.now(),
+      paused: false,
+      timer: 0,
+      enter: null,
+      leave: null,
+    };
+    state.enter = function () {
+      state.paused = true;
+    };
+    state.leave = function () {
+      state.paused = false;
+      state.lastTick = Date.now();
+    };
+    strip.addEventListener("mouseenter", state.enter);
+    strip.addEventListener("mouseleave", state.leave);
+    strip.classList.add("ticker-strip--js-marquee");
+    state.timer = global.setInterval(function () {
+      if (!document.body || !document.body.contains(strip)) {
+        stopJsTicker(strip);
+        return;
+      }
+      var nextParts = getTickerParts(strip);
+      if (!nextParts || !nextParts.viewport || !nextParts.move || !nextParts.primary) {
+        stopJsTicker(strip);
+        return;
+      }
+      if (tickerPrefersReducedMotion() || !tickerNeedsOverflow(nextParts)) {
+        stopJsTicker(strip);
+        return;
+      }
+      var now = Date.now();
+      if (state.paused) {
+        state.lastTick = now;
+        return;
+      }
+      var primaryWidth = nextParts.primary.scrollWidth;
+      if (!primaryWidth) return;
+      var speed = primaryWidth / 72000;
+      if (!isFinite(speed) || speed <= 0) speed = 0.02;
+      state.offset += (now - state.lastTick) * speed;
+      state.lastTick = now;
+      while (state.offset >= primaryWidth) state.offset -= primaryWidth;
+      nextParts.move.style.transform = "translateX(" + (-state.offset).toFixed(2) + "px)";
+    }, 16);
+    strip.__tickerJsMarquee = state;
+  }
+
   function refreshCryptoTickerLayout(strip) {
-    setTickerStacked(strip, false);
+    clearTickerMotionProbe(strip);
     var parts = getTickerParts(strip);
     if (!parts || !parts.primary) return;
     if (!parts.viewport || !parts.move) {
-      setTickerStacked(strip, true);
+      stopJsTicker(strip);
       return;
     }
-    if (!tickerNeedsOverflow(parts) || tickerAnimationUnavailable(parts)) {
-      setTickerStacked(strip, true);
+    if (tickerPrefersReducedMotion() || !tickerNeedsOverflow(parts)) {
+      stopJsTicker(strip);
       return;
     }
-    setTickerStacked(strip, false);
+    if (tickerAnimationUnavailable(parts)) {
+      startJsTicker(strip, parts);
+      return;
+    }
+    stopJsTicker(strip);
     if (
       typeof global.setTimeout !== "function" ||
-      typeof global.requestAnimationFrame !== "function" ||
       typeof global.getComputedStyle !== "function" ||
       (typeof document !== "undefined" && document.visibilityState === "hidden")
     ) {
       return;
     }
-    global.requestAnimationFrame(function () {
-      var startX = tickerTranslateX(parts.move);
-      global.setTimeout(function () {
-        if (!document.body || !document.body.contains(strip)) return;
-        var nextParts = getTickerParts(strip);
-        if (!nextParts || !nextParts.viewport || !nextParts.move) return;
-        if (!tickerNeedsOverflow(nextParts) || tickerAnimationUnavailable(nextParts)) {
-          setTickerStacked(strip, true);
-          return;
-        }
-        var endX = tickerTranslateX(nextParts.move);
-        if (startX == null || endX == null) return;
-        if (Math.abs(endX - startX) < 0.5) setTickerStacked(strip, true);
-      }, 700);
-    });
+    var startX = tickerTranslateX(parts.move);
+    strip.__tickerMotionProbe = global.setTimeout(function () {
+      strip.__tickerMotionProbe = 0;
+      if (!document.body || !document.body.contains(strip)) return;
+      var nextParts = getTickerParts(strip);
+      if (!nextParts || !nextParts.viewport || !nextParts.move) return;
+      if (tickerPrefersReducedMotion() || !tickerNeedsOverflow(nextParts)) {
+        return;
+      }
+      var endX = tickerTranslateX(nextParts.move);
+      if (startX == null || endX == null || Math.abs(endX - startX) < 0.5) startJsTicker(strip, nextParts);
+    }, 900);
   }
 
   function refreshAllCryptoTickerLayouts() {
