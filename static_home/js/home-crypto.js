@@ -55,6 +55,9 @@
     var primary = payload.primary || {};
     var btc = payload.btc || {};
     var eth = payload.eth || {};
+    function maybeDelta(delta) {
+      return delta && delta.pct != null ? fmtDelta(delta.pct, delta.window) : "";
+    }
     els.kpi.innerHTML =
       '<div class="kpi-cell">' +
       '<span class="kpi-label">' +
@@ -63,7 +66,7 @@
       '<span class="kpi-val">' +
       escapeHtml(primary.value_display || "—") +
       "</span>" +
-      fmtDelta(primary.delta && primary.delta.pct, primary.delta && primary.delta.window) +
+      maybeDelta(primary.delta) +
       "</div>" +
       '<div class="kpi-cell">' +
       '<span class="kpi-label">' +
@@ -72,7 +75,7 @@
       '<span class="kpi-val">' +
       escapeHtml(btc.value_display || "—") +
       "</span>" +
-      fmtDelta(btc.delta && btc.delta.pct, btc.delta && btc.delta.window) +
+      maybeDelta(btc.delta) +
       "</div>" +
       '<div class="kpi-cell">' +
       '<span class="kpi-label">' +
@@ -81,7 +84,7 @@
       '<span class="kpi-val">' +
       escapeHtml(eth.value_display || "—") +
       "</span>" +
-      fmtDelta(eth.delta && eth.delta.pct, eth.delta && eth.delta.window) +
+      maybeDelta(eth.delta) +
       "</div>";
   }
 
@@ -113,7 +116,7 @@
           '<td class="num">' +
           escapeHtml(fmtPrice(row.price_usd)) +
           "</td>" +
-          fmtPctTd(row.pct_24h) +
+          fmtPctTd(row.pct_30d) +
           '<td class="num">' +
           escapeHtml(fmtCap(row.market_cap_usd)) +
           "</td>";

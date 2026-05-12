@@ -1264,13 +1264,13 @@ def _crypto_row_json(r: dict[str, object], fallback_rank: int) -> dict[str, obje
         rank_num = fallback_rank
     price = r.get("price_usd")
     market_cap = r.get("market_cap_usd")
-    pct_24h = r.get("pct_24h")
+    pct_30d = r.get("pct_30d")
     return {
         "rank": rank_num,
         "symbol": str(r.get("symbol") or ""),
         "name": str(r.get("name") or ""),
         "price_usd": float(price) if price is not None else None,
-        "pct_24h": float(pct_24h) if pct_24h is not None else None,
+        "pct_30d": float(pct_30d) if pct_30d is not None else None,
         "market_cap_usd": float(market_cap) if market_cap is not None else None,
         "detail_url": str(r.get("detail_url") or ""),
     }
@@ -1397,9 +1397,9 @@ def main() -> None:
         "generated_at": crypto_generated_at,
         "source": "",
         "error": "",
-        "primary": {"label": "Total market cap", "value_display": "—", "delta": {"pct": None, "window": "24H"}},
-        "btc": {"label": "BTC price", "value_display": "—", "delta": {"pct": None, "window": "24H"}},
-        "eth": {"label": "ETH price", "value_display": "—", "delta": {"pct": None, "window": "24H"}},
+        "primary": {"label": "Total market cap", "value_display": "—", "delta": {"pct": None, "window": ""}},
+        "btc": {"label": "BTC price", "value_display": "—", "delta": {"pct": None, "window": "1M"}},
+        "eth": {"label": "ETH price", "value_display": "—", "delta": {"pct": None, "window": "1M"}},
         "source_note": "Crypto market data is unavailable right now.",
     }
     crypto_chart_payload: dict[str, object] = {
@@ -1455,20 +1455,20 @@ def main() -> None:
             "primary": {
                 "label": primary_label,
                 "value_display": primary_value,
-                "delta": _crypto_delta_dict(global_snapshot.get("market_cap_change_pct_24h"), "24H"),
+                "delta": {"pct": None, "window": ""},
             },
             "btc": {
                 "label": "BTC price",
                 "value_display": _fmt_crypto_price(btc_row.get("price_usd")) if btc_row else "—",
-                "delta": _crypto_delta_dict(btc_row.get("pct_24h") if btc_row else None, "24H"),
+                "delta": _crypto_delta_dict(btc_row.get("pct_30d") if btc_row else None, "1M"),
             },
             "eth": {
                 "label": "ETH price",
                 "value_display": _fmt_crypto_price(eth_row.get("price_usd")) if eth_row else "—",
-                "delta": _crypto_delta_dict(eth_row.get("pct_24h") if eth_row else None, "24H"),
+                "delta": _crypto_delta_dict(eth_row.get("pct_30d") if eth_row else None, "1M"),
             },
             "source_note": (
-                "Current market-cap totals come from CoinGecko global market data; spot rows use CoinGecko with CoinCap fallback."
+                "Current market-cap totals come from CoinGecko global market data; one-month price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change."
                 if total_market_cap_usd
                 else "Spot rows use CoinGecko with CoinCap fallback. When total market-cap data is unavailable, the KPI falls back to the tracked top-25 market cap."
             ),

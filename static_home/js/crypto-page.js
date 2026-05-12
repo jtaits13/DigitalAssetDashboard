@@ -8,18 +8,11 @@
       "The interactive market-cap chart is rendered client-side from TradingView so it does not depend on rate-limited historical API calls.",
   };
   var TV_WIDGET_SRC = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
-  var TV_TIME_FRAMES = {
-    "1M": { timeframe: "1M", resolution: "1D" },
-    "6M": { timeframe: "6M", resolution: "1D" },
-    "1Y": { timeframe: "12M", resolution: "1W" },
-    "5Y": { timeframe: "60M", resolution: "1W" },
-  };
   var state = {
     rows: [],
     filtered: [],
     sortKey: "market_cap_usd",
     sortDir: -1,
-    timeframe: "1M",
   };
 
   var els = {
@@ -119,6 +112,9 @@
     var primary = payload.primary || {};
     var btc = payload.btc || {};
     var eth = payload.eth || {};
+    function maybeDelta(delta) {
+      return delta && delta.pct != null ? fmtDelta(delta.pct, delta.window) : "";
+    }
     els.kpi.innerHTML =
       '<div class="kpi-cell">' +
       '<span class="kpi-label">' +
@@ -127,7 +123,7 @@
       '<span class="kpi-val">' +
       escapeHtml(primary.value_display || "—") +
       "</span>" +
-      fmtDelta(primary.delta && primary.delta.pct, primary.delta && primary.delta.window) +
+      maybeDelta(primary.delta) +
       "</div>" +
       '<div class="kpi-cell">' +
       '<span class="kpi-label">' +
@@ -136,7 +132,7 @@
       '<span class="kpi-val">' +
       escapeHtml(btc.value_display || "—") +
       "</span>" +
-      fmtDelta(btc.delta && btc.delta.pct, btc.delta && btc.delta.window) +
+      maybeDelta(btc.delta) +
       "</div>" +
       '<div class="kpi-cell">' +
       '<span class="kpi-label">' +
@@ -145,17 +141,17 @@
       '<span class="kpi-val">' +
       escapeHtml(eth.value_display || "—") +
       "</span>" +
-      fmtDelta(eth.delta && eth.delta.pct, eth.delta && eth.delta.window) +
+      maybeDelta(eth.delta) +
       "</div>";
   }
 
   function chartWidgetConfig(meta) {
-    var tf = TV_TIME_FRAMES[state.timeframe] || TV_TIME_FRAMES["1M"];
     return {
-      autosize: true,
+      width: "100%",
+      height: 460,
       symbol: meta.symbol || DEFAULT_CHART_META.symbol,
-      interval: tf.resolution,
-      timeframe: tf.timeframe,
+      interval: "1W",
+      timeframe: "12M",
       timezone: "Etc/UTC",
       theme: "light",
       style: "1",
@@ -168,21 +164,7 @@
       details: false,
       hotlist: false,
       studies: [],
-      time_frames: [
-        { text: "1m", resolution: "1D", description: "1 Month", title: "1M" },
-        { text: "6m", resolution: "1D", description: "6 Months", title: "6M" },
-        { text: "1y", resolution: "1W", description: "1 Year", title: "1Y" },
-        { text: "5y", resolution: "1W", description: "5 Years", title: "5Y" },
-      ],
     };
-  }
-
-  function updateTimeframeButtons() {
-    document.querySelectorAll(".crypto-chart-range[data-timeframe]").forEach(function (btn) {
-      var active = btn.getAttribute("data-timeframe") === state.timeframe;
-      btn.classList.toggle("is-active", active);
-      btn.setAttribute("aria-pressed", active ? "true" : "false");
-    });
   }
 
   function renderChart(meta) {
@@ -218,28 +200,11 @@
         '<p class="chart-fallback">The TradingView chart could not load here. Use the link below to open it directly.</p>';
     };
     shell.appendChild(script);
-    updateTimeframeButtons();
-  }
-
-  function wireTimeframeButtons(chartMeta) {
-    var buttons = document.querySelectorAll(".crypto-chart-range[data-timeframe]");
-    if (!buttons.length) return;
-    buttons.forEach(function (btn) {
-      if (btn._cryptoRangeBound) return;
-      btn._cryptoRangeBound = true;
-      btn.addEventListener("click", function () {
-        var next = btn.getAttribute("data-timeframe") || "1M";
-        if (next === state.timeframe) return;
-        state.timeframe = next;
-        renderChart(chartMeta || DEFAULT_CHART_META);
-      });
-    });
   }
 
   function renderChartFallback(msg) {
     if (!els.chart) return;
     els.chart.innerHTML = '<p class="chart-fallback">' + escapeHtml(msg) + "</p>";
-    updateTimeframeButtons();
   }
 
   function renderChartLegacy(payload) {
@@ -276,7 +241,7 @@
           '<td class="num">' +
           escapeHtml(fmtPrice(row.price_usd)) +
           "</td>" +
-          fmtPctCell(row.pct_24h) +
+          fmtPctCell(row.pct_30d) +
           '<td class="num">' +
           escapeHtml(fmtCap(row.market_cap_usd)) +
           "</td>" +
@@ -364,7 +329,6 @@
       renderKpi(kpis);
       if (chart && chart.series) renderChartLegacy(chart);
       else renderChart(chart);
-      wireTimeframeButtons(chart);
       state.rows = (prices.rows || []).slice();
       updateSortClass();
       applyFilter();

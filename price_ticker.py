@@ -149,6 +149,7 @@ def _parse_coingecko_markets(data: Any, limit: int) -> list[dict[str, Any]]:
         sym = str(c.get("symbol", "?")).strip().upper()[:14]
         price = _to_float(c.get("current_price"))
         pct = _to_float(c.get("price_change_percentage_24h"))
+        pct_30d = _to_float(c.get("price_change_percentage_30d_in_currency"))
         if price is None:
             continue
         cid = c.get("id")
@@ -165,6 +166,7 @@ def _parse_coingecko_markets(data: Any, limit: int) -> list[dict[str, Any]]:
                 "name": str(c.get("name", sym))[:48],
                 "price_usd": price,
                 "pct_24h": pct,
+                "pct_30d": pct_30d,
                 "market_cap_usd": _to_float(c.get("market_cap")),
                 "market_cap_rank": _to_int(c.get("market_cap_rank")),
                 "detail_url": detail_url,
@@ -204,6 +206,7 @@ def _parse_coincap_assets(payload: Any, limit: int) -> list[dict[str, Any]]:
                 "name": str(c.get("name", sym))[:48],
                 "price_usd": price,
                 "pct_24h": pct,
+                "pct_30d": None,
                 "market_cap_usd": _to_float(c.get("marketCapUsd")),
                 "market_cap_rank": _to_int(c.get("rank")),
                 "detail_url": detail_url,
@@ -232,6 +235,7 @@ def fetch_top_crypto_tickers(limit: int = TICKER_COUNT) -> tuple[list[dict[str, 
                 "per_page": lim,
                 "page": 1,
                 "sparkline": "false",
+                "price_change_percentage": "30d",
             },
             headers=headers,
             timeout=25,

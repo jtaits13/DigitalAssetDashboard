@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=28" />
+    <link rel="stylesheet" href="styles.css?v=29" />
   </head>
   <body class="page-crypto">
     <header class="site-header" role="banner">
@@ -67,21 +67,12 @@
           </div>
         </div>
         <p class="kpi-footnote kpi-footnote--block">
-          The colored <strong>% figures</strong> reflect <strong>24-hour</strong> changes for the primary market-cap KPI,
-          Bitcoin, and Ether.
+          The colored <strong>% figures</strong> reflect <strong>one-month</strong> price changes for Bitcoin and Ether.
         </p>
       </section>
 
       <section class="hub-section" aria-labelledby="js-crypto-chart-heading">
-        <div class="crypto-chart-head">
-          <h2 class="subsection-head" id="js-crypto-chart-heading">Crypto total market cap</h2>
-          <div class="crypto-chart-ranges" role="group" aria-label="Crypto chart time range">
-            <button type="button" class="crypto-chart-range is-active" data-timeframe="1M">1M</button>
-            <button type="button" class="crypto-chart-range" data-timeframe="6M">6M</button>
-            <button type="button" class="crypto-chart-range" data-timeframe="1Y">1Y</button>
-            <button type="button" class="crypto-chart-range" data-timeframe="5Y">5Y</button>
-          </div>
-        </div>
+        <h2 class="subsection-head" id="js-crypto-chart-heading">Crypto total market cap</h2>
         <div id="crypto-market-cap-chart" class="aum-chart-host" role="img" aria-label="Crypto market cap chart"></div>
         <p class="chart-placeholder__cap" id="js-crypto-chart-caption">
           TradingView TOTAL represents crypto market capitalization using the top 125 coins.
@@ -119,7 +110,7 @@
                 <th class="th-sortable" data-sort="symbol">Ticker</th>
                 <th class="th-sortable" data-sort="name">Coin</th>
                 <th class="num th-sortable" data-sort="price_usd">Price</th>
-                <th class="num th-sortable" data-sort="pct_24h">24H %</th>
+                <th class="num th-sortable" data-sort="pct_30d">1M %</th>
                 <th class="num th-sortable" data-sort="market_cap_usd">Market Cap</th>
                 <th>Market Page</th>
               </tr>
@@ -145,6 +136,6 @@
     <footer class="site-footer">Digital Assets Dashboard · Crypto Prices · <time datetime="2026-05">May 2026</time></footer>
     <script defer src="js/static-base.js?v=5"></script>
     <script defer src="js/etp-kpi-shared.js"></script>
-    <script defer src="js/crypto-page.js?v=2"></script>
+    <script defer src="js/crypto-page.js?v=3"></script>
   </body>
 </html>
