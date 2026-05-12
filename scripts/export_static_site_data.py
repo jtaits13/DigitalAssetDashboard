@@ -69,6 +69,8 @@ STATIC_RWA_US_TREASURIES_PAGE = "rwa-us-treasuries.html"
 STATIC_RWA_TOKENIZED_STOCKS_PAGE = "rwa-tokenized-stocks.html"
 APP_RWA_NETWORKS_URL = "https://app.rwa.xyz/networks"
 COINGECKO_GLOBAL_URL = "https://api.coingecko.com/api/v3/global"
+TRADINGVIEW_TOTAL_URL = "https://www.tradingview.com/symbols/TOTAL/"
+TRADINGVIEW_CRYPTO_GLOBAL_CHARTS_URL = "https://www.tradingview.com/markets/cryptocurrencies/global-charts/"
 
 _CAPTION_INLINE_LINK_RE = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
 
@@ -1284,6 +1286,91 @@ def _crypto_delta_dict(pct: object, window: str = "24H") -> dict[str, object]:
     return {"pct": round(num, 4) if num is not None else None, "window": window}
 
 
+def _compact_num_to_float(text: object) -> float | None:
+    if text is None:
+        return None
+    s = str(text).strip().upper().replace(",", "")
+    if not s:
+        return None
+    mult = 1.0
+    if s.endswith("T"):
+        mult = 1e12
+        s = s[:-1]
+    elif s.endswith("B"):
+        mult = 1e9
+        s = s[:-1]
+    elif s.endswith("M"):
+        mult = 1e6
+        s = s[:-1]
+    elif s.endswith("K"):
+        mult = 1e3
+        s = s[:-1]
+    try:
+        return float(s) * mult
+    except ValueError:
+        return None
+
+
+def _normalize_signed_pct(text: object) -> float | None:
+    if text is None:
+        return None
+    s = str(text).strip()
+    if not s:
+        return None
+    s = s.replace("%", "").replace("−", "-").replace("+", "")
+    try:
+        return float(s)
+    except ValueError:
+        return None
+
+
+def _fetch_tradingview_total_snapshot(headers: dict[str, str]) -> tuple[dict[str, float], str | None]:
+    out: dict[str, float] = {}
+    errs: list[str] = []
+
+    try:
+        resp = requests.get(TRADINGVIEW_CRYPTO_GLOBAL_CHARTS_URL, headers=headers, timeout=25)
+        resp.raise_for_status()
+        html = resp.text
+        m = re.search(
+            r"today it'?s\s+([0-9][0-9.,]*[KMBT]),\s+which is\s+([+\-−]?[0-9][0-9.,]*)%\s+(lower|higher)\s+than yesterday",
+            html,
+            flags=re.IGNORECASE,
+        )
+        if m:
+            market_cap = _compact_num_to_float(m.group(1))
+            day_pct = _normalize_signed_pct(m.group(2))
+            direction = str(m.group(3) or "").lower()
+            if market_cap is not None:
+                out["total_market_cap_usd"] = market_cap
+            if day_pct is not None:
+                out["market_cap_change_pct_24h"] = -abs(day_pct) if direction == "lower" else abs(day_pct)
+        else:
+            errs.append("TradingView global charts total market cap was not found.")
+    except (requests.RequestException, ValueError, TypeError) as exc:
+        errs.append(f"TradingView global charts: {type(exc).__name__}: {exc}")
+
+    try:
+        resp = requests.get(TRADINGVIEW_TOTAL_URL, headers=headers, timeout=25)
+        resp.raise_for_status()
+        html = resp.text.replace('\\"', '"')
+        m = re.search(
+            r'data-qa-id=\"time-range-button-1M\"[^>]*>.*?<span>1 month</span><span class=\"change-[^\"]*\">([^<]+)</span>',
+            html,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+        if m:
+            pct_1m = _normalize_signed_pct(m.group(1))
+            if pct_1m is not None:
+                out["market_cap_change_pct_1m"] = pct_1m
+        else:
+            errs.append("TradingView TOTAL 1M change was not found.")
+    except (requests.RequestException, ValueError, TypeError) as exc:
+        errs.append(f"TradingView TOTAL: {type(exc).__name__}: {exc}")
+
+    return out, "; ".join(errs) if errs else None
+
+
 def _fetch_crypto_global_snapshot(headers: dict[str, str]) -> tuple[dict[str, float], str | None]:
     try:
         resp = requests.get(COINGECKO_GLOBAL_URL, headers=headers, timeout=25)
@@ -1424,6 +1511,7 @@ def main() -> None:
             "User-Agent": DEFAULT_UA,
             "Accept": "application/json",
         }
+        tradingview_total, tradingview_err = _fetch_tradingview_total_snapshot(crypto_headers)
         global_snapshot, global_err = _fetch_crypto_global_snapshot(crypto_headers)
 
         crypto_rows_payload = [_crypto_row_json(r, i + 1) for i, r in enumerate(t_rows)]
@@ -1434,26 +1522,21 @@ def main() -> None:
             "rows": crypto_rows_payload,
         }
 
-        total_market_cap_usd = global_snapshot.get("total_market_cap_usd")
-        tracked_market_cap_usd = sum(
-            float(r["market_cap_usd"]) for r in crypto_rows_payload if r.get("market_cap_usd") is not None
-        )
+        total_market_cap_usd = tradingview_total.get("total_market_cap_usd") or global_snapshot.get("total_market_cap_usd")
+        total_market_cap_pct_1m = tradingview_total.get("market_cap_change_pct_1m")
         primary_label = "Total market cap"
         primary_value = format_usd_compact(total_market_cap_usd) if total_market_cap_usd else "—"
-        if total_market_cap_usd is None and tracked_market_cap_usd > 0:
-            primary_label = f"Top {len(crypto_rows_payload)} market cap"
-            primary_value = format_usd_compact(tracked_market_cap_usd)
 
         btc_row = _find_crypto_row(t_rows, "BTC")
         eth_row = _find_crypto_row(t_rows, "ETH")
         crypto_kpis_payload = {
             "generated_at": crypto_generated_at,
-            "source": t_src or "",
+            "source": "TradingView TOTAL + CoinGecko" if (total_market_cap_usd or total_market_cap_pct_1m is not None) else (t_src or ""),
             "error": t_err or "",
             "primary": {
                 "label": primary_label,
                 "value_display": primary_value,
-                "delta": {"pct": None, "window": ""},
+                "delta": _crypto_delta_dict(total_market_cap_pct_1m, "1M"),
             },
             "btc": {
                 "label": "BTC price",
@@ -1466,11 +1549,15 @@ def main() -> None:
                 "delta": _crypto_delta_dict(eth_row.get("pct_30d") if eth_row else None, "1M"),
             },
             "source_note": (
-                "Current market-cap totals come from CoinGecko global market data; one-month price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change."
-                if total_market_cap_usd
-                else "Spot rows use CoinGecko with CoinCap fallback. When total market-cap data is unavailable, the KPI falls back to the tracked top-25 market cap."
+                "Total market cap and its 1M change come from TradingView's TOTAL market-cap pages, with CoinGecko global data only used as a fallback for the current total when needed. Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change."
+                if total_market_cap_usd or total_market_cap_pct_1m is not None
+                else "Total crypto market-cap data is unavailable right now. Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change."
             ),
         }
+        if tradingview_err:
+            crypto_chart_payload["warning"] = tradingview_err
+        if global_err and total_market_cap_usd is None:
+            crypto_kpis_payload["error"] = global_err
 
         crypto_chart_payload["generated_at"] = crypto_generated_at
     except Exception as exc:
