@@ -234,6 +234,109 @@
     }
   }
 
+  function setTickerStacked(strip, isStacked) {
+    if (!strip || !strip.classList) return;
+    if (isStacked) strip.classList.add("ticker-strip--stacked");
+    else strip.classList.remove("ticker-strip--stacked");
+  }
+
+  function tickerNeedsOverflow(parts) {
+    if (!parts || !parts.viewport || !parts.move) return false;
+    return parts.move.scrollWidth > parts.viewport.clientWidth + 8;
+  }
+
+  function tickerAnimationUnavailable(parts) {
+    if (!parts || !parts.move) return true;
+    if (global.matchMedia && global.matchMedia("(prefers-reduced-motion: reduce)").matches) return true;
+    if (typeof global.getComputedStyle !== "function") return false;
+    var style = global.getComputedStyle(parts.move);
+    if (!style) return false;
+    var name = style.animationName || style.webkitAnimationName || "";
+    var duration = style.animationDuration || style.webkitAnimationDuration || "";
+    return !name || name === "none" || !duration || duration === "0s" || duration === "0ms";
+  }
+
+  function tickerTranslateX(node) {
+    if (!node || typeof global.getComputedStyle !== "function") return null;
+    var style = global.getComputedStyle(node);
+    if (!style) return null;
+    var raw = style.transform || style.webkitTransform || "";
+    if (!raw || raw === "none") return 0;
+    var matrix3d = raw.match(/^matrix3d\((.+)\)$/);
+    if (matrix3d) {
+      var vals3d = matrix3d[1].split(",");
+      return vals3d.length > 12 ? parseFloat(vals3d[12]) || 0 : 0;
+    }
+    var matrix2d = raw.match(/^matrix\((.+)\)$/);
+    if (matrix2d) {
+      var vals2d = matrix2d[1].split(",");
+      return vals2d.length > 4 ? parseFloat(vals2d[4]) || 0 : 0;
+    }
+    var translate = raw.match(/translateX\(([-0-9.]+)px\)/i);
+    return translate ? parseFloat(translate[1]) || 0 : null;
+  }
+
+  function refreshCryptoTickerLayout(strip) {
+    setTickerStacked(strip, false);
+    var parts = getTickerParts(strip);
+    if (!parts || !parts.primary) return;
+    if (!parts.viewport || !parts.move) {
+      setTickerStacked(strip, true);
+      return;
+    }
+    if (!tickerNeedsOverflow(parts) || tickerAnimationUnavailable(parts)) {
+      setTickerStacked(strip, true);
+      return;
+    }
+    setTickerStacked(strip, false);
+    if (
+      typeof global.setTimeout !== "function" ||
+      typeof global.requestAnimationFrame !== "function" ||
+      typeof global.getComputedStyle !== "function" ||
+      (typeof document !== "undefined" && document.visibilityState === "hidden")
+    ) {
+      return;
+    }
+    global.requestAnimationFrame(function () {
+      var startX = tickerTranslateX(parts.move);
+      global.setTimeout(function () {
+        if (!document.body || !document.body.contains(strip)) return;
+        var nextParts = getTickerParts(strip);
+        if (!nextParts || !nextParts.viewport || !nextParts.move) return;
+        if (!tickerNeedsOverflow(nextParts) || tickerAnimationUnavailable(nextParts)) {
+          setTickerStacked(strip, true);
+          return;
+        }
+        var endX = tickerTranslateX(nextParts.move);
+        if (startX == null || endX == null) return;
+        if (Math.abs(endX - startX) < 0.5) setTickerStacked(strip, true);
+      }, 700);
+    });
+  }
+
+  function refreshAllCryptoTickerLayouts() {
+    if (typeof document === "undefined") return;
+    var strips = document.querySelectorAll(".ticker-strip");
+    var si = 0;
+    for (; si < strips.length; si++) {
+      refreshCryptoTickerLayout(strips[si]);
+    }
+  }
+
+  var tickerLayoutRefreshTimer = 0;
+
+  function scheduleCryptoTickerLayoutRefresh() {
+    if (typeof global.setTimeout !== "function") {
+      refreshAllCryptoTickerLayouts();
+      return;
+    }
+    if (tickerLayoutRefreshTimer) global.clearTimeout(tickerLayoutRefreshTimer);
+    tickerLayoutRefreshTimer = global.setTimeout(function () {
+      tickerLayoutRefreshTimer = 0;
+      refreshAllCryptoTickerLayouts();
+    }, 120);
+  }
+
   function bootStaticCryptoTicker() {
     if (typeof document === "undefined") return;
     var run = function () {
@@ -242,13 +345,23 @@
         .then(function (data) {
           hydrateStaticCryptoTicker(data);
           initCryptoTickerMarquee();
+          refreshAllCryptoTickerLayouts();
         })
         .catch(function () {
           initCryptoTickerMarquee();
+          refreshAllCryptoTickerLayouts();
         });
     };
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
     else run();
+    if (typeof global.addEventListener === "function") {
+      global.addEventListener("resize", scheduleCryptoTickerLayoutRefresh);
+    }
+    if (typeof document !== "undefined" && typeof document.addEventListener === "function") {
+      document.addEventListener("visibilitychange", function () {
+        if (document.visibilityState === "visible") scheduleCryptoTickerLayoutRefresh();
+      });
+    }
   }
   bootStaticCryptoTicker();
 

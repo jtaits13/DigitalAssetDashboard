@@ -526,6 +526,22 @@ body {
   animation-play-state: paused;
 }
 
+.ticker-strip--stacked .ticker-strip__viewport {
+  overflow: visible;
+}
+
+.ticker-strip--stacked .ticker-strip__move {
+  animation: none !important;
+  transform: none !important;
+  display: block;
+  width: auto;
+  max-width: 100%;
+}
+
+.ticker-strip--stacked .ticker-strip__move .ticker-strip__chips--marquee-clone {
+  display: none !important;
+}
+
 .ticker-strip__viewport .ticker-strip__drum.ticker-strip__chips {
   /* Column gap and trailing padding align the splice (#25→#1) without breaking the -50% loop. */
   --ticker-chip-column-gap: 2.25rem;
@@ -541,6 +557,13 @@ body {
 
 .ticker-strip__chips.ticker-strip__chips--marquee-clone {
   opacity: inherit;
+}
+
+.ticker-strip--stacked .ticker-strip__viewport .ticker-strip__drum.ticker-strip__chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding-inline-end: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
