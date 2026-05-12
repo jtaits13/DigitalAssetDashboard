@@ -245,10 +245,14 @@
       var etps = results[4];
       var rwaOnchain = results[5];
 
-      if (manifest.errors && manifest.errors.length && banner) {
+      var visibleManifestErrors = (manifest.errors || []).filter(function (msg) {
+        return String(msg || "").indexOf("Crypto global snapshot:") !== 0;
+      });
+
+      if (visibleManifestErrors.length && banner) {
         banner.hidden = false;
         banner.textContent =
-          "Some data sources reported issues (site still works): " + manifest.errors.slice(0, 3).join("; ");
+          "Some data sources reported issues (site still works): " + visibleManifestErrors.slice(0, 3).join("; ");
       }
 
       renderList(newsEl, homeNews.items || [], true, false);

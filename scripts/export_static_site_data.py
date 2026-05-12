@@ -1425,8 +1425,6 @@ def main() -> None:
             "Accept": "application/json",
         }
         global_snapshot, global_err = _fetch_crypto_global_snapshot(crypto_headers)
-        if global_err:
-            manifest["errors"].append(f"Crypto global snapshot: {global_err}")
 
         crypto_rows_payload = [_crypto_row_json(r, i + 1) for i, r in enumerate(t_rows)]
         crypto_prices_payload = {
