@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=27" />
+    <link rel="stylesheet" href="styles.css?v=28" />
   </head>
   <body class="page-crypto">
     <header class="site-header" role="banner">
@@ -51,7 +51,7 @@
         <p class="page-intro__dek">
           A dedicated crypto market page with a KPI strip, a 12-month market-cap trend chart, and a searchable
           <strong>top 25</strong> spot-price table. Current market data comes from CoinGecko with CoinCap fallback for
-          spot rows when needed.
+          spot rows when needed, while the market-cap chart uses TradingView's <strong>TOTAL</strong> view.
         </p>
       </header>
 
@@ -73,14 +73,26 @@
       </section>
 
       <section class="hub-section" aria-labelledby="js-crypto-chart-heading">
-        <h2 class="subsection-head" id="js-crypto-chart-heading">Estimated total crypto market cap trend (12 months)</h2>
+        <div class="crypto-chart-head">
+          <h2 class="subsection-head" id="js-crypto-chart-heading">Crypto total market cap</h2>
+          <div class="crypto-chart-ranges" role="group" aria-label="Crypto chart time range">
+            <button type="button" class="crypto-chart-range is-active" data-timeframe="1M">1M</button>
+            <button type="button" class="crypto-chart-range" data-timeframe="6M">6M</button>
+            <button type="button" class="crypto-chart-range" data-timeframe="1Y">1Y</button>
+            <button type="button" class="crypto-chart-range" data-timeframe="5Y">5Y</button>
+          </div>
+        </div>
         <div id="crypto-market-cap-chart" class="aum-chart-host" role="img" aria-label="Crypto market cap chart"></div>
         <p class="chart-placeholder__cap" id="js-crypto-chart-caption">
-          Vertical axis: estimated total crypto market cap (trillions USD; daily points).
+          TradingView TOTAL represents crypto market capitalization using the top 125 coins.
         </p>
         <p class="method-note" id="js-crypto-chart-method">
-          Daily CoinGecko market-cap history for the current top 25 coins, scaled to today's global market cap when that
-          benchmark is available.
+          The chart is powered by TradingView's TOTAL index so it does not rely on rate-limited local historical exports.
+        </p>
+        <p class="cta-note">
+          <a id="js-crypto-chart-link" href="https://www.tradingview.com/symbols/TOTAL/" target="_blank" rel="noopener noreferrer"
+            >Open the full TradingView TOTAL chart →</a
+          >
         </p>
       </section>
 
@@ -120,8 +132,7 @@
           </table>
         </div>
         <p class="source-cap">
-          Spot market source: CoinGecko with CoinCap fallback. Historical market-cap series uses CoinGecko market-cap
-          history where available.
+          Spot market source: CoinGecko with CoinCap fallback. Market-cap chart source: TradingView TOTAL.
         </p>
         <p class="timestamp-foot" id="js-crypto-generated">—</p>
       </section>
@@ -132,9 +143,8 @@
     </main>
 
     <footer class="site-footer">Digital Assets Dashboard · Crypto Prices · <time datetime="2026-05">May 2026</time></footer>
-    <script defer src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
     <script defer src="js/static-base.js?v=5"></script>
     <script defer src="js/etp-kpi-shared.js"></script>
-    <script defer src="js/crypto-page.js?v=1"></script>
+    <script defer src="js/crypto-page.js?v=2"></script>
   </body>
 </html>

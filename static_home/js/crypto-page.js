@@ -1,9 +1,25 @@
 (function () {
+  var DEFAULT_CHART_META = {
+    title: "Crypto total market cap",
+    provider_url: "https://www.tradingview.com/symbols/TOTAL/",
+    symbol: "CRYPTOCAP:TOTAL",
+    caption: "TradingView TOTAL represents crypto market capitalization using the top 125 coins.",
+    method_note:
+      "The interactive market-cap chart is rendered client-side from TradingView so it does not depend on rate-limited historical API calls.",
+  };
+  var TV_WIDGET_SRC = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
+  var TV_TIME_FRAMES = {
+    "1M": { timeframe: "1M", resolution: "1D" },
+    "6M": { timeframe: "6M", resolution: "1D" },
+    "1Y": { timeframe: "12M", resolution: "1W" },
+    "5Y": { timeframe: "60M", resolution: "1W" },
+  };
   var state = {
     rows: [],
     filtered: [],
     sortKey: "market_cap_usd",
     sortDir: -1,
+    timeframe: "1M",
   };
 
   var els = {
@@ -18,6 +34,7 @@
     caption: document.getElementById("js-crypto-chart-caption"),
     method: document.getElementById("js-crypto-chart-method"),
     chartHeading: document.getElementById("js-crypto-chart-heading"),
+    chartLink: document.getElementById("js-crypto-chart-link"),
   };
 
   function showErr(msg) {
@@ -132,52 +149,105 @@
       "</div>";
   }
 
-  function renderChart(payload) {
-    if (els.chartHeading && payload && payload.title) {
-      els.chartHeading.textContent = payload.title;
+  function chartWidgetConfig(meta) {
+    var tf = TV_TIME_FRAMES[state.timeframe] || TV_TIME_FRAMES["1M"];
+    return {
+      autosize: true,
+      symbol: meta.symbol || DEFAULT_CHART_META.symbol,
+      interval: tf.resolution,
+      timeframe: tf.timeframe,
+      timezone: "Etc/UTC",
+      theme: "light",
+      style: "1",
+      locale: "en",
+      withdateranges: true,
+      hide_side_toolbar: false,
+      allow_symbol_change: false,
+      save_image: false,
+      calendar: false,
+      details: false,
+      hotlist: false,
+      studies: [],
+      time_frames: [
+        { text: "1m", resolution: "1D", description: "1 Month", title: "1M" },
+        { text: "6m", resolution: "1D", description: "6 Months", title: "6M" },
+        { text: "1y", resolution: "1W", description: "1 Year", title: "1Y" },
+        { text: "5y", resolution: "1W", description: "5 Years", title: "5Y" },
+      ],
+    };
+  }
+
+  function updateTimeframeButtons() {
+    document.querySelectorAll(".crypto-chart-range[data-timeframe]").forEach(function (btn) {
+      var active = btn.getAttribute("data-timeframe") === state.timeframe;
+      btn.classList.toggle("is-active", active);
+      btn.setAttribute("aria-pressed", active ? "true" : "false");
+    });
+  }
+
+  function renderChart(meta) {
+    meta = meta || DEFAULT_CHART_META;
+    if (els.chartHeading && meta && meta.title) {
+      els.chartHeading.textContent = meta.title || DEFAULT_CHART_META.title;
     }
     if (els.caption) {
-      els.caption.textContent = payload && payload.caption ? payload.caption : "";
+      els.caption.textContent = meta.caption || DEFAULT_CHART_META.caption;
     }
     if (els.method) {
-      els.method.textContent = payload && payload.method_note ? payload.method_note : "";
+      els.method.textContent = meta.method_note || DEFAULT_CHART_META.method_note;
+    }
+    if (els.chartLink) {
+      els.chartLink.href = meta.provider_url || DEFAULT_CHART_META.provider_url;
     }
     if (!els.chart) return;
-    if (!payload || !payload.series || !payload.series.length || typeof Plotly === "undefined") {
-      els.chart.innerHTML = '<p class="chart-fallback">Chart data is unavailable right now.</p>';
+    els.chart.innerHTML = "";
+    var shell = document.createElement("div");
+    shell.className = "tradingview-widget-container tv-chart-shell";
+    var host = document.createElement("div");
+    host.className = "tradingview-widget-container__widget tv-chart-shell__widget";
+    shell.appendChild(host);
+    els.chart.appendChild(shell);
+
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.async = true;
+    script.src = TV_WIDGET_SRC;
+    script.innerHTML = JSON.stringify(chartWidgetConfig(meta));
+    script.onerror = function () {
+      els.chart.innerHTML =
+        '<p class="chart-fallback">The TradingView chart could not load here. Use the link below to open it directly.</p>';
+    };
+    shell.appendChild(script);
+    updateTimeframeButtons();
+  }
+
+  function wireTimeframeButtons(chartMeta) {
+    var buttons = document.querySelectorAll(".crypto-chart-range[data-timeframe]");
+    if (!buttons.length) return;
+    buttons.forEach(function (btn) {
+      if (btn._cryptoRangeBound) return;
+      btn._cryptoRangeBound = true;
+      btn.addEventListener("click", function () {
+        var next = btn.getAttribute("data-timeframe") || "1M";
+        if (next === state.timeframe) return;
+        state.timeframe = next;
+        renderChart(chartMeta || DEFAULT_CHART_META);
+      });
+    });
+  }
+
+  function renderChartFallback(msg) {
+    if (!els.chart) return;
+    els.chart.innerHTML = '<p class="chart-fallback">' + escapeHtml(msg) + "</p>";
+    updateTimeframeButtons();
+  }
+
+  function renderChartLegacy(payload) {
+    if (!payload || !payload.series || !payload.series.length) {
+      renderChartFallback("Chart data is unavailable right now.");
       return;
     }
-    var x = payload.series.map(function (point) {
-      return point.date;
-    });
-    var y = payload.series.map(function (point) {
-      return Number(point.market_cap_usd || 0) / 1e12;
-    });
-    Plotly.newPlot(
-      els.chart,
-      [
-        {
-          x: x,
-          y: y,
-          type: "scatter",
-          mode: "lines",
-          fill: "tozeroy",
-          fillcolor: "rgba(37,128,156,0.15)",
-          line: { color: "#25809c", width: 2 },
-          hovertemplate: "%{x}<br>$%{y:.2f}T<extra></extra>",
-        },
-      ],
-      {
-        margin: { t: 28, r: 16, b: 64, l: 56 },
-        paper_bgcolor: "#fafcfd",
-        plot_bgcolor: "#f8fafc",
-        font: { family: "Outfit, sans-serif", size: 12, color: "#1f4c67" },
-        xaxis: { title: { text: "Date", standoff: 16 }, automargin: true, tickangle: -30 },
-        yaxis: { title: { text: payload.axis_label || "Estimated market cap ($T)", standoff: 8 }, automargin: true },
-        showlegend: false,
-      },
-      { responsive: true, displayModeBar: true, scrollZoom: true }
-    );
+    renderChartFallback("A legacy chart payload was loaded unexpectedly.");
   }
 
   function renderTable() {
@@ -284,15 +354,17 @@
       return { rows: [] };
     }),
     loadJson("crypto_market_cap_series.json").catch(function () {
-      return { series: [] };
+      return DEFAULT_CHART_META;
     }),
   ])
     .then(function (results) {
       var kpis = results[0] || {};
       var prices = results[1] || { rows: [] };
-      var chart = results[2] || { series: [] };
+      var chart = results[2] || DEFAULT_CHART_META;
       renderKpi(kpis);
-      renderChart(chart);
+      if (chart && chart.series) renderChartLegacy(chart);
+      else renderChart(chart);
+      wireTimeframeButtons(chart);
       state.rows = (prices.rows || []).slice();
       updateSortClass();
       applyFilter();
@@ -304,7 +376,7 @@
     })
     .catch(function (err) {
       showErr("Could not load the crypto data page. " + (err && err.message ? err.message : ""));
-      renderChart({ series: [] });
+      renderChart(DEFAULT_CHART_META);
       state.rows = [];
       applyFilter();
     });

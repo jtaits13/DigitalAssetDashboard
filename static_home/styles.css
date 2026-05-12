@@ -1712,6 +1712,51 @@ body.page-crypto #crypto-market-cap-chart {
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
 }
 
+.crypto-chart-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.crypto-chart-ranges {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.crypto-chart-range {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-soft);
+  border-radius: 999px;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+}
+
+.crypto-chart-range:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+.crypto-chart-range.is-active {
+  background: rgba(37, 128, 156, 0.12);
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+.tv-chart-shell,
+.tv-chart-shell__widget {
+  min-height: 420px;
+  width: 100%;
+}
+
 #js-home-crypto-source:empty,
 #js-crypto-chart-caption:empty,
 #js-crypto-chart-method:empty {

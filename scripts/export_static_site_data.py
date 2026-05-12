@@ -15,7 +15,6 @@ import json
 import os
 import re
 import sys
-import time
 from html import escape as html_escape
 from typing import Any
 from datetime import datetime, timezone
@@ -70,7 +69,6 @@ STATIC_RWA_US_TREASURIES_PAGE = "rwa-us-treasuries.html"
 STATIC_RWA_TOKENIZED_STOCKS_PAGE = "rwa-tokenized-stocks.html"
 APP_RWA_NETWORKS_URL = "https://app.rwa.xyz/networks"
 COINGECKO_GLOBAL_URL = "https://api.coingecko.com/api/v3/global"
-COINGECKO_MARKET_CHART_URL = "https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart"
 
 _CAPTION_INLINE_LINK_RE = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
 
@@ -1324,128 +1322,6 @@ def _fetch_crypto_global_snapshot(headers: dict[str, str]) -> tuple[dict[str, fl
     return out, None
 
 
-def _build_crypto_market_cap_series(
-    rows: list[dict[str, object]],
-    headers: dict[str, str],
-    global_total_market_cap_usd: float | None,
-) -> tuple[dict[str, object], list[str]]:
-    series_by_date: dict[str, float] = {}
-    warnings: list[str] = []
-    tracked_rows = [
-        row
-        for row in rows
-        if str(row.get("source") or "").strip().lower() == "coingecko" and str(row.get("coin_id") or "").strip()
-    ][:12]
-    if not tracked_rows:
-        warnings.append("CoinGecko top-coin rows unavailable for historical market-cap export.")
-    loaded = 0
-    for idx, row in enumerate(tracked_rows):
-        coin_id = str(row.get("coin_id") or "").strip()
-        if not coin_id:
-            continue
-        if idx > 0:
-            time.sleep(1.25)
-        payload = None
-        last_err: str | None = None
-        for attempt in range(3):
-            try:
-                resp = requests.get(
-                    COINGECKO_MARKET_CHART_URL.format(coin_id=coin_id),
-                    params={"vs_currency": "usd", "days": "365", "interval": "daily"},
-                    headers=headers,
-                    timeout=25,
-                )
-                if resp.status_code == 429:
-                    last_err = (
-                        "HTTPError: 429 Client Error: Too Many Requests for url: "
-                        + str(resp.url or COINGECKO_MARKET_CHART_URL.format(coin_id=coin_id))
-                    )
-                    if attempt < 2:
-                        time.sleep(3.0 + attempt * 2.0)
-                        continue
-                resp.raise_for_status()
-                payload = resp.json()
-                break
-            except (requests.RequestException, ValueError, TypeError) as exc:
-                last_err = f"{type(exc).__name__}: {exc}"
-                if attempt < 2:
-                    time.sleep(2.0 + attempt)
-                    continue
-        if payload is None:
-            warnings.append(f"{coin_id} history: {last_err or 'request failed'}")
-            continue
-        market_caps = payload.get("market_caps") if isinstance(payload, dict) else None
-        if not isinstance(market_caps, list) or not market_caps:
-            warnings.append(f"{coin_id} history: empty payload")
-            continue
-        daily_points: dict[str, float] = {}
-        for point in market_caps:
-            if not isinstance(point, list) or len(point) < 2:
-                continue
-            try:
-                ts_ms = float(point[0])
-                market_cap_usd = float(point[1])
-            except (TypeError, ValueError):
-                continue
-            ds = datetime.fromtimestamp(ts_ms / 1000, tz=timezone.utc).date().isoformat()
-            if market_cap_usd >= 0:
-                daily_points[ds] = market_cap_usd
-        if not daily_points:
-            warnings.append(f"{coin_id} history: no daily values")
-            continue
-        loaded += 1
-        for ds, market_cap_usd in daily_points.items():
-            series_by_date[ds] = float(series_by_date.get(ds, 0.0)) + market_cap_usd
-
-    current_top_sum = 0.0
-    for row in tracked_rows:
-        try:
-            market_cap_usd = float(row.get("market_cap_usd")) if row.get("market_cap_usd") is not None else None
-        except (TypeError, ValueError):
-            market_cap_usd = None
-        if market_cap_usd is not None and market_cap_usd > 0:
-            current_top_sum += market_cap_usd
-
-    scale_factor = 1.0
-    mode = "top25_aggregate"
-    title = "Top 25 crypto market cap trend (12 months)"
-    axis_label = "Tracked market cap ($T)"
-    caption = "Vertical axis: aggregate market cap for the tracked top 25 coins (trillions USD; daily points)."
-    method_note = (
-        "Daily CoinGecko market-cap history for a tracked set of leading coins. "
-        "Use the Plotly toolbar to zoom, pan, and reset."
-    )
-    if global_total_market_cap_usd and current_top_sum > 0:
-        scale_factor = float(global_total_market_cap_usd) / current_top_sum
-        mode = "scaled_top25"
-        title = "Estimated total crypto market cap trend (12 months)"
-        axis_label = "Estimated market cap ($T)"
-        caption = "Vertical axis: estimated total crypto market cap (trillions USD; daily points)."
-        method_note = (
-            "Daily CoinGecko market-cap history for a tracked set of leading coins, scaled to today's total crypto market cap "
-            "from CoinGecko global data. This avoids relying on CoinGecko's paid global-history endpoint while still "
-            "tracking broad market direction. Use the Plotly toolbar to zoom, pan, and reset."
-        )
-
-    series = [
-        {"date": ds, "market_cap_usd": round(series_by_date[ds] * scale_factor, 2)}
-        for ds in sorted(series_by_date)
-    ]
-    payload = {
-        "title": title,
-        "axis_label": axis_label,
-        "caption": caption,
-        "method_note": method_note,
-        "mode": mode,
-        "coin_count": loaded,
-        "scale_factor": round(scale_factor, 6),
-        "series": series,
-    }
-    if not series:
-        payload["method_note"] = "Historical market-cap data is unavailable right now."
-    return payload, warnings
-
-
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     manifest: dict = {"generated_at": datetime.now(timezone.utc).isoformat(), "errors": []}
@@ -1528,16 +1404,14 @@ def main() -> None:
     }
     crypto_chart_payload: dict[str, object] = {
         "generated_at": crypto_generated_at,
-        "source": "",
+        "source": "TradingView TOTAL",
         "error": "",
-        "title": "Estimated total crypto market cap trend (12 months)",
-        "axis_label": "Estimated market cap ($T)",
-        "caption": "Vertical axis: estimated total crypto market cap (trillions USD; daily points).",
-        "method_note": "Historical market-cap data is unavailable right now.",
-        "mode": "unavailable",
-        "coin_count": 0,
-        "scale_factor": 1.0,
-        "series": [],
+        "title": "Crypto total market cap",
+        "provider_url": "https://www.tradingview.com/symbols/TOTAL/",
+        "symbol": "CRYPTOCAP:TOTAL",
+        "caption": "TradingView TOTAL represents crypto market capitalization using the top 125 coins.",
+        "method_note": "The interactive market-cap chart is rendered client-side from TradingView so the export does not depend on rate-limited historical API calls.",
+        "supported_timeframes": ["1M", "6M", "1Y", "5Y"],
     }
     try:
         from price_ticker import TICKER_COUNT, fetch_top_crypto_tickers, hub_ticker_static_json_payload
@@ -1600,16 +1474,7 @@ def main() -> None:
             ),
         }
 
-        crypto_chart_payload, chart_warnings = _build_crypto_market_cap_series(
-            t_rows, crypto_headers, total_market_cap_usd
-        )
         crypto_chart_payload["generated_at"] = crypto_generated_at
-        crypto_chart_payload["source"] = t_src or "CoinGecko"
-        crypto_chart_payload["error"] = t_err or ""
-        if chart_warnings:
-            crypto_chart_payload["warning"] = (
-                "; ".join(chart_warnings[:3]) + ("; ..." if len(chart_warnings) > 3 else "")
-            )
     except Exception as exc:
         manifest["errors"].append(f"Crypto export: {exc}")
         crypto_payload = {
