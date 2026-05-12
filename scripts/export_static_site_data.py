@@ -68,8 +68,8 @@ STATIC_RWA_STABLECOINS_PAGE = "rwa-stablecoins.html"
 STATIC_RWA_US_TREASURIES_PAGE = "rwa-us-treasuries.html"
 STATIC_RWA_TOKENIZED_STOCKS_PAGE = "rwa-tokenized-stocks.html"
 APP_RWA_NETWORKS_URL = "https://app.rwa.xyz/networks"
-TRADINGVIEW_TOTAL_URL = "https://www.tradingview.com/symbols/TOTAL/"
-TRADINGVIEW_CRYPTO_GLOBAL_CHARTS_URL = "https://www.tradingview.com/markets/cryptocurrencies/global-charts/"
+COINPAPRIKA_GLOBAL_URL = "https://api.coinpaprika.com/v1/global"
+COINPAPRIKA_MARKET_OVERVIEW_TOTAL_30D_URL = "https://coinpaprika.com/market-overview/data/total/30d/"
 
 _CAPTION_INLINE_LINK_RE = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
 
@@ -1285,87 +1285,59 @@ def _crypto_delta_dict(pct: object, window: str = "24H") -> dict[str, object]:
     return {"pct": round(num, 4) if num is not None else None, "window": window}
 
 
-def _compact_num_to_float(text: object) -> float | None:
-    if text is None:
-        return None
-    s = str(text).strip().upper().replace(",", "")
-    if not s:
-        return None
-    mult = 1.0
-    if s.endswith("T"):
-        mult = 1e12
-        s = s[:-1]
-    elif s.endswith("B"):
-        mult = 1e9
-        s = s[:-1]
-    elif s.endswith("M"):
-        mult = 1e6
-        s = s[:-1]
-    elif s.endswith("K"):
-        mult = 1e3
-        s = s[:-1]
-    try:
-        return float(s) * mult
-    except ValueError:
-        return None
-
-
-def _normalize_signed_pct(text: object) -> float | None:
-    if text is None:
-        return None
-    s = str(text).strip()
-    if not s:
-        return None
-    s = s.replace("%", "").replace("−", "-").replace("+", "")
-    try:
-        return float(s)
-    except ValueError:
-        return None
-
-
-def _fetch_tradingview_total_snapshot(headers: dict[str, str]) -> tuple[dict[str, float], str | None]:
+def _fetch_coinpaprika_total_snapshot(headers: dict[str, str]) -> tuple[dict[str, float], str | None]:
     out: dict[str, float] = {}
     errs: list[str] = []
 
     try:
-        resp = requests.get(TRADINGVIEW_CRYPTO_GLOBAL_CHARTS_URL, headers=headers, timeout=25)
+        resp = requests.get(COINPAPRIKA_GLOBAL_URL, headers=headers, timeout=25)
         resp.raise_for_status()
-        html = resp.text
-        m = re.search(
-            r"today it'?s\s+([0-9][0-9.,]*[KMBT]),\s+which is\s+([+\-−]?[0-9][0-9.,]*)%\s+(lower|higher)\s+than yesterday",
-            html,
-            flags=re.IGNORECASE,
-        )
-        if m:
-            market_cap = _compact_num_to_float(m.group(1))
-            day_pct = _normalize_signed_pct(m.group(2))
-            direction = str(m.group(3) or "").lower()
-            if market_cap is not None:
-                out["total_market_cap_usd"] = market_cap
-            if day_pct is not None:
-                out["market_cap_change_pct_24h"] = -abs(day_pct) if direction == "lower" else abs(day_pct)
+        payload = resp.json()
+        if not isinstance(payload, dict):
+            errs.append("Unexpected CoinPaprika global payload.")
         else:
-            errs.append("TradingView global charts total market cap was not found.")
+            market_cap_usd = payload.get("market_cap_usd")
+            try:
+                if market_cap_usd is not None:
+                    out["total_market_cap_usd"] = float(market_cap_usd)
+            except (TypeError, ValueError):
+                errs.append("CoinPaprika global market cap was not numeric.")
     except (requests.RequestException, ValueError, TypeError) as exc:
-        errs.append(f"TradingView global charts: {type(exc).__name__}: {exc}")
+        errs.append(f"CoinPaprika global: {type(exc).__name__}: {exc}")
 
     try:
-        resp = requests.get(TRADINGVIEW_TOTAL_URL, headers=headers, timeout=25)
+        resp = requests.get(COINPAPRIKA_MARKET_OVERVIEW_TOTAL_30D_URL, headers=headers, timeout=25)
         resp.raise_for_status()
-        html = resp.text.replace('\\"', '"')
-        m = re.search(
-            r'data-qa-id=\"time-range-button-1M\"[^>]*>.*?<span>1 month</span><span class=\"change-[^\"]*\">([^<]+)</span>',
-            html,
-            flags=re.IGNORECASE | re.DOTALL,
-        )
-        if m:
-            pct_1m = _normalize_signed_pct(m.group(1))
-            if pct_1m is not None:
-                out["market_cap_change_pct_1m"] = pct_1m
+        payload = resp.json()
+        series = None
+        if isinstance(payload, list) and payload:
+            first = payload[0]
+            if isinstance(first, dict):
+                series = first.get("usd")
+        elif isinstance(payload, dict):
+            series = payload.get("usd")
+
+        values: list[float] = []
+        if isinstance(series, list):
+            for point in series:
+                if isinstance(point, (list, tuple)) and len(point) >= 2:
+                    try:
+                        val = float(point[1])
+                    except (TypeError, ValueError):
+                        continue
+                    values.append(val)
+
+        if len(values) >= 2:
+            first_val = values[0]
+            last_val = values[-1]
+            if "total_market_cap_usd" not in out:
+                out["total_market_cap_usd"] = last_val
+            if first_val > 0:
+                out["market_cap_change_pct_1m"] = ((last_val - first_val) / first_val) * 100.0
         else:
-            errs.append("TradingView TOTAL 1M change was not found.")
+            errs.append("CoinPaprika 30d market-cap series was not found.")
     except (requests.RequestException, ValueError, TypeError) as exc:
-        errs.append(f"TradingView TOTAL: {type(exc).__name__}: {exc}")
+        errs.append(f"CoinPaprika market overview: {type(exc).__name__}: {exc}")
 
     return out, "; ".join(errs) if errs else None
 
@@ -1472,7 +1444,7 @@ def main() -> None:
             "User-Agent": DEFAULT_UA,
             "Accept": "application/json",
         }
-        tradingview_total, tradingview_err = _fetch_tradingview_total_snapshot(crypto_headers)
+        coinpaprika_total, coinpaprika_err = _fetch_coinpaprika_total_snapshot(crypto_headers)
 
         crypto_rows_payload = [_crypto_row_json(r, i + 1) for i, r in enumerate(t_rows)]
         crypto_prices_payload = {
@@ -1482,8 +1454,8 @@ def main() -> None:
             "rows": crypto_rows_payload,
         }
 
-        total_market_cap_usd = tradingview_total.get("total_market_cap_usd")
-        total_market_cap_pct_1m = tradingview_total.get("market_cap_change_pct_1m")
+        total_market_cap_usd = coinpaprika_total.get("total_market_cap_usd")
+        total_market_cap_pct_1m = coinpaprika_total.get("market_cap_change_pct_1m")
         primary_label = "Total market cap"
         primary_value = format_usd_compact(total_market_cap_usd) if total_market_cap_usd else "—"
 
@@ -1491,7 +1463,7 @@ def main() -> None:
         eth_row = _find_crypto_row(t_rows, "ETH")
         crypto_kpis_payload = {
             "generated_at": crypto_generated_at,
-            "source": "TradingView TOTAL + CoinGecko" if (total_market_cap_usd or total_market_cap_pct_1m is not None) else (t_src or ""),
+            "source": "CoinPaprika + CoinGecko" if (total_market_cap_usd or total_market_cap_pct_1m is not None) else (t_src or ""),
             "error": t_err or "",
             "primary": {
                 "label": primary_label,
@@ -1509,15 +1481,17 @@ def main() -> None:
                 "delta": _crypto_delta_dict(eth_row.get("pct_30d") if eth_row else None, "1M"),
             },
             "source_note": (
-                "Total market cap and its 1M change come from TradingView's TOTAL market-cap pages. Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change."
-                if total_market_cap_usd or total_market_cap_pct_1m is not None
-                else "Total crypto market-cap data is unavailable right now. Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change."
+                "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change."
+                if total_market_cap_usd is not None and total_market_cap_pct_1m is not None
+                else (
+                    "Total market cap comes from CoinPaprika global market data. The 1M total-market-cap change is unavailable right now. Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change."
+                    if total_market_cap_usd is not None
+                    else "Total crypto market-cap data is unavailable right now. Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change."
+                )
             ),
         }
-        if tradingview_err:
-            crypto_chart_payload["warning"] = tradingview_err
-        if tradingview_err and total_market_cap_usd is None and total_market_cap_pct_1m is None:
-            crypto_kpis_payload["error"] = tradingview_err
+        if coinpaprika_err and total_market_cap_usd is None and total_market_cap_pct_1m is None:
+            crypto_kpis_payload["error"] = coinpaprika_err
 
         crypto_chart_payload["generated_at"] = crypto_generated_at
     except Exception as exc:
