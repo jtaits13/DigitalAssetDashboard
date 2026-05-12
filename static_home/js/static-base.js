@@ -292,10 +292,11 @@
 
   function tickerLoopWidth(parts) {
     if (!parts || !parts.primary) return 0;
-    if (parts.clone && typeof parts.clone.offsetLeft === "number" && typeof parts.primary.offsetLeft === "number") {
-      var loopWidth = parts.clone.offsetLeft - parts.primary.offsetLeft;
-      if (loopWidth > 0) return loopWidth;
+    if (parts.primary.getBoundingClientRect) {
+      var rectWidth = parts.primary.getBoundingClientRect().width;
+      if (rectWidth > 0) return rectWidth;
     }
+    if (typeof parts.primary.offsetWidth === "number" && parts.primary.offsetWidth > 0) return parts.primary.offsetWidth;
     return parts.primary.scrollWidth || 0;
   }
 
@@ -306,23 +307,26 @@
     if (strip.classList) strip.classList.remove("ticker-strip--js-marquee");
     var state = strip.__tickerJsMarquee;
     if (state) {
-      if (state.timer && typeof global.clearInterval === "function") global.clearInterval(state.timer);
+      if (state.raf && typeof global.cancelAnimationFrame === "function") global.cancelAnimationFrame(state.raf);
+      if (state.timer && typeof global.clearTimeout === "function") global.clearTimeout(state.timer);
       if (state.enter && strip.removeEventListener) strip.removeEventListener("mouseenter", state.enter);
       if (state.leave && strip.removeEventListener) strip.removeEventListener("mouseleave", state.leave);
       strip.__tickerJsMarquee = null;
     }
     var parts = getTickerParts(strip);
     if (parts && parts.move) parts.move.style.transform = "";
+    if (parts && parts.viewport) parts.viewport.scrollLeft = 0;
   }
 
   function startJsTicker(strip, parts) {
-    if (!strip || !parts || !parts.move || !parts.primary) return;
+    if (!strip || !parts || !parts.move || !parts.primary || !parts.viewport) return;
     stopJsTicker(strip);
-    if (!strip.classList || typeof global.setInterval !== "function") return;
+    if (!strip.classList) return;
     var state = {
       offset: 0,
-      lastTick: Date.now(),
+      lastTick: 0,
       paused: false,
+      raf: 0,
       timer: 0,
       enter: null,
       leave: null,
@@ -337,7 +341,8 @@
     strip.addEventListener("mouseenter", state.enter);
     strip.addEventListener("mouseleave", state.leave);
     strip.classList.add("ticker-strip--js-marquee");
-    state.timer = global.setInterval(function () {
+    var step = function (now) {
+      state.raf = 0;
       if (!document.body || !document.body.contains(strip)) {
         stopJsTicker(strip);
         return;
@@ -347,24 +352,48 @@
         stopJsTicker(strip);
         return;
       }
-      if (tickerPrefersReducedMotion() || !tickerNeedsOverflow(nextParts)) {
+      var loopWidth = tickerLoopWidth(nextParts);
+      var viewportWidth = nextParts.viewport.clientWidth || 0;
+      if (!loopWidth || !viewportWidth) {
+        if (typeof global.setTimeout === "function") {
+          state.timer = global.setTimeout(function () {
+            state.timer = 0;
+            queueNextFrame();
+          }, 120);
+        }
+        return;
+      }
+      if (tickerPrefersReducedMotion() || loopWidth <= viewportWidth + 8) {
         stopJsTicker(strip);
         return;
       }
-      var now = Date.now();
+      nextParts.move.style.transform = "";
       if (state.paused) {
         state.lastTick = now;
+        nextParts.viewport.scrollLeft = state.offset;
+        queueNextFrame();
         return;
       }
-      var loopWidth = tickerLoopWidth(nextParts);
-      if (!loopWidth) return;
+      if (!state.lastTick) state.lastTick = now;
       var speed = loopWidth / 72000;
       if (!isFinite(speed) || speed <= 0) speed = 0.02;
       state.offset += (now - state.lastTick) * speed;
       state.lastTick = now;
       while (state.offset >= loopWidth) state.offset -= loopWidth;
-      nextParts.move.style.transform = "translateX(" + (-state.offset).toFixed(2) + "px)";
-    }, 16);
+      nextParts.viewport.scrollLeft = state.offset;
+      queueNextFrame();
+    };
+    var queueNextFrame = function () {
+      if (typeof global.requestAnimationFrame === "function") {
+        state.raf = global.requestAnimationFrame(step);
+      } else if (typeof global.setTimeout === "function") {
+        state.timer = global.setTimeout(function () {
+          state.timer = 0;
+          step(Date.now());
+        }, 16);
+      }
+    };
+    queueNextFrame();
     strip.__tickerJsMarquee = state;
   }
 
