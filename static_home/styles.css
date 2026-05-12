@@ -615,6 +615,65 @@ body {
   margin-bottom: 0.35rem;
 }
 
+.ticker-strip__summary-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.45rem;
+}
+
+.ticker-strip--summary .ticker-strip__label {
+  margin-bottom: 0;
+}
+
+.ticker-strip__toggle {
+  appearance: none;
+  border: 1px solid rgba(37, 128, 156, 0.24);
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--teal);
+  border-radius: 999px;
+  padding: 0.38rem 0.8rem;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.ticker-strip__toggle:hover,
+.ticker-strip__toggle:focus-visible {
+  background: rgba(37, 128, 156, 0.08);
+  border-color: rgba(37, 128, 156, 0.38);
+  color: #1f6d86;
+}
+
+.ticker-strip__toggle:focus-visible {
+  outline: 2px solid rgba(37, 128, 156, 0.18);
+  outline-offset: 2px;
+}
+
+.ticker-strip--summary .ticker-strip__summary,
+.ticker-strip--summary .ticker-strip__all {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5rem 0.8rem;
+}
+
+.ticker-strip--summary .ticker-strip__all {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.28);
+}
+
+.ticker-strip--summary .ticker-strip__all[hidden] {
+  display: none;
+}
+
 /* Fallback before JSEnhancer runs: static centered row */
 .ticker-strip__layout > .ticker-strip__chips {
   display: flex;
@@ -630,6 +689,12 @@ body {
     justify-content: space-between;
     gap: 0.35rem 0.85rem;
   }
+}
+
+.ticker-strip--summary .ticker-strip__layout > .ticker-strip__summary,
+.ticker-strip--summary .ticker-strip__layout > .ticker-strip__all {
+  justify-content: flex-start;
+  gap: 0.5rem 0.8rem;
 }
 
 .ticker-chip {
@@ -698,6 +763,25 @@ a.ticker-chip-link .ticker-chip {
 
 a.ticker-chip-link:hover .ticker-chip {
   background: rgba(37, 128, 156, 0.12);
+}
+
+.ticker-strip--summary .ticker-chip {
+  padding: 0.28rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.84);
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.ticker-strip--summary a.ticker-chip-link .ticker-chip {
+  margin: 0;
+}
+
+@media (max-width: 680px) {
+  .ticker-strip__summary-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 /* —— Page shell & hub sections —— */

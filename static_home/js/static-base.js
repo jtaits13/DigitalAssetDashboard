@@ -136,69 +136,178 @@
     return d.innerHTML;
   };
 
+  function getTickerParts(strip) {
+    if (!strip) return null;
+    var layout = strip.querySelector(".ticker-strip__layout");
+    if (!layout) return null;
+    var label = strip.querySelector(".ticker-strip__label");
+    var mode = (strip.getAttribute("data-ticker-mode") || "").trim();
+    if (mode === "summary") {
+      var summaryCount = parseInt(strip.getAttribute("data-summary-count"), 10);
+      if (!isFinite(summaryCount) || summaryCount < 1) summaryCount = 6;
+      return {
+        strip: strip,
+        layout: layout,
+        label: label,
+        mode: mode,
+        primary: layout.querySelector(".ticker-strip__summary"),
+        overflow: layout.querySelector(".ticker-strip__all"),
+        toggle: layout.querySelector(".ticker-strip__toggle"),
+        summaryCount: summaryCount,
+      };
+    }
+    var viewport = layout.querySelector(".ticker-strip__viewport");
+    var move = viewport ? viewport.querySelector(".ticker-strip__move") : null;
+    var drums = move ? move.querySelectorAll(".ticker-strip__chips") : [];
+    if (drums && drums.length) {
+      return {
+        strip: strip,
+        layout: layout,
+        label: label,
+        mode: "marquee",
+        viewport: viewport,
+        move: move,
+        primary: drums[0],
+        clone: drums.length > 1 ? drums[1] : null,
+      };
+    }
+    var chips = null;
+    var k = 0;
+    var kids = layout.children;
+    for (; k < kids.length; k++) {
+      if (kids[k].classList && kids[k].classList.contains("ticker-strip__chips")) {
+        chips = kids[k];
+        break;
+      }
+    }
+    if (!chips) return null;
+    return {
+      strip: strip,
+      layout: layout,
+      label: label,
+      mode: "marquee",
+      primary: chips,
+      clone: null,
+      viewport: null,
+      move: null,
+    };
+  }
+
+  function tickerChildElements(container) {
+    var items = [];
+    if (!container) return items;
+    var i = 0;
+    for (; i < container.children.length; i++) {
+      items.push(container.children[i]);
+    }
+    return items;
+  }
+
+  function tickerItemSymbol(node) {
+    if (!node || typeof node.querySelector !== "function") return "";
+    var strong = node.querySelector("strong");
+    return strong && strong.textContent ? String(strong.textContent).trim().toUpperCase() : "";
+  }
+
+  function initCryptoTickerSummary(parts) {
+    if (!parts || parts.mode !== "summary" || !parts.primary) return;
+    var summaryHost = parts.primary;
+    var overflowHost = parts.overflow;
+    var toggle = parts.toggle;
+    var limit = parts.summaryCount || 6;
+    var items = tickerChildElements(summaryHost);
+    var preferred = ["BTC", "ETH", "SOL", "XRP", "ADA", "DOGE"];
+    var preferredItems = [];
+    var remaining = items.slice();
+    var pi = 0;
+    for (; pi < preferred.length && preferredItems.length < limit; pi++) {
+      var ri = 0;
+      for (; ri < remaining.length; ri++) {
+        if (tickerItemSymbol(remaining[ri]) === preferred[pi]) {
+          preferredItems.push(remaining.splice(ri, 1)[0]);
+          break;
+        }
+      }
+    }
+    while (preferredItems.length < limit && remaining.length) {
+      preferredItems.push(remaining.shift());
+    }
+    summaryHost.innerHTML = "";
+    preferredItems.forEach(function (item) {
+      summaryHost.appendChild(item);
+    });
+    if (overflowHost) {
+      overflowHost.innerHTML = "";
+      remaining.forEach(function (item) {
+        overflowHost.appendChild(item);
+      });
+    }
+    var hasOverflow = !!(overflowHost && overflowHost.children.length);
+    if (overflowHost) overflowHost.hidden = !hasOverflow;
+    if (toggle) {
+      toggle.hidden = !hasOverflow;
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.textContent = "Show all prices";
+      if (!toggle.__tickerSummaryBound) {
+        toggle.addEventListener("click", function () {
+          var expanded = toggle.getAttribute("aria-expanded") === "true";
+          expanded = !expanded;
+          toggle.setAttribute("aria-expanded", expanded ? "true" : "false");
+          toggle.textContent = expanded ? "Show fewer prices" : "Show all prices";
+          if (overflowHost) overflowHost.hidden = !expanded;
+        });
+        toggle.__tickerSummaryBound = true;
+      }
+    }
+    if (overflowHost && hasOverflow) overflowHost.hidden = true;
+  }
+
   /** Fill ``.ticker-strip`` from ``crypto_ticker.json``. */
   function hydrateStaticCryptoTicker(payload) {
     if (!payload || typeof document === "undefined") return;
     var strips = document.querySelectorAll(".ticker-strip");
     var si = 0;
     for (; si < strips.length; si++) {
-      var strip = strips[si];
-      var layout = strip.querySelector(".ticker-strip__layout");
-      if (!layout) continue;
-      var lab = strip.querySelector(".ticker-strip__label");
-      var chips = null;
-      var k = 0;
-      var kids = layout.children;
-      for (; k < kids.length; k++) {
-        if (kids[k].classList && kids[k].classList.contains("ticker-strip__chips")) {
-          chips = kids[k];
-          break;
-        }
+      var parts = getTickerParts(strips[si]);
+      if (!parts || !parts.primary) continue;
+      if (parts.label && payload.banner_title) parts.label.textContent = payload.banner_title;
+      if (payload.chips_inner_html) {
+        parts.primary.innerHTML = payload.chips_inner_html;
+        if (parts.clone) parts.clone.innerHTML = payload.chips_inner_html;
       }
-      if (!chips) continue;
-      if (lab && payload.banner_title) lab.textContent = payload.banner_title;
-      if (payload.chips_inner_html) chips.innerHTML = payload.chips_inner_html;
       if (typeof global.finalizeHubAnchors === "function") {
-        global.finalizeHubAnchors(strip);
+        global.finalizeHubAnchors(parts.strip);
       }
     }
   }
 
-  function initCryptoTickerMarquee() {
+  function initCryptoTickerDisplays() {
     if (typeof document === "undefined") return;
     var strips = document.querySelectorAll(".ticker-strip");
     var si = 0;
     for (; si < strips.length; si++) {
-      var strip = strips[si];
-      if (!strip || strip.getAttribute("data-ticker-marquee") === "1") continue;
-      var layout = strip.querySelector(".ticker-strip__layout");
-      if (!layout) continue;
-      var chips = null;
-      var k = 0;
-      var kids = layout.children;
-      for (; k < kids.length; k++) {
-        if (kids[k].classList && kids[k].classList.contains("ticker-strip__chips")) {
-          chips = kids[k];
-          break;
-        }
+      var parts = getTickerParts(strips[si]);
+      if (!parts || !parts.primary) continue;
+      if (parts.mode === "summary") {
+        initCryptoTickerSummary(parts);
+        continue;
       }
-      if (!chips) continue;
+      if (parts.strip.getAttribute("data-ticker-marquee") === "1") continue;
 
-      strip.setAttribute("data-ticker-marquee", "1");
-
-      chips.classList.add("ticker-strip__drum");
+      parts.strip.setAttribute("data-ticker-marquee", "1");
+      parts.primary.classList.add("ticker-strip__drum");
 
       var viewport = document.createElement("div");
       viewport.className = "ticker-strip__viewport";
       var move = document.createElement("div");
       move.className = "ticker-strip__move";
-      move.appendChild(chips);
-      var drumB = chips.cloneNode(true);
+      move.appendChild(parts.primary);
+      var drumB = parts.primary.cloneNode(true);
       drumB.setAttribute("aria-hidden", "true");
       drumB.classList.add("ticker-strip__chips--marquee-clone");
       move.appendChild(drumB);
       viewport.appendChild(move);
-      layout.appendChild(viewport);
+      parts.layout.appendChild(viewport);
     }
   }
 
@@ -209,10 +318,10 @@
         .loadJson("crypto_ticker.json")
         .then(function (data) {
           hydrateStaticCryptoTicker(data);
-          initCryptoTickerMarquee();
+          initCryptoTickerDisplays();
         })
         .catch(function () {
-          initCryptoTickerMarquee();
+          initCryptoTickerDisplays();
         });
     };
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
