@@ -68,7 +68,6 @@ STATIC_RWA_STABLECOINS_PAGE = "rwa-stablecoins.html"
 STATIC_RWA_US_TREASURIES_PAGE = "rwa-us-treasuries.html"
 STATIC_RWA_TOKENIZED_STOCKS_PAGE = "rwa-tokenized-stocks.html"
 APP_RWA_NETWORKS_URL = "https://app.rwa.xyz/networks"
-COINGECKO_GLOBAL_URL = "https://api.coingecko.com/api/v3/global"
 TRADINGVIEW_TOTAL_URL = "https://www.tradingview.com/symbols/TOTAL/"
 TRADINGVIEW_CRYPTO_GLOBAL_CHARTS_URL = "https://www.tradingview.com/markets/cryptocurrencies/global-charts/"
 
@@ -1371,44 +1370,6 @@ def _fetch_tradingview_total_snapshot(headers: dict[str, str]) -> tuple[dict[str
     return out, "; ".join(errs) if errs else None
 
 
-def _fetch_crypto_global_snapshot(headers: dict[str, str]) -> tuple[dict[str, float], str | None]:
-    try:
-        resp = requests.get(COINGECKO_GLOBAL_URL, headers=headers, timeout=25)
-        resp.raise_for_status()
-        payload = resp.json()
-    except (requests.RequestException, ValueError, TypeError) as exc:
-        return {}, f"{type(exc).__name__}: {exc}"
-    data = payload.get("data") if isinstance(payload, dict) else None
-    if not isinstance(data, dict):
-        return {}, "Unexpected CoinGecko global payload."
-    total_market_cap = data.get("total_market_cap")
-    total_market_cap_usd = None
-    if isinstance(total_market_cap, dict):
-        total_market_cap_usd = total_market_cap.get("usd")
-    market_cap_change_pct = data.get("market_cap_change_percentage_24h_usd")
-    btc_dominance = None
-    cap_pct = data.get("market_cap_percentage")
-    if isinstance(cap_pct, dict):
-        btc_dominance = cap_pct.get("btc")
-    out: dict[str, float] = {}
-    try:
-        if total_market_cap_usd is not None:
-            out["total_market_cap_usd"] = float(total_market_cap_usd)
-    except (TypeError, ValueError):
-        pass
-    try:
-        if market_cap_change_pct is not None:
-            out["market_cap_change_pct_24h"] = float(market_cap_change_pct)
-    except (TypeError, ValueError):
-        pass
-    try:
-        if btc_dominance is not None:
-            out["btc_dominance_pct"] = float(btc_dominance)
-    except (TypeError, ValueError):
-        pass
-    return out, None
-
-
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     manifest: dict = {"generated_at": datetime.now(timezone.utc).isoformat(), "errors": []}
@@ -1512,7 +1473,6 @@ def main() -> None:
             "Accept": "application/json",
         }
         tradingview_total, tradingview_err = _fetch_tradingview_total_snapshot(crypto_headers)
-        global_snapshot, global_err = _fetch_crypto_global_snapshot(crypto_headers)
 
         crypto_rows_payload = [_crypto_row_json(r, i + 1) for i, r in enumerate(t_rows)]
         crypto_prices_payload = {
@@ -1522,7 +1482,7 @@ def main() -> None:
             "rows": crypto_rows_payload,
         }
 
-        total_market_cap_usd = tradingview_total.get("total_market_cap_usd") or global_snapshot.get("total_market_cap_usd")
+        total_market_cap_usd = tradingview_total.get("total_market_cap_usd")
         total_market_cap_pct_1m = tradingview_total.get("market_cap_change_pct_1m")
         primary_label = "Total market cap"
         primary_value = format_usd_compact(total_market_cap_usd) if total_market_cap_usd else "—"
@@ -1549,15 +1509,15 @@ def main() -> None:
                 "delta": _crypto_delta_dict(eth_row.get("pct_30d") if eth_row else None, "1M"),
             },
             "source_note": (
-                "Total market cap and its 1M change come from TradingView's TOTAL market-cap pages, with CoinGecko global data only used as a fallback for the current total when needed. Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change."
+                "Total market cap and its 1M change come from TradingView's TOTAL market-cap pages. Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change."
                 if total_market_cap_usd or total_market_cap_pct_1m is not None
                 else "Total crypto market-cap data is unavailable right now. Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change."
             ),
         }
         if tradingview_err:
             crypto_chart_payload["warning"] = tradingview_err
-        if global_err and total_market_cap_usd is None:
-            crypto_kpis_payload["error"] = global_err
+        if tradingview_err and total_market_cap_usd is None and total_market_cap_pct_1m is None:
+            crypto_kpis_payload["error"] = tradingview_err
 
         crypto_chart_payload["generated_at"] = crypto_generated_at
     except Exception as exc:

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-12T13:53:00.253418+00:00",
+  "generated_at": "2026-05-12T14:04:23.823267+00:00",
   "source": "TradingView TOTAL + CoinGecko",
   "error": "",
   "primary": {
@@ -12,19 +12,19 @@
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$80,668",
+    "value_display": "$80,479",
     "delta": {
-      "pct": 12.8369,
+      "pct": 13.1117,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,276",
+    "value_display": "$2,273",
     "delta": {
-      "pct": 3.1959,
+      "pct": 3.459,
       "window": "1M"
     }
   },
-  "source_note": "Total market cap and its 1M change come from TradingView's TOTAL market-cap pages, with CoinGecko global data only used as a fallback for the current total when needed. Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change."
+  "source_note": "Total market cap and its 1M change come from TradingView's TOTAL market-cap pages. Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change."
 }
