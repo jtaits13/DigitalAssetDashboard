@@ -1313,6 +1313,14 @@ a.ticker-chip-link:hover .ticker-chip {
   gap: 0.35rem;
 }
 
+.rwa-onchain-cta .btn-secondary {
+  margin-left: 0;
+}
+
+.rwa-onchain-cta.rwa-table-actions [data-rwa-fullscreen-btn="1"] {
+  margin-left: 0;
+}
+
 .rwa-explore-rule {
   margin: 1.25rem 0 1rem;
 }
