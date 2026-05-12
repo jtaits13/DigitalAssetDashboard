@@ -282,9 +282,27 @@
     strip.__tickerMotionProbe = 0;
   }
 
+  function clearTickerRefreshRetry(strip) {
+    if (!strip) return;
+    if (strip.__tickerRefreshRetry && typeof global.clearTimeout === "function") {
+      global.clearTimeout(strip.__tickerRefreshRetry);
+    }
+    strip.__tickerRefreshRetry = 0;
+  }
+
+  function tickerLoopWidth(parts) {
+    if (!parts || !parts.primary) return 0;
+    if (parts.clone && typeof parts.clone.offsetLeft === "number" && typeof parts.primary.offsetLeft === "number") {
+      var loopWidth = parts.clone.offsetLeft - parts.primary.offsetLeft;
+      if (loopWidth > 0) return loopWidth;
+    }
+    return parts.primary.scrollWidth || 0;
+  }
+
   function stopJsTicker(strip) {
     if (!strip) return;
     clearTickerMotionProbe(strip);
+    clearTickerRefreshRetry(strip);
     if (strip.classList) strip.classList.remove("ticker-strip--js-marquee");
     var state = strip.__tickerJsMarquee;
     if (state) {
@@ -338,20 +356,30 @@
         state.lastTick = now;
         return;
       }
-      var primaryWidth = nextParts.primary.scrollWidth;
-      if (!primaryWidth) return;
-      var speed = primaryWidth / 72000;
+      var loopWidth = tickerLoopWidth(nextParts);
+      if (!loopWidth) return;
+      var speed = loopWidth / 72000;
       if (!isFinite(speed) || speed <= 0) speed = 0.02;
       state.offset += (now - state.lastTick) * speed;
       state.lastTick = now;
-      while (state.offset >= primaryWidth) state.offset -= primaryWidth;
+      while (state.offset >= loopWidth) state.offset -= loopWidth;
       nextParts.move.style.transform = "translateX(" + (-state.offset).toFixed(2) + "px)";
     }, 16);
     strip.__tickerJsMarquee = state;
   }
 
+  function scheduleTickerRefreshRetry(strip, delay) {
+    if (!strip || typeof global.setTimeout !== "function") return;
+    clearTickerRefreshRetry(strip);
+    strip.__tickerRefreshRetry = global.setTimeout(function () {
+      strip.__tickerRefreshRetry = 0;
+      if (document.body && document.body.contains(strip)) refreshCryptoTickerLayout(strip);
+    }, delay);
+  }
+
   function refreshCryptoTickerLayout(strip) {
     clearTickerMotionProbe(strip);
+    clearTickerRefreshRetry(strip);
     var parts = getTickerParts(strip);
     if (!parts || !parts.primary) return;
     if (!parts.viewport || !parts.move) {
@@ -359,8 +387,13 @@
       return;
     }
     var forceJsTicker = strip.getAttribute("data-ticker-mode") === "js";
-    if (tickerPrefersReducedMotion() || !tickerNeedsOverflow(parts)) {
+    if (tickerPrefersReducedMotion()) {
       stopJsTicker(strip);
+      return;
+    }
+    if (!tickerNeedsOverflow(parts)) {
+      stopJsTicker(strip);
+      scheduleTickerRefreshRetry(strip, 450);
       return;
     }
     if (forceJsTicker) {
@@ -435,11 +468,21 @@
     else run();
     if (typeof global.addEventListener === "function") {
       global.addEventListener("resize", scheduleCryptoTickerLayoutRefresh);
+      global.addEventListener("load", scheduleCryptoTickerLayoutRefresh);
+      global.addEventListener("pageshow", scheduleCryptoTickerLayoutRefresh);
     }
     if (typeof document !== "undefined" && typeof document.addEventListener === "function") {
       document.addEventListener("visibilitychange", function () {
         if (document.visibilityState === "visible") scheduleCryptoTickerLayoutRefresh();
       });
+    }
+    if (document.fonts && typeof document.fonts.ready === "object" && typeof document.fonts.ready.then === "function") {
+      document.fonts.ready.then(scheduleCryptoTickerLayoutRefresh, function () {});
+    }
+    scheduleCryptoTickerLayoutRefresh();
+    if (typeof global.setTimeout === "function") {
+      global.setTimeout(scheduleCryptoTickerLayoutRefresh, 250);
+      global.setTimeout(scheduleCryptoTickerLayoutRefresh, 1000);
     }
   }
   bootStaticCryptoTicker();
