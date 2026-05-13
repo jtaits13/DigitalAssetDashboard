@@ -2,6 +2,7 @@
 Build JSON payloads under static_home/data/ for the GitHub Pages mirror.
 
 Run locally:  python scripts/export_static_site_data.py
+  Crypto only (rewrites ``crypto_*.json`` with ``about_blurb`` on each row, ~1–3 min):  python scripts/export_static_site_data.py --crypto-only
 Run in CI:    before upload-pages-artifact (see .github/workflows).
 
 Uses the same RSS / StockAnalysis / yfinance / RWA.xyz logic as the Streamlit app (no Streamlit UI), plus ``price_ticker.fetch_top_crypto_tickers`` for ``crypto_ticker.json`` (GitHub Pages marquee).
@@ -1385,69 +1386,8 @@ def _fetch_coinpaprika_total_snapshot(headers: dict[str, str]) -> tuple[dict[str
     return out, "; ".join(errs) if errs else None
 
 
-def main() -> None:
-    OUT.mkdir(parents=True, exist_ok=True)
-    manifest: dict = {"generated_at": datetime.now(timezone.utc).isoformat(), "errors": []}
-
-    # --- ETP list + AUM + KPIs (StockAnalysis + Yahoo; same as app) ---
-    etp_result = fetch_crypto_etps_enriched(DEFAULT_UA)
-    if etp_result.error:
-        manifest["errors"].append(f"ETP scrape: {etp_result.error}")
-    rows = sorted_by_assets(etp_result.rows)
-    rows_payload = [_etp_row_json(r) for r in rows]
-
-    pairs = etp_rows_to_fund_pairs(rows)
-    chart_df, chart_err = build_aggregate_aum_history_12m(list(pairs))
-    if chart_err:
-        manifest["errors"].append(f"AUM chart: {chart_err}")
-
-    series: list[dict] = []
-    if chart_df is not None and not chart_df.empty:
-        for _, r in chart_df.iterrows():
-            d = r["date"]
-            if hasattr(d, "isoformat"):
-                ds = d.isoformat()
-            else:
-                ds = str(d)
-            series.append(
-                {
-                    "date": ds,
-                    "aum_billions": float(r["total_aum_usd"]) / 1e9,
-                }
-            )
-
-    agg_pct, agg_lbl = aggregate_aum_pct_from_history(chart_df)
-    total = total_aum_usd(rows)
-    aum_s = format_usd_compact(total) if total > 0 else "—"
-
-    ibit_r = _row_by_symbol(rows, "IBIT")
-    etha_r = _row_by_symbol(rows, "ETHA")
-    ibit_aum = (
-        format_usd_compact(ibit_r.assets_usd)
-        if ibit_r and has_listed_aum_usd(ibit_r.assets_usd)
-        else "—"
-    )
-    etha_aum = (
-        format_usd_compact(etha_r.assets_usd)
-        if etha_r and has_listed_aum_usd(etha_r.assets_usd)
-        else "—"
-    )
-
-    kpis = {
-        "total_aum_display": aum_s,
-        "aggregate_pct": round(float(agg_pct), 4) if agg_pct is not None else None,
-        "aggregate_window": agg_lbl or "",
-        "ibit": {"aum_display": ibit_aum, "delta": _kpi_delta("IBIT", ibit_r)},
-        "etha": {"aum_display": etha_aum, "delta": _kpi_delta("ETHA", etha_r)},
-    }
-
-    (OUT / "etps.json").write_text(
-        json.dumps({"rows": rows_payload}, indent=2),
-        encoding="utf-8",
-    )
-    (OUT / "aum_series.json").write_text(json.dumps({"series": series}, indent=2), encoding="utf-8")
-    (OUT / "etp_kpis.json").write_text(json.dumps(kpis, indent=2), encoding="utf-8")
-
+def export_crypto_json_bundle(manifest: dict[str, Any]) -> None:
+    """Write ``crypto_ticker.json``, ``crypto_prices.json``, ``crypto_kpis.json``, ``crypto_market_cap_series.json``."""
     # --- Crypto prices + market-cap series (CoinGecko with CoinCap fallback for spot rows) ---
     crypto_generated_at = datetime.now(timezone.utc).isoformat()
     crypto_prices_payload: dict[str, object] = {
@@ -1581,6 +1521,72 @@ def main() -> None:
         json.dumps(crypto_chart_payload, indent=2),
         encoding="utf-8",
     )
+
+
+def main() -> None:
+    OUT.mkdir(parents=True, exist_ok=True)
+    manifest: dict = {"generated_at": datetime.now(timezone.utc).isoformat(), "errors": []}
+
+    # --- ETP list + AUM + KPIs (StockAnalysis + Yahoo; same as app) ---
+    etp_result = fetch_crypto_etps_enriched(DEFAULT_UA)
+    if etp_result.error:
+        manifest["errors"].append(f"ETP scrape: {etp_result.error}")
+    rows = sorted_by_assets(etp_result.rows)
+    rows_payload = [_etp_row_json(r) for r in rows]
+
+    pairs = etp_rows_to_fund_pairs(rows)
+    chart_df, chart_err = build_aggregate_aum_history_12m(list(pairs))
+    if chart_err:
+        manifest["errors"].append(f"AUM chart: {chart_err}")
+
+    series: list[dict] = []
+    if chart_df is not None and not chart_df.empty:
+        for _, r in chart_df.iterrows():
+            d = r["date"]
+            if hasattr(d, "isoformat"):
+                ds = d.isoformat()
+            else:
+                ds = str(d)
+            series.append(
+                {
+                    "date": ds,
+                    "aum_billions": float(r["total_aum_usd"]) / 1e9,
+                }
+            )
+
+    agg_pct, agg_lbl = aggregate_aum_pct_from_history(chart_df)
+    total = total_aum_usd(rows)
+    aum_s = format_usd_compact(total) if total > 0 else "—"
+
+    ibit_r = _row_by_symbol(rows, "IBIT")
+    etha_r = _row_by_symbol(rows, "ETHA")
+    ibit_aum = (
+        format_usd_compact(ibit_r.assets_usd)
+        if ibit_r and has_listed_aum_usd(ibit_r.assets_usd)
+        else "—"
+    )
+    etha_aum = (
+        format_usd_compact(etha_r.assets_usd)
+        if etha_r and has_listed_aum_usd(etha_r.assets_usd)
+        else "—"
+    )
+
+    kpis = {
+        "total_aum_display": aum_s,
+        "aggregate_pct": round(float(agg_pct), 4) if agg_pct is not None else None,
+        "aggregate_window": agg_lbl or "",
+        "ibit": {"aum_display": ibit_aum, "delta": _kpi_delta("IBIT", ibit_r)},
+        "etha": {"aum_display": etha_aum, "delta": _kpi_delta("ETHA", etha_r)},
+    }
+
+    (OUT / "etps.json").write_text(
+        json.dumps({"rows": rows_payload}, indent=2),
+        encoding="utf-8",
+    )
+    (OUT / "aum_series.json").write_text(json.dumps({"series": series}, indent=2), encoding="utf-8")
+    (OUT / "etp_kpis.json").write_text(json.dumps(kpis, indent=2), encoding="utf-8")
+
+    export_crypto_json_bundle(manifest)
 
     # --- Home RSS lane: three newest from core feeds + The Defiant (static site feed list).
     articles_home, feed_errs_home = load_all_feeds(list(DEFAULT_FEEDS) + [STATIC_THE_DEFIANT_FEED])
@@ -1853,4 +1859,20 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    if any(a in ("--crypto-only", "--crypto") for a in sys.argv[1:]):
+        OUT.mkdir(parents=True, exist_ok=True)
+        manifest_only: dict[str, Any] = {"generated_at": datetime.now(timezone.utc).isoformat(), "errors": []}
+        export_crypto_json_bundle(manifest_only)
+        sample_path = OUT / "crypto_prices.json"
+        sample_keys: list[str] = []
+        try:
+            loaded = json.loads(sample_path.read_text(encoding="utf-8"))
+            rows0 = (loaded.get("rows") or [{}])[0]
+            sample_keys = sorted(rows0.keys())
+        except (OSError, ValueError, TypeError):
+            pass
+        print(f"Wrote crypto JSON under {sample_path.parent}. First row keys: {sample_keys}")
+        if manifest_only["errors"]:
+            print("Warnings:", manifest_only["errors"])
+        raise SystemExit(0)
     main()
