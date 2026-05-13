@@ -176,30 +176,111 @@
   /**
    * Chrome: a bubble with ``pointer-events: none`` lets the pointer hit elements behind it, so the
    * hint no longer matches ``:hover`` and the tooltip vanishes. Toggle ``crypto-hint--open`` explicitly.
+   *
+   * Hints inside ``.table-wrap--scroll`` use ``position: fixed`` for the bubble so ``overflow: auto``
+   * does not clip the popup (crypto prices full table).
    */
+  var cryptoBubbleScrollParents =
+    typeof WeakSet !== "undefined"
+      ? new WeakSet()
+      : { has: function () { return false; }, add: function () {} };
+  var cryptoBubbleResizeBound = false;
+
+  function positionCryptoBubble(h) {
+    if (!h || !h.classList || !h.classList.contains("crypto-hint--fixed-bubble")) return;
+    var bubble = h.querySelector(".crypto-hint__bubble");
+    var label = h.querySelector(".crypto-hint__label");
+    if (!bubble || !label) return;
+    var lr = label.getBoundingClientRect();
+    var margin = 8;
+    var vw = typeof window !== "undefined" ? window.innerWidth : 1200;
+    var maxW = Math.min(26 * 16, vw * 0.94);
+    var left = Math.max(margin, Math.min(lr.left, vw - maxW - margin));
+    bubble.style.position = "fixed";
+    bubble.style.left = left + "px";
+    bubble.style.top = lr.bottom + margin + "px";
+    bubble.style.right = "auto";
+    bubble.style.bottom = "auto";
+    bubble.style.maxWidth = "min(26rem, calc(100vw - " + margin * 2 + "px))";
+  }
+
+  function clearCryptoBubblePosition(h) {
+    var bubble = h && h.querySelector ? h.querySelector(".crypto-hint__bubble") : null;
+    if (!bubble) return;
+    bubble.style.removeProperty("position");
+    bubble.style.removeProperty("left");
+    bubble.style.removeProperty("top");
+    bubble.style.removeProperty("right");
+    bubble.style.removeProperty("bottom");
+    bubble.style.removeProperty("max-width");
+  }
+
+  function bindCryptoBubbleScrollContainer(container) {
+    if (!container || !container.addEventListener) return;
+    if (cryptoBubbleScrollParents.has(container)) return;
+    cryptoBubbleScrollParents.add(container);
+    container.addEventListener("scroll", function () {
+      var open = container.querySelectorAll(".crypto-hint--open.crypto-hint--fixed-bubble");
+      var j = 0;
+      for (; j < open.length; j++) positionCryptoBubble(open[j]);
+    });
+  }
+
+  function bindCryptoBubbleWindowResize() {
+    if (cryptoBubbleResizeBound || typeof window === "undefined" || !window.addEventListener) return;
+    cryptoBubbleResizeBound = true;
+    window.addEventListener("resize", function () {
+      var open = document.querySelectorAll(".crypto-hint--open.crypto-hint--fixed-bubble");
+      var j = 0;
+      for (; j < open.length; j++) positionCryptoBubble(open[j]);
+    });
+  }
+
   global.bindCryptoHints = function (root) {
     if (!root || !root.querySelectorAll) return;
+    bindCryptoBubbleWindowResize();
     var hints = root.querySelectorAll(".crypto-hint");
     var i = 0;
     for (; i < hints.length; i++) {
       var h = hints[i];
       if (h.getAttribute("data-hint-bound") === "1") continue;
       h.setAttribute("data-hint-bound", "1");
+      var scrollWrap = h.closest ? h.closest(".table-wrap--scroll") : null;
+      if (scrollWrap) bindCryptoBubbleScrollContainer(scrollWrap);
+
       h.addEventListener("mouseenter", function () {
         this.classList.add("crypto-hint--open");
+        if (this.closest && this.closest(".table-wrap--scroll")) {
+          this.classList.add("crypto-hint--fixed-bubble");
+          var self = this;
+          requestAnimationFrame(function () {
+            positionCryptoBubble(self);
+          });
+        }
       });
       h.addEventListener("mouseleave", function (ev) {
         var rt = ev.relatedTarget;
         if (rt && this.contains(rt)) return;
         this.classList.remove("crypto-hint--open");
+        this.classList.remove("crypto-hint--fixed-bubble");
+        clearCryptoBubblePosition(this);
       });
       h.addEventListener("focusin", function () {
         this.classList.add("crypto-hint--open");
+        if (this.closest && this.closest(".table-wrap--scroll")) {
+          this.classList.add("crypto-hint--fixed-bubble");
+          var self = this;
+          requestAnimationFrame(function () {
+            positionCryptoBubble(self);
+          });
+        }
       });
       h.addEventListener("focusout", function (ev) {
         var rt = ev.relatedTarget;
         if (rt && this.contains(rt)) return;
         this.classList.remove("crypto-hint--open");
+        this.classList.remove("crypto-hint--fixed-bubble");
+        clearCryptoBubblePosition(this);
       });
     }
   };
