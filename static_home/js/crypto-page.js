@@ -223,6 +223,14 @@
     } else {
       sortRows(state.filtered).forEach(function (row) {
         var tr = document.createElement("tr");
+        var w = typeof window !== "undefined" ? window : {};
+        var blurb = (row.about_blurb || "").trim();
+        var wrap =
+          typeof w.wrapCryptoHint === "function"
+            ? w.wrapCryptoHint
+            : function (txt, b, cls) {
+                return w.escapeHtml(String(txt || ""));
+              };
         var detailCell = row.detail_url
           ? '<td><a href="' +
             escapeHtml(row.detail_url) +
@@ -233,10 +241,10 @@
           escapeHtml(String(row.rank != null ? row.rank : "—")) +
           "</td>" +
           '<td><span class="sym">' +
-          escapeHtml(row.symbol || "") +
+          wrap(row.symbol || "", blurb, "") +
           "</span></td>" +
           "<td>" +
-          escapeHtml(row.name || "") +
+          wrap(row.name || "", blurb, "crypto-hint--name") +
           "</td>" +
           '<td class="num">' +
           escapeHtml(fmtPrice(row.price_usd)) +

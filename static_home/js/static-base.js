@@ -138,6 +138,23 @@
     return d.innerHTML;
   };
 
+  /**
+   * Wrap label text with a CoinGecko-derived blurb (``about_blurb`` on JSON rows). Hover/focus shows tooltip.
+   */
+  global.wrapCryptoHint = function (text, blurb, extraClass) {
+    var t = text == null ? "" : String(text);
+    var b = blurb == null ? "" : String(blurb).trim();
+    if (!b) return global.escapeHtml(t);
+    var span = document.createElement("span");
+    span.className = "crypto-hint" + (extraClass ? " " + extraClass : "");
+    span.tabIndex = 0;
+    span.setAttribute("role", "img");
+    span.setAttribute("aria-label", b);
+    span.dataset.tooltip = b;
+    span.textContent = t;
+    return span.outerHTML;
+  };
+
   function getTickerParts(strip) {
     if (!strip) return null;
     var layout = strip.querySelector(".ticker-strip__layout");

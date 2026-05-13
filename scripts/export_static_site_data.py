@@ -1316,6 +1316,7 @@ def _crypto_row_json(r: dict[str, object], fallback_rank: int) -> dict[str, obje
         "pct_30d": float(pct_30d) if pct_30d is not None else None,
         "market_cap_usd": float(market_cap) if market_cap is not None else None,
         "detail_url": str(r.get("detail_url") or ""),
+        "about_blurb": str(r.get("about_blurb") or ""),
     }
 
 
@@ -1481,14 +1482,35 @@ def main() -> None:
 
         crypto_banner_title = PRICE_TICKER_BANNER_TITLE
 
-        t_rows, t_err, t_src = fetch_top_crypto_tickers(TICKER_COUNT)
-        crypto_payload = hub_ticker_static_json_payload(t_rows, t_err, t_src)
-        crypto_payload["generated_at"] = crypto_generated_at
-
         crypto_headers = {
             "User-Agent": DEFAULT_UA,
             "Accept": "application/json",
         }
+
+        t_rows, t_err, t_src = fetch_top_crypto_tickers(TICKER_COUNT)
+        t_rows = [dict(r) for r in t_rows]
+        from coingecko_about import fetch_blurbs_for_coin_ids
+
+        _blurbs_ids: list[str] = []
+        _blurbs_seen: set[str] = set()
+        for _r in t_rows:
+            _cid = str(_r.get("coin_id") or "").strip()
+            if _r.get("source") == "coingecko" and _cid and _cid not in _blurbs_seen:
+                _blurbs_seen.add(_cid)
+                _blurbs_ids.append(_cid)
+        _blurbs_map = (
+            fetch_blurbs_for_coin_ids(_blurbs_ids, headers=crypto_headers, delay_s=0.08) if _blurbs_ids else {}
+        )
+        for _r in t_rows:
+            _cid = str(_r.get("coin_id") or "").strip()
+            if _r.get("source") == "coingecko" and _cid:
+                _r["about_blurb"] = _blurbs_map.get(_cid, "")
+            else:
+                _r["about_blurb"] = ""
+
+        crypto_payload = hub_ticker_static_json_payload(t_rows, t_err, t_src)
+        crypto_payload["generated_at"] = crypto_generated_at
+
         coinpaprika_total, coinpaprika_err = _fetch_coinpaprika_total_snapshot(crypto_headers)
 
         crypto_rows_payload = [_crypto_row_json(r, i + 1) for i, r in enumerate(t_rows)]

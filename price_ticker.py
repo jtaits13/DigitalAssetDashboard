@@ -8,6 +8,8 @@ from typing import Any
 import requests
 import streamlit as st
 
+from coingecko_about import fetch_blurbs_for_coin_ids
+
 try:
     import streamlit.components.v1 as components
 except Exception:  # noqa: BLE001
@@ -93,6 +95,9 @@ a.cd-chip-link {
     cursor: pointer;
     border-radius: 6px;
     outline-offset: 2px;
+}
+a.cd-chip-link[title] {
+    cursor: help;
 }
 a.cd-chip-link:hover .cd-chip {
     background: rgba(37, 128, 156, 0.12);
@@ -287,6 +292,8 @@ def hub_ticker_chip_html(r: dict[str, Any]) -> str:
         cls = "up" if p >= 0 else "down"
         sign = "+" if p > 0 else ""
         pct_html = f'<span class="{cls}">{arrow} {sign}{p:.2f}%</span>'
+    blurb = (str(r.get("about_blurb") or "")).strip()
+    title_attr = f' title="{escape(blurb, quote=True)}"' if blurb else ""
     inner = (
         f'<span class="ticker-chip"><strong>{sym}</strong> '
         f'<span class="ticker-usd">{price_s}</span> {pct_html}</span>'
@@ -295,7 +302,7 @@ def hub_ticker_chip_html(r: dict[str, Any]) -> str:
     if isinstance(href, str) and href.startswith(("https://www.coingecko.com/", "https://coincap.io/")):
         h = escape(href, quote=True)
         return (
-            f'<a class="ticker-chip ticker-chip-link" href="{h}" target="_blank" rel="noopener noreferrer">'
+            f'<a class="ticker-chip ticker-chip-link" href="{h}" target="_blank" rel="noopener noreferrer"{title_attr}>'
             f"{inner}</a>"
         )
     return inner
@@ -350,6 +357,8 @@ def render_price_ticker_html(
             cls = "cd-pct-up" if p >= 0 else "cd-pct-down"
             sign = "+" if p > 0 else ""
             pct_html = f'<span class="cd-pct {cls}">{arrow} {sign}{p:.2f}%</span>'
+        blurb = (str(r.get("about_blurb") or "")).strip()
+        title_attr = f' title="{escape(blurb, quote=True)}"' if blurb else ""
         inner = (
             f'<span class="cd-chip"><strong>{sym}</strong> '
             f'<span class="cd-usd">{price_s}</span> {pct_html}</span>'
@@ -358,7 +367,8 @@ def render_price_ticker_html(
         if isinstance(href, str) and href.startswith(("https://www.coingecko.com/", "https://coincap.io/")):
             h = escape(href, quote=True)
             return (
-                f'<a class="cd-chip cd-chip-link" href="{h}" target="_blank" rel="noopener noreferrer">{inner}</a>'
+                f'<a class="cd-chip cd-chip-link" href="{h}" target="_blank" rel="noopener noreferrer"{title_attr}>'
+                f"{inner}</a>"
             )
         return inner
 
@@ -370,6 +380,30 @@ def render_price_ticker_html(
         f'<span class="cd-ticker-label">{banner}</span>'
         f'<div class="cd-ticker-viewport"><div class="cd-ticker-move">{inner}</div></div></div>'
     )
+
+
+@st.cache_data(ttl=86_400, show_spinner=False)
+def _cached_coingecko_ticker_blurbs(ids_tuple: tuple[str, ...]) -> dict[str, str]:
+    """One fetch per unique id set per day; used for native ``title`` tooltips on ticker chips."""
+    if not ids_tuple:
+        return {}
+    headers = {
+        "User-Agent": "Mozilla/5.0 (compatible; Digital-Assets-Dashboard-News/1.0)",
+        "Accept": "application/json",
+    }
+    return fetch_blurbs_for_coin_ids(list(ids_tuple), headers=headers, delay_s=0.1)
+
+
+def attach_about_blurbs_to_rows(rows: list[dict[str, Any]]) -> None:
+    """Mutate **copies** of ticker rows with ``about_blurb`` (CoinGecko ids only)."""
+    ids = sorted({str(r["coin_id"]).strip() for r in rows if r.get("source") == "coingecko" and r.get("coin_id")})
+    blurbs = _cached_coingecko_ticker_blurbs(tuple(ids)) if ids else {}
+    for r in rows:
+        cid = r.get("coin_id")
+        if r.get("source") == "coingecko" and cid:
+            r["about_blurb"] = blurbs.get(str(cid).strip(), "")
+        else:
+            r["about_blurb"] = ""
 
 
 NAV_TICKER_ALIGN_SCRIPT = """
@@ -399,6 +433,8 @@ def show_price_ticker() -> None:
     """Inject ticker CSS and HTML. Call once per page that should show the ticker."""
     st.markdown(TICKER_STYLES_MARKDOWN, unsafe_allow_html=True)
     rows, err, src = fetch_top_crypto_tickers(TICKER_COUNT)
+    rows = [dict(r) for r in rows]
+    attach_about_blurbs_to_rows(rows)
     st.markdown(render_price_ticker_html(rows, err, src), unsafe_allow_html=True)
     if components is not None:
         components.html(NAV_TICKER_ALIGN_SCRIPT, height=0, width=0)
