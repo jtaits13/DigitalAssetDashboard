@@ -1091,28 +1091,38 @@ a.ticker-chip-link[title] {
   letter-spacing: 0.02em;
 }
 
-/* CoinGecko “About” excerpts: hover / keyboard-focus on Ticker or Coin cells */
+/* CoinGecko “About” excerpts: hover / keyboard on Ticker or Coin (real DOM bubble; avoid content:attr). */
 .crypto-hint {
   position: relative;
   display: inline-block;
   max-width: 100%;
   cursor: help;
-  text-decoration: underline dotted;
-  text-underline-offset: 0.15em;
   outline: none;
 }
 
-.crypto-hint.crypto-hint--name {
+.crypto-hint__label {
+  text-decoration: underline dotted;
+  text-underline-offset: 0.15em;
+}
+
+.crypto-hint.crypto-hint--name .crypto-hint__label {
   font-weight: 500;
   color: var(--ink);
 }
 
-.crypto-hint::after {
-  content: attr(data-tooltip);
+.sym .crypto-hint__label {
+  font-weight: 700;
+  color: var(--teal);
+  letter-spacing: 0.02em;
+}
+
+.crypto-hint__bubble {
+  display: none;
   position: absolute;
   left: 0;
   bottom: calc(100% + 8px);
-  z-index: 80;
+  z-index: 10050;
+  box-sizing: border-box;
   min-width: 11.5rem;
   max-width: min(26rem, 94vw);
   padding: 0.5rem 0.65rem;
@@ -1120,6 +1130,7 @@ a.ticker-chip-link[title] {
   font-weight: 500;
   line-height: 1.38;
   color: #021d41;
+  text-align: left;
   text-decoration: none;
   background: #fff;
   border: 1px solid #c7d8e8;
@@ -1127,18 +1138,14 @@ a.ticker-chip-link[title] {
   box-shadow: 0 8px 22px rgba(15, 23, 42, 0.14);
   white-space: normal;
   pointer-events: none;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.14s ease, visibility 0.14s ease;
 }
 
-.crypto-hint:hover::after,
-.crypto-hint:focus-visible::after {
-  opacity: 1;
-  visibility: visible;
+.crypto-hint:hover .crypto-hint__bubble,
+.crypto-hint:focus-within .crypto-hint__bubble {
+  display: block;
 }
 
-.table-wrap--scroll .crypto-hint::after {
+.table-wrap--scroll .crypto-hint__bubble {
   bottom: auto;
   top: calc(100% + 8px);
 }

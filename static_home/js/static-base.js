@@ -139,21 +139,38 @@
   };
 
   /**
-   * Wrap label text with a CoinGecko-derived blurb (``about_blurb`` on JSON rows). Hover/focus shows tooltip.
+   * Wrap label text with a CoinGecko-derived blurb (``about_blurb`` on JSON rows).
+   * Uses a real DOM subtree for the popup (CSS ``content: attr(...)`` is unreliable for long text).
    */
+  global.escapeAttr = function (s) {
+    if (s == null) return "";
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;")
+      .replace(/</g, "&lt;")
+      .replace(/\r?\n/g, " ");
+  };
+
   global.wrapCryptoHint = function (text, blurb, extraClass) {
     var t = text == null ? "" : String(text);
     var b = blurb == null ? "" : String(blurb).trim();
     if (!b) return global.escapeHtml(t);
-    var span = document.createElement("span");
-    span.className = "crypto-hint" + (extraClass ? " " + extraClass : "");
-    span.tabIndex = 0;
-    span.setAttribute("role", "img");
-    span.setAttribute("aria-label", b);
-    span.setAttribute("data-tooltip", b);
-    span.title = b;
-    span.textContent = t;
-    return span.outerHTML;
+    var cls = "crypto-hint" + (extraClass ? " " + extraClass : "");
+    var titleA = global.escapeAttr(b);
+    return (
+      '<span class="' +
+      cls +
+      '" tabindex="0" title="' +
+      titleA +
+      '">' +
+      '<span class="crypto-hint__label">' +
+      global.escapeHtml(t) +
+      "</span>" +
+      '<span class="crypto-hint__bubble" role="tooltip">' +
+      global.escapeHtml(b) +
+      "</span></span>"
+    );
   };
 
   function getTickerParts(strip) {
