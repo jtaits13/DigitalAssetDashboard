@@ -1117,11 +1117,6 @@ a.ticker-chip-link[title] {
   text-underline-offset: 0.15em;
 }
 
-.crypto-hint.crypto-hint--name .crypto-hint__label {
-  font-weight: 500;
-  color: var(--ink);
-}
-
 .sym .crypto-hint__label {
   font-weight: 700;
   color: var(--teal);

@@ -244,7 +244,7 @@
           wrap(row.symbol || "", blurb, "") +
           "</span></td>" +
           "<td>" +
-          wrap(row.name || "", blurb, "crypto-hint--name") +
+          escapeHtml(row.name || "") +
           "</td>" +
           '<td class="num">' +
           escapeHtml(fmtPrice(row.price_usd)) +
