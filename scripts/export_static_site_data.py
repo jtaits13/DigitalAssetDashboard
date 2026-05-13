@@ -17,7 +17,7 @@ import re
 import sys
 from html import escape as html_escape
 from typing import Any
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import requests
@@ -43,10 +43,8 @@ from crypto_etps.aum_history import (
 )
 from news_feeds import (
     ALL_ARTICLES_FEEDS,
-    ALL_ARTICLES_FEED_DAY_CAP,
     DEFAULT_FEEDS,
     ETP_PULSE_PREVIEW_COUNT,
-    cap_market_news_per_day,
     dedupe_articles,
     load_all_etf_etp_news_cached,
     load_all_feeds,
@@ -56,6 +54,13 @@ from regulatory_news.client import load_regulatory_articles
 OUT = _REPO / "static_home" / "data"
 HOME_NEWS_N = 3
 REG_N = 3
+# Static site only: [The Defiant](https://thedefiant.io/) RSS merged into market, all-articles, regulatory, and ETF pools.
+STATIC_THE_DEFIANT_RSS = "https://thedefiant.io/feed/"
+STATIC_THE_DEFIANT_FEED: tuple[str, str] = ("The Defiant", STATIC_THE_DEFIANT_RSS)
+STATIC_THE_DEFIANT_REG_EXTRA: list[tuple[str, str, str, bool]] = [
+    ("The Defiant", STATIC_THE_DEFIANT_RSS, "Global", False),
+]
+ALL_DIGITAL_NEWS_LOOKBACK_DAYS = 7
 HOME_RWA_PREVIEW_ROWS = 8
 HOME_CRYPTO_PREVIEW_ROWS = 5
 EXPLORE_ASSET_PREVIEW_ROWS = 8
@@ -103,6 +108,43 @@ def _article_json(a: dict) -> dict:
         "summary": (a.get("summary") or "")[:500],
         "country": a.get("country") or "",
     }
+
+
+def _headline_norm_key(title: str) -> str:
+    t = (title or "").lower()
+    t = re.sub(r"[^\w\s]+", " ", t)
+    t = re.sub(r"\s+", " ", t).strip()
+    return t[:280]
+
+
+def dedupe_repetitive_headlines(articles: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """After URL/title dedupe: drop later rows whose normalized title repeats (syndicated near-duplicates)."""
+    seen: set[str] = set()
+    out: list[dict[str, Any]] = []
+    for a in articles:
+        raw_title = str(a.get("title") or "")
+        k = _headline_norm_key(raw_title)
+        if not k:
+            k = f"link:{(a.get('link') or '').strip()}"
+        if k in seen:
+            continue
+        seen.add(k)
+        out.append(a)
+    return out
+
+
+def articles_published_within_utc_days(articles: list[dict[str, Any]], days: int) -> list[dict[str, Any]]:
+    """Keep only items with ``published`` in the last ``days`` full UTC-relative window (rolling)."""
+    if days < 1:
+        return []
+    now = datetime.now(timezone.utc)
+    cutoff = now - timedelta(days=days)
+    out: list[dict[str, Any]] = []
+    for a in articles:
+        pub = a.get("published")
+        if isinstance(pub, datetime) and pub.astimezone(timezone.utc) >= cutoff:
+            out.append(a)
+    return out
 
 
 def _etp_row_json(r: CryptoEtpRow) -> dict:
@@ -1518,21 +1560,26 @@ def main() -> None:
         encoding="utf-8",
     )
 
-    # --- Home RSS lane: three newest from core feeds only (parity with legacy Streamlit home strip).
-    articles_home, feed_errs_home = load_all_feeds(DEFAULT_FEEDS)
+    # --- Home RSS lane: three newest from core feeds + The Defiant (static site feed list).
+    articles_home, feed_errs_home = load_all_feeds(list(DEFAULT_FEEDS) + [STATIC_THE_DEFIANT_FEED])
     for e in feed_errs_home:
         manifest["errors"].append(f"news RSS (home): {e}")
     home_unique = dedupe_articles(articles_home, max_items=None)
     home_news_items = home_unique[:HOME_NEWS_N]
 
-    # --- All digital asset headlines: core + supplement feeds; ranked cap per UTC day (parity with regulatory list volume).
-    articles_all, feed_errs_all = load_all_feeds(ALL_ARTICLES_FEEDS)
+    # --- All digital asset headlines: core + supplement + The Defiant; dedupe; last rolling week only (no per-day cap).
+    articles_all, feed_errs_all = load_all_feeds(list(ALL_ARTICLES_FEEDS) + [STATIC_THE_DEFIANT_FEED])
     for e in feed_errs_all:
         manifest["errors"].append(f"news RSS (all articles): {e}")
     all_unique = dedupe_articles(articles_all, max_items=None)
-    articles_for_all_json = cap_market_news_per_day(all_unique, max_per_day=ALL_ARTICLES_FEED_DAY_CAP)
+    all_unique = dedupe_repetitive_headlines(all_unique)
+    articles_for_all_json = articles_published_within_utc_days(all_unique, ALL_DIGITAL_NEWS_LOOKBACK_DAYS)
+    articles_for_all_json.sort(
+        key=lambda x: x["published"] if isinstance(x.get("published"), datetime) else datetime.min.replace(tzinfo=timezone.utc),
+        reverse=True,
+    )
 
-    reg_articles, reg_errs = load_regulatory_articles()
+    reg_articles, reg_errs = load_regulatory_articles(extra_feeds=STATIC_THE_DEFIANT_REG_EXTRA)
     for e in reg_errs:
         manifest["errors"].append(f"reg RSS: {e}")
     reg_top = reg_articles[:REG_N]
@@ -1556,7 +1603,7 @@ def main() -> None:
     )
 
     # --- ETF / ETP headline pool (same filter + ranked daily cap as Streamlit / FastAPI) ---
-    etf_all, etf_feed_errs = load_all_etf_etp_news_cached()
+    etf_all, etf_feed_errs = load_all_etf_etp_news_cached(extra_feeds=[STATIC_THE_DEFIANT_FEED])
     for e in etf_feed_errs:
         manifest["errors"].append(f"ETF news RSS: {e}")
 

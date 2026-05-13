@@ -1497,10 +1497,15 @@ def pick_etf_market_feed(
 @st.cache_data(ttl=1800, show_spinner=False)
 def load_all_etf_etp_news_cached(
     _filter_rev: int = 14,
+    *,
+    extra_feeds: list[tuple[str, str]] | None = None,
 ) -> tuple[list[dict[str, Any]], list[str]]:
     """ETP lane: :data:`ETP_NEWS_FEEDS`, deduped, :func:`is_etf_market_feed_item`, :func:`cap_market_news_per_day` (``ETF_ETP_NEWS_FEED_DAY_CAP`` / UTC day)."""
     _ = _filter_rev
-    combined, errors = load_all_feeds(ETP_NEWS_FEEDS)
+    feeds = list(ETP_NEWS_FEEDS)
+    if extra_feeds:
+        feeds.extend(extra_feeds)
+    combined, errors = load_all_feeds(feeds)
     combined = dedupe_articles(combined, max_items=None)
     combined.sort(
         key=lambda x: x["published"] or datetime.min.replace(tzinfo=timezone.utc),

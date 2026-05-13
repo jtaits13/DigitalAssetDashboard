@@ -208,11 +208,15 @@ def _load_one_regulatory_source(
 
 
 @st.cache_data(ttl=300, show_spinner=False)
-def load_regulatory_articles() -> tuple[list[dict[str, Any]], list[str]]:
+def load_regulatory_articles(
+    extra_feeds: list[tuple[str, str, str, bool]] | None = None,
+) -> tuple[list[dict[str, Any]], list[str]]:
     """Load, filter, dedupe, cap at ``REGULATORY_HEADLINES_PER_UTC_DAY`` ranked items per UTC day, sort newest first."""
     combined: list[dict[str, Any]] = []
     errors: list[str] = []
-    feeds = REGULATORY_FEEDS
+    feeds = list(REGULATORY_FEEDS)
+    if extra_feeds:
+        feeds.extend(extra_feeds)
     n = len(feeds)
     if n == 0:
         return combined, errors
