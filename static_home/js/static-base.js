@@ -157,13 +157,10 @@
     var b = blurb == null ? "" : String(blurb).trim();
     if (!b) return global.escapeHtml(t);
     var cls = "crypto-hint" + (extraClass ? " " + extraClass : "");
-    var titleA = global.escapeAttr(b);
     return (
       '<span class="' +
       cls +
-      '" tabindex="0" title="' +
-      titleA +
-      '">' +
+      '" tabindex="0">' +
       '<span class="crypto-hint__label">' +
       global.escapeHtml(t) +
       "</span>" +
@@ -192,7 +189,7 @@
     var label = h.querySelector(".crypto-hint__label");
     if (!bubble || !label) return;
     var lr = label.getBoundingClientRect();
-    var margin = 8;
+    var margin = 12;
     var vw = typeof window !== "undefined" ? window.innerWidth : 1200;
     var maxW = Math.min(26 * 16, vw * 0.94);
     var left = Math.max(margin, Math.min(lr.left, vw - maxW - margin));
