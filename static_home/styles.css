@@ -1091,7 +1091,19 @@ a.ticker-chip-link[title] {
   letter-spacing: 0.02em;
 }
 
-/* CoinGecko “About” excerpts: hover / keyboard on Ticker or Coin (real DOM bubble; avoid content:attr). */
+/* Lift hint cells above neighbours so the bubble is not painted under the next row (stacking). */
+.data-table td:has(.crypto-hint) {
+  position: relative;
+  z-index: 0;
+}
+
+.data-table td:has(.crypto-hint--open),
+.data-table td:has(.crypto-hint:hover),
+.data-table td:has(.crypto-hint:focus-within) {
+  z-index: 40;
+}
+
+/* CoinGecko “About” excerpts: hover / keyboard on Ticker or Coin */
 .crypto-hint {
   position: relative;
   display: inline-block;
@@ -1137,11 +1149,11 @@ a.ticker-chip-link[title] {
   border-radius: 8px;
   box-shadow: 0 8px 22px rgba(15, 23, 42, 0.14);
   white-space: normal;
-  pointer-events: none;
 }
 
 .crypto-hint:hover .crypto-hint__bubble,
-.crypto-hint:focus-within .crypto-hint__bubble {
+.crypto-hint:focus-within .crypto-hint__bubble,
+.crypto-hint.crypto-hint--open .crypto-hint__bubble {
   display: block;
 }
 

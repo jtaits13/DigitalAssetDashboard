@@ -130,6 +130,9 @@
           "</td>";
         els.tbody.appendChild(tr);
       });
+    if (typeof window !== "undefined" && typeof window.bindCryptoHints === "function") {
+      window.bindCryptoHints(els.tbody);
+    }
   }
 
   Promise.all([

@@ -173,6 +173,37 @@
     );
   };
 
+  /**
+   * Chrome: a bubble with ``pointer-events: none`` lets the pointer hit elements behind it, so the
+   * hint no longer matches ``:hover`` and the tooltip vanishes. Toggle ``crypto-hint--open`` explicitly.
+   */
+  global.bindCryptoHints = function (root) {
+    if (!root || !root.querySelectorAll) return;
+    var hints = root.querySelectorAll(".crypto-hint");
+    var i = 0;
+    for (; i < hints.length; i++) {
+      var h = hints[i];
+      if (h.getAttribute("data-hint-bound") === "1") continue;
+      h.setAttribute("data-hint-bound", "1");
+      h.addEventListener("mouseenter", function () {
+        this.classList.add("crypto-hint--open");
+      });
+      h.addEventListener("mouseleave", function (ev) {
+        var rt = ev.relatedTarget;
+        if (rt && this.contains(rt)) return;
+        this.classList.remove("crypto-hint--open");
+      });
+      h.addEventListener("focusin", function () {
+        this.classList.add("crypto-hint--open");
+      });
+      h.addEventListener("focusout", function (ev) {
+        var rt = ev.relatedTarget;
+        if (rt && this.contains(rt)) return;
+        this.classList.remove("crypto-hint--open");
+      });
+    }
+  };
+
   function getTickerParts(strip) {
     if (!strip) return null;
     var layout = strip.querySelector(".ticker-strip__layout");

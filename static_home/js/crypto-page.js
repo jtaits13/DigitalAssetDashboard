@@ -257,6 +257,9 @@
         els.tbody.appendChild(tr);
       });
     }
+    if (typeof window !== "undefined" && typeof window.bindCryptoHints === "function") {
+      window.bindCryptoHints(els.tbody);
+    }
     if (els.toolbar) {
       els.toolbar.innerHTML =
         "Showing <strong>" +
