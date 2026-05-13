@@ -1016,10 +1016,6 @@ a.ticker-chip-link[title] {
 }
 
 /* —— Tables —— */
-.table-wrap--no-clip {
-  overflow: visible;
-}
-
 .table-wrap--no-clip > .data-table {
   border-radius: 10px;
 }
@@ -1030,6 +1026,11 @@ a.ticker-chip-link[title] {
   overflow: hidden;
   margin: 0.75rem 0 1rem;
   background: var(--surface);
+}
+
+/* Must beat ``.table-wrap { overflow: hidden }`` when both classes are present (home crypto preview). */
+.table-wrap.table-wrap--no-clip {
+  overflow: visible;
 }
 
 .table-wrap--scroll {
@@ -1135,6 +1136,11 @@ a.ticker-chip-link[title] {
 .crypto-hint:focus-visible::after {
   opacity: 1;
   visibility: visible;
+}
+
+.table-wrap--scroll .crypto-hint::after {
+  bottom: auto;
+  top: calc(100% + 8px);
 }
 
 /* —— CTA —— */

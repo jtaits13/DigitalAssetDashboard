@@ -150,7 +150,8 @@
     span.tabIndex = 0;
     span.setAttribute("role", "img");
     span.setAttribute("aria-label", b);
-    span.dataset.tooltip = b;
+    span.setAttribute("data-tooltip", b);
+    span.title = b;
     span.textContent = t;
     return span.outerHTML;
   };
