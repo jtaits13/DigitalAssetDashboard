@@ -7,6 +7,8 @@ Run in CI:    before upload-pages-artifact (see .github/workflows).
 
 Uses the same RSS / StockAnalysis / yfinance / RWA.xyz logic as the Streamlit app (no Streamlit UI), plus ``price_ticker.fetch_top_crypto_tickers`` for ``crypto_ticker.json`` (GitHub Pages marquee).
 
+Optional env ``COINGECKO_DEMO_API_KEY`` (or ``COINGECKO_API_KEY``): sent as ``x-cg-demo-apikey`` for CoinGecko description calls so CI can fill ``about_blurb`` without hitting public rate limits as often. When the API still returns nothing, ``coingecko_about`` applies short static fallbacks for major assets (BTC, ETH, …) so the static crypto table always shows hint affordances for top names.
+
 Optional env ``STATIC_WEBAPP_BASE``: absolute origin for FastAPI-only routes when needed. Served as HTML in ``static_home/``: Global overview ``rwa-global.html``, Explore by Asset Type ``rwa-explore-asset-type.html``, Explore by Market Participant ``rwa-explore-market-participant.html``, participant deep pages ``rwa-participants-*.html``, Stablecoins ``rwa-stablecoins.html``, US Treasuries ``rwa-us-treasuries.html``, Tokenized Stocks ``rwa-tokenized-stocks.html``.
 """
 
@@ -1422,29 +1424,33 @@ def export_crypto_json_bundle(manifest: dict[str, Any]) -> None:
 
         crypto_banner_title = PRICE_TICKER_BANNER_TITLE
 
-        crypto_headers = {
-            "User-Agent": DEFAULT_UA,
-            "Accept": "application/json",
-        }
-
         t_rows, t_err, t_src = fetch_top_crypto_tickers(TICKER_COUNT)
         t_rows = [dict(r) for r in t_rows]
-        from coingecko_about import fetch_blurbs_for_coin_ids
+        from coingecko_about import (
+            blurb_with_static_fallback,
+            fetch_blurbs_for_coin_ids,
+            resolve_coingecko_id_for_blurb,
+            default_coingecko_headers,
+        )
+
+        crypto_headers = default_coingecko_headers()
+        crypto_headers["User-Agent"] = DEFAULT_UA
 
         _blurbs_ids: list[str] = []
         _blurbs_seen: set[str] = set()
         for _r in t_rows:
-            _cid = str(_r.get("coin_id") or "").strip()
-            if _r.get("source") == "coingecko" and _cid and _cid not in _blurbs_seen:
+            _cid = resolve_coingecko_id_for_blurb(_r)
+            if _cid and _cid not in _blurbs_seen:
                 _blurbs_seen.add(_cid)
                 _blurbs_ids.append(_cid)
         _blurbs_map = (
-            fetch_blurbs_for_coin_ids(_blurbs_ids, headers=crypto_headers, delay_s=0.08) if _blurbs_ids else {}
+            fetch_blurbs_for_coin_ids(_blurbs_ids, headers=crypto_headers, delay_s=0.12) if _blurbs_ids else {}
         )
         for _r in t_rows:
-            _cid = str(_r.get("coin_id") or "").strip()
-            if _r.get("source") == "coingecko" and _cid:
-                _r["about_blurb"] = _blurbs_map.get(_cid, "")
+            _cid = resolve_coingecko_id_for_blurb(_r)
+            if _cid:
+                raw_blurb = (_blurbs_map.get(_cid) or "").strip()
+                _r["about_blurb"] = blurb_with_static_fallback(_cid, raw_blurb)
             else:
                 _r["about_blurb"] = ""
 

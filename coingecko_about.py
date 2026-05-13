@@ -3,11 +3,166 @@
 from __future__ import annotations
 
 import html as html_module
+import os
 import re
 import time
 from typing import Any
 
 import requests
+
+# CoinGecko id for a ticker when markets rows omit ``coin_id`` (e.g. CoinCap fallback) or for robustness.
+SYMBOL_TO_COINGECKO_ID: dict[str, str] = {
+    "BTC": "bitcoin",
+    "ETH": "ethereum",
+    "USDT": "tether",
+    "BNB": "binancecoin",
+    "SOL": "solana",
+    "USDC": "usd-coin",
+    "XRP": "ripple",
+    "DOGE": "dogecoin",
+    "ADA": "cardano",
+    "TRX": "tron",
+    "AVAX": "avalanche-2",
+    "SHIB": "shiba-inu",
+    "DOT": "polkadot",
+    "LINK": "chainlink",
+    "MATIC": "matic-network",
+    "POL": "polygon-ecosystem-token",
+    "TON": "toncoin",
+    "LTC": "litecoin",
+    "BCH": "bitcoin-cash",
+    "NEAR": "near",
+    "APT": "aptos",
+    "UNI": "uniswap",
+    "ICP": "internet-computer",
+    "ATOM": "cosmos",
+    "FIL": "filecoin",
+    "ETC": "ethereum-classic",
+    "XLM": "stellar",
+    "XMR": "monero",
+    "OKB": "okb",
+    "HBAR": "hedera-hashgraph",
+    "VET": "vechain",
+    "CRO": "crypto-com-chain",
+    "AAVE": "aave",
+    "RENDER": "render-token",
+    "MNT": "mantle",
+    "ALGO": "algorand",
+    "QNT": "quant-network",
+    "ARB": "arbitrum",
+    "OP": "optimism",
+    "STX": "blockstack",
+    "IMX": "immutable-x",
+    "INJ": "injective-protocol",
+    "MKR": "maker",
+    "GRT": "the-graph",
+    "SUI": "sui",
+    "PEPE": "pepe",
+    "FET": "fetch-ai",
+    "RNDR": "render-token",
+    "THETA": "theta-token",
+    "FTM": "fantom",
+    "EOS": "eos",
+    "XTZ": "tezos",
+    "FLOW": "flow",
+    "SAND": "the-sandbox",
+    "MANA": "decentraland",
+    "AXS": "axie-infinity",
+    "CHZ": "chiliz",
+    "BEAM": "beam-2",
+    "LDO": "lido-dao",
+    "TIA": "celestia",
+    "SEI": "sei-network",
+    "WLD": "worldcoin-wld",
+}
+
+# Used when CoinGecko description API fails (rate limits in CI) so the static site still shows tooltips.
+STATIC_ABOUT_BLURBS: dict[str, str] = {
+    "bitcoin": (
+        "Bitcoin is a decentralized digital currency and payment network, launched in 2009, "
+        "often used as a store-of-value and settlement asset. Spot Bitcoin ETFs and corporate treasuries "
+        "have broadened traditional access and adoption."
+    ),
+    "ethereum": (
+        "Ethereum is a programmable blockchain for smart contracts and decentralized applications. "
+        "Ether (ETH) pays transaction fees, secures the network via staking, and is widely used in DeFi and digital assets."
+    ),
+    "tether": (
+        "Tether (USDT) is a widely used stablecoin designed to track the U.S. dollar, commonly used for trading "
+        "liquidity and value transfer across crypto markets."
+    ),
+    "binancecoin": (
+        "BNB is the native asset of the BNB Chain ecosystem, used for network fees and participation across "
+        "applications built on BNB-compatible chains."
+    ),
+    "solana": (
+        "Solana is a high-throughput blockchain aimed at fast, low-cost applications. SOL is used for fees, "
+        "staking, and native programs on the network."
+    ),
+    "usd-coin": (
+        "USD Coin (USDC) is a dollar-pegged stablecoin issued by regulated entities, widely used for payments, "
+        "treasury, and trading pairs across crypto markets."
+    ),
+    "ripple": (
+        "XRP is the native digital asset of the XRP Ledger, used for fast cross-border payments and liquidity "
+        "in some institutional and payment-focused workflows."
+    ),
+    "dogecoin": (
+        "Dogecoin began as a meme coin and peer-to-peer cryptocurrency; it remains a widely recognized asset "
+        "with an active community and exchange liquidity."
+    ),
+    "cardano": (
+        "Cardano is a proof-of-stake blockchain focused on formal methods and upgrades via its research-driven roadmap. "
+        "ADA is used for staking and network fees."
+    ),
+    "tron": (
+        "TRON is a blockchain platform emphasizing content and payments use cases. TRX is used for energy, bandwidth, "
+        "and fees on the network."
+    ),
+}
+
+_COINGECKO_DETAIL_RE = re.compile(
+    r"^https://www\.coingecko\.com/en/coins/(?P<id>[^/?#]+)/?",
+    re.I,
+)
+
+
+def default_coingecko_headers(extra: dict[str, str] | None = None) -> dict[str, str]:
+    """Headers for CoinGecko; set ``COINGECKO_DEMO_API_KEY`` for higher public-demo rate limits."""
+    h: dict[str, str] = {
+        "User-Agent": "Mozilla/5.0 (compatible; Digital-Assets-Dashboard/1.0)",
+        "Accept": "application/json",
+    }
+    if extra:
+        h.update(extra)
+    key = (os.environ.get("COINGECKO_DEMO_API_KEY") or os.environ.get("COINGECKO_API_KEY") or "").strip()
+    if key:
+        h["x-cg-demo-apikey"] = key
+    return h
+
+
+def resolve_coingecko_id_for_blurb(row: dict[str, Any]) -> str:
+    """
+    Best CoinGecko ``id`` for fetching ``/coins/{id}`` About text, given a ticker row from markets or fallback feeds.
+    """
+    cid = str(row.get("coin_id") or "").strip()
+    if cid:
+        return cid
+    url = str(row.get("detail_url") or "").strip()
+    m = _COINGECKO_DETAIL_RE.match(url)
+    if m:
+        return (m.group("id") or "").strip()
+    sym = str(row.get("symbol") or "").strip().upper()
+    return (SYMBOL_TO_COINGECKO_ID.get(sym) or "").strip()
+
+
+def blurb_with_static_fallback(coin_id: str, api_blurb: str) -> str:
+    """Prefer API-derived blurb; otherwise a short static line for major assets (static hub tooltips)."""
+    t = (api_blurb or "").strip()
+    if t:
+        return t
+    return (STATIC_ABOUT_BLURBS.get((coin_id or "").strip()) or "").strip()
+
 
 COINGECKO_COIN_URL = "https://api.coingecko.com/api/v3/coins/{coin_id}"
 _COIN_MIN_PARAMS: dict[str, str] = {
@@ -114,10 +269,10 @@ def fetch_coin_description_en(
     cid = (coin_id or "").strip()
     if not cid:
         return ""
-    h = headers or {
-        "User-Agent": "Mozilla/5.0 (compatible; Digital-Assets-Dashboard/1.0)",
-        "Accept": "application/json",
-    }
+    base = default_coingecko_headers()
+    if headers:
+        base = {**base, **headers}
+    h = base
     url = COINGECKO_COIN_URL.format(coin_id=cid)
     r = requests.get(url, params=_COIN_MIN_PARAMS, headers=h, timeout=timeout)
     if r.status_code == 429:
@@ -144,13 +299,16 @@ def fetch_blurbs_for_coin_ids(
     """
     out: dict[str, str] = {}
     seen: set[str] = set()
+    merged = default_coingecko_headers()
+    if headers:
+        merged = {**merged, **headers}
     for raw_id in coin_ids:
         cid = str(raw_id or "").strip()
         if not cid or cid in seen:
             continue
         seen.add(cid)
         try:
-            raw = fetch_coin_description_en(cid, headers=headers)
+            raw = fetch_coin_description_en(cid, headers=merged)
             out[cid] = build_about_blurb_from_description(raw) if raw else ""
         except (requests.RequestException, ValueError, TypeError, KeyError):
             out[cid] = ""
