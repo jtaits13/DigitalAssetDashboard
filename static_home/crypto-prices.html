@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=36" />
+    <link rel="stylesheet" href="styles.css?v=37" />
   </head>
   <body class="page-crypto">
     <header class="site-header" role="banner">
@@ -70,6 +70,19 @@
           and <strong>stablecoin share</strong> describe market structure (computed from this top-50 list vs CoinPaprika total).
         </p>
         <div id="js-crypto-story" hidden></div>
+
+        <div class="crypto-etp-bridge-wrap" aria-labelledby="crypto-etp-bridge-heading">
+          <h3 class="subsection-head crypto-etp-bridge__heading" id="crypto-etp-bridge-heading">
+            U.S. listed crypto ETPs
+          </h3>
+          <p class="crypto-etp-bridge__dek">
+            Regulated exchange-traded products versus spot figures on this page. AUM from StockAnalysis list;
+            % changes use the same windows as the ETP hub.
+          </p>
+          <div id="js-crypto-etp-context" class="crypto-etp-bridge">
+            <p class="toolbar-note">Loading ETP snapshot…</p>
+          </div>
+        </div>
       </section>
 
       <section class="hub-section" aria-labelledby="js-crypto-chart-heading">
@@ -149,6 +162,6 @@
     <script defer src="js/static-base.js?v=12"></script>
     <script defer src="js/etp-kpi-shared.js"></script>
     <script defer src="js/crypto-kpi-shared.js?v=2"></script>
-    <script defer src="js/crypto-page.js?v=10"></script>
+    <script defer src="js/crypto-page.js?v=11"></script>
   </body>
 </html>
