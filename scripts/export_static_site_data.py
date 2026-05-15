@@ -1443,7 +1443,12 @@ def export_crypto_json_bundle(manifest: dict[str, Any]) -> None:
             if _blurbs_ids
             else {}
         )
-        attach_about_blurbs_to_rows(t_rows, headers=crypto_headers, prefetched=_blurbs_map)
+        attach_about_blurbs_to_rows(
+            t_rows,
+            headers=crypto_headers,
+            prefetched=_blurbs_map,
+            refetch_missing=False,
+        )
 
         crypto_payload = hub_ticker_static_json_payload(t_rows, t_err, t_src)
         crypto_payload["generated_at"] = crypto_generated_at

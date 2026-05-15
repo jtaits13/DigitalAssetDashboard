@@ -459,12 +459,13 @@ def attach_about_blurbs_to_rows(
     headers: dict[str, str] | None = None,
     delay_s: float | None = None,
     prefetched: dict[str, str] | None = None,
+    refetch_missing: bool = True,
 ) -> None:
     """Mutate ticker/price rows with ``about_blurb`` (CoinGecko About, then static fallback)."""
     ids = collect_coingecko_ids_for_rows(rows)
     blurbs = dict(prefetched or {})
     missing = [cid for cid in ids if not (blurbs.get(cid) or "").strip()]
-    if missing:
+    if missing and refetch_missing:
         fetched = fetch_blurbs_for_coin_ids(missing, headers=headers, delay_s=delay_s)
         blurbs.update(fetched)
     for row in rows:
@@ -519,6 +520,16 @@ def save_blurb_cache(path: Path, blurbs: dict[str, str]) -> None:
     path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
 
+def _max_blurb_fetches_per_run() -> int | None:
+    """Cap new CoinGecko description calls per export (keeps GitHub Actions under ~10 min)."""
+    raw = (os.environ.get("COINGECKO_BLURB_FETCH_LIMIT") or "").strip()
+    if raw.isdigit():
+        return max(int(raw), 0)
+    if (os.environ.get("CI") or "").strip().lower() in ("1", "true", "yes"):
+        return 15
+    return None
+
+
 def fetch_blurbs_with_cache(
     coin_ids: list[str],
     cache_path: Path,
@@ -529,6 +540,9 @@ def fetch_blurbs_with_cache(
     """Merge disk cache with fresh CoinGecko fetches for ids not yet cached."""
     cached = load_blurb_cache(cache_path)
     need = [cid for cid in coin_ids if cid and not (cached.get(cid) or "").strip()]
+    cap = _max_blurb_fetches_per_run()
+    if need and cap is not None:
+        need = need[:cap]
     if need:
         fresh = fetch_blurbs_for_coin_ids(need, headers=headers, delay_s=delay_s)
         for cid, blurb in fresh.items():
