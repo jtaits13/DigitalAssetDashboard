@@ -164,6 +164,42 @@
     return '<span class="kpi-delta neutral">—</span>';
   }
 
+  function compareEtpSpotRow(assetName, etpTicker, etpKpi, spotRow, esc, fmtEtpDelta, spotFmt, fmtPriceFn) {
+    etpKpi = etpKpi || {};
+    var etpDelta = etpKpi.delta ? fmtEtpDelta(etpKpi.delta.pct, etpKpi.delta.window) : neutralDelta();
+    var spotPct = spotRow && spotRow.pct_30d != null ? spotFmt(spotRow.pct_30d, "1M") : neutralDelta();
+    var spotPrice = spotRow && spotRow.price_usd != null ? esc(fmtPriceFn(spotRow.price_usd)) : "—";
+    return (
+      '<div class="crypto-etp-compare__row" role="group" aria-label="' +
+      esc(assetName + " ETP vs spot") +
+      '">' +
+      '<div class="crypto-etp-compare__title">' +
+      esc(assetName) +
+      "</div>" +
+      '<div class="crypto-etp-compare__panel crypto-etp-compare__panel--etp">' +
+      '<span class="crypto-etp-compare__panel-label">' +
+      esc(etpTicker) +
+      " · ETP (hub)</span>" +
+      '<span class="crypto-etp-compare__figure">' +
+      esc(etpKpi.aum_display || "—") +
+      " AUM</span>" +
+      '<div class="crypto-etp-compare__delta">' +
+      etpDelta +
+      "</div>" +
+      "</div>" +
+      '<div class="crypto-etp-compare__panel crypto-etp-compare__panel--spot">' +
+      '<span class="crypto-etp-compare__panel-label">Spot (this table)</span>' +
+      '<span class="crypto-etp-compare__figure">' +
+      spotPrice +
+      "</span>" +
+      '<div class="crypto-etp-compare__delta">' +
+      spotPct +
+      "</div>" +
+      "</div>" +
+      "</div>"
+    );
+  }
+
   function renderEtpContext(etpKpis, cryptoRows) {
     if (!els.etpContext) return;
     var esc =
@@ -185,7 +221,8 @@
 
     if (!etpKpis || typeof etpKpis !== "object") {
       els.etpContext.innerHTML =
-        '<p class="crypto-etp-bridge__empty">U.S. ETP figures are not available right now. ' +
+        '<p class="crypto-etp-bridge__empty">U.S. ETP snapshot is not available on this deploy ' +
+        "(add <code>data/etp_kpis.json</code> under version control or run the site export). " +
         '<a href="' +
         esc("etps.html") +
         '">Open the full ETP overview →</a></p>';
@@ -194,8 +231,6 @@
 
     var ibit = etpKpis.ibit || {};
     var etha = etpKpis.etha || {};
-    var ibitDelta = ibit.delta ? fmtEtpDelta(ibit.delta.pct, ibit.delta.window) : neutralDelta();
-    var ethaDelta = etha.delta ? fmtEtpDelta(etha.delta.pct, etha.delta.window) : neutralDelta();
     var aggDelta =
       etpKpis.aggregate_pct != null
         ? fmtEtpDelta(etpKpis.aggregate_pct, etpKpis.aggregate_window)
@@ -206,7 +241,7 @@
     var spotFmt =
       typeof K.fmtPctDelta === "function"
         ? K.fmtPctDelta
-        : function (p) {
+        : function (p, w) {
             if (p == null || p === "") return neutralDelta();
             var n = Number(p);
             var cls = n > 0 ? "up" : n < 0 ? "down" : "neutral";
@@ -214,40 +249,19 @@
               '<span class="kpi-delta ' + cls + '">' + (n > 0 ? "+" : "") + n.toFixed(2) + "%</span>"
             );
           };
-    var btcSpot = btc && btc.pct_30d != null ? spotFmt(btc.pct_30d, "1M") : neutralDelta();
-    var ethSpot = eth && eth.pct_30d != null ? spotFmt(eth.pct_30d, "1M") : neutralDelta();
 
     els.etpContext.innerHTML =
-      '<div class="kpi-row kpi-row--etp-snapshot kpi-row--in-panel">' +
-      '<div class="kpi-cell">' +
-      '<span class="kpi-label">Total AUM (listed)</span>' +
-      '<span class="kpi-val">' +
+      '<p class="crypto-etp-bridge__aggregate">' +
+      "<strong>All listed U.S. crypto ETPs</strong> · " +
       esc(etpKpis.total_aum_display || "—") +
-      "</span>" +
+      " AUM · aggregate change " +
       aggDelta +
-      "</div>" +
-      '<div class="kpi-cell">' +
-      '<span class="kpi-label">IBIT · AUM</span>' +
-      '<span class="kpi-val">' +
-      esc(ibit.aum_display || "—") +
-      "</span>" +
-      ibitDelta +
-      "</div>" +
-      '<div class="kpi-cell">' +
-      '<span class="kpi-label">ETHA · AUM</span>' +
-      '<span class="kpi-val">' +
-      esc(etha.aum_display || "—") +
-      "</span>" +
-      ethaDelta +
-      "</div>" +
-      "</div>" +
-      '<p class="crypto-etp-bridge__spot">' +
-      "<strong>Spot (this table, 1M)</strong>: BTC " +
-      btcSpot +
-      " · ETH " +
-      ethSpot +
-      " — not directly comparable to IBIT/ETHA windows above." +
       "</p>" +
+      '<div class="crypto-etp-compare">' +
+      compareEtpSpotRow("Bitcoin", "IBIT", ibit, btc, esc, fmtEtpDelta, spotFmt, fmtPrice) +
+      compareEtpSpotRow("Ether", "ETHA", etha, eth, esc, fmtEtpDelta, spotFmt, fmtPrice) +
+      "</div>" +
+      '<p class="crypto-etp-bridge__note">Use windows shown in each % tag; ETP and spot figures are related but not identical series.</p>' +
       '<p class="crypto-etp-bridge__cta">' +
       '<a href="' +
       esc("etps.html") +

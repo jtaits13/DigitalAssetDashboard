@@ -1119,10 +1119,92 @@ a.ticker-chip-link[title] {
   margin: 0.65rem 0 0.5rem;
 }
 
-.crypto-etp-bridge__spot .kpi-win,
-.crypto-etp-bridge__spot .kpi-delta {
+.crypto-etp-bridge__aggregate {
+  font-size: 0.85rem;
+  margin: 0 0 0.85rem;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.crypto-etp-bridge__aggregate .kpi-delta,
+.crypto-etp-bridge__aggregate .kpi-win {
   display: inline;
   font-size: inherit;
+  font-weight: 600;
+}
+
+.crypto-etp-bridge__note {
+  font-size: 0.72rem;
+  color: var(--muted);
+  line-height: 1.45;
+  margin: 0.65rem 0 0.35rem;
+}
+
+.crypto-etp-compare {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.crypto-etp-compare__row {
+  display: grid;
+  grid-template-columns: minmax(4.5rem, 6.75rem) minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.5rem 0.65rem;
+  align-items: stretch;
+}
+
+@media (max-width: 720px) {
+  .crypto-etp-compare__row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.crypto-etp-compare__title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  align-self: center;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.crypto-etp-compare__panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.55rem 0.65rem;
+  background: var(--surface);
+}
+
+.crypto-etp-compare__panel-label {
+  display: block;
+  font-size: 0.66rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.35rem;
+}
+
+.crypto-etp-compare__figure {
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--teal);
+  line-height: 1.25;
+}
+
+.crypto-etp-compare__delta {
+  margin-top: 0.2rem;
+}
+
+.crypto-etp-compare__delta .kpi-delta,
+.crypto-etp-compare__delta .kpi-win {
+  display: inline;
+  font-size: 0.78rem;
+}
+
+.crypto-etp-bridge__empty code {
+  font-size: 0.85em;
 }
 
 .crypto-etp-bridge__cta {

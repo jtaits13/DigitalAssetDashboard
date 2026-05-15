@@ -11,3 +11,4 @@ static_home/data/*.json
 # Keep explore hub payloads versioned so page intro/table copy matches export script on deploy.
 !static_home/data/rwa_explore_asset_type.json
 !static_home/data/rwa_explore_market_participant.json
+!static_home/data/etp_kpis.json
