@@ -2,7 +2,8 @@
 Build JSON payloads under static_home/data/ for the GitHub Pages mirror.
 
 Run locally:  python scripts/export_static_site_data.py
-  Crypto only (rewrites ``crypto_*.json`` with ``about_blurb`` on each row, ~1–3 min):  python scripts/export_static_site_data.py --crypto-only
+  Crypto only:  python scripts/export_static_site_data.py --crypto-only
+  Crypto + ETP only (no RSS / RWA / explore JSON):  python scripts/export_static_site_data.py --crypto-etp-only
 Run in CI:    every 6 hours via ``.github/workflows/refresh-static-home-data.yml`` (full export + deploy).
   Ad-hoc git pushes only deploy committed ``static_home/`` (see ``deploy-static-home.yml``)—run export locally before committing JSON if you need fresh data on push.
 
@@ -1549,11 +1550,8 @@ def export_crypto_json_bundle(manifest: dict[str, Any]) -> None:
     )
 
 
-def main() -> None:
-    OUT.mkdir(parents=True, exist_ok=True)
-    manifest: dict = {"generated_at": datetime.now(timezone.utc).isoformat(), "errors": []}
-
-    # --- ETP list + AUM + KPIs (StockAnalysis + Yahoo; same as app) ---
+def export_etp_json_bundle(manifest: dict[str, Any]) -> int:
+    """Write ``etps.json``, ``aum_series.json``, ``etp_kpis.json``. Returns listed ETP count."""
     etp_result = fetch_crypto_etps_enriched(DEFAULT_UA)
     if etp_result.error:
         manifest["errors"].append(f"ETP scrape: {etp_result.error}")
@@ -1611,6 +1609,14 @@ def main() -> None:
     )
     (OUT / "aum_series.json").write_text(json.dumps({"series": series}, indent=2), encoding="utf-8")
     (OUT / "etp_kpis.json").write_text(json.dumps(kpis, indent=2), encoding="utf-8")
+    return len(rows_payload)
+
+
+def main() -> None:
+    OUT.mkdir(parents=True, exist_ok=True)
+    manifest: dict = {"generated_at": datetime.now(timezone.utc).isoformat(), "errors": []}
+
+    etp_count = export_etp_json_bundle(manifest)
 
     export_crypto_json_bundle(manifest)
 
@@ -1876,7 +1882,7 @@ def main() -> None:
 
     (OUT / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     print(
-        f"Wrote static data to {OUT} ({len(rows_payload)} ETPs, {len(etf_items)} ETF headlines, "
+        f"Wrote static data to {OUT} ({etp_count} ETPs, {len(etf_items)} ETF headlines, "
         f"{len(rwa_rows)} RWA networks; crypto_ticker.json, rwa_global_market.json, rwa_explore_asset_type.json, "
         "rwa_explore_market_participant.json, rwa_participants_networks.json, rwa_participants_platforms.json, "
         "rwa_participants_asset_managers.json, rwa_stablecoins.json, rwa_us_treasuries.json, "
@@ -1885,6 +1891,18 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    if any(a in ("--crypto-etp-only", "--markets-only") for a in sys.argv[1:]):
+        OUT.mkdir(parents=True, exist_ok=True)
+        manifest_ce: dict[str, Any] = {"generated_at": datetime.now(timezone.utc).isoformat(), "errors": []}
+        etp_n = export_etp_json_bundle(manifest_ce)
+        export_crypto_json_bundle(manifest_ce)
+        print(
+            f"Wrote ETP + crypto JSON under {OUT} ({etp_n} ETPs): etps.json, aum_series.json, etp_kpis.json, "
+            "crypto_ticker.json, crypto_prices.json, crypto_kpis.json, crypto_market_cap_series.json."
+        )
+        if manifest_ce["errors"]:
+            print("Warnings:", manifest_ce["errors"])
+        raise SystemExit(0)
     if any(a in ("--crypto-only", "--crypto") for a in sys.argv[1:]):
         OUT.mkdir(parents=True, exist_ok=True)
         manifest_only: dict[str, Any] = {"generated_at": datetime.now(timezone.utc).isoformat(), "errors": []}
