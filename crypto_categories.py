@@ -263,14 +263,14 @@ def structure_kpi_dicts(
     btc_dom: dict[str, object] = {
         "label": "BTC dominance",
         "value_display": f"{dom:.1f}%" if dom is not None else "—",
-        "subnote": "BTC market cap ÷ CoinPaprika total market cap",
+        "subnote": "BTC mcap ÷ CoinPaprika total",
     }
     if btc_dom_delta_pct_1m is not None:
         btc_dom["delta"] = {"pct": round(btc_dom_delta_pct_1m, 4), "window": "1M"}
     stable: dict[str, object] = {
         "label": "Stablecoin share",
         "value_display": f"{stb:.1f}%" if stb is not None else "—",
-        "subnote": "Stablecoin market cap ÷ top-50 list market cap",
+        "subnote": "Stable mcap ÷ top-50 mcap sum",
     }
     if stable_share_delta_pct_1m is not None:
         stable["delta"] = {"pct": round(stable_share_delta_pct_1m, 4), "window": "1M"}
