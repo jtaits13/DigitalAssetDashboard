@@ -98,7 +98,8 @@
       return labels[slug] || labels.other;
     },
     categoryClass: function (slug) {
-      return "crypto-cat crypto-cat--" + (slug || "other");
+      var s = slug === "exchange" ? "cex" : slug || "other";
+      return "crypto-cat crypto-cat--" + s;
     },
   };
 })(typeof window !== "undefined" ? window : this);
