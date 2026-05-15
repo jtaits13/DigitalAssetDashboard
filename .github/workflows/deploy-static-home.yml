@@ -1,5 +1,6 @@
-# Fast GitHub Pages deploy: uploads committed `static_home/` (no API export).
-# Manual run: repo → Actions → "Deploy static home to GitHub Pages" → Run workflow.
+# Fast GitHub Pages deploy: publishes committed files under `static_home/` as-is (no API export).
+# Fresh JSON from RSS / ETP / RWA / CoinGecko runs on the 6-hour schedule in `refresh-static-home-data.yml`.
+# Repo → Settings → Pages → Source → GitHub Actions.
 name: Deploy static home to GitHub Pages
 
 on:
@@ -10,11 +11,6 @@ on:
       - ".github/workflows/deploy-static-home.yml"
       - ".github/workflows/refresh-static-home-data.yml"
   workflow_dispatch:
-    inputs:
-      note:
-        description: "Optional note (for your own log)"
-        required: false
-        default: ""
 
 permissions:
   contents: read
