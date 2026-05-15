@@ -292,7 +292,8 @@
 
   function chartWidgetConfig(meta) {
     return {
-      autosize: true,
+      width: "100%",
+      height: 460,
       symbol: meta.symbol || DEFAULT_CHART_META.symbol,
       interval: "1W",
       timeframe: "12M",
@@ -308,19 +309,13 @@
       details: false,
       hotlist: false,
       studies: [],
-      support_host: "https://www.tradingview.com",
     };
   }
 
-  function chartMetaSignature(meta) {
-    meta = meta || {};
-    return String(meta.symbol || "") + "\0" + String(meta.title || "");
-  }
-
-  function applyChartChrome(meta) {
+  function renderChart(meta) {
     meta = meta || DEFAULT_CHART_META;
-    if (els.chartHeading && meta.title) {
-      els.chartHeading.textContent = meta.title;
+    if (els.chartHeading && meta && meta.title) {
+      els.chartHeading.textContent = meta.title || DEFAULT_CHART_META.title;
     }
     if (els.caption) {
       els.caption.textContent = meta.caption || DEFAULT_CHART_META.caption;
@@ -331,10 +326,6 @@
     if (els.chartLink) {
       els.chartLink.href = meta.provider_url || DEFAULT_CHART_META.provider_url;
     }
-  }
-
-  function mountTradingViewWidget(meta) {
-    meta = meta || DEFAULT_CHART_META;
     if (!els.chart) return;
     els.chart.innerHTML = "";
     var shell = document.createElement("div");
@@ -348,18 +339,12 @@
     script.type = "text/javascript";
     script.async = true;
     script.src = TV_WIDGET_SRC;
-    script.appendChild(document.createTextNode(JSON.stringify(chartWidgetConfig(meta))));
+    script.innerHTML = JSON.stringify(chartWidgetConfig(meta));
     script.onerror = function () {
       els.chart.innerHTML =
         '<p class="chart-fallback">The TradingView chart could not load here. Use the link below to open it directly.</p>';
     };
     shell.appendChild(script);
-  }
-
-  function renderChart(meta) {
-    meta = meta || DEFAULT_CHART_META;
-    applyChartChrome(meta);
-    mountTradingViewWidget(meta);
   }
 
   function renderChartFallback(msg) {
@@ -529,47 +514,14 @@
         '<div class="kpi-cell"><span class="kpi-label">Error</span><span class="kpi-val">Missing loadJson</span></div>';
     }
   } else {
-  var loadJsonWithTimeout = function (name, ms) {
-    ms = ms || 25000;
-    return new Promise(function (resolve, reject) {
-      var settled = false;
-      var timer = setTimeout(function () {
-        if (!settled) {
-          settled = true;
-          reject(new Error("Timeout loading " + name));
-        }
-      }, ms);
-      loadJsonFn(name).then(
-        function (data) {
-          if (!settled) {
-            settled = true;
-            clearTimeout(timer);
-            resolve(data);
-          }
-        },
-        function (e) {
-          if (!settled) {
-            settled = true;
-            clearTimeout(timer);
-            reject(e);
-          }
-        }
-      );
-    });
-  };
-
-  var defaultChartSig = chartMetaSignature(DEFAULT_CHART_META);
-  applyChartChrome(DEFAULT_CHART_META);
-  mountTradingViewWidget(DEFAULT_CHART_META);
-
   Promise.all([
-    loadJsonWithTimeout("crypto_kpis.json").catch(function () {
+    loadJsonFn("crypto_kpis.json").catch(function () {
       return null;
     }),
-    loadJsonWithTimeout("crypto_prices.json").catch(function () {
+    loadJsonFn("crypto_prices.json").catch(function () {
       return { rows: [] };
     }),
-    loadJsonWithTimeout("crypto_market_cap_series.json").catch(function () {
+    loadJsonFn("crypto_market_cap_series.json").catch(function () {
       return DEFAULT_CHART_META;
     }),
   ])
@@ -579,14 +531,8 @@
       var prices = results[1] || { rows: [] };
       var chart = results[2] || DEFAULT_CHART_META;
       renderKpi(kpis);
-      if (chart && chart.series && chart.series.length) {
-        renderChartLegacy(chart);
-      } else {
-        applyChartChrome(chart);
-        if (chartMetaSignature(chart) !== defaultChartSig) {
-          mountTradingViewWidget(chart);
-        }
-      }
+      if (chart && chart.series) renderChartLegacy(chart);
+      else renderChart(chart);
       state.rows = (prices.rows || []).slice();
       updateSortClass();
       applyFilter();
@@ -595,7 +541,7 @@
       if ((kpis && kpis.error) || (prices && prices.error) || (chart && chart.error)) {
         showErr(kpis.error || prices.error || chart.error);
       }
-      loadJsonWithTimeout("etp_kpis.json")
+      loadJsonFn("etp_kpis.json")
         .catch(function () {
           return null;
         })

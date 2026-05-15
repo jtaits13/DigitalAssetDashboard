@@ -1,31 +1,32 @@
 {
-  "generated_at": "2026-05-15T21:39:42.331135+00:00",
+  "generated_at": "2026-05-15T19:39:08.466182+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
     "value_display": "$2.75T",
     "delta": {
-      "pct": 3.8732,
+      "pct": 4.0563,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$79,062",
+    "value_display": "$79,120",
     "delta": {
-      "pct": 5.6292,
+      "pct": 6.7561,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,219",
+    "value_display": "$2,226",
     "delta": {
-      "pct": -6.1254,
+      "pct": -5.2131,
       "window": "1M"
     }
   },
+  "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
   "btc_dominance": {
     "label": "BTC dominance",
     "value_display": "57.6%",
@@ -37,11 +38,11 @@
     "subnote": "Stablecoin market cap \u00f7 top-50 list market cap"
   },
   "market_structure": {
-    "btc_dominance_pct": 57.57,
-    "stablecoin_share_top50_pct": 11.49,
-    "top50_market_cap_usd": 2603442724869.0,
-    "stablecoin_market_cap_usd": 299058764018.0,
-    "btc_market_cap_usd": 1583953278348.0
+    "btc_dominance_pct": 57.61,
+    "stablecoin_share_top50_pct": 11.48,
+    "top50_market_cap_usd": 2605324333167.0,
+    "stablecoin_market_cap_usd": 299068381205.0,
+    "btc_market_cap_usd": 1584212465239.0
   },
   "story_callout": {
     "title": "How to read this snapshot",
@@ -50,6 +51,5 @@
       "Chart: TradingView TOTAL tracks a broad crypto market-cap index (about the top 125 coins). Use it for trend context; its level can differ from the KPI total because sources and universes differ.",
       "Table: Spot prices, 1M % changes, and categories use the top-50 CoinGecko list (CoinCap fallback when 30-day change is missing). Hover tickers for short About summaries."
     ]
-  },
-  "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; stablecoin share is stablecoin market cap vs the sum of this top-50 list. Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change."
+  }
 }
