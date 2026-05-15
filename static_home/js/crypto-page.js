@@ -13,7 +13,7 @@
     { id: "all", label: "All" },
     { id: "l1", label: "Layer 1" },
     { id: "stablecoin", label: "Stablecoin" },
-    { id: "exchange", label: "Exchange" },
+    { id: "cex", label: "CEX" },
     { id: "defi", label: "DeFi" },
     { id: "meme", label: "Meme" },
     { id: "rwa", label: "RWA / Tokenized" },

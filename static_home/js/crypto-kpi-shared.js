@@ -89,7 +89,7 @@
       var labels = {
         l1: "Layer 1",
         stablecoin: "Stablecoin",
-        exchange: "Exchange",
+        cex: "CEX",
         defi: "DeFi",
         meme: "Meme",
         rwa: "RWA / Tokenized",
