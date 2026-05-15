@@ -32,6 +32,7 @@
     banner: document.getElementById("js-data-banner"),
     kpi: document.getElementById("js-crypto-kpi"),
     story: document.getElementById("js-crypto-story"),
+    etpContext: document.getElementById("js-crypto-etp-context"),
     chart: document.getElementById("crypto-market-cap-chart"),
     search: document.getElementById("js-crypto-search"),
     tabs: document.getElementById("js-crypto-category-tabs"),
@@ -44,6 +45,17 @@
     chartHeading: document.getElementById("js-crypto-chart-heading"),
     chartLink: document.getElementById("js-crypto-chart-link"),
   };
+
+  function escapeHtml(s) {
+    if (typeof window !== "undefined" && typeof window.escapeHtml === "function") {
+      return window.escapeHtml(s);
+    }
+    if (s == null) return "";
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/"/g, "&quot;");
+  }
 
   function cryptoKpiApi() {
     return (typeof window !== "undefined" && window.__CRYPTO_KPI) || {};
@@ -136,6 +148,111 @@
     if (api.renderStoryCallout && els.story) {
       api.renderStoryCallout(els.story, payload || {});
     }
+  }
+
+  function findSymbolRow(rows, sym) {
+    var u = String(sym || "").toUpperCase();
+    for (var i = 0; i < (rows || []).length; i++) {
+      if (String((rows[i] && rows[i].symbol) || "").toUpperCase() === u) {
+        return rows[i];
+      }
+    }
+    return null;
+  }
+
+  function neutralDelta() {
+    return '<span class="kpi-delta neutral">—</span>';
+  }
+
+  function renderEtpContext(etpKpis, cryptoRows) {
+    if (!els.etpContext) return;
+    var esc =
+      typeof window !== "undefined" && typeof window.escapeHtml === "function"
+        ? window.escapeHtml
+        : escapeHtml;
+    var K = (typeof window !== "undefined" && window.__ETP_KPI) || {};
+    var fmtEtpDelta =
+      typeof K.fmtPctDelta === "function"
+        ? K.fmtPctDelta
+        : function (p, w) {
+            if (p == null || p === "") return neutralDelta();
+            var n = Number(p);
+            var cls = n > 0 ? "up" : n < 0 ? "down" : "neutral";
+            return (
+              '<span class="kpi-delta ' + cls + '">' + (n > 0 ? "+" : "") + n.toFixed(2) + "%</span>"
+            );
+          };
+
+    if (!etpKpis || typeof etpKpis !== "object") {
+      els.etpContext.innerHTML =
+        '<p class="crypto-etp-bridge__empty">U.S. ETP figures are not available right now. ' +
+        '<a href="' +
+        esc("etps.html") +
+        '">Open the full ETP overview →</a></p>';
+      return;
+    }
+
+    var ibit = etpKpis.ibit || {};
+    var etha = etpKpis.etha || {};
+    var ibitDelta = ibit.delta ? fmtEtpDelta(ibit.delta.pct, ibit.delta.window) : neutralDelta();
+    var ethaDelta = etha.delta ? fmtEtpDelta(etha.delta.pct, etha.delta.window) : neutralDelta();
+    var aggDelta =
+      etpKpis.aggregate_pct != null
+        ? fmtEtpDelta(etpKpis.aggregate_pct, etpKpis.aggregate_window)
+        : neutralDelta();
+
+    var btc = findSymbolRow(cryptoRows, "BTC");
+    var eth = findSymbolRow(cryptoRows, "ETH");
+    var spotFmt =
+      typeof K.fmtPctDelta === "function"
+        ? K.fmtPctDelta
+        : function (p) {
+            if (p == null || p === "") return neutralDelta();
+            var n = Number(p);
+            var cls = n > 0 ? "up" : n < 0 ? "down" : "neutral";
+            return (
+              '<span class="kpi-delta ' + cls + '">' + (n > 0 ? "+" : "") + n.toFixed(2) + "%</span>"
+            );
+          };
+    var btcSpot = btc && btc.pct_30d != null ? spotFmt(btc.pct_30d, "1M") : neutralDelta();
+    var ethSpot = eth && eth.pct_30d != null ? spotFmt(eth.pct_30d, "1M") : neutralDelta();
+
+    els.etpContext.innerHTML =
+      '<div class="kpi-row kpi-row--etp-snapshot kpi-row--in-panel">' +
+      '<div class="kpi-cell">' +
+      '<span class="kpi-label">Total AUM (listed)</span>' +
+      '<span class="kpi-val">' +
+      esc(etpKpis.total_aum_display || "—") +
+      "</span>" +
+      aggDelta +
+      "</div>" +
+      '<div class="kpi-cell">' +
+      '<span class="kpi-label">IBIT · AUM</span>' +
+      '<span class="kpi-val">' +
+      esc(ibit.aum_display || "—") +
+      "</span>" +
+      ibitDelta +
+      "</div>" +
+      '<div class="kpi-cell">' +
+      '<span class="kpi-label">ETHA · AUM</span>' +
+      '<span class="kpi-val">' +
+      esc(etha.aum_display || "—") +
+      "</span>" +
+      ethaDelta +
+      "</div>" +
+      "</div>" +
+      '<p class="crypto-etp-bridge__spot">' +
+      "<strong>Spot (this table, 1M)</strong>: BTC " +
+      btcSpot +
+      " · ETH " +
+      ethSpot +
+      " — not directly comparable to IBIT/ETHA windows above." +
+      "</p>" +
+      '<p class="crypto-etp-bridge__cta">' +
+      '<a href="' +
+      esc("etps.html") +
+      '">Full U.S. ETP list, chart, and filings →</a>' +
+      "</p>";
   }
 
   function chartWidgetConfig(meta) {
@@ -351,14 +468,21 @@
 
   renderCategoryTabs();
 
+  var loadJsonFn =
+    typeof window !== "undefined" && typeof window.loadJson === "function" ? window.loadJson : null;
+  if (!loadJsonFn) {
+    showErr(
+      "Page loader failed (static-base.js). Hard refresh (Ctrl+Shift+R) or check that js/static-base.js deployed."
+    );
+  } else {
   Promise.all([
-    loadJson("crypto_kpis.json").catch(function () {
+    loadJsonFn("crypto_kpis.json").catch(function () {
       return null;
     }),
-    loadJson("crypto_prices.json").catch(function () {
+    loadJsonFn("crypto_prices.json").catch(function () {
       return { rows: [] };
     }),
-    loadJson("crypto_market_cap_series.json").catch(function () {
+    loadJsonFn("crypto_market_cap_series.json").catch(function () {
       return DEFAULT_CHART_META;
     }),
   ])
@@ -373,17 +497,26 @@
       updateSortClass();
       applyFilter();
       wireSort();
-      renderTimestamp(kpis.generated_at ? kpis : prices);
+      renderTimestamp(kpis && kpis.generated_at ? kpis : prices);
       if ((kpis && kpis.error) || (prices && prices.error) || (chart && chart.error)) {
         showErr(kpis.error || prices.error || chart.error);
       }
+      loadJsonFn("etp_kpis.json")
+        .catch(function () {
+          return null;
+        })
+        .then(function (etpKpis) {
+          renderEtpContext(etpKpis, state.rows);
+        });
     })
     .catch(function (err) {
       showErr("Could not load the crypto data page. " + (err && err.message ? err.message : ""));
       renderChart(DEFAULT_CHART_META);
       state.rows = [];
+      renderEtpContext(null, []);
       applyFilter();
     });
+  }
 
   if (els.search) {
     els.search.addEventListener("input", applyFilter);

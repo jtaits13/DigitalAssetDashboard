@@ -1094,6 +1094,52 @@ a.ticker-chip-link[title] {
   color: #475569;
 }
 
+.crypto-etp-bridge-wrap {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+}
+
+.crypto-etp-bridge__heading {
+  margin-bottom: 0.35rem;
+}
+
+.crypto-etp-bridge__dek {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  line-height: 1.45;
+  margin: 0 0 0.65rem;
+  max-width: 42rem;
+}
+
+.crypto-etp-bridge__spot {
+  font-size: 0.74rem;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 0.65rem 0 0.5rem;
+}
+
+.crypto-etp-bridge__spot .kpi-win,
+.crypto-etp-bridge__spot .kpi-delta {
+  display: inline;
+  font-size: inherit;
+}
+
+.crypto-etp-bridge__cta {
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+.crypto-etp-bridge__cta a {
+  font-weight: 600;
+}
+
+.crypto-etp-bridge__empty {
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
 .kpi-cell {
   flex: 1 1 8.5rem;
   min-width: 0;
