@@ -3,7 +3,8 @@ Build JSON payloads under static_home/data/ for the GitHub Pages mirror.
 
 Run locally:  python scripts/export_static_site_data.py
   Crypto only (rewrites ``crypto_*.json`` with ``about_blurb`` on each row, ~1–3 min):  python scripts/export_static_site_data.py --crypto-only
-Run in CI:    before upload-pages-artifact (see .github/workflows).
+Run in CI:    every 6 hours via ``.github/workflows/refresh-static-home-data.yml`` (full export + deploy).
+  Ad-hoc git pushes only deploy committed ``static_home/`` (see ``deploy-static-home.yml``)—run export locally before committing JSON if you need fresh data on push.
 
 Uses the same RSS / StockAnalysis / yfinance / RWA.xyz logic as the Streamlit app (no Streamlit UI), plus ``price_ticker.fetch_top_crypto_tickers`` for ``crypto_ticker.json`` (GitHub Pages marquee).
 

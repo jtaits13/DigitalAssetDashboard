@@ -1,0 +1,60 @@
+# Full data refresh for the static site: runs export pipelines, writes `static_home/data/*.json`, deploys.
+# Cadence: every 6 hours (UTC). Use "Run workflow" here for a manual refresh without waiting for the schedule.
+name: Refresh static home data and deploy
+
+on:
+  schedule:
+    - cron: "25 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Restore CoinGecko About blurb cache
+        uses: actions/cache@v4
+        with:
+          path: static_home/data/crypto_about_blurbs_cache.json
+          key: crypto-about-blurbs-v1-${{ hashFiles('coingecko_about.py') }}
+          restore-keys: |
+            crypto-about-blurbs-v1-
+
+      - name: Export RSS + ETP + RWA + crypto JSON
+        run: python scripts/export_static_site_data.py
+        env:
+          STOCKANALYSIS_USER_AGENT: ${{ secrets.STOCKANALYSIS_USER_AGENT }}
+          COINGECKO_DEMO_API_KEY: ${{ secrets.COINGECKO_DEMO_API_KEY }}
+          COINGECKO_BLURB_FETCH_LIMIT: "15"
+
+      - name: Upload static_home as site root
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: static_home
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
