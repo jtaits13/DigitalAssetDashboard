@@ -1,11 +1,18 @@
 # Full data refresh for the static site: runs export pipelines, writes `static_home/data/*.json`, deploys.
-# Cadence: every 6 hours (UTC). Use "Run workflow" here for a manual refresh without waiting for the schedule.
+# Schedule: every 6 hours (UTC).
+# Manual run: GitHub repo → Actions tab → this workflow (left list) → Run workflow (dropdown on the right).
+# The live Pages site URL does not list workflows; they only exist under Actions.
 name: Refresh static home data and deploy
 
 on:
   schedule:
     - cron: "25 */6 * * *"
   workflow_dispatch:
+    inputs:
+      note:
+        description: "Optional note (for your own log)"
+        required: false
+        default: ""
 
 permissions:
   contents: read
