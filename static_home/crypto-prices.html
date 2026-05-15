@@ -61,14 +61,15 @@
       <section class="hub-section" aria-labelledby="crypto-snapshot-heading">
         <h2 class="subsection-head" id="crypto-snapshot-heading">Top-Line Market Snapshot</h2>
         <div class="rwa-kpi-panel-static">
-          <div class="kpi-row kpi-row--etp-snapshot kpi-row--in-panel" id="js-crypto-kpi" aria-label="Crypto KPI strip">
+          <div class="kpi-row kpi-row--crypto-snapshot kpi-row--in-panel" id="js-crypto-kpi" aria-label="Crypto KPI strip">
             <div class="kpi-cell"><span class="kpi-label">Loading…</span></div>
           </div>
         </div>
         <p class="kpi-footnote kpi-footnote--block">
-          The colored <strong>% figures</strong> reflect <strong>one-month</strong> changes for total crypto market cap,
-          Bitcoin, and Ether.
+          The colored <strong>% figures</strong> on total market cap, Bitcoin, and Ether reflect <strong>one-month</strong>
+          changes. <strong>BTC dominance</strong> and <strong>stablecoin share</strong> describe market structure.
         </p>
+        <div id="js-crypto-story" hidden></div>
       </section>
 
       <section class="hub-section" aria-labelledby="js-crypto-chart-heading">
@@ -95,6 +96,7 @@
 
       <section class="hub-section" aria-labelledby="crypto-table-heading">
         <h2 class="subsection-head u-vh" id="crypto-table-heading">Crypto table</h2>
+        <div class="crypto-cat-tabs" id="js-crypto-category-tabs"></div>
         <label class="search-field">
           <span class="search-field__label">Search by coin name or ticker</span>
           <input
@@ -117,6 +119,7 @@
                 <th class="num th-sortable" data-sort="rank">Rank</th>
                 <th class="th-sortable" data-sort="symbol">Ticker</th>
                 <th class="th-sortable" data-sort="name">Coin</th>
+                <th class="th-sortable" data-sort="category">Category</th>
                 <th class="num th-sortable" data-sort="price_usd">Price</th>
                 <th class="num th-sortable" data-sort="pct_30d">1M %</th>
                 <th class="num th-sortable" data-sort="market_cap_usd">Market Cap</th>
@@ -125,7 +128,7 @@
             </thead>
             <tbody id="js-crypto-tbody">
               <tr>
-                <td colspan="7">Loading…</td>
+                <td colspan="8">Loading…</td>
               </tr>
             </tbody>
           </table>
@@ -145,6 +148,7 @@
     <footer class="site-footer">Digital Assets Dashboard · Crypto Prices · <time datetime="2026-05">May 2026</time></footer>
     <script defer src="js/static-base.js?v=12"></script>
     <script defer src="js/etp-kpi-shared.js"></script>
-    <script defer src="js/crypto-page.js?v=7"></script>
+    <script defer src="js/crypto-kpi-shared.js?v=1"></script>
+    <script defer src="js/crypto-page.js?v=8"></script>
   </body>
 </html>

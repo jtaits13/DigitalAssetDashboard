@@ -2,9 +2,26 @@
   var els = {
     banner: document.getElementById("js-home-crypto-banner"),
     kpi: document.getElementById("js-home-crypto-kpi"),
+    story: document.getElementById("js-home-crypto-story"),
     tbody: document.getElementById("js-home-crypto-preview"),
     source: document.getElementById("js-home-crypto-source"),
   };
+
+  function cryptoKpiApi() {
+    return (typeof window !== "undefined" && window.__CRYPTO_KPI) || {};
+  }
+
+  function categoryLabel(row) {
+    if (row.category_label) return row.category_label;
+    var api = cryptoKpiApi();
+    return api.categoryLabel ? api.categoryLabel(row.category || "other") : row.category || "Other";
+  }
+
+  function categoryClass(row) {
+    var slug = row.category || "other";
+    var api = cryptoKpiApi();
+    return api.categoryClass ? api.categoryClass(slug) : "crypto-cat crypto-cat--" + slug;
+  }
 
   function showErr(msg) {
     if (!els.banner) return;
@@ -41,58 +58,21 @@
   }
 
   function renderKpi(payload) {
-    if (!els.kpi || !payload) return;
-    var K = window.__ETP_KPI || {};
-    var fmtDelta =
-      typeof K.fmtPctDelta === "function"
-        ? K.fmtPctDelta
-        : function (p) {
-            if (p == null || p === "") return '<span class="kpi-delta neutral">—</span>';
-            var n = Number(p);
-            var cls = n > 0 ? "up" : n < 0 ? "down" : "neutral";
-            return '<span class="kpi-delta ' + cls + '">' + (n > 0 ? "+" : "") + n.toFixed(2) + "%</span>";
-          };
-    var primary = payload.primary || {};
-    var btc = payload.btc || {};
-    var eth = payload.eth || {};
-    function maybeDelta(delta) {
-      return delta && delta.pct != null ? fmtDelta(delta.pct, delta.window) : "";
+    var api = cryptoKpiApi();
+    if (api.renderCryptoKpis && els.kpi) {
+      api.renderCryptoKpis(els.kpi, payload || {});
     }
-    els.kpi.innerHTML =
-      '<div class="kpi-cell">' +
-      '<span class="kpi-label">' +
-      escapeHtml(primary.label || "Total market cap") +
-      "</span>" +
-      '<span class="kpi-val">' +
-      escapeHtml(primary.value_display || "—") +
-      "</span>" +
-      maybeDelta(primary.delta) +
-      "</div>" +
-      '<div class="kpi-cell">' +
-      '<span class="kpi-label">' +
-      escapeHtml(btc.label || "BTC price") +
-      "</span>" +
-      '<span class="kpi-val">' +
-      escapeHtml(btc.value_display || "—") +
-      "</span>" +
-      maybeDelta(btc.delta) +
-      "</div>" +
-      '<div class="kpi-cell">' +
-      '<span class="kpi-label">' +
-      escapeHtml(eth.label || "ETH price") +
-      "</span>" +
-      '<span class="kpi-val">' +
-      escapeHtml(eth.value_display || "—") +
-      "</span>" +
-      maybeDelta(eth.delta) +
-      "</div>";
+    if (els.story) {
+      els.story.hidden = true;
+      els.story.innerHTML = "";
+    }
   }
 
   function renderRows(rows) {
     if (!els.tbody) return;
     els.tbody.innerHTML = "";
     if (!rows || !rows.length) {
-      els.tbody.innerHTML = '<tr><td colspan="6">No crypto price data is available right now.</td></tr>';
+      els.tbody.innerHTML = '<tr><td colspan="7">No crypto price data is available right now.</td></tr>';
       return;
     }
     rows
@@ -121,6 +101,11 @@
           "<td>" +
           escapeHtml(row.name || "") +
           "</td>" +
+          '<td><span class="' +
+          escapeHtml(categoryClass(row)) +
+          '">' +
+          escapeHtml(categoryLabel(row)) +
+          "</span></td>" +
           '<td class="num">' +
           escapeHtml(fmtPrice(row.price_usd)) +
           "</td>" +

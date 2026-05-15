@@ -1303,6 +1303,8 @@ def _find_crypto_row(rows: list[dict[str, object]], symbol: str) -> dict[str, ob
 
 
 def _crypto_row_json(r: dict[str, object], fallback_rank: int) -> dict[str, object]:
+    from crypto_categories import category_label, crypto_category
+
     rank = r.get("market_cap_rank")
     try:
         rank_num = int(rank) if rank is not None else fallback_rank
@@ -1311,10 +1313,15 @@ def _crypto_row_json(r: dict[str, object], fallback_rank: int) -> dict[str, obje
     price = r.get("price_usd")
     market_cap = r.get("market_cap_usd")
     pct_30d = r.get("pct_30d")
+    sym = str(r.get("symbol") or "")
+    name = str(r.get("name") or "")
+    cat = crypto_category(sym, name)
     return {
         "rank": rank_num,
-        "symbol": str(r.get("symbol") or ""),
-        "name": str(r.get("name") or ""),
+        "symbol": sym,
+        "name": name,
+        "category": cat,
+        "category_label": category_label(cat),
         "price_usd": float(price) if price is not None else None,
         "pct_30d": float(pct_30d) if pct_30d is not None else None,
         "market_cap_usd": float(market_cap) if market_cap is not None else None,
@@ -1468,8 +1475,16 @@ def export_crypto_json_bundle(manifest: dict[str, Any]) -> None:
         primary_label = "Total market cap"
         primary_value = format_usd_compact(total_market_cap_usd) if total_market_cap_usd else "—"
 
+        from crypto_categories import (
+            compute_market_structure,
+            story_callout_payload,
+            structure_kpi_dicts,
+        )
+
         btc_row = _find_crypto_row(t_rows, "BTC")
         eth_row = _find_crypto_row(t_rows, "ETH")
+        structure = compute_market_structure(t_rows, total_market_cap_usd=total_market_cap_usd)
+        btc_dom_kpi, stable_kpi = structure_kpi_dicts(structure)
         crypto_kpis_payload = {
             "generated_at": crypto_generated_at,
             "source": "CoinPaprika + CoinGecko" if (total_market_cap_usd or total_market_cap_pct_1m is not None) else (t_src or ""),
@@ -1489,11 +1504,19 @@ def export_crypto_json_bundle(manifest: dict[str, Any]) -> None:
                 "value_display": _fmt_crypto_price(eth_row.get("price_usd")) if eth_row else "—",
                 "delta": _crypto_delta_dict(eth_row.get("pct_30d") if eth_row else None, "1M"),
             },
+            "btc_dominance": btc_dom_kpi,
+            "stablecoin_share": stable_kpi,
+            "market_structure": structure,
+            "story_callout": story_callout_payload(),
             "source_note": (
-                "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change."
+                "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. "
+                "BTC dominance uses Bitcoin’s market cap vs that CoinPaprika total; stablecoin share is stablecoin market cap vs the sum of this top-50 list. "
+                "Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change."
                 if total_market_cap_usd is not None and total_market_cap_pct_1m is not None
                 else (
-                    "Total market cap comes from CoinPaprika global market data. The 1M total-market-cap change is unavailable right now. Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change."
+                    "Total market cap comes from CoinPaprika global market data. The 1M total-market-cap change is unavailable right now. "
+                    "BTC dominance and stablecoin share are computed from the top-50 table when cap data is available. "
+                    "Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change."
                     if total_market_cap_usd is not None
                     else "Total crypto market-cap data is unavailable right now. Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change."
                 )

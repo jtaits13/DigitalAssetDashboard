@@ -115,16 +115,16 @@
             market-cap chart and searchable top-50 table.
           </p>
           <div class="data-banner" id="js-home-crypto-banner" role="status" hidden></div>
-          <div class="kpi-row kpi-row--etp-snapshot" id="js-home-crypto-kpi" aria-label="Crypto market KPI strip">
+          <div class="kpi-row kpi-row--crypto-snapshot" id="js-home-crypto-kpi" aria-label="Crypto market KPI strip">
             <div class="kpi-cell">
               <span class="kpi-label">Loading…</span>
             </div>
           </div>
           <p class="kpi-footnote">
-            The colored <strong>% figures</strong> show <strong>one-month</strong> changes for total crypto market cap,
-            Bitcoin, and Ether. Hover the <strong>Ticker</strong> or <strong>Coin</strong> label for a short summary
-            sourced from CoinGecko.
+            The colored <strong>% figures</strong> on total market cap, Bitcoin, and Ether show <strong>one-month</strong>
+            changes. <strong>BTC dominance</strong> and <strong>stablecoin share</strong> summarize market structure.
           </p>
+          <div id="js-home-crypto-story" hidden></div>
           <div class="table-wrap table-wrap--no-clip">
             <table class="data-table data-table--dense" aria-label="Crypto prices preview">
               <thead>
@@ -132,6 +132,7 @@
                   <th class="num" scope="col">Rank</th>
                   <th scope="col">Ticker</th>
                   <th scope="col">Coin</th>
+                  <th scope="col">Category</th>
                   <th class="num" scope="col">Price</th>
                   <th class="num" scope="col">1M %</th>
                   <th class="num" scope="col">Market Cap</th>
@@ -139,7 +140,7 @@
               </thead>
               <tbody id="js-home-crypto-preview">
                 <tr>
-                  <td colspan="6">Loading crypto snapshot…</td>
+                  <td colspan="7">Loading crypto snapshot…</td>
                 </tr>
               </tbody>
             </table>
@@ -236,7 +237,8 @@
     </footer>
     <script src="js/static-base.js?v=12"></script>
     <script src="js/etp-kpi-shared.js"></script>
-    <script src="js/home-crypto.js?v=5"></script>
+    <script src="js/crypto-kpi-shared.js?v=1"></script>
+    <script src="js/home-crypto.js?v=6"></script>
     <script src="js/rwa-onchain-home.js?v=4"></script>
     <script src="js/home-page.js?v=3"></script>
   </body>

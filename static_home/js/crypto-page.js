@@ -8,18 +8,33 @@
       "The interactive market-cap chart is rendered client-side from TradingView so it does not depend on rate-limited historical API calls.",
   };
   var TV_WIDGET_SRC = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
+
+  var CATEGORY_TABS = [
+    { id: "all", label: "All" },
+    { id: "l1", label: "Layer 1" },
+    { id: "stablecoin", label: "Stablecoin" },
+    { id: "exchange", label: "Exchange" },
+    { id: "defi", label: "DeFi" },
+    { id: "meme", label: "Meme" },
+    { id: "rwa", label: "RWA / Tokenized" },
+    { id: "other", label: "Other" },
+  ];
+
   var state = {
     rows: [],
     filtered: [],
     sortKey: "market_cap_usd",
     sortDir: -1,
+    category: "all",
   };
 
   var els = {
     banner: document.getElementById("js-data-banner"),
     kpi: document.getElementById("js-crypto-kpi"),
+    story: document.getElementById("js-crypto-story"),
     chart: document.getElementById("crypto-market-cap-chart"),
     search: document.getElementById("js-crypto-search"),
+    tabs: document.getElementById("js-crypto-category-tabs"),
     toolbar: document.getElementById("js-crypto-toolbar"),
     tbody: document.getElementById("js-crypto-tbody"),
     thead: document.getElementById("js-crypto-thead"),
@@ -29,6 +44,22 @@
     chartHeading: document.getElementById("js-crypto-chart-heading"),
     chartLink: document.getElementById("js-crypto-chart-link"),
   };
+
+  function cryptoKpiApi() {
+    return (typeof window !== "undefined" && window.__CRYPTO_KPI) || {};
+  }
+
+  function categoryLabel(row) {
+    if (row.category_label) return row.category_label;
+    var api = cryptoKpiApi();
+    return api.categoryLabel ? api.categoryLabel(row.category || "other") : row.category || "Other";
+  }
+
+  function categoryClass(row) {
+    var slug = row.category || "other";
+    var api = cryptoKpiApi();
+    return api.categoryClass ? api.categoryClass(slug) : "crypto-cat crypto-cat--" + slug;
+  }
 
   function showErr(msg) {
     if (!els.banner) return;
@@ -98,51 +129,13 @@
   }
 
   function renderKpi(payload) {
-    if (!els.kpi || !payload) return;
-    var K = window.__ETP_KPI || {};
-    var fmtDelta =
-      typeof K.fmtPctDelta === "function"
-        ? K.fmtPctDelta
-        : function (p) {
-            if (p == null || p === "") return '<span class="kpi-delta neutral">—</span>';
-            var n = Number(p);
-            var cls = n > 0 ? "up" : n < 0 ? "down" : "neutral";
-            return '<span class="kpi-delta ' + cls + '">' + (n > 0 ? "+" : "") + n.toFixed(2) + "%</span>";
-          };
-    var primary = payload.primary || {};
-    var btc = payload.btc || {};
-    var eth = payload.eth || {};
-    function maybeDelta(delta) {
-      return delta && delta.pct != null ? fmtDelta(delta.pct, delta.window) : "";
+    var api = cryptoKpiApi();
+    if (api.renderCryptoKpis && els.kpi) {
+      api.renderCryptoKpis(els.kpi, payload || {});
     }
-    els.kpi.innerHTML =
-      '<div class="kpi-cell">' +
-      '<span class="kpi-label">' +
-      escapeHtml(primary.label || "Total market cap") +
-      "</span>" +
-      '<span class="kpi-val">' +
-      escapeHtml(primary.value_display || "—") +
-      "</span>" +
-      maybeDelta(primary.delta) +
-      "</div>" +
-      '<div class="kpi-cell">' +
-      '<span class="kpi-label">' +
-      escapeHtml(btc.label || "BTC price") +
-      "</span>" +
-      '<span class="kpi-val">' +
-      escapeHtml(btc.value_display || "—") +
-      "</span>" +
-      maybeDelta(btc.delta) +
-      "</div>" +
-      '<div class="kpi-cell">' +
-      '<span class="kpi-label">' +
-      escapeHtml(eth.label || "ETH price") +
-      "</span>" +
-      '<span class="kpi-val">' +
-      escapeHtml(eth.value_display || "—") +
-      "</span>" +
-      maybeDelta(eth.delta) +
-      "</div>";
+    if (api.renderStoryCallout && els.story) {
+      api.renderStoryCallout(els.story, payload || {});
+    }
   }
 
   function chartWidgetConfig(meta) {
@@ -215,11 +208,37 @@
     renderChartFallback("A legacy chart payload was loaded unexpectedly.");
   }
 
+  function renderCategoryTabs() {
+    if (!els.tabs) return;
+    els.tabs.innerHTML = "";
+    els.tabs.setAttribute("role", "tablist");
+    els.tabs.setAttribute("aria-label", "Filter by asset category");
+    CATEGORY_TABS.forEach(function (tab) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "crypto-cat-tab" + (state.category === tab.id ? " is-active" : "");
+      btn.setAttribute("role", "tab");
+      btn.setAttribute("aria-selected", state.category === tab.id ? "true" : "false");
+      btn.setAttribute("data-category", tab.id);
+      btn.textContent = tab.label;
+      btn.addEventListener("click", function () {
+        state.category = tab.id;
+        els.tabs.querySelectorAll(".crypto-cat-tab").forEach(function (b) {
+          var on = b.getAttribute("data-category") === state.category;
+          b.classList.toggle("is-active", on);
+          b.setAttribute("aria-selected", on ? "true" : "false");
+        });
+        applyFilter();
+      });
+      els.tabs.appendChild(btn);
+    });
+  }
+
   function renderTable() {
     if (!els.tbody) return;
     els.tbody.innerHTML = "";
     if (!state.filtered.length) {
-      els.tbody.innerHTML = '<tr><td colspan="7">No coins matched the current filter.</td></tr>';
+      els.tbody.innerHTML = '<tr><td colspan="8">No coins matched the current filter.</td></tr>';
     } else {
       sortRows(state.filtered).forEach(function (row) {
         var tr = document.createElement("tr");
@@ -246,6 +265,11 @@
           "<td>" +
           escapeHtml(row.name || "") +
           "</td>" +
+          '<td><span class="' +
+          escapeHtml(categoryClass(row)) +
+          '">' +
+          escapeHtml(categoryLabel(row)) +
+          "</span></td>" +
           '<td class="num">' +
           escapeHtml(fmtPrice(row.price_usd)) +
           "</td>" +
@@ -261,27 +285,30 @@
       window.bindCryptoHints(els.tbody);
     }
     if (els.toolbar) {
+      var catNote = state.category === "all" ? "" : " in <strong>" + escapeHtml(categoryLabel({ category: state.category })) + "</strong>";
       els.toolbar.innerHTML =
         "Showing <strong>" +
         state.filtered.length +
         "</strong> of <strong>" +
         state.rows.length +
-        "</strong> coins.";
+        "</strong> coins" +
+        catNote +
+        ".";
     }
   }
 
   function applyFilter() {
     var q = (els.search && els.search.value ? els.search.value : "").trim().toLowerCase();
-    if (!q) {
-      state.filtered = state.rows.slice();
-    } else {
-      state.filtered = state.rows.filter(function (row) {
-        return (
-          (row.symbol && row.symbol.toLowerCase().indexOf(q) >= 0) ||
-          (row.name && row.name.toLowerCase().indexOf(q) >= 0)
-        );
-      });
-    }
+    state.filtered = state.rows.filter(function (row) {
+      if (state.category !== "all" && (row.category || "other") !== state.category) {
+        return false;
+      }
+      if (!q) return true;
+      return (
+        (row.symbol && row.symbol.toLowerCase().indexOf(q) >= 0) ||
+        (row.name && row.name.toLowerCase().indexOf(q) >= 0)
+      );
+    });
     renderTable();
   }
 
@@ -309,7 +336,7 @@
       if (state.sortKey === key) state.sortDir *= -1;
       else {
         state.sortKey = key;
-        state.sortDir = key === "symbol" || key === "name" ? 1 : -1;
+        state.sortDir = key === "symbol" || key === "name" || key === "category" ? 1 : -1;
       }
       updateSortClass();
       renderTable();
@@ -321,6 +348,8 @@
     var dt = new Date(payload.generated_at);
     els.ts.textContent = isNaN(dt.getTime()) ? "—" : "Last updated: " + dt.toLocaleString();
   }
+
+  renderCategoryTabs();
 
   Promise.all([
     loadJson("crypto_kpis.json").catch(function () {
