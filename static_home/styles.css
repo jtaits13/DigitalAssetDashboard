@@ -1094,18 +1094,6 @@ a.ticker-chip-link[title] {
   color: #475569;
 }
 
-/* Single-tile ETP snapshot (listed aggregate AUM + change only) */
-.kpi-row.kpi-row--etp-aggregate-only {
-  grid-template-columns: 1fr;
-  max-width: 20rem;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.rwa-kpi-panel-static .kpi-row.kpi-row--etp-aggregate-only {
-  max-width: 20rem;
-}
-
 .kpi-cell {
   flex: 1 1 8.5rem;
   min-width: 0;

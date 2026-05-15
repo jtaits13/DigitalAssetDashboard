@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=39" />
+    <link rel="stylesheet" href="styles.css?v=40" />
   </head>
   <body class="page-crypto">
     <header class="site-header" role="banner">
@@ -66,8 +66,9 @@
           </div>
         </div>
         <p class="kpi-footnote kpi-footnote--block">
-          The colored <strong>%</strong> on total market cap is a <strong>one-month</strong> change. <strong>BTC dominance</strong>
-          and <strong>stablecoin share</strong> describe market structure (computed from this top-50 list vs CoinPaprika total).
+          The colored <strong>%</strong> on total market cap is a <strong>one-month</strong> change from CoinPaprika.
+          <strong>BTC dominance</strong> and <strong>stablecoin share</strong> also show an approximate <strong>one-month %</strong>
+          (ratio change: dominance uses the same total-cap window as total market cap and BTC’s 30d move from this list; stablecoin share uses row-level 30d cap changes on the top 50).
         </p>
         <div id="js-crypto-story" hidden></div>
       </section>
@@ -147,7 +148,8 @@
 
     <footer class="site-footer">Digital Assets Dashboard · Crypto Prices · <time datetime="2026-05">May 2026</time></footer>
     <script defer src="js/static-base.js?v=12"></script>
-    <script defer src="js/crypto-kpi-shared.js?v=2"></script>
-    <script defer src="js/crypto-page.js?v=13"></script>
+    <script defer src="js/etp-kpi-shared.js"></script>
+    <script defer src="js/crypto-kpi-shared.js?v=3"></script>
+    <script defer src="js/crypto-page.js?v=14"></script>
   </body>
 </html>

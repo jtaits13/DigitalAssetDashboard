@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=39" />
+    <link rel="stylesheet" href="styles.css?v=40" />
   </head>
   <body class="page-etp">
     <header class="site-header" role="banner">
@@ -63,16 +63,12 @@
       <section class="hub-section" aria-labelledby="snapshot-heading">
         <h2 class="subsection-head" id="snapshot-heading">Top-Line Market Snapshot</h2>
         <div class="rwa-kpi-panel-static">
-          <div
-            class="kpi-row kpi-row--etp-snapshot kpi-row--etp-aggregate-only kpi-row--in-panel"
-            id="js-etp-kpi"
-            aria-label="U.S. ETP KPI strip"
-          >
+          <div class="kpi-row kpi-row--etp-snapshot kpi-row--in-panel" id="js-etp-kpi" aria-label="U.S. ETP KPI strip">
             <div class="kpi-cell"><span class="kpi-label">Loading…</span></div>
           </div>
         </div>
         <p class="kpi-footnote kpi-footnote--block">
-          The colored <strong>% figure</strong> on total AUM is typically a <strong>one-month</strong> change (~30 calendar days); the tag in parentheses notes the window when it differs (<strong>1 mo</strong>, <strong>1 yr</strong>, or <strong>52W</strong>). Dollar total comes from StockAnalysis; aggregate % is from estimated weekly AUM. See the fund table for per-ticker metrics.
+          The colored <strong>% figures</strong> are typically about <strong>one-month</strong> changes (~30 calendar days); parentheses next to each percent note the exact window when it differs (<strong>1 mo</strong>, <strong>1 yr</strong>, or <strong>52W</strong>). Dollar totals come from StockAnalysis; aggregate % comes from estimated weekly AUM; IBIT and ETHA % deltas come from Yahoo Finance when available.
         </p>
       </section>
 
@@ -192,6 +188,6 @@
     <script defer src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
     <script defer src="js/static-base.js?v=5"></script>
     <script defer src="js/etp-kpi-shared.js"></script>
-    <script defer src="js/etp-page.js?v=3"></script>
+    <script defer src="js/etp-page.js?v=4"></script>
   </body>
 </html>

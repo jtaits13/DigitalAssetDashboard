@@ -177,7 +177,87 @@ def compute_market_structure(
     }
 
 
-def structure_kpi_dicts(structure: dict[str, Any]) -> tuple[dict[str, object], dict[str, object]]:
+def _cap_then_from_row(row: dict[str, Any]) -> float:
+    """Rough 30d-ago market cap from current cap and CoinGecko 30d % (supply held ~constant)."""
+    cap = _cap(row)
+    if cap <= 0:
+        return 0.0
+    pct = row.get("pct_30d")
+    if pct is None:
+        return cap
+    try:
+        p = float(pct)
+    except (TypeError, ValueError):
+        return cap
+    if p <= -99.9:
+        return cap
+    return cap / (1.0 + p / 100.0)
+
+
+def btc_dominance_change_pct_1m(
+    rows: list[dict[str, Any]],
+    *,
+    total_market_cap_now: float | None,
+    total_market_cap_then: float | None,
+) -> float | None:
+    """
+    Approximate 1M % change in BTC dominance (ratio of BTC cap to CoinPaprika total).
+    Uses CoinPaprika total cap series endpoints for total_then/total_now and BTC row 30d % for BTC cap then.
+    """
+    if (
+        not total_market_cap_now
+        or total_market_cap_now <= 0
+        or not total_market_cap_then
+        or total_market_cap_then <= 0
+    ):
+        return None
+    btc_row = next((r for r in rows if str(r.get("symbol", "")).upper() == "BTC"), None)
+    if not btc_row:
+        return None
+    cap_now = _cap(btc_row)
+    cap_then = _cap_then_from_row(btc_row)
+    if cap_now <= 0 or cap_then <= 0:
+        return None
+    dom_now = (cap_now / total_market_cap_now) * 100.0
+    dom_then = (cap_then / total_market_cap_then) * 100.0
+    if dom_then <= 0:
+        return None
+    return ((dom_now / dom_then) - 1.0) * 100.0
+
+
+def stablecoin_share_change_pct_1m(rows: list[dict[str, Any]]) -> float | None:
+    """
+    Approximate 1M % change in stablecoin share of top-list market cap, using each row's 30d % on caps.
+    """
+    top50_now = sum(_cap(r) for r in rows)
+    top50_then = sum(_cap_then_from_row(r) for r in rows)
+    if top50_now <= 0 or top50_then <= 0:
+        return None
+    stable_now = sum(
+        _cap(r)
+        for r in rows
+        if crypto_category(str(r.get("symbol") or ""), str(r.get("name") or "")) == "stablecoin"
+    )
+    stable_then = sum(
+        _cap_then_from_row(r)
+        for r in rows
+        if crypto_category(str(r.get("symbol") or ""), str(r.get("name") or "")) == "stablecoin"
+    )
+    if stable_now <= 0 or stable_then <= 0:
+        return None
+    sh_now = (stable_now / top50_now) * 100.0
+    sh_then = (stable_then / top50_then) * 100.0
+    if sh_then <= 0:
+        return None
+    return ((sh_now / sh_then) - 1.0) * 100.0
+
+
+def structure_kpi_dicts(
+    structure: dict[str, Any],
+    *,
+    btc_dom_delta_pct_1m: float | None = None,
+    stable_share_delta_pct_1m: float | None = None,
+) -> tuple[dict[str, object], dict[str, object]]:
     dom = structure.get("btc_dominance_pct")
     stb = structure.get("stablecoin_share_top50_pct")
     btc_dom: dict[str, object] = {
@@ -185,11 +265,15 @@ def structure_kpi_dicts(structure: dict[str, Any]) -> tuple[dict[str, object], d
         "value_display": f"{dom:.1f}%" if dom is not None else "—",
         "subnote": "BTC market cap ÷ CoinPaprika total market cap",
     }
+    if btc_dom_delta_pct_1m is not None:
+        btc_dom["delta"] = {"pct": round(btc_dom_delta_pct_1m, 4), "window": "1M"}
     stable: dict[str, object] = {
         "label": "Stablecoin share",
         "value_display": f"{stb:.1f}%" if stb is not None else "—",
         "subnote": "Stablecoin market cap ÷ top-50 list market cap",
     }
+    if stable_share_delta_pct_1m is not None:
+        stable["delta"] = {"pct": round(stable_share_delta_pct_1m, 4), "window": "1M"}
     return btc_dom, stable
 
 
@@ -197,7 +281,7 @@ def story_callout_payload() -> dict[str, object]:
     return {
         "title": "How to read this snapshot",
         "bullets": [
-            "KPI strip: Total market cap and its 1M % come from CoinPaprika. BTC dominance compares Bitcoin’s market cap to that total; stablecoin share is the portion of this page’s top-50 list held by stablecoins.",
+            "KPI strip: Total market cap and its 1M % come from CoinPaprika. BTC dominance compares Bitcoin’s market cap to that total, with an approximate 1M % using the same total-cap window and BTC’s 30d cap change from this list. Stablecoin share is stablecoin cap vs this top-50 list, with an approximate 1M % from row-level 30d cap changes.",
             "Chart: TradingView TOTAL tracks a broad crypto market-cap index (about the top 125 coins). Use it for trend context; its level can differ from the KPI total because sources and universes differ.",
             "Table: Spot prices, 1M % changes, and categories use the top-50 CoinGecko list (CoinCap fallback when 30-day change is missing). Hover tickers for short About summaries.",
         ],

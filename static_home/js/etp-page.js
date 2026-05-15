@@ -226,6 +226,20 @@
       escapeHtml(k.total_aum_display || "—") +
       "</span>" +
       fmtDelta(k.aggregate_pct, k.aggregate_window) +
+      "</div>" +
+      '<div class="kpi-cell">' +
+      '<span class="kpi-label">IBIT · AUM</span>' +
+      '<span class="kpi-val">' +
+      escapeHtml(k.ibit && k.ibit.aum_display) +
+      "</span>" +
+      (k.ibit && k.ibit.delta ? fmtDelta(k.ibit.delta.pct, k.ibit.delta.window) : "") +
+      "</div>" +
+      '<div class="kpi-cell">' +
+      '<span class="kpi-label">ETHA · AUM</span>' +
+      '<span class="kpi-val">' +
+      escapeHtml(k.etha && k.etha.aum_display) +
+      "</span>" +
+      (k.etha && k.etha.delta ? fmtDelta(k.etha.delta.pct, k.etha.delta.window) : "") +
       "</div>";
   }
 

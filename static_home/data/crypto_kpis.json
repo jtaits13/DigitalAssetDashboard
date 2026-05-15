@@ -26,16 +26,24 @@
       "window": "1M"
     }
   },
-  "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
+  "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin's market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC's 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
   "btc_dominance": {
     "label": "BTC dominance",
     "value_display": "57.6%",
-    "subnote": "BTC market cap \u00f7 CoinPaprika total market cap"
+    "subnote": "BTC market cap \u00f7 CoinPaprika total market cap",
+    "delta": {
+      "pct": 2.5946,
+      "window": "1M"
+    }
   },
   "stablecoin_share": {
     "label": "Stablecoin share",
     "value_display": "11.5%",
-    "subnote": "Stablecoin market cap \u00f7 top-50 list market cap"
+    "subnote": "Stablecoin market cap \u00f7 top-50 list market cap",
+    "delta": {
+      "pct": -4.401,
+      "window": "1M"
+    }
   },
   "market_structure": {
     "btc_dominance_pct": 57.61,
@@ -47,7 +55,7 @@
   "story_callout": {
     "title": "How to read this snapshot",
     "bullets": [
-      "KPI strip: Total market cap and its 1M % come from CoinPaprika. BTC dominance compares Bitcoin\u2019s market cap to that total; stablecoin share is the portion of this page\u2019s top-50 list held by stablecoins.",
+      "KPI strip: Total market cap and its 1M % come from CoinPaprika. BTC dominance compares Bitcoin\u2019s market cap to that total, with an approximate 1M % using the same total-cap window and BTC\u2019s 30d cap change from this list. Stablecoin share is stablecoin cap vs this top-50 list, with an approximate 1M % from row-level 30d cap changes.",
       "Chart: TradingView TOTAL tracks a broad crypto market-cap index (about the top 125 coins). Use it for trend context; its level can differ from the KPI total because sources and universes differ.",
       "Table: Spot prices, 1M % changes, and categories use the top-50 CoinGecko list (CoinCap fallback when 30-day change is missing). Hover tickers for short About summaries."
     ]

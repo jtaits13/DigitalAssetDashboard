@@ -1384,6 +1384,7 @@ def _fetch_coinpaprika_total_snapshot(headers: dict[str, str]) -> tuple[dict[str
         if len(values) >= 2:
             first_val = values[0]
             last_val = values[-1]
+            out["total_market_cap_usd_30d_ago"] = first_val
             if "total_market_cap_usd" not in out:
                 out["total_market_cap_usd"] = last_val
             if first_val > 0:
@@ -1472,12 +1473,15 @@ def export_crypto_json_bundle(manifest: dict[str, Any]) -> None:
         }
 
         total_market_cap_usd = coinpaprika_total.get("total_market_cap_usd")
+        total_market_cap_usd_30d_ago = coinpaprika_total.get("total_market_cap_usd_30d_ago")
         total_market_cap_pct_1m = coinpaprika_total.get("market_cap_change_pct_1m")
         primary_label = "Total market cap"
         primary_value = format_usd_compact(total_market_cap_usd) if total_market_cap_usd else "—"
 
         from crypto_categories import (
+            btc_dominance_change_pct_1m,
             compute_market_structure,
+            stablecoin_share_change_pct_1m,
             story_callout_payload,
             structure_kpi_dicts,
         )
@@ -1485,7 +1489,17 @@ def export_crypto_json_bundle(manifest: dict[str, Any]) -> None:
         btc_row = _find_crypto_row(t_rows, "BTC")
         eth_row = _find_crypto_row(t_rows, "ETH")
         structure = compute_market_structure(t_rows, total_market_cap_usd=total_market_cap_usd)
-        btc_dom_kpi, stable_kpi = structure_kpi_dicts(structure)
+        dom_delta = btc_dominance_change_pct_1m(
+            t_rows,
+            total_market_cap_now=total_market_cap_usd,
+            total_market_cap_then=total_market_cap_usd_30d_ago,
+        )
+        st_delta = stablecoin_share_change_pct_1m(t_rows)
+        btc_dom_kpi, stable_kpi = structure_kpi_dicts(
+            structure,
+            btc_dom_delta_pct_1m=dom_delta,
+            stable_share_delta_pct_1m=st_delta,
+        )
         crypto_kpis_payload = {
             "generated_at": crypto_generated_at,
             "source": "CoinPaprika + CoinGecko" if (total_market_cap_usd or total_market_cap_pct_1m is not None) else (t_src or ""),
@@ -1511,7 +1525,8 @@ def export_crypto_json_bundle(manifest: dict[str, Any]) -> None:
             "story_callout": story_callout_payload(),
             "source_note": (
                 "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. "
-                "BTC dominance uses Bitcoin’s market cap vs that CoinPaprika total; stablecoin share is stablecoin market cap vs the sum of this top-50 list. "
+                "BTC dominance uses Bitcoin’s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC’s 30d change from this list. "
+                "Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). "
                 "Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change."
                 if total_market_cap_usd is not None and total_market_cap_pct_1m is not None
                 else (
