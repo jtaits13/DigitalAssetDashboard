@@ -9,17 +9,6 @@
   };
   var TV_WIDGET_SRC = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
 
-  function escapeHtml(s) {
-    if (typeof window !== "undefined" && typeof window.escapeHtml === "function") {
-      return window.escapeHtml(s);
-    }
-    if (s == null) return "";
-    return String(s)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/"/g, "&quot;");
-  }
-
   var CATEGORY_TABS = [
     { id: "all", label: "All" },
     { id: "l1", label: "Layer 1" },
@@ -142,41 +131,11 @@
 
   function renderKpi(payload) {
     var api = cryptoKpiApi();
-    payload = payload || {};
     if (api.renderCryptoKpis && els.kpi) {
-      api.renderCryptoKpis(els.kpi, payload);
-    } else if (els.kpi) {
-      var esc =
-        typeof window !== "undefined" && typeof window.escapeHtml === "function"
-          ? window.escapeHtml
-          : function (s) {
-              return String(s == null ? "" : s)
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/"/g, "&quot;");
-            };
-      var p = payload.primary || {};
-      var b = payload.btc_dominance || {};
-      var s = payload.stablecoin_share || {};
-      els.kpi.innerHTML =
-        '<div class="kpi-cell"><span class="kpi-label">' +
-        esc(p.label || "Total market cap") +
-        '</span><span class="kpi-val">' +
-        esc(p.value_display || "—") +
-        "</span></div>" +
-        '<div class="kpi-cell"><span class="kpi-label">' +
-        esc(b.label || "BTC dominance") +
-        '</span><span class="kpi-val">' +
-        esc(b.value_display || "—") +
-        "</span></div>" +
-        '<div class="kpi-cell"><span class="kpi-label">' +
-        esc(s.label || "Stablecoin share") +
-        '</span><span class="kpi-val">' +
-        esc(s.value_display || "—") +
-        "</span></div>";
+      api.renderCryptoKpis(els.kpi, payload || {});
     }
     if (api.renderStoryCallout && els.story) {
-      api.renderStoryCallout(els.story, payload);
+      api.renderStoryCallout(els.story, payload || {});
     }
   }
 
@@ -197,8 +156,8 @@
   function renderEtpContext(etpKpis, cryptoRows) {
     if (!els.etpContext) return;
     var esc =
-      typeof window !== "undefined" && typeof window.escapeHtml === "function"
-        ? window.escapeHtml
+      typeof escapeHtml === "function"
+        ? escapeHtml
         : function (s) {
             return String(s == null ? "" : s)
               .replace(/&/g, "&amp;")
@@ -503,37 +462,30 @@
 
   renderCategoryTabs();
 
-  var loadJsonFn =
-    typeof window !== "undefined" && typeof window.loadJson === "function" ? window.loadJson : null;
-  if (!loadJsonFn) {
-    showErr(
-      "Page loader failed (static-base.js). Hard refresh (Ctrl+Shift+R) or check that js/static-base.js deployed."
-    );
-    if (els.kpi) {
-      els.kpi.innerHTML =
-        '<div class="kpi-cell"><span class="kpi-label">Error</span><span class="kpi-val">Missing loadJson</span></div>';
-    }
-  } else {
   Promise.all([
-    loadJsonFn("crypto_kpis.json").catch(function () {
+    loadJson("crypto_kpis.json").catch(function () {
       return null;
     }),
-    loadJsonFn("crypto_prices.json").catch(function () {
+    loadJson("crypto_prices.json").catch(function () {
       return { rows: [] };
     }),
-    loadJsonFn("crypto_market_cap_series.json").catch(function () {
+    loadJson("crypto_market_cap_series.json").catch(function () {
       return DEFAULT_CHART_META;
+    }),
+    loadJson("etp_kpis.json").catch(function () {
+      return null;
     }),
   ])
     .then(function (results) {
-      try {
       var kpis = results[0] || {};
       var prices = results[1] || { rows: [] };
       var chart = results[2] || DEFAULT_CHART_META;
+      var etpKpis = results[3];
       renderKpi(kpis);
       if (chart && chart.series) renderChartLegacy(chart);
       else renderChart(chart);
       state.rows = (prices.rows || []).slice();
+      renderEtpContext(etpKpis, state.rows);
       updateSortClass();
       applyFilter();
       wireSort();
@@ -541,33 +493,14 @@
       if ((kpis && kpis.error) || (prices && prices.error) || (chart && chart.error)) {
         showErr(kpis.error || prices.error || chart.error);
       }
-      loadJsonFn("etp_kpis.json")
-        .catch(function () {
-          return null;
-        })
-        .then(function (etpKpis) {
-          renderEtpContext(etpKpis, state.rows);
-        });
-      } catch (e) {
-        showErr("Could not render crypto page: " + (e && e.message ? e.message : String(e)));
-        if (els.kpi) {
-          els.kpi.innerHTML =
-            '<div class="kpi-cell"><span class="kpi-label">Error</span><span class="kpi-val">Rendering failed</span></div>';
-        }
-      }
     })
     .catch(function (err) {
       showErr("Could not load the crypto data page. " + (err && err.message ? err.message : ""));
-      if (els.kpi) {
-        els.kpi.innerHTML =
-          '<div class="kpi-cell"><span class="kpi-label">Data</span><span class="kpi-val">Failed to load JSON</span></div>';
-      }
       renderChart(DEFAULT_CHART_META);
       state.rows = [];
       renderEtpContext(null, []);
       applyFilter();
     });
-  }
 
   if (els.search) {
     els.search.addEventListener("input", applyFilter);
