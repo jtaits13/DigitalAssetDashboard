@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=36" />
+    <link rel="stylesheet" href="styles.css?v=39" />
   </head>
   <body>
     <header class="site-header" role="banner">
@@ -156,15 +156,14 @@
             U.S. digital-asset ETP prices, a top-line market snapshot, and a direct path to the full ETP page with a
             12-month AUM chart and searchable fund table.
           </p>
-          <div class="kpi-row kpi-row--etp-snapshot" id="js-home-kpi" aria-label="U.S. ETP KPI strip">
+          <div class="kpi-row kpi-row--etp-snapshot kpi-row--etp-aggregate-only" id="js-home-kpi" aria-label="U.S. ETP KPI strip">
             <div class="kpi-cell">
               <span class="kpi-label">Loading…</span>
             </div>
           </div>
           <p class="kpi-footnote">
-            The colored <strong>% figures</strong> show recent ETP performance. Most reflect
-            <strong>one-month</strong> changes; different windows are labeled in parentheses
-            (<strong>1 mo</strong>, <strong>1 yr</strong>, or <strong>52W</strong>).
+            The colored <strong>% figure</strong> on total AUM is typically a <strong>one-month</strong> change; the tag in parentheses notes the window
+            (<strong>1 mo</strong>, <strong>1 yr</strong>, or <strong>52W</strong>). See the preview table for per-ticker data.
           </p>
           <div class="table-wrap">
             <table class="data-table">
@@ -239,6 +238,6 @@
     <script src="js/crypto-kpi-shared.js?v=2"></script>
     <script src="js/home-crypto.js?v=7"></script>
     <script src="js/rwa-onchain-home.js?v=4"></script>
-    <script src="js/home-page.js?v=3"></script>
+    <script src="js/home-page.js?v=4"></script>
   </body>
 </html>

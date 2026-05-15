@@ -32,7 +32,6 @@
     banner: document.getElementById("js-data-banner"),
     kpi: document.getElementById("js-crypto-kpi"),
     story: document.getElementById("js-crypto-story"),
-    etpContext: document.getElementById("js-crypto-etp-context"),
     chart: document.getElementById("crypto-market-cap-chart"),
     search: document.getElementById("js-crypto-search"),
     tabs: document.getElementById("js-crypto-category-tabs"),
@@ -148,125 +147,6 @@
     if (api.renderStoryCallout && els.story) {
       api.renderStoryCallout(els.story, payload || {});
     }
-  }
-
-  function findSymbolRow(rows, sym) {
-    var u = String(sym || "").toUpperCase();
-    for (var i = 0; i < (rows || []).length; i++) {
-      if (String((rows[i] && rows[i].symbol) || "").toUpperCase() === u) {
-        return rows[i];
-      }
-    }
-    return null;
-  }
-
-  function neutralDelta() {
-    return '<span class="kpi-delta neutral">—</span>';
-  }
-
-  function compareEtpSpotRow(assetName, etpTicker, etpKpi, spotRow, esc, fmtEtpDelta, spotFmt, fmtPriceFn) {
-    etpKpi = etpKpi || {};
-    var etpDelta = etpKpi.delta ? fmtEtpDelta(etpKpi.delta.pct, etpKpi.delta.window) : neutralDelta();
-    var spotPct = spotRow && spotRow.pct_30d != null ? spotFmt(spotRow.pct_30d, "1M") : neutralDelta();
-    var spotPrice = spotRow && spotRow.price_usd != null ? esc(fmtPriceFn(spotRow.price_usd)) : "—";
-    return (
-      '<div class="crypto-etp-compare__row" role="group" aria-label="' +
-      esc(assetName + " ETP vs spot") +
-      '">' +
-      '<div class="crypto-etp-compare__title">' +
-      esc(assetName) +
-      "</div>" +
-      '<div class="crypto-etp-compare__panel crypto-etp-compare__panel--etp">' +
-      '<span class="crypto-etp-compare__panel-label">' +
-      esc(etpTicker) +
-      " · ETP (hub)</span>" +
-      '<span class="crypto-etp-compare__figure">' +
-      esc(etpKpi.aum_display || "—") +
-      " AUM</span>" +
-      '<div class="crypto-etp-compare__delta">' +
-      etpDelta +
-      "</div>" +
-      "</div>" +
-      '<div class="crypto-etp-compare__panel crypto-etp-compare__panel--spot">' +
-      '<span class="crypto-etp-compare__panel-label">Spot (this table)</span>' +
-      '<span class="crypto-etp-compare__figure">' +
-      spotPrice +
-      "</span>" +
-      '<div class="crypto-etp-compare__delta">' +
-      spotPct +
-      "</div>" +
-      "</div>" +
-      "</div>"
-    );
-  }
-
-  function renderEtpContext(etpKpis, cryptoRows) {
-    if (!els.etpContext) return;
-    var esc =
-      typeof window !== "undefined" && typeof window.escapeHtml === "function"
-        ? window.escapeHtml
-        : escapeHtml;
-    var K = (typeof window !== "undefined" && window.__ETP_KPI) || {};
-    var fmtEtpDelta =
-      typeof K.fmtPctDelta === "function"
-        ? K.fmtPctDelta
-        : function (p, w) {
-            if (p == null || p === "") return neutralDelta();
-            var n = Number(p);
-            var cls = n > 0 ? "up" : n < 0 ? "down" : "neutral";
-            return (
-              '<span class="kpi-delta ' + cls + '">' + (n > 0 ? "+" : "") + n.toFixed(2) + "%</span>"
-            );
-          };
-
-    if (!etpKpis || typeof etpKpis !== "object") {
-      els.etpContext.innerHTML =
-        '<p class="crypto-etp-bridge__empty">U.S. ETP snapshot is not available on this deploy ' +
-        "(add <code>data/etp_kpis.json</code> under version control or run the site export). " +
-        '<a href="' +
-        esc("etps.html") +
-        '">Open the full ETP overview →</a></p>';
-      return;
-    }
-
-    var ibit = etpKpis.ibit || {};
-    var etha = etpKpis.etha || {};
-    var aggDelta =
-      etpKpis.aggregate_pct != null
-        ? fmtEtpDelta(etpKpis.aggregate_pct, etpKpis.aggregate_window)
-        : neutralDelta();
-
-    var btc = findSymbolRow(cryptoRows, "BTC");
-    var eth = findSymbolRow(cryptoRows, "ETH");
-    var spotFmt =
-      typeof K.fmtPctDelta === "function"
-        ? K.fmtPctDelta
-        : function (p, w) {
-            if (p == null || p === "") return neutralDelta();
-            var n = Number(p);
-            var cls = n > 0 ? "up" : n < 0 ? "down" : "neutral";
-            return (
-              '<span class="kpi-delta ' + cls + '">' + (n > 0 ? "+" : "") + n.toFixed(2) + "%</span>"
-            );
-          };
-
-    els.etpContext.innerHTML =
-      '<p class="crypto-etp-bridge__aggregate">' +
-      "<strong>All listed U.S. crypto ETPs</strong> · " +
-      esc(etpKpis.total_aum_display || "—") +
-      " AUM · aggregate change " +
-      aggDelta +
-      "</p>" +
-      '<div class="crypto-etp-compare">' +
-      compareEtpSpotRow("Bitcoin", "IBIT", ibit, btc, esc, fmtEtpDelta, spotFmt, fmtPrice) +
-      compareEtpSpotRow("Ether", "ETHA", etha, eth, esc, fmtEtpDelta, spotFmt, fmtPrice) +
-      "</div>" +
-      '<p class="crypto-etp-bridge__note">Use windows shown in each % tag; ETP and spot figures are related but not identical series.</p>' +
-      '<p class="crypto-etp-bridge__cta">' +
-      '<a href="' +
-      esc("etps.html") +
-      '">Full U.S. ETP list, chart, and filings →</a>' +
-      "</p>";
   }
 
   function chartWidgetConfig(meta) {
@@ -515,19 +395,11 @@
       if ((kpis && kpis.error) || (prices && prices.error) || (chart && chart.error)) {
         showErr(kpis.error || prices.error || chart.error);
       }
-      loadJsonFn("etp_kpis.json")
-        .catch(function () {
-          return null;
-        })
-        .then(function (etpKpis) {
-          renderEtpContext(etpKpis, state.rows);
-        });
     })
     .catch(function (err) {
       showErr("Could not load the crypto data page. " + (err && err.message ? err.message : ""));
       renderChart(DEFAULT_CHART_META);
       state.rows = [];
-      renderEtpContext(null, []);
       applyFilter();
     });
   }
