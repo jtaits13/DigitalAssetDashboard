@@ -197,7 +197,7 @@ def story_callout_payload() -> dict[str, object]:
     return {
         "title": "How to read this snapshot",
         "bullets": [
-            "KPI strip: Total market cap and its 1M % come from CoinPaprika. BTC and ETH prices and 1M % come from CoinGecko spot data. BTC dominance compares Bitcoin’s market cap to the CoinPaprika total; stablecoin share is the portion of this page’s top-50 list held by stablecoins.",
+            "KPI strip: Total market cap and its 1M % come from CoinPaprika. BTC dominance compares Bitcoin’s market cap to that total; stablecoin share is the portion of this page’s top-50 list held by stablecoins.",
             "Chart: TradingView TOTAL tracks a broad crypto market-cap index (about the top 125 coins). Use it for trend context; its level can differ from the KPI total because sources and universes differ.",
             "Table: Spot prices, 1M % changes, and categories use the top-50 CoinGecko list (CoinCap fallback when 30-day change is missing). Hover tickers for short About summaries.",
         ],

@@ -46,14 +46,11 @@
     payload = payload || {};
     var K = global.__ETP_KPI || {};
     var fmtDeltaFn = typeof K.fmtPctDelta === "function" ? K.fmtPctDelta : null;
-    var parts = [
-      payload.primary,
-      payload.btc,
-      payload.eth,
-      payload.btc_dominance,
-      payload.stablecoin_share,
-    ];
+    var parts = [payload.primary, payload.btc_dominance, payload.stablecoin_share];
     host.innerHTML = parts
+      .filter(function (p) {
+        return p && (p.label || p.value_display);
+      })
       .map(function (p) {
         return kpiCell(p, fmtDeltaFn);
       })
