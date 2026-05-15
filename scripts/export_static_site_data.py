@@ -7,7 +7,7 @@ Run in CI:    before upload-pages-artifact (see .github/workflows).
 
 Uses the same RSS / StockAnalysis / yfinance / RWA.xyz logic as the Streamlit app (no Streamlit UI), plus ``price_ticker.fetch_top_crypto_tickers`` for ``crypto_ticker.json`` (GitHub Pages marquee).
 
-Optional env ``COINGECKO_DEMO_API_KEY`` (or ``COINGECKO_API_KEY``): sent as ``x-cg-demo-apikey`` for CoinGecko description calls so CI can fill ``about_blurb`` without hitting public rate limits as often. When the API still returns nothing, ``coingecko_about`` applies short static fallbacks for major assets (BTC, ETH, …) so the static crypto table always shows hint affordances for top names.
+Optional env ``COINGECKO_DEMO_API_KEY`` (or ``COINGECKO_API_KEY``): sent as ``x-cg-demo-apikey`` for CoinGecko description calls so CI can fill ``about_blurb`` without hitting public rate limits as often. Optional ``COINGECKO_PRO_API_KEY`` uses the Pro API host. Descriptions are cached in ``static_home/data/crypto_about_blurbs_cache.json`` across exports so scheduled deploys can fill remaining coins without re-fetching every id. When the API still returns nothing, ``coingecko_about`` applies short static fallbacks for major assets (BTC, ETH, …) so the static crypto table always shows hint affordances for top names.
 
 Optional env ``STATIC_WEBAPP_BASE``: absolute origin for FastAPI-only routes when needed. Served as HTML in ``static_home/``: Global overview ``rwa-global.html``, Explore by Asset Type ``rwa-explore-asset-type.html``, Explore by Market Participant ``rwa-explore-market-participant.html``, participant deep pages ``rwa-participants-*.html``, Stablecoins ``rwa-stablecoins.html``, US Treasuries ``rwa-us-treasuries.html``, Tokenized Stocks ``rwa-tokenized-stocks.html``.
 """
@@ -1427,32 +1427,23 @@ def export_crypto_json_bundle(manifest: dict[str, Any]) -> None:
         t_rows, t_err, t_src = fetch_top_crypto_tickers(TICKER_COUNT)
         t_rows = [dict(r) for r in t_rows]
         from coingecko_about import (
-            blurb_with_static_fallback,
-            fetch_blurbs_for_coin_ids,
-            resolve_coingecko_id_for_blurb,
+            attach_about_blurbs_to_rows,
+            collect_coingecko_ids_for_rows,
             default_coingecko_headers,
+            fetch_blurbs_with_cache,
         )
 
         crypto_headers = default_coingecko_headers()
         crypto_headers["User-Agent"] = DEFAULT_UA
 
-        _blurbs_ids: list[str] = []
-        _blurbs_seen: set[str] = set()
-        for _r in t_rows:
-            _cid = resolve_coingecko_id_for_blurb(_r)
-            if _cid and _cid not in _blurbs_seen:
-                _blurbs_seen.add(_cid)
-                _blurbs_ids.append(_cid)
+        blurb_cache_path = OUT / "crypto_about_blurbs_cache.json"
+        _blurbs_ids = collect_coingecko_ids_for_rows(t_rows)
         _blurbs_map = (
-            fetch_blurbs_for_coin_ids(_blurbs_ids, headers=crypto_headers, delay_s=0.12) if _blurbs_ids else {}
+            fetch_blurbs_with_cache(_blurbs_ids, blurb_cache_path, headers=crypto_headers)
+            if _blurbs_ids
+            else {}
         )
-        for _r in t_rows:
-            _cid = resolve_coingecko_id_for_blurb(_r)
-            if _cid:
-                raw_blurb = (_blurbs_map.get(_cid) or "").strip()
-                _r["about_blurb"] = blurb_with_static_fallback(_cid, raw_blurb)
-            else:
-                _r["about_blurb"] = ""
+        attach_about_blurbs_to_rows(t_rows, headers=crypto_headers, prefetched=_blurbs_map)
 
         crypto_payload = hub_ticker_static_json_payload(t_rows, t_err, t_src)
         crypto_payload["generated_at"] = crypto_generated_at

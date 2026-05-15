@@ -8,7 +8,7 @@ from typing import Any
 import requests
 import streamlit as st
 
-from coingecko_about import fetch_blurbs_for_coin_ids
+from coingecko_about import attach_about_blurbs_to_rows as _attach_coingecko_about_blurbs
 
 try:
     import streamlit.components.v1 as components
@@ -385,25 +385,24 @@ def render_price_ticker_html(
 @st.cache_data(ttl=86_400, show_spinner=False)
 def _cached_coingecko_ticker_blurbs(ids_tuple: tuple[str, ...]) -> dict[str, str]:
     """One fetch per unique id set per day; used for native ``title`` tooltips on ticker chips."""
+    from coingecko_about import default_coingecko_headers, fetch_blurbs_for_coin_ids
+
     if not ids_tuple:
         return {}
-    headers = {
-        "User-Agent": "Mozilla/5.0 (compatible; Digital-Assets-Dashboard-News/1.0)",
-        "Accept": "application/json",
-    }
-    return fetch_blurbs_for_coin_ids(list(ids_tuple), headers=headers, delay_s=0.1)
+    return fetch_blurbs_for_coin_ids(list(ids_tuple), headers=default_coingecko_headers())
 
 
 def attach_about_blurbs_to_rows(rows: list[dict[str, Any]]) -> None:
-    """Mutate **copies** of ticker rows with ``about_blurb`` (CoinGecko ids only)."""
-    ids = sorted({str(r["coin_id"]).strip() for r in rows if r.get("source") == "coingecko" and r.get("coin_id")})
-    blurbs = _cached_coingecko_ticker_blurbs(tuple(ids)) if ids else {}
-    for r in rows:
-        cid = r.get("coin_id")
-        if r.get("source") == "coingecko" and cid:
-            r["about_blurb"] = blurbs.get(str(cid).strip(), "")
-        else:
-            r["about_blurb"] = ""
+    """Mutate **copies** of ticker rows with ``about_blurb`` (CoinGecko About + static fallback)."""
+    from coingecko_about import collect_coingecko_ids_for_rows, default_coingecko_headers
+
+    ids = collect_coingecko_ids_for_rows(rows)
+    prefetched = _cached_coingecko_ticker_blurbs(tuple(ids)) if ids else {}
+    _attach_coingecko_about_blurbs(
+        rows,
+        headers=default_coingecko_headers(),
+        prefetched=prefetched,
+    )
 
 
 NAV_TICKER_ALIGN_SCRIPT = """
