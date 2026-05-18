@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=42" />
+    <link rel="stylesheet" href="styles.css?v=43" />
   </head>
   <body class="page-crypto">
     <header class="site-header" role="banner">
@@ -60,6 +60,10 @@
 
       <section class="hub-section" aria-labelledby="crypto-snapshot-heading">
         <h2 class="subsection-head" id="crypto-snapshot-heading">Top-Line Market Snapshot</h2>
+        <p class="data-freshness" id="js-crypto-snapshot-as-of" hidden></p>
+        <p class="section-crosslink">
+          <a href="etps.html">U.S. ETP overview →</a>
+        </p>
         <div class="rwa-kpi-panel-static">
           <div class="kpi-row kpi-row--crypto-snapshot kpi-row--in-panel" id="js-crypto-kpi" aria-label="Crypto KPI strip">
             <div class="kpi-cell"><span class="kpi-label">Loading…</span></div>
@@ -146,8 +150,9 @@
 
     <footer class="site-footer">Digital Assets Dashboard · Crypto Prices · <time datetime="2026-05">May 2026</time></footer>
     <script defer src="js/static-base.js?v=12"></script>
+    <script defer src="js/data-freshness.js?v=1"></script>
     <script defer src="js/etp-kpi-shared.js"></script>
     <script defer src="js/crypto-kpi-shared.js?v=3"></script>
-    <script defer src="js/crypto-page.js?v=14"></script>
+    <script defer src="js/crypto-page.js?v=15"></script>
   </body>
 </html>

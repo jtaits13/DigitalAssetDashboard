@@ -1577,6 +1577,7 @@ def export_crypto_json_bundle(manifest: dict[str, Any]) -> None:
         json.dumps(crypto_chart_payload, indent=2),
         encoding="utf-8",
     )
+    manifest["crypto_refreshed_at"] = crypto_generated_at
 
 
 _ETP_MANIFEST_ERROR_PREFIXES = ("ETP scrape:", "ETP flows:", "AUM chart:")
@@ -1657,7 +1658,10 @@ def export_etp_json_bundle(
         listed_syms, flow_series, days=30
     )
 
+    refreshed_at = datetime.now(timezone.utc).isoformat()
+
     kpis = {
+        "generated_at": refreshed_at,
         "total_aum_display": aum_s,
         "aggregate_pct": round(float(agg_pct), 4) if agg_pct is not None else None,
         "aggregate_window": agg_lbl or "",
@@ -1670,13 +1674,14 @@ def export_etp_json_bundle(
     }
 
     (out_dir / "etps.json").write_text(
-        json.dumps({"rows": rows_payload}, indent=2),
+        json.dumps({"generated_at": refreshed_at, "rows": rows_payload}, indent=2),
         encoding="utf-8",
     )
-    (out_dir / "aum_series.json").write_text(json.dumps({"series": series}, indent=2), encoding="utf-8")
+    (out_dir / "aum_series.json").write_text(
+        json.dumps({"generated_at": refreshed_at, "series": series}, indent=2),
+        encoding="utf-8",
+    )
     (out_dir / "etp_kpis.json").write_text(json.dumps(kpis, indent=2), encoding="utf-8")
-
-    refreshed_at = datetime.now(timezone.utc).isoformat()
     return {
         "etp_refreshed_at": refreshed_at,
         "errors": etp_errors,
@@ -1743,12 +1748,19 @@ def main() -> None:
         manifest["errors"].append(f"reg RSS: {e}")
     reg_top = reg_articles[:REG_N]
 
+    news_ts = datetime.now(timezone.utc).isoformat()
     (OUT / "home_news.json").write_text(
-        json.dumps({"items": [_article_json(a) for a in home_news_items]}, indent=2),
+        json.dumps(
+            {"generated_at": news_ts, "items": [_article_json(a) for a in home_news_items]},
+            indent=2,
+        ),
         encoding="utf-8",
     )
     (OUT / "regulatory.json").write_text(
-        json.dumps({"items": [_article_json(a) for a in reg_top]}, indent=2),
+        json.dumps(
+            {"generated_at": news_ts, "items": [_article_json(a) for a in reg_top]},
+            indent=2,
+        ),
         encoding="utf-8",
     )
     # Full list for static GitHub Pages (search + pagination).
@@ -1772,7 +1784,10 @@ def main() -> None:
         encoding="utf-8",
     )
     pulse = etf_items[:ETP_PULSE_PREVIEW_COUNT]
-    (OUT / "etf_pulse.json").write_text(json.dumps({"items": pulse}, indent=2), encoding="utf-8")
+    (OUT / "etf_pulse.json").write_text(
+        json.dumps({"generated_at": news_ts, "items": pulse}, indent=2),
+        encoding="utf-8",
+    )
 
     # --- On-chain hub (Streamlit home): RWA Global Market KPIs + Networks preview + explore hrefs ---
     import pandas as pd
@@ -1794,7 +1809,9 @@ def main() -> None:
     explore_at = STATIC_RWA_EXPLORE_ASSET_TYPE_PAGE
     explore_mp = STATIC_RWA_EXPLORE_MARKET_PARTICIPANT_PAGE
 
+    rwa_ts = datetime.now(timezone.utc).isoformat()
     rwa_onchain_payload = {
+        "generated_at": rwa_ts,
         "heading": "RWA Global Market Overview",
         "error": rwa_err,
         "kpis": [_rwa_kpi_to_dict(k) for k in rwa_kpis],
@@ -1979,6 +1996,13 @@ def main() -> None:
         encoding="utf-8",
     )
 
+    manifest["sections"] = {
+        "news": news_ts,
+        "regulatory": news_ts,
+        "etp": manifest.get("etp_refreshed_at") or manifest["generated_at"],
+        "rwa": rwa_ts,
+        "crypto": manifest.get("crypto_refreshed_at") or manifest["generated_at"],
+    }
     (OUT / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     print(
         f"Wrote static data to {OUT} ({etp_summary.get('etp_count', 0)} ETPs, {len(etf_items)} ETF headlines, "

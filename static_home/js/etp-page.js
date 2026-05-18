@@ -9,6 +9,8 @@
   var els = {
     banner: document.getElementById("js-data-banner"),
     kpi: document.getElementById("js-etp-kpi"),
+    snapshotAsOf: document.getElementById("js-etp-snapshot-as-of"),
+    concentration: document.getElementById("etp-concentration-chart"),
     chart: document.getElementById("aum-chart"),
     pulse: document.getElementById("js-etf-pulse"),
     search: document.getElementById("js-etp-search"),
@@ -17,6 +19,14 @@
     thead: document.getElementById("js-etp-thead"),
     ts: document.getElementById("js-etp-generated"),
   };
+
+  var freshApi = window.__DATA_FRESHNESS || {};
+  var loadTimed =
+    typeof freshApi.loadJsonWithTimeout === "function"
+      ? freshApi.loadJsonWithTimeout
+      : function (name) {
+          return loadJson(name);
+        };
 
   function parsePrice(s) {
     if (s == null || s === "") return NaN;
@@ -290,6 +300,84 @@
     );
   }
 
+  function renderConcentration(rows) {
+    if (!els.concentration) return;
+    if (typeof Plotly === "undefined") {
+      els.concentration.innerHTML =
+        '<p class="chart-fallback">Chart library did not load.</p>';
+      return;
+    }
+    var withAum = (rows || []).filter(function (r) {
+      var n = Number(r.assets_usd);
+      return isFinite(n) && n > 0;
+    });
+    if (!withAum.length) {
+      els.concentration.innerHTML =
+        '<p class="chart-fallback">Concentration data is unavailable right now.</p>';
+      return;
+    }
+    var total = withAum.reduce(function (sum, r) {
+      return sum + Number(r.assets_usd);
+    }, 0);
+    if (!isFinite(total) || total <= 0) {
+      els.concentration.innerHTML =
+        '<p class="chart-fallback">Concentration data is unavailable right now.</p>';
+      return;
+    }
+    var top = withAum
+      .slice()
+      .sort(function (a, b) {
+        return Number(b.assets_usd) - Number(a.assets_usd);
+      })
+      .slice(0, 5);
+    var labels = top.map(function (r) {
+      return r.symbol || r.name || "—";
+    });
+    var values = top.map(function (r) {
+      return (100 * Number(r.assets_usd)) / total;
+    });
+    var restPct = 100 - values.reduce(function (s, v) {
+      return s + v;
+    }, 0);
+    if (restPct > 0.15) {
+      labels.push("All other listed");
+      values.push(restPct);
+    }
+    labels = labels.slice().reverse();
+    values = values.slice().reverse();
+    Plotly.newPlot(
+      els.concentration,
+      [
+        {
+          type: "bar",
+          orientation: "h",
+          y: labels,
+          x: values,
+          marker: { color: "#25809c" },
+          text: values.map(function (v) {
+            return v.toFixed(1) + "%";
+          }),
+          textposition: "outside",
+          hovertemplate: "%{y}<br>%{x:.1f}% of listed AUM<extra></extra>",
+        },
+      ],
+      {
+        margin: { t: 12, r: 56, b: 40, l: 88 },
+        paper_bgcolor: "#fafcfd",
+        plot_bgcolor: "#f8fafc",
+        font: { family: "Outfit, sans-serif", size: 12, color: "#1f4c67" },
+        xaxis: {
+          title: { text: "% of listed AUM" },
+          range: [0, Math.min(100, Math.max.apply(null, values) + 8)],
+          ticksuffix: "%",
+        },
+        yaxis: { automargin: true },
+        showlegend: false,
+      },
+      { responsive: true, displayModeBar: false }
+    );
+  }
+
   function renderPulse(items) {
     if (!els.pulse) return;
     els.pulse.innerHTML = "";
@@ -396,37 +484,53 @@
     wireSort();
 
     Promise.all([
-      loadJson("manifest.json").catch(function () {
+      loadTimed("manifest.json", 12000).catch(function () {
         return {};
       }),
-      loadJson("etp_kpis.json").catch(function () {
+      loadTimed("etp_kpis.json", 14000).catch(function () {
         return null;
       }),
-      loadJson("aum_series.json").catch(function () {
+      loadTimed("aum_series.json", 14000).catch(function () {
         return { series: [] };
       }),
-      loadJson("etps.json").catch(function () {
+      loadTimed("etps.json", 14000).catch(function () {
         return { rows: [] };
       }),
-      loadJson("etf_pulse.json").catch(function () {
+      loadTimed("etf_pulse.json", 12000).catch(function () {
         return { items: [] };
       }),
     ]).then(function (out) {
       var manifest = out[0];
+      var kpis = out[1];
+      var aum = out[2];
+      var etps = out[3];
+      var pulse = out[4];
       if (manifest.errors && manifest.errors.length && els.banner) {
         els.banner.hidden = false;
         els.banner.textContent =
           "Partial feed warnings: " + manifest.errors.slice(0, 4).join("; ");
       }
-      var tsIso = manifest.etp_refreshed_at || manifest.generated_at;
+      var tsIso =
+        (kpis && kpis.generated_at) ||
+        etps.generated_at ||
+        manifest.etp_refreshed_at ||
+        manifest.generated_at;
+      if (freshApi.renderFreshness) {
+        freshApi.renderFreshness(els.snapshotAsOf, {
+          at: tsIso,
+          source: "StockAnalysis · Yahoo · Farside",
+          mode: "snapshot",
+        });
+      }
       if (tsIso && els.ts) {
         els.ts.textContent = String(tsIso).replace("T", " ").replace(/\.\d+Z$/, " UTC");
       }
-      renderKpi(out[1]);
-      renderChart((out[2] && out[2].series) || []);
-      state.rows = (out[3].rows || []).map(prepareRow);
+      renderKpi(kpis);
+      renderChart((aum && aum.series) || []);
+      state.rows = (etps.rows || []).map(prepareRow);
       state.filtered = state.rows.slice();
-      renderPulse((out[4] && out[4].items) || []);
+      renderConcentration(state.rows);
+      renderPulse((pulse && pulse.items) || []);
       state.sortKey = "assets_usd";
       state.sortDir = -1;
       render();

@@ -120,17 +120,32 @@
     }
   }
 
+  var freshApi = window.__DATA_FRESHNESS || {};
+  var loadTimed =
+    typeof freshApi.loadJsonWithTimeout === "function"
+      ? freshApi.loadJsonWithTimeout
+      : function (name) {
+          return loadJson(name);
+        };
+
   Promise.all([
-    loadJson("crypto_kpis.json").catch(function () {
+    loadTimed("crypto_kpis.json", 12000).catch(function () {
       return null;
     }),
-    loadJson("crypto_prices.json").catch(function () {
+    loadTimed("crypto_prices.json", 12000).catch(function () {
       return { rows: [] };
     }),
   ])
     .then(function (results) {
       var kpis = results[0];
       var prices = results[1] || { rows: [] };
+      if (freshApi.renderFreshness) {
+        freshApi.renderFreshness(document.getElementById("js-home-crypto-as-of"), {
+          at: (kpis && kpis.generated_at) || prices.generated_at,
+          source: (kpis && kpis.source) || prices.source || "CoinPaprika + CoinGecko",
+          mode: "snapshot",
+        });
+      }
       renderKpi(kpis || {});
       renderRows(prices.rows || []);
       if (els.source && kpis && kpis.source_note) {

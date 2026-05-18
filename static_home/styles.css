@@ -972,6 +972,84 @@ a.ticker-chip-link[title] {
   font-weight: 600;
 }
 
+.data-freshness {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin: 0.15rem 0 0.65rem;
+  line-height: 1.4;
+}
+
+.section-crosslink {
+  font-size: 0.88rem;
+  margin: 0.35rem 0 0.85rem;
+  color: var(--ink-soft);
+}
+
+.section-crosslink a {
+  font-weight: 600;
+}
+
+.section-highlight {
+  font-size: 0.92rem;
+  margin: 0 0 0.75rem;
+  padding: 0.55rem 0.75rem;
+  border-left: 3px solid var(--teal);
+  background: rgba(0, 105, 110, 0.05);
+  border-radius: 0 6px 6px 0;
+  color: var(--ink);
+}
+
+.methodology-panel {
+  margin: 0.75rem 0 1rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fafcfd;
+}
+
+.methodology-panel summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.65rem 0.85rem;
+  color: var(--ink);
+  list-style-position: outside;
+}
+
+.methodology-panel__body {
+  padding: 0 0.85rem 0.85rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.methodology-panel__body ul {
+  margin: 0.35rem 0 0.5rem 1.1rem;
+  padding: 0;
+}
+
+.methodology-panel__body li + li {
+  margin-top: 0.35rem;
+}
+
+.etp-concentration {
+  margin: 0 0 1.25rem;
+}
+
+.etp-concentration__cap {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin: 0.35rem 0 0;
+}
+
+#etp-concentration-chart {
+  min-height: 220px;
+}
+
+.home-etp-search-row {
+  margin: 0 0 0.65rem;
+  max-width: 28rem;
+}
+
 .kpi-row.kpi-row--crypto-snapshot {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

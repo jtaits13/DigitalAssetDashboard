@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=42" />
+    <link rel="stylesheet" href="styles.css?v=43" />
   </head>
   <body>
     <header class="site-header" role="banner">
@@ -77,6 +77,7 @@
             keyword-based Google News results. The regulatory lane draws from regulators, central banks, policy bodies,
             legal or regulatory news sources, and The Defiant where stories match the digital-asset regulatory filters.
           </p>
+          <p class="data-freshness" id="js-news-as-of" hidden></p>
           <p class="cta-note cta-note--news-hub-top">
             <a href="all-articles.html">All digital asset headlines →</a>
             <span class="cta-note__sep" aria-hidden="true">·</span>
@@ -114,6 +115,11 @@
             Spot crypto prices, a top-line market snapshot, and a direct path to the full crypto page with a 12-month
             market-cap chart and searchable top-50 table.
           </p>
+          <p class="section-crosslink">
+            Related: <a href="#section-markets">U.S. listed crypto ETPs</a> ·
+            <a href="rwa-global.html">On-chain RWA overview</a>
+          </p>
+          <p class="data-freshness" id="js-home-crypto-as-of" hidden></p>
           <div class="data-banner" id="js-home-crypto-banner" role="status" hidden></div>
           <div class="kpi-row kpi-row--crypto-snapshot" id="js-home-crypto-kpi" aria-label="Crypto market KPI strip">
             <div class="kpi-cell">
@@ -155,6 +161,12 @@
             U.S. digital-asset ETP prices, a top-line market snapshot, and a direct path to the full ETP page with a
             12-month AUM chart and searchable fund table.
           </p>
+          <p class="section-crosslink">
+            Related: <a href="#section-crypto">Crypto prices</a> ·
+            <a href="rwa-global.html">On-chain RWA overview</a>
+          </p>
+          <p class="data-freshness" id="js-home-etp-as-of" hidden></p>
+          <p class="section-highlight" id="js-home-etp-flow-line" hidden></p>
           <div class="kpi-row kpi-row--etp-snapshot" id="js-home-kpi" aria-label="U.S. ETP KPI strip">
             <div class="kpi-cell">
               <span class="kpi-label">Loading…</span>
@@ -165,6 +177,16 @@
             windows in parentheses). <strong>BTC &amp; ETH Fund flows</strong> show the 30-day Farside total and a
             <strong>%</strong> vs the prior 30 days. Full table includes <strong>1Y Flow</strong> per fund when available.
           </p>
+          <label class="search-field home-etp-search-row">
+            <span class="search-field__label">Filter preview by fund name or ticker</span>
+            <input
+              type="search"
+              class="search-field__input"
+              id="js-home-etp-search"
+              placeholder="Filter by name or ticker…"
+            />
+          </label>
+          <p class="toolbar-note" id="js-home-etp-toolbar" hidden></p>
           <div class="table-wrap">
             <table class="data-table">
               <thead id="js-home-etp-thead">
@@ -195,6 +217,11 @@
             <strong>Explore</strong> gateways for stablecoins, U.S. Treasuries, tokenized stocks, networks, platforms,
             and asset managers.
           </p>
+          <p class="section-crosslink">
+            Related: <a href="#section-crypto">Crypto prices</a> ·
+            <a href="#section-markets">U.S. listed crypto ETPs</a>
+          </p>
+          <p class="data-freshness" id="js-rwa-onchain-as-of" hidden></p>
           <div class="data-banner" id="js-rwa-onchain-banner" role="status" hidden></div>
           <div class="jd-hub-subsection-head rwa-market-head" id="jd-rwa-market">
             <h3 class="rwa-market-overview-title">RWA Global Market Overview</h3>
@@ -233,11 +260,12 @@
     <footer class="site-footer">
       Digital Assets Dashboard · Home · <time datetime="2026-05">May 2026</time>
     </footer>
-    <script src="js/static-base.js?v=12"></script>
+    <script src="js/static-base.js?v=13"></script>
+    <script src="js/data-freshness.js?v=1"></script>
     <script src="js/etp-kpi-shared.js"></script>
     <script src="js/crypto-kpi-shared.js?v=3"></script>
-    <script src="js/home-crypto.js?v=7"></script>
-    <script src="js/rwa-onchain-home.js?v=4"></script>
-    <script src="js/home-page.js?v=5"></script>
+    <script src="js/home-crypto.js?v=8"></script>
+    <script src="js/rwa-onchain-home.js?v=5"></script>
+    <script src="js/home-page.js?v=6"></script>
   </body>
 </html>

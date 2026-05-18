@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=42" />
+    <link rel="stylesheet" href="styles.css?v=43" />
   </head>
   <body class="page-etp">
     <header class="site-header" role="banner">
@@ -62,6 +62,30 @@
 
       <section class="hub-section" aria-labelledby="snapshot-heading">
         <h2 class="subsection-head" id="snapshot-heading">Top-Line Market Snapshot</h2>
+        <p class="data-freshness" id="js-etp-snapshot-as-of" hidden></p>
+        <details class="methodology-panel" id="js-etp-methodology">
+          <summary>Data sources &amp; definitions</summary>
+          <div class="methodology-panel__body">
+            <ul>
+              <li>
+                <strong>Total AUM / IBIT / ETHA</strong> — latest listed assets from
+                <a href="https://stockanalysis.com/list/crypto-etfs/" target="_blank" rel="noopener noreferrer">StockAnalysis</a>;
+                colored <strong>%</strong> on AUM tiles use Yahoo Finance adjusted closes (~1 mo when available).
+              </li>
+              <li>
+                <strong>Aggregate AUM %</strong> — estimated weekly aggregate AUM (Yahoo prices × latest reported AUM per fund).
+              </li>
+              <li>
+                <strong>BTC &amp; ETH Fund flows</strong> — sum of daily net creations/redemptions over ~30 calendar days from
+                <a href="https://farside.co.uk/bitcoin-etf-flow-all-data/" target="_blank" rel="noopener noreferrer">Farside BTC flows</a>
+                and
+                <a href="https://farside.co.uk/ethereum-etf-flow-all-data/" target="_blank" rel="noopener noreferrer">Farside ETH flows</a>
+                (spot ETFs on those tables only). The flow <strong>%</strong> compares that 30-day total to the prior 30 days—not fund performance.
+              </li>
+              <li><strong>Table 1Y Flow</strong> — trailing ~12-month sum of the same Farside daily flows per fund.</li>
+            </ul>
+          </div>
+        </details>
         <div class="rwa-kpi-panel-static">
           <div class="kpi-row kpi-row--etp-snapshot kpi-row--in-panel" id="js-etp-kpi" aria-label="U.S. ETP KPI strip">
             <div class="kpi-cell"><span class="kpi-label">Loading…</span></div>
@@ -107,6 +131,16 @@
 
       <hr class="section-rule" />
 
+      <section class="hub-section etp-concentration" aria-labelledby="concentration-heading">
+        <h2 class="subsection-head" id="concentration-heading">AUM concentration (top 5 funds)</h2>
+        <p class="section-lead">
+          Share of total listed AUM held by the five largest funds (StockAnalysis snapshot).
+        </p>
+        <div id="etp-concentration-chart" class="etp-concentration-chart" role="img" aria-label="Top five funds by share of total AUM"></div>
+      </section>
+
+      <hr class="section-rule" />
+
       <div class="split-panels split-panels--etp-equal">
         <section class="split-panels__col split-panels__col--chart" aria-labelledby="aum-heading">
           <h2 class="subsection-head" id="aum-heading">Aggregate AUM trend (12 months)</h2>
@@ -145,6 +179,9 @@
 
       <section class="hub-section" aria-labelledby="table-heading">
         <h2 class="subsection-head u-vh" id="table-heading">Fund table</h2>
+        <p class="section-crosslink">
+          <a href="crypto-prices.html">Crypto prices snapshot →</a>
+        </p>
         <label class="search-field">
           <span class="search-field__label">Search by fund name or ticker</span>
           <input type="search" class="search-field__input" id="js-etp-search" placeholder="Filter by name or ticker…" />
@@ -188,7 +225,8 @@
     <footer class="site-footer">Digital Assets Dashboard · U.S. ETPs · <time datetime="2026-05">May 2026</time></footer>
     <script defer src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
     <script defer src="js/static-base.js?v=5"></script>
+    <script defer src="js/data-freshness.js?v=1"></script>
     <script defer src="js/etp-kpi-shared.js"></script>
-    <script defer src="js/etp-page.js?v=4"></script>
+    <script defer src="js/etp-page.js?v=5"></script>
   </body>
 </html>

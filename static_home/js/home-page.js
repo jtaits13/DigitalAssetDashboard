@@ -7,6 +7,10 @@
   var etpThead = document.getElementById("js-home-etp-thead");
   var etpAllRows = [];
   var etpSort = { key: "assets_usd", dir: -1 };
+  var etpSearch = document.getElementById("js-home-etp-search");
+  var etpToolbar = document.getElementById("js-home-etp-toolbar");
+  var etpFlowLine = document.getElementById("js-home-etp-flow-line");
+  var freshApi = window.__DATA_FRESHNESS || {};
 
   function showErr(msg) {
     if (banner) {
@@ -196,14 +200,75 @@
     );
   }
 
+  function filterEtpRows(rows) {
+    var q = (etpSearch && etpSearch.value ? etpSearch.value : "").trim().toLowerCase();
+    if (!q) return rows;
+    return rows.filter(function (r) {
+      return (
+        (r.symbol && r.symbol.toLowerCase().indexOf(q) >= 0) ||
+        (r.name && r.name.toLowerCase().indexOf(q) >= 0)
+      );
+    });
+  }
+
+  function renderEtpFlowLine(kpis) {
+    if (!etpFlowLine || !kpis) return;
+    var flow = kpis.net_flow_1m_display;
+    if (!flow || flow === "—") {
+      etpFlowLine.hidden = true;
+      return;
+    }
+    var pctPart = "";
+    if (kpis.net_flow_1m_pct != null && kpis.net_flow_1m_pct !== "") {
+      var n = Number(kpis.net_flow_1m_pct);
+      if (isFinite(n)) {
+        pctPart =
+          " (" +
+          (n > 0 ? "+" : "") +
+          n.toFixed(1) +
+          "% vs prior 30d flow total)";
+      }
+    }
+    etpFlowLine.innerHTML =
+      "<strong>Listed spot BTC/ETH ETFs:</strong> " +
+      escapeHtml(flow) +
+      " net flows (30d)" +
+      escapeHtml(pctPart) +
+      ".";
+    etpFlowLine.hidden = false;
+  }
+
   function renderPreview() {
     if (!tblBody) return;
     tblBody.innerHTML = "";
     if (!etpAllRows || !etpAllRows.length) {
       tblBody.innerHTML = '<tr><td colspan="5">No ETP data. Export script not run yet.</td></tr>';
+      if (etpToolbar) etpToolbar.hidden = true;
       return;
     }
-    var rows = sortEtpPreviewRows(etpAllRows).slice(0, 5);
+    var filtered = filterEtpRows(etpAllRows);
+    if (etpToolbar) {
+      var q = (etpSearch && etpSearch.value ? etpSearch.value : "").trim();
+      if (q) {
+        etpToolbar.hidden = false;
+        etpToolbar.innerHTML =
+          "Showing top 5 of <strong>" +
+          filtered.length +
+          "</strong> matching funds (of <strong>" +
+          etpAllRows.length +
+          "</strong> listed).";
+      } else {
+        etpToolbar.hidden = false;
+        etpToolbar.innerHTML =
+          "Preview: top <strong>5</strong> by assets (of <strong>" + etpAllRows.length + "</strong> listed).";
+      }
+    }
+    if (!filtered.length) {
+      tblBody.innerHTML =
+        '<tr><td colspan="5">No funds match your filter. Try another name or ticker.</td></tr>';
+      return;
+    }
+    var rows = sortEtpPreviewRows(filtered).slice(0, 5);
     rows.forEach(function (r) {
       var tr = document.createElement("tr");
       tr.innerHTML =
@@ -224,23 +289,34 @@
     });
   }
 
+  var loadTimed =
+    typeof freshApi.loadJsonWithTimeout === "function"
+      ? freshApi.loadJsonWithTimeout
+      : function (name) {
+          return loadJson(name);
+        };
+
+  if (etpSearch) {
+    etpSearch.addEventListener("input", renderPreview);
+  }
+
   Promise.all([
-    loadJson("manifest.json").catch(function () {
+    loadTimed("manifest.json", 12000).catch(function () {
       return { errors: [] };
     }),
-    loadJson("home_news.json").catch(function () {
+    loadTimed("home_news.json", 12000).catch(function () {
       return { items: [] };
     }),
-    loadJson("regulatory.json").catch(function () {
+    loadTimed("regulatory.json", 12000).catch(function () {
       return { items: [] };
     }),
-    loadJson("etp_kpis.json").catch(function () {
+    loadTimed("etp_kpis.json", 12000).catch(function () {
       return null;
     }),
-    loadJson("etps.json").catch(function () {
+    loadTimed("etps.json", 12000).catch(function () {
       return { rows: [] };
     }),
-    loadJson("rwa_onchain_home.json").catch(function () {
+    loadTimed("rwa_onchain_home.json", 12000).catch(function () {
       return null;
     }),
   ])
@@ -251,6 +327,29 @@
       var kpis = results[3];
       var etps = results[4];
       var rwaOnchain = results[5];
+      var sections = manifest.sections || {};
+
+      if (freshApi.renderFreshness) {
+        freshApi.renderFreshness(document.getElementById("js-news-as-of"), {
+          at: homeNews.generated_at || sections.news || manifest.generated_at,
+          source: "RSS feeds",
+          mode: "snapshot",
+        });
+        freshApi.renderFreshness(document.getElementById("js-home-etp-as-of"), {
+          at:
+            (kpis && kpis.generated_at) ||
+            etps.generated_at ||
+            sections.etp ||
+            manifest.etp_refreshed_at,
+          source: "StockAnalysis · Yahoo · Farside",
+          mode: "snapshot",
+        });
+        freshApi.renderFreshness(document.getElementById("js-rwa-onchain-as-of"), {
+          at: rwaOnchain.generated_at || sections.rwa || manifest.generated_at,
+          source: "RWA.xyz",
+          mode: "snapshot",
+        });
+      }
 
       var visibleManifestErrors = (manifest.errors || []).filter(function (msg) {
         return String(msg || "").indexOf("Crypto global snapshot:") !== 0;
@@ -265,6 +364,7 @@
       renderList(newsEl, homeNews.items || [], true, false);
       renderList(regEl, reg.items || [], true, true);
       renderKpi(kpis);
+      renderEtpFlowLine(kpis);
       etpAllRows = etps.rows || [];
       updateHomeEtpSortClass();
       renderPreview();

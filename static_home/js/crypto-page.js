@@ -362,46 +362,105 @@
 
   renderCategoryTabs();
 
-  var loadJsonFn =
-    typeof window !== "undefined" && typeof window.loadJson === "function" ? window.loadJson : null;
-  if (!loadJsonFn) {
+  var freshApi = window.__DATA_FRESHNESS || {};
+  var loadTimed =
+    typeof freshApi.loadJsonWithTimeout === "function"
+      ? freshApi.loadJsonWithTimeout
+      : typeof window.loadJson === "function"
+        ? window.loadJson
+        : null;
+
+  function applyChartMeta(meta) {
+    meta = meta || DEFAULT_CHART_META;
+    if (els.chartHeading && meta.title) {
+      els.chartHeading.textContent = meta.title;
+    }
+    if (els.caption && meta.caption) {
+      els.caption.textContent = meta.caption;
+    }
+    if (els.method && meta.method_note) {
+      els.method.textContent = meta.method_note;
+    }
+    if (els.chartLink && meta.provider_url) {
+      els.chartLink.href = meta.provider_url;
+    }
+  }
+
+  function mountChartEarly() {
+    if (!els.chart || els.chart._tvMounted) return;
+    els.chart._tvMounted = true;
+    renderChart(DEFAULT_CHART_META);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", mountChartEarly);
+  } else {
+    mountChartEarly();
+  }
+
+  function renderSnapshotFreshness(kpis, prices) {
+    if (!freshApi.renderFreshness) return;
+    freshApi.renderFreshness(document.getElementById("js-crypto-snapshot-as-of"), {
+      at: (kpis && kpis.generated_at) || (prices && prices.generated_at),
+      source: (kpis && kpis.source) || "CoinPaprika + CoinGecko",
+      mode: "snapshot",
+    });
+  }
+
+  if (!loadTimed) {
     showErr(
       "Page loader failed (static-base.js). Hard refresh (Ctrl+Shift+R) or check that js/static-base.js deployed."
     );
   } else {
-  Promise.all([
-    loadJsonFn("crypto_kpis.json").catch(function () {
+    wireSort();
+
+    var kpisPromise = loadTimed("crypto_kpis.json", 14000).catch(function () {
       return null;
-    }),
-    loadJsonFn("crypto_prices.json").catch(function () {
+    });
+    var pricesPromise = loadTimed("crypto_prices.json", 14000).catch(function () {
       return { rows: [] };
-    }),
-    loadJsonFn("crypto_market_cap_series.json").catch(function () {
+    });
+    var chartPromise = loadTimed("crypto_market_cap_series.json", 10000).catch(function () {
       return DEFAULT_CHART_META;
-    }),
-  ])
-    .then(function (results) {
-      var kpis = results[0] || {};
-      var prices = results[1] || { rows: [] };
-      var chart = results[2] || DEFAULT_CHART_META;
-      renderKpi(kpis);
-      if (chart && chart.series) renderChartLegacy(chart);
-      else renderChart(chart);
+    });
+
+    kpisPromise.then(function (kpis) {
+      renderKpi(kpis || {});
+      if (kpis && kpis.error) showErr(kpis.error);
+    });
+
+    pricesPromise.then(function (prices) {
+      prices = prices || { rows: [] };
       state.rows = (prices.rows || []).slice();
       updateSortClass();
       applyFilter();
-      wireSort();
-      renderTimestamp(kpis && kpis.generated_at ? kpis : prices);
-      if ((kpis && kpis.error) || (prices && prices.error) || (chart && chart.error)) {
-        showErr(kpis.error || prices.error || chart.error);
-      }
-    })
-    .catch(function (err) {
-      showErr("Could not load the crypto data page. " + (err && err.message ? err.message : ""));
-      renderChart(DEFAULT_CHART_META);
-      state.rows = [];
-      applyFilter();
+      if (prices.error) showErr(prices.error);
     });
+
+    chartPromise.then(function (chart) {
+      chart = chart || DEFAULT_CHART_META;
+      if (chart.series && chart.series.length) {
+        renderChartLegacy(chart);
+      } else {
+        applyChartMeta(chart);
+      }
+      if (chart.error) showErr(chart.error);
+    });
+
+    Promise.all([kpisPromise, pricesPromise, chartPromise])
+      .then(function (results) {
+        var kpis = results[0];
+        var prices = results[1];
+        renderSnapshotFreshness(kpis, prices);
+        renderTimestamp(kpis && kpis.generated_at ? kpis : prices);
+      })
+      .catch(function (err) {
+        showErr(
+          "Could not load the crypto data page. " + (err && err.message ? err.message : "")
+        );
+        state.rows = [];
+        applyFilter();
+      });
   }
 
   if (els.search) {
