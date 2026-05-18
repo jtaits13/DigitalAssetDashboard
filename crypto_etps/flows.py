@@ -7,10 +7,13 @@ limited to funds on Farside's BTC/ETH flow tables (not futures, leveraged, or ot
 
 from __future__ import annotations
 
+import json
 import logging
 import re
+import time
 from dataclasses import dataclass
 from datetime import datetime, timedelta
+from pathlib import Path
 from typing import Literal
 
 import requests
@@ -19,12 +22,16 @@ from dateutil import parser as date_parser
 
 logger = logging.getLogger(__name__)
 
+_REPO_ROOT = Path(__file__).resolve().parent.parent
+DEFAULT_FARSIDE_CACHE_PATH = _REPO_ROOT / "static_home" / "data" / "farside_flow_cache.json"
+
 _FARSIDE_UA = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-    "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    "(KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
 )
 _FARSIDE_BTC_ALL = "https://farside.co.uk/bitcoin-etf-flow-all-data/"
 _FARSIDE_ETH_ALL = "https://farside.co.uk/ethereum-etf-flow-all-data/"
+_FARSIDE_REFERER = "https://farside.co.uk/btc/"
 
 _FLOW_MILLIONS_RE = re.compile(r"[^0-9.\-()]")
 
@@ -64,18 +71,48 @@ def _parse_date_cell(raw: str) -> datetime | None:
         return None
 
 
-def _fetch_farside_html(url: str, *, timeout: int = 60) -> str | None:
-    try:
-        r = requests.get(
-            url,
-            headers={"User-Agent": _FARSIDE_UA, "Accept": "text/html"},
-            timeout=timeout,
-        )
-        r.raise_for_status()
-        return r.text
-    except requests.RequestException as e:
-        logger.warning("Farside fetch %s: %s", url, e)
-        return None
+def _farside_request_headers(*, referer: str = _FARSIDE_REFERER) -> dict[str, str]:
+    return {
+        "User-Agent": _FARSIDE_UA,
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Referer": referer,
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache",
+    }
+
+
+def _fetch_farside_html(url: str, *, timeout: int = 60, retries: int = 3) -> str | None:
+    """Fetch Farside HTML; may return None when blocked (common on CI/datacenter IPs)."""
+    last_err: Exception | None = None
+    for attempt in range(max(1, retries)):
+        if attempt:
+            time.sleep(1.5 * attempt)
+        try:
+            r = requests.get(
+                url,
+                headers=_farside_request_headers(),
+                timeout=timeout,
+            )
+            if r.status_code == 403:
+                logger.warning("Farside fetch %s: HTTP 403 (often blocked off residential IP)", url)
+                last_err = requests.HTTPError(f"403 for {url}")
+                continue
+            r.raise_for_status()
+            text = r.text or ""
+            if len(text) < 5000 or "IBIT" not in text and "bitcoin-etf-flow" in url:
+                logger.warning("Farside fetch %s: short or unexpected body (%s bytes)", url, len(text))
+                continue
+            if "ETHA" not in text and "ethereum-etf-flow" in url:
+                logger.warning("Farside fetch %s: ETH table markers missing", url)
+                continue
+            return text
+        except requests.RequestException as e:
+            logger.warning("Farside fetch %s (attempt %s): %s", url, attempt + 1, e)
+            last_err = e
+    if last_err:
+        logger.debug("Farside fetch failed for %s: %s", url, last_err)
+    return None
 
 
 def _parse_btc_table(soup: BeautifulSoup) -> FarsideFlowSeries:
@@ -154,8 +191,83 @@ def _parse_eth_table(soup: BeautifulSoup) -> FarsideFlowSeries:
     return FarsideFlowSeries(by_symbol=by_symbol, latest_date=latest)
 
 
-def load_farside_flow_series(*, timeout: int = 60) -> FarsideFlowSeries:
-    """Merge BTC + ETH Farside daily flow series (USD)."""
+def _series_to_cache_dict(series: FarsideFlowSeries) -> dict:
+    by_symbol: dict[str, list[dict[str, object]]] = {}
+    for sym, points in series.by_symbol.items():
+        by_symbol[sym] = [
+            {"date": d.strftime("%Y-%m-%d"), "flow_usd": float(v)} for d, v in points
+        ]
+    latest = series.latest_date.strftime("%Y-%m-%d") if series.latest_date else None
+    return {
+        "fetched_at": datetime.now().replace(tzinfo=None).isoformat(),
+        "latest_date": latest,
+        "by_symbol": by_symbol,
+    }
+
+
+def _series_from_cache_dict(data: dict) -> FarsideFlowSeries | None:
+    raw = data.get("by_symbol")
+    if not isinstance(raw, dict) or not raw:
+        return None
+    merged: dict[str, list[tuple[datetime, float]]] = {}
+    latest: datetime | None = None
+    for sym, points in raw.items():
+        if not isinstance(points, list):
+            continue
+        rows: list[tuple[datetime, float]] = []
+        for pt in points:
+            if not isinstance(pt, dict):
+                continue
+            dt = _parse_date_cell(str(pt.get("date") or ""))
+            try:
+                flow = float(pt.get("flow_usd"))
+            except (TypeError, ValueError):
+                continue
+            if dt is None:
+                continue
+            rows.append((dt, flow))
+            if latest is None or dt > latest:
+                latest = dt
+        if rows:
+            merged[str(sym).upper()] = sorted(rows, key=lambda x: x[0])
+    if not merged:
+        return None
+    ld = data.get("latest_date")
+    if isinstance(ld, str) and ld.strip():
+        parsed = _parse_date_cell(ld)
+        if parsed is not None:
+            latest = parsed
+    return FarsideFlowSeries(by_symbol=merged, latest_date=latest)
+
+
+def save_farside_flow_cache(
+    series: FarsideFlowSeries,
+    path: Path | None = None,
+) -> None:
+    """Persist parsed flows for CI fallback when farside.co.uk blocks datacenter IPs."""
+    if not series.by_symbol:
+        return
+    dest = path or DEFAULT_FARSIDE_CACHE_PATH
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.write_text(json.dumps(_series_to_cache_dict(series), indent=2), encoding="utf-8")
+
+
+def load_farside_flow_cache(path: Path | None = None) -> FarsideFlowSeries | None:
+    dest = path or DEFAULT_FARSIDE_CACHE_PATH
+    if not dest.is_file():
+        return None
+    try:
+        data = json.loads(dest.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as e:
+        logger.warning("Farside cache read %s: %s", dest, e)
+        return None
+    if not isinstance(data, dict):
+        return None
+    return _series_from_cache_dict(data)
+
+
+def _load_farside_flow_series_live(*, timeout: int = 60) -> FarsideFlowSeries:
+    """Merge BTC + ETH Farside daily flow series (USD) from live HTML."""
     merged: dict[str, list[tuple[datetime, float]]] = {}
     latest: datetime | None = None
 
@@ -171,10 +283,60 @@ def load_farside_flow_series(*, timeout: int = 60) -> FarsideFlowSeries:
             latest = part.latest_date
         for sym, points in part.by_symbol.items():
             merged.setdefault(sym, []).extend(points)
+        time.sleep(0.4)
 
     for sym in merged:
         merged[sym].sort(key=lambda x: x[0])
     return FarsideFlowSeries(by_symbol=merged, latest_date=latest)
+
+
+def load_farside_flow_series(
+    *,
+    timeout: int = 60,
+    cache_path: Path | None = None,
+) -> FarsideFlowSeries:
+    """
+    Daily net flows (USD). Tries live Farside HTML, then ``farside_flow_cache.json``.
+
+    GitHub Actions often receives HTTP 403 from farside.co.uk; the committed cache
+  keeps export/deploy working until a residential/local export refreshes it.
+    """
+    live = _load_farside_flow_series_live(timeout=timeout)
+    if live.by_symbol:
+        try:
+            save_farside_flow_cache(live, cache_path)
+        except OSError as e:
+            logger.warning("Could not write Farside flow cache: %s", e)
+        return live
+
+    cached = load_farside_flow_cache(cache_path)
+    if cached and cached.by_symbol:
+        logger.info(
+            "Using Farside flow cache (%s symbols); live fetch returned no data",
+            len(cached.by_symbol),
+        )
+        return cached
+    return live
+
+
+def load_farside_flow_series_with_source(
+    *,
+    timeout: int = 60,
+    cache_path: Path | None = None,
+) -> tuple[FarsideFlowSeries, Literal["live", "cache", "none"]]:
+    """Like :func:`load_farside_flow_series` but reports data source for export warnings."""
+    live = _load_farside_flow_series_live(timeout=timeout)
+    if live.by_symbol:
+        try:
+            save_farside_flow_cache(live, cache_path)
+        except OSError as e:
+            logger.warning("Could not write Farside flow cache: %s", e)
+        return live, "live"
+
+    cached = load_farside_flow_cache(cache_path)
+    if cached and cached.by_symbol:
+        return cached, "cache"
+    return live, "none"
 
 
 def sum_flow_window(

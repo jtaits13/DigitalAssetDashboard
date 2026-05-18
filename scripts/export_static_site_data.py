@@ -50,7 +50,7 @@ from crypto_etps.flows import (
     aggregate_flow_for_symbols,
     format_flow_usd_compact,
     fund_flow_usd,
-    load_farside_flow_series,
+    load_farside_flow_series_with_source,
 )
 from news_feeds import (
     ALL_ARTICLES_FEEDS,
@@ -1600,9 +1600,11 @@ def export_etp_json_bundle(
     if etp_result.error:
         etp_errors.append(f"ETP scrape: {etp_result.error}")
     rows = sorted_by_assets(etp_result.rows)
-    flow_series = load_farside_flow_series()
-    if not flow_series.by_symbol:
-        etp_errors.append("ETP flows: could not load Farside BTC/ETH flow tables.")
+    flow_series, flow_src = load_farside_flow_series_with_source()
+    if flow_src == "none":
+        etp_errors.append(
+            "ETP flows: could not load Farside BTC/ETH flow tables (live fetch failed and no cache file)."
+        )
 
     rows_payload = []
     for r in rows:

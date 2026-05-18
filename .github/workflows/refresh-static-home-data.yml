@@ -43,6 +43,14 @@ jobs:
           restore-keys: |
             crypto-about-blurbs-v1-
 
+      - name: Restore Farside flow cache
+        uses: actions/cache@v4
+        with:
+          path: static_home/data/farside_flow_cache.json
+          key: farside-flow-cache-v1-${{ hashFiles('crypto_etps/flows.py') }}
+          restore-keys: |
+            farside-flow-cache-v1-
+
       - name: Export RSS + ETP + RWA + crypto JSON
         run: python scripts/export_static_site_data.py
         env:
