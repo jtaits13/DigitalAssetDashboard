@@ -27,10 +27,10 @@ def etp_kpi_methodology_footnote_html() -> str:
         "Each tile repeats the exact window in parentheses next to the percent (<strong>1 mo</strong>, <strong>1 yr</strong>, or <strong>52W</strong>) "
         "when the standard month window is unavailable. "
         "<strong>Total</strong>: percent change on estimated aggregate AUM (weekly series). "
-        "<strong>Net flows</strong>: sum of daily net creations/redemptions over ~30 calendar days for "
-        "listed spot Bitcoin and Ethereum ETFs on "
+        "<strong>BTC &amp; ETH Fund flows</strong>: sum of daily net creations/redemptions over ~30 calendar days from "
         '<a href="https://farside.co.uk/" target="_blank" rel="noopener noreferrer">Farside Investors</a> '
-        "(other ETP types are excluded). "
+        "(listed spot Bitcoin and Ethereum ETFs only). The <strong>%</strong> is month-over-month change in that "
+        "30-day total vs the prior 30 days. "
         "<strong>IBIT / ETHA</strong>: Yahoo adjusted closes when available; otherwise StockAnalysis "
         "<strong>52W %</strong> from the ETF detail page. "
         "Table <strong>1Y Flow</strong> uses the same Farside source over ~12 months (see column when present). "

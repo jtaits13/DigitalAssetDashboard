@@ -21,12 +21,15 @@ from crypto_etps.client import (
     has_listed_aum_usd,
     total_aum_usd,
 )
-from crypto_etps.flows import aggregate_flow_for_symbols, load_farside_flow_series_cached
+from crypto_etps.flows import (
+    aggregate_flow_for_symbols,
+    aggregate_flow_mom_pct,
+    format_flow_usd_compact,
+    load_farside_flow_series_cached,
+)
 from crypto_etps.widgets import (
     _ETP_KPI_PANEL_INLINE_STYLE,
     _etf_delta_html,
-    _etf_flow_val_html,
-    _etf_flow_window_html,
     _row_by_symbol,
 )
 from rwa_league.client import RwaGlobalKpi
@@ -157,10 +160,20 @@ def etp_summary_kpi_row_html(
     net_flow_1m, net_flow_win = aggregate_flow_for_symbols(
         listed_syms, flow_series, days=30
     )
+    net_flow_1m_pct, net_flow_pct_win = aggregate_flow_mom_pct(
+        listed_syms, flow_series, days=30
+    )
 
     cells: list[tuple[str, str, str]] = [
         ("Total AUM (listed)", escape(aum_s), _etf_delta_html(agg_pct, etp_delta_window_caption(agg_win))),
-        ("Net flows (listed)", _etf_flow_val_html(net_flow_1m), _etf_flow_window_html(net_flow_win)),
+        (
+            "BTC & ETH Fund flows (listed)",
+            escape(format_flow_usd_compact(net_flow_1m)),
+            _etf_delta_html(
+                net_flow_1m_pct,
+                etp_delta_window_caption(net_flow_pct_win or net_flow_win),
+            ),
+        ),
         ("IBIT · AUM", escape(ibit_aum), _etf_delta_html(ip, etp_delta_window_caption(ip_win))),
         ("ETHA · AUM", escape(etha_aum), _etf_delta_html(ep, etp_delta_window_caption(ep_win))),
     ]

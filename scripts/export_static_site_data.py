@@ -48,6 +48,7 @@ from crypto_etps.aum_history import (
 )
 from crypto_etps.flows import (
     aggregate_flow_for_symbols,
+    aggregate_flow_mom_pct,
     format_flow_usd_compact,
     fund_flow_usd,
     load_farside_flow_series_with_source,
@@ -1652,6 +1653,9 @@ def export_etp_json_bundle(
     net_flow_1m, net_flow_1m_lbl = aggregate_flow_for_symbols(
         listed_syms, flow_series, days=30
     )
+    net_flow_1m_pct, net_flow_pct_lbl = aggregate_flow_mom_pct(
+        listed_syms, flow_series, days=30
+    )
 
     kpis = {
         "total_aum_display": aum_s,
@@ -1659,7 +1663,8 @@ def export_etp_json_bundle(
         "aggregate_window": agg_lbl or "",
         "net_flow_1m_usd": round(float(net_flow_1m), 2) if net_flow_1m is not None else None,
         "net_flow_1m_display": format_flow_usd_compact(net_flow_1m),
-        "net_flow_window": net_flow_1m_lbl or "",
+        "net_flow_1m_pct": round(float(net_flow_1m_pct), 4) if net_flow_1m_pct is not None else None,
+        "net_flow_pct_window": net_flow_pct_lbl or net_flow_1m_lbl or "",
         "ibit": {"aum_display": ibit_aum, "delta": _kpi_delta("IBIT", ibit_r)},
         "etha": {"aum_display": etha_aum, "delta": _kpi_delta("ETHA", etha_r)},
     }

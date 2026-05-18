@@ -74,13 +74,11 @@
       fmtDelta(k.aggregate_pct, k.aggregate_window) +
       "</div>" +
       '<div class="kpi-cell">' +
-      '<span class="kpi-label">Net flows (listed)</span>' +
-      '<span class="kpi-val' +
-      (typeof K.flowValClass === "function" ? K.flowValClass(k.net_flow_1m_usd) : "") +
-      '">' +
+      '<span class="kpi-label">BTC &amp; ETH Fund flows (listed)</span>' +
+      '<span class="kpi-val">' +
       escapeHtml(k.net_flow_1m_display || "—") +
       "</span>" +
-      (typeof K.fmtFlowWindowTag === "function" ? K.fmtFlowWindowTag(k.net_flow_window) : "") +
+      fmtDelta(k.net_flow_1m_pct, k.net_flow_pct_window || k.net_flow_window) +
       "</div>" +
       '<div class="kpi-cell">' +
       '<span class="kpi-label">IBIT · AUM</span>' +

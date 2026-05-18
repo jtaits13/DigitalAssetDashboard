@@ -30,6 +30,7 @@ from crypto_etps.dataframe_table import (
 )
 from crypto_etps.flows import (
     aggregate_flow_for_symbols,
+    aggregate_flow_mom_pct,
     format_flow_usd_compact,
     load_farside_flow_series_cached,
 )
@@ -252,12 +253,16 @@ def render_etp_summary_kpi_row(
     net_flow_1m, net_flow_win = aggregate_flow_for_symbols(
         listed_syms, flow_series, days=30
     )
+    net_flow_1m_pct, net_flow_pct_win = aggregate_flow_mom_pct(
+        listed_syms, flow_series, days=30
+    )
     _render_etp_home_kpi_row(
         total_aum_display=aum_s,
         agg_pct=agg_pct,
         agg_window=agg_win,
         net_flow_1m_usd=net_flow_1m,
-        net_flow_window=net_flow_win,
+        net_flow_1m_pct=net_flow_1m_pct,
+        net_flow_pct_window=net_flow_pct_win or net_flow_win,
         ibit_row=ibit_r,
         etha_row=etha_r,
         metrics_above_methodology_note=metrics_above_methodology_note,
@@ -270,7 +275,8 @@ def _render_etp_home_kpi_row(
     agg_pct: float | None,
     agg_window: str = "",
     net_flow_1m_usd: float | None = None,
-    net_flow_window: str = "",
+    net_flow_1m_pct: float | None = None,
+    net_flow_pct_window: str = "",
     ibit_row: CryptoEtpRow | None,
     etha_row: CryptoEtpRow | None,
     metrics_above_methodology_note: bool = False,
@@ -295,9 +301,9 @@ def _render_etp_home_kpi_row(
             _etf_delta_html(agg_pct, etp_delta_window_caption(agg_window)),
         ),
         (
-            "Net flows (listed)",
-            _etf_flow_val_html(net_flow_1m_usd),
-            _etf_flow_window_html(net_flow_window),
+            "BTC & ETH Fund flows (listed)",
+            escape(format_flow_usd_compact(net_flow_1m_usd)),
+            _etf_delta_html(net_flow_1m_pct, etp_delta_window_caption(net_flow_pct_window)),
         ),
         (
             "IBIT · AUM",
@@ -312,10 +318,14 @@ def _render_etp_home_kpi_row(
     ]
     parts = []
     for label, val_html, delta_html in cells:
+        if val_html.startswith("<span"):
+            val_block = val_html
+        else:
+            val_block = f"<span class='etp-kpi-val'>{val_html}</span>"
         parts.append(
             "<div class='etp-kpi-cell'>"
             f"<span class='etp-kpi-label'>{escape(label)}</span>"
-            f"{val_html if val_html.startswith('<span') else \"<span class='etp-kpi-val'>\" + val_html + '</span>'}"
+            f"{val_block}"
             f"{delta_html}"
             "</div>"
         )

@@ -356,6 +356,24 @@ def sum_flow_window(
     return total
 
 
+def sum_flow_prior_window(
+    points: list[tuple[datetime, float]],
+    *,
+    days: int,
+    latest: datetime | None = None,
+) -> float | None:
+    """Sum daily flows in the prior ``days`` window (immediately before the latest ``days``)."""
+    if not points:
+        return None
+    end = latest or points[-1][0]
+    cut_recent = end - timedelta(days=days)
+    cut_prior = end - timedelta(days=2 * days)
+    total = sum(v for d, v in points if cut_prior < d <= cut_recent)
+    if not any(cut_prior < d <= cut_recent for d, _ in points):
+        return None
+    return total
+
+
 def flow_window_label(
     points: list[tuple[datetime, float]],
     *,
@@ -414,6 +432,43 @@ def aggregate_flow_for_symbols(
     if not any_flow:
         return None, ""
     return total, label
+
+
+def aggregate_flow_mom_pct(
+    symbols: list[str],
+    series: FarsideFlowSeries,
+    *,
+    days: int = 30,
+) -> tuple[float | None, str]:
+    """
+    Month-over-month % change in aggregate net flows (current ``days`` vs prior ``days``).
+
+    Only includes tickers with Farside history for both windows.
+    """
+    current, label = aggregate_flow_for_symbols(symbols, series, days=days)
+    if current is None:
+        return None, ""
+
+    prior_total = 0.0
+    any_prior = False
+    for sym in symbols:
+        key = re.sub(r"\s+", "", sym or "").strip().upper()
+        points = series.by_symbol.get(key)
+        if not points:
+            continue
+        prior = sum_flow_prior_window(points, days=days, latest=series.latest_date)
+        if prior is None:
+            continue
+        prior_total += prior
+        any_prior = True
+
+    if not any_prior or not label:
+        return None, label
+    if abs(prior_total) < 1.0:
+        return None, label
+
+    pct = (current - prior_total) / abs(prior_total) * 100.0
+    return pct, label
 
 
 def format_flow_usd_compact(n: float | None) -> str:
