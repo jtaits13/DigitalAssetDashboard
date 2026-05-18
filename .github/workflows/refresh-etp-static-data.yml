@@ -1,0 +1,48 @@
+# Partial static-site refresh: U.S. ETP JSON only (~2–4 min), then deploy.
+# Does not re-export crypto, RWA, or news — those stay as committed until the full refresh workflow runs.
+name: Refresh ETP static data and deploy
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-etp-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh-etp-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Export ETP JSON only
+        run: python scripts/export_etp_static_data.py
+        env:
+          STOCKANALYSIS_USER_AGENT: ${{ secrets.STOCKANALYSIS_USER_AGENT }}
+
+      - name: Upload static_home as site root
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: static_home
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

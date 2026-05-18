@@ -21,9 +21,12 @@ from crypto_etps.client import (
     has_listed_aum_usd,
     total_aum_usd,
 )
+from crypto_etps.flows import aggregate_flow_for_symbols, load_farside_flow_series_cached
 from crypto_etps.widgets import (
     _ETP_KPI_PANEL_INLINE_STYLE,
     _etf_delta_html,
+    _etf_flow_val_html,
+    _etf_flow_window_html,
     _row_by_symbol,
 )
 from rwa_league.client import RwaGlobalKpi
@@ -149,18 +152,28 @@ def etp_summary_kpi_row_html(
     )
     ip, ip_win = _fund_trailing_pct("IBIT", ibit_r)
     ep, ep_win = _fund_trailing_pct("ETHA", etha_r)
+    flow_series = load_farside_flow_series_cached()
+    listed_syms = [r.symbol for r in rows if (r.symbol or "").strip()]
+    net_flow_1m, net_flow_win = aggregate_flow_for_symbols(
+        listed_syms, flow_series, days=30
+    )
 
     cells: list[tuple[str, str, str]] = [
         ("Total AUM (listed)", escape(aum_s), _etf_delta_html(agg_pct, etp_delta_window_caption(agg_win))),
+        ("Net flows (listed)", _etf_flow_val_html(net_flow_1m), _etf_flow_window_html(net_flow_win)),
         ("IBIT · AUM", escape(ibit_aum), _etf_delta_html(ip, etp_delta_window_caption(ip_win))),
         ("ETHA · AUM", escape(etha_aum), _etf_delta_html(ep, etp_delta_window_caption(ep_win))),
     ]
     parts: list[str] = []
     for label, val_html, delta_html in cells:
+        if val_html.startswith("<span"):
+            val_block = val_html
+        else:
+            val_block = f"<span class='etp-kpi-val'>{val_html}</span>"
         parts.append(
             "<div class='etp-kpi-cell'>"
             f"<span class='etp-kpi-label'>{escape(label)}</span>"
-            f"<span class='etp-kpi-val'>{val_html}</span>"
+            f"{val_block}"
             f"{delta_html}"
             "</div>"
         )

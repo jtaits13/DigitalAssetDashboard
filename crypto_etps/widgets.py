@@ -28,6 +28,11 @@ from crypto_etps.dataframe_table import (
     filter_rows_by_fund_name,
     style_etp_dataframe,
 )
+from crypto_etps.flows import (
+    aggregate_flow_for_symbols,
+    format_flow_usd_compact,
+    load_farside_flow_series_cached,
+)
 from crypto_etps.kpi_labels import etp_delta_window_caption, etp_kpi_methodology_footnote_html
 from home_layout import KPI_WINDOW_NOTE_CSS, STREAMLIT_TABLE_UNIFY_CSS
 from news_feeds import load_all_etf_etp_news_cached
@@ -185,6 +190,21 @@ def _row_by_symbol(rows: list[CryptoEtpRow], symbol: str) -> CryptoEtpRow | None
     return None
 
 
+def _etf_flow_val_html(flow_usd: float | None) -> str:
+    if flow_usd is None or not isinstance(flow_usd, (int, float)):
+        return escape("—")
+    v = float(flow_usd)
+    cls = "up" if v > 0 else "down" if v < 0 else "neutral"
+    return f"<span class='etp-kpi-val etp-kpi-val--flow {cls}'>{escape(format_flow_usd_compact(v))}</span>"
+
+
+def _etf_flow_window_html(window_lbl: str) -> str:
+    tag = etp_delta_window_caption(window_lbl)
+    if not tag:
+        return "<span class='etp-kpi-delta neutral'>—</span>"
+    return f'<span class="etp-kpi-delta neutral"><span class="etp-kpi-window-tag">({escape(tag)})</span></span>'
+
+
 def _etf_delta_html(pct: float | None, window_lbl: str) -> str:
     if pct is None or not isinstance(pct, (int, float)):
         return "<span class='etp-kpi-delta neutral'>—</span>"
@@ -227,10 +247,17 @@ def render_etp_summary_kpi_row(
     agg_pct, agg_win = aggregate_aum_pct_from_history(hist_df)
     ibit_r = _row_by_symbol(rows, "IBIT")
     etha_r = _row_by_symbol(rows, "ETHA")
+    flow_series = load_farside_flow_series_cached()
+    listed_syms = [r.symbol for r in rows if (r.symbol or "").strip()]
+    net_flow_1m, net_flow_win = aggregate_flow_for_symbols(
+        listed_syms, flow_series, days=30
+    )
     _render_etp_home_kpi_row(
         total_aum_display=aum_s,
         agg_pct=agg_pct,
         agg_window=agg_win,
+        net_flow_1m_usd=net_flow_1m,
+        net_flow_window=net_flow_win,
         ibit_row=ibit_r,
         etha_row=etha_r,
         metrics_above_methodology_note=metrics_above_methodology_note,
@@ -242,6 +269,8 @@ def _render_etp_home_kpi_row(
     total_aum_display: str,
     agg_pct: float | None,
     agg_window: str = "",
+    net_flow_1m_usd: float | None = None,
+    net_flow_window: str = "",
     ibit_row: CryptoEtpRow | None,
     etha_row: CryptoEtpRow | None,
     metrics_above_methodology_note: bool = False,
@@ -266,6 +295,11 @@ def _render_etp_home_kpi_row(
             _etf_delta_html(agg_pct, etp_delta_window_caption(agg_window)),
         ),
         (
+            "Net flows (listed)",
+            _etf_flow_val_html(net_flow_1m_usd),
+            _etf_flow_window_html(net_flow_window),
+        ),
+        (
             "IBIT · AUM",
             escape(ibit_aum),
             _etf_delta_html(ip, etp_delta_window_caption(ip_win)),
@@ -281,7 +315,7 @@ def _render_etp_home_kpi_row(
         parts.append(
             "<div class='etp-kpi-cell'>"
             f"<span class='etp-kpi-label'>{escape(label)}</span>"
-            f"<span class='etp-kpi-val'>{val_html}</span>"
+            f"{val_html if val_html.startswith('<span') else \"<span class='etp-kpi-val'>\" + val_html + '</span>'}"
             f"{delta_html}"
             "</div>"
         )
@@ -319,6 +353,7 @@ def show_etp_dataframe(
         "Fund Name",
         "Price",
         "52W %",
+        "1Y Flow",
         "Assets (B)",
         "Issuer",
         "Custodian",
@@ -346,6 +381,13 @@ def show_etp_dataframe(
             format=None,
             width="small",
             help="Past-year return from fund narrative (proxy for 52-week %)",
+        ),
+        "1Y Flow": st.column_config.NumberColumn(
+            f"1Y Flow {_SORT}",
+            format=None,
+            width="small",
+            help="Trailing ~12-month net creations/redemptions (USD) from Farside Investors "
+            "for U.S. spot Bitcoin and Ethereum ETFs only; other ETP types show —.",
         ),
         "Assets (B)": st.column_config.NumberColumn(
             f"Assets (B) {_SORT}",
@@ -444,7 +486,8 @@ def show_us_crypto_etps_widget(
     filtered = filter_rows_by_fund_name(ranked, q)
     cap = preview_row_limit if home_preview else 10
     display_rows = filtered[:cap]
-    df = build_etp_dataframe(display_rows)
+    flow_series = load_farside_flow_series_cached()
+    df = build_etp_dataframe(display_rows, flow_series=flow_series)
     empty_msg = None
     if df.empty and q.strip():
         empty_msg = "No funds match your search. Try a different name, ticker, or clear the search box."

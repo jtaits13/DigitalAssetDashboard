@@ -13,6 +13,7 @@ import pandas as pd
 
 from crypto_etps.client import CryptoEtpRow, format_usd_compact, has_listed_aum_usd
 from crypto_etps.custodian import resolve_custodian
+from crypto_etps.flows import FarsideFlowSeries, fund_flow_usd
 from crypto_etps.sec_prospectus import edgar_s1_fallback_url
 
 
@@ -40,6 +41,7 @@ _ETP_DF_COLUMNS: tuple[str, ...] = (
     "Fund Name",
     "Price",
     "52W %",
+    "1Y Flow",
     "Assets (B)",
     "Issuer",
     "Custodian",
@@ -48,7 +50,11 @@ _ETP_DF_COLUMNS: tuple[str, ...] = (
 )
 
 
-def build_etp_dataframe(rows: list[CryptoEtpRow]) -> pd.DataFrame:
+def build_etp_dataframe(
+    rows: list[CryptoEtpRow],
+    *,
+    flow_series: FarsideFlowSeries | None = None,
+) -> pd.DataFrame:
     """Numeric / datetime columns for correct sorting in st.dataframe."""
     records: list[dict[str, object]] = []
     for r in rows:
@@ -56,12 +62,18 @@ def build_etp_dataframe(rows: list[CryptoEtpRow]) -> pd.DataFrame:
         issuer = (r.issuer or "").strip()
         fund_filing = (r.fund_filing_url or "").strip() or edgar_s1_fallback_url(r.symbol)
         cust = _custodian_cell(r)
+        flow_1y = np.nan
+        if flow_series is not None:
+            fy, _ = fund_flow_usd(r.symbol, flow_series, days=365)
+            if fy is not None:
+                flow_1y = float(fy)
         records.append(
             {
                 "Symbol": r.symbol,
                 "Fund Name": r.name,
                 "Price": _parse_price(r.price),
                 "52W %": r.pct_52w if r.pct_52w is not None else np.nan,
+                "1Y Flow": flow_1y,
                 "Assets (B)": (r.assets_usd / 1e9) if has_listed_aum_usd(r.assets_usd) else np.nan,
                 "Issuer": issuer,
                 "Custodian": cust,
@@ -103,10 +115,18 @@ def _fmt_assets_b_cell(v: object) -> str:
     return format_usd_compact(float(v) * 1e9)
 
 
+def _fmt_flow_cell(v: object) -> str:
+    if pd.isna(v):
+        return "—"
+    from crypto_etps.flows import format_flow_usd_compact
+
+    return format_flow_usd_compact(float(v))
+
+
 def style_etp_dataframe(df: pd.DataFrame) -> pd.io.formats.style.Styler:
     """Green/red 52W %; arrows + % and ``x.xxB`` assets via ``format`` (numeric dtypes unchanged)."""
 
-    def highlight_52w(s: pd.Series) -> list[str]:
+    def _signed_color(s: pd.Series) -> list[str]:
         return [
             "color: #28794E; font-weight: 600"
             if pd.notna(v) and float(v) >= 0
@@ -119,7 +139,12 @@ def style_etp_dataframe(df: pd.DataFrame) -> pd.io.formats.style.Styler:
     if df.empty or "52W %" not in df.columns:
         return df.style
 
-    return df.style.apply(highlight_52w, subset=["52W %"]).format(
-        {"52W %": _fmt_52w_cell, "Assets (B)": _fmt_assets_b_cell},
-        na_rep="—",
-    )
+    fmt_map: dict[str, object] = {
+        "52W %": _fmt_52w_cell,
+        "Assets (B)": _fmt_assets_b_cell,
+    }
+    styler = df.style.apply(_signed_color, subset=["52W %"])
+    if "1Y Flow" in df.columns:
+        fmt_map["1Y Flow"] = _fmt_flow_cell
+        styler = styler.apply(_signed_color, subset=["1Y Flow"])
+    return styler.format(fmt_map, na_rep="—")

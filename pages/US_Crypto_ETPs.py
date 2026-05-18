@@ -25,6 +25,7 @@ from crypto_etps.dataframe_table import (
     build_etp_dataframe,
     filter_rows_by_fund_name,
 )
+from crypto_etps.flows import load_farside_flow_series_cached
 from crypto_etps.widgets import (
     ETP_DATA_SOURCE_CAPTION,
     WIDGET_CSS,
@@ -271,7 +272,8 @@ def main() -> None:
 
     filtered = filter_rows_by_fund_name(rows, q)
     sorted_rows = sorted_by_assets(filtered)
-    df = build_etp_dataframe(sorted_rows)
+    flow_series = load_farside_flow_series_cached()
+    df = build_etp_dataframe(sorted_rows, flow_series=flow_series)
 
     if q.strip():
         st.markdown(

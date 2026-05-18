@@ -944,19 +944,32 @@ a.ticker-chip-link[title] {
   border-bottom: 1px solid var(--line);
 }
 
-/* ETP snapshot: three columns (grid overrides flex from .kpi-row — more reliable than flex-wrap) */
+/* ETP snapshot: four KPI tiles (grid overrides flex from .kpi-row) */
 .kpi-row.kpi-row--etp-snapshot {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   column-gap: 0.65rem;
   row-gap: 0.5rem;
   align-items: start;
+}
+
+@media (max-width: 900px) {
+  .kpi-row.kpi-row--etp-snapshot {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 520px) {
   .kpi-row.kpi-row--etp-snapshot {
     grid-template-columns: 1fr;
   }
+}
+
+.kpi-val.up,
+.kpi-val.down,
+.etp-kpi-val--flow.up,
+.etp-kpi-val--flow.down {
+  font-weight: 600;
 }
 
 .kpi-row.kpi-row--crypto-snapshot {

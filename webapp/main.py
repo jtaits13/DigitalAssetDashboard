@@ -167,7 +167,10 @@ async def home(request: Request) -> HTMLResponse:
     else:
         ranked = sorted_by_assets(etp_data.rows)
         display_rows = ranked[:ETP_PREVIEW_ROWS]
-        df = build_etp_dataframe(display_rows)
+        from crypto_etps.flows import load_farside_flow_series_cached
+
+        flow_series = load_farside_flow_series_cached()
+        df = build_etp_dataframe(display_rows, flow_series=flow_series)
         etp_block = (
             f"<h2 class=\"home-widget-heading\">U.S. Digital Asset ETPs</h2>"
             f"{etp_summary_kpi_row_html(etp_data.rows, metrics_above_methodology_note=False)}"
@@ -445,7 +448,10 @@ async def us_crypto_etps(request: Request, q: str = "") -> HTMLResponse:
         body_parts.append("<hr class=\"jd-divider\" />")
         filtered = filter_rows_by_fund_name(rows, search_q)
         sorted_rows = sorted_by_assets(filtered)
-        df = build_etp_dataframe(sorted_rows)
+        from crypto_etps.flows import load_farside_flow_series_cached
+
+        flow_series = load_farside_flow_series_cached()
+        df = build_etp_dataframe(sorted_rows, flow_series=flow_series)
         if not df.empty and "Assets (B)" in df.columns:
             has_assets = df["Assets (B)"].notna() & (df["Assets (B)"] > 0)
             df = (

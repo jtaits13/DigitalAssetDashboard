@@ -68,7 +68,7 @@
           </div>
         </div>
         <p class="kpi-footnote kpi-footnote--block">
-          The colored <strong>% figures</strong> are typically about <strong>one-month</strong> changes (~30 calendar days); parentheses next to each percent note the exact window when it differs (<strong>1 mo</strong>, <strong>1 yr</strong>, or <strong>52W</strong>). Dollar totals come from StockAnalysis; aggregate % comes from estimated weekly AUM; IBIT and ETHA % deltas come from Yahoo Finance when available.
+          The colored <strong>% figures</strong> are typically about <strong>one-month</strong> changes (~30 calendar days); parentheses note the window when it differs (<strong>1 mo</strong>, <strong>1 yr</strong>, or <strong>52W</strong>). <strong>Net flows</strong> sum daily creations/redemptions over ~30 days for listed spot BTC/ETH ETFs (<a href="https://farside.co.uk/" target="_blank" rel="noopener noreferrer">Farside Investors</a>). Table <strong>1Y Flow</strong> uses the same source over ~12 months. Dollar totals from StockAnalysis; aggregate % from estimated weekly AUM; IBIT/ETHA % from Yahoo when available.
         </p>
       </section>
 
@@ -159,6 +159,7 @@
                 <th data-sort="name" class="th-sortable">Fund Name</th>
                 <th class="num th-sortable" data-sort="price">Price</th>
                 <th class="num th-sortable" data-sort="pct_52w">52W %</th>
+                <th class="num th-sortable" data-sort="flow_1y_usd">1Y Flow</th>
                 <th class="num th-sortable" data-sort="assets_usd">Assets (B)</th>
                 <th data-sort="issuer" class="th-sortable">Issuer</th>
                 <th data-sort="custodian" class="th-sortable">Custodian</th>
@@ -168,13 +169,13 @@
             </thead>
             <tbody id="js-etp-tbody">
               <tr>
-                <td colspan="9">Loading…</td>
+                <td colspan="10">Loading…</td>
               </tr>
             </tbody>
           </table>
         </div>
         <p class="source-cap">
-          Fund data source: StockAnalysis.
+          Fund data: StockAnalysis (list and AUM). Spot BTC/ETH flows: Farside Investors (daily net creations/redemptions, USD).
         </p>
         <p class="timestamp-foot" id="js-etp-generated">—</p>
       </section>

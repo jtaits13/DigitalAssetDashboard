@@ -74,6 +74,15 @@
       fmtDelta(k.aggregate_pct, k.aggregate_window) +
       "</div>" +
       '<div class="kpi-cell">' +
+      '<span class="kpi-label">Net flows (listed)</span>' +
+      '<span class="kpi-val' +
+      (typeof K.flowValClass === "function" ? K.flowValClass(k.net_flow_1m_usd) : "") +
+      '">' +
+      escapeHtml(k.net_flow_1m_display || "—") +
+      "</span>" +
+      (typeof K.fmtFlowWindowTag === "function" ? K.fmtFlowWindowTag(k.net_flow_window) : "") +
+      "</div>" +
+      '<div class="kpi-cell">' +
       '<span class="kpi-label">IBIT · AUM</span>' +
       '<span class="kpi-val">' +
       escapeHtml(k.ibit && k.ibit.aum_display) +

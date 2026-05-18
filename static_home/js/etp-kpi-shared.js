@@ -37,7 +37,72 @@
     );
   }
 
+  function fmtFlowUsd(n) {
+    if (n == null || n === "" || isNaN(Number(n))) return "—";
+    var x = Number(n);
+    var sign = x > 0 ? "+" : x < 0 ? "−" : "";
+    var ax = Math.abs(x);
+    var body;
+    if (ax >= 1e12) body = "$" + (ax / 1e12).toFixed(2) + "T";
+    else if (ax >= 1e9) body = "$" + (ax / 1e9).toFixed(2) + "B";
+    else if (ax >= 1e6) body = "$" + (ax / 1e6).toFixed(0) + "M";
+    else if (ax >= 1e3) body = "$" + (ax / 1e3).toFixed(0) + "K";
+    else body = "$" + ax.toLocaleString();
+    return sign ? sign + body : body;
+  }
+
+  function fmtFlowDelta(usd, winCode) {
+    if (usd == null || usd === "" || isNaN(Number(usd)))
+      return '<span class="kpi-delta neutral">—</span>';
+    var n = Number(usd);
+    var cls = n > 0 ? "up" : n < 0 ? "down" : "neutral";
+    var esc =
+      global.escapeHtml ||
+      function (x) {
+        return String(x);
+      };
+    var tag =
+      winCode != null && String(winCode).length
+        ? '<span class="kpi-win"> (' + esc(etpWindowCaption(winCode)) + ")</span>"
+        : "";
+    return (
+      '<span class="kpi-delta ' + cls + '">' + esc(fmtFlowUsd(n)) + "</span>" + tag
+    );
+  }
+
+  function fmtFlowCell(usd) {
+    if (usd == null || usd === "" || isNaN(Number(usd))) return '<td class="num">—</td>';
+    var n = Number(usd);
+    var cls = n >= 0 ? "pct up" : "pct down";
+    return '<td class="num ' + cls + '">' + fmtFlowUsd(n) + "</td>";
+  }
+
+  function fmtFlowWindowTag(winCode) {
+    if (!winCode) return "";
+    var esc =
+      global.escapeHtml ||
+      function (x) {
+        return String(x);
+      };
+    return (
+      '<span class="kpi-delta neutral"><span class="kpi-win"> (' +
+      esc(etpWindowCaption(winCode)) +
+      ")</span></span>"
+    );
+  }
+
+  function flowValClass(usd) {
+    if (usd == null || usd === "" || isNaN(Number(usd))) return "";
+    var n = Number(usd);
+    return n > 0 ? " up" : n < 0 ? " down" : "";
+  }
+
   global.__ETP_KPI = {
     fmtPctDelta: fmtPctDelta,
+    fmtFlowDelta: fmtFlowDelta,
+    fmtFlowCell: fmtFlowCell,
+    fmtFlowUsd: fmtFlowUsd,
+    fmtFlowWindowTag: fmtFlowWindowTag,
+    flowValClass: flowValClass,
   };
 })(typeof window !== "undefined" ? window : this);

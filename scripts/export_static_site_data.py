@@ -3,6 +3,7 @@ Build JSON payloads under static_home/data/ for the GitHub Pages mirror.
 
 Run locally:  python scripts/export_static_site_data.py
   Crypto only (rewrites ``crypto_*.json`` with ``about_blurb`` on each row, ~1–3 min):  python scripts/export_static_site_data.py --crypto-only
+  ETP only (``etps.json``, ``etp_kpis.json``, ``aum_series.json``; ~2–4 min):  python scripts/export_etp_static_data.py
 Run in CI:    every 6 hours via ``.github/workflows/refresh-static-home-data.yml`` (full export + deploy).
   Ad-hoc git pushes only deploy committed ``static_home/`` (see ``deploy-static-home.yml``)—run export locally before committing JSON if you need fresh data on push.
 
@@ -44,6 +45,12 @@ from crypto_etps.aum_history import (
     build_aggregate_aum_history_12m,
     etp_rows_to_fund_pairs,
     etp_symbol_price_change_cached,
+)
+from crypto_etps.flows import (
+    aggregate_flow_for_symbols,
+    format_flow_usd_compact,
+    fund_flow_usd,
+    load_farside_flow_series,
 )
 from news_feeds import (
     ALL_ARTICLES_FEEDS,
@@ -151,7 +158,12 @@ def articles_published_within_utc_days(articles: list[dict[str, Any]], days: int
     return out
 
 
-def _etp_row_json(r: CryptoEtpRow) -> dict:
+def _etp_row_json(
+    r: CryptoEtpRow,
+    *,
+    flow_1y_usd: float | None = None,
+    flow_1y_window: str = "",
+) -> dict:
     inc = (r.inception or "").strip()
     filing = (r.fund_filing_url or "").strip()
     assets = float(r.assets_usd) if has_listed_aum_usd(r.assets_usd) else None
@@ -161,6 +173,8 @@ def _etp_row_json(r: CryptoEtpRow) -> dict:
         "price": r.price,
         "pct_52w": r.pct_52w,
         "assets_usd": assets,
+        "flow_1y_usd": round(float(flow_1y_usd), 2) if flow_1y_usd is not None else None,
+        "flow_1y_window": (flow_1y_window or "").strip(),
         "issuer": (r.issuer or "").strip(),
         "custodian": resolve_custodian(r.symbol).strip(),
         "inception": inc,
@@ -1564,21 +1578,41 @@ def export_crypto_json_bundle(manifest: dict[str, Any]) -> None:
     )
 
 
-def main() -> None:
-    OUT.mkdir(parents=True, exist_ok=True)
-    manifest: dict = {"generated_at": datetime.now(timezone.utc).isoformat(), "errors": []}
+_ETP_MANIFEST_ERROR_PREFIXES = ("ETP scrape:", "ETP flows:", "AUM chart:")
 
-    # --- ETP list + AUM + KPIs (StockAnalysis + Yahoo; same as app) ---
+
+def export_etp_json_bundle(
+    out: Path | None = None,
+    *,
+    errors_out: list[str] | None = None,
+) -> dict[str, Any]:
+    """
+    Refresh U.S. ETP JSON only (fund list, KPI strip, aggregate AUM chart series).
+
+    Writes ``etps.json``, ``etp_kpis.json``, and ``aum_series.json`` under ``static_home/data/``.
+    Does not touch crypto, RWA, news, or other payloads.
+    """
+    out_dir = out or OUT
+    out_dir.mkdir(parents=True, exist_ok=True)
+    etp_errors: list[str] = errors_out if errors_out is not None else []
+
     etp_result = fetch_crypto_etps_enriched(DEFAULT_UA)
     if etp_result.error:
-        manifest["errors"].append(f"ETP scrape: {etp_result.error}")
+        etp_errors.append(f"ETP scrape: {etp_result.error}")
     rows = sorted_by_assets(etp_result.rows)
-    rows_payload = [_etp_row_json(r) for r in rows]
+    flow_series = load_farside_flow_series()
+    if not flow_series.by_symbol:
+        etp_errors.append("ETP flows: could not load Farside BTC/ETH flow tables.")
+
+    rows_payload = []
+    for r in rows:
+        fy, fy_lbl = fund_flow_usd(r.symbol, flow_series, days=365)
+        rows_payload.append(_etp_row_json(r, flow_1y_usd=fy, flow_1y_window=fy_lbl))
 
     pairs = etp_rows_to_fund_pairs(rows)
     chart_df, chart_err = build_aggregate_aum_history_12m(list(pairs))
     if chart_err:
-        manifest["errors"].append(f"AUM chart: {chart_err}")
+        etp_errors.append(f"AUM chart: {chart_err}")
 
     series: list[dict] = []
     if chart_df is not None and not chart_df.empty:
@@ -1612,20 +1646,69 @@ def main() -> None:
         else "—"
     )
 
+    listed_syms = [r.symbol for r in rows if (r.symbol or "").strip()]
+    net_flow_1m, net_flow_1m_lbl = aggregate_flow_for_symbols(
+        listed_syms, flow_series, days=30
+    )
+
     kpis = {
         "total_aum_display": aum_s,
         "aggregate_pct": round(float(agg_pct), 4) if agg_pct is not None else None,
         "aggregate_window": agg_lbl or "",
+        "net_flow_1m_usd": round(float(net_flow_1m), 2) if net_flow_1m is not None else None,
+        "net_flow_1m_display": format_flow_usd_compact(net_flow_1m),
+        "net_flow_window": net_flow_1m_lbl or "",
         "ibit": {"aum_display": ibit_aum, "delta": _kpi_delta("IBIT", ibit_r)},
         "etha": {"aum_display": etha_aum, "delta": _kpi_delta("ETHA", etha_r)},
     }
 
-    (OUT / "etps.json").write_text(
+    (out_dir / "etps.json").write_text(
         json.dumps({"rows": rows_payload}, indent=2),
         encoding="utf-8",
     )
-    (OUT / "aum_series.json").write_text(json.dumps({"series": series}, indent=2), encoding="utf-8")
-    (OUT / "etp_kpis.json").write_text(json.dumps(kpis, indent=2), encoding="utf-8")
+    (out_dir / "aum_series.json").write_text(json.dumps({"series": series}, indent=2), encoding="utf-8")
+    (out_dir / "etp_kpis.json").write_text(json.dumps(kpis, indent=2), encoding="utf-8")
+
+    refreshed_at = datetime.now(timezone.utc).isoformat()
+    return {
+        "etp_refreshed_at": refreshed_at,
+        "errors": etp_errors,
+        "etp_count": len(rows_payload),
+        "aum_points": len(series),
+    }
+
+
+def merge_etp_refresh_into_manifest(summary: dict[str, Any], manifest_path: Path | None = None) -> None:
+    """Patch ``manifest.json``: ETP timestamp + replace ETP-scoped errors only."""
+    path = manifest_path or (OUT / "manifest.json")
+    if path.exists():
+        try:
+            manifest = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            manifest = {}
+    else:
+        manifest = {}
+    if not isinstance(manifest.get("errors"), list):
+        manifest["errors"] = []
+    kept = [
+        e
+        for e in manifest["errors"]
+        if not any(str(e).startswith(p) for p in _ETP_MANIFEST_ERROR_PREFIXES)
+    ]
+    manifest["errors"] = kept + list(summary.get("errors") or [])
+    manifest["etp_refreshed_at"] = summary.get("etp_refreshed_at")
+    if not manifest.get("generated_at"):
+        manifest["generated_at"] = summary.get("etp_refreshed_at")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+
+
+def main() -> None:
+    OUT.mkdir(parents=True, exist_ok=True)
+    manifest: dict = {"generated_at": datetime.now(timezone.utc).isoformat(), "errors": []}
+
+    etp_summary = export_etp_json_bundle(errors_out=manifest["errors"])
+    manifest["etp_refreshed_at"] = etp_summary["etp_refreshed_at"]
 
     export_crypto_json_bundle(manifest)
 
@@ -1891,7 +1974,7 @@ def main() -> None:
 
     (OUT / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     print(
-        f"Wrote static data to {OUT} ({len(rows_payload)} ETPs, {len(etf_items)} ETF headlines, "
+        f"Wrote static data to {OUT} ({etp_summary.get('etp_count', 0)} ETPs, {len(etf_items)} ETF headlines, "
         f"{len(rwa_rows)} RWA networks; crypto_ticker.json, rwa_global_market.json, rwa_explore_asset_type.json, "
         "rwa_explore_market_participant.json, rwa_participants_networks.json, rwa_participants_platforms.json, "
         "rwa_participants_asset_managers.json, rwa_stablecoins.json, rwa_us_treasuries.json, "
@@ -1900,6 +1983,17 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    if any(a in ("--etp-only", "--etp") for a in sys.argv[1:]):
+        summary = export_etp_json_bundle()
+        merge_etp_refresh_into_manifest(summary)
+        print(
+            f"Wrote ETP JSON to {OUT} ({summary['etp_count']} funds, "
+            f"{summary['aum_points']} chart points). "
+            f"Other static_home/data/*.json unchanged."
+        )
+        if summary["errors"]:
+            print("Warnings:", summary["errors"])
+        raise SystemExit(0)
     if any(a in ("--crypto-only", "--crypto") for a in sys.argv[1:]):
         OUT.mkdir(parents=True, exist_ok=True)
         manifest_only: dict[str, Any] = {"generated_at": datetime.now(timezone.utc).isoformat(), "errors": []}

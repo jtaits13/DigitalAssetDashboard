@@ -228,6 +228,15 @@
       fmtDelta(k.aggregate_pct, k.aggregate_window) +
       "</div>" +
       '<div class="kpi-cell">' +
+      '<span class="kpi-label">Net flows (listed)</span>' +
+      '<span class="kpi-val' +
+      (typeof K.flowValClass === "function" ? K.flowValClass(k.net_flow_1m_usd) : "") +
+      '">' +
+      escapeHtml(k.net_flow_1m_display || "—") +
+      "</span>" +
+      (typeof K.fmtFlowWindowTag === "function" ? K.fmtFlowWindowTag(k.net_flow_window) : "") +
+      "</div>" +
+      '<div class="kpi-cell">' +
       '<span class="kpi-label">IBIT · AUM</span>' +
       '<span class="kpi-val">' +
       escapeHtml(k.ibit && k.ibit.aum_display) +
@@ -327,6 +336,9 @@
         escapeHtml(String(r.price != null ? r.price : "—")) +
         "</td>" +
         fmt52wTd(r.pct_52w) +
+        (window.__ETP_KPI && typeof window.__ETP_KPI.fmtFlowCell === "function"
+          ? window.__ETP_KPI.fmtFlowCell(r.flow_1y_usd)
+          : '<td class="num">—</td>') +
         '<td class="num">' +
         fmtAssets(r.assets_usd) +
         "</td>" +
@@ -408,8 +420,9 @@
         els.banner.textContent =
           "Partial feed warnings: " + manifest.errors.slice(0, 4).join("; ");
       }
-      if (manifest.generated_at && els.ts) {
-        els.ts.textContent = manifest.generated_at.replace("T", " ").replace(/\.\d+Z$/, " UTC");
+      var tsIso = manifest.etp_refreshed_at || manifest.generated_at;
+      if (tsIso && els.ts) {
+        els.ts.textContent = String(tsIso).replace("T", " ").replace(/\.\d+Z$/, " UTC");
       }
       renderKpi(out[1]);
       renderChart((out[2] && out[2].series) || []);
