@@ -43,16 +43,19 @@
 
   function renderCryptoKpis(host, payload) {
     if (!host) return;
+    var snap = global.__SNAPSHOT_KPI;
+    if (snap && typeof snap.renderCryptoSnapshot === "function") {
+      snap.renderCryptoSnapshot(host, payload || {});
+      return;
+    }
     payload = payload || {};
-    var K = global.__ETP_KPI || {};
-    var fmtDeltaFn = typeof K.fmtPctDelta === "function" ? K.fmtPctDelta : null;
     var parts = [payload.primary, payload.btc_dominance, payload.stablecoin_share];
     host.innerHTML = parts
       .filter(function (p) {
         return p && (p.label || p.value_display);
       })
       .map(function (p) {
-        return kpiCell(p, fmtDeltaFn);
+        return kpiCell(p, null);
       })
       .join("");
   }

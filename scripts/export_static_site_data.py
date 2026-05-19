@@ -270,6 +270,21 @@ def _kpi_legend_for_asset(overview_title: str) -> str:
     )
 
 
+CRYPTO_KPI_WINDOW_NOTE = (
+    "All % changes in this row are approximately one-month (~30 calendar days). "
+    "Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list "
+    "(CoinGecko, CoinCap fallback)."
+)
+
+ETP_KPI_WINDOW_NOTE = (
+    "All % changes in this row are typically one-month (~30 calendar days); "
+    "IBIT and ETHA may use 52-week figures when one-month Yahoo data is unavailable. "
+    "Aggregate AUM % uses estimated weekly series. "
+    "Fund-flow % compares 30-day Farside spot BTC/ETH ETF totals vs the prior 30 days. "
+    "Dollar totals from StockAnalysis."
+)
+
+
 def _html_escape_segment_with_bold(seg: str) -> str:
     if not seg:
         return ""
@@ -1537,6 +1552,7 @@ def export_crypto_json_bundle(manifest: dict[str, Any]) -> None:
             "btc_dominance": btc_dom_kpi,
             "stablecoin_share": stable_kpi,
             "market_structure": structure,
+            "kpi_window_note": CRYPTO_KPI_WINDOW_NOTE,
             "story_callout": story_callout_payload(),
             "source_note": (
                 "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. "
@@ -1662,6 +1678,7 @@ def export_etp_json_bundle(
 
     kpis = {
         "generated_at": refreshed_at,
+        "kpi_window_note": ETP_KPI_WINDOW_NOTE,
         "total_aum_display": aum_s,
         "aggregate_pct": round(float(agg_pct), 4) if agg_pct is not None else None,
         "aggregate_window": agg_lbl or "",

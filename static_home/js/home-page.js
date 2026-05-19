@@ -59,45 +59,10 @@
 
   function renderKpi(k) {
     if (!kpiEl || !k) return;
-    var K = window.__ETP_KPI || {};
-    var fmtDelta =
-      typeof K.fmtPctDelta === "function"
-        ? K.fmtPctDelta
-        : function (p) {
-            if (p == null || p === "") return '<span class="kpi-delta neutral">—</span>';
-            var n = Number(p);
-            var cls = n > 0 ? "up" : n < 0 ? "down" : "neutral";
-            return '<span class="kpi-delta ' + cls + '">' + (n > 0 ? "+" : "") + n.toFixed(2) + "%</span>";
-          };
-    kpiEl.innerHTML =
-      '<div class="kpi-cell">' +
-      '<span class="kpi-label">Total AUM (listed)</span>' +
-      '<span class="kpi-val">' +
-      escapeHtml(k.total_aum_display || "—") +
-      "</span>" +
-      fmtDelta(k.aggregate_pct, k.aggregate_window) +
-      "</div>" +
-      '<div class="kpi-cell">' +
-      '<span class="kpi-label">BTC &amp; ETH Fund flows (listed)</span>' +
-      '<span class="kpi-val">' +
-      escapeHtml(k.net_flow_1m_display || "—") +
-      "</span>" +
-      fmtDelta(k.net_flow_1m_pct, k.net_flow_pct_window || k.net_flow_window) +
-      "</div>" +
-      '<div class="kpi-cell">' +
-      '<span class="kpi-label">IBIT · AUM</span>' +
-      '<span class="kpi-val">' +
-      escapeHtml(k.ibit && k.ibit.aum_display) +
-      "</span>" +
-      (k.ibit && k.ibit.delta ? fmtDelta(k.ibit.delta.pct, k.ibit.delta.window) : "") +
-      "</div>" +
-      '<div class="kpi-cell">' +
-      '<span class="kpi-label">ETHA · AUM</span>' +
-      '<span class="kpi-val">' +
-      escapeHtml(k.etha && k.etha.aum_display) +
-      "</span>" +
-      (k.etha && k.etha.delta ? fmtDelta(k.etha.delta.pct, k.etha.delta.window) : "") +
-      "</div>";
+    var snap = window.__SNAPSHOT_KPI;
+    if (snap && typeof snap.renderEtpSnapshot === "function") {
+      snap.renderEtpSnapshot(kpiEl, k);
+    }
   }
 
   function assetsB(r) {

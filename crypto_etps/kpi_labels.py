@@ -23,9 +23,8 @@ def etp_kpi_methodology_footnote_html() -> str:
     """Sources and lookback (below the KPI row)."""
     return (
         '<p class="jd-kpi-window-note">'
-        "The <strong>% figures</strong> are typically about <strong>one-month</strong> changes (~30 calendar days). "
-        "Each tile repeats the exact window in parentheses next to the percent (<strong>1 mo</strong>, <strong>1 yr</strong>, or <strong>52W</strong>) "
-        "when the standard month window is unavailable. "
+        "All <strong>% figures</strong> in the KPI row are typically <strong>one-month</strong> changes (~30 calendar days); "
+        "IBIT and ETHA may use <strong>52-week</strong> figures when one-month Yahoo data is unavailable. "
         "<strong>Total</strong>: percent change on estimated aggregate AUM (weekly series). "
         "<strong>BTC &amp; ETH Fund flows</strong>: sum of daily net creations/redemptions over ~30 calendar days from "
         '<a href="https://farside.co.uk/" target="_blank" rel="noopener noreferrer">Farside Investors</a> '

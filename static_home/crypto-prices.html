@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -68,14 +68,7 @@
             <li><a href="index.html#section-onchain">On-chain RWA overview</a></li>
           </ul>
         </aside>
-        <div class="rwa-kpi-panel-static">
-          <div class="kpi-row kpi-row--crypto-snapshot kpi-row--in-panel" id="js-crypto-kpi" aria-label="Crypto KPI strip">
-            <div class="kpi-cell"><span class="kpi-label">Loading…</span></div>
-          </div>
-        </div>
-        <p class="kpi-footnote kpi-footnote--block">
-          Colored <strong>%</strong>: total market cap = CoinPaprika <strong>1M</strong>; <strong>BTC dominance</strong> = BTC mcap ÷ CoinPaprika total; <strong>stablecoin share</strong> = stable mcap ÷ top-50 mcap sum; ~1M % on the two ratios is approximate.
-        </p>
+        <div id="js-crypto-kpi" aria-label="Crypto KPI strip"></div>
         <div id="js-crypto-story" hidden></div>
       </section>
 
@@ -155,8 +148,9 @@
     <footer class="site-footer">Digital Assets Dashboard · Crypto Prices · <time datetime="2026-05">May 2026</time></footer>
     <script defer src="js/static-base.js?v=12"></script>
     <script defer src="js/data-freshness.js?v=1"></script>
+    <script defer src="js/snapshot-kpi-shared.js?v=1"></script>
     <script defer src="js/etp-kpi-shared.js"></script>
-    <script defer src="js/crypto-kpi-shared.js?v=3"></script>
-    <script defer src="js/crypto-page.js?v=15"></script>
+    <script defer src="js/crypto-kpi-shared.js?v=4"></script>
+    <script defer src="js/crypto-page.js?v=16"></script>
   </body>
 </html>
