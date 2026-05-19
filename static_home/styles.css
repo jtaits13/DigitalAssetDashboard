@@ -1068,6 +1068,7 @@ a.ticker-chip-link[title] {
   flex: 1 1 0;
   min-width: 0;
   width: 100%;
+  text-align: center;
 }
 
 .kpi-subnote {
@@ -1196,6 +1197,24 @@ a.ticker-chip-link[title] {
   min-width: 0;
   width: 100%;
   max-width: 100%;
+  text-align: center;
+}
+
+/* Top-line snapshot KPIs — center text on home, ETP, crypto, and RWA pages */
+.rwa-kpi-row--home-grid .rwa-kpi-cell,
+.rwa-kpi-panel-static .rwa-kpi-cell {
+  text-align: center;
+  min-width: 0;
+}
+
+.kpi-cell .kpi-label,
+.kpi-cell .kpi-val,
+.kpi-cell .kpi-delta,
+.kpi-cell .kpi-subnote,
+.rwa-kpi-panel-static .rwa-kpi-label,
+.rwa-kpi-panel-static .rwa-kpi-val,
+.rwa-kpi-panel-static .rwa-kpi-delta {
+  text-align: center;
 }
 
 .kpi-label {
@@ -1220,6 +1239,12 @@ a.ticker-chip-link[title] {
   font-size: 0.8rem;
   font-weight: 600;
   margin-top: 0.2rem;
+}
+
+.kpi-cell .kpi-delta,
+.kpi-cell .kpi-win {
+  display: inline-block;
+  max-width: 100%;
 }
 
 .kpi-delta.up {
