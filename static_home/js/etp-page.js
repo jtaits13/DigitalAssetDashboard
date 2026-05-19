@@ -310,6 +310,12 @@
     }
     labels = labels.slice().reverse();
     values = values.slice().reverse();
+    var maxLabelLen = labels.reduce(function (n, label) {
+      var len = String(label || "").length;
+      return len > n ? len : n;
+    }, 0);
+    var leftMargin = Math.min(220, Math.max(116, 36 + maxLabelLen * 7.5));
+    var xMax = Math.min(100, Math.max.apply(null, values) + 8);
     Plotly.newPlot(
       els.concentration,
       [
@@ -323,20 +329,27 @@
             return v.toFixed(1) + "%";
           }),
           textposition: "outside",
+          cliponaxis: false,
           hovertemplate: "%{y}<br>%{x:.1f}% of listed AUM<extra></extra>",
         },
       ],
       {
-        margin: { t: 12, r: 56, b: 40, l: 88 },
+        margin: { t: 20, r: 72, b: 52, l: leftMargin },
         paper_bgcolor: "#fafcfd",
         plot_bgcolor: "#f8fafc",
         font: { family: "Outfit, sans-serif", size: 12, color: "#1f4c67" },
         xaxis: {
-          title: { text: "% of listed AUM" },
-          range: [0, Math.min(100, Math.max.apply(null, values) + 8)],
+          title: { text: "% of listed AUM", standoff: 12 },
+          range: [0, xMax],
           ticksuffix: "%",
+          automargin: true,
         },
-        yaxis: { automargin: true },
+        yaxis: {
+          automargin: true,
+          ticklabelstandoff: 14,
+          ticklabeloverflow: "allow",
+          tickfont: { size: 12 },
+        },
         showlegend: false,
       },
       { responsive: true, displayModeBar: false }
