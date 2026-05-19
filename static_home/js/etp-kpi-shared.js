@@ -8,7 +8,7 @@
     if (u === "1M") return "1 mo";
     if (u === "1Y") return "1 yr";
     if (u === "1Y*") return "1 yr*";
-    if (u === "52W") return "52W";
+    if (u === "52W") return "1 yr";
     return String(code);
   }
 

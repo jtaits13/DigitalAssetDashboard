@@ -1,7 +1,7 @@
 """
 Fetch crypto ETF list from stockanalysis.com/list/crypto-etfs/, then enrich each
 ETF with Profile fields from its detail page (issuer, inception, past-year return
-as a proxy for 52-week performance).
+as past-year (1Y) total return).
 
 No API key; HTML parsing only. Respect site terms of use and rate limits.
 """

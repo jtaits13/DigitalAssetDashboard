@@ -126,7 +126,7 @@ def _fund_trailing_pct(symbol: str, row: CryptoEtpRow | None) -> tuple[float | N
     if py is not None:
         return py, pl
     if row is not None and row.pct_52w is not None:
-        return float(row.pct_52w), "52W"
+        return float(row.pct_52w), "1Y"
     return None, ""
 
 

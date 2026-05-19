@@ -1,7 +1,7 @@
 """Pandas DataFrame builders for Streamlit ETF tables.
 
 Numeric columns stay typed for sorting. ``style_etp_dataframe`` uses ``Styler.apply`` for
-green/red 52W % text and ``Styler.format`` only on ``52W %`` / ``Assets (B)`` so arrows
+green/red 1Y % text and ``Styler.format`` only on ``1Y %`` / ``Assets (B)`` so arrows
 and compact **$** assets (``format_usd_compact`` on AUM in USD) appear in-cell. In ``show_etp_dataframe``, those columns use
 ``NumberColumn(..., format=None)`` so Streamlit does not override Styler formatting.
 """
@@ -40,7 +40,7 @@ _ETP_DF_COLUMNS: tuple[str, ...] = (
     "Symbol",
     "Fund Name",
     "Price",
-    "52W %",
+    "1Y %",
     "1Y Flow",
     "Assets (B)",
     "Issuer",
@@ -72,7 +72,7 @@ def build_etp_dataframe(
                 "Symbol": r.symbol,
                 "Fund Name": r.name,
                 "Price": _parse_price(r.price),
-                "52W %": r.pct_52w if r.pct_52w is not None else np.nan,
+                "1Y %": r.pct_52w if r.pct_52w is not None else np.nan,
                 "1Y Flow": flow_1y,
                 "Assets (B)": (r.assets_usd / 1e9) if has_listed_aum_usd(r.assets_usd) else np.nan,
                 "Issuer": issuer,
@@ -124,7 +124,7 @@ def _fmt_flow_cell(v: object) -> str:
 
 
 def style_etp_dataframe(df: pd.DataFrame) -> pd.io.formats.style.Styler:
-    """Green/red 52W %; arrows + % and ``x.xxB`` assets via ``format`` (numeric dtypes unchanged)."""
+    """Green/red 1Y %; arrows + % and ``x.xxB`` assets via ``format`` (numeric dtypes unchanged)."""
 
     def _signed_color(s: pd.Series) -> list[str]:
         return [
@@ -136,14 +136,14 @@ def style_etp_dataframe(df: pd.DataFrame) -> pd.io.formats.style.Styler:
             for v in s
         ]
 
-    if df.empty or "52W %" not in df.columns:
+    if df.empty or "1Y %" not in df.columns:
         return df.style
 
     fmt_map: dict[str, object] = {
-        "52W %": _fmt_52w_cell,
+        "1Y %": _fmt_52w_cell,
         "Assets (B)": _fmt_assets_b_cell,
     }
-    styler = df.style.apply(_signed_color, subset=["52W %"])
+    styler = df.style.apply(_signed_color, subset=["1Y %"])
     if "1Y Flow" in df.columns:
         fmt_map["1Y Flow"] = _fmt_flow_cell
         styler = styler.apply(_signed_color, subset=["1Y Flow"])

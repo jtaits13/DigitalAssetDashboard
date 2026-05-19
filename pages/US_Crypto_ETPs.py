@@ -155,7 +155,7 @@ def main() -> None:
         "<strong>U.S. crypto-related exchange-traded products</strong>: KPI strip, estimated aggregate AUM trend, searchable "
         "fund table, and a short ETF/ETP headline teaser. Reference columns come from "
         '<a href="https://stockanalysis.com/list/crypto-etfs/">StockAnalysis.com</a> '
-        "(issuer, inception, <strong>52W %</strong>).</p>",
+        "(issuer, inception, <strong>1Y %</strong> past-year total return).</p>",
         unsafe_allow_html=True,
     )
     st.divider()

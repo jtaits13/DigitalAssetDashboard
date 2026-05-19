@@ -222,7 +222,7 @@ def _fund_trailing_pct(symbol: str, row: CryptoEtpRow | None) -> tuple[float | N
     if py is not None:
         return py, pl
     if row is not None and row.pct_52w is not None:
-        return float(row.pct_52w), "52W"
+        return float(row.pct_52w), "1Y"
     return None, ""
 
 
@@ -234,7 +234,7 @@ def render_etp_summary_kpi_row(
 ) -> None:
     """
     Home-style KPI strip: total listed AUM, IBIT, and ETHA with % moves tagged by lookback
-    (typically ~1 month on Yahoo when available; 1 yr / 52W fallbacks).
+    (typically ~1 month on Yahoo when available; 1 yr fallbacks).
 
     Pass ``metrics_above_methodology_note=True`` on the full ETP list for spacing tweaks
     (legend + figures always appear before the methodology footnote).
@@ -362,7 +362,7 @@ def show_etp_dataframe(
         "Symbol",
         "Fund Name",
         "Price",
-        "52W %",
+        "1Y %",
         "1Y Flow",
         "Assets (B)",
         "Issuer",
@@ -386,11 +386,11 @@ def show_etp_dataframe(
             format="$%.2f",
             width="small",
         ),
-        "52W %": st.column_config.NumberColumn(
-            f"52W % {_SORT}",
+        "1Y %": st.column_config.NumberColumn(
+            f"1Y % {_SORT}",
             format=None,
             width="small",
-            help="Past-year return from fund narrative (proxy for 52-week %)",
+            help="Past-year total return from StockAnalysis fund narrative",
         ),
         "1Y Flow": st.column_config.NumberColumn(
             f"1Y Flow {_SORT}",

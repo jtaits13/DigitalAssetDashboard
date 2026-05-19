@@ -278,7 +278,7 @@ CRYPTO_KPI_WINDOW_NOTE = (
 
 ETP_KPI_WINDOW_NOTE = (
     "All % changes in this row are typically one-month (~30 calendar days); "
-    "IBIT and ETHA may use 52-week figures when one-month Yahoo data is unavailable. "
+    "IBIT and ETHA may use one-year figures when one-month Yahoo data is unavailable. "
     "Aggregate AUM % uses estimated weekly series. "
     "Fund-flow % compares 30-day Farside spot BTC/ETH ETF totals vs the prior 30 days. "
     "Dollar totals from StockAnalysis."
@@ -1307,7 +1307,7 @@ def _kpi_delta(symbol: str, row: CryptoEtpRow | None) -> dict:
     if p is not None:
         return {"pct": round(float(p), 4), "window": lbl or ""}
     if row is not None and row.pct_52w is not None:
-        return {"pct": round(float(row.pct_52w), 4), "window": "52W"}
+        return {"pct": round(float(row.pct_52w), 4), "window": "1Y"}
     return {"pct": None, "window": ""}
 
 

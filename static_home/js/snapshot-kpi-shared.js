@@ -8,7 +8,7 @@
 
   var ETP_KPI_LEGEND_DEFAULT =
     "All % changes in this row are typically one-month (~30 calendar days); " +
-    "IBIT and ETHA may use 52-week figures when one-month Yahoo data is unavailable. " +
+    "IBIT and ETHA may use one-year figures when one-month Yahoo data is unavailable. " +
     "Aggregate AUM % uses estimated weekly series. " +
     "Fund-flow % compares 30-day Farside spot BTC/ETH ETF totals vs the prior 30 days. " +
     "Dollar totals from StockAnalysis.";
