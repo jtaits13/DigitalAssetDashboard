@@ -45,19 +45,11 @@
     );
   }
 
-  function shouldSkipKpiLegend() {
-    return !!(
-      typeof document !== "undefined" &&
-      document.body &&
-      document.body.getAttribute("data-skip-kpi-legend") === "1"
-    );
-  }
-
   function renderSnapshotPanel(host, legendText, cellsHtml) {
     if (!host) return;
     host.innerHTML =
       '<div class="rwa-kpi-panel-static">' +
-      (legendText && !shouldSkipKpiLegend()
+      (legendText
         ? '<p class="jd-kpi-window-note rwa-onchain-kpi-legend">' + esc(legendText) + "</p>"
         : "") +
       '<div class="rwa-kpi-row rwa-kpi-row--home-grid">' +

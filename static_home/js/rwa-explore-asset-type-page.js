@@ -86,10 +86,7 @@
       kpiHost.className = "rwa-exat-kpi-host";
       section.appendChild(kpiHost);
 
-      renderKpis(kpiHost, sec.kpis || [], sec.kpi_window_note || "", {
-        hideIfEmpty: true,
-        skipLegend: true,
-      });
+      renderKpis(kpiHost, sec.kpis || [], sec.kpi_window_note || "", { hideIfEmpty: true });
 
       if (sec.info_html_preview) {
         var iprev = document.createElement("div");

@@ -445,15 +445,6 @@
     return actions;
   }
 
-  function shouldSkipKpiLegend(ko) {
-    if (ko && ko.skipLegend) return true;
-    return !!(
-      typeof document !== "undefined" &&
-      document.body &&
-      document.body.getAttribute("data-skip-kpi-legend") === "1"
-    );
-  }
-
   function renderKpis(host, kpis, legendText, kpiOpts) {
     var ko = kpiOpts || {};
     if (!host) return;
@@ -484,7 +475,7 @@
       .join("");
     host.innerHTML =
       '<div class="rwa-kpi-panel-static">' +
-      (legendText && !shouldSkipKpiLegend(ko)
+      (legendText
         ? '<p class="jd-kpi-window-note rwa-onchain-kpi-legend">' + esc(legendText) + "</p>"
         : "") +
       '<div class="rwa-kpi-row rwa-kpi-row--home-grid">' +
