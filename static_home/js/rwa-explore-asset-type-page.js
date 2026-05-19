@@ -70,11 +70,26 @@
       h2.textContent = sec.title || "Section";
       section.appendChild(h2);
 
+      var meth = global.__PAGE_METHODOLOGY;
+      var explorePage = document.body.classList.contains("page-rwa-explore-mp")
+        ? "participant"
+        : "asset";
+      if (meth && typeof meth.exploreBullets === "function" && sec.id) {
+        var bullets = meth.exploreBullets(explorePage, sec.id);
+        if (bullets && typeof meth.buildElement === "function") {
+          var panel = meth.buildElement(bullets);
+          if (panel) section.appendChild(panel);
+        }
+      }
+
       var kpiHost = document.createElement("div");
       kpiHost.className = "rwa-exat-kpi-host";
       section.appendChild(kpiHost);
 
-      renderKpis(kpiHost, sec.kpis || [], sec.kpi_window_note || "", { hideIfEmpty: true });
+      renderKpis(kpiHost, sec.kpis || [], sec.kpi_window_note || "", {
+        hideIfEmpty: true,
+        skipLegend: true,
+      });
 
       if (sec.info_html_preview) {
         var iprev = document.createElement("div");
