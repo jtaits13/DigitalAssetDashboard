@@ -125,6 +125,16 @@
           <p class="data-freshness" id="js-home-crypto-as-of" hidden></p>
           <div class="data-banner" id="js-home-crypto-banner" role="status" hidden></div>
           <div id="js-home-crypto-kpi" aria-label="Crypto market KPI strip"></div>
+          <label class="search-field home-preview-search-row">
+            <span class="search-field__label">Filter preview by coin name or ticker</span>
+            <input
+              type="search"
+              class="search-field__input"
+              id="js-home-crypto-search"
+              placeholder="Filter by name or ticker…"
+            />
+          </label>
+          <p class="toolbar-note" id="js-home-crypto-toolbar" hidden></p>
           <div class="table-wrap table-wrap--no-clip">
             <table class="data-table data-table--dense" aria-label="Crypto prices preview">
               <thead>
@@ -166,7 +176,7 @@
           </aside>
           <p class="data-freshness" id="js-home-etp-as-of" hidden></p>
           <div id="js-home-kpi" aria-label="U.S. ETP KPI strip"></div>
-          <label class="search-field home-etp-search-row">
+          <label class="search-field home-preview-search-row">
             <span class="search-field__label">Filter preview by fund name or ticker</span>
             <input
               type="search"
@@ -219,7 +229,16 @@
             <h3 class="rwa-market-overview-title">RWA Global Market Overview</h3>
           </div>
           <div id="js-rwa-kpi-host"></div>
-          <p class="toolbar-note" id="js-rwa-preview-note"></p>
+          <label class="search-field home-preview-search-row">
+            <span class="search-field__label">Filter preview by network name</span>
+            <input
+              type="search"
+              class="search-field__input"
+              id="js-home-rwa-search"
+              placeholder="Filter by network…"
+            />
+          </label>
+          <p class="toolbar-note" id="js-home-rwa-toolbar" hidden></p>
           <div class="table-wrap">
             <table class="data-table data-table--dense" aria-label="RWA networks preview">
               <thead>
@@ -257,8 +276,8 @@
     <script src="js/snapshot-kpi-shared.js?v=1"></script>
     <script src="js/etp-kpi-shared.js"></script>
     <script src="js/crypto-kpi-shared.js?v=4"></script>
-    <script src="js/home-crypto.js?v=8"></script>
-    <script src="js/rwa-onchain-home.js?v=5"></script>
+    <script src="js/home-crypto.js?v=9"></script>
+    <script src="js/rwa-onchain-home.js?v=6"></script>
     <script src="js/home-page.js?v=7"></script>
   </body>
 </html>

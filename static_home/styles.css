@@ -1045,7 +1045,8 @@ a.ticker-chip-link[title] {
   min-height: 220px;
 }
 
-.home-etp-search-row {
+.home-etp-search-row,
+.home-preview-search-row {
   margin: 0 0 0.65rem;
   max-width: 28rem;
 }

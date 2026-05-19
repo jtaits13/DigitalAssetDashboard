@@ -1,10 +1,15 @@
 (function () {
+  var HOME_CRYPTO_PREVIEW_LIMIT = 5;
+  var cryptoAllRows = [];
+
   var els = {
     banner: document.getElementById("js-home-crypto-banner"),
     kpi: document.getElementById("js-home-crypto-kpi"),
     story: document.getElementById("js-home-crypto-story"),
     tbody: document.getElementById("js-home-crypto-preview"),
     source: document.getElementById("js-home-crypto-source"),
+    search: document.getElementById("js-home-crypto-search"),
+    toolbar: document.getElementById("js-home-crypto-toolbar"),
   };
 
   function cryptoKpiApi() {
@@ -68,53 +73,96 @@
     }
   }
 
-  function renderRows(rows) {
+  function filterCryptoRows(rows) {
+    var q = (els.search && els.search.value ? els.search.value : "").trim().toLowerCase();
+    if (!q) return rows;
+    return rows.filter(function (row) {
+      return (
+        (row.symbol && row.symbol.toLowerCase().indexOf(q) >= 0) ||
+        (row.name && row.name.toLowerCase().indexOf(q) >= 0) ||
+        (row.category && row.category.toLowerCase().indexOf(q) >= 0) ||
+        (row.category_label && String(row.category_label).toLowerCase().indexOf(q) >= 0)
+      );
+    });
+  }
+
+  function sortCryptoRows(arr) {
+    return arr.slice().sort(function (a, b) {
+      return Number(b.market_cap_usd || 0) - Number(a.market_cap_usd || 0);
+    });
+  }
+
+  function renderPreview() {
     if (!els.tbody) return;
     els.tbody.innerHTML = "";
-    if (!rows || !rows.length) {
-      els.tbody.innerHTML = '<tr><td colspan="7">No crypto price data is available right now.</td></tr>';
+    if (!cryptoAllRows || !cryptoAllRows.length) {
+      els.tbody.innerHTML =
+        '<tr><td colspan="7">No crypto price data is available right now.</td></tr>';
+      if (els.toolbar) els.toolbar.hidden = true;
       return;
     }
-    rows
-      .slice()
-      .sort(function (a, b) {
-        return Number(b.market_cap_usd || 0) - Number(a.market_cap_usd || 0);
-      })
-      .slice(0, 5)
-      .forEach(function (row) {
-        var tr = document.createElement("tr");
-        var w = typeof window !== "undefined" ? window : {};
-        var blurb = (row.about_blurb || "").trim();
-        var wrap =
-          typeof w.wrapCryptoHint === "function"
-            ? w.wrapCryptoHint
-            : function (txt, b, cls) {
-                return w.escapeHtml(String(txt || ""));
-              };
-        tr.innerHTML =
-          '<td class="num">' +
-          escapeHtml(String(row.rank != null ? row.rank : "—")) +
-          "</td>" +
-          '<td><span class="sym">' +
-          wrap(row.symbol || "", blurb, "") +
-          "</span></td>" +
-          "<td>" +
-          escapeHtml(row.name || "") +
-          "</td>" +
-          '<td><span class="' +
-          escapeHtml(categoryClass(row)) +
-          '">' +
-          escapeHtml(categoryLabel(row)) +
-          "</span></td>" +
-          '<td class="num">' +
-          escapeHtml(fmtPrice(row.price_usd)) +
-          "</td>" +
-          fmtPctTd(row.pct_30d) +
-          '<td class="num">' +
-          escapeHtml(fmtCap(row.market_cap_usd)) +
-          "</td>";
-        els.tbody.appendChild(tr);
-      });
+    var filtered = filterCryptoRows(cryptoAllRows);
+    if (els.toolbar) {
+      var q = (els.search && els.search.value ? els.search.value : "").trim();
+      els.toolbar.hidden = false;
+      if (q) {
+        els.toolbar.innerHTML =
+          "Showing top " +
+          HOME_CRYPTO_PREVIEW_LIMIT +
+          " of <strong>" +
+          filtered.length +
+          "</strong> matching coins (of <strong>" +
+          cryptoAllRows.length +
+          "</strong> listed).";
+      } else {
+        els.toolbar.innerHTML =
+          "Preview: top <strong>" +
+          HOME_CRYPTO_PREVIEW_LIMIT +
+          "</strong> by market cap (of <strong>" +
+          cryptoAllRows.length +
+          "</strong> listed).";
+      }
+    }
+    if (!filtered.length) {
+      els.tbody.innerHTML =
+        '<tr><td colspan="7">No coins match your filter. Try another name or ticker.</td></tr>';
+      return;
+    }
+    var rows = sortCryptoRows(filtered).slice(0, HOME_CRYPTO_PREVIEW_LIMIT);
+    var w = typeof window !== "undefined" ? window : {};
+    var wrap =
+      typeof w.wrapCryptoHint === "function"
+        ? w.wrapCryptoHint
+        : function (txt) {
+            return w.escapeHtml ? w.escapeHtml(String(txt || "")) : String(txt || "");
+          };
+    rows.forEach(function (row) {
+      var tr = document.createElement("tr");
+      var blurb = (row.about_blurb || "").trim();
+      tr.innerHTML =
+        '<td class="num">' +
+        escapeHtml(String(row.rank != null ? row.rank : "—")) +
+        "</td>" +
+        '<td><span class="sym">' +
+        wrap(row.symbol || "", blurb, "") +
+        "</span></td>" +
+        "<td>" +
+        escapeHtml(row.name || "") +
+        "</td>" +
+        '<td><span class="' +
+        escapeHtml(categoryClass(row)) +
+        '">' +
+        escapeHtml(categoryLabel(row)) +
+        "</span></td>" +
+        '<td class="num">' +
+        escapeHtml(fmtPrice(row.price_usd)) +
+        "</td>" +
+        fmtPctTd(row.pct_30d) +
+        '<td class="num">' +
+        escapeHtml(fmtCap(row.market_cap_usd)) +
+        "</td>";
+      els.tbody.appendChild(tr);
+    });
     if (typeof window !== "undefined" && typeof window.bindCryptoHints === "function") {
       window.bindCryptoHints(els.tbody);
     }
@@ -127,6 +175,10 @@
       : function (name) {
           return loadJson(name);
         };
+
+  if (els.search) {
+    els.search.addEventListener("input", renderPreview);
+  }
 
   Promise.all([
     loadTimed("crypto_kpis.json", 12000).catch(function () {
@@ -147,7 +199,8 @@
         });
       }
       renderKpi(kpis || {});
-      renderRows(prices.rows || []);
+      cryptoAllRows = prices.rows || [];
+      renderPreview();
       if (els.source && kpis && kpis.source_note) {
         els.source.textContent = kpis.source_note;
       }
@@ -157,6 +210,7 @@
     })
     .catch(function (err) {
       showErr("Could not load crypto market data. " + (err && err.message ? err.message : ""));
-      renderRows([]);
+      cryptoAllRows = [];
+      renderPreview();
     });
 })();

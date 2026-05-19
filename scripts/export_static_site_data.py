@@ -1819,8 +1819,7 @@ def main() -> None:
     if rwa_err:
         manifest["errors"].append(f"RWA home overview: {rwa_err}")
 
-    rwa_preview = list(rwa_rows)[:HOME_RWA_PREVIEW_ROWS]
-    rwa_df = build_rwa_dataframe(rwa_preview) if rwa_preview else pd.DataFrame()
+    rwa_df = build_rwa_dataframe(list(rwa_rows)) if rwa_rows else pd.DataFrame()
     rwa_table_rows, rwa_columns = _dataframe_json_records(rwa_df)
 
     explore_at = STATIC_RWA_EXPLORE_ASSET_TYPE_PAGE
@@ -1838,7 +1837,7 @@ def main() -> None:
         ),
         "columns": rwa_columns,
         "rows": rwa_table_rows,
-        "preview_count": len(rwa_table_rows),
+        "preview_count": min(HOME_RWA_PREVIEW_ROWS, len(rwa_table_rows)),
         "total_networks": len(rwa_rows),
         "caption": (
             "Source: RWA.xyz homepage (https://app.rwa.xyz/)—Global Market Overview headline figures and the "

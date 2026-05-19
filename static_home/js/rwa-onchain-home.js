@@ -163,22 +163,102 @@
     });
   }
 
+  var HOME_RWA_PREVIEW_LIMIT = 5;
+
+  function filterRwaHomeRows(rows, q) {
+    if (!q) return rows;
+    q = q.trim().toLowerCase();
+    return rows.filter(function (row) {
+      if (row.Network && String(row.Network).toLowerCase().indexOf(q) >= 0) return true;
+      return Object.keys(row).some(function (k) {
+        if (k === "Link") return false;
+        var v = row[k];
+        return v != null && String(v).toLowerCase().indexOf(q) >= 0;
+      });
+    });
+  }
+
+  function sortRwaHomeRows(rows, columns, sortCol, sortDir) {
+    if (sortCol == null || sortCol < 0 || !columns || !columns[sortCol]) {
+      return rows.slice().sort(function (a, b) {
+        return (Number(a["#"]) || 9999) - (Number(b["#"]) || 9999);
+      });
+    }
+    var colName = columns[sortCol];
+    return rows.slice().sort(function (a, b) {
+      return compareRwaRows(a, b, colName, sortDir);
+    });
+  }
+
+  function updateHomeRwaToolbar(hp, filteredCount, q) {
+    if (!hp.toolbarEl) return;
+    var total = hp.allRows.length;
+    if (!total) {
+      hp.toolbarEl.hidden = true;
+      return;
+    }
+    hp.toolbarEl.hidden = false;
+    if (q) {
+      hp.toolbarEl.innerHTML =
+        "Showing top " +
+        hp.limit +
+        " of <strong>" +
+        filteredCount +
+        "</strong> matching networks (of <strong>" +
+        total +
+        "</strong> listed).";
+    } else {
+      hp.toolbarEl.innerHTML =
+        "Preview: top <strong>" +
+        hp.limit +
+        "</strong> by rank (of <strong>" +
+        total +
+        "</strong> listed).";
+    }
+  }
+
+  function refreshHomeRwaPreview(theadRow, tbody) {
+    var hp = tbody._rwaHomePreview;
+    if (!hp) return;
+    var st = tbody._rwaTableSort;
+    var q = hp.searchEl && hp.searchEl.value ? hp.searchEl.value.trim() : "";
+    var filtered = filterRwaHomeRows(hp.allRows, q);
+    var sortCol = st ? st.sortCol : null;
+    var sortDir = st ? st.sortDir : 1;
+    var sorted = sortRwaHomeRows(filtered, hp.columns, sortCol, sortDir);
+    var display = sorted.slice(0, hp.limit);
+    var emptyMsg = q
+      ? "No networks match your filter. Try another name."
+      : hp.opts.emptyMsg || "No preview rows are available.";
+    if (!display.length) {
+      fillRwaTableBody(tbody, hp.columns, [], { emptyMsg: emptyMsg });
+    } else {
+      fillRwaTableBody(tbody, hp.columns, display, hp.opts);
+    }
+    updateHomeRwaToolbar(hp, filtered.length, q);
+  }
+
   function applyRwaTableSort(theadRow, tbody, colIndex) {
     var st = tbody._rwaTableSort;
-    if (!st || !st.rows || !st.rows.length || !st.columns) return;
+    if (!st || !st.columns) return;
     if (colIndex < 0 || colIndex >= st.columns.length) return;
-    var colName = st.columns[colIndex];
     if (st.sortCol === colIndex) {
       st.sortDir *= -1;
     } else {
       st.sortCol = colIndex;
       st.sortDir = 1;
     }
+    setTheadSortClasses(theadRow, colIndex, st.sortDir);
+    if (tbody._rwaHomePreview) {
+      refreshHomeRwaPreview(theadRow, tbody);
+      return;
+    }
+    if (!st.rows || !st.rows.length) return;
+    var colName = st.columns[colIndex];
     var dir = st.sortDir;
     st.rows = st.rows.slice().sort(function (a, b) {
       return compareRwaRows(a, b, colName, dir);
     });
-    setTheadSortClasses(theadRow, colIndex, dir);
     fillRwaTableBody(tbody, st.columns, st.rows, st.opts);
   }
 
@@ -440,7 +520,33 @@
       sortCol: null,
       sortDir: 1,
     };
-    fillRwaTableBody(tbody, columns, rowsCopy, opts);
+    if (opts.homePreview) {
+      var searchEl =
+        opts.searchInputId && typeof document !== "undefined"
+          ? document.getElementById(opts.searchInputId)
+          : null;
+      var toolbarEl =
+        opts.toolbarId && typeof document !== "undefined"
+          ? document.getElementById(opts.toolbarId)
+          : null;
+      tbody._rwaHomePreview = {
+        allRows: rowsCopy,
+        columns: columns.slice(),
+        opts: opts,
+        limit: opts.previewLimit != null ? opts.previewLimit : HOME_RWA_PREVIEW_LIMIT,
+        searchEl: searchEl,
+        toolbarEl: toolbarEl,
+      };
+      if (searchEl && !searchEl._rwaHomeSearchBound) {
+        searchEl._rwaHomeSearchBound = true;
+        searchEl.addEventListener("input", function () {
+          refreshHomeRwaPreview(theadRow, tbody);
+        });
+      }
+      refreshHomeRwaPreview(theadRow, tbody);
+    } else {
+      fillRwaTableBody(tbody, columns, rowsCopy, opts);
+    }
     wireRwaTableSortDelegate(theadRow, tbody);
   }
 
@@ -482,7 +588,6 @@
     if (!data) return;
     var banner = document.getElementById("js-rwa-onchain-banner");
     var kpiHost = document.getElementById("js-rwa-kpi-host");
-    var noteEl = document.getElementById("js-rwa-preview-note");
     var theadRow = document.getElementById("js-rwa-thead-row");
     var tbody = document.getElementById("js-rwa-tbody");
     var openFull = document.getElementById("js-rwa-open-full");
@@ -502,17 +607,13 @@
 
     renderKpis(kpiHost, data.kpis || [], data.kpi_window_note || "");
 
-    if (noteEl) {
-      var total = data.total_networks != null ? data.total_networks : 0;
-      var shown = data.preview_count != null ? data.preview_count : 0;
-      if (total > 0) {
-        noteEl.textContent = "Showing " + shown + " of " + total + " networks from the homepage Global Market Overview table.";
-      } else {
-        noteEl.textContent = "";
-      }
-    }
-
-    renderTable(theadRow, tbody, data.columns || [], data.rows || []);
+    renderTable(theadRow, tbody, data.columns || [], data.rows || [], {
+      emptyMsg: "On-chain data is unavailable.",
+      homePreview: true,
+      previewLimit: HOME_RWA_PREVIEW_LIMIT,
+      searchInputId: "js-home-rwa-search",
+      toolbarId: "js-home-rwa-toolbar",
+    });
     attachRwaTableFullscreenButton(
       tbody && tbody.closest ? tbody.closest(".table-wrap") : null,
       tbody && tbody.closest ? tbody.closest("table") : null,
