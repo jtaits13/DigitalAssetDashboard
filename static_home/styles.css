@@ -1042,7 +1042,11 @@ a.ticker-chip-link[title] {
 }
 
 #etp-concentration-chart {
-  min-height: 280px;
+  min-height: 360px;
+  overflow: visible;
+}
+
+#etp-concentration-chart .main-svg {
   overflow: visible;
 }
 
