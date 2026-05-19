@@ -9,7 +9,6 @@
   var etpSort = { key: "assets_usd", dir: -1 };
   var etpSearch = document.getElementById("js-home-etp-search");
   var etpToolbar = document.getElementById("js-home-etp-toolbar");
-  var etpFlowLine = document.getElementById("js-home-etp-flow-line");
   var freshApi = window.__DATA_FRESHNESS || {};
 
   function showErr(msg) {
@@ -176,33 +175,6 @@
     });
   }
 
-  function renderEtpFlowLine(kpis) {
-    if (!etpFlowLine || !kpis) return;
-    var flow = kpis.net_flow_1m_display;
-    if (!flow || flow === "—") {
-      etpFlowLine.hidden = true;
-      return;
-    }
-    var pctPart = "";
-    if (kpis.net_flow_1m_pct != null && kpis.net_flow_1m_pct !== "") {
-      var n = Number(kpis.net_flow_1m_pct);
-      if (isFinite(n)) {
-        pctPart =
-          " (" +
-          (n > 0 ? "+" : "") +
-          n.toFixed(1) +
-          "% vs prior 30d flow total)";
-      }
-    }
-    etpFlowLine.innerHTML =
-      "<strong>Listed spot BTC/ETH ETFs:</strong> " +
-      escapeHtml(flow) +
-      " net flows (30d)" +
-      escapeHtml(pctPart) +
-      ".";
-    etpFlowLine.hidden = false;
-  }
-
   function renderPreview() {
     if (!tblBody) return;
     tblBody.innerHTML = "";
@@ -329,7 +301,6 @@
       renderList(newsEl, homeNews.items || [], true, false);
       renderList(regEl, reg.items || [], true, true);
       renderKpi(kpis);
-      renderEtpFlowLine(kpis);
       etpAllRows = etps.rows || [];
       updateHomeEtpSortClass();
       renderPreview();
