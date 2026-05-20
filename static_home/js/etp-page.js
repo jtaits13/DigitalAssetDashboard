@@ -265,6 +265,15 @@
     );
   }
 
+  function concentrationFundLabel(row) {
+    var ticker = String(row.symbol || "").trim();
+    var company = String(row.issuer || row.name || "").trim();
+    if (ticker && company) return ticker + " (" + company + ")";
+    if (ticker) return ticker;
+    if (company) return company;
+    return "—";
+  }
+
   /** Top funds by share of listed AUM (descending %). */
   function buildConcentrationSeries(rows) {
     var withAum = (rows || []).filter(function (r) {
@@ -285,7 +294,7 @@
       .slice(0, 5);
     var series = top.map(function (r) {
       return {
-        label: r.symbol || r.name || "—",
+        label: concentrationFundLabel(r),
         pct: (100 * Number(r.assets_usd)) / total,
       };
     });
@@ -318,6 +327,11 @@
       '<figure class="etp-conc-chart" role="img" aria-labelledby="etp-conc-chart-title">',
       '<p class="u-vh" id="etp-conc-chart-title">AUM concentration: largest funds as a percent of listed AUM</p>',
       '<div class="etp-conc-chart__grid">',
+      '<div class="etp-conc-chart__head">',
+      '<span class="etp-conc-chart__y-head">Ticker (company)</span>',
+      '<span class="etp-conc-chart__bar-head" aria-hidden="true"></span>',
+      '<span class="etp-conc-chart__pct-head" aria-hidden="true"></span>',
+      "</div>",
     ];
 
     series.forEach(function (d) {

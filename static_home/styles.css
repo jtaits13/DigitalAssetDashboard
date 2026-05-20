@@ -1035,6 +1035,11 @@ a.ticker-chip-link[title] {
   margin: 0 0 1.25rem;
 }
 
+.etp-concentration__dek {
+  margin: 0.35rem 0 0.85rem;
+  max-width: 52rem;
+}
+
 .etp-concentration__cap {
   font-size: 0.78rem;
   color: var(--muted);
@@ -1053,15 +1058,25 @@ a.ticker-chip-link[title] {
   border-radius: 10px;
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
   display: grid;
-  grid-template-columns: minmax(5.5rem, max-content) minmax(0, 1fr) 3.75rem;
+  grid-template-columns: minmax(7.5rem, max-content) minmax(0, 1fr) 3.75rem;
   column-gap: 0.85rem;
   row-gap: 0.7rem;
   align-items: center;
 }
 
 .etp-conc-chart__grid,
-.etp-conc-chart__row {
+.etp-conc-chart__row,
+.etp-conc-chart__head {
   display: contents;
+}
+
+.etp-conc-chart__y-head {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-align: right;
+  padding: 0 0.15rem 0.1rem 0;
+  line-height: 1.3;
 }
 
 .etp-conc-chart__label {
