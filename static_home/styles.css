@@ -1188,6 +1188,55 @@ a.ticker-chip-link[title] {
   margin-top: 0.35rem;
 }
 
+.crypto-top-movers__list > li {
+  list-style: none;
+  margin-left: 0;
+  padding-left: 0;
+}
+
+.crypto-top-movers__list {
+  padding-left: 0;
+  list-style: none;
+}
+
+.crypto-top-mover__head {
+  margin: 0 0 0.2rem;
+  font-size: 0.82rem;
+  line-height: 1.35;
+  color: var(--ink);
+}
+
+.crypto-top-mover__head .pct {
+  font-weight: 700;
+  margin-left: 0.15rem;
+}
+
+.crypto-top-mover__name {
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.crypto-top-mover__ctx {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.crypto-top-mover__ctx a {
+  font-weight: 600;
+  color: var(--teal-dark, #00696e);
+  text-decoration: none;
+}
+
+.crypto-top-mover__ctx a:hover {
+  text-decoration: underline;
+}
+
+.crypto-top-mover__source {
+  font-weight: 500;
+}
+
 .crypto-story-callout__note {
   margin: 0.55rem 0 0;
   font-size: 0.76rem;

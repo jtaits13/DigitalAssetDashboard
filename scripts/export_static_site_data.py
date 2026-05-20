@@ -1427,7 +1427,11 @@ def _fetch_coinpaprika_total_snapshot(headers: dict[str, str]) -> tuple[dict[str
     return out, "; ".join(errs) if errs else None
 
 
-def export_crypto_json_bundle(manifest: dict[str, Any]) -> None:
+def export_crypto_json_bundle(
+    manifest: dict[str, Any],
+    *,
+    news_articles: list[dict[str, Any]] | None = None,
+) -> None:
     """Write ``crypto_ticker.json``, ``crypto_prices.json``, ``crypto_kpis.json``, ``crypto_market_cap_series.json``."""
     # --- Crypto prices + market-cap series (CoinGecko with CoinCap fallback for spot rows) ---
     crypto_generated_at = datetime.now(timezone.utc).isoformat()
@@ -1515,6 +1519,7 @@ def export_crypto_json_bundle(manifest: dict[str, Any]) -> None:
             story_callout_payload,
             structure_kpi_dicts,
         )
+        from crypto_top_movers import top_movers_callout_payload
 
         btc_row = _find_crypto_row(t_rows, "BTC")
         eth_row = _find_crypto_row(t_rows, "ETH")
@@ -1554,6 +1559,7 @@ def export_crypto_json_bundle(manifest: dict[str, Any]) -> None:
             "market_structure": structure,
             "kpi_window_note": CRYPTO_KPI_WINDOW_NOTE,
             "story_callout": story_callout_payload(),
+            "top_movers": top_movers_callout_payload(t_rows, news_articles),
             "source_note": (
                 "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. "
                 "BTC dominance uses Bitcoin’s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC’s 30d change from this list. "
@@ -1739,14 +1745,14 @@ def main() -> None:
     etp_summary = export_etp_json_bundle(errors_out=manifest["errors"])
     manifest["etp_refreshed_at"] = etp_summary["etp_refreshed_at"]
 
-    export_crypto_json_bundle(manifest)
-
-    # --- Home RSS lane: three newest from core feeds + The Defiant (static site feed list).
+    # --- Home RSS lane (also used for crypto Top Movers headline context).
     articles_home, feed_errs_home = load_all_feeds(list(DEFAULT_FEEDS) + [STATIC_THE_DEFIANT_FEED])
     for e in feed_errs_home:
         manifest["errors"].append(f"news RSS (home): {e}")
     home_unique = dedupe_articles(articles_home, max_items=None)
     home_news_items = home_unique[:HOME_NEWS_N]
+
+    export_crypto_json_bundle(manifest, news_articles=home_unique)
 
     # --- All digital asset headlines: core + supplement + The Defiant; dedupe; last rolling week only (no per-day cap).
     articles_all, feed_errs_all = load_all_feeds(list(ALL_ARTICLES_FEEDS) + [STATIC_THE_DEFIANT_FEED])

@@ -139,14 +139,49 @@
     });
   }
 
-  function renderKpi(payload) {
+  var lastKpisPayload = null;
+
+  function renderKpiStrip(payload) {
     var api = cryptoKpiApi();
     if (api.renderCryptoKpis && els.kpi) {
       api.renderCryptoKpis(els.kpi, payload || {});
     }
-    if (api.renderStoryCallout && els.story) {
-      api.renderStoryCallout(els.story, payload || {});
+  }
+
+  function renderTopMoversBlock(kpis, priceRows) {
+    if (!els.story) return;
+    var api = cryptoKpiApi();
+    if (!api.renderTopMoversCallout) return;
+    var block = (kpis && kpis.top_movers) || null;
+    if (!block || !block.movers || !block.movers.length) {
+      var computed = api.pickTopMoversFromRows
+        ? api.pickTopMoversFromRows(priceRows || state.rows, 3)
+        : [];
+      if (computed.length) {
+        block = {
+          title: "Top movers (1M)",
+          movers: computed,
+          footnote:
+            "Largest 1-month % moves in the top-50 table (stablecoins excluded). Re-run the static export to attach headline context from news feeds.",
+        };
+      }
     }
+    if (block && block.movers && block.movers.length) {
+      api.renderTopMoversCallout(els.story, block);
+      return;
+    }
+    if (api.renderStoryCallout) {
+      api.renderStoryCallout(els.story, kpis || {});
+    } else {
+      els.story.hidden = true;
+      els.story.innerHTML = "";
+    }
+  }
+
+  function renderKpi(payload, priceRows) {
+    lastKpisPayload = payload || null;
+    renderKpiStrip(payload);
+    renderTopMoversBlock(payload, priceRows);
   }
 
   function chartWidgetConfig(meta) {
@@ -425,7 +460,7 @@
     });
 
     kpisPromise.then(function (kpis) {
-      renderKpi(kpis || {});
+      renderKpi(kpis || {}, state.rows);
       if (kpis && kpis.error) showErr(kpis.error);
     });
 
@@ -434,6 +469,7 @@
       state.rows = (prices.rows || []).slice();
       updateSortClass();
       applyFilter();
+      renderTopMoversBlock(lastKpisPayload, state.rows);
       if (prices.error) showErr(prices.error);
     });
 

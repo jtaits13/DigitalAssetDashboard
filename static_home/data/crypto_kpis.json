@@ -58,5 +58,53 @@
       "Table: Spot prices, 1M % changes, and categories use the top-50 CoinGecko list (CoinCap fallback when 30-day change is missing). Hover tickers for short About summaries."
     ]
   },
-  "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change."
+  "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
+  "top_movers": {
+    "title": "Top movers (1M)",
+    "footnote": "Largest 1-month % moves in the top-50 table (stablecoins excluded). Context lines match recent headlines from dashboard news feeds, with Google News as fallback.",
+    "movers": [
+      {
+        "symbol": "ZEC",
+        "name": "Zcash",
+        "pct_30d": 73.7697,
+        "category": "l1",
+        "category_label": "Layer 1",
+        "detail_url": "https://www.coingecko.com/en/coins/zcash",
+        "direction": "up",
+        "context": {
+          "title": "Why is Zcash Price Surging 90% In a month while Bitcoin Struggles Under $78K? - CoinGape",
+          "source": "Google News",
+          "link": "https://news.google.com/rss/articles/CBMipwFBVV95cUxQM2hFQnV5aUVsS2RmcEF2RGFILXVFR0V5aHpYd002YTBhb3p3SnFqRGJVQ1loUXQ2U0t2UlE2Y2t0ZVZDNGw1U1JKOUF5VTBtWFpqaWdSeDRUa1Yyem9lc3c2OUs4TTdib0pIdWtTdU1DZmt4LUp0RTktYzVmaFY4ZFBfUGJoU2p6eTJmQWJFYU0tTWNQajlXSzZacER1TkExUUw3ZjhGcw?oc=5"
+        }
+      },
+      {
+        "symbol": "TON",
+        "name": "Toncoin",
+        "pct_30d": 44.4631,
+        "category": "l1",
+        "category_label": "Layer 1",
+        "detail_url": "https://www.coingecko.com/en/coins/the-open-network",
+        "direction": "up",
+        "context": {
+          "title": "Toncoin can revisit $1.50 before TON\u2019s next major rally begins \u2013 Here\u2019s why - AMBCrypto",
+          "source": "Google News",
+          "link": "https://news.google.com/rss/articles/CBMimAFBVV95cUxNeG82Y2RYb2d3eVRPZlpUR1pGTmt1RzBMMUhDcnk5UTBwZ0w0MEVVMDVDNDB5dmp3SlVodlB5MUdERFhqNE9RblA0LVJibm1uMFhfTnVQOEZuZHJVQUZXYVNoQVVueC1ldldhNThGVXFDQUx2eTNmWVVEVXBkVHo0T0hkYXpBRTVrcmV6bl9WMU9tNnlmZ2JNWNIBngFBVV95cUxPNC1tTzFwQ0J5VmxRalVqcTc2YlY1UmFCY0ZTUzhXN2pEdW43Nkoyck5mSjBjNEtiTUlEU2NOTGQzNk9QVXZMRm8xSWNfV1diS3VuZlNwbUQtekZXOW1lSFZDeGRlZTBJb19zb2N1ajFIMjRfbFVrekp0WTVrZjA0UTBEZFF4Q2c1RkFiWjYySG5NYXU5UFAtNS1fUTdBQQ?oc=5"
+        }
+      },
+      {
+        "symbol": "ONDO",
+        "name": "Ondo",
+        "pct_30d": 37.0896,
+        "category": "rwa",
+        "category_label": "RWA / Tokenized",
+        "detail_url": "https://www.coingecko.com/en/coins/ondo-finance",
+        "direction": "up",
+        "context": {
+          "title": "Ondo Crypto Bulls Target $0.50 After SEC Catalyst and Rising TVL - The Coin Republic",
+          "source": "Google News",
+          "link": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOREotNzhKdnktLU5LbDg3SWZDZnhQQzlkbm0tNERqUjFtNWpFSWJuTUR5MXZsT3RLZUNhaGs4LXM4MHk5ZE5TeWd2TkxvZ0hzMjJpVFp2SG16VVVlQVV0Nllad1A0UURjRlRTRlI5X0VmM3pidHZ6a1QxTmVQODZQUUJYdDF5cUFjeTNxSjBwdlpMcVUxM1RmUTZJWlF3WVZBd0VxQU5MenFyNzTSAbABQVVfeXFMTTYzNTF4UXVMRVlpVjNuSmVTbnlFTU1SaFhFN3QwM2l1X2NsQ01HbnlTOThHYWZ0aE16eUI1Q2JtZ1dwSWphYmhTX2xoNFZsSjZweWMzSVJVX1g4UFpkNkZ6TXBSOTc2WWVnTHJ0WHd0ak1HanhpaEdBZ21Id3AyUlZRcEFJWW1IakJVd1Y2TVBCWE51Uzl2TlRIVlp0TkdQUnRoUXdPclJnNF9ra1pEeXg?oc=5"
+        }
+      }
+    ]
+  }
 }

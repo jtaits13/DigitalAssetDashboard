@@ -85,9 +85,109 @@
       "</aside>";
   }
 
+  function fmtMoverPct(pct) {
+    var n = Number(pct);
+    if (!isFinite(n)) return "—";
+    var cls = n >= 0 ? "up" : "down";
+    return (
+      '<span class="pct ' +
+      cls +
+      '">' +
+      (n >= 0 ? "+" : "") +
+      n.toFixed(2) +
+      "%</span>"
+    );
+  }
+
+  function moverContextHtml(ctx) {
+    if (!ctx || !ctx.title) return "";
+    var title = escapeHtml(ctx.title);
+    var src = ctx.source ? '<span class="crypto-top-mover__source"> · ' + escapeHtml(ctx.source) + "</span>" : "";
+    if (ctx.link) {
+      return (
+        '<p class="crypto-top-mover__ctx">' +
+        '<a href="' +
+        escapeHtml(ctx.link) +
+        '" target="_blank" rel="noopener noreferrer">' +
+        title +
+        "</a>" +
+        src +
+        "</p>"
+      );
+    }
+    return '<p class="crypto-top-mover__ctx">' + title + src + "</p>";
+  }
+
+  function renderTopMoversCallout(host, block) {
+    if (!host) return;
+    block = block || {};
+    var movers = block.movers || [];
+    if (!movers.length) {
+      host.hidden = true;
+      host.innerHTML = "";
+      return;
+    }
+    host.hidden = false;
+    var items = movers
+      .map(function (m) {
+        var sym = escapeHtml(m.symbol || "");
+        var name = escapeHtml(m.name || "");
+        var head =
+          '<p class="crypto-top-mover__head">' +
+          "<strong>" +
+          sym +
+          "</strong> " +
+          fmtMoverPct(m.pct_30d) +
+          (name ? ' <span class="crypto-top-mover__name">' + name + "</span>" : "") +
+          "</p>";
+        return "<li>" + head + moverContextHtml(m.context || {}) + "</li>";
+      })
+      .join("");
+    var note = block.footnote
+      ? '<p class="crypto-story-callout__note">' + escapeHtml(block.footnote) + "</p>"
+      : "";
+    host.innerHTML =
+      '<aside class="crypto-story-callout crypto-top-movers" aria-labelledby="crypto-top-movers-title">' +
+      '<h3 class="crypto-story-callout__title" id="crypto-top-movers-title">' +
+      escapeHtml(block.title || "Top movers (1M)") +
+      "</h3>" +
+      '<ul class="crypto-story-callout__list crypto-top-movers__list">' +
+      items +
+      "</ul>" +
+      note +
+      "</aside>";
+  }
+
+  function pickTopMoversFromRows(rows, limit) {
+    limit = limit || 3;
+    var candidates = (rows || []).filter(function (r) {
+      if (!r || (r.category || "").toLowerCase() === "stablecoin") return false;
+      var p = Number(r.pct_30d);
+      return isFinite(p);
+    });
+    candidates.sort(function (a, b) {
+      return Math.abs(Number(b.pct_30d)) - Math.abs(Number(a.pct_30d));
+    });
+    return candidates.slice(0, limit).map(function (r) {
+      return {
+        symbol: r.symbol,
+        name: r.name,
+        pct_30d: Number(r.pct_30d),
+        direction: Number(r.pct_30d) >= 0 ? "up" : "down",
+        context: {
+          title:
+            "Headline context loads on the next data export; check crypto news for recent catalysts.",
+          source: "",
+        },
+      };
+    });
+  }
+
   global.__CRYPTO_KPI = {
     renderCryptoKpis: renderCryptoKpis,
     renderStoryCallout: renderStoryCallout,
+    renderTopMoversCallout: renderTopMoversCallout,
+    pickTopMoversFromRows: pickTopMoversFromRows,
     categoryLabel: function (slug) {
       var labels = {
         l1: "Layer 1",
