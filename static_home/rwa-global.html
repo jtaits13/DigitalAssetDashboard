@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=59" />
+    <link rel="stylesheet" href="styles.css?v=60" />
   </head>
   <body class="page-rwa-global" data-methodology="rwa-global">
     <header class="site-header" role="banner">
@@ -18,7 +18,7 @@
         <a class="site-brand" href="index.html">Digital Assets Dashboard</a>
         <nav class="site-nav" aria-label="Primary">
           <a href="index.html">Home</a>
-          <a href="index.html#section-news">Digital Asset News</a>
+          <a href="index.html#section-news">News Hub</a>
           <a href="crypto-prices.html">Crypto Prices</a>
           <div class="site-nav__dropdown">
             <span class="site-nav__trigger">U.S. ETPs</span>
@@ -40,9 +40,10 @@
     </header>
 
     <div class="page-back-below-header">
-      <p class="back-link back-link--below-header">
+      <nav class="back-link back-link--below-header back-link--stack" aria-label="Page navigation">
         <a href="index.html">← Back to home</a>
-      </p>
+        <a class="back-link__secondary" href="index.html#section-onchain">On-chain RWA section on home →</a>
+      </nav>
     </div>
 
     <main class="page-shell">
@@ -121,9 +122,10 @@
         <div id="js-rwa-global-bottom-cta" class="cta-row" hidden></div>
       </div>
 
-      <p class="back-link">
+      <nav class="back-link back-link--stack" aria-label="Page navigation">
         <a href="index.html">← Back to home</a>
-      </p>
+        <a class="back-link__secondary" href="index.html#section-onchain">On-chain RWA section on home →</a>
+      </nav>
     </main>
 
     <footer class="site-footer">
@@ -132,7 +134,7 @@
     </footer>
 
     <script defer src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
-    <script defer src="js/static-base.js?v=13"></script>
+    <script defer src="js/static-base.js?v=14"></script>
     <script defer src="js/page-methodology.js?v=2"></script>
     <script defer src="js/rwa-onchain-home.js?v=7"></script>
     <script defer src="js/rwa-global-page.js?v=6"></script>

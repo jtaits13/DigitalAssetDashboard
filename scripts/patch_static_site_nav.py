@@ -27,7 +27,7 @@ def make_nav(
     return f"""
         <nav class="site-nav" aria-label="Primary">
           <a href="index.html"{_ia(home)}>Home</a>
-          <a href="index.html#section-news"{_ia(news)}>Digital Asset News</a>
+          <a href="index.html#section-news"{_ia(news)}>News Hub</a>
           <a href="crypto-prices.html"{_ia(crypto)}>Crypto Prices</a>
           <div class="site-nav__dropdown">
             <span class="site-nav__trigger">U.S. ETPs</span>

@@ -494,14 +494,27 @@ body {
 
 .site-footer {
   max-width: var(--max);
-  margin: 0 auto;
-  padding: 1.5rem 1.25rem;
+  margin: 0.5rem auto 0;
+  padding: 1.35rem 1.5rem 2rem;
   text-align: center;
-  font-size: 0.75rem;
-  line-height: 1.55;
+  font-size: 0.85rem;
+  line-height: 1.5;
   color: var(--muted);
-  border-top: 1px solid var(--line);
+  border-top: 1px solid rgba(199, 216, 232, 0.9);
   background: rgba(255, 255, 255, 0.6);
+}
+
+.site-footer .timestamp-foot,
+.site-footer .site-footer__meta,
+.site-footer time {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.site-footer #js-deep-footer-note,
+.site-footer #js-exat-footer-note,
+.site-footer #js-rwa-footer {
+  color: var(--ink-soft);
 }
 
 /* —— Shared layout & nav active —— */
@@ -2017,6 +2030,19 @@ a.hub-panel-surface:hover,
 }
 
 /* —— ETP page specifics —— */
+.page-shell {
+  padding-bottom: 2.5rem;
+}
+
+.page-shell > .hub-section,
+.page-shell > section.hub-section {
+  margin-bottom: 1.75rem;
+}
+
+.page-shell > .section-rule {
+  margin: 1.25rem 0 1.5rem;
+}
+
 .page-intro {
   margin-bottom: 0.5rem;
 }
@@ -2039,12 +2065,6 @@ a.hub-panel-surface:hover,
 
 .page-intro .page-intro__title + .page-intro__dek {
   margin-top: 0.5rem;
-}
-
-.site-footer .timestamp-foot,
-.site-footer .site-footer__meta {
-  color: var(--muted);
-  font-size: 0.85rem;
 }
 
 .page-intro__dek {
@@ -2317,8 +2337,35 @@ nav.back-link {
   padding: 0 1.5rem;
 }
 
-p.back-link.back-link--below-header {
+p.back-link.back-link--below-header,
+nav.back-link.back-link--below-header {
   margin: 0.2rem 0 0.85rem;
+}
+
+.back-link--stack {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 1.35rem;
+}
+
+.back-link--stack > a,
+.back-link--stack > .back-link__secondary {
+  font-weight: 600;
+  color: var(--teal);
+  text-decoration: none;
+}
+
+.back-link--stack > .back-link__secondary {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+.back-link--stack > a:hover,
+.back-link--stack > .back-link__secondary:hover {
+  text-decoration: underline;
+  color: var(--teal);
 }
 
 /* —— Live data / Plotly / ETF news —— */

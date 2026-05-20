@@ -1,36 +1,30 @@
-"""Align static_home HTML asset versions, footers, and shared intro patterns."""
+"""Align static_home HTML: cache versions, nav labels, back links, footers, script defer."""
 from __future__ import annotations
 
 import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent / "static_home"
-CSS_V = "49"
-STATIC_BASE_V = "13"
 
-DEEP_INTRO_OLD = """      <header class="page-intro">
-        <p class="band-label teal" id="js-deep-band"></p>
-        <motion class="page-intro__dek" id="js-deep-subtitle"></motion>
-      </header>
+CSS_V = "60"
+STATIC_BASE_V = "14"
+DATA_FRESHNESS_V = "1"
+PAGE_METHODOLOGY_V = "2"
+SNAPSHOT_KPI_V = "3"
+ETP_KPI_V = "2"
+CRYPTO_KPI_V = "7"
+HOME_CRYPTO_V = "9"
+HOME_PAGE_V = "8"
+RWA_ONCHAIN_V = "7"
+RWA_GLOBAL_V = "6"
+RWA_DEEP_V = "7"
+RWA_EXPLORE_PAGE_V = "6"
+ETP_PAGE_V = "11"
+CRYPTO_PAGE_V = "17"
+ETF_NEWS_V = "2"
+FULL_ARTICLE_FEED_V = "5"
 
-      <motion class="data-banner" id="js-deep-banner" role="status" hidden></motion>
-""".replace("<motion class", "<motion class").replace(
-    '<motion class="page-intro__dek" id="js-deep-subtitle"></motion>',
-    '<div class="page-intro__dek" id="js-deep-subtitle"></div>',
-).replace(
-    '<motion class="data-banner" id="js-deep-banner" role="status" hidden></motion>',
-    '<motion class="data-banner" id="js-deep-banner" role="status" hidden></motion>',
-)
-
-DEEP_INTRO_OLD = """      <header class="page-intro">
-        <p class="band-label teal" id="js-deep-band"></p>
-        <div class="page-intro__dek" id="js-deep-subtitle"></div>
-      </header>
-
-      <div class="data-banner" id="js-deep-banner" role="status" hidden></motion>
-""".replace("</motion>", "</div>")
-
-DEEP_INTRO_NEW = """      <header class="page-intro">
+DEEP_INTRO_BLOCK = """      <header class="page-intro">
         <p class="band-label teal" id="js-deep-band"></p>
         <h1 class="page-intro__title" id="js-deep-title"></h1>
         <div class="page-intro__dek" id="js-deep-subtitle"></div>
@@ -40,13 +34,35 @@ DEEP_INTRO_NEW = """      <header class="page-intro">
       <hr class="section-rule" />
 """
 
-DEEP_FILES = [
-    "rwa-stablecoins.html",
-    "rwa-us-treasuries.html",
-    "rwa-tokenized-stocks.html",
-    "rwa-participants-networks.html",
-    "rwa-participants-platforms.html",
-    "rwa-participants-asset-managers.html",
+DEEP_FILES = frozenset(
+    {
+        "rwa-stablecoins.html",
+        "rwa-us-treasuries.html",
+        "rwa-tokenized-stocks.html",
+        "rwa-participants-networks.html",
+        "rwa-participants-platforms.html",
+        "rwa-participants-asset-managers.html",
+    }
+)
+
+SCRIPT_VERSIONS: list[tuple[str, str]] = [
+    (r"styles\.css\?v=\d+", f"styles.css?v={CSS_V}"),
+    (r"static-base\.js\?v=\d+", f"static-base.js?v={STATIC_BASE_V}"),
+    (r"data-freshness\.js\?v=\d+", f"data-freshness.js?v={DATA_FRESHNESS_V}"),
+    (r"page-methodology\.js\?v=\d+", f"page-methodology.js?v={PAGE_METHODOLOGY_V}"),
+    (r"snapshot-kpi-shared\.js\?v=\d+", f"snapshot-kpi-shared.js?v={SNAPSHOT_KPI_V}"),
+    (r"etp-kpi-shared\.js\?v=\d+", f"etp-kpi-shared.js?v={ETP_KPI_V}"),
+    (r"crypto-kpi-shared\.js\?v=\d+", f"crypto-kpi-shared.js?v={CRYPTO_KPI_V}"),
+    (r"home-crypto\.js\?v=\d+", f"home-crypto.js?v={HOME_CRYPTO_V}"),
+    (r"home-page\.js\?v=\d+", f"home-page.js?v={HOME_PAGE_V}"),
+    (r"rwa-onchain-home\.js\?v=\d+", f"rwa-onchain-home.js?v={RWA_ONCHAIN_V}"),
+    (r"rwa-global-page\.js\?v=\d+", f"rwa-global-page.js?v={RWA_GLOBAL_V}"),
+    (r"rwa-asset-deep-page\.js\?v=\d+", f"rwa-asset-deep-page.js?v={RWA_DEEP_V}"),
+    (r"rwa-explore-asset-type-page\.js\?v=\d+", f"rwa-explore-asset-type-page.js?v={RWA_EXPLORE_PAGE_V}"),
+    (r"etp-page\.js\?v=\d+", f"etp-page.js?v={ETP_PAGE_V}"),
+    (r"crypto-page\.js\?v=\d+", f"crypto-page.js?v={CRYPTO_PAGE_V}"),
+    (r"etf-news-page\.js\?v=\d+", f"etf-news-page.js?v={ETF_NEWS_V}"),
+    (r"full-article-feed-page\.js\?v=\d+", f"full-article-feed-page.js?v={FULL_ARTICLE_FEED_V}"),
 ]
 
 FOOTER_DASH = re.compile(
@@ -54,21 +70,35 @@ FOOTER_DASH = re.compile(
     re.I,
 )
 
+NAV_NEWS_OLD = '<a href="index.html#section-news">Digital Asset News</a>'
+NAV_NEWS_NEW = '<a href="index.html#section-news">News Hub</a>'
+NAV_NEWS_ACTIVE_OLD = '<a href="index.html#section-news" class="is-active">Digital Asset News</a>'
+NAV_NEWS_ACTIVE_NEW = '<a href="index.html#section-news" class="is-active">News Hub</a>'
+
+BACK_NEWS_OLD = "← Back to home (News)"
+BACK_NEWS_NEW = "← Back to home (News Hub)"
+
 
 def bump_assets(text: str) -> str:
-    text = re.sub(r"styles\.css\?v=\d+", f"styles.css?v={CSS_V}", text)
-    text = re.sub(r"static-base\.js\?v=\d+", f"static-base.js?v={STATIC_BASE_V}", text)
-    text = re.sub(
-        r'<script src="js/static-base\.js"></script>',
+    for pat, repl in SCRIPT_VERSIONS:
+        text = re.sub(pat, repl, text)
+    text = text.replace(
+        '<script src="js/static-base.js"></script>',
         f'<script defer src="js/static-base.js?v={STATIC_BASE_V}"></script>',
-        text,
     )
-    text = re.sub(r"rwa-onchain-home\.js\?v=6", "rwa-onchain-home.js?v=7", text)
+    # Prefer defer on local JS (skip plotly CDN)
     text = re.sub(
-        r'<script src="js/rwa-onchain-home\.js"></script>',
-        '<script defer src="js/rwa-onchain-home.js?v=7"></script>',
+        r'<script src="(js/[^"]+\.js\?v=\d+)"></script>',
+        r'<script defer src="\1"></script>',
         text,
     )
+    return text
+
+
+def normalize_nav_and_back(text: str) -> str:
+    text = text.replace(NAV_NEWS_ACTIVE_OLD, NAV_NEWS_ACTIVE_NEW)
+    text = text.replace(NAV_NEWS_OLD, NAV_NEWS_NEW)
+    text = text.replace(BACK_NEWS_OLD, BACK_NEWS_NEW)
     return text
 
 
@@ -80,18 +110,99 @@ def normalize_footer(text: str) -> str:
     return FOOTER_DASH.sub(repl, text)
 
 
+def ensure_deep_intro(path: Path, text: str) -> str:
+    if path.name not in DEEP_FILES:
+        return text
+    if DEEP_INTRO_BLOCK in text:
+        return text
+    # Legacy: missing h1 or wrong closing tags
+    legacy = re.search(
+        r'<header class="page-intro">[\s\S]*?</header>\s*'
+        r'<(?:div|motion)[^>]*id="js-deep-banner"[\s\S]*?>\s*'
+        r'<hr class="section-rule"\s*/>',
+        text,
+    )
+    if legacy:
+        text = text[: legacy.start()] + DEEP_INTRO_BLOCK + text[legacy.end() :]
+        print("  fixed deep intro", path.name)
+    else:
+        print("  WARN deep intro", path.name)
+    return text
+
+
+def add_hub_back_stacks(text: str, path: Path) -> str:
+    """Secondary link back to the matching home section."""
+    specs: dict[str, tuple[str, str]] = {
+        "crypto-prices.html": ("index.html#section-crypto", "Crypto section on home →"),
+        "etps.html": ("index.html#section-markets", "U.S. ETP section on home →"),
+        "rwa-global.html": ("index.html#section-onchain", "On-chain RWA section on home →"),
+    }
+    if path.name not in specs:
+        return text
+    section_href, secondary_label = specs[path.name]
+    top_old = """    <div class="page-back-below-header">
+      <p class="back-link back-link--below-header">
+        <a href="index.html">← Back to home</a>
+      </p>
+    </div>"""
+    top_new = f"""    <div class="page-back-below-header">
+      <nav class="back-link back-link--below-header back-link--stack" aria-label="Page navigation">
+        <a href="index.html">← Back to home</a>
+        <a class="back-link__secondary" href="{section_href}">{secondary_label}</a>
+      </nav>
+    </div>"""
+    bottom_old = """      <p class="back-link">
+        <a href="index.html">← Back to home</a>
+      </p>"""
+    bottom_new = f"""      <nav class="back-link back-link--stack" aria-label="Page navigation">
+        <a href="index.html">← Back to home</a>
+        <a class="back-link__secondary" href="{section_href}">{secondary_label}</a>
+      </nav>"""
+    if top_old in text and top_new not in text:
+        text = text.replace(top_old, top_new, 1)
+    if bottom_old in text and bottom_new not in text:
+        text = text.replace(bottom_old, bottom_new, 1)
+    return text
+
+
+def add_etf_news_bottom_home_link(text: str, path: Path) -> str:
+    if path.name != "etf-news.html":
+        return text
+    needle = """      <p class="back-link">
+        <a href="etps.html">← Back to U.S. ETP Overview</a>
+      </p>"""
+    replacement = """      <nav class="back-link back-link--stack" aria-label="Page navigation">
+        <a href="etps.html">← Back to U.S. ETP Overview</a>
+        <a class="back-link__secondary" href="index.html#section-news">News Hub on home →</a>
+      </nav>"""
+    if needle in text and "back-link--stack" not in text:
+        text = text.replace(needle, replacement, 1)
+        # Top back row
+        top = """    <div class="page-back-below-header">
+      <p class="back-link back-link--below-header">
+        <a href="etps.html">← Back to U.S. ETP Overview</a>
+      </p>
+    </div>"""
+        top_new = """    <div class="page-back-below-header">
+      <nav class="back-link back-link--below-header back-link--stack" aria-label="Page navigation">
+        <a href="etps.html">← Back to U.S. ETP Overview</a>
+        <a class="back-link__secondary" href="index.html#section-news">News Hub on home →</a>
+      </nav>
+    </div>"""
+        text = text.replace(top, top_new, 1)
+    return text
+
+
 def main() -> None:
     for path in sorted(ROOT.glob("*.html")):
         text = path.read_text(encoding="utf-8")
         orig = text
         text = bump_assets(text)
+        text = normalize_nav_and_back(text)
         text = normalize_footer(text)
-        if path.name in DEEP_FILES:
-            if DEEP_INTRO_OLD in text:
-                text = text.replace(DEEP_INTRO_OLD, DEEP_INTRO_NEW, 1)
-                print("deep intro", path.name)
-            else:
-                print("WARN deep intro miss", path.name)
+        text = ensure_deep_intro(path, text)
+        text = add_hub_back_stacks(text, path)
+        text = add_etf_news_bottom_home_link(text, path)
         if text != orig:
             path.write_text(text, encoding="utf-8", newline="\n")
             print("updated", path.name)
