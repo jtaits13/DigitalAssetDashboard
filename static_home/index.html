@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=49" />
+    <link rel="stylesheet" href="styles.css?v=55" />
   </head>
   <body class="page-home">
     <header class="site-header" role="banner">
@@ -70,15 +70,14 @@
         <div class="data-banner" id="js-data-banner" role="status" hidden></div>
 
         <section class="hub-section hub-section--panel" id="section-news" aria-labelledby="news-heading">
-          <h2 class="band-label teal" id="news-heading">News &amp; Regulatory</h2>
+          <h2 class="band-label teal" id="news-heading">News</h2>
           <p class="section-dek section-dek--wide">
-            Digital-asset-related headlines from CoinDesk, CoinTelegraph, Decrypt, The Block, and The Defiant.
+            Digital-asset headlines from CoinDesk, CoinTelegraph, Decrypt, The Block, and The Defiant — plus links to
+            regulatory, ETF/ETP, and custody-industry feeds.
           </p>
           <p class="data-freshness" id="js-news-as-of" hidden></p>
           <p class="cta-note cta-note--news-hub-top">
             <a href="all-articles.html">All digital asset headlines →</a>
-            <span class="cta-note__sep" aria-hidden="true">·</span>
-            <a href="all-regulatory.html">All regulatory headlines →</a>
           </p>
           <div class="lane-row">
             <article class="lane-panel">
@@ -90,19 +89,29 @@
                 <li class="headline-list__loading">Loading…</li>
               </ul>
             </article>
-            <article class="lane-panel lane-panel--reg">
+            <article class="lane-panel lane-panel--news-hub">
               <header class="lane-panel__head">
-                <span class="lane-panel__eyebrow">Regulatory wires</span>
-                <h3 class="lane-panel__title">Policy &amp; filings</h3>
+                <span class="lane-panel__eyebrow">Specialist feeds</span>
+                <h3 class="lane-panel__title">Explore news</h3>
               </header>
-              <ul class="headline-list headline-list--compact" id="js-home-reg-list">
-                <li class="headline-list__loading">Loading…</li>
-              </ul>
+              <nav class="news-hub-panels" aria-label="Specialist news feeds">
+                <a class="news-hub-panel" href="all-regulatory.html">
+                  <span class="news-hub-panel__title">Regulatory</span>
+                  <span class="news-hub-panel__desc">Policy, filings, and regulator wires</span>
+                </a>
+                <a class="news-hub-panel" href="etf-news.html">
+                  <span class="news-hub-panel__title">ETF / ETP</span>
+                  <span class="news-hub-panel__desc">Listed fund launches, flows, and issuer news</span>
+                </a>
+                <a class="news-hub-panel" href="all-custodian-news.html">
+                  <span class="news-hub-panel__title">Custody</span>
+                  <span class="news-hub-panel__desc">Custodian and digital-asset servicing headlines</span>
+                </a>
+              </nav>
             </article>
           </div>
           <div class="cta-row cta-row--news-full" role="navigation" aria-label="Full news lists">
             <a class="btn btn-primary" href="all-articles.html">All digital asset headlines →</a>
-            <a class="btn btn-secondary" href="all-regulatory.html">All regulatory headlines →</a>
           </div>
         </section>
 
@@ -275,6 +284,6 @@
     <script src="js/crypto-kpi-shared.js?v=4"></script>
     <script src="js/home-crypto.js?v=9"></script>
     <script src="js/rwa-onchain-home.js?v=7"></script>
-    <script src="js/home-page.js?v=7"></script>
+    <script src="js/home-page.js?v=8"></script>
   </body>
 </html>

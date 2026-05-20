@@ -51,6 +51,7 @@ NAV_BY_FILE: dict[str, dict[str, bool]] = {
     "index.html": {"home": True},
     "all-articles.html": {"news": True},
     "all-regulatory.html": {"news": True},
+    "all-custodian-news.html": {"news": True},
     "etf-news.html": {"etf_news": True},
     "etps.html": {"etf_data": True},
     "crypto-prices.html": {"crypto": True},

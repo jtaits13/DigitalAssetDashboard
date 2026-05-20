@@ -1,7 +1,7 @@
 /**
  * Full article list UI: load JSON export, search, paginate, group by local calendar day.
- * Configure via body: data-article-feed="all_articles.json" | "all_regulatory.json"
- * and optional data-article-feed-country="1" to show country in meta + search.
+ * Configure via body: data-article-feed="all_articles.json" | "all_regulatory.json" | "all_custodian_news.json"
+ * Optional: data-article-feed-country="1", data-article-feed-access="1" (custody paywall badges).
  */
 (function () {
   var DEFAULT_PAGE_SIZE = 20;
@@ -16,6 +16,7 @@
     return {
       feed: (b && b.getAttribute("data-article-feed") || "all_articles.json").trim(),
       includeCountry: b && b.getAttribute("data-article-feed-country") === "1",
+      includeAccess: b && b.getAttribute("data-article-feed-access") === "1",
       pageSize: pz > 0 ? pz : DEFAULT_PAGE_SIZE,
       maxPages: mp > 0 ? mp : null,
     };
@@ -35,7 +36,8 @@
           (a.summary || "") +
           " " +
           (a.source || "") +
-          (c.includeCountry ? " " + (a.country || "") : "");
+          (c.includeCountry ? " " + (a.country || "") : "") +
+          (c.includeAccess ? " " + (a.access || "") + " " + (a.category || "") : "");
         return blob.toLowerCase().indexOf(q) >= 0;
       });
     }
@@ -60,6 +62,7 @@
     var slice = sortedLimited.slice(start, start + PAGE);
     renderArticleFeedByDay(listEl, slice, {
       includeCountry: c.includeCountry,
+      includeAccess: c.includeAccess,
       emptyMessage: "No headlines match. Clear search and try again.",
       emptyClass: "article-feed-empty",
     });

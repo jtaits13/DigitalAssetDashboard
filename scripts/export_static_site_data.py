@@ -61,6 +61,7 @@ from news_feeds import (
     load_all_etf_etp_news_cached,
     load_all_feeds,
 )
+from custodian_news.client import CUSTODIAN_LOOKBACK_DAYS, detect_article_access, load_custodian_articles
 from regulatory_news.client import load_regulatory_articles
 
 OUT = _REPO / "static_home" / "data"
@@ -73,6 +74,7 @@ STATIC_THE_DEFIANT_REG_EXTRA: list[tuple[str, str, str, bool]] = [
     ("The Defiant", STATIC_THE_DEFIANT_RSS, "Global", False),
 ]
 ALL_DIGITAL_NEWS_LOOKBACK_DAYS = 7
+CUSTODIAN_ACCESS_FETCH_MAX = 25
 HOME_RWA_PREVIEW_ROWS = 8
 HOME_CRYPTO_PREVIEW_ROWS = 5
 EXPLORE_ASSET_PREVIEW_ROWS = 8
@@ -112,7 +114,7 @@ def _serialize_dt(o: object) -> str | None:
 
 def _article_json(a: dict) -> dict:
     pub = a.get("published")
-    return {
+    out = {
         "title": a.get("title") or "",
         "link": a.get("link") or "",
         "source": a.get("source") or "",
@@ -120,6 +122,28 @@ def _article_json(a: dict) -> dict:
         "summary": (a.get("summary") or "")[:500],
         "country": a.get("country") or "",
     }
+    access = a.get("access")
+    if access:
+        out["access"] = str(access)
+    category = a.get("category")
+    if category:
+        out["category"] = str(category)
+    return out
+
+
+def enrich_custodian_access(articles: list[dict[str, Any]]) -> None:
+    """Best-effort HTML paywall check for items still marked ``unknown`` (bounded)."""
+    n = 0
+    for a in articles:
+        if n >= CUSTODIAN_ACCESS_FETCH_MAX:
+            break
+        if (a.get("access") or "unknown") != "unknown":
+            continue
+        link = (a.get("link") or "").strip()
+        if not link:
+            continue
+        a["access"] = detect_article_access(link, rss_summary=a.get("summary") or "")
+        n += 1
 
 
 def _headline_norm_key(title: str) -> str:
@@ -1793,6 +1817,22 @@ def main() -> None:
     )
     (OUT / "all_regulatory.json").write_text(
         json.dumps({"items": [_article_json(a) for a in reg_articles]}, indent=2),
+        encoding="utf-8",
+    )
+
+    cust_raw, cust_errs = load_custodian_articles(per_day_cap=0)
+    for e in cust_errs:
+        manifest["errors"].append(f"custodian RSS: {e}")
+    cust_articles = articles_published_within_utc_days(cust_raw, CUSTODIAN_LOOKBACK_DAYS)
+    enrich_custodian_access(cust_articles)
+    cust_articles.sort(
+        key=lambda x: x["published"]
+        if isinstance(x.get("published"), datetime)
+        else datetime.min.replace(tzinfo=timezone.utc),
+        reverse=True,
+    )
+    (OUT / "all_custodian_news.json").write_text(
+        json.dumps({"items": [_article_json(a) for a in cust_articles]}, indent=2),
         encoding="utf-8",
     )
 

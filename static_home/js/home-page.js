@@ -1,6 +1,5 @@
 (function () {
   var newsEl = document.getElementById("js-home-news-list");
-  var regEl = document.getElementById("js-home-reg-list");
   var banner = document.getElementById("js-data-banner");
   var kpiEl = document.getElementById("js-home-kpi");
   var tblBody = document.getElementById("js-home-etp-preview");
@@ -244,9 +243,6 @@
     loadTimed("home_news.json", 12000).catch(function () {
       return { items: [] };
     }),
-    loadTimed("regulatory.json", 12000).catch(function () {
-      return { items: [] };
-    }),
     loadTimed("etp_kpis.json", 12000).catch(function () {
       return null;
     }),
@@ -260,10 +256,9 @@
     .then(function (results) {
       var manifest = results[0];
       var homeNews = results[1];
-      var reg = results[2];
-      var kpis = results[3];
-      var etps = results[4];
-      var rwaOnchain = results[5];
+      var kpis = results[2];
+      var etps = results[3];
+      var rwaOnchain = results[4];
       var sections = manifest.sections || {};
 
       if (freshApi.renderFreshness) {
@@ -299,7 +294,6 @@
       }
 
       renderList(newsEl, homeNews.items || [], true, false);
-      renderList(regEl, reg.items || [], true, true);
       renderKpi(kpis);
       etpAllRows = etps.rows || [];
       updateHomeEtpSortClass();

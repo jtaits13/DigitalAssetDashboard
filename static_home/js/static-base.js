@@ -523,6 +523,17 @@
    * Full feed pages: render items grouped by local day, with card layout.
    * ``options.includeCountry``: regulatory meta. ``options.emptyMessage`` / ``emptyClass`` for zero state.
    */
+  global.articleAccessBadgeHtml = function (access) {
+    var a = String(access || "unknown").toLowerCase();
+    if (a === "free") {
+      return '<span class="article-access article-access--free">Free</span>';
+    }
+    if (a === "subscriber") {
+      return '<span class="article-access article-access--subscriber">Subscriber</span>';
+    }
+    return '<span class="article-access article-access--unknown">Check site</span>';
+  };
+
   global.renderArticleFeedByDay = function (container, items, options) {
     options = options || {};
     var emptyMsg =
@@ -531,6 +542,7 @@
         : "No headlines match. Clear search and try again.";
     var emptyClass = options.emptyClass || "article-feed-empty";
     var includeCountry = !!options.includeCountry;
+    var includeAccess = !!options.includeAccess;
     var esc = global.escapeHtml;
     if (!container) return;
     container.innerHTML = "";
@@ -568,9 +580,11 @@
       var metaParts = [
         a.source || "",
         includeCountry && a.country ? a.country : "",
+        a.category || "",
         global.fmtTimeOnly(a.published) || "",
       ].filter(Boolean);
       var metaStr = metaParts.join(" · ");
+      var accessHtml = includeAccess ? global.articleAccessBadgeHtml(a.access) : "";
       var sumHtml = "";
       if (a.summary) {
         var snip = a.summary.length > 280 ? a.summary.substring(0, 280) + "…" : a.summary;
@@ -583,6 +597,7 @@
         esc(a.title || "Untitled") +
         "</a>" +
         '<div class="article-feed-card__meta">' +
+        accessHtml +
         esc(metaStr) +
         "</div>" +
         sumHtml;

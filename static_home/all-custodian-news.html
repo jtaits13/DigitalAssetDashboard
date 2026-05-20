@@ -3,19 +3,19 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>All regulatory headlines — Digital Assets Dashboard</title>
+    <title>All custody headlines — Digital Assets Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=49" />
+    <link rel="stylesheet" href="styles.css?v=55" />
   </head>
   <body
     class="page-full-feed page-article-feed"
-    data-article-feed="all_regulatory.json"
-    data-article-feed-country="1"
+    data-article-feed="all_custodian_news.json"
+    data-article-feed-access="1"
   >
     <header class="site-header" role="banner">
       <div class="site-header__inner">
@@ -51,10 +51,12 @@
 
     <main class="page-shell">
       <header class="page-intro">
-        <h1 class="page-intro__title">All regulatory headlines</h1>
+        <h1 class="page-intro__title">All custody headlines</h1>
         <p class="page-intro__dek">
-          Digital-asset regulatory and policy headlines from regulator, central-bank, and news feeds. Up to
-          <strong>five</strong> ranked stories per <strong>UTC day</strong>; <strong>20</strong> per page with search.
+          Crypto and digital-asset stories from
+          <a href="https://www.globalcustodian.com/" target="_blank" rel="noopener noreferrer">Global Custodian</a>
+          RSS, filtered to tokenisation, digital custody, and related servicing news. Access badges are best-effort
+          (Free / Subscriber / Check site).
         </p>
       </header>
 
@@ -69,7 +71,7 @@
             type="search"
             class="search-field__input"
             id="js-article-feed-search"
-            placeholder="Keyword in title, summary, source, or country…"
+            placeholder="Keyword in title, summary, source, or category…"
           />
         </label>
         <p class="toolbar-note" id="js-article-feed-meta">Loading…</p>
@@ -83,8 +85,8 @@
       </p>
     </main>
 
-    <footer class="site-footer">Digital Assets Dashboard · Regulatory headlines · <time datetime="2026-05">May 2026</time></footer>
-    <script defer src="js/static-base.js?v=13"></script>
-    <script src="js/full-article-feed-page.js?v=3"></script>
+    <footer class="site-footer">Digital Assets Dashboard · Custody headlines · <time datetime="2026-05">May 2026</time></footer>
+    <script defer src="js/static-base.js?v=14"></script>
+    <script src="js/full-article-feed-page.js?v=4"></script>
   </body>
 </html>
