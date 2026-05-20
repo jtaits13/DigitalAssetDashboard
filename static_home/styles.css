@@ -1758,6 +1758,24 @@ a.ticker-chip-link[title] {
   margin: 0 0 0.65rem;
 }
 
+.page-intro .band-label {
+  margin: 0 0 0.35rem;
+}
+
+.page-intro .band-label + .page-intro__title {
+  margin-top: 0;
+}
+
+.page-intro .page-intro__title + .page-intro__dek {
+  margin-top: 0.5rem;
+}
+
+.site-footer .timestamp-foot,
+.site-footer .site-footer__meta {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
 .page-intro__dek {
   font-size: 0.95rem;
   line-height: 1.55;

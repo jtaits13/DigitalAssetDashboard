@@ -235,6 +235,13 @@
     var band = $("js-deep-band");
     if (band) band.textContent = payload.band_label || "";
 
+    var titleEl = $("js-deep-title");
+    if (titleEl) {
+      var titleText = payload.page_title || "";
+      titleText = titleText.replace(/\s*[—–-]\s*Digital Assets Dashboard\s*$/i, "").trim();
+      titleEl.textContent = titleText || payload.band_label || "";
+    }
+
     var sub = $("js-deep-subtitle");
     if (sub) sub.innerHTML = payload.page_subtitle_html || "";
 

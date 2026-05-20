@@ -16,6 +16,7 @@ def make_nav(
     *,
     home: bool = False,
     news: bool = False,
+    crypto: bool = False,
     etf_news: bool = False,
     etf_data: bool = False,
     mo: bool = False,
@@ -27,6 +28,7 @@ def make_nav(
         <nav class="site-nav" aria-label="Primary">
           <a href="index.html"{_ia(home)}>Home</a>
           <a href="index.html#section-news"{_ia(news)}>Digital Asset News</a>
+          <a href="crypto-prices.html"{_ia(crypto)}>Crypto Prices</a>
           <div class="site-nav__dropdown">
             <span class="site-nav__trigger">U.S. ETPs</span>
             <ul class="site-nav__sub">
@@ -51,6 +53,7 @@ NAV_BY_FILE: dict[str, dict[str, bool]] = {
     "all-regulatory.html": {"news": True},
     "etf-news.html": {"etf_news": True},
     "etps.html": {"etf_data": True},
+    "crypto-prices.html": {"crypto": True},
     "rwa-global.html": {"mo": True},
     "rwa-explore-asset-type.html": {"rwa_assets": True},
     "rwa-explore-market-participant.html": {"rwa_part": True},
