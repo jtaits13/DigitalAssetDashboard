@@ -265,103 +265,88 @@
     );
   }
 
-  function renderConcentration(rows) {
-    if (!els.concentration) return;
-    if (typeof Plotly === "undefined") {
-      els.concentration.innerHTML =
-        '<p class="chart-fallback">Chart library did not load.</p>';
-      return;
-    }
+  /** Top funds by share of listed AUM (descending %). */
+  function buildConcentrationSeries(rows) {
     var withAum = (rows || []).filter(function (r) {
       var n = Number(r.assets_usd);
       return isFinite(n) && n > 0;
     });
-    if (!withAum.length) {
-      els.concentration.innerHTML =
-        '<p class="chart-fallback">Concentration data is unavailable right now.</p>';
-      return;
-    }
+    if (!withAum.length) return null;
     var total = withAum.reduce(function (sum, r) {
       return sum + Number(r.assets_usd);
     }, 0);
-    if (!isFinite(total) || total <= 0) {
-      els.concentration.innerHTML =
-        '<p class="chart-fallback">Concentration data is unavailable right now.</p>';
-      return;
-    }
+    if (!isFinite(total) || total <= 0) return null;
+
     var top = withAum
       .slice()
       .sort(function (a, b) {
         return Number(b.assets_usd) - Number(a.assets_usd);
       })
       .slice(0, 5);
-    var labels = top.map(function (r) {
-      return r.symbol || r.name || "—";
+    var series = top.map(function (r) {
+      return {
+        label: r.symbol || r.name || "—",
+        pct: (100 * Number(r.assets_usd)) / total,
+      };
     });
-    var values = top.map(function (r) {
-      return (100 * Number(r.assets_usd)) / total;
-    });
-    var restPct = 100 - values.reduce(function (s, v) {
-      return s + v;
+    var topSum = series.reduce(function (s, d) {
+      return s + d.pct;
     }, 0);
+    var restPct = 100 - topSum;
     if (restPct > 0.15) {
-      labels.push("All other listed");
-      values.push(restPct);
+      series.push({ label: "All other listed", pct: restPct });
     }
-    labels = labels.slice().reverse();
-    values = values.slice().reverse();
-    var maxLabelLen = labels.reduce(function (n, label) {
-      var len = String(label || "").length;
-      return len > n ? len : n;
-    }, 0);
-    var rowCount = labels.length;
-    var leftMargin = Math.min(280, Math.max(150, 56 + maxLabelLen * 8));
-    var xMax = Math.min(100, Math.max.apply(null, values) + 10);
-    var chartHeight = Math.max(240, 52 * rowCount + 88);
-    Plotly.newPlot(
-      els.concentration,
-      [
-        {
-          type: "bar",
-          orientation: "h",
-          y: labels,
-          x: values,
-          marker: { color: "#25809c" },
-          text: values.map(function (v) {
-            return v.toFixed(1) + "%";
-          }),
-          textposition: "outside",
-          cliponaxis: false,
-          hovertemplate: "%{y}<br>%{x:.1f}% of listed AUM<extra></extra>",
-        },
-      ],
-      {
-        height: chartHeight,
-        bargap: 0.28,
-        margin: { t: 24, r: 72, b: 52, l: leftMargin },
-        paper_bgcolor: "#fafcfd",
-        plot_bgcolor: "#f8fafc",
-        font: { family: "Outfit, sans-serif", size: 12, color: "#1f4c67" },
-        xaxis: {
-          title: { text: "% of listed AUM", standoff: 14 },
-          range: [0, xMax],
-          ticksuffix: "%",
-          automargin: true,
-        },
-        yaxis: {
-          type: "category",
-          categoryorder: "array",
-          categoryarray: labels,
-          automargin: true,
-          ticklabelstandoff: 16,
-          ticklabeloverflow: "allow",
-          tickfont: { size: 12 },
-          side: "left",
-        },
-        showlegend: false,
-      },
-      { responsive: true, displayModeBar: false }
+    return series;
+  }
+
+  function renderConcentration(rows) {
+    if (!els.concentration) return;
+    var series = buildConcentrationSeries(rows);
+    if (!series || !series.length) {
+      els.concentration.innerHTML =
+        '<p class="chart-fallback">Concentration data is unavailable right now.</p>';
+      return;
+    }
+
+    var xMax = Math.min(
+      100,
+      series.reduce(function (m, d) {
+        return d.pct > m ? d.pct : m;
+      }, 0) + 8
     );
+    var parts = [
+      '<figure class="etp-conc-chart" role="img" aria-labelledby="etp-conc-chart-title">',
+      '<p class="u-vh" id="etp-conc-chart-title">AUM concentration: largest funds as a percent of listed AUM</p>',
+      '<div class="etp-conc-chart__grid">',
+    ];
+
+    series.forEach(function (d) {
+      var barWidth = xMax > 0 ? (d.pct / xMax) * 100 : 0;
+      var tip = d.label + ": " + d.pct.toFixed(1) + "% of listed AUM";
+      parts.push(
+        '<div class="etp-conc-chart__row">',
+        '<span class="etp-conc-chart__label" title="' +
+          escapeHtml(tip) +
+          '">' +
+          escapeHtml(d.label) +
+          "</span>",
+        '<div class="etp-conc-chart__track" aria-hidden="true">',
+        '<span class="etp-conc-chart__bar" style="width:' +
+          barWidth.toFixed(2) +
+          '%"></span>',
+        "</div>",
+        '<span class="etp-conc-chart__pct">' + d.pct.toFixed(1) + "%</span>",
+        "</div>"
+      );
+    });
+
+    parts.push(
+      "</div>",
+      '<p class="etp-conc-chart__x-label">% of listed AUM</p>',
+      "</figure>"
+    );
+
+    els.concentration.innerHTML = parts.join("");
   }
 
   function renderPulse(items) {
