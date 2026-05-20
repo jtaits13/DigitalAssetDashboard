@@ -102,9 +102,6 @@
   function moverContextHtml(ctx) {
     if (!ctx || !ctx.title) return "";
     var title = escapeHtml(ctx.title);
-    var src = ctx.source
-      ? '<span class="crypto-top-mover__source">' + escapeHtml(ctx.source) + "</span>"
-      : "";
     if (ctx.link) {
       return (
         '<p class="crypto-top-mover__ctx">' +
@@ -112,12 +109,10 @@
         escapeHtml(ctx.link) +
         '" target="_blank" rel="noopener noreferrer">' +
         title +
-        "</a>" +
-        src +
-        "</p>"
+        "</a></p>"
       );
     }
-    return '<p class="crypto-top-mover__ctx">' + title + src + "</p>";
+    return '<p class="crypto-top-mover__ctx">' + title + "</p>";
   }
 
   function renderTopMoversCallout(host, block) {
@@ -131,9 +126,10 @@
     }
     host.hidden = false;
     var items = movers
-      .map(function (m, i) {
+      .map(function (m) {
         var sym = escapeHtml(m.symbol || "");
         var name = escapeHtml(m.name || "");
+        var label = name ? sym + " (" + name + ")" : sym;
         var pctHtml = fmtMoverPct(m.pct_30d).replace(
           'class="pct ',
           'class="crypto-top-mover__pct pct '
@@ -141,16 +137,10 @@
         var ctx = moverContextHtml(m.context || {});
         return (
           '<li class="crypto-top-mover">' +
-          '<div class="crypto-top-mover__main">' +
-          '<span class="crypto-top-mover__rank" aria-hidden="true">' +
-          String(i + 1) +
+          '<div class="crypto-top-mover__row">' +
+          '<span class="crypto-top-mover__label">' +
+          label +
           "</span>" +
-          '<div class="crypto-top-mover__identity">' +
-          '<span class="crypto-top-mover__sym">' +
-          sym +
-          "</span>" +
-          (name ? '<span class="crypto-top-mover__name">' + name + "</span>" : "") +
-          "</div>" +
           pctHtml +
           "</div>" +
           ctx +
