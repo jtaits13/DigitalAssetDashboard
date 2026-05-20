@@ -102,16 +102,6 @@
 
       <hr class="section-rule" />
 
-      <section class="hub-section etp-concentration" aria-labelledby="concentration-heading">
-        <h2 class="subsection-head" id="concentration-heading">AUM concentration (top 5 funds)</h2>
-        <p class="page-intro__dek etp-concentration__dek">
-          Share of total listed AUM held by the five largest funds (StockAnalysis snapshot).
-        </p>
-        <div id="etp-concentration-chart" class="etp-concentration-chart" role="img" aria-label="Top five funds by share of total AUM"></div>
-      </section>
-
-      <hr class="section-rule" />
-
       <div class="split-panels split-panels--etp-equal">
         <section class="split-panels__col split-panels__col--chart" aria-labelledby="aum-heading">
           <h2 class="subsection-head" id="aum-heading">Aggregate AUM trend (12 months)</h2>
@@ -148,13 +138,23 @@
 
       <hr class="section-rule" />
 
+      <section class="hub-section etp-concentration" aria-labelledby="concentration-heading">
+        <h2 class="subsection-head" id="concentration-heading">AUM concentration (top 5 funds)</h2>
+        <p class="page-intro__dek etp-concentration__dek">
+          Share of total listed AUM held by the five largest funds (StockAnalysis snapshot).
+        </p>
+        <div id="etp-concentration-chart" class="etp-concentration-chart" role="img" aria-label="Top five funds by share of total AUM"></div>
+      </section>
+
+      <hr class="section-rule" />
+
       <section class="hub-section" aria-labelledby="table-heading">
         <h2 class="subsection-head u-vh" id="table-heading">Fund table</h2>
         <label class="search-field">
           <span class="search-field__label">Search by fund name or ticker</span>
           <input type="search" class="search-field__input" id="js-etp-search" placeholder="Filter by name or ticker…" />
         </label>
-        <p class="toolbar-note" id="js-etp-toolbar"><p class="toolbar-note" id="js-etp-toolbar">Loading fund list…</p>
+        <p class="toolbar-note" id="js-etp-toolbar">Loading fund list…</p>
 
         <div class="table-wrap table-wrap--scroll">
           <table class="data-table data-table--dense data-table--sortable">
