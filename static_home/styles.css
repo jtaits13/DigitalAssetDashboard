@@ -1188,37 +1188,82 @@ a.ticker-chip-link[title] {
   margin-top: 0.35rem;
 }
 
-.crypto-top-movers__list > li {
-  list-style: none;
-  margin-left: 0;
-  padding-left: 0;
-}
-
-.crypto-top-movers__list {
-  padding-left: 0;
+.crypto-top-movers .crypto-top-movers__list {
+  margin: 0;
+  padding: 0;
   list-style: none;
 }
 
-.crypto-top-mover__head {
-  margin: 0 0 0.2rem;
-  font-size: 0.82rem;
-  line-height: 1.35;
-  color: var(--ink);
+.crypto-top-movers .crypto-top-movers__list > li + li {
+  margin-top: 0;
 }
 
-.crypto-top-mover__head .pct {
+.crypto-top-mover {
+  padding: 0.7rem 0;
+  border-bottom: 1px solid rgba(0, 105, 110, 0.14);
+}
+
+.crypto-top-mover:first-child {
+  padding-top: 0.2rem;
+}
+
+.crypto-top-mover:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.crypto-top-mover__main {
+  display: grid;
+  grid-template-columns: 1.35rem 1fr auto;
+  align-items: center;
+  column-gap: 0.65rem;
+  margin-bottom: 0.4rem;
+}
+
+.crypto-top-mover__rank {
+  font-size: 0.72rem;
   font-weight: 700;
-  margin-left: 0.15rem;
+  color: var(--teal-dark, #00696e);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  opacity: 0.85;
+}
+
+.crypto-top-mover__identity {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  min-width: 0;
+}
+
+.crypto-top-mover__sym {
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  line-height: 1.2;
 }
 
 .crypto-top-mover__name {
+  font-size: 0.76rem;
   font-weight: 500;
   color: var(--muted);
+  line-height: 1.25;
+}
+
+.crypto-top-mover__pct {
+  font-size: 0.88rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  line-height: 1.2;
 }
 
 .crypto-top-mover__ctx {
-  margin: 0;
-  font-size: 0.78rem;
+  margin: 0 0 0 2rem;
+  padding: 0.4rem 0 0.05rem 0.65rem;
+  border-left: 2px solid rgba(0, 105, 110, 0.22);
+  font-size: 0.76rem;
   line-height: 1.45;
   color: var(--muted);
 }
@@ -1227,6 +1272,7 @@ a.ticker-chip-link[title] {
   font-weight: 600;
   color: var(--teal-dark, #00696e);
   text-decoration: none;
+  display: inline;
 }
 
 .crypto-top-mover__ctx a:hover {
@@ -1234,7 +1280,22 @@ a.ticker-chip-link[title] {
 }
 
 .crypto-top-mover__source {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.7rem;
   font-weight: 500;
+  color: var(--muted);
+  opacity: 0.9;
+}
+
+.crypto-top-movers .crypto-story-callout__note {
+  margin-top: 0.65rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid rgba(0, 105, 110, 0.14);
+}
+
+.crypto-top-movers-host:empty {
+  display: none;
 }
 
 .crypto-story-callout__note {
