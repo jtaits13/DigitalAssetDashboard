@@ -839,16 +839,11 @@ a.ticker-chip-link[title] {
   border: 0;
 }
 
-/* —— News hub panels (home right lane) —— */
-.news-hub-panels {
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-}
-
-.lane-panel--news-hub .news-hub-panel {
-  display: block;
-  padding: 0.9rem 1rem 0.9rem 1.05rem;
+/* —— Hub panel surface (News Hub links + RWA Explore gateways) —— */
+.hub-panel-surface,
+.lane-panel--news-hub .news-hub-panel,
+.jd-hub-explore-card-static,
+.rwa-explore-card {
   border: 1px solid rgba(37, 128, 156, 0.22);
   border-left: 3px solid rgba(37, 128, 156, 0.55);
   border-radius: var(--radius);
@@ -860,7 +855,6 @@ a.ticker-chip-link[title] {
     #e2f0f6 100%
   );
   box-shadow: 0 1px 5px rgba(2, 29, 65, 0.06);
-  text-decoration: none;
   transition:
     border-color 0.15s ease,
     box-shadow 0.15s ease,
@@ -868,7 +862,11 @@ a.ticker-chip-link[title] {
     transform 0.15s ease;
 }
 
-.lane-panel--news-hub .news-hub-panel:hover {
+.hub-panel-surface:hover,
+a.hub-panel-surface:hover,
+.lane-panel--news-hub .news-hub-panel:hover,
+.jd-hub-explore-card-static:hover,
+.rwa-explore-card:hover {
   border-color: rgba(37, 128, 156, 0.38);
   box-shadow: 0 3px 10px rgba(37, 128, 156, 0.12);
   background-color: #ecf5f9;
@@ -879,6 +877,19 @@ a.ticker-chip-link[title] {
     #d8eaf2 100%
   );
   transform: translateY(-1px);
+}
+
+/* —— News hub panels (home right lane) —— */
+.news-hub-panels {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.lane-panel--news-hub .news-hub-panel {
+  display: block;
+  padding: 0.9rem 1rem 0.9rem 1.05rem;
+  text-decoration: none;
 }
 
 .lane-panel--news-hub .news-hub-panel__title {
@@ -1951,11 +1962,7 @@ a.ticker-chip-link[title] {
 }
 
 .jd-hub-explore-card-static {
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
   padding: 1rem 1.15rem 1.15rem;
-  background: var(--surface);
-  box-shadow: var(--shadow);
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -2945,10 +2952,8 @@ body.page-article-feed .etf-news-nav {
 }
 
 .rwa-explore-card {
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 1rem;
-  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 1rem 1.15rem 1.15rem;
 }
 
 .rwa-explore-card .eyebrow {
