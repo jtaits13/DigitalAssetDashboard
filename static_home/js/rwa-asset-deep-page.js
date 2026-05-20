@@ -253,7 +253,15 @@
     }
 
     var ko = $("js-deep-ko");
-    if (ko) ko.innerHTML = payload.key_observations_html || "";
+    if (ko) {
+      if (H.renderKeyObservationsCallout) {
+        H.renderKeyObservationsCallout(ko, payload.key_observations_html || "", {
+          title: "Key observations",
+        });
+      } else {
+        ko.innerHTML = payload.key_observations_html || "";
+      }
+    }
 
     var mode = payload.error_mode || "";
     var errMsg = payload.error_detail || "";

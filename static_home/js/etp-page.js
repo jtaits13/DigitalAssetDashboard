@@ -315,9 +315,9 @@
       return len > n ? len : n;
     }, 0);
     var rowCount = labels.length;
-    var leftMargin = Math.min(240, Math.max(128, 44 + maxLabelLen * 7.5));
+    var leftMargin = Math.min(280, Math.max(150, 56 + maxLabelLen * 8));
     var xMax = Math.min(100, Math.max.apply(null, values) + 10);
-    var chartHeight = Math.max(360, 76 * rowCount + 120);
+    var chartHeight = Math.max(240, 52 * rowCount + 88);
     Plotly.newPlot(
       els.concentration,
       [
@@ -337,8 +337,8 @@
       ],
       {
         height: chartHeight,
-        bargap: 0.42,
-        margin: { t: 44, r: 88, b: 64, l: leftMargin, pad: 8 },
+        bargap: 0.28,
+        margin: { t: 24, r: 72, b: 52, l: leftMargin },
         paper_bgcolor: "#fafcfd",
         plot_bgcolor: "#f8fafc",
         font: { family: "Outfit, sans-serif", size: 12, color: "#1f4c67" },
@@ -353,8 +353,7 @@
           categoryorder: "array",
           categoryarray: labels,
           automargin: true,
-          ticklabelstandoff: 22,
-          ticklabelpadding: 10,
+          ticklabelstandoff: 16,
           ticklabeloverflow: "allow",
           tickfont: { size: 12 },
           side: "left",

@@ -445,6 +445,50 @@
     return actions;
   }
 
+  function renderKeyObservationsCallout(host, html, options) {
+    if (!host) return false;
+    var raw = html == null ? "" : String(html);
+    if (!raw.trim()) {
+      host.innerHTML = "";
+      return false;
+    }
+    var title = (options && options.title) || "Key observations";
+    var temp = document.createElement("div");
+    temp.innerHTML = raw;
+    temp.querySelectorAll("style").forEach(function (node) {
+      node.remove();
+    });
+    var ul = temp.querySelector("ul");
+    if (!ul) {
+      host.innerHTML = raw;
+      return true;
+    }
+    var listHtml = ul.innerHTML;
+    var noteEl = temp.querySelector(
+      ".takeaways__note, .etp-takeaway-note, .rwa-gmo-takeaway-note"
+    );
+    var reviewEl = temp.querySelector(".review-note");
+    var noteHtml = "";
+    if (noteEl) {
+      noteHtml =
+        '<p class="crypto-story-callout__note">' + noteEl.innerHTML + "</p>";
+    }
+    host.innerHTML =
+      '<aside class="crypto-story-callout" aria-labelledby="key-obs-callout-title">' +
+      '<h3 class="crypto-story-callout__title" id="key-obs-callout-title">' +
+      esc(title) +
+      "</h3>" +
+      '<ul class="crypto-story-callout__list">' +
+      listHtml +
+      "</ul>" +
+      (noteHtml || "") +
+      "</aside>";
+    if (reviewEl) {
+      host.insertAdjacentHTML("beforeend", reviewEl.outerHTML);
+    }
+    return true;
+  }
+
   function renderKpis(host, kpis, legendText, kpiOpts) {
     var ko = kpiOpts || {};
     if (!host) return;
@@ -648,6 +692,7 @@
 
   /** Shared KPI/table formatters for ``rwa-global-page.js``. */
   global.__RWA_STATIC_HELPERS = {
+    renderKeyObservationsCallout: renderKeyObservationsCallout,
     renderKpis: renderKpis,
     renderTable: renderTable,
     attachRwaTableFullscreenButton: attachRwaTableFullscreenButton,

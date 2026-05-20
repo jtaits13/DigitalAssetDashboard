@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=47" />
+    <link rel="stylesheet" href="styles.css?v=48" />
   </head>
   <body class="page-etp">
     <header class="site-header" role="banner">
@@ -90,9 +90,10 @@
       </section>
 
       <section class="hub-section" aria-labelledby="obs-heading">
-        <h2 class="subsection-head" id="obs-heading">Key Observations</h2>
-        <div class="takeaways">
-          <ul>
+        <h2 class="subsection-head u-vh" id="obs-heading">Key Observations</h2>
+        <aside class="crypto-story-callout" aria-labelledby="etp-key-obs-title">
+          <h3 class="crypto-story-callout__title" id="etp-key-obs-title">Key observations</h3>
+          <ul class="crypto-story-callout__list">
             <li>
               <strong>Product access expanded quickly, then concentrated.</strong> U.S. spot Bitcoin ETP approvals in 2024
               (see
@@ -114,11 +115,11 @@
               (<a href="https://www.sec.gov/files/rules/sro/cboebzx/2024/34-101224.pdf" target="_blank" rel="noopener noreferrer">SEC approval order</a>) improve hedging and risk transfer around spot ETPs.
             </li>
           </ul>
-          <p class="takeaways__note">
+          <p class="crypto-story-callout__note">
             Context for strategy only (not investment advice). The KPI row, chart, and table below use data from StockAnalysis
             and Yahoo Finance.
           </p>
-        </div>
+        </aside>
         <p class="review-note">Reviewed monthly — Last reviewed: <strong>Apr 2026</strong></p>
       </section>
 
@@ -174,9 +175,9 @@
         <h2 class="subsection-head u-vh" id="table-heading">Fund table</h2>
         <label class="search-field">
           <span class="search-field__label">Search by fund name or ticker</span>
-          <input type="search" class="search-field__input" id="js-etp-search" placeholder="Filter by name or ticker—" />
+          <input type="search" class="search-field__input" id="js-etp-search" placeholder="Filter by name or ticker…" />
         </label>
-        <p class="toolbar-note" id="js-etp-toolbar">Loading fund list—</p>
+        <p class="toolbar-note" id="js-etp-toolbar"><p class="toolbar-note" id="js-etp-toolbar">Loading fund list…</p>
 
         <div class="table-wrap table-wrap--scroll">
           <table class="data-table data-table--dense data-table--sortable">
@@ -196,7 +197,7 @@
             </thead>
             <tbody id="js-etp-tbody">
               <tr>
-                <td colspan="10">Loading—</td>
+                <td colspan="10">Loading…</td>
               </tr>
             </tbody>
           </table>
@@ -218,6 +219,6 @@
     <script defer src="js/data-freshness.js?v=1"></script>
     <script defer src="js/snapshot-kpi-shared.js?v=3"></script>
     <script defer src="js/etp-kpi-shared.js?v=2"></script>
-    <script defer src="js/etp-page.js?v=8"></script>
+    <script defer src="js/etp-page.js?v=9"></script>
   </body>
 </html>

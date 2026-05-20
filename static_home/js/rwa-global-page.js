@@ -364,7 +364,15 @@
     renderKpis($("js-rwa-global-kpis"), data.kpis || [], data.kpi_window_note || "");
 
     var macroHost = $("js-rwa-global-macro");
-    if (macroHost) macroHost.innerHTML = data.macro_observations_html || "";
+    if (macroHost) {
+      if (H.renderKeyObservationsCallout) {
+        H.renderKeyObservationsCallout(macroHost, data.macro_observations_html || "", {
+          title: "Key observations",
+        });
+      } else {
+        macroHost.innerHTML = data.macro_observations_html || "";
+      }
+    }
 
     var exploreHost = $("js-rwa-global-explore");
     if (exploreHost) {
