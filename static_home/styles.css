@@ -2337,35 +2337,8 @@ nav.back-link {
   padding: 0 1.5rem;
 }
 
-p.back-link.back-link--below-header,
-nav.back-link.back-link--below-header {
+p.back-link.back-link--below-header {
   margin: 0.2rem 0 0.85rem;
-}
-
-.back-link--stack {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.35rem 1.35rem;
-}
-
-.back-link--stack > a,
-.back-link--stack > .back-link__secondary {
-  font-weight: 600;
-  color: var(--teal);
-  text-decoration: none;
-}
-
-.back-link--stack > .back-link__secondary {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--ink-soft);
-}
-
-.back-link--stack > a:hover,
-.back-link--stack > .back-link__secondary:hover {
-  text-decoration: underline;
-  color: var(--teal);
 }
 
 /* —— Live data / Plotly / ETF news —— */

@@ -130,69 +130,6 @@ def ensure_deep_intro(path: Path, text: str) -> str:
     return text
 
 
-def add_hub_back_stacks(text: str, path: Path) -> str:
-    """Secondary link back to the matching home section."""
-    specs: dict[str, tuple[str, str]] = {
-        "crypto-prices.html": ("index.html#section-crypto", "Crypto section on home →"),
-        "etps.html": ("index.html#section-markets", "U.S. ETP section on home →"),
-        "rwa-global.html": ("index.html#section-onchain", "On-chain RWA section on home →"),
-    }
-    if path.name not in specs:
-        return text
-    section_href, secondary_label = specs[path.name]
-    top_old = """    <div class="page-back-below-header">
-      <p class="back-link back-link--below-header">
-        <a href="index.html">← Back to home</a>
-      </p>
-    </div>"""
-    top_new = f"""    <div class="page-back-below-header">
-      <nav class="back-link back-link--below-header back-link--stack" aria-label="Page navigation">
-        <a href="index.html">← Back to home</a>
-        <a class="back-link__secondary" href="{section_href}">{secondary_label}</a>
-      </nav>
-    </div>"""
-    bottom_old = """      <p class="back-link">
-        <a href="index.html">← Back to home</a>
-      </p>"""
-    bottom_new = f"""      <nav class="back-link back-link--stack" aria-label="Page navigation">
-        <a href="index.html">← Back to home</a>
-        <a class="back-link__secondary" href="{section_href}">{secondary_label}</a>
-      </nav>"""
-    if top_old in text and top_new not in text:
-        text = text.replace(top_old, top_new, 1)
-    if bottom_old in text and bottom_new not in text:
-        text = text.replace(bottom_old, bottom_new, 1)
-    return text
-
-
-def add_etf_news_bottom_home_link(text: str, path: Path) -> str:
-    if path.name != "etf-news.html":
-        return text
-    needle = """      <p class="back-link">
-        <a href="etps.html">← Back to U.S. ETP Overview</a>
-      </p>"""
-    replacement = """      <nav class="back-link back-link--stack" aria-label="Page navigation">
-        <a href="etps.html">← Back to U.S. ETP Overview</a>
-        <a class="back-link__secondary" href="index.html#section-news">News Hub on home →</a>
-      </nav>"""
-    if needle in text and "back-link--stack" not in text:
-        text = text.replace(needle, replacement, 1)
-        # Top back row
-        top = """    <div class="page-back-below-header">
-      <p class="back-link back-link--below-header">
-        <a href="etps.html">← Back to U.S. ETP Overview</a>
-      </p>
-    </div>"""
-        top_new = """    <div class="page-back-below-header">
-      <nav class="back-link back-link--below-header back-link--stack" aria-label="Page navigation">
-        <a href="etps.html">← Back to U.S. ETP Overview</a>
-        <a class="back-link__secondary" href="index.html#section-news">News Hub on home →</a>
-      </nav>
-    </div>"""
-        text = text.replace(top, top_new, 1)
-    return text
-
-
 def main() -> None:
     for path in sorted(ROOT.glob("*.html")):
         text = path.read_text(encoding="utf-8")
@@ -201,8 +138,6 @@ def main() -> None:
         text = normalize_nav_and_back(text)
         text = normalize_footer(text)
         text = ensure_deep_intro(path, text)
-        text = add_hub_back_stacks(text, path)
-        text = add_etf_news_bottom_home_link(text, path)
         if text != orig:
             path.write_text(text, encoding="utf-8", newline="\n")
             print("updated", path.name)
