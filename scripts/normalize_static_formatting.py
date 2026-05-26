@@ -6,14 +6,14 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent / "static_home"
 
-CSS_V = "61"
+CSS_V = "62"
 STATIC_BASE_V = "14"
 KPI_HINTS_V = "2"
 DATA_FRESHNESS_V = "1"
 PAGE_METHODOLOGY_V = "2"
 SNAPSHOT_KPI_V = "4"
 ETP_KPI_V = "2"
-CRYPTO_KPI_V = "8"
+CRYPTO_KPI_V = "9"
 HOME_CRYPTO_V = "9"
 HOME_PAGE_V = "8"
 RWA_ONCHAIN_V = "8"

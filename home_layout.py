@@ -28,6 +28,17 @@ def _add_calendar_months(year: int, month: int, delta: int) -> tuple[int, int]:
     return adj_year, adj_month
 
 
+def _monthly_review_state(*, year: int, month: int) -> tuple[bool, str, int]:
+    """``(is_overdue, label_str, age_days)`` for ``year``–``month`` (first of month UTC)."""
+    last_review = datetime(year, month, 1, tzinfo=timezone.utc)
+    now = datetime.now(timezone.utc)
+    label = last_review.strftime("%b %Y")
+    overdue_year, overdue_month = _add_calendar_months(year, month, 3)
+    overdue_threshold = datetime(overdue_year, overdue_month, 1, tzinfo=timezone.utc)
+    age_days = max(0, (now - last_review).days)
+    return (now >= overdue_threshold, label, age_days)
+
+
 def monthly_review_note_html(*, year: int = 2026, month: int = 4) -> str:
     """
     Footnote HTML for keyed headline / observations blocks.
@@ -35,13 +46,8 @@ def monthly_review_note_html(*, year: int = 2026, month: int = 4) -> str:
     Shows **Review due** (red) only once **three** full calendar months have passed since ``year``–``month``
     (treated as the first day of that month in UTC); otherwise shows a neutral last-reviewed line.
     """
-    last_review = datetime(year, month, 1, tzinfo=timezone.utc)
-    now = datetime.now(timezone.utc)
-    label = last_review.strftime("%b %Y")
-    overdue_year, overdue_month = _add_calendar_months(year, month, 3)
-    overdue_threshold = datetime(overdue_year, overdue_month, 1, tzinfo=timezone.utc)
-    if now >= overdue_threshold:
-        age_days = max(0, (now - last_review).days)
+    overdue, label, age_days = _monthly_review_state(year=year, month=month)
+    if overdue:
         return (
             '<p style="margin:0.1rem 0 0.55rem 0;color:#b91c1c;font-size:0.78rem;">'
             f"<strong>Review due:</strong> last reviewed {label} ({age_days} days ago).</p>"
@@ -49,6 +55,23 @@ def monthly_review_note_html(*, year: int = 2026, month: int = 4) -> str:
     return (
         '<p style="margin:0.1rem 0 0.55rem 0;color:#3E6A7A;font-size:0.78rem;">'
         f"Reviewed monthly · Last reviewed: {label}</p>"
+    )
+
+
+def monthly_review_note_class_html(*, year: int = 2026, month: int = 4) -> str:
+    """
+    Same calendar logic as :func:`monthly_review_note_html` but uses ``review-note`` classes
+    (matches static ETF / hub pages: em dash, strong month label).
+    """
+    overdue, label, age_days = _monthly_review_state(year=year, month=month)
+    label_e = escape(label)
+    if overdue:
+        return (
+            '<p class="review-note review-note--due">'
+            f"<strong>Review due:</strong> last reviewed {label_e} ({age_days} days ago).</p>"
+        )
+    return (
+        f'<p class="review-note">Reviewed monthly — Last reviewed: <strong>{label_e}</strong></p>'
     )
 
 

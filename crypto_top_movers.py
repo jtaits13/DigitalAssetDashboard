@@ -3,11 +3,16 @@
 from __future__ import annotations
 
 import re
+import statistics
+from collections import defaultdict
 from html import escape
 from typing import Any
 from urllib.parse import quote_plus
 
 import feedparser
+
+from crypto_categories import category_label, crypto_category
+from home_layout import monthly_review_note_class_html
 
 MOVER_EXCLUDE_CATEGORIES: frozenset[str] = frozenset({"stablecoin"})
 
@@ -222,29 +227,159 @@ def top_movers_callout_payload(
     }
 
 
-def _fmt_signed_pct(pct: float | None) -> str:
-    if pct is None:
-        return "—"
+def _row_cap_usd(row: dict[str, Any]) -> float:
     try:
-        n = float(pct)
+        v = float(row.get("market_cap_usd") or 0)
     except (TypeError, ValueError):
-        return "—"
-    if n != n:
-        return "—"
-    return f"{n:+.2f}%"
+        return 0.0
+    return v if v > 0 else 0.0
 
 
-def _kpi_line(label: str, value: str, pct: float | None, *, window: str = "1M") -> str:
-    delta = _fmt_signed_pct(pct)
-    if delta == "—":
-        return f"<strong>{escape(label)}:</strong> {escape(value)}."
+def _delta_pct_from_kpi(block: dict[str, Any] | None) -> float | None:
+    if not block:
+        return None
+    d = block.get("delta") or {}
+    p = d.get("pct")
+    if p is None:
+        return None
+    try:
+        v = float(p)
+    except (TypeError, ValueError):
+        return None
+    if v != v:
+        return None
+    return v
+
+
+def _breadth_takeaway_li(rows: list[dict[str, Any]]) -> str:
+    """Up / down / flat counts among non-stable names with a 1M % change."""
+    up = down = flat = 0
+    for row in rows:
+        cat = str(row.get("category") or "").lower()
+        if cat in MOVER_EXCLUDE_CATEGORIES:
+            continue
+        pct = _pct_30d(row)
+        if pct is None:
+            continue
+        if pct > 0.5:
+            up += 1
+        elif pct < -0.5:
+            down += 1
+        else:
+            flat += 1
+    n = up + down + flat
+    if n < 5:
+        return ""
+    tone = (
+        "a risk-on skew"
+        if up > down + 5
+        else "a defensive skew"
+        if down > up + 5
+        else "mixed breadth"
+    )
     return (
-        f"<strong>{escape(label)}:</strong> {escape(value)} "
-        f"({delta} over {escape(window)})."
+        "<li><strong>Breadth (1M, top-50 ex. stablecoins):</strong> "
+        f"{up} names up more than ~0.5%, {down} down more than ~0.5%, and {flat} roughly flat "
+        f"out of <strong>{n}</strong> with a valid 1M %—{tone} in this snapshot.</li>"
     )
 
 
-def _mover_takeaway_li(mover: dict[str, Any]) -> str:
+def _category_rotation_takeaway_li(rows: list[dict[str, Any]]) -> str:
+    """Cap-weighted average 1M % by coarse category (l1, defi, meme, cex, rwa, other)."""
+    sums: dict[str, list[tuple[float, float]]] = defaultdict(list)
+    for row in rows:
+        sym = str(row.get("symbol") or "").strip().upper()
+        name = str(row.get("name") or "")
+        cat = crypto_category(sym, name)
+        if cat in MOVER_EXCLUDE_CATEGORIES:
+            continue
+        pct = _pct_30d(row)
+        if pct is None:
+            continue
+        cap = _row_cap_usd(row)
+        sums[cat].append((pct, cap))
+
+    avgs: dict[str, float] = {}
+    for cat, pairs in sums.items():
+        tw = sum(c for _, c in pairs)
+        if tw > 0:
+            avgs[cat] = sum(p * c for p, c in pairs) / tw
+        elif pairs:
+            avgs[cat] = statistics.mean(p for p, _ in pairs)
+
+    if len(avgs) < 2:
+        return ""
+
+    best_cat = max(avgs, key=avgs.get)
+    worst_cat = min(avgs, key=avgs.get)
+    if best_cat == worst_cat:
+        return ""
+    b = avgs[best_cat]
+    w = avgs[worst_cat]
+    if abs(b - w) < 0.35:
+        return ""
+
+    bl = escape(category_label(best_cat))
+    wl = escape(category_label(worst_cat))
+    return (
+        "<li><strong>Category rotation (cap-weighted 1M % in the top-50):</strong> "
+        f"<strong>{bl}</strong> averaged about <strong>{b:+.1f}%</strong>, while "
+        f"<strong>{wl}</strong> averaged about <strong>{w:+.1f}%</strong>—the widest spread among tab buckets.</li>"
+    )
+
+
+def _structure_takeaway_li(_rows: list[dict[str, Any]], kpis: dict[str, Any]) -> str:
+    """Interpretation: majors vs alts, dominance vs flat total, or stablecoin share shift."""
+    btc_d = _delta_pct_from_kpi(kpis.get("btc"))
+    eth_d = _delta_pct_from_kpi(kpis.get("eth"))
+    primary_d = _delta_pct_from_kpi(kpis.get("primary"))
+    dom_d = _delta_pct_from_kpi(kpis.get("btc_dominance"))
+    st_d = _delta_pct_from_kpi(kpis.get("stablecoin_share"))
+
+    if btc_d is not None and eth_d is not None:
+        spread = btc_d - eth_d
+        if abs(spread) >= 0.75:
+            if spread > 0:
+                body = (
+                    f"<strong>BTC</strong> outpaced <strong>ETH</strong> by about <strong>{spread:.1f}pp</strong> "
+                    "over 1M on spot (top-50 table)."
+                )
+            else:
+                body = (
+                    f"<strong>ETH</strong> outpaced <strong>BTC</strong> by about <strong>{abs(spread):.1f}pp</strong> "
+                    "over 1M on spot (top-50 table)."
+                )
+            return "<li><strong>Structure:</strong> " + body + "</li>"
+
+    if primary_d is not None and dom_d is not None and abs(primary_d) < 2.0 and abs(dom_d) >= 0.12:
+        body = (
+            f"Aggregate market cap moved only about <strong>{primary_d:+.1f}%</strong> over 1M while "
+            f"<strong>BTC dominance</strong> shifted about <strong>{dom_d:+.2f}pp</strong>—"
+            "suggesting how much of the tape was Bitcoin vs the rest."
+        )
+        return "<li><strong>Structure:</strong> " + body + "</li>"
+
+    if st_d is not None and dom_d is not None and abs(st_d) >= 0.08:
+        body = (
+            f"<strong>Stablecoin share</strong> of the top-50 list moved about <strong>{st_d:+.2f}pp</strong> over 1M "
+            f"alongside a <strong>BTC dominance</strong> change of about <strong>{dom_d:+.2f}pp</strong>."
+        )
+        return "<li><strong>Structure:</strong> " + body + "</li>"
+
+    dom_v = (kpis.get("btc_dominance") or {}).get("value_display")
+    st_v = (kpis.get("stablecoin_share") or {}).get("value_display")
+    if dom_v and st_v:
+        body = (
+            f"Compare <strong>BTC dominance</strong> ({escape(str(dom_v))}) with "
+            f"<strong>stablecoin share of the top-50</strong> ({escape(str(st_v))}) "
+            "to see whether liquidity and beta leaned the same direction this month."
+        )
+        return "<li><strong>Structure:</strong> " + body + "</li>"
+
+    return ""
+
+
+def _mover_takeaway_li(mover: dict[str, Any], *, superlative: str = "the largest") -> str:
     sym = escape(str(mover.get("symbol") or ""))
     name = escape(str(mover.get("name") or sym))
     pct = float(mover.get("pct_30d") or 0)
@@ -254,7 +389,7 @@ def _mover_takeaway_li(mover: dict[str, Any]) -> str:
     link = str(ctx.get("link") or "").strip()
     lead = (
         f"<strong>{sym}</strong> ({name}) {direction} about <strong>{abs(pct):.1f}%</strong> "
-        f"over one month—the largest move in the top-50 table (stablecoins excluded)."
+        f"over one month—{superlative} moves in the top-50 table (stablecoins excluded)."
     )
     if headline and "no recent headline matched" not in headline.lower():
         if link:
@@ -274,64 +409,41 @@ def crypto_key_takeaways_html(
     *,
     mover_limit: int = 3,
 ) -> str:
-    """HTML ``ul`` block for static Key observations (ETP / RWA callout pattern)."""
+    """HTML for static Key observations: breadth, category mix, structure, one mover + footnotes."""
+    del mover_limit  # single-mover headline; keep param for callers
     bullets: list[str] = []
 
-    primary = kpis.get("primary") or {}
-    if primary.get("value_display"):
-        delta = (primary.get("delta") or {}).get("pct")
-        bullets.append(
-            "<li>"
-            + _kpi_line(
-                str(primary.get("label") or "Total market cap"),
-                str(primary.get("value_display") or "—"),
-                delta,
-            )
-            + "</li>"
-        )
+    b1 = _breadth_takeaway_li(rows)
+    if b1:
+        bullets.append(b1)
 
-    btc_dom = kpis.get("btc_dominance") or {}
-    stable = kpis.get("stablecoin_share") or {}
-    if btc_dom.get("value_display") and stable.get("value_display"):
-        dom_pct = (btc_dom.get("delta") or {}).get("pct")
-        st_pct = (stable.get("delta") or {}).get("pct")
-        bullets.append(
-            "<li>"
-            + _kpi_line("BTC dominance", str(btc_dom.get("value_display")), dom_pct)
-            + " "
-            + _kpi_line("stablecoin share of the top-50 list", str(stable.get("value_display")), st_pct)
-            + "</li>"
-        )
+    b2 = _category_rotation_takeaway_li(rows)
+    if b2:
+        bullets.append(b2)
 
-    btc = kpis.get("btc") or {}
-    eth = kpis.get("eth") or {}
-    if btc.get("value_display") and eth.get("value_display"):
-        bullets.append(
-            "<li>"
-            + _kpi_line("BTC", str(btc.get("value_display")), (btc.get("delta") or {}).get("pct"))
-            + " "
-            + _kpi_line("ETH", str(eth.get("value_display")), (eth.get("delta") or {}).get("pct"))
-            + " Spot prices are from the top-50 table (CoinGecko with CoinCap fallback).</li>"
-        )
+    b3 = _structure_takeaway_li(rows, kpis)
+    if b3:
+        bullets.append(b3)
 
-    movers = enrich_movers_with_context(
-        pick_top_movers(rows, limit=mover_limit),
-        articles,
-    )
-    bullets.extend(_mover_takeaway_li(m) for m in movers)
+    movers = enrich_movers_with_context(pick_top_movers(rows, limit=1), articles)
+    if movers:
+        bullets.append(_mover_takeaway_li(movers[0], superlative="among the largest"))
 
     if not bullets:
         return ""
 
     note = (
-        '<p class="takeaways__note">Context only—not investment advice. KPIs use CoinPaprika and the top-50 '
-        "list; headline links are matched from dashboard news feeds (Google News fallback).</p>"
+        '<p class="takeaways__note">Context only—not investment advice. Observations are derived from the '
+        "top-50 table and KPI math described on this page; optional headline links use dashboard news feeds "
+        "(Google News fallback).</p>"
     )
+    review = monthly_review_note_class_html()
     return (
         '<div class="takeaways">'
         '<ul class="crypto-story-callout__list">'
         + "".join(bullets)
         + "</ul>"
         + note
+        + review
         + "</div>"
     )

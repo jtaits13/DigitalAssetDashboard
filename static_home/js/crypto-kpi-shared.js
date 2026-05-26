@@ -152,6 +152,7 @@
     var noteHtml = noteEl
       ? '<p class="crypto-story-callout__note">' + noteEl.innerHTML + "</p>"
       : "";
+    var reviewEl = temp.querySelector(".review-note");
     host.innerHTML =
       '<aside class="crypto-story-callout" aria-labelledby="crypto-key-obs-title">' +
       '<h3 class="crypto-story-callout__title" id="crypto-key-obs-title">' +
@@ -162,6 +163,9 @@
       "</ul>" +
       noteHtml +
       "</aside>";
+    if (reviewEl) {
+      host.insertAdjacentHTML("beforeend", reviewEl.outerHTML);
+    }
     return true;
   }
 
