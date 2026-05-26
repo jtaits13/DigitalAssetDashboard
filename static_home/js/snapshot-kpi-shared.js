@@ -31,11 +31,19 @@
     );
   }
 
-  function snapshotCell(label, valueDisplay, deltaHtml) {
+  function wrapLabel(label, hint) {
+    var H = global.__KPI_HINTS;
+    if (H && typeof H.wrapKpiLabel === "function") {
+      return H.wrapKpiLabel(label, hint);
+    }
+    return esc(label);
+  }
+
+  function snapshotCell(label, valueDisplay, deltaHtml, hint) {
     return (
       '<div class="rwa-kpi-cell">' +
       '<span class="rwa-kpi-label">' +
-      esc(label) +
+      wrapLabel(label, hint) +
       "</span>" +
       '<span class="rwa-kpi-val">' +
       esc(valueDisplay != null && valueDisplay !== "" ? valueDisplay : "—") +
@@ -55,6 +63,9 @@
       '<div class="rwa-kpi-row rwa-kpi-row--home-grid">' +
       cellsHtml +
       "</div></div>";
+    if (global.__KPI_HINTS && typeof global.__KPI_HINTS.bindKpiHints === "function") {
+      global.__KPI_HINTS.bindKpiHints(host);
+    }
   }
 
   function renderCryptoSnapshot(host, payload) {
@@ -69,7 +80,7 @@
       .map(function (p) {
         var delta =
           p.delta && p.delta.pct != null ? pct(p.delta.pct) : '<span class="rwa-kpi-delta neutral">—</span>';
-        return snapshotCell(p.label, p.value_display, delta);
+        return snapshotCell(p.label, p.value_display, delta, p.hint);
       })
       .join("");
     if (!cells) {

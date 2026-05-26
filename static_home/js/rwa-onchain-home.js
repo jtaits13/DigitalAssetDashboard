@@ -504,10 +504,14 @@
     host.style.display = "";
     var cells = kpis
       .map(function (k) {
+        var labelHtml =
+          global.__KPI_HINTS && typeof global.__KPI_HINTS.wrapKpiLabel === "function"
+            ? global.__KPI_HINTS.wrapKpiLabel(k.label, k.hint)
+            : esc(k.label);
         return (
           '<div class="rwa-kpi-cell">' +
           '<span class="rwa-kpi-label">' +
-          esc(k.label) +
+          labelHtml +
           "</span>" +
           '<span class="rwa-kpi-val">' +
           esc(k.value_display) +
@@ -525,6 +529,9 @@
       '<div class="rwa-kpi-row rwa-kpi-row--home-grid">' +
       cells +
       "</div></div>";
+    if (global.__KPI_HINTS && typeof global.__KPI_HINTS.bindKpiHints === "function") {
+      global.__KPI_HINTS.bindKpiHints(host);
+    }
   }
 
   function renderTable(theadRow, tbody, columns, rows, tableOpts) {

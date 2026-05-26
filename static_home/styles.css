@@ -1679,6 +1679,26 @@ a.hub-panel-surface:hover,
   letter-spacing: 0.02em;
 }
 
+.rwa-kpi-label .crypto-hint,
+.kpi-label .crypto-hint {
+  cursor: help;
+}
+
+.rwa-kpi-label .crypto-hint__label,
+.kpi-label .crypto-hint__label {
+  font-weight: 700;
+  color: var(--ink-soft);
+  text-decoration: underline dotted;
+  text-decoration-color: rgba(37, 128, 156, 0.65);
+  text-underline-offset: 0.18em;
+}
+
+.rwa-kpi-label .crypto-hint__bubble,
+.kpi-label .crypto-hint__bubble {
+  font-weight: 500;
+  max-width: min(22rem, 92vw);
+}
+
 .crypto-hint__bubble {
   display: none;
   position: absolute;

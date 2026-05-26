@@ -27,10 +27,14 @@
     var sub = item.subnote
       ? '<span class="kpi-subnote">' + escapeHtml(item.subnote) + "</span>"
       : "";
+    var labelHtml =
+      global.__KPI_HINTS && typeof global.__KPI_HINTS.wrapKpiLabel === "function"
+        ? global.__KPI_HINTS.wrapKpiLabel(item.label, item.hint)
+        : escapeHtml(item.label || "");
     return (
       '<div class="kpi-cell">' +
       '<span class="kpi-label">' +
-      escapeHtml(item.label || "") +
+      labelHtml +
       "</span>" +
       '<span class="kpi-val">' +
       escapeHtml(item.value_display || "—") +
@@ -46,6 +50,9 @@
     var snap = global.__SNAPSHOT_KPI;
     if (snap && typeof snap.renderCryptoSnapshot === "function") {
       snap.renderCryptoSnapshot(host, payload || {});
+      if (global.__KPI_HINTS && typeof global.__KPI_HINTS.bindKpiHints === "function") {
+        global.__KPI_HINTS.bindKpiHints(host);
+      }
       return;
     }
     payload = payload || {};
@@ -58,6 +65,9 @@
         return kpiCell(p, null);
       })
       .join("");
+    if (global.__KPI_HINTS && typeof global.__KPI_HINTS.bindKpiHints === "function") {
+      global.__KPI_HINTS.bindKpiHints(host);
+    }
   }
 
   function renderStoryCallout(host, payload) {

@@ -6,16 +6,17 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent / "static_home"
 
-CSS_V = "60"
+CSS_V = "61"
 STATIC_BASE_V = "14"
+KPI_HINTS_V = "2"
 DATA_FRESHNESS_V = "1"
 PAGE_METHODOLOGY_V = "2"
-SNAPSHOT_KPI_V = "3"
+SNAPSHOT_KPI_V = "4"
 ETP_KPI_V = "2"
-CRYPTO_KPI_V = "7"
+CRYPTO_KPI_V = "8"
 HOME_CRYPTO_V = "9"
 HOME_PAGE_V = "8"
-RWA_ONCHAIN_V = "7"
+RWA_ONCHAIN_V = "8"
 RWA_GLOBAL_V = "6"
 RWA_DEEP_V = "7"
 RWA_EXPLORE_PAGE_V = "6"
@@ -48,6 +49,7 @@ DEEP_FILES = frozenset(
 SCRIPT_VERSIONS: list[tuple[str, str]] = [
     (r"styles\.css\?v=\d+", f"styles.css?v={CSS_V}"),
     (r"static-base\.js\?v=\d+", f"static-base.js?v={STATIC_BASE_V}"),
+    (r"kpi-hints\.js\?v=\d+", f"kpi-hints.js?v={KPI_HINTS_V}"),
     (r"data-freshness\.js\?v=\d+", f"data-freshness.js?v={DATA_FRESHNESS_V}"),
     (r"page-methodology\.js\?v=\d+", f"page-methodology.js?v={PAGE_METHODOLOGY_V}"),
     (r"snapshot-kpi-shared\.js\?v=\d+", f"snapshot-kpi-shared.js?v={SNAPSHOT_KPI_V}"),
@@ -79,6 +81,22 @@ BACK_NEWS_OLD = "← Back to home (News)"
 BACK_NEWS_NEW = "← Back to home (News Hub)"
 
 
+KPI_HINTS_TAG = f'<script defer src="js/kpi-hints.js?v={KPI_HINTS_V}"></script>'
+
+
+def ensure_kpi_hints_script(text: str) -> str:
+    if "kpi-hints.js" in text:
+        return text
+    needle = re.search(
+        r'<script defer src="js/static-base\.js\?v=\d+"></script>',
+        text,
+    )
+    if not needle:
+        return text
+    insert_at = needle.end()
+    return text[:insert_at] + "\n    " + KPI_HINTS_TAG + text[insert_at:]
+
+
 def bump_assets(text: str) -> str:
     for pat, repl in SCRIPT_VERSIONS:
         text = re.sub(pat, repl, text)
@@ -86,6 +104,7 @@ def bump_assets(text: str) -> str:
         '<script src="js/static-base.js"></script>',
         f'<script defer src="js/static-base.js?v={STATIC_BASE_V}"></script>',
     )
+    text = ensure_kpi_hints_script(text)
     # Prefer defer on local JS (skip plotly CDN)
     text = re.sub(
         r'<script src="(js/[^"]+\.js\?v=\d+)"></script>',
