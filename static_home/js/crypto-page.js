@@ -31,7 +31,7 @@
   var els = {
     banner: document.getElementById("js-data-banner"),
     kpi: document.getElementById("js-crypto-kpi"),
-    story: document.getElementById("js-crypto-story"),
+    keyObs: document.getElementById("js-crypto-key-obs"),
     chart: document.getElementById("crypto-market-cap-chart"),
     search: document.getElementById("js-crypto-search"),
     tabs: document.getElementById("js-crypto-category-tabs"),
@@ -148,40 +148,21 @@
     }
   }
 
-  function renderTopMoversBlock(kpis, priceRows) {
-    if (!els.story) return;
+  function renderKeyObservationsBlock(kpis) {
+    if (!els.keyObs) return;
     var api = cryptoKpiApi();
-    if (!api.renderTopMoversCallout) return;
-    var block = (kpis && kpis.top_movers) || null;
-    if (!block || !block.movers || !block.movers.length) {
-      var computed = api.pickTopMoversFromRows
-        ? api.pickTopMoversFromRows(priceRows || state.rows, 3)
-        : [];
-      if (computed.length) {
-        block = {
-          title: "Top movers (1M)",
-          movers: computed,
-          footnote:
-            "Largest 1-month % moves in the top-50 table (stablecoins excluded). Re-run the static export to attach headline context from news feeds.",
-        };
-      }
-    }
-    if (block && block.movers && block.movers.length) {
-      api.renderTopMoversCallout(els.story, block);
+    var html = (kpis && kpis.key_observations_html) || "";
+    if (api.renderKeyObservationsCallout && api.renderKeyObservationsCallout(els.keyObs, html)) {
       return;
     }
-    if (api.renderStoryCallout) {
-      api.renderStoryCallout(els.story, kpis || {});
-    } else {
-      els.story.hidden = true;
-      els.story.innerHTML = "";
-    }
+    els.keyObs.hidden = true;
+    els.keyObs.innerHTML = "";
   }
 
   function renderKpi(payload, priceRows) {
     lastKpisPayload = payload || null;
     renderKpiStrip(payload);
-    renderTopMoversBlock(payload, priceRows);
+    renderKeyObservationsBlock(payload);
   }
 
   function chartWidgetConfig(meta) {
@@ -469,7 +450,7 @@
       state.rows = (prices.rows || []).slice();
       updateSortClass();
       applyFilter();
-      renderTopMoversBlock(lastKpisPayload, state.rows);
+      renderKeyObservationsBlock(lastKpisPayload);
       if (prices.error) showErr(prices.error);
     });
 

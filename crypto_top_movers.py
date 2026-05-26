@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+from html import escape
 from typing import Any
 from urllib.parse import quote_plus
 
@@ -219,3 +220,118 @@ def top_movers_callout_payload(
         ),
         "movers": movers,
     }
+
+
+def _fmt_signed_pct(pct: float | None) -> str:
+    if pct is None:
+        return "—"
+    try:
+        n = float(pct)
+    except (TypeError, ValueError):
+        return "—"
+    if n != n:
+        return "—"
+    return f"{n:+.2f}%"
+
+
+def _kpi_line(label: str, value: str, pct: float | None, *, window: str = "1M") -> str:
+    delta = _fmt_signed_pct(pct)
+    if delta == "—":
+        return f"<strong>{escape(label)}:</strong> {escape(value)}."
+    return (
+        f"<strong>{escape(label)}:</strong> {escape(value)} "
+        f"({delta} over {escape(window)})."
+    )
+
+
+def _mover_takeaway_li(mover: dict[str, Any]) -> str:
+    sym = escape(str(mover.get("symbol") or ""))
+    name = escape(str(mover.get("name") or sym))
+    pct = float(mover.get("pct_30d") or 0)
+    direction = "gained" if pct >= 0 else "lost"
+    ctx = mover.get("context") or {}
+    headline = str(ctx.get("title") or "").strip()
+    link = str(ctx.get("link") or "").strip()
+    lead = (
+        f"<strong>{sym}</strong> ({name}) {direction} about <strong>{abs(pct):.1f}%</strong> "
+        f"over one month—the largest move in the top-50 table (stablecoins excluded)."
+    )
+    if headline and "no recent headline matched" not in headline.lower():
+        if link:
+            lead += (
+                f' Recent coverage: <a href="{escape(link, quote=True)}" '
+                f'target="_blank" rel="noopener noreferrer">{escape(headline)}</a>.'
+            )
+        else:
+            lead += f" Recent coverage: {escape(headline)}."
+    return f"<li>{lead}</li>"
+
+
+def crypto_key_takeaways_html(
+    rows: list[dict[str, Any]],
+    kpis: dict[str, Any],
+    articles: list[dict[str, Any]] | None = None,
+    *,
+    mover_limit: int = 3,
+) -> str:
+    """HTML ``ul`` block for static Key observations (ETP / RWA callout pattern)."""
+    bullets: list[str] = []
+
+    primary = kpis.get("primary") or {}
+    if primary.get("value_display"):
+        delta = (primary.get("delta") or {}).get("pct")
+        bullets.append(
+            "<li>"
+            + _kpi_line(
+                str(primary.get("label") or "Total market cap"),
+                str(primary.get("value_display") or "—"),
+                delta,
+            )
+            + "</li>"
+        )
+
+    btc_dom = kpis.get("btc_dominance") or {}
+    stable = kpis.get("stablecoin_share") or {}
+    if btc_dom.get("value_display") and stable.get("value_display"):
+        dom_pct = (btc_dom.get("delta") or {}).get("pct")
+        st_pct = (stable.get("delta") or {}).get("pct")
+        bullets.append(
+            "<li>"
+            + _kpi_line("BTC dominance", str(btc_dom.get("value_display")), dom_pct)
+            + " "
+            + _kpi_line("stablecoin share of the top-50 list", str(stable.get("value_display")), st_pct)
+            + "</li>"
+        )
+
+    btc = kpis.get("btc") or {}
+    eth = kpis.get("eth") or {}
+    if btc.get("value_display") and eth.get("value_display"):
+        bullets.append(
+            "<li>"
+            + _kpi_line("BTC", str(btc.get("value_display")), (btc.get("delta") or {}).get("pct"))
+            + " "
+            + _kpi_line("ETH", str(eth.get("value_display")), (eth.get("delta") or {}).get("pct"))
+            + " Spot prices are from the top-50 table (CoinGecko with CoinCap fallback).</li>"
+        )
+
+    movers = enrich_movers_with_context(
+        pick_top_movers(rows, limit=mover_limit),
+        articles,
+    )
+    bullets.extend(_mover_takeaway_li(m) for m in movers)
+
+    if not bullets:
+        return ""
+
+    note = (
+        '<p class="takeaways__note">Context only—not investment advice. KPIs use CoinPaprika and the top-50 '
+        "list; headline links are matched from dashboard news feeds (Google News fallback).</p>"
+    )
+    return (
+        '<div class="takeaways">'
+        '<ul class="crypto-story-callout__list">'
+        + "".join(bullets)
+        + "</ul>"
+        + note
+        + "</div>"
+    )

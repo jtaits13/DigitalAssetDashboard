@@ -1543,7 +1543,7 @@ def export_crypto_json_bundle(
             story_callout_payload,
             structure_kpi_dicts,
         )
-        from crypto_top_movers import top_movers_callout_payload
+        from crypto_top_movers import crypto_key_takeaways_html, top_movers_callout_payload
 
         btc_row = _find_crypto_row(t_rows, "BTC")
         eth_row = _find_crypto_row(t_rows, "ETH")
@@ -1601,6 +1601,16 @@ def export_crypto_json_bundle(
         }
         if coinpaprika_err and total_market_cap_usd is None and total_market_cap_pct_1m is None:
             crypto_kpis_payload["error"] = coinpaprika_err
+
+        try:
+            crypto_kpis_payload["key_observations_html"] = crypto_key_takeaways_html(
+                t_rows,
+                crypto_kpis_payload,
+                news_articles,
+            )
+        except Exception as exc:
+            crypto_kpis_payload["key_observations_html"] = ""
+            manifest["errors"].append(f"Crypto key takeaways HTML: {exc}")
 
         crypto_chart_payload["generated_at"] = crypto_generated_at
     except Exception as exc:
