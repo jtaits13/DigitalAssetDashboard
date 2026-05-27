@@ -270,17 +270,17 @@ def _breadth_takeaway_li(rows: list[dict[str, Any]]) -> str:
     n = up + down + flat
     if n < 5:
         return ""
-    tone = (
-        "a risk-on skew"
+    tone_label = (
+        "Gains broadened among top-50 alts"
         if up > down + 5
-        else "a defensive skew"
+        else "Losses broadened among top-50 alts"
         if down > up + 5
-        else "mixed breadth"
+        else "Top-50 alts showed mixed 1M moves"
     )
     return (
-        "<li><strong>Breadth (1M, top-50 ex. stablecoins):</strong> "
+        f"<li><strong>{tone_label}:</strong> "
         f"{up} names up more than ~0.5%, {down} down more than ~0.5%, and {flat} roughly flat "
-        f"out of <strong>{n}</strong> with a valid 1M %—{tone} in this snapshot.</li>"
+        f"out of <strong>{n}</strong> non-stable coins with a valid 1M % (top-50 table).</li>"
     )
 
 
@@ -322,9 +322,9 @@ def _category_rotation_takeaway_li(rows: list[dict[str, Any]]) -> str:
     bl = escape(category_label(best_cat))
     wl = escape(category_label(worst_cat))
     return (
-        "<li><strong>Category rotation (cap-weighted 1M % in the top-50):</strong> "
-        f"<strong>{bl}</strong> averaged about <strong>{b:+.1f}%</strong>, while "
-        f"<strong>{wl}</strong> averaged about <strong>{w:+.1f}%</strong>—the widest spread among tab buckets.</li>"
+        f"<li><strong>{bl} outpaced {wl} over 1M:</strong> "
+        f"{bl} averaged about <strong>{b:+.1f}%</strong> cap-weighted in the top-50, while "
+        f"{wl} averaged about <strong>{w:+.1f}%</strong>—the widest gap among category tabs.</li>"
     )
 
 
@@ -340,66 +340,40 @@ def _structure_takeaway_li(_rows: list[dict[str, Any]], kpis: dict[str, Any]) ->
         spread = btc_d - eth_d
         if abs(spread) >= 0.75:
             if spread > 0:
-                body = (
-                    f"<strong>BTC</strong> outpaced <strong>ETH</strong> by about <strong>{spread:.1f}pp</strong> "
-                    "over 1M on spot (top-50 table)."
+                return (
+                    "<li><strong>BTC outpaced ETH over 1M:</strong> "
+                    f"about <strong>{spread:.1f}pp</strong> on spot from the top-50 table.</li>"
                 )
-            else:
-                body = (
-                    f"<strong>ETH</strong> outpaced <strong>BTC</strong> by about <strong>{abs(spread):.1f}pp</strong> "
-                    "over 1M on spot (top-50 table)."
-                )
-            return "<li><strong>Structure:</strong> " + body + "</li>"
+            return (
+                "<li><strong>ETH outpaced BTC over 1M:</strong> "
+                f"about <strong>{abs(spread):.1f}pp</strong> on spot from the top-50 table.</li>"
+            )
 
     if primary_d is not None and dom_d is not None and abs(primary_d) < 2.0 and abs(dom_d) >= 0.12:
-        body = (
-            f"Aggregate market cap moved only about <strong>{primary_d:+.1f}%</strong> over 1M while "
-            f"<strong>BTC dominance</strong> shifted about <strong>{dom_d:+.2f}pp</strong>—"
-            "suggesting how much of the tape was Bitcoin vs the rest."
+        return (
+            "<li><strong>Bitcoin drove moves in a flat market:</strong> "
+            f"aggregate market cap moved about <strong>{primary_d:+.1f}%</strong> over 1M while "
+            f"<strong>BTC dominance</strong> shifted about <strong>{dom_d:+.2f}pp</strong>.</li>"
         )
-        return "<li><strong>Structure:</strong> " + body + "</li>"
 
     if st_d is not None and dom_d is not None and abs(st_d) >= 0.08:
-        body = (
-            f"<strong>Stablecoin share</strong> of the top-50 list moved about <strong>{st_d:+.2f}pp</strong> over 1M "
-            f"alongside a <strong>BTC dominance</strong> change of about <strong>{dom_d:+.2f}pp</strong>."
+        return (
+            "<li><strong>Stablecoin share moved with BTC dominance:</strong> "
+            f"stablecoin share of the top-50 list shifted about <strong>{st_d:+.2f}pp</strong> over 1M "
+            f"alongside a <strong>BTC dominance</strong> change of about <strong>{dom_d:+.2f}pp</strong>.</li>"
         )
-        return "<li><strong>Structure:</strong> " + body + "</li>"
 
     dom_v = (kpis.get("btc_dominance") or {}).get("value_display")
     st_v = (kpis.get("stablecoin_share") or {}).get("value_display")
     if dom_v and st_v:
-        body = (
-            f"Compare <strong>BTC dominance</strong> ({escape(str(dom_v))}) with "
-            f"<strong>stablecoin share of the top-50</strong> ({escape(str(st_v))}) "
-            "to see whether liquidity and beta leaned the same direction this month."
+        return (
+            "<li><strong>Dominance and stablecoin share diverged this month:</strong> "
+            f"<strong>BTC dominance</strong> is {escape(str(dom_v))} and "
+            f"<strong>stablecoin share of the top-50</strong> is {escape(str(st_v))}—compare whether "
+            "liquidity and beta leaned the same direction.</li>"
         )
-        return "<li><strong>Structure:</strong> " + body + "</li>"
 
     return ""
-
-
-def _mover_takeaway_li(mover: dict[str, Any], *, superlative: str = "the largest") -> str:
-    sym = escape(str(mover.get("symbol") or ""))
-    name = escape(str(mover.get("name") or sym))
-    pct = float(mover.get("pct_30d") or 0)
-    direction = "gained" if pct >= 0 else "lost"
-    ctx = mover.get("context") or {}
-    headline = str(ctx.get("title") or "").strip()
-    link = str(ctx.get("link") or "").strip()
-    lead = (
-        f"<strong>{sym}</strong> ({name}) {direction} about <strong>{abs(pct):.1f}%</strong> "
-        f"over one month—{superlative} moves in the top-50 table (stablecoins excluded)."
-    )
-    if headline and "no recent headline matched" not in headline.lower():
-        if link:
-            lead += (
-                f' Recent coverage: <a href="{escape(link, quote=True)}" '
-                f'target="_blank" rel="noopener noreferrer">{escape(headline)}</a>.'
-            )
-        else:
-            lead += f" Recent coverage: {escape(headline)}."
-    return f"<li>{lead}</li>"
 
 
 def crypto_key_takeaways_html(
@@ -409,8 +383,8 @@ def crypto_key_takeaways_html(
     *,
     mover_limit: int = 3,
 ) -> str:
-    """HTML for static Key observations: breadth, category mix, structure, one mover + footnotes."""
-    del mover_limit  # single-mover headline; keep param for callers
+    """HTML for static Key observations: breadth, category mix, structure + footnotes."""
+    del articles, mover_limit  # keep signature for export callers
     bullets: list[str] = []
 
     b1 = _breadth_takeaway_li(rows)
@@ -425,17 +399,12 @@ def crypto_key_takeaways_html(
     if b3:
         bullets.append(b3)
 
-    movers = enrich_movers_with_context(pick_top_movers(rows, limit=1), articles)
-    if movers:
-        bullets.append(_mover_takeaway_li(movers[0], superlative="among the largest"))
-
     if not bullets:
         return ""
 
     note = (
         '<p class="takeaways__note">Context only—not investment advice. Observations are derived from the '
-        "top-50 table and KPI math described on this page; optional headline links use dashboard news feeds "
-        "(Google News fallback).</p>"
+        "top-50 table and KPI math described on this page.</p>"
     )
     review = monthly_review_note_class_html()
     return (
