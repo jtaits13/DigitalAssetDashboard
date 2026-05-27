@@ -60,6 +60,7 @@ NAV_BY_FILE: dict[str, dict[str, bool]] = {
     "rwa-explore-market-participant.html": {"rwa_part": True},
     "rwa-stablecoins.html": {"rwa_assets": True},
     "rwa-us-treasuries.html": {"rwa_assets": True},
+    "rwa-tokenized-mmf.html": {"rwa_assets": True},
     "rwa-tokenized-stocks.html": {"rwa_assets": True},
     "rwa-participants-networks.html": {"rwa_part": True},
     "rwa-participants-platforms.html": {"rwa_part": True},

@@ -399,7 +399,7 @@ def render_subpage_sidebar(*, key_prefix: str, current: str) -> None:
     ``key_prefix`` must be unique per page module (e.g. ``all_articles``) so widget keys stay isolated.
 
     ``current`` marks the active destination: ``articles``, ``regulatory``, ``etp``, ``etf_news``,
-    ``rwa_explore_asset_type``, ``rwa_explore_market_participant``, ``rwa_participants_networks``, ``rwa_participants_platforms``, ``rwa_participants_asset_managers``, ``rwa_stablecoins``, ``rwa_treasuries``, ``rwa_tokenized_stocks``.
+    ``rwa_explore_asset_type``, ``rwa_explore_market_participant``, ``rwa_participants_networks``, ``rwa_participants_platforms``, ``rwa_participants_asset_managers``, ``rwa_stablecoins``, ``rwa_treasuries``, ``rwa_tokenized_stocks``, ``rwa_tokenized_mmf``.
     """
     # Import here to avoid a circular import: news_feeds → rwa_league → widgets → news_feeds.
     from rwa_league.explore_nav import set_rwa_explore_top_nav_target
@@ -424,6 +424,7 @@ def render_subpage_sidebar(*, key_prefix: str, current: str) -> None:
             ("ETF/ETP market news", "pages/All_ETF_News.py", "etf_news"),
             ("RWA Stablecoins", "pages/RWA_Stablecoins.py", "rwa_stablecoins"),
             ("RWA U.S. Treasuries", "pages/RWA_US_Treasuries.py", "rwa_treasuries"),
+            ("RWA Tokenized MMF", "pages/RWA_Tokenized_MMF.py", "rwa_tokenized_mmf"),
             ("RWA Tokenized Stocks", "pages/RWA_Tokenized_Stocks.py", "rwa_tokenized_stocks"),
             ("Explore by Asset Type", "pages/RWA_Explore_By_Asset_Type.py", "rwa_explore_asset_type"),
             ("Explore by Market Participant", "pages/RWA_Explore_By_Market_Participant.py", "rwa_explore_market_participant"),

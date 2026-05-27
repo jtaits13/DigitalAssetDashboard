@@ -43,7 +43,13 @@
       RWA_CLASS_LIST +
       "—where tokens remain on the issuing platform and are not freely transferable between wallets.",
     "distributed value":
-      "Distributed value for the asset type on this page—for example U.S. Treasuries, stablecoins, or tokenized stocks.",
+      "Distributed value for the asset type on this page—for example U.S. Treasuries, stablecoins, tokenized stocks, or tokenized money market funds.",
+    "tokenized funds":
+      "Count of distinct tokenized money market fund products in this view (US Treasuries and Non-U.S. Government Debt listings).",
+    "active networks":
+      "Blockchain networks with at least one on-chain deployment among the tokenized MMFs in this view.",
+    "7d blended apy":
+      "Value-weighted average of each fund token's 7-day APY field across deployments (when reported).",
     "represented value":
       "Represented value for the asset type on this page (platform-bound tokens, not freely transferable between wallets).",
     "total asset holders":

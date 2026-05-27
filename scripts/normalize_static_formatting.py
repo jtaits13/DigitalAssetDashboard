@@ -39,6 +39,7 @@ DEEP_FILES = frozenset(
     {
         "rwa-stablecoins.html",
         "rwa-us-treasuries.html",
+        "rwa-tokenized-mmf.html",
         "rwa-tokenized-stocks.html",
         "rwa-participants-networks.html",
         "rwa-participants-platforms.html",

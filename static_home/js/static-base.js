@@ -43,6 +43,7 @@
     if (p.endsWith("/rwa-stablecoins.html")) return p.slice(0, -"rwa-stablecoins.html".length);
     if (p.endsWith("/rwa-us-treasuries.html")) return p.slice(0, -"rwa-us-treasuries.html".length);
     if (p.endsWith("/rwa-tokenized-stocks.html")) return p.slice(0, -"rwa-tokenized-stocks.html".length);
+    if (p.endsWith("/rwa-tokenized-mmf.html")) return p.slice(0, -"rwa-tokenized-mmf.html".length);
     if (p.endsWith("/")) return p;
     // ``/repo-name`` with no trailing slash: treat as directory so ``rwa-global.html`` does not resolve to site root.
     if (/^\/[^/]+$/.test(p)) return p + "/";
@@ -104,6 +105,7 @@
         ["rwa-stablecoins.html", "rwa-stablecoins.html"],
         ["rwa-us-treasuries.html", "rwa-us-treasuries.html"],
         ["rwa-tokenized-stocks.html", "rwa-tokenized-stocks.html"],
+        ["rwa-tokenized-mmf.html", "rwa-tokenized-mmf.html"],
         ["all-articles.html", "all-articles.html"],
         ["all-regulatory.html", "all-regulatory.html"],
         ["crypto-prices.html", "crypto-prices.html"],

@@ -28,6 +28,7 @@ APP_NETWORKS = "https://app.rwa.xyz/networks"
 APP_PLATFORMS = "https://app.rwa.xyz/platforms"
 APP_STABLECOINS = "https://app.rwa.xyz/stablecoins"
 APP_TREASURIES = "https://app.rwa.xyz/treasuries"
+APP_GOVERNMENT_BONDS = "https://app.rwa.xyz/government-bonds"
 APP_STOCKS = "https://app.rwa.xyz/stocks"
 APP_ASSET_MANAGERS = "https://app.rwa.xyz/asset-managers"
 USER_AGENT = "Digital-Assets-Dashboard/1.0 (RWA league widget; contact via app maintainer)"
@@ -1278,6 +1279,30 @@ def _fetch_stablecoins_props_payload() -> tuple[dict[str, Any] | None, str | Non
     return props, None
 
 
+def _fetch_government_bonds_props_payload() -> tuple[dict[str, Any] | None, str | None]:
+    try:
+        r = _http_get_text(APP_GOVERNMENT_BONDS)
+    except (requests.RequestException, OSError) as e:
+        logger.debug("RWA government bonds fetch: %s", e)
+        return None, str(e)
+
+    payload = _extract_next_data(r.text)
+    if not payload:
+        return None, (
+            "Could not read data from the RWA.xyz Non-U.S. Government Debt page "
+            "(the site layout may have changed)."
+        )
+    if payload.get("page") != "/government-bonds":
+        return None, (
+            "The RWA.xyz Government Bonds page returned an unexpected layout "
+            f"(expected /government-bonds, got {payload.get('page')!r})."
+        )
+    props = payload.get("props")
+    if not isinstance(props, dict):
+        return None, "The RWA.xyz Government Bonds page data was not in the expected format."
+    return props, None
+
+
 def _fetch_treasuries_props_payload() -> tuple[dict[str, Any] | None, str | None]:
     try:
         r = _http_get_text(APP_TREASURIES)
@@ -1414,3 +1439,15 @@ def fetch_rwa_tokenized_stocks_data() -> tuple[
 
     plat_out = _stocks_platform_rows_from_raw(raw_plat or [])
     return net_out, plat_out, kpis, None
+
+
+def fetch_rwa_tokenized_mmf_data() -> tuple[
+    list[RwaTreasuryDistributedNetworkRow],
+    list[RwaTreasuryPlatformRow],
+    list[RwaGlobalKpi],
+    str | None,
+]:
+    """Tokenized money market funds: aggregated networks, platforms, and KPIs (see ``rwa_league.mmf``)."""
+    from rwa_league.mmf import fetch_rwa_tokenized_mmf_data as _fetch
+
+    return _fetch()

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tokenized Money Market Funds — Digital Assets Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=62" />
+  </head>
+  <body class="page-rwa-deep page-rwa-deep-mmf" data-rwa-deep-json="rwa_tokenized_mmf.json" data-methodology="rwa-mmf">
+    <header class="site-header" role="banner">
+      <div class="site-header__inner">
+        <a class="site-brand" href="index.html">Digital Assets Dashboard</a>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="index.html">Home</a>
+          <a href="index.html#section-news">News Hub</a>
+          <a href="crypto-prices.html">Crypto Prices</a>
+          <div class="site-nav__dropdown">
+            <span class="site-nav__trigger">U.S. ETPs</span>
+            <ul class="site-nav__sub">
+              <li><a href="etps.html">U.S. ETP Overview</a></li>
+              <li><a href="etf-news.html">ETF/ETP News</a></li>
+            </ul>
+          </div>
+          <div class="site-nav__dropdown">
+            <span class="site-nav__trigger">RWA Market</span>
+            <ul class="site-nav__sub">
+              <li><a href="rwa-global.html">Market Overview</a></li>
+              <li><a href="rwa-explore-asset-type.html" class="is-active">RWA · Assets</a></li>
+              <li><a href="rwa-explore-market-participant.html">RWA · Participants</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="page-back-below-header">
+      <p class="back-link back-link--below-header">
+        <a data-deep-back="explore" href="rwa-explore-asset-type.html">← Explore by Asset Type</a>
+      </p>
+    </div>
+
+    <main class="page-shell">
+      <header class="page-intro">
+        <p class="band-label teal" id="js-deep-band"></p>
+        <h1 class="page-intro__title" id="js-deep-title"></h1>
+        <div class="page-intro__dek" id="js-deep-subtitle"></div>
+      </header>
+
+      <div class="data-banner" id="js-deep-banner" role="status" hidden></div>
+      <hr class="section-rule" />
+
+      <section class="hub-section" id="js-deep-snapshot" aria-labelledby="js-deep-snap-h">
+        <h2 class="subsection-head" id="js-deep-snap-h">Top-Line Market Snapshot</h2>
+        <div id="js-deep-kpis" aria-label="Tokenized money market funds headline KPI strip"></div>
+      </section>
+
+      <section class="hub-section" id="js-deep-ko-section" hidden aria-labelledby="js-deep-ko-h">
+        <h2 class="subsection-head u-vh" id="js-deep-ko-h">Key Observations</h2>
+        <div id="js-deep-ko"></div>
+      </section>
+
+      <hr class="jd-rwa-gmo-soft-rule" id="js-deep-rule-after-ko" hidden aria-hidden="true" />
+
+      <div id="deep-net-wrap"></div>
+
+      <hr class="jd-divider" id="js-deep-rule-mid" hidden aria-hidden="true" />
+
+      <div id="deep-plat-wrap"></div>
+
+      <div id="js-deep-bottom-cta" class="cta-row rwa-deep-page-cta"></div>
+
+      <p class="back-link">
+        <a data-deep-back="explore" href="rwa-explore-asset-type.html">← Explore by Asset Type</a>
+      </p>
+    </main>
+
+    <footer class="site-footer">
+      <span id="js-deep-footer-note"></span>
+      <span class="site-footer__meta"> · Digital Assets Dashboard · </span><time datetime="2026-05">May 2026</time>
+    </footer>
+
+    <script defer src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
+    <script defer src="js/static-base.js?v=14"></script>
+    <script defer src="js/kpi-hints.js?v=2"></script>
+    <script defer src="js/page-methodology.js?v=2"></script>
+    <script defer src="js/rwa-onchain-home.js?v=8"></script>
+    <script defer src="js/rwa-asset-deep-page.js?v=7"></script>
+  </body>
+</html>

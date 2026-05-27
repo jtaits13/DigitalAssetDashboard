@@ -11,7 +11,7 @@ Uses the same RSS / StockAnalysis / yfinance / RWA.xyz logic as the Streamlit ap
 
 Optional env ``COINGECKO_DEMO_API_KEY`` (or ``COINGECKO_API_KEY``): sent as ``x-cg-demo-apikey`` for CoinGecko description calls so CI can fill ``about_blurb`` without hitting public rate limits as often. Optional ``COINGECKO_PRO_API_KEY`` uses the Pro API host. Descriptions are cached in ``static_home/data/crypto_about_blurbs_cache.json`` across exports so scheduled deploys can fill remaining coins without re-fetching every id. When the API still returns nothing, ``coingecko_about`` applies short static fallbacks for major assets (BTC, ETH, …) so the static crypto table always shows hint affordances for top names.
 
-Optional env ``STATIC_WEBAPP_BASE``: absolute origin for FastAPI-only routes when needed. Served as HTML in ``static_home/``: Global overview ``rwa-global.html``, Explore by Asset Type ``rwa-explore-asset-type.html``, Explore by Market Participant ``rwa-explore-market-participant.html``, participant deep pages ``rwa-participants-*.html``, Stablecoins ``rwa-stablecoins.html``, US Treasuries ``rwa-us-treasuries.html``, Tokenized Stocks ``rwa-tokenized-stocks.html``.
+Optional env ``STATIC_WEBAPP_BASE``: absolute origin for FastAPI-only routes when needed. Served as HTML in ``static_home/``: Global overview ``rwa-global.html``, Explore by Asset Type ``rwa-explore-asset-type.html``, Explore by Market Participant ``rwa-explore-market-participant.html``, participant deep pages ``rwa-participants-*.html``, Stablecoins ``rwa-stablecoins.html``, US Treasuries ``rwa-us-treasuries.html``, Tokenized Stocks ``rwa-tokenized-stocks.html``, Tokenized MMF ``rwa-tokenized-mmf.html``.
 """
 
 from __future__ import annotations
@@ -86,6 +86,7 @@ STATIC_RWA_PARTICIPANTS_ASSET_MANAGERS_PAGE = "rwa-participants-asset-managers.h
 STATIC_RWA_STABLECOINS_PAGE = "rwa-stablecoins.html"
 STATIC_RWA_US_TREASURIES_PAGE = "rwa-us-treasuries.html"
 STATIC_RWA_TOKENIZED_STOCKS_PAGE = "rwa-tokenized-stocks.html"
+STATIC_RWA_TOKENIZED_MMF_PAGE = "rwa-tokenized-mmf.html"
 APP_RWA_NETWORKS_URL = "https://app.rwa.xyz/networks"
 COINPAPRIKA_GLOBAL_URL = "https://api.coinpaprika.com/v1/global"
 COINPAPRIKA_MARKET_OVERVIEW_TOTAL_30D_URL = "https://coinpaprika.com/market-overview/data/total/30d/"
@@ -225,6 +226,7 @@ def _rwa_explore_gateways_static_html(at_href: str, mp_href: str) -> str:
         '<h3>Explore by Asset Type</h3>'
         '<ul class="rwa-explore-list">'
         "<li>Stablecoins</li><li>US Treasuries</li><li>Tokenized Stocks</li>"
+        "<li>Tokenized Money Market Funds</li>"
         "</ul>"
         '<p class="rwa-explore-tail">Use <strong>Explore</strong> to open the hub and go deeper on the next pages.</p>'
         f'<a class="btn btn-primary" href="{ae}">Explore</a>'
@@ -735,11 +737,127 @@ def _build_rwa_tokenized_stocks_deep_payload(st_pack: tuple[Any, Any, Any, Any],
     return b
 
 
+def _kpi_legend_for_mmf() -> str:
+    return (
+        "Distributed value uses a 30-day (30D) % change vs summed token values 30 days ago. "
+        "7D blended APY is value-weighted across fund token deployments. "
+        "Fund universe: tokenized money market funds on RWA.xyz US Treasuries and Non-U.S. Government Debt pages."
+    )
+
+
+def _build_rwa_tokenized_mmf_deep_payload(mmf_pack: tuple[Any, Any, Any, Any], manifest: dict[str, Any]) -> dict[str, Any]:
+    from rwa_league.client import APP_GOVERNMENT_BONDS, APP_TREASURIES
+    from rwa_league.dataframe_table import (
+        build_us_treasury_network_dataframe,
+        build_us_treasury_platform_dataframe,
+    )
+    from rwa_league.widgets import (
+        MMF_NETWORK_CAPTION,
+        MMF_PLATFORM_CAPTION,
+        MMF_RWA_LINK_LABEL,
+        RWA_MMF_CHART_MAX_BARS,
+    )
+
+    rows_net: list[Any] = list(mmf_pack[0])
+    rows_plat: list[Any] = list(mmf_pack[1])
+    kpis: list[Any] = list(mmf_pack[2])
+    err_any = mmf_pack[3]
+    err_s = "" if err_any is None else str(err_any)
+
+    sources = (
+        f'<a href="{html_escape(APP_TREASURIES, quote=True)}">RWA.xyz US Treasuries</a> and '
+        f'<a href="{html_escape(APP_GOVERNMENT_BONDS, quote=True)}">Non-U.S. Government Debt</a>'
+    )
+
+    def _seed() -> dict[str, Any]:
+        return {
+            "page_title": "Tokenized Money Market Funds — Digital Assets Dashboard",
+            "band_label": "Tokenized Money Market Funds",
+            "page_subtitle_html": (
+                f"Tokenized money market fund (MMF) exposure aggregated from {sources}. "
+                "Networks and platforms are built from each fund's on-chain token deployments; "
+                "<strong>Distributed Value</strong> columns are current levels."
+            ),
+            "kpi_window_note": _kpi_legend_for_mmf(),
+            "kpis": [_rwa_kpi_to_dict(k) for k in kpis],
+            "chart_max_bars": RWA_MMF_CHART_MAX_BARS,
+            "back_href": STATIC_RWA_EXPLORE_ASSET_TYPE_PAGE,
+            "footer_note": _static_rwa_footer_text(),
+            "bottom_cta": {"href": APP_TREASURIES, "label": MMF_RWA_LINK_LABEL},
+        }
+
+    if err_s.strip() and not rows_net and not rows_plat:
+        b = _seed()
+        b["error_mode"] = "warn_total"
+        b["error_detail"] = err_s
+        b["key_observations_html"] = ""
+        b["networks"] = None
+        b["platforms"] = None
+        return b
+    if not rows_net and not rows_plat:
+        b = _seed()
+        b["error_mode"] = "empty_total"
+        b["empty_message"] = "No tokenized money market fund rows returned."
+        b["key_observations_html"] = ""
+        b["networks"] = None
+        b["platforms"] = None
+        return b
+
+    try:
+        from pages.RWA_Tokenized_MMF import _mmf_takeaway_html as _ko_mmf
+
+        ko_html = _ko_mmf()
+    except Exception as exc:
+        manifest["errors"].append(f"Tokenized MMF takeaway HTML export: {exc}")
+        ko_html = ""
+
+    b = _seed()
+    b["error_mode"] = ""
+    b["key_observations_html"] = ko_html
+    b["networks"] = _league_split_payload(
+        rows_net,
+        build_df=build_us_treasury_network_dataframe,
+        block_heading="By network (Tokenized MMFs)",
+        table_heading="Networks table",
+        chart_heading="Top networks by value",
+        name_column="Network",
+        value_column="Distributed Value",
+        chart_max_bars=RWA_MMF_CHART_MAX_BARS,
+        caption_md=MMF_NETWORK_CAPTION,
+        search_entity="network",
+        section_intro_md=(
+            "**Networks** — aggregate distributed value of tokenized money market funds by chain, "
+            "summed from each fund's token deployments."
+        ),
+        filter_note_suffix_all="networks (Tokenized MMFs).",
+        filter_note_entity_plural="networks",
+    )
+    b["platforms"] = _league_split_payload(
+        rows_plat,
+        build_df=build_us_treasury_platform_dataframe,
+        block_heading="By platform (Tokenized MMFs · Asset managers)",
+        table_heading="Platforms table",
+        chart_heading="Top platforms by value",
+        name_column="Platform",
+        value_column="Total Value",
+        chart_max_bars=RWA_MMF_CHART_MAX_BARS,
+        caption_md=MMF_PLATFORM_CAPTION,
+        search_entity="platform",
+        section_intro_md=(
+            "**Platforms** — issuer / asset-manager aggregates for tokenized MMFs (same measures as Networks)."
+        ),
+        filter_note_suffix_all="platforms (Tokenized MMFs).",
+        filter_note_entity_plural="platforms",
+    )
+    return b
+
+
 def _build_rwa_explore_asset_type_payload(
     manifest: dict,
     sc_pack: tuple[Any, Any, Any, Any],
     tr_pack: tuple[Any, Any, Any, Any],
     st_pack: tuple[Any, Any, Any, Any],
+    mmf_pack: tuple[Any, Any, Any, Any],
 ) -> dict[str, Any]:
     """Preview sections for the static Explore by Asset Type page."""
     from home_layout import rwa_xyz_mirror_footer_text
@@ -900,9 +1018,57 @@ def _build_rwa_explore_asset_type_payload(
         sec_st["info_html"] = '<p class="alert info">No Tokenized Stocks network or platform rows returned.</p>'
     sections.append(sec_st)
 
+    mmf_net, mmf_plat, mmf_kpis, mmf_err = mmf_pack
+    from rwa_league.client import APP_GOVERNMENT_BONDS
+    from rwa_league.widgets import MMF_RWA_LINK_LABEL
+
+    sec_mmf: dict[str, Any] = {
+        "id": "tokenized_mmf",
+        "title": "Tokenized Money Market Funds",
+        "anchor_id": "jd-rwa-tokenized-mmf",
+        "kpi_window_note": _kpi_legend_for_mmf(),
+        "kpis": [_rwa_kpi_to_dict(k) for k in mmf_kpis],
+        "table_subheading": "By network (Tokenized MMFs)",
+        "columns": [],
+        "rows": [],
+        "preview_note": "",
+        "info_html": "",
+        "warn_html": "",
+        "cta": [
+            {
+                "href": STATIC_RWA_TOKENIZED_MMF_PAGE,
+                "label": "Open full Tokenized MMF overview",
+                "variant": "primary",
+                "internal": True,
+            },
+            {"href": APP_TREASURIES, "label": MMF_RWA_LINK_LABEL, "variant": "secondary"},
+            {
+                "href": APP_GOVERNMENT_BONDS,
+                "label": "See Non-U.S. Government Debt on RWA.xyz",
+                "variant": "secondary",
+            },
+        ],
+    }
+    if mmf_err and not mmf_net and not mmf_plat:
+        sec_mmf["warn_html"] = f'<p class="alert warn">{html_escape(str(mmf_err))}</p>'
+    elif not mmf_net and not mmf_plat:
+        sec_mmf["info_html"] = '<p class="alert info">No tokenized money market fund rows returned.</p>'
+    elif mmf_net:
+        prev = list(mmf_net)[:EXPLORE_ASSET_PREVIEW_ROWS]
+        df_mmf = build_us_treasury_network_dataframe(prev)
+        rj, cj = _dataframe_json_records(df_mmf)
+        sec_mmf["columns"], sec_mmf["rows"] = cj, rj
+        sec_mmf["preview_note"] = (
+            f"Preview: first {len(prev)} of {len(mmf_net)} networks (Tokenized MMFs), sorted by distributed value."
+        )
+    else:
+        sec_mmf["info_html"] = '<p class="muted"><em>No MMF network rows.</em></p>'
+    sections.append(sec_mmf)
+
     intro_html = (
         "<p><strong>On-chain RWA</strong> by asset—short previews for "
-        "<strong>Stablecoins</strong>, <strong>US Treasuries</strong>, and <strong>Tokenized Stocks</strong> "
+        "<strong>Stablecoins</strong>, <strong>US Treasuries</strong>, <strong>Tokenized Stocks</strong>, "
+        "and <strong>Tokenized Money Market Funds</strong> "
         "(<strong>RWA.xyz</strong>). Use <strong>Open full overview</strong> for search, charts, and full league views.</p>"
     )
 
@@ -1991,6 +2157,7 @@ def main() -> None:
         fetch_rwa_platforms_page_data,
         fetch_rwa_stablecoins_data,
         fetch_rwa_treasuries_data,
+        fetch_rwa_tokenized_mmf_data,
         fetch_rwa_tokenized_stocks_data,
     )
 
@@ -2013,6 +2180,12 @@ def main() -> None:
         st_pack = ([], [], [], str(exc))
 
     try:
+        mmf_pack = fetch_rwa_tokenized_mmf_data()
+    except Exception as exc:
+        manifest["errors"].append(f"RWA Tokenized MMF snapshot (Explore + asset pages): {exc}")
+        mmf_pack = ([], [], [], str(exc))
+
+    try:
         p_net_pack = fetch_rwa_networks_page_data()
     except Exception as exc:
         manifest["errors"].append(f"RWA Participants Networks snapshot: {exc}")
@@ -2030,7 +2203,7 @@ def main() -> None:
         manifest["errors"].append(f"RWA Participants Asset Managers snapshot: {exc}")
         p_am_pack = ([], [], str(exc))
 
-    explore_at_payload = _build_rwa_explore_asset_type_payload(manifest, sc_pack, tr_pack, st_pack)
+    explore_at_payload = _build_rwa_explore_asset_type_payload(manifest, sc_pack, tr_pack, st_pack, mmf_pack)
     (OUT / "rwa_explore_asset_type.json").write_text(
         json.dumps(explore_at_payload, indent=2),
         encoding="utf-8",
@@ -2067,6 +2240,10 @@ def main() -> None:
         json.dumps(_build_rwa_tokenized_stocks_deep_payload(st_pack, manifest), indent=2),
         encoding="utf-8",
     )
+    (OUT / "rwa_tokenized_mmf.json").write_text(
+        json.dumps(_build_rwa_tokenized_mmf_deep_payload(mmf_pack, manifest), indent=2),
+        encoding="utf-8",
+    )
 
     manifest["sections"] = {
         "news": news_ts,
@@ -2081,7 +2258,7 @@ def main() -> None:
         f"{len(rwa_rows)} RWA networks; crypto_ticker.json, rwa_global_market.json, rwa_explore_asset_type.json, "
         "rwa_explore_market_participant.json, rwa_participants_networks.json, rwa_participants_platforms.json, "
         "rwa_participants_asset_managers.json, rwa_stablecoins.json, rwa_us_treasuries.json, "
-        "rwa_tokenized_stocks.json, rwa_onchain_home.json)."
+        "rwa_tokenized_stocks.json, rwa_tokenized_mmf.json, rwa_onchain_home.json)."
     )
 
 

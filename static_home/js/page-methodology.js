@@ -27,6 +27,14 @@
       "<strong>Preview tables</strong> — distributed value by network and platform (current levels) from the live Tokenized Stocks views.",
       "<strong>Full view</strong> — open the Tokenized Stocks page for complete leagues and charts.",
     ],
+    tokenized_mmf: [
+      "<strong>KPI strip</strong> — totals for tokenized <strong>money market funds</strong> drawn from " +
+        RWA +
+        ' <a href="https://app.rwa.xyz/treasuries" target="_blank" rel="noopener noreferrer">US Treasuries</a> and ' +
+        '<a href="https://app.rwa.xyz/government-bonds" target="_blank" rel="noopener noreferrer">Non-U.S. Government Debt</a> fund lists.',
+      "<strong>Network preview</strong> — distributed value summed across each fund's on-chain token deployments by network.",
+      "<strong>Full view</strong> — open the Tokenized MMF page for platform (asset-manager) leagues and full tables.",
+    ],
   };
 
   var EXPLORE_PARTICIPANT = {
@@ -92,6 +100,17 @@
           ' <a href="https://app.rwa.xyz/treasuries" target="_blank" rel="noopener noreferrer">US Treasuries</a> distributed views.',
         "<strong>KPI strip</strong> — overview totals; top-line <strong>%</strong> figures are <strong>30-day (30D)</strong>.",
         "<strong>Networks / Platforms</strong> — <strong>Distributed Value</strong> is a current level; 7D and 30D columns follow fields on the live RWA.xyz tables.",
+      ],
+    },
+    "rwa-mmf": {
+      before: "#js-deep-kpis",
+      bullets: [
+        "<strong>Source</strong> — tokenized <strong>money market funds</strong> from " +
+          RWA +
+          ' <a href="https://app.rwa.xyz/treasuries" target="_blank" rel="noopener noreferrer">US Treasuries</a> and ' +
+          '<a href="https://app.rwa.xyz/government-bonds" target="_blank" rel="noopener noreferrer">Non-U.S. Government Debt</a> asset lists (yield vaults excluded).',
+        "<strong>KPI strip</strong> — <strong>Distributed value</strong> uses a <strong>30-day (30D)</strong> % vs summed token values 30 days ago; <strong>7D blended APY</strong> is value-weighted across deployments.",
+        "<strong>Networks / Platforms</strong> — aggregates each fund's token rows by chain and by asset manager; <strong>Distributed Value</strong> is a current level.",
       ],
     },
     "rwa-tokenized-stocks": {

@@ -250,6 +250,17 @@ TOKENIZED_STOCKS_RWA_CAPTION = (
 
 TREASURIES_RWA_LINK_LABEL = "See US Treasuries on RWA.xyz"
 TOKENIZED_STOCKS_RWA_LINK_LABEL = "See Tokenized Stocks on RWA.xyz"
+MMF_RWA_LINK_LABEL = "See US Treasuries on RWA.xyz (MMF listings)"
+MMF_NETWORK_CAPTION = (
+    "Networks table sums **distributed value** across tokenized money market fund token deployments on each chain. "
+    "**7D Δ value** and **market share** are computed from aggregated token rows (RWA.xyz US Treasuries and "
+    "Non-U.S. Government Debt fund lists)."
+)
+MMF_PLATFORM_CAPTION = (
+    "Platforms table groups the same fund universe by **asset manager** (issuer). "
+    "**RWA Count** is the number of distinct MMF products with exposure for that manager."
+)
+RWA_MMF_CHART_MAX_BARS = 12
 
 
 def _format_pct_change_30d(pct: float | None) -> tuple[str, str] | None:
@@ -1698,6 +1709,22 @@ def load_rwa_treasuries_cached(
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
+def load_rwa_tokenized_mmf_cached(
+    *, _mmf_schema: int = 1
+) -> tuple[
+    list[RwaTreasuryDistributedNetworkRow],
+    list[RwaTreasuryPlatformRow],
+    list[RwaGlobalKpi],
+    str | None,
+]:
+    """Bump ``_mmf_schema`` when MMF fund-list parsing changes."""
+    _ = _mmf_schema
+    from rwa_league.client import fetch_rwa_tokenized_mmf_data
+
+    return fetch_rwa_tokenized_mmf_data()
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
 def load_rwa_tokenized_stocks_cached(
     *, _stocks_schema: int = 2
 ) -> tuple[
@@ -1720,6 +1747,7 @@ def clear_rwa_league_cache() -> None:
     load_rwa_asset_managers_cached.clear()
     load_rwa_stablecoins_cached.clear()
     load_rwa_treasuries_cached.clear()
+    load_rwa_tokenized_mmf_cached.clear()
     load_rwa_tokenized_stocks_cached.clear()
 
 
@@ -2226,6 +2254,120 @@ def show_rwa_treasuries_widget(
             use_container_width=True,
             key="rwa_tr_rwa_link_full",
         )
+
+
+def show_rwa_mmf_widget(
+    *,
+    home_preview: bool = True,
+    preview_rows: int = 8,
+    full_page_header: bool = False,
+    full_page_key_observations_html: str | None = None,
+) -> None:
+    """Tokenized money market funds: KPIs + aggregated Networks / Platforms tables."""
+    from rwa_league.client import APP_GOVERNMENT_BONDS, APP_TREASURIES
+
+    h2_sub = "home-widget-heading" if home_preview else "home-main-heading"
+    if home_preview:
+        st.divider()
+        st.markdown(
+            f'<div class="jd-hub-subsection-head" id="jd-rwa-tokenized-mmf">'
+            f'<h2 class="{h2_sub}">Tokenized Money Market Funds</h2></div>',
+            unsafe_allow_html=True,
+        )
+    elif not full_page_header:
+        st.markdown(
+            '<div class="jd-hub-subsection-head" id="jd-rwa-tokenized-mmf">'
+            '<h2 class="home-main-heading">Tokenized Money Market Funds</h2></div>',
+            unsafe_allow_html=True,
+        )
+        st.caption(
+            "Fund universe from "
+            f"[RWA.xyz US Treasuries]({APP_TREASURIES}) and "
+            f"[Non-U.S. Government Debt]({APP_GOVERNMENT_BONDS}); tables aggregate each fund's token deployments."
+        )
+
+    rows_m, plat_m, kpis_m, err_m = load_rwa_tokenized_mmf_cached()
+
+    if err_m and not rows_m and not plat_m:
+        st.warning(escape(err_m))
+        _render_rwa_treasuries_overview(kpis_m, overview_title="Tokenized Money Market Funds")
+        _inject_full_page_key_observations(full_page_key_observations_html)
+        st.link_button(MMF_RWA_LINK_LABEL, APP_TREASURIES, use_container_width=True, key="rwa_mmf_link_err")
+        return
+    if not rows_m and not plat_m:
+        st.info("No tokenized money market fund rows returned.")
+        _render_rwa_treasuries_overview(kpis_m, overview_title="Tokenized Money Market Funds")
+        _inject_full_page_key_observations(full_page_key_observations_html)
+        st.link_button(MMF_RWA_LINK_LABEL, APP_TREASURIES, use_container_width=True, key="rwa_mmf_link_empty")
+        return
+
+    if not home_preview:
+        st.markdown(hub_subsection_heading_html("Top-Line Market Snapshot"), unsafe_allow_html=True)
+    _render_rwa_treasuries_overview(kpis_m, overview_title="Tokenized Money Market Funds", show_kpi_legend=not home_preview)
+    _inject_full_page_key_observations(full_page_key_observations_html)
+
+    if rows_m:
+        if home_preview:
+            working = rows_m[: max(1, min(preview_rows, len(rows_m)))]
+            table_h = rwa_table_height(len(working))
+        else:
+            q = st.text_input(
+                "Search network table",
+                "",
+                key="rwa_mmf_search_net",
+                placeholder="Filter by network name…",
+            )
+            working = filter_treasury_network_rows(rows_m, q)
+            st.caption(
+                f"Showing {len(working)} of {len(rows_m)} networks (Tokenized MMFs)."
+                if q.strip()
+                else f"Showing all {len(working)} networks (Tokenized MMFs)."
+            )
+            table_h = rwa_table_height(len(working), max_h=900)
+        st.markdown(
+            f'<div class="jd-hub-subsection-head"><h2 class="{h2_sub}">By network (Tokenized MMFs)</h2></div>',
+            unsafe_allow_html=True,
+        )
+        df_m = build_us_treasury_network_dataframe(working)
+        if home_preview:
+            _show_us_treasury_network_dataframe(df_m, height=table_h)
+        else:
+            st.caption(MMF_NETWORK_CAPTION)
+            _show_us_treasury_network_dataframe(df_m, height=table_h)
+
+    if plat_m and not home_preview:
+        st.divider()
+        qp = st.text_input(
+            "Search platform table",
+            "",
+            key="rwa_mmf_search_plat",
+            placeholder="Filter by platform name…",
+        )
+        working_p = filter_treasury_platform_rows(plat_m, qp)
+        st.caption(
+            f"Showing {len(working_p)} of {len(plat_m)} platforms (Tokenized MMFs)."
+            if qp.strip()
+            else f"Showing all {len(working_p)} platforms (Tokenized MMFs)."
+        )
+        st.markdown(
+            hub_subsection_heading_html("By platform (Tokenized MMFs · Asset managers)"),
+            unsafe_allow_html=True,
+        )
+        df_p = build_us_treasury_platform_dataframe(working_p)
+        _show_us_treasury_platform_dataframe(df_p, height=rwa_table_height(len(working_p), max_h=900))
+        st.caption(MMF_PLATFORM_CAPTION)
+
+    if home_preview:
+        if st.button(
+            "Open full Tokenized MMF overview",
+            key="see_full_rwa_mmf",
+            use_container_width=True,
+            type="primary",
+        ):
+            st.switch_page("pages/RWA_Tokenized_MMF.py")
+        st.link_button(MMF_RWA_LINK_LABEL, APP_TREASURIES, use_container_width=True, key="rwa_mmf_link_home")
+    else:
+        st.link_button(MMF_RWA_LINK_LABEL, APP_TREASURIES, use_container_width=True, key="rwa_mmf_link_full")
 
 
 def show_rwa_tokenized_stocks_widget(
@@ -3248,6 +3390,7 @@ def show_rwa_onchain_explore_gateways(
             "<li>Stablecoins</li>"
             "<li>US Treasuries</li>"
             "<li>Tokenized Stocks</li>"
+            "<li>Tokenized Money Market Funds</li>"
             "</ul>"
             '<p class="jd-hub-explore-blurb--tail">Use <strong>Explore</strong> to open the hub and go deeper on the next pages.</p>'
             "</div></section>",
@@ -3292,11 +3435,12 @@ def show_rwa_onchain_explore_gateways(
 
 
 def show_rwa_explore_by_asset_type_widget(*, preview_rows: int = 8) -> None:
-    """Index page: Stablecoins, US Treasuries, and Tokenized Stocks hub previews (``home_preview=True``)."""
+    """Index page: Stablecoins, US Treasuries, Tokenized Stocks, and MMF hub previews."""
     st.markdown(WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
     show_rwa_stablecoins_widget(home_preview=True, preview_rows=preview_rows)
     show_rwa_treasuries_widget(home_preview=True, preview_rows=preview_rows)
     show_rwa_tokenized_stocks_widget(home_preview=True, preview_rows=preview_rows)
+    show_rwa_mmf_widget(home_preview=True, preview_rows=preview_rows)
 
 
 def show_rwa_explore_by_market_participant_widget(*, preview_rows: int = 8) -> None:
