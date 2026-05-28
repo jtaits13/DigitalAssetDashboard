@@ -416,7 +416,7 @@ async def us_crypto_etps(request: Request, q: str = "") -> HTMLResponse:
     if etp_res.error and not etp_res.rows:
         body_parts.append(f'<p class="alert warn">{escape(etp_res.error)}</p>')
     else:
-        from pages.US_Crypto_ETPs import ETP_KEY_OBSERVATIONS_HTML  # noqa: PLC0415
+        from pages.US_Crypto_ETPs import _etp_key_observations_html  # noqa: PLC0415
 
         rows = etp_res.rows
         etp_pulse = etp_all_news[:ETP_PULSE_PREVIEW_COUNT]
@@ -425,7 +425,7 @@ async def us_crypto_etps(request: Request, q: str = "") -> HTMLResponse:
         )
         body_parts.append(etp_summary_kpi_row_html(rows, metrics_above_methodology_note=True))
         body_parts.append(hub_subsection_heading_html("Key Observations"))
-        body_parts.append(ETP_KEY_OBSERVATIONS_HTML)
+        body_parts.append(_etp_key_observations_html(rows, etp_news=etp_all_news))
         body_parts.append('<div class="split-etp">')
         body_parts.append("<div>")
         body_parts.append(
