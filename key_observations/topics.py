@@ -163,6 +163,60 @@ TOPIC_THEMES: dict[str, tuple[TopicTheme, ...]] = {
             ("bitcoin ETF flow",),
         ),
     ),
+    "etp": (
+        TopicTheme(
+            "etf_flows",
+            "ETF flows & inflows",
+            (
+                "etf flow",
+                "inflow",
+                "outflow",
+                "spot bitcoin etf",
+                "spot ether etf",
+                "ibit",
+                "farside",
+            ),
+            ("bitcoin ETF inflow", "spot bitcoin ETF flow"),
+        ),
+        TopicTheme(
+            "market_sizing",
+            "ETF AUM & market-size scenarios",
+            (
+                "etf aum",
+                "assets under management",
+                "180 billion",
+                "220 billion",
+                "bitcoin etf assets",
+                "market size",
+            ),
+            ("bitcoin ETF AUM forecast 2026",),
+        ),
+        TopicTheme(
+            "launch_pipeline",
+            "ETP filings & product pipeline",
+            (
+                "etf filing",
+                "s-1",
+                "spot etf",
+                "crypto etf filing",
+                "new etf",
+                "etf application",
+            ),
+            ("crypto ETF filing SEC", "spot bitcoin ETF filing"),
+        ),
+        TopicTheme(
+            "regulation",
+            "SEC & exchange approvals",
+            ("sec", "approval", "nyse", "cboe", "listing", "exchange-traded"),
+            ("spot bitcoin ETF SEC approval",),
+        ),
+        TopicTheme(
+            "concentration",
+            "Fund concentration & share",
+            ("ibit", "blackrock", "dominance", "concentration", "market share"),
+            ("bitcoin ETF market share IBIT",),
+        ),
+    ),
     "rwa_global": (
         TopicTheme(
             "tokenization_growth",

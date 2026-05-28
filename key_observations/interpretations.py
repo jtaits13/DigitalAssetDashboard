@@ -78,7 +78,28 @@ PAGE_THEME_INTERPRETATIONS: dict[tuple[str, str], str] = {
     ),
     ("crypto", "etf_flows"): (
         "Spot ETF flow stories often move Bitcoin first—"
-        "ETF-related coverage can show up in BTC dominance and top-line market-cap KPIs before alt categories react."
+        "compare headline flow narratives with the 30-day net-flow KPI and IBIT/ETHA AUM on this page."
+    ),
+    # U.S. ETPs
+    ("etp", "etf_flows"): (
+        "Flow headlines can front-run AUM changes in the KPI strip and aggregate chart—"
+        "compare cited inflow/outflow themes with the 30-day Farside net-flow figure and fund-table AUM."
+    ),
+    ("etp", "market_sizing"): (
+        "AUM scenario coverage is useful for planning ranges, not point forecasts—"
+        "anchor analyst brackets against live spot Bitcoin ETP AUM on this page and the aggregate trend chart."
+    ),
+    ("etp", "launch_pipeline"): (
+        "Filing-wave headlines signal product attempts ahead of launches—"
+        "most filings will not scale, but they can foreshadow issuer and custodian competition in the table below."
+    ),
+    ("etp", "regulation"): (
+        "Approval and listing headlines shape which products can scale on U.S. exchanges—"
+        "watch whether coverage names issuers or structures already listed in the fund table."
+    ),
+    ("etp", "concentration"): (
+        "Concentration narratives matter for distribution economics—"
+        "compare headline focus on mega-funds with top-fund AUM share in the KPI row and concentration chart."
     ),
     # RWA global
     ("rwa_global", "tokenization_growth"): (

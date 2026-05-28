@@ -10,6 +10,7 @@
     banner: document.getElementById("js-data-banner"),
     kpi: document.getElementById("js-etp-kpi"),
     snapshotAsOf: document.getElementById("js-etp-snapshot-as-of"),
+    keyObs: document.getElementById("js-etp-key-obs"),
     concentration: document.getElementById("etp-concentration-chart"),
     chart: document.getElementById("aum-chart"),
     pulse: document.getElementById("js-etf-pulse"),
@@ -511,6 +512,20 @@
         els.ts.textContent = String(tsIso).replace("T", " ").replace(/\.\d+Z$/, " UTC");
       }
       renderKpi(kpis);
+      var koApi = window.__CRYPTO_KPI || {};
+      if (typeof koApi.renderKeyObservationsCallout === "function") {
+        koApi.renderKeyObservationsCallout(
+          els.keyObs,
+          (kpis && kpis.key_observations_html) || "",
+          { title: "Key observations" }
+        );
+      } else if (els.keyObs && kpis && kpis.key_observations_html) {
+        els.keyObs.hidden = false;
+        els.keyObs.innerHTML = kpis.key_observations_html;
+      } else if (els.keyObs) {
+        els.keyObs.hidden = true;
+        els.keyObs.innerHTML = "";
+      }
       renderChart((aum && aum.series) || []);
       state.rows = (etps.rows || []).map(prepareRow);
       state.filtered = state.rows.slice();

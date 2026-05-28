@@ -2089,6 +2089,21 @@ def export_etp_json_bundle(
         "etha": {"aum_display": etha_aum, "delta": _kpi_delta("ETHA", etha_r)},
     }
 
+    try:
+        from crypto_etps.etp_takeaways import build_etp_key_observations_html
+        from news_feeds import load_all_etf_etp_news_cached
+
+        etf_articles, _etf_feed_errs = load_all_etf_etp_news_cached(extra_feeds=[STATIC_THE_DEFIANT_FEED])
+        kpis["key_observations_html"] = build_etp_key_observations_html(
+            rows,
+            net_flow_1m_display=kpis["net_flow_1m_display"],
+            net_flow_1m_pct=net_flow_1m_pct,
+            articles=etf_articles,
+        )
+    except Exception as exc:
+        kpis["key_observations_html"] = ""
+        etp_errors.append(f"ETP key observations HTML: {exc}")
+
     (out_dir / "etps.json").write_text(
         json.dumps({"generated_at": refreshed_at, "rows": rows_payload}, indent=2),
         encoding="utf-8",

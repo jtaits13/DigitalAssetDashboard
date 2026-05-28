@@ -25,7 +25,12 @@ from crypto_etps.dataframe_table import (
     build_etp_dataframe,
     filter_rows_by_fund_name,
 )
-from crypto_etps.flows import load_farside_flow_series_cached
+from crypto_etps.flows import (
+    aggregate_flow_for_symbols,
+    aggregate_flow_mom_pct,
+    format_flow_usd_compact,
+    load_farside_flow_series_cached,
+)
 from crypto_etps.widgets import (
     ETP_DATA_SOURCE_CAPTION,
     WIDGET_CSS,
@@ -41,7 +46,6 @@ from home_layout import (
     KPI_WINDOW_NOTE_CSS,
     STREAMLIT_TABLE_UNIFY_CSS,
     hub_subsection_heading_html,
-    monthly_review_note_html,
     section_label_teal,
     subpage_footnote_markup_html,
     subpage_toolbar_note_html,
@@ -60,67 +64,24 @@ from price_ticker import show_price_ticker
 # Chart sits in a half-width column next to the ETF pulse panel; KPI row is full width above.
 ETP_TOP_SPLIT_AUM_CHART_HEIGHT = 420
 
-_SEC_SPOT_BTC_ETPS_ORDER_URL = "https://www.sec.gov/files/rules/sro/nysearca/2024/34-99306.pdf"
-_SEC_OPTIONS_APPROVAL_URL = "https://www.sec.gov/files/rules/sro/cboebzx/2024/34-101224.pdf"
-_DL_NEWS_BTC_ETF_AUM_SCENARIO_URL = (
-    "https://www.dlnews.com/articles/markets/bitcoin-etfs-to-top-180-billion-usd-in-2026-say-analysts/"
-)
-_CF_BENCHMARKS_FILINGS_WAVE_URL = (
-    "https://www.cfbenchmarks.com/blog/what-a-huge-wall-of-filings-tells-us-about-the-next-wave-of-us-crypto-etfs"
-)
 
-ETP_KEY_OBSERVATIONS_HTML = f"""
-<style>
-.etp-takeaways {{
-  border: 1px solid #C7D8E8;
-  border-radius: 10px;
-  padding: 0.9rem 1.05rem 1rem;
-  margin: 0.1rem 0 0.55rem;
-  background: #ffffff;
-  box-shadow: 0 1px 3px rgba(15,23,42,0.06);
-}}
-.etp-takeaways ul {{
-  margin: 0.35rem 0 0.2rem 1.1rem;
-  padding: 0;
-  color: #1F4C67;
-  font-size: 0.92rem;
-  line-height: 1.45;
-}}
-.etp-takeaways li {{
-  margin-bottom: 0.45rem;
-}}
-.etp-takeaways .etp-takeaway-note {{
-  margin: 0.5rem 0 0 0;
-  font-size: 0.78rem;
-  color: #3E6A7A;
-  line-height: 1.4;
-}}
-</style>
-<div class="etp-takeaways">
-  <ul>
-    <li><strong>Product access expanded quickly, then concentrated.</strong> U.S. spot Bitcoin ETP approvals in 2024
-    (see <a href="{_SEC_SPOT_BTC_ETPS_ORDER_URL}">SEC order</a>) widened listed access fast—yet assets still cluster in a
-    few large funds. For allocators and service providers, scale and distribution economics now matter at least as much
-    as first-mover timing.</li>
-    <li><strong>Forward market-size scenarios are large, but still assumptions-driven.</strong> Public analyst commentary
-    continues to frame the next few years in a broad range rather than a single consensus point. For example, one
-    widely-cited 2026 scenario set discussed in market coverage points to roughly <strong>$180B-$220B</strong> for Bitcoin
-    ETF assets, compared with roughly <strong>~$145B today</strong> in that same discussion context (see
-    <a href="{_DL_NEWS_BTC_ETF_AUM_SCENARIO_URL}">DL News summary of analyst estimates</a>). Treat these as directional
-    planning ranges, not a base-case forecast.</li>
-    <li><strong>The launch pipeline is crowded.</strong> Industry filing trackers and analyst snapshots indicate
-    <strong>120+ crypto ETP filings</strong> in the U.S. queue (example discussion:
-    <a href="{_CF_BENCHMARKS_FILINGS_WAVE_URL}">CF Benchmarks, citing Bloomberg analysts</a>). Filing volume does
-    <strong>not</strong> mean all products launch or scale, but it does point to a heavier near-term slate of spot
-    and spot-adjacent product attempts.</li>
-    <li><strong>Market structure is maturing around liquidity tools.</strong> U.S. exchange-listed spot Bitcoin options
-    (<a href="{_SEC_OPTIONS_APPROVAL_URL}">SEC approval order</a>) improve hedging and risk transfer around spot ETPs,
-    which can influence advisor suitability frameworks, institutional implementation, and trading-desk workflow design.</li>
-  </ul>
-  <p class="etp-takeaway-note">Context for strategy only (not investment advice). The KPI row, chart, and table below use
-  data from the StockAnalysis + Yahoo process described on this page.</p>
-</div>
-"""
+def _etp_key_observations_html(
+    rows: list,
+    *,
+    etp_news: list[dict] | None = None,
+) -> str:
+    from crypto_etps.etp_takeaways import build_etp_key_observations_html
+
+    flow_series, _ = load_farside_flow_series_cached()
+    listed_syms = [r.symbol for r in rows if (r.symbol or "").strip()]
+    net_flow_1m, _ = aggregate_flow_for_symbols(listed_syms, flow_series, days=30)
+    net_flow_1m_pct, _ = aggregate_flow_mom_pct(listed_syms, flow_series, days=30)
+    return build_etp_key_observations_html(
+        rows,
+        net_flow_1m_display=format_flow_usd_compact(net_flow_1m),
+        net_flow_1m_pct=net_flow_1m_pct,
+        articles=etp_news,
+    )
 
 
 def main() -> None:
@@ -193,8 +154,10 @@ def main() -> None:
         metrics_above_methodology_note=True,
     )
     st.markdown(hub_subsection_heading_html("Key Observations"), unsafe_allow_html=True)
-    st.markdown(ETP_KEY_OBSERVATIONS_HTML, unsafe_allow_html=True)
-    st.markdown(monthly_review_note_html(), unsafe_allow_html=True)
+    st.markdown(
+        _etp_key_observations_html(rows, etp_news=etp_all_news),
+        unsafe_allow_html=True,
+    )
     st.divider()
 
     # border=True: same as home News & Regulatory row — stretch columns and pin Explore CTA under the hub panel.

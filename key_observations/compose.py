@@ -32,15 +32,23 @@ def select_observations(
     max_count: int = 5,
     min_data: int = 2,
     max_news: int = 2,
+    pin_candidate_ids: tuple[str, ...] = (),
 ) -> list[ObservationCandidate]:
     if not candidates:
         return []
     ranked = sorted(candidates, key=lambda c: c.score, reverse=True)
+    by_id = {c.id: c for c in candidates}
     data_ranked = [c for c in ranked if c.source == "data"]
     news_ranked = [c for c in ranked if c.source == "news"]
 
     chosen: list[ObservationCandidate] = []
     used_themes: set[str] = set()
+
+    for pin_id in pin_candidate_ids:
+        cand = by_id.get(pin_id)
+        if cand and cand not in chosen:
+            chosen.append(cand)
+            used_themes.update(cand.themes)
 
     def _try_add(cand: ObservationCandidate, *, force: bool = False) -> bool:
         if cand in chosen:
@@ -123,6 +131,7 @@ def build_key_observations_html(
     max_bullets: int = 5,
     variant: Variant = "boxed",
     include_monthly_review: bool | None = None,
+    pin_candidate_ids: tuple[str, ...] = (),
 ) -> str:
     """Merge data-driven and headline-driven candidates; pick the highest-scoring set."""
     theme_key = resolve_topic_key(topic)
@@ -148,6 +157,7 @@ def build_key_observations_html(
         max_count=max_bullets,
         min_data=min_data,
         max_news=max_news,
+        pin_candidate_ids=pin_candidate_ids,
     )
     return render_observations_html(
         selected,
