@@ -104,6 +104,11 @@
   function fillRwaTableBody(tbody, columns, rows, opts) {
     var emptyMsg = opts.emptyMsg;
     var linkAria = opts.linkAria || "Open link";
+    var isTmmfPage =
+      typeof document !== "undefined" &&
+      document.body &&
+      document.body.classList &&
+      document.body.classList.contains("page-rwa-deep-mmf");
     tbody.innerHTML = "";
     if (!rows || !rows.length) {
       var colspan = columns && columns.length ? columns.length : 1;
@@ -150,7 +155,11 @@
           tds.push('<td class="num' + pctCellCls(v) + '">' + fmtPctPts(v, 2) + "</td>");
         } else if (col === "% distributed") {
           tds.push('<td class="num">' + fmtPctLevel(v, 2) + "</td>");
-        } else if (col === "Market Share" || col === "30D Δ share") {
+        } else if (col === "Market Share") {
+          tds.push(
+            '<td class="num">' + (isTmmfPage ? fmtPctLevel(v, 2) : fmtPctPts(v, 2)) + "</td>"
+          );
+        } else if (col === "30D Δ share") {
           tds.push('<td class="num">' + fmtPctPts(v, 2) + "</td>");
         } else if (col === "#" || col === "RWA Count" || col === "Stablecoins") {
           tds.push('<td class="num">' + (v != null ? esc(String(v)) : "—") + "</td>");

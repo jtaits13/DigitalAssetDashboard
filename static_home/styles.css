@@ -2765,6 +2765,22 @@ body.page-article-feed .etf-news-nav {
   box-shadow: 0 1px 0 rgba(199, 216, 232, 0.9);
 }
 
+.tmmf-net-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0 0.4rem 0.2rem 0;
+  white-space: nowrap;
+}
+
+.tmmf-net-chip img {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #d5e3ef;
+}
+
 .rwa-split-chart-shell {
   flex: 0 0 auto;
   position: relative;

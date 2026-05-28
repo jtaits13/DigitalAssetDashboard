@@ -1,0 +1,376 @@
+{
+  "page_title": "Tokenized Money Market Funds \u2014 Digital Assets Dashboard",
+  "band_label": "Tokenized Money Market Funds",
+  "page_subtitle_html": "Tokenized money market fund (MMF) exposure aggregated from <a href=\"https://app.rwa.xyz/treasuries\">RWA.xyz US Treasuries</a> and <a href=\"https://app.rwa.xyz/government-bonds\">Non-U.S. Government Debt</a>. Networks and platforms are built from each fund's on-chain token deployments; <strong>Distributed Value</strong> columns are current levels.",
+  "kpi_window_note": "Distributed value uses a 30-day (30D) % change vs summed token values 30 days ago. 7D blended APY is value-weighted across fund token deployments. Fund universe: tokenized money market funds on RWA.xyz US Treasuries and Non-U.S. Government Debt pages.",
+  "kpis": [
+    {
+      "label": "Distributed value",
+      "value_display": "$13.48B",
+      "delta_30d_pct": 0.05697158176905404
+    },
+    {
+      "label": "Tokenized funds",
+      "value_display": "23",
+      "delta_30d_pct": null
+    },
+    {
+      "label": "Active networks",
+      "value_display": "17",
+      "delta_30d_pct": null
+    },
+    {
+      "label": "7D blended APY",
+      "value_display": "\u2014",
+      "delta_30d_pct": null
+    }
+  ],
+  "chart_max_bars": 12,
+  "back_href": "rwa-explore-asset-type.html",
+  "footer_note": "2026-05-28 12:11:15 UTC \u00b7 Source: RWA.xyz",
+  "bottom_cta": {
+    "href": "https://app.rwa.xyz/treasuries",
+    "label": "See US Treasuries on RWA.xyz (MMF listings)"
+  },
+  "error_mode": "",
+  "key_observations_html": "<div style=\"border:1px solid #C7D8E8;border-radius:10px;padding:0.75rem 0.95rem;margin:0.1rem 0 0.55rem;background:#ffffff;box-shadow:0 1px 3px rgba(15,23,42,0.06);\"><ul style=\"margin:0.1rem 0 0 1.05rem;padding:0;color:#1F4C67;font-size:0.9rem;line-height:1.4;\"><li><strong>Liquidity funds anchor institutional RWA adoption:</strong> tokenized MMFs concentrate in short-duration government and repo-like products used for cash management and collateral.</li><li><strong>Multi-chain distribution is selective:</strong> largest funds deploy on a handful of networks where issuer integrations and transferability matter\u2014not every chain carries meaningful AUM.</li><li><strong>Issuer concentration reflects fund franchises:</strong> a small set of asset managers accounts for most distributed value; tail funds are often regional or single-chain programs.</li></ul></div><p style=\"margin:0.1rem 0 0.55rem 0;color:#3E6A7A;font-size:0.78rem;\">Reviewed monthly \u00b7 Last reviewed: Apr 2026</p>",
+  "between_ko_and_leagues_html": "<section class=\"hub-section tmmf-funds-list\" aria-labelledby=\"tmmf-funds-h\"><h2 class=\"subsection-head\" id=\"tmmf-funds-h\">Included funds</h2><p class=\"muted\">Funds included in this page\u2019s MMF universe (23 total).</p><div class=\"rwa-split-table-scroll\"><table class=\"data-table data-table--dense\"><thead><tr><th>Fund Name</th><th>Ticker</th><th>Platform</th><th>Networks</th><th>Total Value</th><th>Eligible Investors</th><th>Holders</th><th>Domicile</th><th>Regulatory Framework</th><th>Custodian</th><th>Terms</th></tr></thead><tbody><tr><td>Circle USYC</td><td>USYC</td><td>Circle International</td><td><span class=\"tmmf-net-chip\"><img src=\"https://rwa-partners-infra-prod-rwapartnersuploads740d2985-1c2klgo7i3ef.s3.us-east-1.amazonaws.com/uploads/images/BNB_Glyth_Yellow.svg\" alt=\"BNB Chain logo\" loading=\"lazy\" />BNB Chain</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum logo\" loading=\"lazy\" />Ethereum</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/sol.png\" alt=\"Solana logo\" loading=\"lazy\" />Solana</span></td><td class=\"num\">$2.98B</td><td>Non-U.S. Investor</td><td class=\"num\">44</td><td>United States of America</td><td>U.S. Securities Act Reg. S Exemption</td><td>\u2014</td><td><a href=\"https://www.circle.com/usyc\" target=\"_blank\" rel=\"noopener noreferrer\">Website</a></td></tr><tr><td>BlackRock USD Institutional Digital Liquidity Fund</td><td>BUIDL</td><td>BlackRock USD Institutional Digital Liquidity Fund</td><td><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum logo\" loading=\"lazy\" />Ethereum</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/avalanche.png\" alt=\"Avalanche C-Chain logo\" loading=\"lazy\" />Avalanche C-Chain</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/sol.png\" alt=\"Solana logo\" loading=\"lazy\" />Solana</span><span class=\"tmmf-net-chip\"><img src=\"https://rwa-partners-infra-prod-rwapartnersuploads740d2985-1c2klgo7i3ef.s3.us-east-1.amazonaws.com/uploads/images/BNB_Glyth_Yellow.svg\" alt=\"BNB Chain logo\" loading=\"lazy\" />BNB Chain</span><span class=\"tmmf-net-chip\"><img src=\"https://rwa-partners-infra-prod-rwapartnersuploads740d2985-1c2klgo7i3ef.s3.us-east-1.amazonaws.com/uploads/images/aptos_pfp-mint_512.png\" alt=\"Aptos logo\" loading=\"lazy\" />Aptos</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/optimism.png\" alt=\"Optimism logo\" loading=\"lazy\" />Optimism</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/arbitrum.png\" alt=\"Arbitrum logo\" loading=\"lazy\" />Arbitrum</span><span class=\"tmmf-net-chip\"><img src=\"https://rwa-partners-infra-prod-rwapartnersuploads740d2985-1c2klgo7i3ef.s3.us-east-1.amazonaws.com/uploads/images/Polygon%20Icon.png\" alt=\"Polygon logo\" loading=\"lazy\" />Polygon</span></td><td class=\"num\">$2.44B</td><td>\u2014</td><td class=\"num\">108</td><td>United States of America</td><td>U.S. Securities Act Reg. D Exemption</td><td>Bank of New York Mellon</td><td><a href=\"https://securitize.io/blackrock/buidl\" target=\"_blank\" rel=\"noopener noreferrer\">Website</a></td></tr><tr><td>Ondo U.S. Dollar Yield</td><td>USDY</td><td>Ondo USDY</td><td><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum logo\" loading=\"lazy\" />Ethereum</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/entity-icons/128/color/plume.png\" alt=\"Plume logo\" loading=\"lazy\" />Plume</span><span class=\"tmmf-net-chip\"><img src=\"https://s3.coinmarketcap.com/static-gravity/image/992744cfbd5e40f5920018ee7a830b98.png\" alt=\"SEI logo\" loading=\"lazy\" />SEI</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/sol.png\" alt=\"Solana logo\" loading=\"lazy\" />Solana</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/xlm.png\" alt=\"Stellar logo\" loading=\"lazy\" />Stellar</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/entity-icons/128/color/mantle.png\" alt=\"Mantle logo\" loading=\"lazy\" />Mantle</span><span class=\"tmmf-net-chip\"><img src=\"https://rwa-app-public.s3.amazonaws.com/sui.webp\" alt=\"Sui logo\" loading=\"lazy\" />Sui</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/nobel.png\" alt=\"Noble logo\" loading=\"lazy\" />Noble</span><span class=\"tmmf-net-chip\"><img src=\"https://rwa-partners-infra-prod-rwapartnersuploads740d2985-1c2klgo7i3ef.s3.us-east-1.amazonaws.com/uploads/images/aptos_pfp-mint_512.png\" alt=\"Aptos logo\" loading=\"lazy\" />Aptos</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/arbitrum.png\" alt=\"Arbitrum logo\" loading=\"lazy\" />Arbitrum</span><span class=\"tmmf-net-chip\"><img src=\"https://rwa-partners-infra-prod-rwapartnersuploads740d2985-1c2klgo7i3ef.s3.us-east-1.amazonaws.com/uploads/images/om%20token%20logo%20256.svg\" alt=\"MANTRA logo\" loading=\"lazy\" />MANTRA</span></td><td class=\"num\">$2.14B</td><td>Non-U.S. Investor</td><td class=\"num\">14,913</td><td>United States of America</td><td>U.S. Securities Act Reg. S Exemption</td><td>Morgan Stanley Smith Barney</td><td><a href=\"https://ondo.finance/usdy\" target=\"_blank\" rel=\"noopener noreferrer\">Website</a></td></tr><tr><td>iBENJI</td><td>iBENJI</td><td>Franklin OnChain Institutional Liquidity Fund Ltd.</td><td><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum logo\" loading=\"lazy\" />Ethereum</span><span class=\"tmmf-net-chip\"><img src=\"https://rwa-partners-infra-prod-rwapartnersuploads740d2985-1c2klgo7i3ef.s3.us-east-1.amazonaws.com/uploads/images/BNB_Glyth_Yellow.svg\" alt=\"BNB Chain logo\" loading=\"lazy\" />BNB Chain</span></td><td class=\"num\">$1.60B</td><td>Institutional Investor</td><td class=\"num\">26</td><td>United States of America</td><td>U.S. Securities Act Reg. D Exemption</td><td>\u2014</td><td><a href=\"https://franklintempleton.com\" target=\"_blank\" rel=\"noopener noreferrer\">Website</a></td></tr><tr><td>Spiko EU T-Bills Money Market Fund</td><td>EUTBL</td><td>Spiko</td><td><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/xlm.png\" alt=\"Stellar logo\" loading=\"lazy\" />Stellar</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/arbitrum.png\" alt=\"Arbitrum logo\" loading=\"lazy\" />Arbitrum</span><span class=\"tmmf-net-chip\"><img src=\"https://rwa-partners-infra-prod-rwapartnersuploads740d2985-1c2klgo7i3ef.s3.us-east-1.amazonaws.com/uploads/images/Polygon%20Icon.png\" alt=\"Polygon logo\" loading=\"lazy\" />Polygon</span><span class=\"tmmf-net-chip\"><img src=\"https://www.base.org/document/favicon-32x32.png\" alt=\"Base logo\" loading=\"lazy\" />Base</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum logo\" loading=\"lazy\" />Ethereum</span></td><td class=\"num\">$1.02B</td><td>Non-U.S. Investor</td><td class=\"num\">3,539</td><td>European Union</td><td>UCITS Directive (2009/65/EC)</td><td>CACEIS</td><td><a href=\"https://www.spiko.io/spiko-euro\" target=\"_blank\" rel=\"noopener noreferrer\">Terms / transparency</a></td></tr><tr><td>WisdomTree Treasury\u00a0Money Market Digital Fund</td><td>WTGXX</td><td>WisdomTree Government Money Market Digital Fund</td><td><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum logo\" loading=\"lazy\" />Ethereum</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/arbitrum.png\" alt=\"Arbitrum logo\" loading=\"lazy\" />Arbitrum</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/xlm.png\" alt=\"Stellar logo\" loading=\"lazy\" />Stellar</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/avalanche.png\" alt=\"Avalanche C-Chain logo\" loading=\"lazy\" />Avalanche C-Chain</span><span class=\"tmmf-net-chip\"><img src=\"https://www.base.org/document/favicon-32x32.png\" alt=\"Base logo\" loading=\"lazy\" />Base</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/sol.png\" alt=\"Solana logo\" loading=\"lazy\" />Solana</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/entity-icons/128/color/plume.png\" alt=\"Plume logo\" loading=\"lazy\" />Plume</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/optimism.png\" alt=\"Optimism logo\" loading=\"lazy\" />Optimism</span></td><td class=\"num\">$943.16M</td><td>U.S. Retail and Institutional Investor</td><td class=\"num\">888</td><td>United States of America</td><td>U.S. Securities Act Form N-1A for Mutual Funds</td><td>Bank of New York Mellon</td><td><a href=\"https://www.wisdomtree.com/investments/digital-funds/money-market/wtgxx\" target=\"_blank\" rel=\"noopener noreferrer\">Website</a></td></tr><tr><td>BENJI</td><td>BENJI</td><td>Franklin Templeton Trust</td><td><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/xlm.png\" alt=\"Stellar logo\" loading=\"lazy\" />Stellar</span><span class=\"tmmf-net-chip\"><img src=\"https://www.base.org/document/favicon-32x32.png\" alt=\"Base logo\" loading=\"lazy\" />Base</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/arbitrum.png\" alt=\"Arbitrum logo\" loading=\"lazy\" />Arbitrum</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum logo\" loading=\"lazy\" />Ethereum</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/avalanche.png\" alt=\"Avalanche C-Chain logo\" loading=\"lazy\" />Avalanche C-Chain</span><span class=\"tmmf-net-chip\"><img src=\"https://rwa-partners-infra-prod-rwapartnersuploads740d2985-1c2klgo7i3ef.s3.us-east-1.amazonaws.com/uploads/images/Polygon%20Icon.png\" alt=\"Polygon logo\" loading=\"lazy\" />Polygon</span><span class=\"tmmf-net-chip\"><img src=\"https://rwa-partners-infra-prod-rwapartnersuploads740d2985-1c2klgo7i3ef.s3.us-east-1.amazonaws.com/uploads/images/aptos_pfp-mint_512.png\" alt=\"Aptos logo\" loading=\"lazy\" />Aptos</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/sol.png\" alt=\"Solana logo\" loading=\"lazy\" />Solana</span></td><td class=\"num\">$823.47M</td><td>U.S. Retail and Institutional Investor</td><td class=\"num\">1,106</td><td>United States of America</td><td>Investment Company Act of 1940</td><td>J.P. Morgan</td><td><a href=\"https://www.sec.gov/Archives/edgar/data/1786958/000113743919000429/fttn1a092019.htm\" target=\"_blank\" rel=\"noopener noreferrer\">Legal document</a></td></tr><tr><td>Ondo Short-Term US Government Bond Fund</td><td>OUSG</td><td>Ondo I</td><td><span class=\"tmmf-net-chip\"><img src=\"https://rwa-partners-infra-prod-rwapartnersuploads740d2985-1c2klgo7i3ef.s3.us-east-1.amazonaws.com/uploads/images/XRPL%20-%20Black.png\" alt=\"XRP Ledger logo\" loading=\"lazy\" />XRP Ledger</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum logo\" loading=\"lazy\" />Ethereum</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/sol.png\" alt=\"Solana logo\" loading=\"lazy\" />Solana</span><span class=\"tmmf-net-chip\"><img src=\"https://rwa-partners-infra-prod-rwapartnersuploads740d2985-1c2klgo7i3ef.s3.us-east-1.amazonaws.com/uploads/images/Polygon%20Icon.png\" alt=\"Polygon logo\" loading=\"lazy\" />Polygon</span></td><td class=\"num\">$612.60M</td><td>U.S. Qualified Purchaser</td><td class=\"num\">56</td><td>British Virgin Islands</td><td>British Virgin Islands Securities and Investment Business Act</td><td>Clear Street</td><td><a href=\"https://ondo.finance/ousg\" target=\"_blank\" rel=\"noopener noreferrer\">Website</a></td></tr><tr><td>ChinaAMC USD Digital Money Market Fund Class I USD</td><td>CUMIU</td><td>ChinaAMC</td><td><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum logo\" loading=\"lazy\" />Ethereum</span></td><td class=\"num\">$546.98M</td><td>Non-U.S. Investor</td><td class=\"num\">1</td><td>Hong Kong</td><td>Hong Kong Ordinance Professional Investor Exemption</td><td>Standard Chartered Trustee (Hong Kong)</td><td><a href=\"https://www.chinaamc.com.hk/product/chinaamc-hkd-digital-money-market-fund/\" target=\"_blank\" rel=\"noopener noreferrer\">Website</a></td></tr><tr><td>Spiko US T-Bills Money Market Fund</td><td>USTBL</td><td>Spiko</td><td><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum logo\" loading=\"lazy\" />Ethereum</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/xlm.png\" alt=\"Stellar logo\" loading=\"lazy\" />Stellar</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/arbitrum.png\" alt=\"Arbitrum logo\" loading=\"lazy\" />Arbitrum</span><span class=\"tmmf-net-chip\"><img src=\"https://rwa-partners-infra-prod-rwapartnersuploads740d2985-1c2klgo7i3ef.s3.us-east-1.amazonaws.com/uploads/images/Polygon%20Icon.png\" alt=\"Polygon logo\" loading=\"lazy\" />Polygon</span><span class=\"tmmf-net-chip\"><img src=\"https://www.base.org/document/favicon-32x32.png\" alt=\"Base logo\" loading=\"lazy\" />Base</span></td><td class=\"num\">$148.94M</td><td>U.S. and Global Retail</td><td class=\"num\">894</td><td>European Union</td><td>UCITS Directive (2009/65/EC)</td><td>CACEIS</td><td><a href=\"https://www.spiko.io/spiko-dollar\" target=\"_blank\" rel=\"noopener noreferrer\">Website</a></td></tr><tr><td>ChinaAMC HKD Digital Money Market Fund Class A HKD</td><td>CAMMF</td><td>ChinaAMC</td><td><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum logo\" loading=\"lazy\" />Ethereum</span></td><td class=\"num\">$91.62M</td><td>Non-U.S. Investor</td><td class=\"num\">2</td><td>Hong Kong</td><td>Hong Kong Ordinance Professional Investor Exemption</td><td>Standard Chartered Trustee (Hong Kong)</td><td><a href=\"https://www.chinaamc.com.hk/product/chinaamc-hkd-digital-money-market-fund/\" target=\"_blank\" rel=\"noopener noreferrer\">Website</a></td></tr><tr><td>ChinaAMC RMB Digital Money Market Fund Class B RMB</td><td>CRMBR</td><td>ChinaAMC</td><td><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum logo\" loading=\"lazy\" />Ethereum</span></td><td class=\"num\">$32.02M</td><td>Non-U.S. Investor</td><td class=\"num\">3</td><td>Hong Kong</td><td>Hong Kong Ordinance Professional Investor Exemption</td><td>Standard Chartered Trustee (Hong Kong)</td><td><a href=\"https://www.chinaamc.com.hk/product/chinaamc-hkd-digital-money-market-fund/\" target=\"_blank\" rel=\"noopener noreferrer\">Website</a></td></tr><tr><td>ChinaAMC USD Digital Money Market Fund Class B USD</td><td>CUMBU</td><td>ChinaAMC</td><td><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum logo\" loading=\"lazy\" />Ethereum</span></td><td class=\"num\">$30.98M</td><td>Non-U.S. Investor</td><td class=\"num\">2</td><td>Hong Kong</td><td>Hong Kong Ordinance Professional Investor Exemption</td><td>Standard Chartered Trustee (Hong Kong)</td><td><a href=\"https://www.chinaamc.com.hk/product/chinaamc-hkd-digital-money-market-fund/\" target=\"_blank\" rel=\"noopener noreferrer\">Website</a></td></tr><tr><td>UBS USD Money Market Investment Fund Token</td><td>uMINT</td><td>UBS Global Opportunties</td><td><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum logo\" loading=\"lazy\" />Ethereum</span></td><td class=\"num\">$21.05M</td><td>Institutional Investor, Accredited Investor</td><td class=\"num\">32</td><td>Singapore</td><td>Singapore \u2014 Variable Capital Companies Act 2018 (VCC)</td><td>State Street</td><td><a href=\"https://www.ubs.com/global/en.html\" target=\"_blank\" rel=\"noopener noreferrer\">Website</a></td></tr><tr><td>ChinaAMC USD Digital Money Market Fund Class F USD</td><td>CUMFU</td><td>ChinaAMC</td><td><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum logo\" loading=\"lazy\" />Ethereum</span></td><td class=\"num\">$20.09M</td><td>Non-U.S. Investor</td><td class=\"num\">5</td><td>Hong Kong</td><td>Hong Kong Ordinance Professional Investor Exemption</td><td>Standard Chartered Trustee (Hong Kong)</td><td><a href=\"https://www.chinaamc.com.hk/product/chinaamc-hkd-digital-money-market-fund/\" target=\"_blank\" rel=\"noopener noreferrer\">Website</a></td></tr><tr><td>Spiko UK T-Bills Money Market Fund</td><td>UKTBL</td><td>Spiko</td><td><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/xlm.png\" alt=\"Stellar logo\" loading=\"lazy\" />Stellar</span><span class=\"tmmf-net-chip\"><img src=\"https://rwa-partners-infra-prod-rwapartnersuploads740d2985-1c2klgo7i3ef.s3.us-east-1.amazonaws.com/uploads/images/Polygon%20Icon.png\" alt=\"Polygon logo\" loading=\"lazy\" />Polygon</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/arbitrum.png\" alt=\"Arbitrum logo\" loading=\"lazy\" />Arbitrum</span><span class=\"tmmf-net-chip\"><img src=\"https://www.base.org/document/favicon-32x32.png\" alt=\"Base logo\" loading=\"lazy\" />Base</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum logo\" loading=\"lazy\" />Ethereum</span></td><td class=\"num\">$17.07M</td><td>U.S. and Global Retail</td><td class=\"num\">388</td><td>European Union</td><td>UCITS Directive (2009/65/EC)</td><td>CACEIS</td><td><a href=\"https://www.spiko.io/spiko-pound\" target=\"_blank\" rel=\"noopener noreferrer\">Terms / transparency</a></td></tr><tr><td>CMBI USD Money Market Fund Token</td><td>CMBMINT</td><td>DigiFT</td><td><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum logo\" loading=\"lazy\" />Ethereum</span><span class=\"tmmf-net-chip\"><img src=\"https://rwa-partners-infra-prod-rwapartnersuploads740d2985-1c2klgo7i3ef.s3.us-east-1.amazonaws.com/uploads/images/BNB_Glyth_Yellow.svg\" alt=\"BNB Chain logo\" loading=\"lazy\" />BNB Chain</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/sol.png\" alt=\"Solana logo\" loading=\"lazy\" />Solana</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/entity-icons/128/color/plume.png\" alt=\"Plume logo\" loading=\"lazy\" />Plume</span></td><td class=\"num\">$7.87M</td><td>Accredited Investor, Professional Investor</td><td class=\"num\">10</td><td>Singapore</td><td>Singapore Securities and Futures Act Section 275 Exemption</td><td>\u2014</td><td><a href=\"https://www.digift.io/solutions/investDetail?tokenCode=CMBMINT\" target=\"_blank\" rel=\"noopener noreferrer\">Website</a></td></tr><tr><td>ChinaAMC RMB Digital Money Market Fund Class F RMB</td><td>CRMFR</td><td>ChinaAMC</td><td><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum logo\" loading=\"lazy\" />Ethereum</span></td><td class=\"num\">$4.34M</td><td>Non-U.S. Investor</td><td class=\"num\">2</td><td>Hong Kong</td><td>Hong Kong Ordinance Professional Investor Exemption</td><td>Standard Chartered Trustee (Hong Kong)</td><td><a href=\"https://www.chinaamc.com.hk/product/chinaamc-hkd-digital-money-market-fund/\" target=\"_blank\" rel=\"noopener noreferrer\">Website</a></td></tr><tr><td>CMS Asseto Secure Hodl+ | CMS USD Money Market Fund</td><td>CASH+</td><td>Reale Assets Limited.</td><td><span class=\"tmmf-net-chip\"><img src=\"https://rwa-partners-infra-prod-rwapartnersuploads740d2985-1c2klgo7i3ef.s3.us-east-1.amazonaws.com/uploads/images/BNB_Glyth_Yellow.svg\" alt=\"BNB Chain logo\" loading=\"lazy\" />BNB Chain</span><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum logo\" loading=\"lazy\" />Ethereum</span></td><td class=\"num\">$1.40M</td><td>Non-U.S. Investor</td><td class=\"num\">38</td><td>Hong Kong</td><td>Hong Kong SFC-authorized fund</td><td>Bank of China (HK)</td><td><a href=\"https://asseto.finance/distribution/CashPlus_ETH\" target=\"_blank\" rel=\"noopener noreferrer\">Terms / transparency</a></td></tr><tr><td>ChinaAMC HKD Digital Money Market Fund Class F HKD</td><td>CAMFF</td><td>ChinaAMC</td><td><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum logo\" loading=\"lazy\" />Ethereum</span></td><td class=\"num\">$663.88K</td><td>Non-U.S. Investor</td><td class=\"num\">3</td><td>Hong Kong</td><td>Hong Kong Ordinance Professional Investor Exemption</td><td>Standard Chartered Trustee (Hong Kong)</td><td><a href=\"https://www.chinaamc.com.hk/product/chinaamc-hkd-digital-money-market-fund/\" target=\"_blank\" rel=\"noopener noreferrer\">Website</a></td></tr><tr><td>ChinaAMC HKD Digital Money Market Fund Class A USD</td><td>CAMMU</td><td>ChinaAMC</td><td><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum logo\" loading=\"lazy\" />Ethereum</span></td><td class=\"num\">$4.30K</td><td>Non-U.S. Investor</td><td class=\"num\">2</td><td>Hong Kong</td><td>Hong Kong Ordinance Professional Investor Exemption</td><td>Standard Chartered Trustee (Hong Kong)</td><td><a href=\"https://www.chinaamc.com.hk/product/chinaamc-hkd-digital-money-market-fund/\" target=\"_blank\" rel=\"noopener noreferrer\">Website</a></td></tr><tr><td>OpenTrade FT Money Market Fund Yield</td><td>XFTB</td><td>OpenTrade</td><td><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/avalanche.png\" alt=\"Avalanche C-Chain logo\" loading=\"lazy\" />Avalanche C-Chain</span></td><td class=\"num\">$114.34</td><td>\u2014</td><td class=\"num\">2</td><td>N/A</td><td>Non-Regulated</td><td>\u2014</td><td><a href=\"https://docs.opentrade.io/stablecoin-yield/stablecoin-yield-vaults/money-market-fund-vaults/franklin-templeton-benji-mmf-vault\" target=\"_blank\" rel=\"noopener noreferrer\">Terms / transparency</a></td></tr><tr><td>ChinaAMC HKD Digital Money Market Fund Class A RMB</td><td>CAMMR</td><td>ChinaAMC</td><td><span class=\"tmmf-net-chip\"><img src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum logo\" loading=\"lazy\" />Ethereum</span></td><td class=\"num\">$13.89</td><td>Non-U.S. Investor</td><td class=\"num\">1</td><td>Hong Kong</td><td>Hong Kong Ordinance Professional Investor Exemption</td><td>Standard Chartered Trustee (Hong Kong)</td><td><a href=\"https://www.chinaamc.com.hk/product/chinaamc-hkd-digital-money-market-fund/\" target=\"_blank\" rel=\"noopener noreferrer\">Website</a></td></tr></tbody></table></div></section>",
+  "networks": {
+    "block_heading": "By network (Tokenized MMFs)",
+    "table_heading": "Networks table",
+    "chart_heading": "Top networks by value",
+    "search_label": "Search network table",
+    "search_placeholder": "Filter by network name\u2026",
+    "name_column": "Network",
+    "value_column": "Distributed Value",
+    "columns": [
+      "#",
+      "Network",
+      "Link",
+      "RWA Count",
+      "Distributed Value",
+      "7D \u0394 value",
+      "Market Share",
+      "30D \u0394 share"
+    ],
+    "rows_full": [
+      {
+        "#": 1,
+        "Network": "Ethereum",
+        "Link": "https://app.rwa.xyz/networks/ethereum",
+        "RWA Count": 22,
+        "Distributed Value": 5665750926.136475,
+        "7D \u0394 value": -0.10516744504233315,
+        "Market Share": 42.01657972195135,
+        "30D \u0394 share": 0.7720006755236652
+      },
+      {
+        "#": 2,
+        "Network": "BNB Chain",
+        "Link": "https://app.rwa.xyz/networks/bnb-chain",
+        "RWA Count": 5,
+        "Distributed Value": 3091829562.4932675,
+        "7D \u0394 value": 0.05944431820058264,
+        "Market Share": 22.928664707075257,
+        "30D \u0394 share": -5.673351997986037
+      },
+      {
+        "#": 3,
+        "Network": "Stellar",
+        "Link": "https://app.rwa.xyz/networks/stellar",
+        "RWA Count": 6,
+        "Distributed Value": 1282858320.2566411,
+        "7D \u0394 value": -0.903212498424381,
+        "Market Share": 9.513534849613931,
+        "30D \u0394 share": -1.1158397666114928
+      },
+      {
+        "#": 4,
+        "Network": "Solana",
+        "Link": "https://app.rwa.xyz/networks/solana",
+        "RWA Count": 7,
+        "Distributed Value": 856205877.3273151,
+        "7D \u0394 value": 0.05236405127816571,
+        "Market Share": 6.3495277099408245,
+        "30D \u0394 share": 2.262590852797313
+      },
+      {
+        "#": 5,
+        "Network": "Avalanche C-Chain",
+        "Link": "https://app.rwa.xyz/networks/avalanche-c-chain",
+        "RWA Count": 4,
+        "Distributed Value": 640055301.3661736,
+        "7D \u0394 value": -3.259874197652388,
+        "Market Share": 4.746579040785324,
+        "30D \u0394 share": 2.956848382912343
+      },
+      {
+        "#": 6,
+        "Network": "Plume",
+        "Link": "https://app.rwa.xyz/networks/plume",
+        "RWA Count": 2,
+        "Distributed Value": 505164202.8110773,
+        "7D \u0394 value": 0.06692540985491426,
+        "Market Share": 3.7462416327152823,
+        "30D \u0394 share": 2.0537788129750987
+      },
+      {
+        "#": 7,
+        "Network": "Arbitrum",
+        "Link": "https://app.rwa.xyz/networks/arbitrum",
+        "RWA Count": 7,
+        "Distributed Value": 502526652.0135755,
+        "7D \u0394 value": 0.4503015239991053,
+        "Market Share": 3.7266818488845623,
+        "30D \u0394 share": -0.5870822964377007
+      },
+      {
+        "#": 8,
+        "Network": "XRP Ledger",
+        "Link": "https://app.rwa.xyz/networks/xrp-ledger",
+        "RWA Count": 1,
+        "Distributed Value": 294051032.9329974,
+        "7D \u0394 value": 0.06404133308102172,
+        "Market Share": 2.1806498076992633,
+        "30D \u0394 share": -0.5240950183020385
+      },
+      {
+        "#": 9,
+        "Network": "SEI",
+        "Link": "https://app.rwa.xyz/networks/sei",
+        "RWA Count": 1,
+        "Distributed Value": 256605476.23358223,
+        "7D \u0394 value": 0.0032460142652652344,
+        "Market Share": 1.9029577173117502,
+        "30D \u0394 share": 0.9776534753817443
+      },
+      {
+        "#": 10,
+        "Network": "Polygon",
+        "Link": "https://app.rwa.xyz/networks/polygon",
+        "RWA Count": 6,
+        "Distributed Value": 143967505.50073978,
+        "7D \u0394 value": -0.004219123850565205,
+        "Market Share": 1.0676470341005944,
+        "30D \u0394 share": -0.2298747658556215
+      },
+      {
+        "#": 11,
+        "Network": "Base",
+        "Link": "https://app.rwa.xyz/networks/base",
+        "RWA Count": 5,
+        "Distributed Value": 82218967.59983608,
+        "7D \u0394 value": 0.14373405847402046,
+        "Market Share": 0.609726733817214,
+        "30D \u0394 share": -0.06651941551799384
+      },
+      {
+        "#": 12,
+        "Network": "Aptos",
+        "Link": "https://app.rwa.xyz/networks/aptos",
+        "RWA Count": 3,
+        "Distributed Value": 69068893.16869716,
+        "7D \u0394 value": 5.8102667891235,
+        "Market Share": 0.5122072420695752,
+        "30D \u0394 share": -0.7251060879155875
+      },
+      {
+        "#": 13,
+        "Network": "Mantle",
+        "Link": "https://app.rwa.xyz/networks/mantle",
+        "RWA Count": 1,
+        "Distributed Value": 29376360.91201671,
+        "7D \u0394 value": -0.24031069356165785,
+        "Market Share": 0.2178518304619934,
+        "30D \u0394 share": -0.02844857068293248
+      },
+      {
+        "#": 14,
+        "Network": "Optimism",
+        "Link": "https://app.rwa.xyz/networks/optimism",
+        "RWA Count": 1,
+        "Distributed Value": 26182542.510000024,
+        "7D \u0394 value": 0.059626077358341245,
+        "Market Share": 0.19416682784623657,
+        "30D \u0394 share": -0.024382020870893473
+      },
+      {
+        "#": 15,
+        "Network": "Sui",
+        "Link": "https://app.rwa.xyz/networks/sui",
+        "RWA Count": 1,
+        "Distributed Value": 23160646.39,
+        "7D \u0394 value": 0.06692540647511928,
+        "Market Share": 0.17175678178301892,
+        "30D \u0394 share": -0.033737081618943635
+      },
+      {
+        "#": 16,
+        "Network": "Noble",
+        "Link": "https://app.rwa.xyz/networks/noble",
+        "RWA Count": 1,
+        "Distributed Value": 15170586.48,
+        "7D \u0394 value": 0.06692543096320154,
+        "Market Share": 0.11250338473674082,
+        "30D \u0394 share": -0.01409403361327592
+      },
+      {
+        "#": 17,
+        "Network": "MANTRA",
+        "Link": "https://app.rwa.xyz/networks/mantra",
+        "RWA Count": 1,
+        "Distributed Value": 367201.9933345228,
+        "7D \u0394 value": 0.06692540986542167,
+        "Market Share": 0.0027231292070794056,
+        "30D \u0394 share": -0.00034114417764851806
+      }
+    ],
+    "caption_html": "Networks table sums <strong>distributed value</strong> across tokenized money market fund token deployments on each chain. <strong>7D \u0394 value</strong> and <strong>market share</strong> are computed from aggregated token rows (RWA.xyz US Treasuries and Non-U.S. Government Debt fund lists).",
+    "chart_note_html": "The chart lists the top <strong>12</strong> networks by total value (labels include market share). Scroll the table for the full filtered list.",
+    "wide_chart_note_html": "",
+    "split_body_height_px": 458,
+    "chart_empty_filtered_entity_plural": "networks",
+    "section_intro_html": "<strong>Networks</strong> \u2014 aggregate distributed value of tokenized money market funds by chain, summed from each fund&#x27;s token deployments.",
+    "filter_note_suffix_all": "networks (Tokenized MMFs).",
+    "filter_note_entity_plural": "networks"
+  },
+  "platforms": {
+    "block_heading": "By platform (Tokenized MMFs \u00b7 Asset managers)",
+    "table_heading": "Platforms table",
+    "chart_heading": "Top platforms by value",
+    "search_label": "Search platform table",
+    "search_placeholder": "Filter by platform name\u2026",
+    "name_column": "Platform",
+    "value_column": "Total Value",
+    "columns": [
+      "#",
+      "Platform",
+      "Link",
+      "RWA Count",
+      "Total Value",
+      "7D \u0394 value",
+      "Market Share",
+      "30D \u0394 share"
+    ],
+    "rows_full": [
+      {
+        "#": 1,
+        "Platform": "Circle",
+        "Link": "https://app.rwa.xyz/asset-managers/circle",
+        "RWA Count": 1,
+        "Total Value": 2984068007.6357975,
+        "7D \u0394 value": 0.19953923826267167,
+        "Market Share": 22.12951698250032,
+        "30D \u0394 share": -2.190878582411046
+      },
+      {
+        "#": 2,
+        "Platform": "Ondo",
+        "Link": "https://app.rwa.xyz/asset-managers/ondo",
+        "RWA Count": 2,
+        "Total Value": 2756755826.182681,
+        "7D \u0394 value": -0.46540382214903403,
+        "Market Share": 20.443795086442957,
+        "30D \u0394 share": 3.691663490575861
+      },
+      {
+        "#": 3,
+        "Platform": "BlackRock",
+        "Link": "https://app.rwa.xyz/asset-managers/blackrock",
+        "RWA Count": 1,
+        "Total Value": 2440830549.2704506,
+        "7D \u0394 value": -3.81191973786372,
+        "Market Share": 18.10092831439196,
+        "30D \u0394 share": -0.8981307844406122
+      },
+      {
+        "#": 4,
+        "Platform": "Franklin Templeton",
+        "Link": "https://app.rwa.xyz/asset-managers/franklin-templeton",
+        "RWA Count": 2,
+        "Total Value": 2419360624.6391206,
+        "7D \u0394 value": 4.650071697892855,
+        "Market Share": 17.941709737427143,
+        "30D \u0394 share": 1.8610404698964078
+      },
+      {
+        "#": 5,
+        "Platform": "Twenty First Capital",
+        "Link": "https://app.rwa.xyz/asset-managers/twenty-first-capital",
+        "RWA Count": 3,
+        "Total Value": 1183353782.2557735,
+        "7D \u0394 value": -0.6405485353971427,
+        "Market Share": 8.77562024515737,
+        "30D \u0394 share": -1.202312919875967
+      },
+      {
+        "#": 6,
+        "Platform": "WisdomTree Digital Management",
+        "Link": "https://app.rwa.xyz/asset-managers/wisdomtree-digital-management",
+        "RWA Count": 1,
+        "Total Value": 943163694.0368357,
+        "7D \u0394 value": -0.7978136073559778,
+        "Market Share": 6.994397222535843,
+        "30D \u0394 share": -0.1831201662322715
+      },
+      {
+        "#": 7,
+        "Platform": "China Asset Management",
+        "Link": "https://app.rwa.xyz/asset-managers/china-asset-management",
+        "RWA Count": 9,
+        "Total Value": 726702977.3835115,
+        "7D \u0394 value": -2.609724837921399,
+        "Market Share": 5.389148584446305,
+        "30D \u0394 share": -0.6141540736297308
+      },
+      {
+        "#": 8,
+        "Platform": "UBS Asset Management (Singapore) Ltd.",
+        "Link": "https://app.rwa.xyz/asset-managers/ubs-asset-management-singapore-ltd",
+        "RWA Count": 1,
+        "Total Value": 21049607.185695007,
+        "7D \u0394 value": 2.8204686307571936,
+        "Market Share": 0.15610154946162036,
+        "30D \u0394 share": 0.008956102368211892
+      },
+      {
+        "#": 9,
+        "Platform": "CMB International Asset Management",
+        "Link": "https://app.rwa.xyz/asset-managers/cmb-international-asset-management",
+        "RWA Count": 1,
+        "Total Value": 7874379.900642187,
+        "7D \u0394 value": 0.0626060446589834,
+        "Market Share": 0.05839552694242358,
+        "30D \u0394 share": -0.428945227983592
+      },
+      {
+        "#": 10,
+        "Platform": "China Merchants Securities (HK)",
+        "Link": "https://app.rwa.xyz/asset-managers/china-merchants-securities-hk",
+        "RWA Count": 1,
+        "Total Value": 1400493.293639999,
+        "7D \u0394 value": 0.07480674923114604,
+        "Market Share": 0.010385902749595357,
+        "30D \u0394 share": -0.04411830995557856
+      },
+      {
+        "#": 11,
+        "Platform": "OpenTrade",
+        "Link": "https://app.rwa.xyz/",
+        "RWA Count": 1,
+        "Total Value": 114.34158121607484,
+        "7D \u0394 value": 12.901336584535041,
+        "Market Share": 8.479444693794965e-07,
+        "30D \u0394 share": 1.6883219491422807e-09
+      }
+    ],
+    "caption_html": "Platforms table groups the same fund universe by <strong>asset manager</strong> (issuer). <strong>RWA Count</strong> is the number of distinct MMF products with exposure for that manager.",
+    "chart_note_html": "The chart lists the top <strong>12</strong> platforms by total value (labels include market share). Scroll the table for the full filtered list.",
+    "wide_chart_note_html": "",
+    "split_body_height_px": 423,
+    "chart_empty_filtered_entity_plural": "platforms",
+    "section_intro_html": "<strong>Platforms</strong> \u2014 issuer / asset-manager aggregates for tokenized MMFs (same measures as Networks).",
+    "filter_note_suffix_all": "platforms (Tokenized MMFs).",
+    "filter_note_entity_plural": "platforms"
+  }
+}
