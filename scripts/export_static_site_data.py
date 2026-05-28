@@ -966,8 +966,11 @@ def _build_rwa_tokenized_mmf_deep_payload(mmf_pack: tuple[Any, Any, Any, Any], m
 
         b["between_ko_and_leagues_html"] = (
             '<section class="hub-section tmmf-funds-list" id="tmmf-funds-wrap" aria-labelledby="tmmf-funds-h">'
-            '<h2 class="subsection-head" id="tmmf-funds-h">Included funds</h2>'
-            '<p class="muted">Funds included in this page\u2019s MMF universe (' + str(len(fund_assets)) + " total).</p>"
+            '<h2 class="subsection-head" id="tmmf-funds-h">Tokenized Money Market Fund Population</h2>'
+            '<p class="muted">Fund population identified based on fund functionality '
+            "(short duration underlying assets, stable/accumulating NAV etc). "
+            "Population may not include all TMMFs in the market."
+            "</p>"
             "</section>"
         )
         b["funds_table"] = {
