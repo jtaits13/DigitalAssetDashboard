@@ -11,7 +11,7 @@ from urllib.parse import quote_plus
 
 import feedparser
 
-from crypto_categories import category_label, crypto_category
+from crypto_categories import category_takeaway_label, crypto_category
 
 MOVER_EXCLUDE_CATEGORIES: frozenset[str] = frozenset({"stablecoin"})
 
@@ -286,6 +286,7 @@ def _breadth_takeaway_li(rows: list[dict[str, Any]]) -> str:
 def _category_rotation_takeaway_li(rows: list[dict[str, Any]]) -> str:
     """Cap-weighted average 1M % by coarse category (l1, defi, meme, cex, rwa, other)."""
     sums: dict[str, list[tuple[float, float]]] = defaultdict(list)
+    symbols_by_cat: dict[str, list[str]] = defaultdict(list)
     for row in rows:
         sym = str(row.get("symbol") or "").strip().upper()
         name = str(row.get("name") or "")
@@ -297,6 +298,8 @@ def _category_rotation_takeaway_li(rows: list[dict[str, Any]]) -> str:
             continue
         cap = _row_cap_usd(row)
         sums[cat].append((pct, cap))
+        if sym and sym not in symbols_by_cat[cat]:
+            symbols_by_cat[cat].append(sym)
 
     avgs: dict[str, float] = {}
     for cat, pairs in sums.items():
@@ -318,12 +321,22 @@ def _category_rotation_takeaway_li(rows: list[dict[str, Any]]) -> str:
     if abs(b - w) < 0.35:
         return ""
 
-    bl = escape(category_label(best_cat))
-    wl = escape(category_label(worst_cat))
+    bl = escape(
+        category_takeaway_label(
+            best_cat,
+            example_symbols=symbols_by_cat.get(best_cat),
+        )
+    )
+    wl = escape(
+        category_takeaway_label(
+            worst_cat,
+            example_symbols=symbols_by_cat.get(worst_cat),
+        )
+    )
     return (
         f"<li><strong>{bl} outpaced {wl} over 1M:</strong> "
-        f"{bl} averaged about <strong>{b:+.1f}%</strong> cap-weighted in the top-50, while "
-        f"{wl} averaged about <strong>{w:+.1f}%</strong>—the widest gap among category tabs.</li>"
+        f"the stronger group averaged about <strong>{b:+.1f}%</strong> cap-weighted in the top-50, while "
+        f"the weaker averaged about <strong>{w:+.1f}%</strong>—the widest gap among category tabs.</li>"
     )
 
 

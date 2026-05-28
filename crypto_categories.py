@@ -138,6 +138,36 @@ def category_label(slug: str) -> str:
     return CATEGORY_LABELS.get((slug or "").strip(), CATEGORY_LABELS["other"])
 
 
+def category_takeaway_label(
+    slug: str,
+    *,
+    example_symbols: list[str] | None = None,
+) -> str:
+    """
+    Display phrase for Key observations (more context than table tab labels).
+    """
+    key = (slug or "").strip() or "other"
+    if key == "other":
+        ex = ""
+        if example_symbols:
+            tickers = ", ".join(s for s in example_symbols[:5] if s)
+            if tickers:
+                ex = f", e.g. {tickers}"
+        return (
+            "Others (top-50 coins outside Layer 1, stablecoins, CEX, DeFi, meme, and RWA tabs"
+            f"{ex})"
+        )
+    phrases = {
+        "l1": "Layer 1s",
+        "cex": "CEX tokens",
+        "defi": "DeFi tokens",
+        "meme": "Meme coins",
+        "rwa": "RWA / tokenized assets",
+        "stablecoin": "Stablecoins",
+    }
+    return phrases.get(key, category_label(key))
+
+
 def _cap(row: dict[str, Any]) -> float:
     try:
         v = float(row.get("market_cap_usd") or 0)
