@@ -10,6 +10,7 @@ from urllib.parse import quote_plus
 
 import feedparser
 
+from key_observations.interpretations import page_theme_interpretation, resolve_topic_key
 from key_observations.models import ObservationCandidate, TopicTheme
 
 _GOOGLE_NEWS_RSS = "https://news.google.com/rss/search?q={query}&hl=en-US&gl=US&ceid=US:en"
@@ -59,7 +60,13 @@ def _article_sort_key(article: dict[str, Any]) -> tuple[int, float, float]:
 
 def _matches_theme(article: dict[str, Any], theme: TopicTheme) -> bool:
     text = _article_text(article)
-    return any(kw in text for kw in theme.keywords)
+    for kw in theme.keywords:
+        if " " in kw:
+            if kw in text:
+                return True
+        elif re.search(rf"\b{re.escape(kw)}\b", text):
+            return True
+    return False
 
 
 def collect_headlines_for_topic(
@@ -106,7 +113,7 @@ def collect_headlines_for_topic(
                     key = title.lower()
                     if key in seen_titles:
                         continue
-                    if not any(kw in title.lower() for kw in theme.keywords):
+                    if not _matches_theme({"title": title, "summary": "", "source": "", "category": ""}, theme):
                         continue
                     seen_titles.add(key)
                     by_theme[theme.id].append(
@@ -152,6 +159,7 @@ def _headline_link_html(article: dict[str, Any]) -> str:
 
 
 def news_observation_candidates(
+    topic: str,
     themes: tuple[TopicTheme, ...],
     headlines_by_theme: dict[str, list[dict[str, Any]]],
     *,
@@ -167,15 +175,13 @@ def news_observation_candidates(
         if strength < min_strength:
             continue
         cites = "; ".join(_headline_link_html(a) for a in items[:2])
-        body = (
-            f"Recent industry coverage clusters on <strong>{escape(theme.label)}</strong>—e.g. {cites}. "
-            "This theme may be more important than slower-moving on-chain aggregates alone."
-        )
+        interpretation = page_theme_interpretation(topic, theme.id)
+        body = f"Recent coverage includes {cites}. {interpretation}"
         score = 52.0 + strength * 38.0
         out.append(
             ObservationCandidate(
                 id=f"news_{theme.id}",
-                lead=f"Industry headlines emphasize {theme.label.lower()}",
+                lead=f"Industry headlines emphasize {theme.label}",
                 body=body,
                 score=score,
                 themes=(theme.id,),

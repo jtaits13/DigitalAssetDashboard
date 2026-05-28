@@ -13,6 +13,7 @@ from key_observations.news import (
     news_observation_candidates,
     theme_news_strength,
 )
+from key_observations.interpretations import resolve_topic_key
 from key_observations.topics import TOPIC_THEMES
 
 Variant = Literal["boxed", "crypto"]
@@ -124,13 +125,14 @@ def build_key_observations_html(
     include_monthly_review: bool | None = None,
 ) -> str:
     """Merge data-driven and headline-driven candidates; pick the highest-scoring set."""
-    themes = TOPIC_THEMES.get(topic, ())
+    theme_key = resolve_topic_key(topic)
+    themes = TOPIC_THEMES.get(theme_key, TOPIC_THEMES.get(topic, ()))
     headlines = collect_headlines_for_topic(themes, articles) if themes else {}
     news_strength = theme_news_strength(headlines) if themes else {}
 
     pool = list(data_candidates)
     pool = apply_news_adjustments(pool, news_strength)
-    pool.extend(news_observation_candidates(themes, headlines))
+    pool.extend(news_observation_candidates(topic, themes, headlines))
 
     has_news = any(c.source == "news" for c in pool)
     has_data = any(c.source == "data" for c in pool)
