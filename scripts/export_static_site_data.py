@@ -1201,7 +1201,6 @@ def _build_rwa_explore_asset_type_payload(
     sections.append(sec_st)
 
     mmf_net, mmf_plat, mmf_kpis, mmf_err = mmf_pack
-    from rwa_league.client import APP_GOVERNMENT_BONDS
     from rwa_league.widgets import MMF_RWA_LINK_LABEL
 
     sec_mmf: dict[str, Any] = {
@@ -1224,11 +1223,6 @@ def _build_rwa_explore_asset_type_payload(
                 "internal": True,
             },
             {"href": APP_TREASURIES, "label": MMF_RWA_LINK_LABEL, "variant": "secondary"},
-            {
-                "href": APP_GOVERNMENT_BONDS,
-                "label": "See Non-U.S. Government Debt on RWA.xyz",
-                "variant": "secondary",
-            },
         ],
     }
     if mmf_err and not mmf_net and not mmf_plat:
