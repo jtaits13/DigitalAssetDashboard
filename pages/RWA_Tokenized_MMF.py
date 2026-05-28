@@ -22,22 +22,14 @@ from price_ticker import show_price_ticker
 
 
 def _mmf_takeaway_html() -> str:
-    return (
-        '<div style="border:1px solid #C7D8E8;border-radius:10px;padding:0.75rem 0.95rem;'
-        'margin:0.1rem 0 0.55rem;background:#ffffff;box-shadow:0 1px 3px rgba(15,23,42,0.06);">'
-        '<ul style="margin:0.1rem 0 0 1.05rem;padding:0;color:#1F4C67;font-size:0.9rem;line-height:1.4;">'
-        "<li><strong>Liquidity funds anchor institutional RWA adoption:</strong> tokenized MMFs concentrate "
-        "in short-duration government and repo-like products used for cash management and collateral.</li>"
-        "<li><strong>Multi-chain distribution is selective:</strong> largest funds deploy on a handful of "
-        "networks where issuer integrations and transferability matter—not every chain carries meaningful AUM.</li>"
-        "<li><strong>Issuer concentration reflects fund franchises:</strong> a small set of asset managers "
-        "accounts for most distributed value; tail funds are often regional or single-chain programs.</li>"
-        "</ul>"
-        '<p class="takeaways__note">Context only—not investment advice. Observations contextualize the '
-        "headline KPI row above (RWA.xyz US Treasuries and Non-U.S. Government Debt fund aggregates).</p>"
-        "</div>"
-        + monthly_review_note_class_html()
-    )
+    from rwa_league.mmf import _aggregate_network_rows, collect_tokenized_mmf_assets
+    from rwa_league.mmf_takeaways import build_mmf_key_observations_html
+
+    mmfs, err = collect_tokenized_mmf_assets()
+    if err or not mmfs:
+        return ""
+    net_rows = _aggregate_network_rows(mmfs)
+    return build_mmf_key_observations_html(mmfs, net_rows) + monthly_review_note_class_html()
 
 
 def main() -> None:

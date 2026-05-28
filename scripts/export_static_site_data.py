@@ -807,13 +807,7 @@ def _build_rwa_tokenized_mmf_deep_payload(mmf_pack: tuple[Any, Any, Any, Any], m
         b["platforms"] = None
         return b
 
-    try:
-        from pages.RWA_Tokenized_MMF import _mmf_takeaway_html as _ko_mmf
-
-        ko_html = _ko_mmf()
-    except Exception as exc:
-        manifest["errors"].append(f"Tokenized MMF takeaway HTML export: {exc}")
-        ko_html = ""
+    ko_html = ""
 
     b = _seed()
     b["error_mode"] = ""
@@ -920,6 +914,14 @@ def _build_rwa_tokenized_mmf_deep_payload(mmf_pack: tuple[Any, Any, Any, Any], m
     if fund_err:
         manifest["errors"].append(f"Tokenized MMF funds table export: {fund_err}")
     if fund_assets:
+        try:
+            from home_layout import monthly_review_note_class_html
+            from rwa_league.mmf_takeaways import build_mmf_key_observations_html
+
+            ko_html = build_mmf_key_observations_html(fund_assets, list(rows_net)) + monthly_review_note_class_html()
+            b["key_observations_html"] = ko_html
+        except Exception as exc:
+            manifest["errors"].append(f"Tokenized MMF takeaway HTML export: {exc}")
         fund_rows: list[dict[str, Any]] = []
         for asset in fund_assets:
             name_raw = str(asset.get("name") or "").strip() or "—"
