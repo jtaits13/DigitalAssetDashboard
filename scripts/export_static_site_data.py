@@ -425,7 +425,11 @@ def _league_split_payload(
     return out
 
 
-def _build_rwa_stablecoins_deep_payload(sc_pack: tuple[Any, Any, Any, Any], manifest: dict[str, Any]) -> dict[str, Any]:
+def _build_rwa_stablecoins_deep_payload(
+    sc_pack: tuple[Any, Any, Any, Any],
+    manifest: dict[str, Any],
+    articles: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
     from home_layout import rwa_xyz_mirror_footer_text
     from rwa_league.client import APP_STABLECOINS
     from rwa_league.dataframe_table import (
@@ -482,9 +486,9 @@ def _build_rwa_stablecoins_deep_payload(sc_pack: tuple[Any, Any, Any, Any], mani
         return b
 
     try:
-        from pages.RWA_Stablecoins import _stablecoins_takeaway_html as _ko_sc
+        from key_observations.page_ko import build_legacy_page_ko
 
-        ko_html = _ko_sc()
+        ko_html = build_legacy_page_ko("stablecoins", articles)
     except Exception as exc:  # pragma: no cover - export-only
         manifest["errors"].append(f"Stablecoins takeaway HTML export: {exc}")
         ko_html = ""
@@ -555,7 +559,11 @@ def _build_rwa_stablecoins_deep_payload(sc_pack: tuple[Any, Any, Any, Any], mani
     return b
 
 
-def _build_rwa_us_treasuries_deep_payload(tr_pack: tuple[Any, Any, Any, Any], manifest: dict[str, Any]) -> dict[str, Any]:
+def _build_rwa_us_treasuries_deep_payload(
+    tr_pack: tuple[Any, Any, Any, Any],
+    manifest: dict[str, Any],
+    articles: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
     from home_layout import rwa_xyz_mirror_footer_text
     from rwa_league.client import APP_TREASURIES
     from rwa_league.dataframe_table import (
@@ -609,9 +617,9 @@ def _build_rwa_us_treasuries_deep_payload(tr_pack: tuple[Any, Any, Any, Any], ma
         return b
 
     try:
-        from pages.RWA_US_Treasuries import _treasuries_takeaway_html as _ko_tr
+        from key_observations.page_ko import build_legacy_page_ko
 
-        ko_html = _ko_tr()
+        ko_html = build_legacy_page_ko("us_treasuries", articles)
     except Exception as exc:
         manifest["errors"].append(f"US Treasuries takeaway HTML export: {exc}")
         ko_html = ""
@@ -646,7 +654,11 @@ def _build_rwa_us_treasuries_deep_payload(tr_pack: tuple[Any, Any, Any, Any], ma
     return b
 
 
-def _build_rwa_tokenized_stocks_deep_payload(st_pack: tuple[Any, Any, Any, Any], manifest: dict[str, Any]) -> dict[str, Any]:
+def _build_rwa_tokenized_stocks_deep_payload(
+    st_pack: tuple[Any, Any, Any, Any],
+    manifest: dict[str, Any],
+    articles: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
     from home_layout import rwa_xyz_mirror_footer_text
     from rwa_league.client import APP_STOCKS
     from rwa_league.dataframe_table import (
@@ -701,9 +713,9 @@ def _build_rwa_tokenized_stocks_deep_payload(st_pack: tuple[Any, Any, Any, Any],
         return b
 
     try:
-        from pages.RWA_Tokenized_Stocks import _tokenized_stocks_takeaway_html as _ko_st
+        from key_observations.page_ko import build_legacy_page_ko
 
-        ko_html = _ko_st()
+        ko_html = build_legacy_page_ko("tokenized_stocks", articles)
     except Exception as exc:
         manifest["errors"].append(f"Tokenized Stocks takeaway HTML export: {exc}")
         ko_html = ""
@@ -746,7 +758,11 @@ def _kpi_legend_for_mmf() -> str:
     )
 
 
-def _build_rwa_tokenized_mmf_deep_payload(mmf_pack: tuple[Any, Any, Any, Any], manifest: dict[str, Any]) -> dict[str, Any]:
+def _build_rwa_tokenized_mmf_deep_payload(
+    mmf_pack: tuple[Any, Any, Any, Any],
+    manifest: dict[str, Any],
+    articles: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
     from rwa_league.client import APP_GOVERNMENT_BONDS, APP_TREASURIES
     from rwa_league.mmf import asset_distributed_value_usd, collect_tokenized_mmf_assets
     from rwa_league.dataframe_table import (
@@ -915,11 +931,11 @@ def _build_rwa_tokenized_mmf_deep_payload(mmf_pack: tuple[Any, Any, Any, Any], m
         manifest["errors"].append(f"Tokenized MMF funds table export: {fund_err}")
     if fund_assets:
         try:
-            from home_layout import monthly_review_note_class_html
             from rwa_league.mmf_takeaways import build_mmf_key_observations_html
 
-            ko_html = build_mmf_key_observations_html(fund_assets, list(rows_net)) + monthly_review_note_class_html()
-            b["key_observations_html"] = ko_html
+            b["key_observations_html"] = build_mmf_key_observations_html(
+                fund_assets, list(rows_net), articles
+            )
         except Exception as exc:
             manifest["errors"].append(f"Tokenized MMF takeaway HTML export: {exc}")
         fund_rows: list[dict[str, Any]] = []
@@ -1430,6 +1446,7 @@ def _build_rwa_explore_market_participant_payload(
 def _build_rwa_participants_networks_deep_payload(
     pack: tuple[list[Any], list[Any], Any],
     manifest: dict[str, Any],
+    articles: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     from home_layout import rwa_xyz_mirror_footer_text
     from rwa_league.client import APP_NETWORKS
@@ -1480,11 +1497,9 @@ def _build_rwa_participants_networks_deep_payload(
         return b
 
     try:
-        from pages.RWA_Participants_Networks import (
-            _participants_networks_takeaway_html as _ko,
-        )
+        from key_observations.page_ko import build_legacy_page_ko
 
-        ko_html = _ko()
+        ko_html = build_legacy_page_ko("participants_networks", articles)
     except Exception as exc:
         manifest["errors"].append(f"Participants Networks takeaway HTML export: {exc}")
         ko_html = ""
@@ -1511,6 +1526,7 @@ def _build_rwa_participants_networks_deep_payload(
 def _build_rwa_participants_platforms_deep_payload(
     pack: tuple[list[Any], list[Any], Any],
     manifest: dict[str, Any],
+    articles: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     from home_layout import rwa_xyz_mirror_footer_text
     from rwa_league.client import APP_PLATFORMS
@@ -1561,11 +1577,9 @@ def _build_rwa_participants_platforms_deep_payload(
         return b
 
     try:
-        from pages.RWA_Participants_Platforms import (
-            _participants_platforms_takeaway_html as _ko,
-        )
+        from key_observations.page_ko import build_legacy_page_ko
 
-        ko_html = _ko()
+        ko_html = build_legacy_page_ko("participants_platforms", articles)
     except Exception as exc:
         manifest["errors"].append(f"Participants Platforms takeaway HTML export: {exc}")
         ko_html = ""
@@ -1592,6 +1606,7 @@ def _build_rwa_participants_platforms_deep_payload(
 def _build_rwa_participants_asset_managers_deep_payload(
     pack: tuple[list[Any], list[Any], Any],
     manifest: dict[str, Any],
+    articles: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     from home_layout import rwa_xyz_mirror_footer_text
     from rwa_league.client import APP_ASSET_MANAGERS
@@ -1641,11 +1656,9 @@ def _build_rwa_participants_asset_managers_deep_payload(
         return b
 
     try:
-        from pages.RWA_Participants_Asset_Managers import (
-            _participants_asset_managers_takeaway_html as _ko,
-        )
+        from key_observations.page_ko import build_legacy_page_ko
 
-        ko_html = _ko()
+        ko_html = build_legacy_page_ko("participants_asset_managers", articles)
     except Exception as exc:
         manifest["errors"].append(f"Participants Asset Managers takeaway HTML export: {exc}")
         ko_html = ""
@@ -2383,6 +2396,10 @@ def main() -> None:
         manifest["errors"].append(f"RWA Participants Asset Managers snapshot: {exc}")
         p_am_pack = ([], [], str(exc))
 
+    from key_observations.feeds import merge_takeaway_pools
+
+    takeaway_pool = merge_takeaway_pools(home_unique, all_unique, reg_top)
+
     explore_at_payload = _build_rwa_explore_asset_type_payload(manifest, sc_pack, tr_pack, st_pack, mmf_pack)
     (OUT / "rwa_explore_asset_type.json").write_text(
         json.dumps(explore_at_payload, indent=2),
@@ -2396,32 +2413,41 @@ def main() -> None:
     )
 
     (OUT / "rwa_participants_networks.json").write_text(
-        json.dumps(_build_rwa_participants_networks_deep_payload(p_net_pack, manifest), indent=2),
+        json.dumps(
+            _build_rwa_participants_networks_deep_payload(p_net_pack, manifest, takeaway_pool),
+            indent=2,
+        ),
         encoding="utf-8",
     )
     (OUT / "rwa_participants_platforms.json").write_text(
-        json.dumps(_build_rwa_participants_platforms_deep_payload(p_plat_pack, manifest), indent=2),
+        json.dumps(
+            _build_rwa_participants_platforms_deep_payload(p_plat_pack, manifest, takeaway_pool),
+            indent=2,
+        ),
         encoding="utf-8",
     )
     (OUT / "rwa_participants_asset_managers.json").write_text(
-        json.dumps(_build_rwa_participants_asset_managers_deep_payload(p_am_pack, manifest), indent=2),
+        json.dumps(
+            _build_rwa_participants_asset_managers_deep_payload(p_am_pack, manifest, takeaway_pool),
+            indent=2,
+        ),
         encoding="utf-8",
     )
 
     (OUT / "rwa_stablecoins.json").write_text(
-        json.dumps(_build_rwa_stablecoins_deep_payload(sc_pack, manifest), indent=2),
+        json.dumps(_build_rwa_stablecoins_deep_payload(sc_pack, manifest, takeaway_pool), indent=2),
         encoding="utf-8",
     )
     (OUT / "rwa_us_treasuries.json").write_text(
-        json.dumps(_build_rwa_us_treasuries_deep_payload(tr_pack, manifest), indent=2),
+        json.dumps(_build_rwa_us_treasuries_deep_payload(tr_pack, manifest, takeaway_pool), indent=2),
         encoding="utf-8",
     )
     (OUT / "rwa_tokenized_stocks.json").write_text(
-        json.dumps(_build_rwa_tokenized_stocks_deep_payload(st_pack, manifest), indent=2),
+        json.dumps(_build_rwa_tokenized_stocks_deep_payload(st_pack, manifest, takeaway_pool), indent=2),
         encoding="utf-8",
     )
     (OUT / "rwa_tokenized_mmf.json").write_text(
-        json.dumps(_build_rwa_tokenized_mmf_deep_payload(mmf_pack, manifest), indent=2),
+        json.dumps(_build_rwa_tokenized_mmf_deep_payload(mmf_pack, manifest, takeaway_pool), indent=2),
         encoding="utf-8",
     )
 

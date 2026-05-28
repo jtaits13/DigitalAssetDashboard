@@ -12,7 +12,6 @@ from urllib.parse import quote_plus
 import feedparser
 
 from crypto_categories import category_label, crypto_category
-from home_layout import monthly_review_note_class_html
 
 MOVER_EXCLUDE_CATEGORIES: frozenset[str] = frozenset({"stablecoin"})
 
@@ -376,6 +375,36 @@ def _structure_takeaway_li(_rows: list[dict[str, Any]], kpis: dict[str, Any]) ->
     return ""
 
 
+def _li_to_candidate(
+    bullet_id: str,
+    li_html: str,
+    score: float,
+    themes: tuple[str, ...],
+) -> ObservationCandidate | None:
+    import re
+
+    from key_observations.models import ObservationCandidate
+
+    m = re.match(
+        r"<li><strong>(.*?)</strong>\s*(.*)</li>\s*$",
+        li_html.strip(),
+        flags=re.DOTALL | re.IGNORECASE,
+    )
+    if not m:
+        return None
+    lead = m.group(1).strip()
+    if not lead.endswith(":"):
+        lead = f"{lead}:"
+    return ObservationCandidate(
+        id=bullet_id,
+        lead=lead,
+        body=m.group(2).strip(),
+        score=score,
+        themes=themes,
+        source="data",
+    )
+
+
 def crypto_key_takeaways_html(
     rows: list[dict[str, Any]],
     kpis: dict[str, Any],
@@ -383,36 +412,42 @@ def crypto_key_takeaways_html(
     *,
     mover_limit: int = 3,
 ) -> str:
-    """HTML for static Key observations: breadth, category mix, structure + footnotes."""
-    del articles, mover_limit  # keep signature for export callers
-    bullets: list[str] = []
+    """HTML for static Key observations: table-derived signals ranked with industry headlines."""
+    del mover_limit
+    from key_observations import build_key_observations_html
 
+    candidates: list[ObservationCandidate] = []
     b1 = _breadth_takeaway_li(rows)
     if b1:
-        bullets.append(b1)
-
+        c = _li_to_candidate("crypto_breadth", b1, 72.0, ("market_structure",))
+        if c:
+            candidates.append(c)
     b2 = _category_rotation_takeaway_li(rows)
     if b2:
-        bullets.append(b2)
-
+        c = _li_to_candidate("crypto_rotation", b2, 68.0, ("market_structure",))
+        if c:
+            candidates.append(c)
     b3 = _structure_takeaway_li(rows, kpis)
     if b3:
-        bullets.append(b3)
+        themes: tuple[str, ...] = ("etf_flows", "market_structure")
+        if "stablecoin" in b3.lower():
+            themes = ("market_structure", "etf_flows")
+        c = _li_to_candidate("crypto_structure", b3, 66.0, themes)
+        if c:
+            candidates.append(c)
 
-    if not bullets:
+    if not candidates and not articles:
         return ""
 
-    note = (
-        '<p class="takeaways__note">Context only—not investment advice. Observations are derived from the '
-        "top-50 table and KPI math described on this page.</p>"
-    )
-    review = monthly_review_note_class_html()
-    return (
-        '<div class="takeaways">'
-        '<ul class="crypto-story-callout__list">'
-        + "".join(bullets)
-        + "</ul>"
-        + note
-        + review
-        + "</div>"
+    return build_key_observations_html(
+        "crypto",
+        candidates,
+        articles,
+        context_note=(
+            "Context only—not investment advice. Observations rank the top-50 table and KPI math on this page "
+            "against recent crypto and ETF headlines."
+        ),
+        min_bullets=2,
+        max_bullets=4,
+        variant="crypto",
     )

@@ -14,7 +14,6 @@ import streamlit as st
 from home_layout import (
     ETP_FULLPAGE_AUM_LINE_CSS,
     STREAMLIT_TABLE_UNIFY_CSS,
-    monthly_review_note_html,
     rwa_xyz_mirror_footer_text,
     section_label_teal,
 )
@@ -22,17 +21,9 @@ from price_ticker import show_price_ticker
 
 
 def _treasuries_takeaway_html() -> str:
-    return (
-        '<div style="border:1px solid #C7D8E8;border-radius:10px;padding:0.75rem 0.95rem;'
-        'margin:0.1rem 0 0.55rem;background:#ffffff;box-shadow:0 1px 3px rgba(15,23,42,0.06);">'
-        '<ul style="margin:0.1rem 0 0 1.05rem;padding:0;color:#1F4C67;font-size:0.9rem;line-height:1.4;">'
-        '<li><strong>Tokenized U.S. Treasuries remain the institutional bridge into RWAs:</strong> adoption is strongest '
-        'where products plug into cash management, collateral, and liquidity workflows.</li>'
-        '<li><strong>Distribution still drives outcomes:</strong> network/platform leadership generally follows issuer '
-        'reach, treasury utility, and integration quality more than feature novelty.</li>'
-        "</ul></div>"
-        + monthly_review_note_html()
-    )
+    from key_observations.page_ko import build_legacy_page_ko
+
+    return build_legacy_page_ko("us_treasuries")
 
 
 def main() -> None:

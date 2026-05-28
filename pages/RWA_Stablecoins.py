@@ -14,7 +14,6 @@ import streamlit as st
 from home_layout import (
     ETP_FULLPAGE_AUM_LINE_CSS,
     STREAMLIT_TABLE_UNIFY_CSS,
-    monthly_review_note_html,
     rwa_xyz_mirror_footer_text,
     section_label_teal,
 )
@@ -22,18 +21,9 @@ from price_ticker import show_price_ticker
 
 
 def _stablecoins_takeaway_html() -> str:
-    return (
-        '<div style="border:1px solid #C7D8E8;border-radius:10px;padding:0.75rem 0.95rem;'
-        'margin:0.1rem 0 0.55rem;background:#ffffff;box-shadow:0 1px 3px rgba(15,23,42,0.06);">'
-        '<ul style="margin:0.1rem 0 0 1.05rem;padding:0;color:#1F4C67;font-size:0.9rem;line-height:1.4;">'
-        '<li><strong>Stablecoin market structure remains concentration-led:</strong> in practice, leadership is still '
-        'defined by a small set of large issuers/platforms, so monitoring share shifts is more informative than only '
-        'watching aggregate market-cap growth.</li>'
-        '<li><strong>Institutional relevance continues to rise:</strong> policy and bank-integration pathways are '
-        'increasingly framing stablecoins as payment and treasury infrastructure rather than only crypto trading liquidity.</li>'
-        "</ul></div>"
-        + monthly_review_note_html()
-    )
+    from key_observations.page_ko import build_legacy_page_ko
+
+    return build_legacy_page_ko("stablecoins")
 
 
 def main() -> None:

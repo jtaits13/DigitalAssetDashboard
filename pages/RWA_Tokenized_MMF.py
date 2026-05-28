@@ -14,7 +14,6 @@ import streamlit as st
 from home_layout import (
     ETP_FULLPAGE_AUM_LINE_CSS,
     STREAMLIT_TABLE_UNIFY_CSS,
-    monthly_review_note_class_html,
     rwa_xyz_mirror_footer_text,
     section_label_teal,
 )
@@ -22,6 +21,7 @@ from price_ticker import show_price_ticker
 
 
 def _mmf_takeaway_html() -> str:
+    from key_observations.feeds import load_takeaway_articles
     from rwa_league.mmf import _aggregate_network_rows, collect_tokenized_mmf_assets
     from rwa_league.mmf_takeaways import build_mmf_key_observations_html
 
@@ -29,7 +29,7 @@ def _mmf_takeaway_html() -> str:
     if err or not mmfs:
         return ""
     net_rows = _aggregate_network_rows(mmfs)
-    return build_mmf_key_observations_html(mmfs, net_rows) + monthly_review_note_class_html()
+    return build_mmf_key_observations_html(mmfs, net_rows, load_takeaway_articles())
 
 
 def main() -> None:

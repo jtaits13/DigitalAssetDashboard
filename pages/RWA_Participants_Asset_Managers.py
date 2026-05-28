@@ -14,7 +14,6 @@ import streamlit as st
 from home_layout import (
     ETP_FULLPAGE_AUM_LINE_CSS,
     STREAMLIT_TABLE_UNIFY_CSS,
-    monthly_review_note_html,
     rwa_xyz_mirror_footer_text,
     section_label_teal,
 )
@@ -22,17 +21,9 @@ from price_ticker import show_price_ticker
 
 
 def _participants_asset_managers_takeaway_html() -> str:
-    return (
-        '<div style="border:1px solid #C7D8E8;border-radius:10px;padding:0.75rem 0.95rem;'
-        'margin:0.1rem 0 0.55rem;background:#ffffff;box-shadow:0 1px 3px rgba(15,23,42,0.06);">'
-        '<ul style="margin:0.1rem 0 0 1.05rem;padding:0;color:#1F4C67;font-size:0.9rem;line-height:1.4;">'
-        '<li><strong>Asset-manager participation remains top-heavy:</strong> a smaller set of large managers still '
-        'accounts for most distributed value and often anchors category momentum.</li>'
-        '<li><strong>Share shifts are usually distribution-sensitive:</strong> advisor access, custody confidence, and '
-        'repeat issuance cadence are key drivers of manager-level position changes.</li>'
-        "</ul></div>"
-        + monthly_review_note_html()
-    )
+    from key_observations.page_ko import build_legacy_page_ko
+
+    return build_legacy_page_ko("participants_asset_managers")
 
 
 def main() -> None:
