@@ -2138,12 +2138,8 @@ a.hub-panel-surface:hover,
   margin: 0.75rem 0 0;
 }
 
-.review-note--due {
-  color: #b91c1c;
-}
-
-.review-note--due strong {
-  color: inherit;
+.review-note.ko-disclaimer {
+  font-style: italic;
 }
 
 .split-panels {

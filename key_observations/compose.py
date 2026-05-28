@@ -5,7 +5,7 @@ from __future__ import annotations
 from html import escape
 from typing import Any, Literal
 
-from home_layout import monthly_review_note_class_html
+from home_layout import key_observations_disclaimer_html
 from key_observations.models import ObservationCandidate
 from key_observations.news import (
     apply_news_adjustments,
@@ -87,7 +87,7 @@ def render_observations_html(
     *,
     context_note: str,
     variant: Variant = "boxed",
-    include_monthly_review: bool = True,
+    include_disclaimer: bool = True,
 ) -> str:
     if not selected:
         return ""
@@ -96,7 +96,7 @@ def render_observations_html(
         f'<p class="takeaways__note">{escape(context_note)} '
         "Bullets are ranked from on-page data and recent industry headlines (dashboard RSS plus Google News fallback).</p>"
     )
-    review = monthly_review_note_class_html() if include_monthly_review else ""
+    review = key_observations_disclaimer_html() if include_disclaimer else ""
     if variant == "crypto":
         return (
             '<div class="takeaways">'
@@ -117,10 +117,11 @@ def build_key_observations_html(
     articles: list[dict[str, Any]] | None = None,
     *,
     context_note: str,
-    include_monthly_review: bool = True,
+    include_disclaimer: bool = True,
     min_bullets: int = 3,
     max_bullets: int = 5,
     variant: Variant = "boxed",
+    include_monthly_review: bool | None = None,
 ) -> str:
     """Merge data-driven and headline-driven candidates; pick the highest-scoring set."""
     themes = TOPIC_THEMES.get(topic, ())
@@ -136,6 +137,9 @@ def build_key_observations_html(
     min_data = 2 if has_data and has_news else 0
     max_news = 2 if has_data and has_news else max_bullets
 
+    if include_monthly_review is not None:
+        include_disclaimer = include_monthly_review
+
     selected = select_observations(
         pool,
         min_count=min_bullets,
@@ -147,5 +151,5 @@ def build_key_observations_html(
         selected,
         context_note=context_note,
         variant=variant,
-        include_monthly_review=include_monthly_review,
+        include_disclaimer=include_disclaimer,
     )
