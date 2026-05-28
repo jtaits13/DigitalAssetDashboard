@@ -20,6 +20,11 @@
     return sign + x.toFixed(digits != null ? digits : 2) + "%";
   }
 
+  function fmtPctSignedNoPlus(v, digits) {
+    if (v == null || !isFinite(Number(v))) return "—";
+    return Number(v).toFixed(digits != null ? digits : 2) + "%";
+  }
+
   /** Level / ratio as percent (no leading +), for **% distributed** vs signed deltas (7D, share changes). */
   function fmtPctLevel(v, digits) {
     if (v == null || !isFinite(Number(v))) return "—";
@@ -125,7 +130,7 @@
       var tds = [];
       (columns || []).forEach(function (col) {
         var v = row[col];
-        if (col === "Network" || col === "Platform" || col === "Asset manager") {
+        if (col === "Network" || col === "Platform" || col === "Asset manager" || col === "Fund Name") {
           var href = row.Link ? esc(row.Link) : "#";
           tds.push(
             "<td><strong><a href=\"" +
@@ -156,11 +161,19 @@
         } else if (col === "% distributed") {
           tds.push('<td class="num">' + fmtPctLevel(v, 2) + "</td>");
         } else if (col === "Market Share") {
-          tds.push(
-            '<td class="num">' + (isTmmfPage ? fmtPctLevel(v, 2) : fmtPctPts(v, 2)) + "</td>"
-          );
+          tds.push('<td class="num">' + (isTmmfPage ? fmtPctLevel(v, 2) : fmtPctPts(v, 2)) + "</td>");
         } else if (col === "30D Δ share") {
-          tds.push('<td class="num">' + fmtPctPts(v, 2) + "</td>");
+          tds.push('<td class="num">' + (isTmmfPage ? fmtPctSignedNoPlus(v, 2) : fmtPctPts(v, 2)) + "</td>");
+        } else if (col === "Terms") {
+          tds.push("<td>" + (v != null ? String(v) : "—") + "</td>");
+        } else if (col === "Holders") {
+          tds.push(
+            '<td class="num">' +
+              (v != null && isFinite(Number(v))
+                ? esc(Number(v).toLocaleString(undefined, { maximumFractionDigits: 0 }))
+                : "—") +
+              "</td>"
+          );
         } else if (col === "#" || col === "RWA Count" || col === "Stablecoins") {
           tds.push('<td class="num">' + (v != null ? esc(String(v)) : "—") + "</td>");
         } else {

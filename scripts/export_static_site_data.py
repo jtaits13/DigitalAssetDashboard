@@ -493,6 +493,7 @@ def _build_rwa_stablecoins_deep_payload(sc_pack: tuple[Any, Any, Any, Any], mani
     b["error_mode"] = ""
     b["key_observations_html"] = ko_html
     b["between_ko_and_leagues_html"] = ""
+    b["funds_table"] = None
     if not rows_net and rows_plat:
         b["between_ko_and_leagues_html"] = (
             '<p class="alert info">The <strong>Networks</strong> league was not present in the Stablecoins embed; '
@@ -747,6 +748,7 @@ def _kpi_legend_for_mmf() -> str:
 
 def _build_rwa_tokenized_mmf_deep_payload(mmf_pack: tuple[Any, Any, Any, Any], manifest: dict[str, Any]) -> dict[str, Any]:
     from rwa_league.client import APP_GOVERNMENT_BONDS, APP_TREASURIES
+    from rwa_league.mmf import asset_distributed_value_usd, collect_tokenized_mmf_assets
     from rwa_league.dataframe_table import (
         build_us_treasury_network_dataframe,
         build_us_treasury_platform_dataframe,
@@ -814,6 +816,127 @@ def _build_rwa_tokenized_mmf_deep_payload(mmf_pack: tuple[Any, Any, Any, Any], m
     b = _seed()
     b["error_mode"] = ""
     b["key_observations_html"] = ko_html
+    b["between_ko_and_leagues_html"] = ""
+
+    def _safe_text(v: Any) -> str:
+        s = str(v or "").strip()
+        return html_escape(s) if s else "—"
+
+    def _network_names(asset: dict[str, Any]) -> str:
+        seen: set[str] = set()
+        names: list[str] = []
+        for tok in asset.get("tokens") or []:
+            if not isinstance(tok, dict):
+                continue
+            n = tok.get("network") or {}
+            if not isinstance(n, dict):
+                continue
+            n_name = str(n.get("name") or "").strip()
+            key = n_name.lower()
+            if not n_name or key in seen:
+                continue
+            seen.add(key)
+            names.append(n_name)
+        return ", ".join(names) if names else "—"
+
+    def _term_link(asset: dict[str, Any]) -> str:
+        for key, label in (
+            ("legal_structure__document_url", "Legal document"),
+            ("transparency_url", "Terms / transparency"),
+            ("website", "Website"),
+        ):
+            href = str(asset.get(key) or "").strip()
+            if href:
+                return (
+                    '<a href="'
+                    + html_escape(href, quote=True)
+                    + '" target="_blank" rel="noopener noreferrer">'
+                    + html_escape(label)
+                    + "</a>"
+                )
+        return "—"
+
+    try:
+        fund_assets, fund_err = collect_tokenized_mmf_assets()
+    except Exception as exc:
+        fund_assets, fund_err = [], str(exc)
+    if fund_err:
+        manifest["errors"].append(f"Tokenized MMF funds table export: {fund_err}")
+    if fund_assets:
+        fund_rows: list[dict[str, Any]] = []
+        for asset in fund_assets:
+            name_raw = str(asset.get("name") or "").strip() or "—"
+            ticker = str(asset.get("ticker") or "").strip() or "—"
+            platform = str(asset.get("issuer_name") or "").strip() or "—"
+            total_value_num = asset_distributed_value_usd(asset)
+            investors_raw = asset.get("primary_market__investor_types")
+            investors = (
+                ", ".join(str(x).strip() for x in investors_raw if str(x).strip())
+                if isinstance(investors_raw, list)
+                else str(investors_raw or "").strip()
+            )
+            holders_raw = asset.get("holding_addresses_count") or {}
+            holders = holders_raw.get("val") if isinstance(holders_raw, dict) else None
+            val_obj = asset.get("bridged_token_value_dollar") or {}
+            pct7 = val_obj.get("chg_7d_pct") if isinstance(val_obj, dict) else None
+            domicile = _safe_text(
+                asset.get("jurisdiction_country_name")
+                or asset.get("legal_structure__country_name")
+                or asset.get("dispute_resolution_country_name")
+            )
+            reg_fw = _safe_text(asset.get("regulatory_framework"))
+            cust = asset.get("traditional_custodian") or asset.get("crypto_custodian") or {}
+            cust_name = cust.get("name") if isinstance(cust, dict) else None
+            custodian = _safe_text(cust_name)
+            fund_rows.append(
+                {
+                    "Fund Name": name_raw,
+                    "Link": f"https://app.rwa.xyz/assets/{html_escape(str(asset.get('slug') or '').strip(), quote=True)}"
+                    if str(asset.get("slug") or "").strip()
+                    else "https://app.rwa.xyz/treasuries",
+                    "Ticker": ticker,
+                    "Platform": platform,
+                    "Networks": _network_names(asset),
+                    "Total Value": float(total_value_num),
+                    "7D Δ value": float(pct7) if isinstance(pct7, (int, float)) else None,
+                    "Eligible Investors": str(investors or "—"),
+                    "Holders": int(holders) if isinstance(holders, (int, float)) else None,
+                    "Domicile": str(domicile or "—"),
+                    "Regulatory Framework": str(reg_fw or "—"),
+                    "Custodian": str(custodian or "—"),
+                    "Terms": _term_link(asset),
+                }
+            )
+
+        b["between_ko_and_leagues_html"] = (
+            '<section class="hub-section tmmf-funds-list" id="tmmf-funds-wrap" aria-labelledby="tmmf-funds-h">'
+            '<h2 class="subsection-head" id="tmmf-funds-h">Included funds</h2>'
+            '<p class="muted">Funds included in this page\u2019s MMF universe (' + str(len(fund_assets)) + " total).</p>"
+            "</section>"
+        )
+        b["funds_table"] = {
+            "columns": [
+                "Fund Name",
+                "Ticker",
+                "Platform",
+                "Networks",
+                "Total Value",
+                "7D Δ value",
+                "Eligible Investors",
+                "Holders",
+                "Domicile",
+                "Regulatory Framework",
+                "Custodian",
+                "Terms",
+            ],
+            "rows_full": fund_rows,
+            "name_column": "Fund Name",
+            "search_label": "Search funds table",
+            "search_placeholder": "Filter by fund name, ticker, platform, network, domicile…",
+            "filter_note_suffix_all": "funds.",
+            "filter_note_entity_plural": "funds",
+        }
+
     b["networks"] = _league_split_payload(
         rows_net,
         build_df=build_us_treasury_network_dataframe,
