@@ -131,14 +131,24 @@
       (columns || []).forEach(function (col) {
         var v = row[col];
         if (col === "Network" || col === "Platform" || col === "Asset manager" || col === "Fund Name") {
-          var href = row.Link ? esc(row.Link) : "#";
-          tds.push(
-            "<td><strong><a href=\"" +
-              href +
-              "\" target=\"_blank\" rel=\"noopener noreferrer\">" +
-              esc(v) +
-              "</a></strong></td>"
-          );
+          var hrefRaw =
+            col === "Fund Name"
+              ? row["Fund Link"] || row.Link
+              : col === "Platform"
+                ? row["Platform Link"] || row.Link
+                : row.Link;
+          var href = hrefRaw ? esc(hrefRaw) : "";
+          if (href) {
+            tds.push(
+              "<td><strong><a href=\"" +
+                href +
+                "\" target=\"_blank\" rel=\"noopener noreferrer\">" +
+                esc(v) +
+                "</a></strong></td>"
+            );
+          } else {
+            tds.push("<td><strong>" + esc(v) + "</strong></td>");
+          }
         } else if (col === "Link") {
           var h = v ? esc(v) : "#";
           tds.push(

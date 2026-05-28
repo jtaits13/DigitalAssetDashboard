@@ -856,6 +856,33 @@ def _build_rwa_tokenized_mmf_deep_payload(mmf_pack: tuple[Any, Any, Any, Any], m
                 )
         return "—"
 
+    def _platform_info(asset: dict[str, Any]) -> tuple[str, str]:
+        by_slug: dict[str, dict[str, Any]] = {}
+        for tok in asset.get("tokens") or []:
+            if not isinstance(tok, dict):
+                continue
+            p = tok.get("platform") or {}
+            if not isinstance(p, dict):
+                continue
+            slug = str(p.get("slug") or "").strip()
+            name = str(p.get("name") or tok.get("platform_name") or "").strip()
+            if not slug and not name:
+                continue
+            key = slug or name.lower().replace(" ", "-")
+            if key not in by_slug:
+                by_slug[key] = {"slug": slug, "name": name or "—", "value": 0.0}
+            b = tok.get("bridged_token_value_dollar") or {}
+            v = float(b.get("val")) if isinstance(b, dict) and isinstance(b.get("val"), (int, float)) else 0.0
+            by_slug[key]["value"] = float(by_slug[key]["value"]) + float(v)
+        if not by_slug:
+            fallback = str(asset.get("issuer_name") or "—").strip() or "—"
+            return fallback, ""
+        best = max(by_slug.values(), key=lambda x: float(x.get("value", 0.0)))
+        name = str(best.get("name") or "—").strip() or "—"
+        slug = str(best.get("slug") or "").strip()
+        href = f"https://app.rwa.xyz/platforms/{slug}" if slug else ""
+        return name, href
+
     try:
         fund_assets, fund_err = collect_tokenized_mmf_assets()
     except Exception as exc:
@@ -866,8 +893,9 @@ def _build_rwa_tokenized_mmf_deep_payload(mmf_pack: tuple[Any, Any, Any, Any], m
         fund_rows: list[dict[str, Any]] = []
         for asset in fund_assets:
             name_raw = str(asset.get("name") or "").strip() or "—"
+            slug_raw = str(asset.get("slug") or "").strip()
             ticker = str(asset.get("ticker") or "").strip() or "—"
-            platform = str(asset.get("issuer_name") or "").strip() or "—"
+            platform, platform_href = _platform_info(asset)
             total_value_num = asset_distributed_value_usd(asset)
             investors_raw = asset.get("primary_market__investor_types")
             investors = (
@@ -891,11 +919,11 @@ def _build_rwa_tokenized_mmf_deep_payload(mmf_pack: tuple[Any, Any, Any, Any], m
             fund_rows.append(
                 {
                     "Fund Name": name_raw,
-                    "Link": f"https://app.rwa.xyz/assets/{html_escape(str(asset.get('slug') or '').strip(), quote=True)}"
-                    if str(asset.get("slug") or "").strip()
-                    else "https://app.rwa.xyz/treasuries",
+                    "Link": f"https://app.rwa.xyz/assets/{slug_raw}" if slug_raw else "https://app.rwa.xyz/treasuries",
+                    "Fund Link": f"https://app.rwa.xyz/assets/{slug_raw}" if slug_raw else "https://app.rwa.xyz/treasuries",
                     "Ticker": ticker,
                     "Platform": platform,
+                    "Platform Link": platform_href,
                     "Networks": _network_names(asset),
                     "Total Value": float(total_value_num),
                     "7D Δ value": float(pct7) if isinstance(pct7, (int, float)) else None,

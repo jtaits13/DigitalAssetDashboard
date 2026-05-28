@@ -2934,6 +2934,11 @@ body.page-article-feed .etf-news-nav {
   margin: 0;
 }
 
+.rwa-table-modal__table-wrap table th,
+.rwa-table-modal__table-wrap table td {
+  white-space: nowrap;
+}
+
 .rwa-table-modal__table-wrap thead th {
   position: sticky;
   top: 0;
