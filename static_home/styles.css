@@ -2800,10 +2800,9 @@ body.page-article-feed .etf-news-nav {
   margin-top: 0.35rem;
 }
 
-.page-rwa-deep-mmf #tmmf-funds-wrap .muted {
+.page-rwa-deep-mmf #tmmf-funds-wrap .rwa-deep-section-intro {
   margin: 0.2rem 0 0.65rem;
   max-width: 84ch;
-  line-height: 1.45;
 }
 
 .page-rwa-deep-mmf #tmmf-funds-wrap .inline-search {
@@ -2812,6 +2811,10 @@ body.page-article-feed .etf-news-nav {
 
 .page-rwa-deep-mmf #tmmf-funds-wrap .toolbar-note {
   margin-top: 0.4rem;
+}
+
+.page-rwa-deep-mmf #tmmf-funds-wrap .rwa-table-actions {
+  margin-bottom: 1rem;
 }
 
 .rwa-split-chart-shell {
