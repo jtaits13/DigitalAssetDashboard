@@ -68,6 +68,22 @@
     "30D Δ share": 1,
   };
 
+  function isRwaTextColumn(col) {
+    return (
+      col === "Network" ||
+      col === "Platform" ||
+      col === "Asset manager" ||
+      col === "Fund Name" ||
+      col === "Networks" ||
+      col === "Ticker" ||
+      col === "Eligible Investors" ||
+      col === "Domicile" ||
+      col === "Regulatory Framework" ||
+      col === "Custodian" ||
+      col === "Terms"
+    );
+  }
+
   function compareRwaRows(a, b, col, dir) {
     var va = a[col];
     var vb = b[col];
@@ -174,7 +190,7 @@
           tds.push('<td class="num">' + (isTmmfPage ? fmtPctLevel(v, 2) : fmtPctPts(v, 2)) + "</td>");
         } else if (col === "30D Δ share") {
           tds.push('<td class="num">' + (isTmmfPage ? fmtPctSignedNoPlus(v, 2) : fmtPctPts(v, 2)) + "</td>");
-        } else if (col === "Terms") {
+        } else if (col === "Terms" || col === "Networks") {
           tds.push("<td>" + (v != null ? String(v) : "—") + "</td>");
         } else if (col === "Holders") {
           tds.push(
@@ -579,7 +595,7 @@
     theadRow.innerHTML = (columns || [])
       .map(function (c, idx) {
         var label = c === "Link" ? "↗" : esc(c);
-        var isName = c === "Network" || c === "Platform" || c === "Asset manager";
+        var isName = isRwaTextColumn(c);
         var cls = [];
         if (!(isName || c === "Link")) cls.push("num");
         cls.push("th-sortable");
