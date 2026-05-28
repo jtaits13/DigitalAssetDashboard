@@ -2805,20 +2805,28 @@ body.page-article-feed .etf-news-nav {
   max-width: 84ch;
 }
 
-.page-rwa-deep-mmf #tmmf-funds-wrap .inline-search {
-  margin-top: 0.2rem;
+/* Population block: title/intro live in #tmmf-funds-wrap; table/search/actions are siblings in #js-deep-extra-before-leagues. */
+.page-rwa-deep-mmf #js-deep-extra-before-leagues {
+  display: flow-root;
+  margin-bottom: 2rem;
 }
 
-.page-rwa-deep-mmf #tmmf-funds-wrap .toolbar-note {
+.page-rwa-deep-mmf #js-deep-extra-before-leagues .inline-search {
+  margin-top: 0.35rem;
+}
+
+.page-rwa-deep-mmf #js-deep-extra-before-leagues .toolbar-note {
   margin-top: 0.4rem;
+  margin-bottom: 0;
 }
 
-.page-rwa-deep-mmf #tmmf-funds-wrap .rwa-table-actions {
-  margin: 0.6rem 0 1.25rem !important;
+.page-rwa-deep-mmf #js-deep-extra-before-leagues .rwa-table-actions {
+  margin-top: 0.75rem;
+  margin-bottom: 0;
 }
 
-.page-rwa-deep-mmf #tmmf-funds-wrap {
-  padding-bottom: 0.15rem;
+.page-rwa-deep-mmf #deep-net-wrap {
+  margin-top: 0;
 }
 
 .rwa-split-chart-shell {
