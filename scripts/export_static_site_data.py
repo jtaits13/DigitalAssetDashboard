@@ -765,6 +765,7 @@ def _build_rwa_tokenized_mmf_deep_payload(mmf_pack: tuple[Any, Any, Any, Any], m
     kpis: list[Any] = list(mmf_pack[2])
     err_any = mmf_pack[3]
     err_s = "" if err_any is None else str(err_any)
+    export_ts = datetime.now(timezone.utc).isoformat()
 
     sources = (
         f'<a href="{html_escape(APP_TREASURIES, quote=True)}">RWA.xyz US Treasuries</a> and '
@@ -773,6 +774,7 @@ def _build_rwa_tokenized_mmf_deep_payload(mmf_pack: tuple[Any, Any, Any, Any], m
 
     def _seed() -> dict[str, Any]:
         return {
+            "generated_at": export_ts,
             "page_title": "Tokenized Money Market Funds — Digital Assets Dashboard",
             "band_label": "Tokenized Money Market Funds",
             "page_subtitle_html": (

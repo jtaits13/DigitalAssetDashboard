@@ -32,7 +32,8 @@
       function (x) {
         return String(x);
       };
-    var parts = ["Data as of " + at];
+    var label = opts.label ? String(opts.label).trim() : "Data";
+    var parts = [(label || "Data") + " as of " + at];
     if (opts.source) parts.push("· " + opts.source);
     if (opts.mode === "snapshot") parts.push("· static snapshot");
     else if (opts.mode === "live") parts.push("· live chart");

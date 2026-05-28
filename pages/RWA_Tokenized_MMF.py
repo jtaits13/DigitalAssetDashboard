@@ -14,7 +14,7 @@ import streamlit as st
 from home_layout import (
     ETP_FULLPAGE_AUM_LINE_CSS,
     STREAMLIT_TABLE_UNIFY_CSS,
-    monthly_review_note_html,
+    monthly_review_note_class_html,
     rwa_xyz_mirror_footer_text,
     section_label_teal,
 )
@@ -32,8 +32,11 @@ def _mmf_takeaway_html() -> str:
         "networks where issuer integrations and transferability matter—not every chain carries meaningful AUM.</li>"
         "<li><strong>Issuer concentration reflects fund franchises:</strong> a small set of asset managers "
         "accounts for most distributed value; tail funds are often regional or single-chain programs.</li>"
-        "</ul></div>"
-        + monthly_review_note_html()
+        "</ul>"
+        '<p class="takeaways__note">Context only—not investment advice. Observations contextualize the '
+        "headline KPI row above (RWA.xyz US Treasuries and Non-U.S. Government Debt fund aggregates).</p>"
+        "</div>"
+        + monthly_review_note_class_html()
     )
 
 

@@ -554,11 +554,32 @@
       banner.innerHTML = "";
     }
 
+    var hasKo = !!(payload.key_observations_html && String(payload.key_observations_html).trim());
     if (koSec) {
-      koSec.hidden = !payload.key_observations_html;
+      koSec.hidden = !hasKo;
     }
     if (ruleKo) {
-      ruleKo.hidden = !payload.key_observations_html;
+      ruleKo.hidden = !hasKo;
+    }
+    var koAsOf = $("js-deep-ko-as-of");
+    var freshApi = global.__DATA_FRESHNESS;
+    if (koAsOf) {
+      if (
+        hasKo &&
+        payload.generated_at &&
+        freshApi &&
+        typeof freshApi.renderFreshness === "function"
+      ) {
+        freshApi.renderFreshness(koAsOf, {
+          at: payload.generated_at,
+          label: payload.key_observations_as_of_label || "Headline KPIs",
+          source: "RWA.xyz",
+          mode: "snapshot",
+        });
+      } else {
+        koAsOf.hidden = true;
+        koAsOf.textContent = "";
+      }
     }
 
     setOptionalDeepHtml("js-deep-extra-before-leagues", payload.between_ko_and_leagues_html);
