@@ -10,6 +10,7 @@ CSS_V = "62"
 STATIC_BASE_V = "14"
 KPI_HINTS_V = "2"
 DATA_FRESHNESS_V = "1"
+MONTHLY_REVIEW_V = "1"
 PAGE_METHODOLOGY_V = "2"
 SNAPSHOT_KPI_V = "4"
 ETP_KPI_V = "2"
@@ -83,6 +84,7 @@ BACK_NEWS_NEW = "← Back to home (News Hub)"
 
 
 KPI_HINTS_TAG = f'<script defer src="js/kpi-hints.js?v={KPI_HINTS_V}"></script>'
+MONTHLY_REVIEW_TAG = f'<script defer src="js/monthly-review-note.js?v={MONTHLY_REVIEW_V}"></script>'
 
 
 def ensure_kpi_hints_script(text: str) -> str:
@@ -98,6 +100,19 @@ def ensure_kpi_hints_script(text: str) -> str:
     return text[:insert_at] + "\n    " + KPI_HINTS_TAG + text[insert_at:]
 
 
+def ensure_monthly_review_script(text: str) -> str:
+    if "monthly-review-note.js" in text:
+        return text
+    needle = re.search(
+        r'<script defer src="js/static-base\.js\?v=\d+"></script>',
+        text,
+    )
+    if not needle:
+        return text
+    insert_at = needle.end()
+    return text[:insert_at] + "\n    " + MONTHLY_REVIEW_TAG + text[insert_at:]
+
+
 def bump_assets(text: str) -> str:
     for pat, repl in SCRIPT_VERSIONS:
         text = re.sub(pat, repl, text)
@@ -106,6 +121,7 @@ def bump_assets(text: str) -> str:
         f'<script defer src="js/static-base.js?v={STATIC_BASE_V}"></script>',
     )
     text = ensure_kpi_hints_script(text)
+    text = ensure_monthly_review_script(text)
     # Prefer defer on local JS (skip plotly CDN)
     text = re.sub(
         r'<script src="(js/[^"]+\.js\?v=\d+)"></script>',

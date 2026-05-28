@@ -20,6 +20,10 @@ def rwa_xyz_mirror_footer_text() -> str:
     )
 
 
+# Calendar months after last review before static pages show "Review due" (see ``monthly-review-note.js``).
+REVIEW_STALE_CALENDAR_MONTHS = 1
+
+
 def _add_calendar_months(year: int, month: int, delta: int) -> tuple[int, int]:
     """Return ``(year, month)`` after adding ``delta`` months (``month`` is 1–12)."""
     zero_based = month - 1 + delta
@@ -33,7 +37,7 @@ def _monthly_review_state(*, year: int, month: int) -> tuple[bool, str, int]:
     last_review = datetime(year, month, 1, tzinfo=timezone.utc)
     now = datetime.now(timezone.utc)
     label = last_review.strftime("%b %Y")
-    overdue_year, overdue_month = _add_calendar_months(year, month, 3)
+    overdue_year, overdue_month = _add_calendar_months(year, month, REVIEW_STALE_CALENDAR_MONTHS)
     overdue_threshold = datetime(overdue_year, overdue_month, 1, tzinfo=timezone.utc)
     age_days = max(0, (now - last_review).days)
     return (now >= overdue_threshold, label, age_days)
@@ -43,18 +47,19 @@ def monthly_review_note_html(*, year: int = 2026, month: int = 4) -> str:
     """
     Footnote HTML for keyed headline / observations blocks.
 
-    Shows **Review due** (red) only once **three** full calendar months have passed since ``year``–``month``
+    Shows **Review due** (red) once **one** full calendar month has passed since ``year``–``month``
     (treated as the first day of that month in UTC); otherwise shows a neutral last-reviewed line.
     """
     overdue, label, age_days = _monthly_review_state(year=year, month=month)
+    attrs = f'data-review-year="{year}" data-review-month="{month}"'
     if overdue:
         return (
-            '<p style="margin:0.1rem 0 0.55rem 0;color:#b91c1c;font-size:0.78rem;">'
-            f"<strong>Review due:</strong> last reviewed {label} ({age_days} days ago).</p>"
+            f'<p class="review-note review-note--due" {attrs}>'
+            f"<strong>Review due:</strong> last reviewed {escape(label)} ({age_days} days ago).</p>"
         )
     return (
-        '<p style="margin:0.1rem 0 0.55rem 0;color:#3E6A7A;font-size:0.78rem;">'
-        f"Reviewed monthly · Last reviewed: {label}</p>"
+        f'<p class="review-note" {attrs}>'
+        f"Reviewed monthly — Last reviewed: <strong>{escape(label)}</strong></p>"
     )
 
 
@@ -65,13 +70,14 @@ def monthly_review_note_class_html(*, year: int = 2026, month: int = 4) -> str:
     """
     overdue, label, age_days = _monthly_review_state(year=year, month=month)
     label_e = escape(label)
+    attrs = f'data-review-year="{year}" data-review-month="{month}"'
     if overdue:
         return (
-            '<p class="review-note review-note--due">'
+            f'<p class="review-note review-note--due" {attrs}>'
             f"<strong>Review due:</strong> last reviewed {label_e} ({age_days} days ago).</p>"
         )
     return (
-        f'<p class="review-note">Reviewed monthly — Last reviewed: <strong>{label_e}</strong></p>'
+        f'<p class="review-note" {attrs}>Reviewed monthly — Last reviewed: <strong>{label_e}</strong></p>'
     )
 
 

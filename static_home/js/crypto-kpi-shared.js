@@ -165,6 +165,10 @@
       "</aside>";
     if (reviewEl) {
       host.insertAdjacentHTML("beforeend", reviewEl.outerHTML);
+      var monthlyReview = global.__MONTHLY_REVIEW;
+      if (monthlyReview && typeof monthlyReview.apply === "function") {
+        monthlyReview.apply(host);
+      }
     }
     return true;
   }
