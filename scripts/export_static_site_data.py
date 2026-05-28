@@ -822,22 +822,50 @@ def _build_rwa_tokenized_mmf_deep_payload(mmf_pack: tuple[Any, Any, Any, Any], m
         s = str(v or "").strip()
         return html_escape(s) if s else "—"
 
-    def _network_names(asset: dict[str, Any]) -> str:
+    def _network_logo_stack(asset: dict[str, Any]) -> str:
         seen: set[str] = set()
-        names: list[str] = []
+        chips: list[str] = []
+        labels: list[str] = []
         for tok in asset.get("tokens") or []:
             if not isinstance(tok, dict):
                 continue
             n = tok.get("network") or {}
             if not isinstance(n, dict):
                 continue
-            n_name = str(n.get("name") or "").strip()
-            key = n_name.lower()
-            if not n_name or key in seen:
+            slug = str(n.get("slug") or n.get("name") or "").strip()
+            if not slug or slug in seen:
                 continue
-            seen.add(key)
-            names.append(n_name)
-        return ", ".join(names) if names else "—"
+            seen.add(slug)
+            n_name = str(n.get("name") or slug).strip() or "—"
+            labels.append(n_name)
+            icon = str(n.get("icon_url") or "").strip()
+            if icon:
+                chips.append(
+                    '<img class="tmmf-net-avatar" src="'
+                    + html_escape(icon, quote=True)
+                    + '" alt="'
+                    + html_escape(n_name, quote=True)
+                    + '" title="'
+                    + html_escape(n_name, quote=True)
+                    + '" loading="lazy" />'
+                )
+            else:
+                chips.append(
+                    '<span class="tmmf-net-avatar tmmf-net-avatar--text" title="'
+                    + html_escape(n_name, quote=True)
+                    + '">'
+                    + html_escape(n_name[:1].upper())
+                    + "</span>"
+                )
+        if not chips:
+            return "—"
+        return (
+            '<div class="tmmf-net-stack" aria-label="'
+            + html_escape(", ".join(labels), quote=True)
+            + '">'
+            + "".join(chips)
+            + "</div>"
+        )
 
     def _term_link(asset: dict[str, Any]) -> str:
         for key, label in (
@@ -924,7 +952,7 @@ def _build_rwa_tokenized_mmf_deep_payload(mmf_pack: tuple[Any, Any, Any, Any], m
                     "Ticker": ticker,
                     "Platform": platform,
                     "Platform Link": platform_href,
-                    "Networks": _network_names(asset),
+                    "Networks": _network_logo_stack(asset),
                     "Total Value": float(total_value_num),
                     "7D Δ value": float(pct7) if isinstance(pct7, (int, float)) else None,
                     "Eligible Investors": str(investors or "—"),
