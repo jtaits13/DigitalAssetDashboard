@@ -6,22 +6,23 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent / "static_home"
 
-CSS_V = "63"
+CSS_V = "64"
 STATIC_BASE_V = "14"
+TABLE_FULLSCREEN_V = "1"
 KPI_HINTS_V = "2"
 DATA_FRESHNESS_V = "1"
 PAGE_METHODOLOGY_V = "2"
 SNAPSHOT_KPI_V = "4"
 ETP_KPI_V = "2"
 CRYPTO_KPI_V = "9"
-HOME_CRYPTO_V = "9"
-HOME_PAGE_V = "8"
-RWA_ONCHAIN_V = "8"
+HOME_CRYPTO_V = "10"
+HOME_PAGE_V = "9"
+RWA_ONCHAIN_V = "9"
 RWA_GLOBAL_V = "6"
 RWA_DEEP_V = "7"
 RWA_EXPLORE_PAGE_V = "6"
-ETP_PAGE_V = "12"
-CRYPTO_PAGE_V = "17"
+ETP_PAGE_V = "13"
+CRYPTO_PAGE_V = "18"
 ETF_NEWS_V = "2"
 FULL_ARTICLE_FEED_V = "5"
 
@@ -50,6 +51,7 @@ DEEP_FILES = frozenset(
 SCRIPT_VERSIONS: list[tuple[str, str]] = [
     (r"styles\.css\?v=\d+", f"styles.css?v={CSS_V}"),
     (r"static-base\.js\?v=\d+", f"static-base.js?v={STATIC_BASE_V}"),
+    (r"table-fullscreen\.js\?v=\d+", f"table-fullscreen.js?v={TABLE_FULLSCREEN_V}"),
     (r"kpi-hints\.js\?v=\d+", f"kpi-hints.js?v={KPI_HINTS_V}"),
     (r"data-freshness\.js\?v=\d+", f"data-freshness.js?v={DATA_FRESHNESS_V}"),
     (r"page-methodology\.js\?v=\d+", f"page-methodology.js?v={PAGE_METHODOLOGY_V}"),
@@ -83,6 +85,9 @@ BACK_NEWS_NEW = "← Back to home (News Hub)"
 
 
 KPI_HINTS_TAG = f'<script defer src="js/kpi-hints.js?v={KPI_HINTS_V}"></script>'
+TABLE_FULLSCREEN_TAG = f'<script defer src="js/table-fullscreen.js?v={TABLE_FULLSCREEN_V}"></script>'
+
+
 def ensure_kpi_hints_script(text: str) -> str:
     if "kpi-hints.js" in text:
         return text
@@ -94,6 +99,21 @@ def ensure_kpi_hints_script(text: str) -> str:
         return text
     insert_at = needle.end()
     return text[:insert_at] + "\n    " + KPI_HINTS_TAG + text[insert_at:]
+
+
+def ensure_table_fullscreen_script(text: str) -> str:
+    if "table-fullscreen.js" in text:
+        return text
+    if "table-wrap" not in text and "rwa-onchain-home.js" not in text:
+        return text
+    needle = re.search(
+        r'<script defer src="js/static-base\.js\?v=\d+"></script>',
+        text,
+    )
+    if not needle:
+        return text
+    insert_at = needle.end()
+    return text[:insert_at] + "\n    " + TABLE_FULLSCREEN_TAG + text[insert_at:]
 
 
 def strip_monthly_review_script(text: str) -> str:
@@ -112,6 +132,7 @@ def bump_assets(text: str) -> str:
         f'<script defer src="js/static-base.js?v={STATIC_BASE_V}"></script>',
     )
     text = ensure_kpi_hints_script(text)
+    text = ensure_table_fullscreen_script(text)
     text = strip_monthly_review_script(text)
     # Prefer defer on local JS (skip plotly CDN)
     text = re.sub(

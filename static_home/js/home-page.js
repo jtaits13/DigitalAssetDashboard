@@ -174,6 +174,15 @@
     });
   }
 
+  function wireHomeEtpFullscreen() {
+    var fs = window.__TABLE_FULLSCREEN;
+    if (!fs || !fs.attachTableFullscreenButton || !tblBody) return;
+    var wrap = tblBody.closest ? tblBody.closest(".table-wrap") : null;
+    var table = wrap ? wrap.querySelector("table") : null;
+    if (!wrap || !table) return;
+    fs.attachTableFullscreenButton(wrap, table, { title: "U.S. ETP fund table preview" });
+  }
+
   function renderPreview() {
     if (!tblBody) return;
     tblBody.innerHTML = "";
@@ -299,6 +308,7 @@
       updateHomeEtpSortClass();
       renderPreview();
       wireHomeEtpSort();
+      wireHomeEtpFullscreen();
       if (typeof renderRwaOnchainHome === "function") {
         renderRwaOnchainHome(rwaOnchain || {});
       }

@@ -261,6 +261,15 @@
     });
   }
 
+  function wireTableFullscreen() {
+    var fs = window.__TABLE_FULLSCREEN;
+    if (!fs || !fs.attachTableFullscreenButton || !els.tbody) return;
+    var wrap = els.tbody.closest ? els.tbody.closest(".table-wrap") : null;
+    var table = wrap ? wrap.querySelector("table") : null;
+    if (!wrap || !table) return;
+    fs.attachTableFullscreenButton(wrap, table, { title: "Crypto prices table" });
+  }
+
   function renderTable() {
     if (!els.tbody) return;
     els.tbody.innerHTML = "";
@@ -429,6 +438,7 @@
     );
   } else {
     wireSort();
+    wireTableFullscreen();
 
     var kpisPromise = loadTimed("crypto_kpis.json", 14000).catch(function () {
       return null;

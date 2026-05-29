@@ -92,6 +92,15 @@
     });
   }
 
+  function wireHomeCryptoFullscreen() {
+    var fs = window.__TABLE_FULLSCREEN;
+    if (!fs || !fs.attachTableFullscreenButton || !els.tbody) return;
+    var wrap = els.tbody.closest ? els.tbody.closest(".table-wrap") : null;
+    var table = wrap ? wrap.querySelector("table") : null;
+    if (!wrap || !table) return;
+    fs.attachTableFullscreenButton(wrap, table, { title: "Crypto prices preview" });
+  }
+
   function renderPreview() {
     if (!els.tbody) return;
     els.tbody.innerHTML = "";
@@ -201,6 +210,7 @@
       renderKpi(kpis || {});
       cryptoAllRows = prices.rows || [];
       renderPreview();
+      wireHomeCryptoFullscreen();
       if (els.source && kpis && kpis.source_note) {
         els.source.textContent = kpis.source_note;
       }

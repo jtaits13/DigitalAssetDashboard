@@ -130,92 +130,13 @@
     render();
   }
 
-  function stripElementIds(node) {
-    if (!node || node.nodeType !== 1) return;
-    node.removeAttribute("id");
-    Array.prototype.forEach.call(node.children || [], stripElementIds);
-  }
-
-  function closeTableModal() {
-    var root = document.getElementById("js-table-modal");
-    if (!root) return;
-    root.hidden = true;
-    document.body.classList.remove("rwa-table-modal-open");
-    var body = document.getElementById("js-table-modal-body");
-    if (body) body.innerHTML = "";
-  }
-
-  function ensureTableModal() {
-    var root = document.getElementById("js-table-modal");
-    if (root) return root;
-
-    root = document.createElement("div");
-    root.id = "js-table-modal";
-    root.className = "rwa-table-modal";
-    root.hidden = true;
-    root.innerHTML =
-      '<div class="rwa-table-modal__backdrop" data-table-modal-close="1"></div>' +
-      '<div class="rwa-table-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="js-table-modal-title">' +
-      '<div class="rwa-table-modal__header">' +
-      '<div>' +
-      '<p class="rwa-table-modal__eyebrow">Full-screen table</p>' +
-      '<h2 class="rwa-table-modal__title" id="js-table-modal-title">Table</h2>' +
-      "</div>" +
-      '<button type="button" class="btn btn-secondary rwa-table-modal__close" data-table-modal-close="1">Close</button>' +
-      "</div>" +
-      '<div class="rwa-table-modal__body" id="js-table-modal-body"></div>' +
-      "</div>";
-    document.body.appendChild(root);
-
-    root.addEventListener("click", function (ev) {
-      var closeEl = ev.target.closest ? ev.target.closest("[data-table-modal-close]") : null;
-      if (closeEl) closeTableModal();
-    });
-
-    if (!document.body._tableModalKeyBound) {
-      document.body._tableModalKeyBound = true;
-      document.addEventListener("keydown", function (ev) {
-        if (ev.key === "Escape") closeTableModal();
-      });
-    }
-
-    return root;
-  }
-
   function wireTableFullscreen() {
+    var fs = window.__TABLE_FULLSCREEN;
+    if (!fs || !fs.attachTableFullscreenButton) return;
     var wrap = document.querySelector(".table-wrap--scroll");
     var table = wrap ? wrap.querySelector("table") : null;
-    if (!wrap || !table || wrap._fullScreenBound) return;
-    wrap._fullScreenBound = true;
-
-    var actions = document.createElement("div");
-    actions.className = "rwa-table-actions";
-
-    var btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "btn btn-secondary";
-    btn.textContent = "View table full screen";
-    btn.addEventListener("click", function () {
-      var root = ensureTableModal();
-      var title = document.getElementById("js-table-modal-title");
-      var body = document.getElementById("js-table-modal-body");
-      if (!root || !title || !body) return;
-      title.textContent = "U.S. ETP fund table";
-      body.innerHTML = "";
-      var tableWrap = document.createElement("div");
-      tableWrap.className = "rwa-table-modal__table-wrap";
-      var clone = table.cloneNode(true);
-      stripElementIds(clone);
-      tableWrap.appendChild(clone);
-      body.appendChild(tableWrap);
-      root.hidden = false;
-      document.body.classList.add("rwa-table-modal-open");
-      var closeBtn = root.querySelector(".rwa-table-modal__close");
-      if (closeBtn) closeBtn.focus();
-    });
-
-    actions.appendChild(btn);
-    wrap.insertAdjacentElement("afterend", actions);
+    if (!wrap || !table) return;
+    fs.attachTableFullscreenButton(wrap, table, { title: "U.S. ETP fund table" });
   }
 
   function renderKpi(k) {
