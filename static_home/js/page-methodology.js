@@ -109,7 +109,7 @@
           RWA +
           ' <a href="https://app.rwa.xyz/treasuries" target="_blank" rel="noopener noreferrer">US Treasuries</a> and ' +
           '<a href="https://app.rwa.xyz/government-bonds" target="_blank" rel="noopener noreferrer">Non-U.S. Government Debt</a> asset lists (yield vaults excluded).',
-        "<strong>KPI strip</strong> — <strong>Distributed value</strong> uses a <strong>30-day (30D)</strong> % vs summed token values 30 days ago; <strong>7D blended APY</strong> is value-weighted across deployments.",
+        "<strong>KPI strip</strong> — <strong>Distributed value</strong> uses a <strong>30-day (30D)</strong> % vs summed token values 30 days ago; <strong>30D net change</strong> is the dollar change in total distributed value across all funds in that window.",
         "<strong>Networks / Platforms</strong> — aggregates each fund's token rows by chain and by asset manager; <strong>Distributed Value</strong> is a current level.",
       ],
     },

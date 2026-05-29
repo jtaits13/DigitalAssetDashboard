@@ -48,8 +48,8 @@
       "Count of distinct tokenized money market fund products in this view (US Treasuries and Non-U.S. Government Debt listings).",
     "active networks":
       "Blockchain networks with at least one on-chain deployment among the tokenized MMFs in this view.",
-    "7d blended apy":
-      "Value-weighted average of each fund token's 7-day APY field across deployments (when reported).",
+    "30d net change":
+      "Net change in total distributed value across all tokenized MMF deployments vs summed token values 30 days ago—a proxy for net inflows/outflows when subscription and redemption data are unavailable.",
     "represented value":
       "Represented value for the asset type on this page (platform-bound tokens, not freely transferable between wallets).",
     "total asset holders":

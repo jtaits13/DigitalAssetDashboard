@@ -1710,7 +1710,7 @@ def load_rwa_treasuries_cached(
 
 @st.cache_data(ttl=3600, show_spinner=False)
 def load_rwa_tokenized_mmf_cached(
-    *, _mmf_schema: int = 1
+    *, _mmf_schema: int = 2
 ) -> tuple[
     list[RwaTreasuryDistributedNetworkRow],
     list[RwaTreasuryPlatformRow],

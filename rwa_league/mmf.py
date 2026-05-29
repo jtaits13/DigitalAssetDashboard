@@ -303,22 +303,9 @@ def _aggregate_platform_rows(mmfs: list[dict[str, Any]]) -> list[RwaTreasuryPlat
     return rows
 
 
-def _blended_apy_7d(mmfs: list[dict[str, Any]]) -> float | None:
-    num = 0.0
-    den = 0.0
-    for asset in mmfs:
-        for tok in asset.get("tokens") or []:
-            if not isinstance(tok, dict):
-                continue
-            apy = tok.get("apy_7_day")
-            b = tok.get("bridged_token_value_dollar") or {}
-            val = _dollar_subfield(b, "val")
-            if isinstance(apy, (int, float)) and val > 0:
-                num += float(apy) * val
-                den += val
-    if den <= 0:
-        return None
-    return num / den
+def _format_usd_signed_change(n: float) -> str:
+    sign = "+" if n >= 0 else "-"
+    return sign + format_usd_compact(abs(n))
 
 
 def _total_value_30d_ago(mmfs: list[dict[str, Any]]) -> float:
@@ -338,14 +325,16 @@ def build_mmf_kpis(mmfs: list[dict[str, Any]]) -> list[RwaGlobalKpi]:
         delta_30 = (total - total_30) / total_30
 
     networks = {slug for a in mmfs for tok in (a.get("tokens") or []) if isinstance(tok, dict) for slug in [str((tok.get("network") or {}).get("slug") or "")] if slug}
-    apy = _blended_apy_7d(mmfs)
-    apy_disp = f"{apy:.2f}%" if apy is not None else "—"
+    net_30: float | None = None
+    if total_30 > 0:
+        net_30 = total - total_30
+    net_disp = _format_usd_signed_change(net_30) if net_30 is not None else "—"
 
     return [
         RwaGlobalKpi("Distributed value", format_usd_compact(total), delta_30),
         RwaGlobalKpi("Tokenized funds", str(len(mmfs)), None),
         RwaGlobalKpi("Active networks", str(len(networks)), None),
-        RwaGlobalKpi("7D blended APY", apy_disp, None),
+        RwaGlobalKpi("30D net change", net_disp, None),
     ]
 
 
