@@ -1,55 +1,55 @@
 {
-  "generated_at": "2026-05-18T20:24:39.773442+00:00",
+  "generated_at": "2026-05-27T22:43:53.351929+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
-  "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "primary": {
     "label": "Total market cap",
-    "value_display": "$2.68T",
+    "value_display": "$2.61T",
     "delta": {
-      "pct": 0.2223,
+      "pct": -2.7626,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$76,999",
+    "value_display": "$74,525",
     "delta": {
-      "pct": 1.7785,
+      "pct": -3.1975,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,124",
+    "value_display": "$2,029",
     "delta": {
-      "pct": -9.6211,
+      "pct": -11.4785,
       "window": "1M"
     }
   },
   "btc_dominance": {
     "label": "BTC dominance",
-    "value_display": "57.5%",
+    "value_display": "57.1%",
     "delta": {
-      "pct": 1.5527,
+      "pct": -0.3991,
       "window": "1M"
     }
   },
   "stablecoin_share": {
     "label": "Stablecoin share",
-    "value_display": "11.8%",
+    "value_display": "12.0%",
     "delta": {
-      "pct": -0.376,
+      "pct": 2.6818,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 57.55,
-    "stablecoin_share_top50_pct": 11.79,
-    "top50_market_cap_usd": 2538036636677.0,
-    "stablecoin_market_cap_usd": 299201556586.0,
-    "btc_market_cap_usd": 1542280175648.0
+    "btc_dominance_pct": 57.12,
+    "stablecoin_share_top50_pct": 11.99,
+    "top50_market_cap_usd": 2472394592722.0,
+    "stablecoin_market_cap_usd": 296368604927.0,
+    "btc_market_cap_usd": 1493259087897.0
   },
+  "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
     "title": "How to read this snapshot",
     "bullets": [
@@ -58,53 +58,54 @@
       "Table: Spot prices, 1M % changes, and categories use the top-50 CoinGecko list (CoinCap fallback when 30-day change is missing). Hover tickers for short About summaries."
     ]
   },
-  "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
   "top_movers": {
     "title": "Top movers (1M)",
     "footnote": "Largest 1-month % moves in the top-50 table (stablecoins excluded). Context lines match recent headlines from dashboard news feeds, with Google News as fallback.",
     "movers": [
       {
+        "symbol": "RAIN",
+        "name": "Rain",
+        "pct_30d": 97.3666,
+        "category": "",
+        "category_label": "",
+        "detail_url": "https://www.coingecko.com/en/coins/rain",
+        "direction": "up",
+        "context": {
+          "title": "$11.58M Drained in Ongoing Exploit on Verus-Ethereum Bridge",
+          "source": "The Defiant",
+          "link": "https://thedefiant.io/news/hacks/verus-ethereum-bridge-exploit-11-5-million-ri18bt"
+        }
+      },
+      {
+        "symbol": "NEAR",
+        "name": "NEAR Protocol",
+        "pct_30d": 90.0872,
+        "category": "",
+        "category_label": "",
+        "detail_url": "https://www.coingecko.com/en/coins/near",
+        "direction": "up",
+        "context": {
+          "title": "Ethereum Traders Grow Increasingly Bearish as ETFs Bleed, ETH Sinks Near $2,000",
+          "source": "Decrypt",
+          "link": "https://decrypt.co/369218/ethereum-traders-increasingly-bearish-etfs-bleed-eth-sinks-near-2000"
+        }
+      },
+      {
         "symbol": "ZEC",
         "name": "Zcash",
-        "pct_30d": 73.7697,
-        "category": "l1",
-        "category_label": "Layer 1",
+        "pct_30d": 55.508,
+        "category": "",
+        "category_label": "",
         "detail_url": "https://www.coingecko.com/en/coins/zcash",
         "direction": "up",
         "context": {
-          "title": "Why is Zcash Price Surging 90% In a month while Bitcoin Struggles Under $78K? - CoinGape",
-          "source": "Google News",
-          "link": "https://news.google.com/rss/articles/CBMipwFBVV95cUxQM2hFQnV5aUVsS2RmcEF2RGFILXVFR0V5aHpYd002YTBhb3p3SnFqRGJVQ1loUXQ2U0t2UlE2Y2t0ZVZDNGw1U1JKOUF5VTBtWFpqaWdSeDRUa1Yyem9lc3c2OUs4TTdib0pIdWtTdU1DZmt4LUp0RTktYzVmaFY4ZFBfUGJoU2p6eTJmQWJFYU0tTWNQajlXSzZacER1TkExUUw3ZjhGcw?oc=5"
-        }
-      },
-      {
-        "symbol": "TON",
-        "name": "Toncoin",
-        "pct_30d": 44.4631,
-        "category": "l1",
-        "category_label": "Layer 1",
-        "detail_url": "https://www.coingecko.com/en/coins/the-open-network",
-        "direction": "up",
-        "context": {
-          "title": "Toncoin can revisit $1.50 before TON\u2019s next major rally begins \u2013 Here\u2019s why - AMBCrypto",
-          "source": "Google News",
-          "link": "https://news.google.com/rss/articles/CBMimAFBVV95cUxNeG82Y2RYb2d3eVRPZlpUR1pGTmt1RzBMMUhDcnk5UTBwZ0w0MEVVMDVDNDB5dmp3SlVodlB5MUdERFhqNE9RblA0LVJibm1uMFhfTnVQOEZuZHJVQUZXYVNoQVVueC1ldldhNThGVXFDQUx2eTNmWVVEVXBkVHo0T0hkYXpBRTVrcmV6bl9WMU9tNnlmZ2JNWNIBngFBVV95cUxPNC1tTzFwQ0J5VmxRalVqcTc2YlY1UmFCY0ZTUzhXN2pEdW43Nkoyck5mSjBjNEtiTUlEU2NOTGQzNk9QVXZMRm8xSWNfV1diS3VuZlNwbUQtekZXOW1lSFZDeGRlZTBJb19zb2N1ajFIMjRfbFVrekp0WTVrZjA0UTBEZFF4Q2c1RkFiWjYySG5NYXU5UFAtNS1fUTdBQQ?oc=5"
-        }
-      },
-      {
-        "symbol": "ONDO",
-        "name": "Ondo",
-        "pct_30d": 37.0896,
-        "category": "rwa",
-        "category_label": "RWA / Tokenized",
-        "detail_url": "https://www.coingecko.com/en/coins/ondo-finance",
-        "direction": "up",
-        "context": {
-          "title": "Ondo Crypto Bulls Target $0.50 After SEC Catalyst and Rising TVL - The Coin Republic",
-          "source": "Google News",
-          "link": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOREotNzhKdnktLU5LbDg3SWZDZnhQQzlkbm0tNERqUjFtNWpFSWJuTUR5MXZsT3RLZUNhaGs4LXM4MHk5ZE5TeWd2TkxvZ0hzMjJpVFp2SG16VVVlQVV0Nllad1A0UURjRlRTRlI5X0VmM3pidHZ6a1QxTmVQODZQUUJYdDF5cUFjeTNxSjBwdlpMcVUxM1RmUTZJWlF3WVZBd0VxQU5MenFyNzTSAbABQVVfeXFMTTYzNTF4UXVMRVlpVjNuSmVTbnlFTU1SaFhFN3QwM2l1X2NsQ01HbnlTOThHYWZ0aE16eUI1Q2JtZ1dwSWphYmhTX2xoNFZsSjZweWMzSVJVX1g4UFpkNkZ6TXBSOTc2WWVnTHJ0WHd0ak1HanhpaEdBZ21Id3AyUlZRcEFJWW1IakJVd1Y2TVBCWE51Uzl2TlRIVlp0TkdQUnRoUXdPclJnNF9ra1pEeXg?oc=5"
+          "title": "Price predictions 5/27: BTC, ETH, BNB, XRP, SOL, DOGE, HYPE, ZEC, ADA, XMR",
+          "source": "CoinTelegraph",
+          "link": "https://cointelegraph.com/markets/price-predictions-527-btc-eth-bnb-xrp-sol-doge-hype-zec-ada-xmr?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound"
         }
       }
     ]
-  }
+  },
+  "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Top-50 alts showed mixed 1M moves:</strong> 18 names up more than ~0.5%, 19 down more than ~0.5%, and 13 roughly flat out of <strong>50</strong> non-stable coins with a valid 1M % (top-50 table).</li><li><strong>Other outpaced Layer 1 over 1M:</strong> Other averaged about <strong>+26.2%</strong> cap-weighted in the top-50, while Layer 1 averaged about <strong>-3.5%</strong>\u2014the widest gap among category tabs.</li><li><strong>BTC outpaced ETH over 1M:</strong> about <strong>8.3pp</strong> on spot from the top-50 table.</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations are derived from the top-50 table and KPI math described on this page.</p><p class=\"review-note\">Reviewed monthly \u2014 Last reviewed: <strong>Apr 2026</strong></p></div>"
 }
