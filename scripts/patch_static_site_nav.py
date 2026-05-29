@@ -7,78 +7,125 @@ from pathlib import Path
 
 _REPO = Path(__file__).resolve().parent.parent
 
+RWA_ASSET_CHILDREN: list[tuple[str, str]] = [
+    ("rwa-stablecoins.html", "Stablecoins"),
+    ("rwa-us-treasuries.html", "U.S. Treasuries"),
+    ("rwa-tokenized-stocks.html", "Tokenized Stocks"),
+    ("rwa-tokenized-mmf.html", "TMMFs"),
+]
 
-def _ia(on: bool) -> str:
-    return ' class="is-active"' if on else ""
+RWA_PART_CHILDREN: list[tuple[str, str]] = [
+    ("rwa-participants-networks.html", "Networks"),
+    ("rwa-participants-platforms.html", "Platforms"),
+    ("rwa-participants-asset-managers.html", "Asset Managers"),
+]
+
+NAV_BY_FILE: dict[str, str | None] = {
+    "index.html": None,
+    "all-articles.html": "news",
+    "all-regulatory.html": "news",
+    "all-custodian-news.html": "news",
+    "etf-news.html": "etf-news.html",
+    "etps.html": "etps.html",
+    "crypto-prices.html": "crypto-prices.html",
+    "rwa-global.html": "rwa-global.html",
+    "rwa-explore-asset-type.html": "rwa-explore-asset-type.html",
+    "rwa-explore-market-participant.html": "rwa-explore-market-participant.html",
+    "rwa-stablecoins.html": "rwa-stablecoins.html",
+    "rwa-us-treasuries.html": "rwa-us-treasuries.html",
+    "rwa-tokenized-mmf.html": "rwa-tokenized-mmf.html",
+    "rwa-tokenized-stocks.html": "rwa-tokenized-stocks.html",
+    "rwa-participants-networks.html": "rwa-participants-networks.html",
+    "rwa-participants-platforms.html": "rwa-participants-platforms.html",
+    "rwa-participants-asset-managers.html": "rwa-participants-asset-managers.html",
+}
 
 
-def make_nav(
+def _ia(active: str | None, href: str) -> str:
+    return ' class="is-active"' if active == href else ""
+
+
+def _flyout_item(
+    parent_href: str,
+    parent_label: str,
+    children: list[tuple[str, str]],
+    active: str | None,
     *,
-    home: bool = False,
-    news: bool = False,
-    crypto: bool = False,
-    etf_news: bool = False,
-    etf_data: bool = False,
-    mo: bool = False,
-    rwa_assets: bool = False,
-    rwa_part: bool = False,
+    aria_label: str,
 ) -> str:
-    # Leading newline: regex consumes ``\\s*`` before ``<nav``, so this restores the line break after ``</a>``.
+    child_hrefs = {href for href, _ in children}
+    parent_active = active == parent_href or active in child_hrefs
+    parent_cls = (
+        "site-nav__parent-link is-active"
+        if parent_active
+        else "site-nav__parent-link"
+    )
+    nested = "\n".join(
+        f'                  <li><a href="{href}"{_ia(active, href)}>{label}</a></li>'
+        for href, label in children
+    )
+    return f"""              <li class="site-nav__item site-nav__item--flyout">
+                <a href="{parent_href}" class="{parent_cls}">{parent_label}</a>
+                <ul class="site-nav__sub site-nav__sub--nested" aria-label="{aria_label}">
+{nested}
+                </ul>
+              </li>"""
+
+
+def make_nav(active: str | None = None) -> str:
+    home_ia = ' class="is-active"' if active is None else ""
+    news_ia = ' class="is-active"' if active == "news" else ""
+    crypto_ia = _ia(active, "crypto-prices.html")
+    mo_ia = _ia(active, "rwa-global.html")
+
+    assets_flyout = _flyout_item(
+        "rwa-explore-asset-type.html",
+        "RWA · Assets",
+        RWA_ASSET_CHILDREN,
+        active,
+        aria_label="RWA asset pages",
+    )
+    part_flyout = _flyout_item(
+        "rwa-explore-market-participant.html",
+        "RWA · Participants",
+        RWA_PART_CHILDREN,
+        active,
+        aria_label="RWA participant pages",
+    )
+
     return f"""
         <nav class="site-nav" aria-label="Primary">
-          <a href="index.html"{_ia(home)}>Home</a>
-          <a href="index.html#section-news"{_ia(news)}>News Hub</a>
+          <a href="index.html"{home_ia}>Home</a>
+          <a href="index.html#section-news"{news_ia}>News Hub</a>
           <div class="site-nav__dropdown">
             <span class="site-nav__trigger">RWA Market</span>
             <ul class="site-nav__sub">
-              <li><a href="rwa-global.html"{_ia(mo)}>Market Overview</a></li>
-              <li><a href="rwa-explore-asset-type.html"{_ia(rwa_assets)}>RWA · Assets</a></li>
-              <li><a href="rwa-explore-market-participant.html"{_ia(rwa_part)}>RWA · Participants</a></li>
+              <li><a href="rwa-global.html"{mo_ia}>Market Overview</a></li>
+{assets_flyout}
+{part_flyout}
             </ul>
           </div>
           <div class="site-nav__dropdown">
             <span class="site-nav__trigger">U.S. ETPs</span>
             <ul class="site-nav__sub">
-              <li><a href="etps.html"{_ia(etf_data)}>U.S. ETP Overview</a></li>
-              <li><a href="etf-news.html"{_ia(etf_news)}>ETF/ETP News</a></li>
+              <li><a href="etps.html"{_ia(active, "etps.html")}>U.S. ETP Overview</a></li>
+              <li><a href="etf-news.html"{_ia(active, "etf-news.html")}>ETF/ETP News</a></li>
             </ul>
           </div>
-          <a href="crypto-prices.html"{_ia(crypto)}>Crypto Prices</a>
+          <a href="crypto-prices.html"{crypto_ia}>Crypto Prices</a>
         </nav>"""
-
-
-NAV_BY_FILE: dict[str, dict[str, bool]] = {
-    "index.html": {"home": True},
-    "all-articles.html": {"news": True},
-    "all-regulatory.html": {"news": True},
-    "all-custodian-news.html": {"news": True},
-    "etf-news.html": {"etf_news": True},
-    "etps.html": {"etf_data": True},
-    "crypto-prices.html": {"crypto": True},
-    "rwa-global.html": {"mo": True},
-    "rwa-explore-asset-type.html": {"rwa_assets": True},
-    "rwa-explore-market-participant.html": {"rwa_part": True},
-    "rwa-stablecoins.html": {"rwa_assets": True},
-    "rwa-us-treasuries.html": {"rwa_assets": True},
-    "rwa-tokenized-mmf.html": {"rwa_assets": True},
-    "rwa-tokenized-stocks.html": {"rwa_assets": True},
-    "rwa-participants-networks.html": {"rwa_part": True},
-    "rwa-participants-platforms.html": {"rwa_part": True},
-    "rwa-participants-asset-managers.html": {"rwa_part": True},
-}
 
 
 def main() -> None:
     static = _REPO / "static_home"
-    # Consume leading whitespace so we do not double the indent before ``<nav>``.
     pat = re.compile(r'\s*<nav\s+class="site-nav"[^>]*>[\s\S]*?</nav>', re.I)
-    for fname, flags in NAV_BY_FILE.items():
+    for fname, active in NAV_BY_FILE.items():
         path = static / fname
         if not path.is_file():
             print("skip missing:", path)
             continue
         text = path.read_text(encoding="utf-8")
-        new_nav = make_nav(**flags)
+        new_nav = make_nav(active)
         text2, n = pat.subn(new_nav, text, count=1)
         if n != 1:
             print("WARN: nav replace count", n, path)
