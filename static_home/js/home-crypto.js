@@ -98,7 +98,29 @@
     var wrap = els.tbody.closest ? els.tbody.closest(".table-wrap") : null;
     var table = wrap ? wrap.querySelector("table") : null;
     if (!wrap || !table) return;
-    fs.attachTableFullscreenButton(wrap, table, { title: "Crypto prices preview" });
+    fs.attachTableFullscreenButton(wrap, table, {
+      title: "Crypto prices preview",
+      filename: "crypto-prices-preview",
+      getExportData: function () {
+        if (!cryptoAllRows.length) return null;
+        var filtered = filterCryptoRows(cryptoAllRows);
+        var rows = sortCryptoRows(filtered);
+        return {
+          headers: ["Rank", "Ticker", "Coin", "Category", "Price", "1M %", "Market Cap"],
+          rows: rows.map(function (row) {
+            return [
+              row.rank != null ? row.rank : "",
+              row.symbol || "",
+              row.name || "",
+              categoryLabel(row),
+              row.price_usd != null ? Number(row.price_usd) : "",
+              row.pct_30d != null ? Number(row.pct_30d) : "",
+              row.market_cap_usd != null ? Number(row.market_cap_usd) : "",
+            ];
+          }),
+        };
+      },
+    });
   }
 
   function renderPreview() {

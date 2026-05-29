@@ -267,7 +267,10 @@
     var wrap = els.tbody.closest ? els.tbody.closest(".table-wrap") : null;
     var table = wrap ? wrap.querySelector("table") : null;
     if (!wrap || !table) return;
-    fs.attachTableFullscreenButton(wrap, table, { title: "Crypto prices table" });
+    fs.attachTableFullscreenButton(wrap, table, {
+      title: "Crypto prices table",
+      filename: "crypto-prices",
+    });
   }
 
   function renderTable() {

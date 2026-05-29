@@ -556,7 +556,35 @@
       fs.attachTableFullscreenButton(
         tbody && tbody.closest ? tbody.closest(".table-wrap") : null,
         tbody && tbody.closest ? tbody.closest("table") : null,
-        { title: "RWA Global Market Overview networks table" }
+        {
+          title: "RWA Global Market Overview networks table",
+          filename: "rwa-networks-preview",
+          getExportData: function () {
+            var hp = tbody && tbody._rwaHomePreview;
+            if (!hp || !hp.allRows || !hp.allRows.length) return null;
+            var q = hp.searchEl && hp.searchEl.value ? hp.searchEl.value : "";
+            var filtered = filterRwaHomeRows(hp.allRows, q);
+            var sortState = tbody._rwaTableSort || {};
+            var sorted = sortRwaHomeRows(
+              filtered,
+              hp.columns,
+              sortState.sortCol,
+              sortState.sortDir != null ? sortState.sortDir : 1
+            );
+            var cols = (hp.columns || []).filter(function (c) {
+              return c !== "Link";
+            });
+            return {
+              headers: cols,
+              rows: sorted.map(function (row) {
+                return cols.map(function (c) {
+                  var v = row[c];
+                  return v == null ? "" : v;
+                });
+              }),
+            };
+          },
+        }
       );
     }
 

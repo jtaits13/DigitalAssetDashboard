@@ -6,23 +6,24 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent / "static_home"
 
-CSS_V = "64"
+CSS_V = "65"
 STATIC_BASE_V = "14"
 TABLE_FULLSCREEN_V = "1"
+TABLE_DOWNLOAD_V = "1"
 KPI_HINTS_V = "2"
 DATA_FRESHNESS_V = "1"
 PAGE_METHODOLOGY_V = "2"
 SNAPSHOT_KPI_V = "4"
 ETP_KPI_V = "2"
 CRYPTO_KPI_V = "9"
-HOME_CRYPTO_V = "10"
-HOME_PAGE_V = "9"
-RWA_ONCHAIN_V = "9"
+HOME_CRYPTO_V = "11"
+HOME_PAGE_V = "10"
+RWA_ONCHAIN_V = "10"
 RWA_GLOBAL_V = "6"
 RWA_DEEP_V = "7"
 RWA_EXPLORE_PAGE_V = "6"
-ETP_PAGE_V = "13"
-CRYPTO_PAGE_V = "18"
+ETP_PAGE_V = "14"
+CRYPTO_PAGE_V = "19"
 ETF_NEWS_V = "2"
 FULL_ARTICLE_FEED_V = "5"
 
@@ -52,6 +53,7 @@ SCRIPT_VERSIONS: list[tuple[str, str]] = [
     (r"styles\.css\?v=\d+", f"styles.css?v={CSS_V}"),
     (r"static-base\.js\?v=\d+", f"static-base.js?v={STATIC_BASE_V}"),
     (r"table-fullscreen\.js\?v=\d+", f"table-fullscreen.js?v={TABLE_FULLSCREEN_V}"),
+    (r"table-download\.js\?v=\d+", f"table-download.js?v={TABLE_DOWNLOAD_V}"),
     (r"kpi-hints\.js\?v=\d+", f"kpi-hints.js?v={KPI_HINTS_V}"),
     (r"data-freshness\.js\?v=\d+", f"data-freshness.js?v={DATA_FRESHNESS_V}"),
     (r"page-methodology\.js\?v=\d+", f"page-methodology.js?v={PAGE_METHODOLOGY_V}"),
@@ -86,6 +88,7 @@ BACK_NEWS_NEW = "← Back to home (News Hub)"
 
 KPI_HINTS_TAG = f'<script defer src="js/kpi-hints.js?v={KPI_HINTS_V}"></script>'
 TABLE_FULLSCREEN_TAG = f'<script defer src="js/table-fullscreen.js?v={TABLE_FULLSCREEN_V}"></script>'
+TABLE_DOWNLOAD_TAG = f'<script defer src="js/table-download.js?v={TABLE_DOWNLOAD_V}"></script>'
 
 
 def ensure_kpi_hints_script(text: str) -> str:
@@ -116,6 +119,21 @@ def ensure_table_fullscreen_script(text: str) -> str:
     return text[:insert_at] + "\n    " + TABLE_FULLSCREEN_TAG + text[insert_at:]
 
 
+def ensure_table_download_script(text: str) -> str:
+    if "table-download.js" in text:
+        return text
+    if "table-fullscreen.js" not in text:
+        return text
+    needle = re.search(
+        r'<script defer src="js/table-fullscreen\.js\?v=\d+"></script>',
+        text,
+    )
+    if not needle:
+        return text
+    insert_at = needle.end()
+    return text[:insert_at] + "\n    " + TABLE_DOWNLOAD_TAG + text[insert_at:]
+
+
 def strip_monthly_review_script(text: str) -> str:
     return re.sub(
         r'\s*<script defer src="js/monthly-review-note\.js\?v=\d+"></script>',
@@ -133,6 +151,7 @@ def bump_assets(text: str) -> str:
     )
     text = ensure_kpi_hints_script(text)
     text = ensure_table_fullscreen_script(text)
+    text = ensure_table_download_script(text)
     text = strip_monthly_review_script(text)
     # Prefer defer on local JS (skip plotly CDN)
     text = re.sub(

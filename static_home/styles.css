@@ -1595,6 +1595,52 @@ a.hub-panel-surface:hover,
   max-height: min(70vh, 900px);
 }
 
+.table-export-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  min-height: 2rem;
+  margin: 0.75rem 0 -0.35rem;
+  padding: 0 0.15rem 0.35rem;
+}
+
+.table-download-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--teal);
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.table-download-btn:hover {
+  background: #f0f6fa;
+  border-color: var(--teal);
+}
+
+.table-download-btn:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+
+.table-download-btn:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.table-download-btn.is-loading svg {
+  opacity: 0.45;
+}
+
 .data-table {
   width: 100%;
   border-collapse: collapse;

@@ -136,7 +136,7 @@
     var wrap = document.querySelector(".table-wrap--scroll");
     var table = wrap ? wrap.querySelector("table") : null;
     if (!wrap || !table) return;
-    fs.attachTableFullscreenButton(wrap, table, { title: "U.S. ETP fund table" });
+    fs.attachTableFullscreenButton(wrap, table, { title: "U.S. ETP fund table", filename: "us-etp-funds" });
   }
 
   function renderKpi(k) {

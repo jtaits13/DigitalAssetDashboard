@@ -180,7 +180,27 @@
     var wrap = tblBody.closest ? tblBody.closest(".table-wrap") : null;
     var table = wrap ? wrap.querySelector("table") : null;
     if (!wrap || !table) return;
-    fs.attachTableFullscreenButton(wrap, table, { title: "U.S. ETP fund table preview" });
+    fs.attachTableFullscreenButton(wrap, table, {
+      title: "U.S. ETP fund table preview",
+      filename: "us-etp-funds-preview",
+      getExportData: function () {
+        if (!etpAllRows.length) return null;
+        var filtered = filterEtpRows(etpAllRows);
+        var rows = sortEtpPreviewRows(filtered);
+        return {
+          headers: ["Symbol", "Fund Name", "Price", "1Y %", "Assets (B)"],
+          rows: rows.map(function (r) {
+            return [
+              r.symbol || "",
+              r.name || "",
+              r.price != null ? String(r.price) : "",
+              r.pct_52w != null ? Number(r.pct_52w) : "",
+              r.assets_usd != null ? Number(r.assets_usd) / 1e9 : "",
+            ];
+          }),
+        };
+      },
+    });
   }
 
   function renderPreview() {
