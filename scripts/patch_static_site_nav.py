@@ -28,14 +28,6 @@ def make_nav(
         <nav class="site-nav" aria-label="Primary">
           <a href="index.html"{_ia(home)}>Home</a>
           <a href="index.html#section-news"{_ia(news)}>News Hub</a>
-          <a href="crypto-prices.html"{_ia(crypto)}>Crypto Prices</a>
-          <div class="site-nav__dropdown">
-            <span class="site-nav__trigger">U.S. ETPs</span>
-            <ul class="site-nav__sub">
-              <li><a href="etps.html"{_ia(etf_data)}>U.S. ETP Overview</a></li>
-              <li><a href="etf-news.html"{_ia(etf_news)}>ETF/ETP News</a></li>
-            </ul>
-          </div>
           <div class="site-nav__dropdown">
             <span class="site-nav__trigger">RWA Market</span>
             <ul class="site-nav__sub">
@@ -44,6 +36,14 @@ def make_nav(
               <li><a href="rwa-explore-market-participant.html"{_ia(rwa_part)}>RWA · Participants</a></li>
             </ul>
           </div>
+          <div class="site-nav__dropdown">
+            <span class="site-nav__trigger">U.S. ETPs</span>
+            <ul class="site-nav__sub">
+              <li><a href="etps.html"{_ia(etf_data)}>U.S. ETP Overview</a></li>
+              <li><a href="etf-news.html"{_ia(etf_news)}>ETF/ETP News</a></li>
+            </ul>
+          </div>
+          <a href="crypto-prices.html"{_ia(crypto)}>Crypto Prices</a>
         </nav>"""
 
 
