@@ -65,7 +65,7 @@ from custodian_news.client import CUSTODIAN_LOOKBACK_DAYS, detect_article_access
 from regulatory_news.client import load_regulatory_articles
 
 OUT = _REPO / "static_home" / "data"
-HOME_NEWS_N = 3
+HOME_NEWS_N = 4
 REG_N = 3
 # Static site only: [The Defiant](https://thedefiant.io/) RSS merged into market, all-articles, regulatory, and ETF pools.
 STATIC_THE_DEFIANT_RSS = "https://thedefiant.io/feed/"

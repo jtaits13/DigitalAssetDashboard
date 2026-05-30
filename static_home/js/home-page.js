@@ -1,5 +1,5 @@
 (function () {
-  var HOME_NEWS_LIMIT = 5;
+  var HOME_NEWS_LIMIT = 4;
   var newsEl = document.getElementById("js-home-news-list");
   var banner = document.getElementById("js-data-banner");
   var kpiEl = document.getElementById("js-home-kpi");

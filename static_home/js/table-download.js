@@ -111,15 +111,32 @@
     return downloadXlsx(data, filename);
   }
 
-  function ensureExportBar(tableWrap) {
-    var existing = tableWrap.previousElementSibling;
+  function findToolbarRow(tableWrap) {
+    var prev = tableWrap && tableWrap.previousElementSibling;
+    if (!prev || !prev.classList) return null;
     if (
-      existing &&
-      existing.classList &&
-      existing.classList.contains("table-export-bar")
+      prev.classList.contains("table-toolbar-row") ||
+      prev.classList.contains("table-export-bar")
     ) {
-      return existing;
+      return prev;
     }
+    return null;
+  }
+
+  function ensureExportBar(tableWrap) {
+    var existing = findToolbarRow(tableWrap);
+    if (existing) return existing;
+
+    var prev = tableWrap.previousElementSibling;
+    if (prev && prev.classList && prev.classList.contains("toolbar-note")) {
+      var row = document.createElement("div");
+      row.className = "table-toolbar-row";
+      prev.parentNode.insertBefore(row, prev);
+      row.appendChild(prev);
+      prev.classList.add("table-toolbar-row__note");
+      return row;
+    }
+
     var bar = document.createElement("div");
     bar.className = "table-export-bar";
     tableWrap.parentNode.insertBefore(bar, tableWrap);
