@@ -6,7 +6,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent / "static_home"
 
-CSS_V = "73"
+CSS_V = "74"
 STATIC_BASE_V = "14"
 TABLE_FULLSCREEN_V = "1"
 TABLE_DOWNLOAD_V = "1"

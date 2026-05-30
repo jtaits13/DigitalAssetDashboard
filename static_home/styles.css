@@ -1245,42 +1245,6 @@ a.hub-panel-surface:hover,
   padding: 0;
 }
 
-.home-feed-link--regulatory {
-  background: rgba(37, 128, 156, 0.1);
-  border-color: rgba(37, 128, 156, 0.32);
-  color: #1a6278;
-}
-
-.home-feed-link--regulatory:hover {
-  background: rgba(37, 128, 156, 0.16);
-  border-color: var(--teal);
-  color: var(--teal);
-}
-
-.home-feed-link--etp {
-  background: rgba(176, 118, 28, 0.1);
-  border-color: rgba(176, 118, 28, 0.32);
-  color: #6b4a12;
-}
-
-.home-feed-link--etp:hover {
-  background: rgba(176, 118, 28, 0.16);
-  border-color: rgba(140, 90, 18, 0.55);
-  color: #5a3d0f;
-}
-
-.home-feed-link--custody {
-  background: rgba(2, 29, 65, 0.06);
-  border-color: rgba(2, 29, 65, 0.2);
-  color: var(--ink-soft);
-}
-
-.home-feed-link--custody:hover {
-  background: rgba(2, 29, 65, 0.1);
-  border-color: rgba(2, 29, 65, 0.35);
-  color: var(--ink);
-}
-
 @media (min-width: 960px) {
   .home-main-split {
     /* Narrow headline rail (~22% at max width); main column holds RWA / ETP / crypto */
@@ -2108,6 +2072,42 @@ a.hub-panel-surface:hover,
 .home-news-rail .btn.btn-secondary {
   margin-left: 0;
   margin-right: 0;
+}
+
+.home-news-rail .btn.home-feed-link.home-feed-link--regulatory {
+  background: rgba(37, 128, 156, 0.14);
+  border-color: rgba(37, 128, 156, 0.42);
+  color: #165a6e;
+}
+
+.home-news-rail .btn.home-feed-link.home-feed-link--regulatory:hover {
+  background: rgba(37, 128, 156, 0.22);
+  border-color: var(--teal);
+  color: #124854;
+}
+
+.home-news-rail .btn.home-feed-link.home-feed-link--etp {
+  background: rgba(176, 118, 28, 0.14);
+  border-color: rgba(176, 118, 28, 0.4);
+  color: #5a3d0f;
+}
+
+.home-news-rail .btn.home-feed-link.home-feed-link--etp:hover {
+  background: rgba(176, 118, 28, 0.22);
+  border-color: rgba(140, 90, 18, 0.62);
+  color: #4a320c;
+}
+
+.home-news-rail .btn.home-feed-link.home-feed-link--custody {
+  background: rgba(2, 29, 65, 0.08);
+  border-color: rgba(2, 29, 65, 0.26);
+  color: #1a3d5c;
+}
+
+.home-news-rail .btn.home-feed-link.home-feed-link--custody:hover {
+  background: rgba(2, 29, 65, 0.13);
+  border-color: rgba(2, 29, 65, 0.4);
+  color: var(--ink);
 }
 
 @media (max-width: 540px) {
