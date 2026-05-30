@@ -97,6 +97,30 @@
     return n > 0 ? " up" : n < 0 ? " down" : "";
   }
 
+  function stockAnalysisFundUrl(symbol) {
+    var s = String(symbol || "").trim().toLowerCase();
+    if (!s) return "";
+    return "https://stockanalysis.com/etf/" + encodeURIComponent(s) + "/";
+  }
+
+  function renderSymbolTd(symbol) {
+    var esc =
+      global.escapeHtml ||
+      function (x) {
+        return String(x);
+      };
+    var label = esc(symbol || "—");
+    var url = stockAnalysisFundUrl(symbol);
+    if (!url) return '<td><span class="sym">' + label + "</span></td>";
+    return (
+      '<td><a class="sym sym--link" href="' +
+      esc(url) +
+      '" target="_blank" rel="noopener noreferrer">' +
+      label +
+      "</a></td>"
+    );
+  }
+
   global.__ETP_KPI = {
     fmtPctDelta: fmtPctDelta,
     fmtFlowDelta: fmtFlowDelta,
@@ -104,5 +128,7 @@
     fmtFlowUsd: fmtFlowUsd,
     fmtFlowWindowTag: fmtFlowWindowTag,
     flowValClass: flowValClass,
+    stockAnalysisFundUrl: stockAnalysisFundUrl,
+    renderSymbolTd: renderSymbolTd,
   };
 })(typeof window !== "undefined" ? window : this);

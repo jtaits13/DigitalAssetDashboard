@@ -319,10 +319,10 @@
     sorted.forEach(function (r) {
       var tr = document.createElement("tr");
       tr.innerHTML =
-        '<td><span class="sym">' +
-        escapeHtml(r.symbol) +
-        "</span></td>" +
-        "<td>" +
+        (window.__ETP_KPI && typeof window.__ETP_KPI.renderSymbolTd === "function"
+          ? window.__ETP_KPI.renderSymbolTd(r.symbol)
+          : '<td><span class="sym">' + escapeHtml(r.symbol) + "</span></td>") +
+        '<td class="data-table__name">' +
         escapeHtml(r.name) +
         "</td>" +
         '<td class="num">' +

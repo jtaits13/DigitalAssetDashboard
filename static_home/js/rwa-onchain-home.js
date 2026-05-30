@@ -156,14 +156,14 @@
           var href = hrefRaw ? esc(hrefRaw) : "";
           if (href) {
             tds.push(
-              "<td><strong><a href=\"" +
+              '<td><a class="sym sym--link" href="' +
                 href +
-                "\" target=\"_blank\" rel=\"noopener noreferrer\">" +
+                '" target="_blank" rel="noopener noreferrer">' +
                 esc(v) +
-                "</a></strong></td>"
+                "</a></td>"
             );
           } else {
-            tds.push("<td><strong>" + esc(v) + "</strong></td>");
+            tds.push("<td><span class=\"sym\">" + esc(v) + "</span></td>");
           }
         } else if (col === "Link") {
           var h = v ? esc(v) : "#";
@@ -191,7 +191,7 @@
         } else if (col === "30D Δ share") {
           tds.push('<td class="num">' + (isTmmfPage ? fmtPctSignedNoPlus(v, 2) : fmtPctPts(v, 2)) + "</td>");
         } else if (col === "Terms" || col === "Networks") {
-          tds.push("<td>" + (v != null ? String(v) : "—") + "</td>");
+          tds.push('<td class="data-table__text">' + (v != null ? String(v) : "—") + "</td>");
         } else if (col === "Holders") {
           tds.push(
             '<td class="num">' +

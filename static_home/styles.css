@@ -1933,6 +1933,40 @@ a.hub-panel-surface:hover,
   font-size: 0.78rem;
 }
 
+/* Primary identifier, label, and change columns (shared across RWA / ETP / crypto tables) */
+.data-table .sym,
+.data-table a.sym--link {
+  font-weight: 700;
+  color: var(--teal);
+  letter-spacing: 0.02em;
+}
+
+.data-table a.sym--link {
+  text-decoration: none;
+}
+
+.data-table a.sym--link:hover {
+  color: var(--teal);
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+}
+
+.data-table__name,
+.data-table__text {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.data-table td.num {
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.data-table td.num.pct.up,
+.data-table td.num.pct.down {
+  font-weight: 600;
+}
+
 .sym {
   font-weight: 700;
   color: var(--teal);
@@ -2376,6 +2410,7 @@ a.hub-panel-surface:hover,
   text-decoration: none;
   font-weight: 700;
   color: var(--teal);
+  letter-spacing: 0.02em;
 }
 
 .rwa-table-link:hover {

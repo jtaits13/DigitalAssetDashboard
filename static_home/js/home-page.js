@@ -242,11 +242,13 @@
     var rows = sortEtpPreviewRows(filtered).slice(0, 5);
     rows.forEach(function (r) {
       var tr = document.createElement("tr");
+      var symbolTd =
+        window.__ETP_KPI && typeof window.__ETP_KPI.renderSymbolTd === "function"
+          ? window.__ETP_KPI.renderSymbolTd(r.symbol)
+          : '<td><span class="sym">' + escapeHtml(r.symbol) + "</span></td>";
       tr.innerHTML =
-        '<td><span class="sym">' +
-        escapeHtml(r.symbol) +
-        "</span></td>" +
-        "<td>" +
+        symbolTd +
+        '<td class="data-table__name">' +
         escapeHtml(r.name) +
         "</td>" +
         '<td class="num">' +

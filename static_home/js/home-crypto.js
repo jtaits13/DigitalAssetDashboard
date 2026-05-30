@@ -177,7 +177,7 @@
         '<td><span class="sym">' +
         wrap(row.symbol || "", blurb, "") +
         "</span></td>" +
-        "<td>" +
+        '<td class="data-table__name">' +
         escapeHtml(row.name || "") +
         "</td>" +
         '<td><span class="' +
