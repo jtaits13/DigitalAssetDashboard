@@ -176,10 +176,7 @@ body {
 }
 
 .site-nav__parent-link {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
+  display: block;
   width: 100%;
   padding: 0.45rem 1rem;
   font-size: 0.8rem;
@@ -188,17 +185,6 @@ body {
   text-decoration: none;
   box-sizing: border-box;
   transition: color 0.15s ease, background 0.15s ease;
-}
-
-.site-nav__parent-link::after {
-  content: "";
-  width: 0.32rem;
-  height: 0.32rem;
-  border-right: 1.5px solid currentColor;
-  border-bottom: 1.5px solid currentColor;
-  transform: rotate(-45deg);
-  opacity: 0.65;
-  flex-shrink: 0;
 }
 
 .site-nav__parent-link:hover,
@@ -261,10 +247,6 @@ body {
   .site-nav__sub--nested a {
     padding-left: 1.35rem;
     font-size: 0.78rem;
-  }
-
-  .site-nav__parent-link::after {
-    transform: rotate(45deg);
   }
 }
 
