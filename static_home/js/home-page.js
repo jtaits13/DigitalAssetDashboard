@@ -340,4 +340,16 @@
           (e && e.message ? e.message : "")
       );
     });
+
+  function syncHomeNewsRailStickyTop() {
+    var header = document.querySelector(".site-header");
+    if (!header || !window.matchMedia("(min-width: 960px)").matches) return;
+    document.documentElement.style.setProperty(
+      "--home-news-rail-top",
+      header.offsetHeight + 12 + "px"
+    );
+  }
+
+  syncHomeNewsRailStickyTop();
+  window.addEventListener("resize", syncHomeNewsRailStickyTop);
 })();

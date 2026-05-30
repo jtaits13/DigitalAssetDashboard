@@ -1260,8 +1260,11 @@ a.hub-panel-surface:hover,
   .home-news-rail {
     grid-column: 1;
     grid-row: 1;
+    align-self: start;
     position: sticky;
-    top: 0.85rem;
+    top: var(--home-news-rail-top, 4.25rem);
+    max-height: calc(100vh - var(--home-news-rail-top, 4.25rem) - 0.75rem);
+    overflow-y: auto;
     margin-bottom: 0;
   }
 
