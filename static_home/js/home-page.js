@@ -31,8 +31,7 @@
       var title = escapeHtml(a.title || "Untitled");
       var source = a.source ? escapeHtml(a.source) : "";
       var timeStr = fmtDate(a.published) ? escapeHtml(fmtDate(a.published)) : "";
-      var linkCls =
-        "headline-list__link" + (idx === 0 ? " headline-list__link--lead" : "");
+      var linkCls = "headline-list__link";
       var metaRow =
         '<span class="headline-list__meta-row">' +
         (source ? '<span class="headline-list__source">' + source + "</span>" : "") +
@@ -53,9 +52,7 @@
           metaRow;
       } else {
         li.innerHTML =
-          '<span class="headline-list__link headline-list__link--plain' +
-          (idx === 0 ? " headline-list__link--lead" : "") +
-          '">' +
+          '<span class="headline-list__link headline-list__link--plain">' +
           title +
           "</span>" +
           metaRow;
@@ -300,11 +297,6 @@
       var sections = manifest.sections || {};
 
       if (freshApi.renderFreshness) {
-        freshApi.renderFreshness(document.getElementById("js-news-as-of"), {
-          at: homeNews.generated_at || sections.news || manifest.generated_at,
-          source: "RSS feeds",
-          mode: "snapshot",
-        });
         freshApi.renderFreshness(document.getElementById("js-home-etp-as-of"), {
           at:
             (kpis && kpis.generated_at) ||

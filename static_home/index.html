@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=70" />
+    <link rel="stylesheet" href="styles.css?v=73" />
   </head>
   <body class="page-home">
     <header class="site-header" role="banner">
@@ -253,35 +253,29 @@
             <p class="section-dek section-dek--rail">
               Headlines from CoinDesk, CoinTelegraph, Decrypt, The Block, and The Defiant.
             </p>
-            <p class="data-freshness" id="js-news-as-of" hidden></p>
 
             <div class="home-news-block">
               <h3 class="home-news-block__heading">Latest headlines</h3>
               <ul class="headline-list headline-list--rail" id="js-home-news-list">
                 <li class="headline-list__loading">Loading…</li>
               </ul>
-              <p class="home-news-rail__more">
+              <div class="home-news-rail__more">
                 <a class="btn btn-secondary home-news-rail__cta" href="all-articles.html"
                   >All digital asset headlines →</a
                 >
-              </p>
+              </div>
             </div>
 
             <div class="home-news-block home-news-block--feeds">
               <h3 class="home-news-block__heading">Specialist feeds</h3>
-              <nav class="news-hub-panels news-hub-panels--rail" aria-label="Specialist news feeds">
-                <a class="news-hub-panel news-hub-panel--rail" href="all-regulatory.html">
-                  <span class="news-hub-panel__title">Regulatory</span>
-                  <span class="news-hub-panel__desc">Policy, filings, and regulator wires</span>
-                </a>
-                <a class="news-hub-panel news-hub-panel--rail" href="etf-news.html">
-                  <span class="news-hub-panel__title">ETF / ETP</span>
-                  <span class="news-hub-panel__desc">Fund launches, flows, and issuer news</span>
-                </a>
-                <a class="news-hub-panel news-hub-panel--rail" href="all-custodian-news.html">
-                  <span class="news-hub-panel__title">Custody</span>
-                  <span class="news-hub-panel__desc">Custodian and digital-asset servicing headlines</span>
-                </a>
+              <nav class="home-feed-links" aria-label="Specialist news feeds">
+                <a class="btn btn-secondary home-feed-link home-feed-link--regulatory" href="all-regulatory.html"
+                  >Regulatory →</a
+                >
+                <a class="btn btn-secondary home-feed-link home-feed-link--etp" href="etf-news.html">ETF / ETP →</a>
+                <a class="btn btn-secondary home-feed-link home-feed-link--custody" href="all-custodian-news.html"
+                  >Custody →</a
+                >
               </nav>
             </div>
           </aside>
@@ -302,6 +296,6 @@
     <script defer src="js/crypto-kpi-shared.js?v=9"></script>
     <script defer src="js/home-crypto.js?v=11"></script>
     <script defer src="js/rwa-onchain-home.js?v=10"></script>
-    <script defer src="js/home-page.js?v=11"></script>
+    <script defer src="js/home-page.js?v=12"></script>
   </body>
 </html>
