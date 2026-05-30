@@ -151,8 +151,8 @@ body {
   box-shadow: var(--shadow);
 }
 
-.site-nav__dropdown:hover .site-nav__sub,
-.site-nav__dropdown:focus-within .site-nav__sub {
+.site-nav__dropdown:hover > .site-nav__sub,
+.site-nav__dropdown:focus-within > .site-nav__sub {
   display: block;
 }
 
