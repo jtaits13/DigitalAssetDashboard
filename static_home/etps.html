@@ -12,8 +12,9 @@
     />
     <link rel="stylesheet" href="styles.css?v=78" />
     <link rel="stylesheet" href="css/site-experience.css?v=2" />
+    <link rel="stylesheet" href="css/etp-page-experience.css?v=1" />
   </head>
-  <body class="page-etp site-experience" data-methodology="etp">
+  <body class="page-etp page-etp--rich site-experience" data-methodology="etp">
     <header class="site-header" role="banner">
       <div class="site-header__inner">
         <a class="site-brand" href="index.html">Digital Assets Dashboard</a>
@@ -57,120 +58,152 @@
 
     <div class="page-back-below-header">
       <p class="back-link back-link--below-header">
-        <a href="index.html">← Back to home</a>
+        <a href="index.html#section-markets">← Back to home (U.S. ETPs)</a>
       </p>
     </div>
 
     <main class="page-shell">
-      <header class="page-intro">
-        <h1 class="page-intro__title">U.S. Digital Asset ETPs — Full List</h1>
-        <p class="page-intro__dek">
-          <strong>U.S. crypto-related exchange-traded products</strong>, with a KPI strip, an estimated aggregate AUM trend
-          chart, a searchable fund table, and a related ETF/ETP headlines panel. Reference:
-          <a href="https://stockanalysis.com/list/crypto-etfs/" target="_blank" rel="noopener noreferrer">StockAnalysis.com</a>
-          (issuer, inception, <strong>1Y %</strong> past-year total return).
-        </p>
-      </header>
-
-      <div class="data-banner" id="js-data-banner" role="status" hidden></div>
-
-      <hr class="section-rule" />
-
-      <section class="hub-section" aria-labelledby="snapshot-heading">
-        <h2 class="subsection-head" id="snapshot-heading">Top-Line Market Snapshot</h2>
-        <p class="data-freshness" id="js-etp-snapshot-as-of" hidden></p>
-        <div id="js-etp-kpi" aria-label="U.S. ETP KPI strip"></div>
-      </section>
-
-      <section class="hub-section" aria-labelledby="obs-heading">
-        <h2 class="subsection-head u-vh" id="obs-heading">Key Observations</h2>
-        <div id="js-etp-key-obs" hidden></div>
-      </section>
-
-      <hr class="section-rule" />
-
-      <div class="split-panels split-panels--etp-equal">
-        <section class="split-panels__col split-panels__col--chart" aria-labelledby="aum-heading">
-          <h2 class="subsection-head" id="aum-heading">Aggregate AUM trend (12 months)</h2>
-          <div class="split-panels__widget split-panels__widget--chart">
-            <div id="aum-chart" class="aum-chart-host" role="img" aria-label="Aggregate estimated AUM chart"></div>
-            <p class="chart-placeholder__cap">
-              Vertical axis: estimated aggregate AUM (<strong>billions USD</strong>; weekly points).
-            </p>
-            <p class="method-note split-panels__method-note">
-              <strong>Yahoo Finance</strong> weekly closes — each fund—s latest StockAnalysis AUM (constant-share approximation),
-              summed across the table. Use the Plotly toolbar to zoom, pan, and reset.
+      <article class="hub-section hub-section--panel etp-rich-zone home-zone home-zone--etp">
+        <div class="home-zone__stripe" aria-hidden="true"></div>
+        <header class="home-zone__head">
+          <span class="home-zone__badge" aria-hidden="true">ETP</span>
+          <div class="home-zone__titles">
+            <h1 class="band-label teal" id="page-title">U.S. Digital Asset ETPs — Full List</h1>
+            <p class="section-dek section-dek--wide">
+              <strong>U.S. crypto-related exchange-traded products</strong>, with a KPI strip, an estimated aggregate AUM
+              trend chart, a searchable fund table, and a related ETF/ETP headlines panel. Reference:
+              <a href="https://stockanalysis.com/list/crypto-etfs/" target="_blank" rel="noopener noreferrer"
+                >StockAnalysis.com</a
+              >
+              (issuer, inception, <strong>1Y %</strong> past-year total return).
             </p>
           </div>
-        </section>
+        </header>
 
-        <section class="split-panels__col split-panels__col--pulse" aria-labelledby="pulse-heading">
-          <h2 class="subsection-head" id="pulse-heading">ETF/ETP News Feed</h2>
-          <div class="split-panels__widget split-panels__widget--pulse">
-            <div class="pulse-box pulse-box--etp-split">
-              <ul class="pulse-list" id="js-etf-pulse">
-                <li class="pulse-list__loading">Loading headlines…</li>
-              </ul>
-            </div>
-            <div class="cta-row cta-row--news-full cta-row--etp-feed" role="navigation" aria-label="Full ETF and ETP headlines">
-              <a class="btn btn-primary" href="etf-news.html">All ETF/ETP headlines →</a>
-            </div>
-            <p class="cta-note cta-note--etp-feed-hint">
-              Up to five ranked ETF/ETP headlines per UTC calendar day. Use the ETF/ETP headlines page for search and
-              pagination.
-            </p>
+        <div class="home-zone__body etp-rich-zone__body">
+          <div class="home-related-chips" aria-label="Related pages">
+            <span class="home-related-chips__label">Related</span>
+            <a class="home-chip" href="index.html#section-markets">Home ETP preview</a>
+            <a class="home-chip" href="crypto-prices.html">Crypto prices</a>
+            <a class="home-chip" href="etf-news.html">All ETF/ETP headlines</a>
           </div>
-        </section>
-      </div>
 
-      <hr class="section-rule" />
+          <div class="data-banner" id="js-data-banner" role="status" hidden></div>
 
-      <section class="hub-section etp-concentration" aria-labelledby="concentration-heading">
-        <h2 class="subsection-head" id="concentration-heading">AUM concentration (top 5 funds)</h2>
-        <p class="page-intro__dek etp-concentration__dek">
-          Share of total listed AUM held by the five largest funds (StockAnalysis snapshot).
-        </p>
-        <div id="etp-concentration-chart" class="etp-concentration-chart" role="img" aria-label="Top five funds by share of total AUM"></div>
-      </section>
+          <div class="etp-rich-block" aria-labelledby="snapshot-heading">
+            <h2 class="subsection-head" id="snapshot-heading">Top-Line Market Snapshot</h2>
+            <p class="data-freshness" id="js-etp-snapshot-as-of" hidden></p>
+            <div id="js-etp-kpi" aria-label="U.S. ETP KPI strip"></div>
+          </div>
 
-      <hr class="section-rule" />
+          <div class="etp-rich-block" aria-labelledby="obs-heading">
+            <h2 class="subsection-head u-vh" id="obs-heading">Key Observations</h2>
+            <div id="js-etp-key-obs" hidden></div>
+          </div>
 
-      <section class="hub-section" aria-labelledby="table-heading">
-        <h2 class="subsection-head u-vh" id="table-heading">Fund table</h2>
-        <label class="search-field">
-          <span class="search-field__label">Search by fund name or ticker</span>
-          <input type="search" class="search-field__input" id="js-etp-search" placeholder="Filter by name or ticker…" />
-        </label>
-        <p class="toolbar-note" id="js-etp-toolbar">Loading fund list…</p>
+          <hr class="etp-rich-rule" aria-hidden="true" />
 
-        <div class="table-wrap table-wrap--scroll">
-          <table class="data-table data-table--dense data-table--sortable">
-            <thead id="js-etp-thead">
-              <tr>
-                <th data-sort="symbol" class="th-sortable">Symbol</th>
-                <th data-sort="name" class="th-sortable">Fund Name</th>
-                <th class="num th-sortable" data-sort="price">Price</th>
-                <th class="num th-sortable" data-sort="pct_52w">1Y %</th>
-                <th class="num th-sortable" data-sort="flow_1y_usd">1Y Flow</th>
-                <th class="num th-sortable" data-sort="assets_usd">Assets (B)</th>
-                <th data-sort="issuer" class="th-sortable">Issuer</th>
-                <th data-sort="custodian" class="th-sortable">Custodian</th>
-                <th data-sort="inception" class="th-sortable">Inception</th>
-                <th>Fund Filing</th>
-              </tr>
-            </thead>
-            <tbody id="js-etp-tbody">
-              <tr>
-                <td colspan="10">Loading…</td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="etp-rich-block">
+            <div class="split-panels split-panels--etp-equal">
+              <section class="split-panels__col split-panels__col--chart" aria-labelledby="aum-heading">
+                <h2 class="subsection-head" id="aum-heading">Aggregate AUM trend (12 months)</h2>
+                <div class="split-panels__widget split-panels__widget--chart">
+                  <div id="aum-chart" class="aum-chart-host" role="img" aria-label="Aggregate estimated AUM chart"></div>
+                  <p class="chart-placeholder__cap">
+                    Vertical axis: estimated aggregate AUM (<strong>billions USD</strong>; weekly points).
+                  </p>
+                  <p class="method-note split-panels__method-note">
+                    <strong>Yahoo Finance</strong> weekly closes — each fund’s latest StockAnalysis AUM (constant-share
+                    approximation), summed across the table. Use the Plotly toolbar to zoom, pan, and reset.
+                  </p>
+                </div>
+              </section>
+
+              <section class="split-panels__col split-panels__col--pulse" aria-labelledby="pulse-heading">
+                <h2 class="subsection-head" id="pulse-heading">ETF/ETP News Feed</h2>
+                <div class="split-panels__widget split-panels__widget--pulse">
+                  <div class="pulse-box pulse-box--etp-split">
+                    <ul class="pulse-list" id="js-etf-pulse">
+                      <li class="pulse-list__loading">Loading headlines…</li>
+                    </ul>
+                  </div>
+                  <div
+                    class="cta-row cta-row--news-full cta-row--etp-feed"
+                    role="navigation"
+                    aria-label="Full ETF and ETP headlines"
+                  >
+                    <a class="btn btn-primary" href="etf-news.html">All ETF/ETP headlines →</a>
+                  </div>
+                  <p class="cta-note cta-note--etp-feed-hint">
+                    Up to five ranked ETF/ETP headlines per UTC calendar day. Use the ETF/ETP headlines page for search
+                    and pagination.
+                  </p>
+                </div>
+              </section>
+            </div>
+          </div>
+
+          <hr class="etp-rich-rule" aria-hidden="true" />
+
+          <div class="etp-rich-block etp-concentration" aria-labelledby="concentration-heading">
+            <h2 class="subsection-head" id="concentration-heading">AUM concentration (top 5 funds)</h2>
+            <p class="page-intro__dek etp-concentration__dek">
+              Share of total listed AUM held by the five largest funds (StockAnalysis snapshot).
+            </p>
+            <div
+              id="etp-concentration-chart"
+              class="etp-concentration-chart"
+              role="img"
+              aria-label="Top five funds by share of total AUM"
+            ></div>
+          </div>
+
+          <hr class="etp-rich-rule" aria-hidden="true" />
+
+          <div class="etp-rich-block" aria-labelledby="table-heading">
+            <h2 class="subsection-head" id="table-heading">Fund table</h2>
+            <label class="search-field">
+              <span class="search-field__label">Search by fund name or ticker</span>
+              <input
+                type="search"
+                class="search-field__input"
+                id="js-etp-search"
+                placeholder="Filter by name or ticker…"
+              />
+            </label>
+            <p class="toolbar-note" id="js-etp-toolbar">Loading fund list…</p>
+
+            <div class="table-wrap table-wrap--scroll">
+              <table class="data-table data-table--dense data-table--sortable">
+                <thead id="js-etp-thead">
+                  <tr>
+                    <th data-sort="symbol" class="th-sortable">Symbol</th>
+                    <th data-sort="name" class="th-sortable">Fund Name</th>
+                    <th class="num th-sortable" data-sort="price">Price</th>
+                    <th class="num th-sortable" data-sort="pct_52w">1Y %</th>
+                    <th class="num th-sortable" data-sort="flow_1y_usd">1Y Flow</th>
+                    <th class="num th-sortable" data-sort="assets_usd">Assets (B)</th>
+                    <th data-sort="issuer" class="th-sortable">Issuer</th>
+                    <th data-sort="custodian" class="th-sortable">Custodian</th>
+                    <th data-sort="inception" class="th-sortable">Inception</th>
+                    <th>Fund Filing</th>
+                  </tr>
+                </thead>
+                <tbody id="js-etp-tbody">
+                  <tr>
+                    <td colspan="10">Loading…</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="source-cap">
+              Fund data: StockAnalysis (list and AUM). Spot BTC/ETH flows: Farside Investors (daily net
+              creations/redemptions, USD).
+            </p>
+            <p class="timestamp-foot" id="js-etp-generated">—</p>
+          </div>
         </div>
-        <p class="source-cap">
-          Fund data: StockAnalysis (list and AUM). Spot BTC/ETH flows: Farside Investors (daily net creations/redemptions, USD).
-        </p>
-        <p class="timestamp-foot" id="js-etp-generated">—</p>
-      </section>
+      </article>
 
       <p class="back-link">
         <a href="index.html">← Back to home</a>
@@ -189,6 +222,6 @@
     <script defer src="js/etp-kpi-shared.js?v=3"></script>
     <script defer src="js/crypto-kpi-shared.js?v=9"></script>
     <script defer src="js/etp-page.js?v=15"></script>
-      <script defer src="js/site-experience.js?v=1"></script>
+    <script defer src="js/site-experience.js?v=1"></script>
   </body>
 </html>
