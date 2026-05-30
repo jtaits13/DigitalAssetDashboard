@@ -1,53 +1,53 @@
 {
-  "generated_at": "2026-05-27T22:43:53.351929+00:00",
+  "generated_at": "2026-05-29T18:35:16.674769+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
-    "value_display": "$2.61T",
+    "value_display": "$2.60T",
     "delta": {
-      "pct": -2.7626,
+      "pct": -1.4863,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$74,525",
+    "value_display": "$73,722",
     "delta": {
-      "pct": -3.1975,
+      "pct": -2.9931,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,029",
+    "value_display": "$2,023",
     "delta": {
-      "pct": -11.4785,
+      "pct": -10.6956,
       "window": "1M"
     }
   },
   "btc_dominance": {
     "label": "BTC dominance",
-    "value_display": "57.1%",
+    "value_display": "56.9%",
     "delta": {
-      "pct": -0.3991,
+      "pct": -1.5709,
       "window": "1M"
     }
   },
   "stablecoin_share": {
     "label": "Stablecoin share",
-    "value_display": "12.0%",
+    "value_display": "12.1%",
     "delta": {
-      "pct": 2.6818,
+      "pct": 2.3144,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 57.12,
-    "stablecoin_share_top50_pct": 11.99,
-    "top50_market_cap_usd": 2472394592722.0,
-    "stablecoin_market_cap_usd": 296368604927.0,
-    "btc_market_cap_usd": 1493259087897.0
+    "btc_dominance_pct": 56.87,
+    "stablecoin_share_top50_pct": 12.06,
+    "top50_market_cap_usd": 2453704352766.0,
+    "stablecoin_market_cap_usd": 295852845994.0,
+    "btc_market_cap_usd": 1477046546478.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -63,49 +63,49 @@
     "footnote": "Largest 1-month % moves in the top-50 table (stablecoins excluded). Context lines match recent headlines from dashboard news feeds, with Google News as fallback.",
     "movers": [
       {
-        "symbol": "RAIN",
-        "name": "Rain",
-        "pct_30d": 97.3666,
-        "category": "",
-        "category_label": "",
-        "detail_url": "https://www.coingecko.com/en/coins/rain",
-        "direction": "up",
-        "context": {
-          "title": "$11.58M Drained in Ongoing Exploit on Verus-Ethereum Bridge",
-          "source": "The Defiant",
-          "link": "https://thedefiant.io/news/hacks/verus-ethereum-bridge-exploit-11-5-million-ri18bt"
-        }
-      },
-      {
         "symbol": "NEAR",
         "name": "NEAR Protocol",
-        "pct_30d": 90.0872,
+        "pct_30d": 95.0514,
         "category": "",
         "category_label": "",
         "detail_url": "https://www.coingecko.com/en/coins/near",
         "direction": "up",
         "context": {
-          "title": "Ethereum Traders Grow Increasingly Bearish as ETFs Bleed, ETH Sinks Near $2,000",
+          "title": "Bitcoin Slips Under $73K as Crypto Liquidations Near $1B",
           "source": "Decrypt",
-          "link": "https://decrypt.co/369218/ethereum-traders-increasingly-bearish-etfs-bleed-eth-sinks-near-2000"
+          "link": "https://decrypt.co/369255/bitcoin-slips-under-73k-as-crypto-liquidations-near-1b"
+        }
+      },
+      {
+        "symbol": "RAIN",
+        "name": "Rain",
+        "pct_30d": 84.2173,
+        "category": "",
+        "category_label": "",
+        "detail_url": "https://www.coingecko.com/en/coins/rain",
+        "direction": "up",
+        "context": {
+          "title": "Ukrainian Police Officers Allegedly Kidnapped Crypto Entrepreneurs to Extort Millions",
+          "source": "Decrypt",
+          "link": "https://decrypt.co/369443/ukrainian-police-officers-allegedly-kidnapped-crypto-entrepreneurs-to-extort-millions"
         }
       },
       {
         "symbol": "ZEC",
         "name": "Zcash",
-        "pct_30d": 55.508,
+        "pct_30d": 66.6631,
         "category": "",
         "category_label": "",
         "detail_url": "https://www.coingecko.com/en/coins/zcash",
         "direction": "up",
         "context": {
-          "title": "Price predictions 5/27: BTC, ETH, BNB, XRP, SOL, DOGE, HYPE, ZEC, ADA, XMR",
-          "source": "CoinTelegraph",
-          "link": "https://cointelegraph.com/markets/price-predictions-527-btc-eth-bnb-xrp-sol-doge-hype-zec-ada-xmr?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound"
+          "title": "Pump & Memes HEATING up! XMR vs ZEC! How important are these rate cuts? - Under Exposed",
+          "source": "Decrypt",
+          "link": "https://decrypt.co/videos/interviews/IuLdmgP6/pump-memes-heating-up-xmr-vs-zec-how-important-are-these-rate-cuts-under-exposed"
         }
       }
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Top-50 alts showed mixed 1M moves:</strong> 18 names up more than ~0.5%, 19 down more than ~0.5%, and 13 roughly flat out of <strong>50</strong> non-stable coins with a valid 1M % (top-50 table).</li><li><strong>Other outpaced Layer 1 over 1M:</strong> Other averaged about <strong>+26.2%</strong> cap-weighted in the top-50, while Layer 1 averaged about <strong>-3.5%</strong>\u2014the widest gap among category tabs.</li><li><strong>BTC outpaced ETH over 1M:</strong> about <strong>8.3pp</strong> on spot from the top-50 table.</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations are derived from the top-50 table and KPI math described on this page.</p><p class=\"review-note\">Reviewed monthly \u2014 Last reviewed: <strong>Apr 2026</strong></p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Top-50 alts showed mixed 1M moves:</strong> 16 names up more than ~0.5%, 18 down more than ~0.5%, and 16 roughly flat out of <strong>50</strong> non-stable coins with a valid 1M % (top-50 table).</li><li><strong>Others (top-50 coins outside Layer 1, stablecoins, CEX, DeFi, meme, and RWA tabs, e.g. HYPE, MNT, WLFI, ASTER, RLUSD) outpaced Layer 1s over 1M:</strong> the stronger group averaged about <strong>+44.0%</strong> cap-weighted in the top-50, while the weaker averaged about <strong>-3.1%</strong>\u2014the widest gap among category tabs.</li><li><strong>Industry headlines emphasize Crypto regulation</strong> Recent coverage includes <a href=\"https://www.coindesk.com/policy/2026/05/29/clarity-act-risks-regulation-without-oversight-brookings-fellow-says\" target=\"_blank\" rel=\"noopener noreferrer\">Clarity Act Risks Regulation Without Oversight, Brookings Fellow Says</a> (CoinDesk); <a href=\"https://www.coindesk.com/policy/2026/05/29/paxos-is-first-blockchain-firm-to-provide-settlement-and-clearing-services-following-sec-approval\" target=\"_blank\" rel=\"noopener noreferrer\">Paxos wins SEC approval to clear U.S. stocks on blockchain</a> (CoinDesk). Enforcement and legislation headlines can shift risk appetite across the top-50\u2014watch whether beta concentrates in majors or spreads into higher-beta categories.</li><li><strong>Industry headlines emphasize Crypto market structure</strong> Recent coverage includes <a href=\"https://www.coindesk.com/markets/2026/05/29/live-markets-bitcoin-slides-further-putting-two-month-winning-streak-in-jeopardy\" target=\"_blank\" rel=\"noopener noreferrer\">Live markets: Bitcoin shrugs off early decline, but two-month winning streak is in jeopardy</a> (CoinDesk); <a href=\"https://www.coindesk.com/daybook-us/2026/05/29/bitcoin-underperforms-risk-assets-as-record-9th-day-of-etf-outflows-signal-waning-demand\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin underperforms risk assets as record 9th day of ETF outflows signal waning demand</a> (CoinDesk). Breadth and dominance narratives help explain whether moves are Bitcoin-led or alt-led\u2014compare with BTC/ETH 1M % and the category mix in the top-50 table.</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets are ranked from on-page data and recent industry headlines (dashboard RSS plus Google News fallback).</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
