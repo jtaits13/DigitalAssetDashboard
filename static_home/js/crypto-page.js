@@ -295,7 +295,7 @@
             '" target="_blank" rel="noopener noreferrer">Open</a></td>'
           : "<td>—</td>";
         tr.innerHTML =
-          '<td class="num">' +
+          "<td>" +
           escapeHtml(String(row.rank != null ? row.rank : "—")) +
           "</td>" +
           '<td><span class="sym">' +

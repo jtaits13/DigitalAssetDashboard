@@ -171,7 +171,7 @@
       var tr = document.createElement("tr");
       var blurb = (row.about_blurb || "").trim();
       tr.innerHTML =
-        '<td class="num">' +
+        "<td>" +
         escapeHtml(String(row.rank != null ? row.rank : "—")) +
         "</td>" +
         '<td><span class="sym">' +
