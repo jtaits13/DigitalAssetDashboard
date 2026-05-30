@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=67" />
+    <link rel="stylesheet" href="styles.css?v=68" />
   </head>
   <body class="page-home">
     <header class="site-header" role="banner">
@@ -60,13 +60,12 @@
           <div class="hero-copy hero-copy--lead">
             <h1 id="page-title">Digital Assets Dashboard</h1>
             <p class="hero-lead">
-              Digital-asset <strong>news</strong>, global <strong>regulatory</strong> coverage,
-              <strong>on-chain RWA</strong> data from <strong>RWA.xyz</strong>, U.S.-listed
-              <strong>crypto ETPs</strong>, and top-line <strong>crypto prices</strong>—in one place. Track market
-              direction, policy signals, and where activity is building across
-              <strong>networks</strong>, <strong>platforms</strong>, <strong>participants</strong>,
-              <strong>stablecoins</strong>, <strong>U.S. Treasuries</strong>, <strong>tokenized stocks</strong>, and
-              <strong>tokenized MMFs (TMMFs)</strong>.
+              <strong>On-chain RWA</strong> data from <strong>RWA.xyz</strong>, digital-asset
+              <strong>news</strong>, U.S.-listed <strong>crypto ETPs</strong>, and top-line
+              <strong>crypto prices</strong>—in one place. Track market direction, policy signals, and where activity
+              is building across <strong>networks</strong>, <strong>platforms</strong>,
+              <strong>participants</strong>, <strong>stablecoins</strong>, <strong>U.S. Treasuries</strong>,
+              <strong>tokenized stocks</strong>, and <strong>tokenized MMFs (TMMFs)</strong>.
             </p>
             <p class="hero-dek callout">
               For <strong>internal digital asset</strong> materials (documentation, product context, and key contacts), see the
@@ -84,52 +83,6 @@
 
       <div class="page-shell">
         <div class="data-banner" id="js-data-banner" role="status" hidden></div>
-
-        <section class="hub-section hub-section--panel" id="section-news" aria-labelledby="news-heading">
-          <h2 class="band-label teal" id="news-heading">News Hub</h2>
-          <p class="section-dek section-dek--wide">
-            Digital-asset headlines from CoinDesk, CoinTelegraph, Decrypt, The Block, and The Defiant — plus links to
-            regulatory, ETF/ETP, and custody-industry feeds.
-          </p>
-          <p class="data-freshness" id="js-news-as-of" hidden></p>
-          <p class="cta-note cta-note--news-hub-top">
-            <a href="all-articles.html">All digital asset headlines →</a>
-          </p>
-          <div class="lane-row">
-            <article class="lane-panel">
-              <header class="lane-panel__head">
-                <span class="lane-panel__eyebrow">Market feed</span>
-                <h3 class="lane-panel__title">Latest Digital Asset News</h3>
-              </header>
-              <ul class="headline-list" id="js-home-news-list">
-                <li class="headline-list__loading">Loading…</li>
-              </ul>
-            </article>
-            <article class="lane-panel lane-panel--news-hub">
-              <header class="lane-panel__head">
-                <span class="lane-panel__eyebrow">Specialist feeds</span>
-                <h3 class="lane-panel__title">Explore news</h3>
-              </header>
-              <nav class="news-hub-panels" aria-label="Specialist news feeds">
-                <a class="news-hub-panel" href="all-regulatory.html">
-                  <span class="news-hub-panel__title">Regulatory</span>
-                  <span class="news-hub-panel__desc">Policy, filings, and regulator wires</span>
-                </a>
-                <a class="news-hub-panel" href="etf-news.html">
-                  <span class="news-hub-panel__title">ETF / ETP</span>
-                  <span class="news-hub-panel__desc">Listed fund launches, flows, and issuer news</span>
-                </a>
-                <a class="news-hub-panel" href="all-custodian-news.html">
-                  <span class="news-hub-panel__title">Custody</span>
-                  <span class="news-hub-panel__desc">Custodian and digital-asset servicing headlines</span>
-                </a>
-              </nav>
-            </article>
-          </div>
-          <div class="cta-row cta-row--news-full" role="navigation" aria-label="Full news lists">
-            <a class="btn btn-primary" href="all-articles.html">All digital asset headlines →</a>
-          </div>
-        </section>
 
         <section class="hub-section hub-section--panel" id="section-onchain" aria-labelledby="onchain-heading">
           <h2 class="band-label teal" id="onchain-heading">On-chain Data</h2>
@@ -188,6 +141,50 @@
           <div id="js-rwa-explore-split"></div>
         </section>
 
+        <div class="home-main-split">
+          <aside
+            class="home-news-rail hub-section hub-section--panel hub-section--news-rail"
+            id="section-news"
+            aria-labelledby="news-heading"
+          >
+            <h2 class="band-label teal" id="news-heading">News Hub</h2>
+            <p class="section-dek section-dek--rail">
+              Headlines from CoinDesk, CoinTelegraph, Decrypt, The Block, and The Defiant.
+            </p>
+            <p class="data-freshness" id="js-news-as-of" hidden></p>
+
+            <div class="home-news-block">
+              <h3 class="home-news-block__heading">Latest headlines</h3>
+              <ul class="headline-list headline-list--rail" id="js-home-news-list">
+                <li class="headline-list__loading">Loading…</li>
+              </ul>
+              <p class="home-news-rail__more">
+                <a class="btn btn-secondary home-news-rail__cta" href="all-articles.html"
+                  >All digital asset headlines →</a
+                >
+              </p>
+            </div>
+
+            <div class="home-news-block home-news-block--feeds">
+              <h3 class="home-news-block__heading">Specialist feeds</h3>
+              <nav class="news-hub-panels news-hub-panels--rail" aria-label="Specialist news feeds">
+                <a class="news-hub-panel news-hub-panel--rail" href="all-regulatory.html">
+                  <span class="news-hub-panel__title">Regulatory</span>
+                  <span class="news-hub-panel__desc">Policy, filings, and regulator wires</span>
+                </a>
+                <a class="news-hub-panel news-hub-panel--rail" href="etf-news.html">
+                  <span class="news-hub-panel__title">ETF / ETP</span>
+                  <span class="news-hub-panel__desc">Fund launches, flows, and issuer news</span>
+                </a>
+                <a class="news-hub-panel news-hub-panel--rail" href="all-custodian-news.html">
+                  <span class="news-hub-panel__title">Custody</span>
+                  <span class="news-hub-panel__desc">Custodian and digital-asset servicing headlines</span>
+                </a>
+              </nav>
+            </div>
+          </aside>
+
+          <div class="home-markets-stack">
         <section class="hub-section hub-section--panel" id="section-markets" aria-labelledby="markets-heading">
           <h2 class="band-label teal" id="markets-heading">U.S. ETP Market</h2>
           <p class="section-dek section-dek--wide">
@@ -287,6 +284,8 @@
             <a class="btn btn-primary" href="crypto-prices.html">Open full crypto prices page (chart and table)</a>
           </div>
         </section>
+          </div>
+        </div>
       </div>
     </main>
 
@@ -303,6 +302,6 @@
     <script defer src="js/crypto-kpi-shared.js?v=9"></script>
     <script defer src="js/home-crypto.js?v=11"></script>
     <script defer src="js/rwa-onchain-home.js?v=10"></script>
-    <script defer src="js/home-page.js?v=10"></script>
+    <script defer src="js/home-page.js?v=11"></script>
   </body>
 </html>

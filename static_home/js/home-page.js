@@ -1,4 +1,5 @@
 (function () {
+  var HOME_NEWS_LIMIT = 5;
   var newsEl = document.getElementById("js-home-news-list");
   var banner = document.getElementById("js-data-banner");
   var kpiEl = document.getElementById("js-home-kpi");
@@ -25,31 +26,39 @@
         '<li class="headline-list__empty">No items are available right now.</li>';
       return;
     }
-    items.forEach(function (a) {
+    items.slice(0, HOME_NEWS_LIMIT).forEach(function (a, idx) {
       var li = document.createElement("li");
       var title = escapeHtml(a.title || "Untitled");
-      var metaParts = [a.source || "", useCountry && a.country ? a.country : "", fmtDate(a.published) || ""].filter(
-        Boolean
-      );
-      var meta = escapeHtml(metaParts.join(" · "));
+      var source = a.source ? escapeHtml(a.source) : "";
+      var timeStr = fmtDate(a.published) ? escapeHtml(fmtDate(a.published)) : "";
+      var linkCls =
+        "headline-list__link" + (idx === 0 ? " headline-list__link--lead" : "");
+      var metaRow =
+        '<span class="headline-list__meta-row">' +
+        (source ? '<span class="headline-list__source">' + source + "</span>" : "") +
+        (useCountry && a.country
+          ? '<span class="headline-list__time">' + escapeHtml(a.country) + "</span>"
+          : "") +
+        (timeStr ? '<span class="headline-list__time">' + timeStr + "</span>" : "") +
+        "</span>";
       if (linkArticles && (a.link || "").trim()) {
         li.innerHTML =
-          '<a class="headline-list__link" href="' +
+          '<a class="' +
+          linkCls +
+          '" href="' +
           escapeHtml(a.link) +
           '" target="_blank" rel="noopener noreferrer">' +
           title +
           "</a>" +
-          '<span class="headline-list__meta">' +
-          meta +
-          "</span>";
+          metaRow;
       } else {
         li.innerHTML =
-          '<span class="headline-list__link headline-list__link--plain">' +
+          '<span class="headline-list__link headline-list__link--plain' +
+          (idx === 0 ? " headline-list__link--lead" : "") +
+          '">' +
           title +
           "</span>" +
-          '<span class="headline-list__meta">' +
-          meta +
-          "</span>";
+          metaRow;
       }
       el.appendChild(li);
     });
