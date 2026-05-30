@@ -32,8 +32,8 @@ def main() -> None:
         text = path.read_text(encoding="utf-8")
         if "site-experience.css" not in text:
             issues.append(f"{path.name}: missing site-experience.css")
-        elif "site-experience.css?v=2" not in text:
-            issues.append(f"{path.name}: site-experience.css not at v=2")
+        elif "site-experience.css?v=3" not in text:
+            issues.append(f"{path.name}: site-experience.css not at v=3")
         if "site-experience.js" not in text:
             issues.append(f"{path.name}: missing site-experience.js")
         body = re.search(r"<body\b[^>]*\sclass=\"([^\"]+)\"", text, re.S)
@@ -58,7 +58,7 @@ def main() -> None:
         for item in issues:
             print(" -", item)
     else:
-        print("All pages include site-experience CSS (v2), JS, body class, and styles.css v78.")
+        print("All pages include site-experience CSS (v3), JS, body class, and styles.css v78.")
 
     print(f"\nDistinct nav structures (ignoring is-active): {len(nav_hashes)}")
     for h, names in sorted(nav_hashes.items(), key=lambda x: -len(x[1])):

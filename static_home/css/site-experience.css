@@ -97,23 +97,38 @@
   box-shadow: 0 1px 4px rgba(37, 128, 156, 0.12);
 }
 
+.site-experience .site-nav__dropdown {
+  position: relative;
+}
+
 .site-experience .site-nav__sub {
-  margin-top: 0.35rem;
-  padding: 0.4rem;
+  margin-top: 0;
+  padding: 0.45rem 0.4rem 0.4rem;
   min-width: 13rem;
   border-radius: 12px;
   border: 1px solid rgba(199, 216, 232, 0.95);
   box-shadow:
     0 4px 6px rgba(2, 29, 65, 0.04),
     0 16px 32px rgba(2, 29, 65, 0.1);
-  overflow: hidden;
+  overflow: visible;
+  z-index: 80;
+}
+
+/* Invisible bridge — pointer can reach the menu without closing hover */
+.site-experience .site-nav__dropdown > .site-nav__sub::after {
+  content: "";
+  position: absolute;
+  top: -0.55rem;
+  left: 0;
+  right: 0;
+  height: 0.55rem;
 }
 
 .site-experience .site-nav__sub::before {
   content: "";
   display: block;
   height: 3px;
-  margin: -0.4rem -0.4rem 0.35rem;
+  margin: -0.45rem -0.4rem 0.35rem;
   background: linear-gradient(90deg, var(--hx-rwa-bright), rgba(37, 128, 156, 0.35), transparent);
 }
 
@@ -136,10 +151,30 @@
   font-weight: 700;
 }
 
+.site-experience .site-nav__item--flyout {
+  position: relative;
+}
+
 .site-experience .site-nav__sub--nested {
+  top: -0.45rem;
+  left: calc(100% - 6px);
+  margin: 0;
+  padding: 0.45rem 0.4rem 0.4rem;
   border-radius: 10px;
   border: 1px solid rgba(199, 216, 232, 0.75);
   box-shadow: 0 8px 20px rgba(2, 29, 65, 0.08);
+  overflow: visible;
+  z-index: 90;
+}
+
+/* Bridge horizontal gap between flyout parent and nested panel */
+.site-experience .site-nav__item--flyout > .site-nav__sub--nested::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -8px;
+  width: 8px;
+  bottom: 0;
 }
 
 .site-experience .site-brand:focus-visible,

@@ -17,8 +17,8 @@ RENAME_MAP = {
 }
 
 
-def zone_for_body(body_class: str) -> tuple[str, str, str]:
-    if "page-etp" in body_class:
+def zone_for_body(body_class: str, filename: str = "") -> tuple[str, str, str]:
+    if filename == "etf-news.html" or "page-etp" in body_class:
         return "zone--etp", "ETP", "home-zone--etp"
     if "page-crypto" in body_class:
         return "zone--crypto", "CRY", "home-zone--crypto"
@@ -129,7 +129,7 @@ def main() -> None:
         if not body_m:
             body_m = re.search(r"<body[^>]*\sclass=\"([^\"]+)\"", orig, re.S)
         body_class = body_m.group(1) if body_m else ""
-        zone, badge, home_zone = zone_for_body(body_class)
+        zone, badge, home_zone = zone_for_body(body_class, path.name)
 
         text = patch_head(orig)
         text = patch_body_class(text)
