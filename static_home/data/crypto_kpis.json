@@ -1,53 +1,53 @@
 {
-  "generated_at": "2026-05-29T18:35:16.674769+00:00",
+  "generated_at": "2026-06-01T20:04:35.219839+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
-    "value_display": "$2.60T",
+    "value_display": "$2.56T",
     "delta": {
-      "pct": -1.4863,
+      "pct": -6.0311,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$73,722",
+    "value_display": "$71,455",
     "delta": {
-      "pct": -2.9931,
+      "pct": -8.9139,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,023",
+    "value_display": "$2,001",
     "delta": {
-      "pct": -10.6956,
+      "pct": -13.4076,
       "window": "1M"
     }
   },
   "btc_dominance": {
     "label": "BTC dominance",
-    "value_display": "56.9%",
+    "value_display": "56.0%",
     "delta": {
-      "pct": -1.5709,
+      "pct": -3.0639,
       "window": "1M"
     }
   },
   "stablecoin_share": {
     "label": "Stablecoin share",
-    "value_display": "12.1%",
+    "value_display": "12.2%",
     "delta": {
-      "pct": 2.3144,
+      "pct": 6.4079,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 56.87,
-    "stablecoin_share_top50_pct": 12.06,
-    "top50_market_cap_usd": 2453704352766.0,
-    "stablecoin_market_cap_usd": 295852845994.0,
-    "btc_market_cap_usd": 1477046546478.0
+    "btc_dominance_pct": 55.96,
+    "stablecoin_share_top50_pct": 12.18,
+    "top50_market_cap_usd": 2414923919121.0,
+    "stablecoin_market_cap_usd": 294139574777.0,
+    "btc_market_cap_usd": 1431761542336.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -63,23 +63,37 @@
     "footnote": "Largest 1-month % moves in the top-50 table (stablecoins excluded). Context lines match recent headlines from dashboard news feeds, with Google News as fallback.",
     "movers": [
       {
+        "symbol": "LAB",
+        "name": "LAB",
+        "pct_30d": 681.6527,
+        "category": "",
+        "category_label": "",
+        "detail_url": "https://www.coingecko.com/en/coins/lab",
+        "direction": "up",
+        "context": {
+          "title": "Arkham Intelligence Reports 90%+ Token Concentration in $LAB Project Trading at $4B Market Cap",
+          "source": "The Defiant",
+          "link": "https://thedefiant.io/news/markets/arkham-lab-token-90-percent-concentration-4-billion-market-cap-c2a0qd"
+        }
+      },
+      {
         "symbol": "NEAR",
         "name": "NEAR Protocol",
-        "pct_30d": 95.0514,
+        "pct_30d": 101.5933,
         "category": "",
         "category_label": "",
         "detail_url": "https://www.coingecko.com/en/coins/near",
         "direction": "up",
         "context": {
-          "title": "Bitcoin Slips Under $73K as Crypto Liquidations Near $1B",
+          "title": "Bitcoin ETF Losses Near $3B Across 10 Days as YTD Flows Turn Negative",
           "source": "Decrypt",
-          "link": "https://decrypt.co/369255/bitcoin-slips-under-73k-as-crypto-liquidations-near-1b"
+          "link": "https://decrypt.co/369583/bitcoin-etf-losses-near-3b-across-10-days-as-ytd-flows-turn-negative"
         }
       },
       {
         "symbol": "RAIN",
         "name": "Rain",
-        "pct_30d": 84.2173,
+        "pct_30d": 78.7392,
         "category": "",
         "category_label": "",
         "detail_url": "https://www.coingecko.com/en/coins/rain",
@@ -89,23 +103,9 @@
           "source": "Decrypt",
           "link": "https://decrypt.co/369443/ukrainian-police-officers-allegedly-kidnapped-crypto-entrepreneurs-to-extort-millions"
         }
-      },
-      {
-        "symbol": "ZEC",
-        "name": "Zcash",
-        "pct_30d": 66.6631,
-        "category": "",
-        "category_label": "",
-        "detail_url": "https://www.coingecko.com/en/coins/zcash",
-        "direction": "up",
-        "context": {
-          "title": "Pump & Memes HEATING up! XMR vs ZEC! How important are these rate cuts? - Under Exposed",
-          "source": "Decrypt",
-          "link": "https://decrypt.co/videos/interviews/IuLdmgP6/pump-memes-heating-up-xmr-vs-zec-how-important-are-these-rate-cuts-under-exposed"
-        }
       }
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Top-50 alts showed mixed 1M moves:</strong> 16 names up more than ~0.5%, 18 down more than ~0.5%, and 16 roughly flat out of <strong>50</strong> non-stable coins with a valid 1M % (top-50 table).</li><li><strong>Others (top-50 coins outside Layer 1, stablecoins, CEX, DeFi, meme, and RWA tabs, e.g. HYPE, MNT, WLFI, ASTER, RLUSD) outpaced Layer 1s over 1M:</strong> the stronger group averaged about <strong>+44.0%</strong> cap-weighted in the top-50, while the weaker averaged about <strong>-3.1%</strong>\u2014the widest gap among category tabs.</li><li><strong>Industry headlines emphasize Crypto regulation</strong> Recent coverage includes <a href=\"https://www.coindesk.com/policy/2026/05/29/clarity-act-risks-regulation-without-oversight-brookings-fellow-says\" target=\"_blank\" rel=\"noopener noreferrer\">Clarity Act Risks Regulation Without Oversight, Brookings Fellow Says</a> (CoinDesk); <a href=\"https://www.coindesk.com/policy/2026/05/29/paxos-is-first-blockchain-firm-to-provide-settlement-and-clearing-services-following-sec-approval\" target=\"_blank\" rel=\"noopener noreferrer\">Paxos wins SEC approval to clear U.S. stocks on blockchain</a> (CoinDesk). Enforcement and legislation headlines can shift risk appetite across the top-50\u2014watch whether beta concentrates in majors or spreads into higher-beta categories.</li><li><strong>Industry headlines emphasize Crypto market structure</strong> Recent coverage includes <a href=\"https://www.coindesk.com/markets/2026/05/29/live-markets-bitcoin-slides-further-putting-two-month-winning-streak-in-jeopardy\" target=\"_blank\" rel=\"noopener noreferrer\">Live markets: Bitcoin shrugs off early decline, but two-month winning streak is in jeopardy</a> (CoinDesk); <a href=\"https://www.coindesk.com/daybook-us/2026/05/29/bitcoin-underperforms-risk-assets-as-record-9th-day-of-etf-outflows-signal-waning-demand\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin underperforms risk assets as record 9th day of ETF outflows signal waning demand</a> (CoinDesk). Breadth and dominance narratives help explain whether moves are Bitcoin-led or alt-led\u2014compare with BTC/ETH 1M % and the category mix in the top-50 table.</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets are ranked from on-page data and recent industry headlines (dashboard RSS plus Google News fallback).</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Top-50 alts showed mixed 1M moves:</strong> 16 names up more than ~0.5%, 21 down more than ~0.5%, and 13 roughly flat out of <strong>50</strong> non-stable coins with a valid 1M % (top-50 table).</li><li><strong>Others (top-50 coins outside Layer 1, stablecoins, CEX, DeFi, meme, and RWA tabs, e.g. HYPE, LAB, MNT, WLFI, ASTER) outpaced Layer 1s over 1M:</strong> the stronger group averaged about <strong>+157.7%</strong> cap-weighted in the top-50, while the weaker averaged about <strong>-8.1%</strong>\u2014the widest gap among category tabs.</li><li><strong>Industry headlines emphasize Crypto regulation</strong> Recent coverage includes <a href=\"https://thedefiant.io/news/blockchains/telegrams-durov-renames-ton-native-token-to-gram-price-climbs-19\" target=\"_blank\" rel=\"noopener noreferrer\">Telegram&#x27;s Durov Renames TON&#x27;s Native Token to Gram, Price Climbs as Much as 19%</a> (The Defiant); <a href=\"https://decrypt.co/369479/how-president-trump-immigration-order-feed-stablecoin-bitcoin-atms\" target=\"_blank\" rel=\"noopener noreferrer\">How President Trump\u2019s Immigration Order Will Feed the Stablecoin Economy, Bitcoin ATMs</a> (Decrypt). Enforcement and legislation headlines can shift risk appetite across the top-50\u2014watch whether beta concentrates in majors or spreads into higher-beta categories.</li><li><strong>Industry headlines emphasize Crypto market structure</strong> Recent coverage includes <a href=\"https://www.coindesk.com/business/2026/06/01/saylor-s-strategy-sold-bitcoin-for-the-first-time-since-2022-these-firms-are-still-buying\" target=\"_blank\" rel=\"noopener noreferrer\">Saylor&#x27;s Strategy sold bitcoin for the first time since 2022. These firms are still buying</a> (CoinDesk); <a href=\"https://www.coindesk.com/markets/2026/06/01/strategy-s-second-bitcoin-sale-revives-memories-of-2022\" target=\"_blank\" rel=\"noopener noreferrer\">It&#x27;s not 2022 anymore: What Strategy&#x27;s first bitcoin sale can (and can&#x27;t) tell us about this one</a> (CoinDesk). Breadth and dominance narratives help explain whether moves are Bitcoin-led or alt-led\u2014compare with BTC/ETH 1M % and the category mix in the top-50 table.</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets are ranked from on-page data and recent industry headlines (dashboard RSS plus Google News fallback).</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
