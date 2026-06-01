@@ -300,7 +300,14 @@
           String(q).trim() +
           '".';
       } else {
-        hp.toolbarEl.textContent = "Showing " + shown + " preview " + entity + ".";
+        hp.toolbarEl.textContent =
+          "Preview: " +
+          shown +
+          " of " +
+          total +
+          " " +
+          entity +
+          ". Search to filter the full list.";
       }
       return;
     }
@@ -334,13 +341,15 @@
     var sortCol = st ? st.sortCol : null;
     var sortDir = st ? st.sortDir : 1;
     var sorted = sortRwaHomeRows(filtered, hp.columns, sortCol, sortDir);
+    var previewCap =
+      hp.previewLimit != null && hp.previewLimit > 0
+        ? hp.previewLimit
+        : hp.limit != null && hp.limit > 0
+          ? hp.limit
+          : null;
     var cap;
     if (hp.previewScope === "explore") {
-      cap = q
-        ? sorted.length
-        : hp.previewLimit != null && hp.previewLimit > 0
-          ? hp.previewLimit
-          : sorted.length;
+      cap = q ? sorted.length : previewCap != null ? previewCap : sorted.length;
     } else {
       cap = hp.limit != null && hp.limit > 0 ? hp.limit : sorted.length;
     }
@@ -538,11 +547,14 @@
       if (!toolbarEl && opts.toolbarId && typeof document !== "undefined") {
         toolbarEl = document.getElementById(opts.toolbarId);
       }
+      var previewCap =
+        opts.previewLimit != null ? opts.previewLimit : HOME_RWA_PREVIEW_LIMIT;
       tbody._rwaHomePreview = {
         allRows: rowsCopy,
         columns: columns.slice(),
         opts: opts,
-        limit: opts.previewLimit != null ? opts.previewLimit : HOME_RWA_PREVIEW_LIMIT,
+        limit: previewCap,
+        previewLimit: previewCap,
         searchEl: searchEl,
         toolbarEl: toolbarEl,
         previewScope: opts.previewScope || "home",

@@ -157,6 +157,10 @@
 
     var heightPx =
       league.split_body_height_px != null ? Number(league.split_body_height_px) : 420;
+    if (shell) {
+      var shellH = shell.clientHeight || shell.offsetHeight;
+      if (shellH > 0) heightPx = Math.round(shellH);
+    }
 
     var layout = {
       height: heightPx,

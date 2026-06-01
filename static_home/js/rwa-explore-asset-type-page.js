@@ -12,6 +12,8 @@
     return S && typeof S.assetUrl === "function" ? S.assetUrl(rel) : rel;
   }
 
+  var EXPLORE_PREVIEW_ROWS = 8;
+
   function previewEntityFromColumns(columns) {
     var cols = columns || [];
     if (cols.indexOf("Network") >= 0) return { entity: "networks", label: "Filter preview by network name", placeholder: "Filter by network…" };
@@ -174,7 +176,6 @@
         section.appendChild(wrap);
 
         var searchInput = searchLabel.querySelector("input");
-        var previewLimit = (sec.rows || []).length || 8;
         var allRows =
           sec.rows_full && sec.rows_full.length ? sec.rows_full : sec.rows || [];
         renderTable(trh, tbody, sec.columns, allRows, {
@@ -183,7 +184,7 @@
           homePreview: true,
           previewScope: "explore",
           previewEntity: previewMeta.entity,
-          previewLimit: previewLimit,
+          previewLimit: EXPLORE_PREVIEW_ROWS,
           searchEl: searchInput,
           toolbarEl: toolbar,
         });

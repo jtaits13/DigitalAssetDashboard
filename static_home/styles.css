@@ -2812,9 +2812,6 @@ body.page-crypto #crypto-market-cap-chart {
   display: none;
 }
 
-.rwa-split-chart-shell > .aum-chart-host {
-  min-height: 0;
-}
 
 .chart-fallback {
   margin: 0;
@@ -3090,7 +3087,7 @@ body.page-article-feed .etf-news-nav {
 /* RWA overview: paired table + Plotly chart — same viewport height; extra gap for chart y-axis labels. */
 .split-two.rwa-split {
   gap: 1.35rem;
-  align-items: start;
+  align-items: stretch;
 }
 
 .rwa-split-pane {
@@ -3219,18 +3216,25 @@ body.page-article-feed .etf-news-nav {
 .rwa-split-chart-shell {
   flex: 0 0 auto;
   position: relative;
+  display: flex;
+  flex-direction: column;
   height: var(--rwa-split-body-height, 420px);
+  min-height: var(--rwa-split-body-height, 420px);
   max-height: var(--rwa-split-body-height, 420px);
   width: 100%;
   overflow: visible;
+  border: 1px solid var(--line);
   border-radius: 8px;
   background: #f8fafc;
   padding: 0;
   box-sizing: border-box;
 }
 
-.page-rwa-deep .rwa-split-chart-shell .plot-container.plotly {
+.page-rwa-deep .rwa-split-chart-shell .plot-container.plotly,
+.rwa-split-chart-shell .plot-container.plotly {
   width: 100% !important;
+  height: 100% !important;
+  min-height: 100%;
 }
 
 /* Plotly defaults clip overflow; y-axis category labels sit in the left margin. */
@@ -3245,7 +3249,15 @@ body.page-article-feed .etf-news-nav {
 }
 
 .rwa-split-chart-host {
-  min-height: 0;
+  flex: 1 1 auto;
+  min-height: 100%;
+  height: 100%;
+  width: 100%;
+}
+
+.rwa-split-chart-shell > .aum-chart-host {
+  flex: 1 1 auto;
+  min-height: 100%;
   height: 100%;
   width: 100%;
 }
