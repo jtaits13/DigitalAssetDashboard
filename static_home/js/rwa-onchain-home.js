@@ -39,12 +39,51 @@
     return "";
   }
 
+  var PARTICIPANT_KPI_MAX = 5;
+  var KPI_DROP_STABLECOIN_HOLDERS = "Total Stablecoin Holders";
+
   function delta30Html(frac) {
-    if (frac == null || !isFinite(Number(frac))) return "";
+    if (frac == null || !isFinite(Number(frac))) {
+      return '<span class="rwa-kpi-delta rwa-kpi-delta--placeholder" aria-hidden="true">&nbsp;</span>';
+    }
     var pct = Number(frac) * 100;
     var cls = pct > 0 ? "up" : pct < 0 ? "down" : "neutral";
     var sign = pct > 0 ? "+" : "";
     return '<span class="rwa-kpi-delta ' + cls + '">' + sign + pct.toFixed(2) + "%</span>";
+  }
+
+  function normalizeKpisForDisplay(kpis, kpiOpts) {
+    var opts = kpiOpts || {};
+    var list = (kpis || []).slice();
+    if (opts.dropStablecoinHolders) {
+      list = list.filter(function (k) {
+        return String(k && k.label != null ? k.label : "") !== KPI_DROP_STABLECOIN_HOLDERS;
+      });
+    }
+    var maxN = opts.maxKpis != null ? Number(opts.maxKpis) : opts.participantKpis ? PARTICIPANT_KPI_MAX : 0;
+    if (maxN > 0) list = list.slice(0, maxN);
+    return list;
+  }
+
+  function kpiRenderOptsFromPage(kpiOpts) {
+    var opts = Object.assign({}, kpiOpts || {});
+    if (typeof document === "undefined" || !document.body) return opts;
+    var body = document.body;
+    if (body.classList.contains("page-rwa-explore-mp")) {
+      opts.participantKpis = true;
+    }
+    if (body.classList.contains("page-rwa-deep-participants-networks")) {
+      opts.participantKpis = true;
+      opts.dropStablecoinHolders = true;
+    }
+    if (body.classList.contains("page-rwa-deep-participants-platforms")) {
+      opts.participantKpis = true;
+      opts.dropStablecoinHolders = true;
+    }
+    if (body.classList.contains("page-rwa-deep-participants-am")) {
+      opts.participantKpis = true;
+    }
+    return opts;
   }
 
   function esc(s) {
@@ -408,7 +447,8 @@
   }
 
   function renderKpis(host, kpis, legendText, kpiOpts) {
-    var ko = kpiOpts || {};
+    var ko = kpiRenderOptsFromPage(kpiOpts);
+    kpis = normalizeKpisForDisplay(kpis, ko);
     if (!host) return;
     if (!kpis || !kpis.length) {
       if (ko.hideIfEmpty) {

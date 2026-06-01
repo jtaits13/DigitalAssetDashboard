@@ -90,7 +90,14 @@
       kpiHost.className = "rwa-exat-kpi-host";
       section.appendChild(kpiHost);
 
-      renderKpis(kpiHost, sec.kpis || [], sec.kpi_window_note || "", { hideIfEmpty: true });
+      var kpiOpts = { hideIfEmpty: true };
+      if (document.body.classList.contains("page-rwa-explore-mp")) {
+        kpiOpts.participantKpis = true;
+        if (sec.id === "participant_networks" || sec.id === "participant_platforms") {
+          kpiOpts.dropStablecoinHolders = true;
+        }
+      }
+      renderKpis(kpiHost, sec.kpis || [], sec.kpi_window_note || "", kpiOpts);
 
       if (sec.info_html_preview) {
         var iprev = document.createElement("div");

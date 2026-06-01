@@ -1297,7 +1297,7 @@ a.hub-panel-surface:hover,
   grid-template-columns: repeat(4, minmax(0, 1fr));
   column-gap: 0.65rem;
   row-gap: 0.5rem;
-  align-items: start;
+  align-items: stretch;
 }
 
 @media (max-width: 900px) {
@@ -1480,7 +1480,7 @@ a.hub-panel-surface:hover,
   grid-template-columns: repeat(3, minmax(0, 1fr));
   column-gap: 0.65rem;
   row-gap: 0.65rem;
-  align-items: start;
+  align-items: stretch;
 }
 
 @media (max-width: 720px) {
@@ -1730,9 +1730,18 @@ a.hub-panel-surface:hover,
   text-align: center;
 }
 
-/* Top-line snapshot KPIs — center text on home, ETP, crypto, and RWA pages */
+/* Top-line snapshot KPIs — equal-height tiles on home, ETP, crypto, and RWA pages */
 .rwa-kpi-row--home-grid .rwa-kpi-cell,
-.rwa-kpi-panel-static .rwa-kpi-cell {
+.rwa-kpi-panel-static .rwa-kpi-cell,
+.kpi-row.kpi-row--etp-snapshot .kpi-cell,
+.kpi-row.kpi-row--crypto-snapshot .kpi-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 6.35rem;
+  padding: 0.5rem 0.4rem;
+  box-sizing: border-box;
   text-align: center;
   min-width: 0;
 }
@@ -2282,31 +2291,45 @@ a.hub-panel-surface:hover,
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
   gap: 0.55rem 0.65rem;
-  align-items: start;
+  align-items: stretch;
 }
 
-.rwa-kpi-panel-static .rwa-kpi-label {
+.rwa-kpi-panel-static .rwa-kpi-label,
+.kpi-row.kpi-row--etp-snapshot .kpi-label,
+.kpi-row.kpi-row--crypto-snapshot .kpi-label {
   display: block;
-  font-size: 0.84rem;
+  font-size: 0.78rem;
   font-weight: 600;
   color: var(--ink-soft);
-  margin-bottom: 0.3rem;
+  line-height: 1.28;
+  margin: 0 0 0.32rem;
+  max-width: 11.5rem;
 }
 
-.rwa-kpi-panel-static .rwa-kpi-val {
+.rwa-kpi-panel-static .rwa-kpi-val,
+.kpi-row.kpi-row--etp-snapshot .kpi-val,
+.kpi-row.kpi-row--crypto-snapshot .kpi-val {
   display: block;
-  font-size: 1.02rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--teal);
   line-height: 1.2;
+  margin: 0 0 0.18rem;
 }
 
-.rwa-kpi-panel-static .rwa-kpi-delta {
+.rwa-kpi-panel-static .rwa-kpi-delta,
+.kpi-row.kpi-row--etp-snapshot .kpi-delta,
+.kpi-row.kpi-row--crypto-snapshot .kpi-delta {
   display: block;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 600;
-  margin-top: 0.15rem;
   line-height: 1.2;
+  min-height: 1.15em;
+  margin: 0;
+}
+
+.rwa-kpi-delta--placeholder {
+  visibility: hidden;
 }
 
 .rwa-kpi-panel-static .rwa-kpi-delta.up {

@@ -257,6 +257,10 @@ def _rwa_explore_gateways_static_html(at_href: str, mp_href: str) -> str:
     )
 
 
+PARTICIPANT_KPI_MAX = 5
+KPI_LABEL_STABLECOIN_HOLDERS = "Total Stablecoin Holders"
+
+
 def _rwa_kpi_to_dict(k: object) -> dict[str, object]:
     delta = getattr(k, "delta_30d_pct", None)
     return {
@@ -264,6 +268,23 @@ def _rwa_kpi_to_dict(k: object) -> dict[str, object]:
         "value_display": str(getattr(k, "value_display", "")),
         "delta_30d_pct": float(delta) if delta is not None else None,
     }
+
+
+def _participant_kpis_for_export(
+    kpis: list[Any],
+    *,
+    drop_stablecoin_holders: bool = False,
+) -> list[dict[str, object]]:
+    """At most five participant headline KPIs; optionally drop stablecoin holders on Networks/Platforms."""
+    out: list[dict[str, object]] = []
+    for k in kpis:
+        row = _rwa_kpi_to_dict(k)
+        if drop_stablecoin_holders and row.get("label") == KPI_LABEL_STABLECOIN_HOLDERS:
+            continue
+        out.append(row)
+        if len(out) >= PARTICIPANT_KPI_MAX:
+            break
+    return out
 
 
 def _dataframe_json_records(df: Any) -> tuple[list[dict[str, object]], list[str]]:
@@ -1320,7 +1341,7 @@ def _build_rwa_explore_market_participant_payload(
         "title": "Networks",
         "anchor_id": "jd-rwa-participants-networks",
         "kpi_window_note": _kpi_legend_for_asset("Networks"),
-        "kpis": [_rwa_kpi_to_dict(k) for k in pnet_kpis],
+        "kpis": _participant_kpis_for_export(pnet_kpis, drop_stablecoin_holders=True),
         "table_subheading": None,
         "info_html_preview": "",
         "columns": [],
@@ -1357,7 +1378,7 @@ def _build_rwa_explore_market_participant_payload(
         "title": "Platforms",
         "anchor_id": "jd-rwa-participants-platforms",
         "kpi_window_note": _kpi_legend_for_asset("Platforms"),
-        "kpis": [_rwa_kpi_to_dict(k) for k in pplat_kpis],
+        "kpis": _participant_kpis_for_export(pplat_kpis, drop_stablecoin_holders=True),
         "table_subheading": None,
         "info_html_preview": "",
         "columns": [],
@@ -1394,7 +1415,7 @@ def _build_rwa_explore_market_participant_payload(
         "title": "Asset Managers",
         "anchor_id": "jd-rwa-participants-asset-managers",
         "kpi_window_note": _kpi_legend_for_asset("Asset Managers"),
-        "kpis": [_rwa_kpi_to_dict(k) for k in pam_kpis],
+        "kpis": _participant_kpis_for_export(pam_kpis),
         "table_subheading": None,
         "info_html_preview": "",
         "columns": [],
@@ -1476,7 +1497,7 @@ def _build_rwa_participants_networks_deep_payload(
                 "focused on the Distributed Networks league."
             ),
             "kpi_window_note": _kpi_legend_for_asset("Networks"),
-            "kpis": [_rwa_kpi_to_dict(k) for k in kpis],
+            "kpis": _participant_kpis_for_export(kpis, drop_stablecoin_holders=True),
             "chart_max_bars": RWA_PARTICIPANTS_CHART_MAX_BARS,
             "back_href": STATIC_RWA_EXPLORE_MARKET_PARTICIPANT_PAGE,
             "footer_note": _static_rwa_footer_text(),
@@ -1556,7 +1577,7 @@ def _build_rwa_participants_platforms_deep_payload(
                 "focused on the Distributed Platforms league."
             ),
             "kpi_window_note": _kpi_legend_for_asset("Platforms"),
-            "kpis": [_rwa_kpi_to_dict(k) for k in kpis],
+            "kpis": _participant_kpis_for_export(kpis, drop_stablecoin_holders=True),
             "chart_max_bars": RWA_PARTICIPANTS_CHART_MAX_BARS,
             "back_href": STATIC_RWA_EXPLORE_MARKET_PARTICIPANT_PAGE,
             "footer_note": _static_rwa_footer_text(),
@@ -1635,7 +1656,7 @@ def _build_rwa_participants_asset_managers_deep_payload(
                 f'Asset-manager data from <a href="{html_escape(APP_ASSET_MANAGERS, quote=True)}">RWA.xyz Asset Managers</a>.'
             ),
             "kpi_window_note": _kpi_legend_for_asset("Asset Managers"),
-            "kpis": [_rwa_kpi_to_dict(k) for k in kpis],
+            "kpis": _participant_kpis_for_export(kpis),
             "chart_max_bars": RWA_PARTICIPANTS_CHART_MAX_BARS,
             "back_href": STATIC_RWA_EXPLORE_MARKET_PARTICIPANT_PAGE,
             "footer_note": _static_rwa_footer_text(),
