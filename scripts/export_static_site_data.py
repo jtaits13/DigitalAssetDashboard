@@ -78,6 +78,19 @@ CUSTODIAN_ACCESS_FETCH_MAX = 25
 HOME_RWA_PREVIEW_ROWS = 8
 HOME_CRYPTO_PREVIEW_ROWS = 5
 EXPLORE_ASSET_PREVIEW_ROWS = 8
+
+
+def _explore_preview_table(
+    source_rows: list[Any],
+    build_df: Any,
+) -> tuple[list[str], list[dict[str, Any]], list[dict[str, Any]]]:
+    """Column names, preview rows, and full row list for explore index tables."""
+    ordered = list(source_rows)
+    rows_full, columns = _dataframe_json_records(build_df(ordered))
+    preview = rows_full[:EXPLORE_ASSET_PREVIEW_ROWS]
+    return columns, preview, rows_full
+
+
 STATIC_RWA_EXPLORE_ASSET_TYPE_PAGE = "rwa-explore-asset-type.html"
 STATIC_RWA_EXPLORE_MARKET_PARTICIPANT_PAGE = "rwa-explore-market-participant.html"
 STATIC_RWA_PARTICIPANTS_NETWORKS_PAGE = "rwa-participants-networks.html"
@@ -1108,21 +1121,19 @@ def _build_rwa_explore_asset_type_payload(
     elif not sc_net and not sc_plat:
         sec_sc["info_html"] = '<p class="alert info">No Stablecoins league rows returned.</p>'
     elif sc_net:
-        prev = list(sc_net)[:EXPLORE_ASSET_PREVIEW_ROWS]
-        df_sc = build_stablecoin_network_dataframe(prev)
-        rj, cj = _dataframe_json_records(df_sc)
+        cj, rj, rj_full = _explore_preview_table(sc_net, build_stablecoin_network_dataframe)
         sec_sc["columns"], sec_sc["rows"] = cj, rj
+        sec_sc["rows_full"] = rj_full
         sec_sc["table_subheading"] = "By network (Stablecoins · Networks)"
         sec_sc["preview_note"] = (
-            f"Preview: first {len(prev)} of {len(sc_net)} networks (Stablecoins · Networks)."
+            f"Preview: first {len(rj)} of {len(rj_full)} networks (Stablecoins · Networks)."
         )
     elif sc_plat:
-        prev = list(sc_plat)[:EXPLORE_ASSET_PREVIEW_ROWS]
-        df_sc = build_stablecoin_platform_dataframe(prev)
-        rj, cj = _dataframe_json_records(df_sc)
+        cj, rj, rj_full = _explore_preview_table(sc_plat, build_stablecoin_platform_dataframe)
         sec_sc["columns"], sec_sc["rows"] = cj, rj
+        sec_sc["rows_full"] = rj_full
         sec_sc["preview_note"] = (
-            f"Preview: first {len(prev)} of {len(sc_plat)} platforms (Stablecoins · Platforms)."
+            f"Preview: first {len(rj)} of {len(rj_full)} platforms (Stablecoins · Platforms)."
         )
     else:
         sec_sc["info_html"] = '<p class="muted"><em>No stablecoin league rows.</em></p>'
@@ -1157,12 +1168,11 @@ def _build_rwa_explore_asset_type_payload(
     elif not tr_rows and not tr_plat:
         sec_tr["info_html"] = '<p class="alert info">No US Treasuries league rows returned.</p>'
     elif tr_rows:
-        prev = list(tr_rows)[:EXPLORE_ASSET_PREVIEW_ROWS]
-        df_tr = build_us_treasury_network_dataframe(prev)
-        rj, cj = _dataframe_json_records(df_tr)
+        cj, rj, rj_full = _explore_preview_table(tr_rows, build_us_treasury_network_dataframe)
         sec_tr["columns"], sec_tr["rows"] = cj, rj
+        sec_tr["rows_full"] = rj_full
         sec_tr["preview_note"] = (
-            f"Preview: first {len(prev)} of {len(tr_rows)} networks (US Treasuries · Distributed · Networks)."
+            f"Preview: first {len(rj)} of {len(rj_full)} networks (US Treasuries · Distributed · Networks)."
         )
     else:
         sec_tr["info_html"] = '<p class="muted"><em>No treasury network rows.</em></p>'
@@ -1198,22 +1208,20 @@ def _build_rwa_explore_asset_type_payload(
         sec_st["info_html"] = '<p class="alert info">No Tokenized Stocks league rows returned.</p>'
     elif st_net:
         ordered_n = sorted(st_net, key=lambda r: int(r.rank))
-        prev = ordered_n[:EXPLORE_ASSET_PREVIEW_ROWS]
-        df_st = build_tokenized_stock_network_dataframe(prev)
-        rj, cj = _dataframe_json_records(df_st)
+        cj, rj, rj_full = _explore_preview_table(ordered_n, build_tokenized_stock_network_dataframe)
         sec_st["columns"], sec_st["rows"] = cj, rj
+        sec_st["rows_full"] = rj_full
         sec_st["table_subheading"] = "By Network (Distributed · Networks)"
         sec_st["preview_note"] = (
-            f"Preview: first {len(prev)} of {len(st_net)} networks "
+            f"Preview: first {len(rj)} of {len(rj_full)} networks "
             "(Tokenized Stocks · Distributed · Networks), sorted by #."
         )
     elif st_plat:
-        prev = list(st_plat)[:EXPLORE_ASSET_PREVIEW_ROWS]
-        df_st = build_tokenized_stock_platform_dataframe(prev)
-        rj, cj = _dataframe_json_records(df_st)
+        cj, rj, rj_full = _explore_preview_table(st_plat, build_tokenized_stock_platform_dataframe)
         sec_st["columns"], sec_st["rows"] = cj, rj
+        sec_st["rows_full"] = rj_full
         sec_st["preview_note"] = (
-            f"Preview: first {len(prev)} of {len(st_plat)} platforms "
+            f"Preview: first {len(rj)} of {len(rj_full)} platforms "
             "(Tokenized Stocks · Distributed · Platforms)."
         )
     else:
@@ -1250,12 +1258,11 @@ def _build_rwa_explore_asset_type_payload(
     elif not mmf_net and not mmf_plat:
         sec_mmf["info_html"] = '<p class="alert info">No tokenized money market fund rows returned.</p>'
     elif mmf_net:
-        prev = list(mmf_net)[:EXPLORE_ASSET_PREVIEW_ROWS]
-        df_mmf = build_us_treasury_network_dataframe(prev)
-        rj, cj = _dataframe_json_records(df_mmf)
+        cj, rj, rj_full = _explore_preview_table(mmf_net, build_us_treasury_network_dataframe)
         sec_mmf["columns"], sec_mmf["rows"] = cj, rj
+        sec_mmf["rows_full"] = rj_full
         sec_mmf["preview_note"] = (
-            f"Preview: first {len(prev)} of {len(mmf_net)} networks (Tokenized MMFs), sorted by distributed value."
+            f"Preview: first {len(rj)} of {len(rj_full)} networks (Tokenized MMFs), sorted by distributed value."
         )
     else:
         sec_mmf["info_html"] = '<p class="muted"><em>No MMF network rows.</em></p>'
@@ -1336,12 +1343,11 @@ def _build_rwa_explore_market_participant_payload(
     elif not pnet_rows:
         sec_net["info_html"] = '<p class="alert info">No Networks league rows returned.</p>'
     else:
-        prev = list(pnet_rows)[:EXPLORE_ASSET_PREVIEW_ROWS]
-        df_n = build_rwa_networks_page_dataframe(prev)
-        rj, cj = _dataframe_json_records(df_n)
+        cj, rj, rj_full = _explore_preview_table(pnet_rows, build_rwa_networks_page_dataframe)
         sec_net["columns"], sec_net["rows"] = cj, rj
+        sec_net["rows_full"] = rj_full
         sec_net["preview_note"] = (
-            f"Preview: first {len(prev)} of {len(pnet_rows)} networks (Distributed · Networks)."
+            f"Preview: first {len(rj)} of {len(rj_full)} networks (Distributed · Networks)."
         )
     sections.append(sec_net)
 
@@ -1374,12 +1380,11 @@ def _build_rwa_explore_market_participant_payload(
     elif not pplat_rows:
         sec_plat["info_html"] = '<p class="alert info">No Platforms league rows returned.</p>'
     else:
-        prev = list(pplat_rows)[:EXPLORE_ASSET_PREVIEW_ROWS]
-        df_p = build_rwa_platforms_page_dataframe(prev)
-        rj, cj = _dataframe_json_records(df_p)
+        cj, rj, rj_full = _explore_preview_table(pplat_rows, build_rwa_platforms_page_dataframe)
         sec_plat["columns"], sec_plat["rows"] = cj, rj
+        sec_plat["rows_full"] = rj_full
         sec_plat["preview_note"] = (
-            f"Preview: first {len(prev)} of {len(pplat_rows)} platforms (Distributed · Platforms)."
+            f"Preview: first {len(rj)} of {len(rj_full)} platforms (Distributed · Platforms)."
         )
     sections.append(sec_plat)
 
@@ -1412,12 +1417,11 @@ def _build_rwa_explore_market_participant_payload(
     elif not pam_rows:
         sec_am["info_html"] = '<p class="alert info">No Asset Managers league rows returned.</p>'
     else:
-        prev = list(pam_rows)[:EXPLORE_ASSET_PREVIEW_ROWS]
-        df_a = build_rwa_asset_managers_page_dataframe(prev)
-        rj, cj = _dataframe_json_records(df_a)
+        cj, rj, rj_full = _explore_preview_table(pam_rows, build_rwa_asset_managers_page_dataframe)
         sec_am["columns"], sec_am["rows"] = cj, rj
+        sec_am["rows_full"] = rj_full
         sec_am["preview_note"] = (
-            f"Preview: first {len(prev)} of {len(pam_rows)} asset managers (Distributed · Asset Managers)."
+            f"Preview: first {len(rj)} of {len(rj_full)} asset managers (Distributed · Asset Managers)."
         )
     sections.append(sec_am)
 

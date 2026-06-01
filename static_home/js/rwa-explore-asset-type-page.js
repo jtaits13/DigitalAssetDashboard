@@ -166,16 +166,19 @@
         wrap.appendChild(table);
         section.appendChild(wrap);
 
-        var rowCount = (sec.rows || []).length;
-        renderTable(trh, tbody, sec.columns, sec.rows || [], {
+        var searchInput = searchLabel.querySelector("input");
+        var previewLimit = (sec.rows || []).length || 8;
+        var allRows =
+          sec.rows_full && sec.rows_full.length ? sec.rows_full : sec.rows || [];
+        renderTable(trh, tbody, sec.columns, allRows, {
           emptyMsg: "No preview rows for this section.",
           linkAria: "Open RWA.xyz",
           homePreview: true,
           previewScope: "explore",
           previewEntity: previewMeta.entity,
-          previewLimit: rowCount > 0 ? rowCount : 8,
-          searchInputId: searchId,
-          toolbarId: toolbarId,
+          previewLimit: previewLimit,
+          searchEl: searchInput,
+          toolbarEl: toolbar,
         });
       } else if (sec.preview_note) {
         var pnOnly = document.createElement("p");

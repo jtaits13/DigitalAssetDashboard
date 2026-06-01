@@ -295,7 +295,16 @@
     var sortCol = st ? st.sortCol : null;
     var sortDir = st ? st.sortDir : 1;
     var sorted = sortRwaHomeRows(filtered, hp.columns, sortCol, sortDir);
-    var cap = hp.limit != null && hp.limit > 0 ? hp.limit : sorted.length;
+    var cap;
+    if (hp.previewScope === "explore") {
+      cap = q
+        ? sorted.length
+        : hp.previewLimit != null && hp.previewLimit > 0
+          ? hp.previewLimit
+          : sorted.length;
+    } else {
+      cap = hp.limit != null && hp.limit > 0 ? hp.limit : sorted.length;
+    }
     var display = sorted.slice(0, cap);
     var entity = hp.previewEntity || "networks";
     var emptyMsg = q
@@ -499,11 +508,14 @@
         previewScope: opts.previewScope || "home",
         previewEntity: opts.previewEntity || "networks",
       };
-      if (searchEl && !searchEl._rwaHomeSearchBound) {
-        searchEl._rwaHomeSearchBound = true;
-        searchEl.addEventListener("input", function () {
-          refreshHomeRwaPreview(theadRow, tbody);
-        });
+      if (searchEl) {
+        if (!searchEl._rwaHomeSearchBound) {
+          searchEl._rwaHomeSearchBound = true;
+          searchEl.addEventListener("input", function () {
+            refreshHomeRwaPreview(theadRow, tbody);
+          });
+        }
+        searchEl._rwaHomePreviewTbody = tbody;
       }
       refreshHomeRwaPreview(theadRow, tbody);
     } else {

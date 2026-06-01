@@ -30,7 +30,7 @@
     var sw = typeof shellWidth === "number" && shellWidth > 0 ? shellWidth : 560;
     var fromText = Math.round(maxLab * 6.25 + 48);
     var minByWidth = Math.round(sw * 0.24);
-    var marginLeft = Math.min(300, Math.max(128, Math.max(fromText, minByWidth)));
+    var marginLeft = Math.min(312, Math.max(140, Math.max(fromText, minByWidth) + 12));
     var marginRight = Math.min(
       188,
       Math.max(96, Math.round(maxPct * 5.5 + 64))
@@ -186,6 +186,8 @@
         categoryorder: "array",
         categoryarray: y,
         showticklabels: true,
+        automargin: true,
+        ticklabelstandoff: 8,
       },
     };
 
