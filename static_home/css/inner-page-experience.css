@@ -672,6 +672,18 @@
 
 .site-experience.page-inner--rich .inner-rich-zone .rwa-exat-section .table-wrap {
   margin-top: 0.35rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+}
+
+.site-experience.page-inner--rich .inner-rich-zone .rwa-exat-section .table-wrap .data-table {
+  width: max-content;
+  min-width: 100%;
+}
+
+.page-rwa-deep-mmf #js-deep-extra-before-leagues .tmmf-funds-table-wrap {
+  margin-top: 0.35rem;
 }
 
 .site-experience.page-inner--rich .back-link--below-header a,

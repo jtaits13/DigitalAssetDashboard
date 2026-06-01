@@ -1018,6 +1018,10 @@ def _build_rwa_tokenized_mmf_deep_payload(
                 }
             )
 
+        fund_rows.sort(key=lambda r: -(float(r.get("Total Value") or 0)))
+        for i, row in enumerate(fund_rows, 1):
+            row["#"] = i
+
         b["between_ko_and_leagues_html"] = (
             '<section class="hub-section tmmf-funds-list" id="tmmf-funds-wrap" aria-labelledby="tmmf-funds-h">'
             '<h2 class="subsection-head" id="tmmf-funds-h">Tokenized Money Market Fund Population</h2>'
@@ -1029,6 +1033,7 @@ def _build_rwa_tokenized_mmf_deep_payload(
         )
         b["funds_table"] = {
             "columns": [
+                "#",
                 "Fund Name",
                 "Ticker",
                 "Platform",

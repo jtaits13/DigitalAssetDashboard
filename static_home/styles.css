@@ -1813,20 +1813,32 @@ a.hub-panel-surface:hover,
 .table-wrap {
   border: 1px solid var(--line);
   border-radius: 10px;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
   margin: 0.75rem 0 1rem;
   background: var(--surface);
+  -webkit-overflow-scrolling: touch;
 }
 
-/* Must beat ``.table-wrap { overflow: hidden }`` when both classes are present (home crypto preview). */
+/* Must beat ``.table-wrap { overflow-y: hidden }`` when both classes are present (home crypto preview). */
 .table-wrap.table-wrap--no-clip {
-  overflow: visible;
+  overflow-x: auto;
+  overflow-y: visible;
 }
 
 .table-wrap--scroll {
   overflow: auto;
   max-width: 100%;
   max-height: min(70vh, 900px);
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-wrap .data-table,
+.rwa-split-table-scroll .data-table,
+.rwa-exat-table-wrap .data-table {
+  width: max-content;
+  min-width: 100%;
 }
 
 .table-toolbar-row {
@@ -3109,8 +3121,8 @@ body.page-article-feed .etf-news-nav {
   flex: 0 0 auto;
   height: var(--rwa-split-body-height, 420px);
   max-height: var(--rwa-split-body-height, 420px);
-  overflow-x: auto;
-  overflow-y: auto;
+  overflow: auto;
+  max-width: 100%;
   -webkit-overflow-scrolling: touch;
   border: 1px solid var(--line);
   border-radius: 8px;

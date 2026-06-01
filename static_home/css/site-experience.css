@@ -1120,25 +1120,45 @@
   background: linear-gradient(145deg, rgba(238, 243, 250, 0.98) 0%, rgba(255, 255, 255, 0.92) 68%);
 }
 
-.site-experience[class*="page-rwa"] .table-wrap:not(.table-wrap--no-clip),
-.site-experience.page-home .home-zone--rwa .table-wrap:not(.table-wrap--no-clip) {
+.site-experience[class*="page-rwa"] .table-wrap:not(.table-wrap--no-clip):not(.table-wrap--scroll),
+.site-experience.page-home .home-zone--rwa .table-wrap:not(.table-wrap--no-clip):not(.table-wrap--scroll) {
   border-radius: 10px;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   border: 1px solid rgba(37, 128, 156, 0.14);
 }
 
-.site-experience.page-etp .table-wrap:not(.table-wrap--no-clip),
-.site-experience.page-home .home-zone--etp .table-wrap:not(.table-wrap--no-clip) {
+.site-experience.page-etp .table-wrap:not(.table-wrap--no-clip):not(.table-wrap--scroll),
+.site-experience.page-home .home-zone--etp .table-wrap:not(.table-wrap--no-clip):not(.table-wrap--scroll) {
   border-radius: 10px;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   border: 1px solid rgba(166, 111, 18, 0.14);
 }
 
-.site-experience.page-crypto .table-wrap:not(.table-wrap--no-clip),
-.site-experience.page-home .home-zone--crypto .table-wrap:not(.table-wrap--no-clip) {
+.site-experience.page-crypto .table-wrap:not(.table-wrap--no-clip):not(.table-wrap--scroll),
+.site-experience.page-home .home-zone--crypto .table-wrap:not(.table-wrap--no-clip):not(.table-wrap--scroll) {
   border-radius: 10px;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   border: 1px solid rgba(61, 106, 158, 0.14);
+}
+
+.site-experience .table-wrap.table-wrap--scroll,
+.site-experience.page-etp .table-wrap.table-wrap--scroll,
+.site-experience.page-crypto .table-wrap.table-wrap--scroll,
+.site-experience.page-home .home-zone--etp .table-wrap.table-wrap--scroll,
+.site-experience.page-home .home-zone--crypto .table-wrap.table-wrap--scroll,
+.site-experience[class*="page-rwa"] .table-wrap.table-wrap--scroll {
+  overflow: auto;
+  max-height: min(70vh, 900px);
+  -webkit-overflow-scrolling: touch;
+}
+
+.site-experience .table-wrap.table-wrap--no-clip,
+.site-experience.page-home .home-zone--crypto .table-wrap.table-wrap--no-clip {
+  overflow-x: auto;
+  overflow-y: visible;
 }
 
 .site-experience .data-table tbody tr {
