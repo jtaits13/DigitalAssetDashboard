@@ -3202,8 +3202,12 @@ body.page-article-feed .etf-news-nav {
   overflow: visible;
   border-radius: 8px;
   background: #f8fafc;
-  padding-left: 2px;
+  padding: 0;
   box-sizing: border-box;
+}
+
+.page-rwa-deep .rwa-split-chart-shell .plot-container.plotly {
+  width: 100% !important;
 }
 
 /* Plotly defaults clip overflow; y-axis category labels sit in the left margin. */

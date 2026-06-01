@@ -612,12 +612,66 @@
 
 .site-experience.page-inner--rich .inner-rich-zone #js-rwa-global-search-block,
 .site-experience.page-inner--rich .inner-rich-zone #deep-net-wrap,
-.site-experience.page-inner--rich .inner-rich-zone .split-two {
-  background: rgba(255, 255, 255, 0.78);
+.site-experience.page-inner--rich .inner-rich-zone #deep-plat-wrap,
+.site-experience.page-inner--rich .inner-rich-zone .rwa-deep-league-panel {
+  background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(37, 128, 156, 0.14);
   border-radius: 12px;
-  padding: 0.85rem 1rem 1rem;
+  padding: 1rem 1.15rem 1.15rem;
   box-shadow: 0 2px 10px rgba(26, 107, 130, 0.05);
+  margin-bottom: 1rem;
+}
+
+.site-experience.page-inner--rich .inner-rich-zone .rwa-deep-league-panel > .subsection-head:first-child {
+  margin-top: 0;
+}
+
+.site-experience.page-inner--rich .inner-rich-zone .rwa-deep-league-panel .split-two.rwa-split {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+  margin-top: 0.65rem;
+}
+
+.site-experience.page-inner--rich .inner-rich-zone .rwa-exat-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 0.25rem;
+}
+
+.site-experience.page-inner--rich .inner-rich-zone .rwa-exat-sections > .rwa-exat-section {
+  margin-bottom: 0;
+}
+
+.site-experience.page-inner--rich .inner-rich-zone .rwa-exat-intro--in-body {
+  margin: 0 0 1rem;
+  padding: 0.85rem 1rem;
+  max-width: none;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(37, 128, 156, 0.14);
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(26, 107, 130, 0.05);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+.site-experience.page-inner--rich .inner-rich-zone .rwa-exat-intro--in-body strong {
+  color: var(--ink);
+}
+
+.site-experience.page-inner--rich .inner-rich-zone .rwa-exat-search-row {
+  margin: 0.5rem 0 0.35rem;
+}
+
+.site-experience.page-inner--rich .inner-rich-zone .rwa-exat-section .rwa-kpi-panel-static {
+  margin-bottom: 0.15rem;
+}
+
+.site-experience.page-inner--rich .inner-rich-zone .rwa-exat-section .table-wrap {
+  margin-top: 0.35rem;
 }
 
 .site-experience.page-inner--rich .back-link--below-header a,

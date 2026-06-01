@@ -28,12 +28,12 @@
       maxPct = Math.max(maxPct, String(textLabels[i] || "").length);
     }
     var sw = typeof shellWidth === "number" && shellWidth > 0 ? shellWidth : 560;
-    var fromText = Math.round(maxLab * 7.5 + 76);
-    var minByWidth = Math.round(sw * 0.44);
-    var marginLeft = Math.min(440, Math.max(176, Math.max(fromText, minByWidth)));
+    var fromText = Math.round(maxLab * 6.25 + 48);
+    var minByWidth = Math.round(sw * 0.24);
+    var marginLeft = Math.min(300, Math.max(128, Math.max(fromText, minByWidth)));
     var marginRight = Math.min(
-      210,
-      Math.max(118, Math.round(maxPct * 6 + 84))
+      188,
+      Math.max(96, Math.round(maxPct * 5.5 + 64))
     );
     return { l: marginLeft, r: marginRight };
   }
@@ -134,11 +134,14 @@
     var m = estimateChartMargins(y, text, shellW);
     var axisProps = buildCurrencyAxisProps(x, Math.max(120, shellW - m.l - m.r));
 
+    var barThickness = Math.min(0.9, Math.max(0.58, 0.86 - y.length * 0.028));
+
     var trace = {
       type: "bar",
       x: x,
       y: y,
       orientation: "h",
+      width: barThickness,
       marker: {
         color: "#25809C",
         line: { color: "#1F4C67", width: 0.5 },
@@ -158,7 +161,8 @@
     var layout = {
       height: heightPx,
       autosize: true,
-      margin: { l: m.l, r: m.r, t: 14, b: 60, pad: 4 },
+      margin: { l: m.l, r: m.r, t: 12, b: 56, pad: 2 },
+      bargap: 0.14,
       paper_bgcolor: "rgba(0,0,0,0)",
       plot_bgcolor: "#f8fafc",
       font: { size: 12, color: "#1F4C67" },
@@ -192,7 +196,7 @@
         var m2 = estimateChartMargins(y, text, wLate);
         var axisProps2 = buildCurrencyAxisProps(x, Math.max(120, wLate - m2.l - m2.r));
         Plotly.relayout(chartEl, {
-          margin: { l: m2.l, r: m2.r, t: 14, b: 60, pad: 4 },
+          margin: { l: m2.l, r: m2.r, t: 12, b: 56, pad: 2 },
           "xaxis.tickangle": axisProps2.tickangle,
           "xaxis.tickvals": axisProps2.tickvals,
           "xaxis.ticktext": axisProps2.ticktext,
@@ -294,6 +298,7 @@
       }
 
       host.hidden = false;
+      host.className = "rwa-deep-league-panel";
 
       var wideNote = league.wide_chart_note_html != null ? String(league.wide_chart_note_html) : "";
       var colNote =

@@ -238,7 +238,7 @@
     });
   }
 
-  function updateHomeRwaToolbar(hp, filteredCount, q) {
+  function updateHomeRwaToolbar(hp, filteredCount, q, displayCount) {
     if (!hp.toolbarEl) return;
     var total = hp.allRows.length;
     if (!total) {
@@ -246,13 +246,34 @@
       return;
     }
     hp.toolbarEl.hidden = false;
+    var shown = displayCount != null ? displayCount : Math.min(filteredCount, hp.limit);
+    var entity = hp.previewEntity || "networks";
+    if (hp.previewScope === "explore") {
+      if (q) {
+        hp.toolbarEl.textContent =
+          "Showing " +
+          shown +
+          " of " +
+          total +
+          " " +
+          entity +
+          ' matching "' +
+          String(q).trim() +
+          '".';
+      } else {
+        hp.toolbarEl.textContent = "Showing " + shown + " preview " + entity + ".";
+      }
+      return;
+    }
     if (q) {
       hp.toolbarEl.innerHTML =
         "Showing top " +
         hp.limit +
         " of <strong>" +
         filteredCount +
-        "</strong> matching networks (of <strong>" +
+        "</strong> matching " +
+        entity +
+        " (of <strong>" +
         total +
         "</strong> listed).";
     } else {
@@ -274,16 +295,18 @@
     var sortCol = st ? st.sortCol : null;
     var sortDir = st ? st.sortDir : 1;
     var sorted = sortRwaHomeRows(filtered, hp.columns, sortCol, sortDir);
-    var display = sorted.slice(0, hp.limit);
+    var cap = hp.limit != null && hp.limit > 0 ? hp.limit : sorted.length;
+    var display = sorted.slice(0, cap);
+    var entity = hp.previewEntity || "networks";
     var emptyMsg = q
-      ? "No networks match your filter. Try another name."
+      ? "No " + entity + " match your filter. Try another name."
       : hp.opts.emptyMsg || "No preview rows are available.";
     if (!display.length) {
       fillRwaTableBody(tbody, hp.columns, [], { emptyMsg: emptyMsg });
     } else {
       fillRwaTableBody(tbody, hp.columns, display, hp.opts);
     }
-    updateHomeRwaToolbar(hp, filtered.length, q);
+    updateHomeRwaToolbar(hp, filtered.length, q, display.length);
   }
 
   function applyRwaTableSort(theadRow, tbody, colIndex) {
@@ -458,14 +481,14 @@
       sortDir: 1,
     };
     if (opts.homePreview) {
-      var searchEl =
-        opts.searchInputId && typeof document !== "undefined"
-          ? document.getElementById(opts.searchInputId)
-          : null;
-      var toolbarEl =
-        opts.toolbarId && typeof document !== "undefined"
-          ? document.getElementById(opts.toolbarId)
-          : null;
+      var searchEl = opts.searchEl || null;
+      if (!searchEl && opts.searchInputId && typeof document !== "undefined") {
+        searchEl = document.getElementById(opts.searchInputId);
+      }
+      var toolbarEl = opts.toolbarEl || null;
+      if (!toolbarEl && opts.toolbarId && typeof document !== "undefined") {
+        toolbarEl = document.getElementById(opts.toolbarId);
+      }
       tbody._rwaHomePreview = {
         allRows: rowsCopy,
         columns: columns.slice(),
@@ -473,6 +496,8 @@
         limit: opts.previewLimit != null ? opts.previewLimit : HOME_RWA_PREVIEW_LIMIT,
         searchEl: searchEl,
         toolbarEl: toolbarEl,
+        previewScope: opts.previewScope || "home",
+        previewEntity: opts.previewEntity || "networks",
       };
       if (searchEl && !searchEl._rwaHomeSearchBound) {
         searchEl._rwaHomeSearchBound = true;

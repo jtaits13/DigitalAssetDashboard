@@ -41,8 +41,8 @@ def main() -> None:
             issues.append(f"{path.name}: body missing site-experience class")
         if "home-experience" in text:
             issues.append(f"{path.name}: stale home-experience reference")
-        if 'styles.css?v=78' not in text:
-            issues.append(f"{path.name}: styles.css not at v=78")
+        if 'styles.css?v=79' not in text:
+            issues.append(f"{path.name}: styles.css not at v=79")
 
         nav = extract_nav(text)
         if not nav:
@@ -58,7 +58,7 @@ def main() -> None:
         for item in issues:
             print(" -", item)
     else:
-        print("All pages include site-experience CSS (v3), JS, body class, and styles.css v78.")
+        print("All pages include site-experience CSS (v3), JS, body class, and styles.css v79.")
 
     print(f"\nDistinct nav structures (ignoring is-active): {len(nav_hashes)}")
     for h, names in sorted(nav_hashes.items(), key=lambda x: -len(x[1])):

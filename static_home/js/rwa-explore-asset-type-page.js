@@ -1,6 +1,6 @@
 /**
- * Static Explore by Asset Type index — ``static_home/data/rwa_explore_asset_type.json``.
- * Renders the Explore by Asset Type page from JSON data.
+ * Static Explore by Asset Type / Market Participant index.
+ * Renders from ``rwa_explore_asset_type.json`` or ``rwa_explore_market_participant.json``.
  */
 (function (global) {
   function $(id) {
@@ -10,6 +10,16 @@
   function assetPath(rel) {
     var S = global.__STATIC;
     return S && typeof S.assetUrl === "function" ? S.assetUrl(rel) : rel;
+  }
+
+  function previewEntityFromColumns(columns) {
+    var cols = columns || [];
+    if (cols.indexOf("Network") >= 0) return { entity: "networks", label: "Filter preview by network name", placeholder: "Filter by network…" };
+    if (cols.indexOf("Platform") >= 0) return { entity: "platforms", label: "Filter preview by platform name", placeholder: "Filter by platform…" };
+    if (cols.indexOf("Asset Manager") >= 0) {
+      return { entity: "asset managers", label: "Filter preview by asset manager", placeholder: "Filter by name…" };
+    }
+    return { entity: "rows", label: "Filter preview table", placeholder: "Filter…" };
   }
 
   function renderExploreAssetTypePage(data) {
@@ -54,15 +64,9 @@
     if (!root) return;
     root.innerHTML = "";
 
-    (data.sections || []).forEach(function (sec, idx) {
-      if (idx > 0) {
-        var hr = document.createElement("hr");
-        hr.className = "section-rule";
-        root.appendChild(hr);
-      }
-
+    (data.sections || []).forEach(function (sec) {
       var section = document.createElement("section");
-      section.className = "hub-section rwa-exat-section";
+      section.className = "hub-section hub-section--panel inner-rich-block rwa-exat-section";
       if (sec.anchor_id) section.id = sec.anchor_id;
 
       var h2 = document.createElement("h2");
@@ -118,16 +122,39 @@
         section.appendChild(h3);
       }
 
-      if (sec.preview_note) {
-        var pn = document.createElement("p");
-        pn.className = "toolbar-note";
-        pn.textContent = sec.preview_note;
-        section.appendChild(pn);
-      }
+      var searchId = "js-exat-search-" + String(sec.id || sec.anchor_id || "section");
+      var toolbarId = "js-exat-toolbar-" + String(sec.id || sec.anchor_id || "section");
+      var previewMeta = previewEntityFromColumns(sec.columns);
 
       if (sec.columns && sec.columns.length) {
+        var searchLabel = document.createElement("label");
+        searchLabel.className = "search-field home-preview-search-row rwa-exat-search-row";
+        searchLabel.setAttribute("for", searchId);
+        searchLabel.innerHTML =
+          '<span class="search-field__label">' +
+          previewMeta.label +
+          '</span><input type="search" class="search-field__input" id="' +
+          searchId +
+          '" placeholder="' +
+          previewMeta.placeholder +
+          '" />';
+        section.appendChild(searchLabel);
+
+        var toolbar = document.createElement("p");
+        toolbar.className = "toolbar-note";
+        toolbar.id = toolbarId;
+        toolbar.hidden = true;
+        section.appendChild(toolbar);
+
+        if (sec.preview_note) {
+          var pn = document.createElement("p");
+          pn.className = "toolbar-note rwa-exat-preview-note";
+          pn.textContent = sec.preview_note;
+          section.appendChild(pn);
+        }
+
         var wrap = document.createElement("div");
-        wrap.className = "table-scroll rwa-exat-table-wrap";
+        wrap.className = "table-wrap rwa-exat-table-wrap";
         var table = document.createElement("table");
         table.className = "data-table data-table--dense";
         var thead = document.createElement("thead");
@@ -139,10 +166,22 @@
         wrap.appendChild(table);
         section.appendChild(wrap);
 
+        var rowCount = (sec.rows || []).length;
         renderTable(trh, tbody, sec.columns, sec.rows || [], {
           emptyMsg: "No preview rows for this section.",
           linkAria: "Open RWA.xyz",
+          homePreview: true,
+          previewScope: "explore",
+          previewEntity: previewMeta.entity,
+          previewLimit: rowCount > 0 ? rowCount : 8,
+          searchInputId: searchId,
+          toolbarId: toolbarId,
         });
+      } else if (sec.preview_note) {
+        var pnOnly = document.createElement("p");
+        pnOnly.className = "toolbar-note";
+        pnOnly.textContent = sec.preview_note;
+        section.appendChild(pnOnly);
       }
 
       var ctaRow = document.createElement("div");
@@ -167,8 +206,11 @@
         }
         ctaRow.appendChild(a);
       });
-      if (sec.columns && sec.columns.length && attachTableFullscreenButton) {
-        attachTableFullscreenButton(wrap, table, {
+
+      var tableWrap = section.querySelector(".rwa-exat-table-wrap");
+      if (tableWrap && attachTableFullscreenButton) {
+        var tableEl = tableWrap.querySelector("table");
+        attachTableFullscreenButton(tableWrap, tableEl, {
           title: String(sec.table_subheading || sec.title || "RWA preview table"),
           actionRow: ctaRow,
         });
@@ -183,6 +225,21 @@
   }
 
   function boot() {
+    var intro = $("js-exat-intro");
+    var body = document.querySelector(".inner-rich-zone__body");
+    if (intro && body && intro.parentElement && intro.parentElement.classList.contains("home-zone__titles")) {
+      var banner = $("js-exat-banner");
+      var sections = $("js-exat-sections");
+      if (banner && banner.parentElement === body) {
+        body.insertBefore(intro, sections || banner.nextSibling);
+      } else if (sections) {
+        body.insertBefore(intro, sections);
+      } else {
+        body.insertBefore(intro, body.firstChild);
+      }
+      intro.classList.add("rwa-exat-intro--in-body");
+    }
+
     var name =
       (document.body.getAttribute("data-explore-json") || "rwa_explore_asset_type.json").trim();
     loadJson(name)
@@ -193,7 +250,7 @@
           b.hidden = false;
           b.textContent =
             (e && e.message) ||
-            "Could not load rwa_explore_asset_type.json.";
+            "Could not load explore index JSON.";
         }
       });
   }
