@@ -219,9 +219,16 @@
   global.__TABLE_FULLSCREEN = api;
 
   global.__RWA_STATIC_HELPERS = global.__RWA_STATIC_HELPERS || {};
-  global.__RWA_STATIC_HELPERS.attachRwaTableFullscreenButton =
-    attachTableFullscreenButton;
   global.__RWA_STATIC_HELPERS.appendRwaActionLink = appendActionLink;
+  global.__RWA_STATIC_HELPERS.attachRwaTableFullscreenButton = function (
+    tableWrap,
+    tableEl,
+    opts
+  ) {
+    var fs = global.__TABLE_FULLSCREEN;
+    if (!fs || !fs.attachTableFullscreenButton) return null;
+    return fs.attachTableFullscreenButton(tableWrap, tableEl, opts);
+  };
   global.__RWA_STATIC_HELPERS.openRwaTableModal = openTableModal;
   global.__RWA_STATIC_HELPERS.closeRwaTableModal = closeTableModal;
 })(typeof window !== "undefined" ? window : this);

@@ -148,7 +148,15 @@
     tableWrap._rwaDownloadBound = true;
     tableWrap._rwaDownloadOpts = opts || {};
 
-    var bar = ensureExportBar(tableWrap);
+    var bar =
+      opts && opts.actionRow
+        ? opts.actionRow
+        : ensureExportBar(tableWrap);
+    if (!bar) return null;
+    if (bar.classList) {
+      bar.classList.add("rwa-table-actions");
+    }
+
     var btn = bar.querySelector('[data-table-download-btn="1"]');
     if (btn) return bar;
 
@@ -174,8 +182,18 @@
           btn.classList.remove("is-loading");
         });
     });
-    bar.appendChild(btn);
+    var fullscreenBtn = bar.querySelector('[data-rwa-fullscreen-btn="1"]');
+    if (fullscreenBtn) bar.insertBefore(btn, fullscreenBtn);
+    else bar.appendChild(btn);
     return bar;
+  }
+
+  function syncRwaFullscreenHelper() {
+    var fs = global.__TABLE_FULLSCREEN;
+    if (!fs || !fs.attachTableFullscreenButton) return;
+    global.__RWA_STATIC_HELPERS = global.__RWA_STATIC_HELPERS || {};
+    global.__RWA_STATIC_HELPERS.attachRwaTableFullscreenButton =
+      fs.attachTableFullscreenButton;
   }
 
   function patchFullscreenAttach() {
@@ -184,9 +202,11 @@
     fs._downloadPatched = true;
     var origAttach = fs.attachTableFullscreenButton;
     fs.attachTableFullscreenButton = function (tableWrap, tableEl, opts) {
+      var row = origAttach(tableWrap, tableEl, opts);
       attachTableDownloadButton(tableWrap, tableEl, opts);
-      return origAttach(tableWrap, tableEl, opts);
+      return row;
     };
+    syncRwaFullscreenHelper();
   }
 
   patchFullscreenAttach();
