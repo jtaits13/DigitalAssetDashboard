@@ -170,8 +170,8 @@
           type: "scatter",
           mode: "lines",
           fill: "tozeroy",
-          fillcolor: "rgba(74,90,106,0.15)",
-          line: { color: "#4a5a6a", width: 2 },
+          fillcolor: "rgba(223,111,38,0.15)",
+          line: { color: "#df6f26", width: 2 },
         },
       ],
       {

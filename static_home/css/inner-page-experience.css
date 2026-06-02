@@ -250,7 +250,7 @@
 }
 
 .site-experience.page-inner--rich .inner-rich-zone.zone--etp .inner-rich-zone__body {
-  background: linear-gradient(180deg, rgba(232, 236, 240, 0.55) 0%, rgba(251, 252, 253, 0.98) 100%);
+  background: linear-gradient(180deg, rgb(var(--hx-etp-rgb) / 0.06) 0%, rgba(255, 251, 248, 0.98) 100%);
 }
 
 .site-experience.page-inner--rich .inner-rich-zone.zone--rwa .inner-rich-zone__body {
@@ -505,7 +505,7 @@
 }
 
 .site-experience.page-inner--rich .inner-rich-zone.zone--etp .pulse-box--etp-split {
-  background: linear-gradient(180deg, var(--hx-etp-soft) 0%, rgb(251 252 253 / 0.92) 100%);
+  background: linear-gradient(180deg, var(--hx-etp-soft) 0%, rgb(255 251 248 / 0.92) 100%);
   border: 1px solid rgb(var(--hx-etp-bright-rgb) / 0.18);
 }
 
@@ -514,7 +514,7 @@
 }
 
 .site-experience.page-inner--rich .inner-rich-zone.zone--etp .data-table thead th {
-  background: linear-gradient(180deg, var(--hx-etp-soft) 0%, rgb(251 252 253 / 0.92) 100%);
+  background: linear-gradient(180deg, var(--hx-etp-soft) 0%, rgb(255 251 248 / 0.92) 100%);
   color: var(--hx-etp);
   border-bottom-color: rgb(var(--hx-etp-bright-rgb) / 0.22);
 }
@@ -703,7 +703,7 @@
 }
 
 .site-experience.page-inner--rich .inner-rich-zone.zone--etp .btn-primary:hover {
-  background: linear-gradient(180deg, var(--hx-etp-bright) 0%, var(--hx-etp) 100%);
+  background: linear-gradient(180deg, var(--hx-etp) 0%, #c5621f 100%);
   color: #fff;
 }
 
@@ -939,7 +939,7 @@
 .site-experience.page-inner--rich.page-etp .back-link--below-header a,
 .site-experience.page-inner--rich.page-etp .page-shell > .back-link a {
   border: 1px solid rgb(var(--hx-etp-bright-rgb) / 0.24);
-  background: rgba(251, 252, 253, 0.85);
+  background: rgba(255, 251, 248, 0.85);
 }
 
 .site-experience.page-inner--rich[class*="page-rwa"] .back-link--below-header a,
