@@ -3264,6 +3264,19 @@ body.page-article-feed .etf-news-nav {
   margin-bottom: 0;
 }
 
+/* ~10 dense rows visible; scroll for the rest of the curated population */
+.page-rwa-deep-mmf .tmmf-funds-table-wrap.table-wrap--scroll {
+  max-height: min(22rem, 55vh);
+}
+
+.page-rwa-deep-mmf .tmmf-funds-table-wrap thead th {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: #f0f6fa;
+  box-shadow: 0 1px 0 rgba(199, 216, 232, 0.9);
+}
+
 .page-rwa-deep-mmf #js-deep-extra-before-leagues .rwa-table-actions {
   margin-top: 0.75rem;
   margin-bottom: 0;
