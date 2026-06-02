@@ -5,13 +5,13 @@
   --hx-rwa-bright: #25809c;
   --hx-rwa-soft: #e8f4f8;
   --hx-rwa-head: linear-gradient(180deg, #f2fafc 0%, #ffffff 100%);
-  --hx-etp: #3d5568;
-  --hx-etp-bright: #5a7d9e;
-  --hx-etp-rgb: 61 85 104;
-  --hx-etp-bright-rgb: 90 125 158;
-  --hx-etp-soft: #eef2f7;
-  --hx-etp-surface: #f8fafc;
-  --hx-etp-head: linear-gradient(180deg, #e8eef5 0%, #ffffff 100%);
+  --hx-etp: #5a4fcf;
+  --hx-etp-bright: #7b72e0;
+  --hx-etp-rgb: 90 79 207;
+  --hx-etp-bright-rgb: 123 114 224;
+  --hx-etp-soft: #f0effa;
+  --hx-etp-surface: #faf9fe;
+  --hx-etp-head: linear-gradient(180deg, #eeecf8 0%, #ffffff 100%);
   --hx-crypto: #2a5080;
   --hx-crypto-bright: #3d6a9e;
   --hx-crypto-rgb: 42 80 128;
@@ -677,7 +677,7 @@
 }
 
 .site-experience.page-home .home-zone--etp .btn-primary {
-  background: linear-gradient(180deg, #6b8ead 0%, var(--hx-etp-bright) 100%);
+  background: linear-gradient(180deg, var(--hx-etp-bright) 0%, var(--hx-etp) 100%);
   border: 1px solid rgb(var(--hx-etp-rgb) / 0.28);
   box-shadow: 0 2px 8px rgb(var(--hx-etp-rgb) / 0.18);
 }
@@ -1230,7 +1230,7 @@
 .site-experience.page-home .home-zone--etp .rwa-kpi-row--home-grid .rwa-kpi-cell {
   border: 1px solid rgb(var(--hx-etp-bright-rgb) / 0.16);
   border-left: 3px solid rgb(var(--hx-etp-bright-rgb) / 0.45);
-  background: linear-gradient(145deg, rgba(250, 244, 232, 0.92) 0%, rgba(255, 255, 255, 0.88) 68%);
+  background: linear-gradient(145deg, rgba(240, 239, 250, 0.92) 0%, rgba(255, 255, 255, 0.88) 68%);
 }
 
 .site-experience.page-crypto .rwa-kpi-row--home-grid .rwa-kpi-cell,
@@ -1251,7 +1251,7 @@
 .site-experience.page-home .home-zone--etp .rwa-kpi-row--home-grid .rwa-kpi-cell:hover {
   border-color: rgb(var(--hx-etp-bright-rgb) / 0.24);
   box-shadow: 0 4px 12px rgb(var(--hx-etp-rgb) / 0.12);
-  background: linear-gradient(145deg, rgba(250, 244, 232, 0.98) 0%, rgba(255, 255, 255, 0.92) 68%);
+  background: linear-gradient(145deg, rgba(240, 239, 250, 0.98) 0%, rgba(255, 255, 255, 0.92) 68%);
 }
 
 .site-experience.page-crypto .rwa-kpi-row--home-grid .rwa-kpi-cell:hover,
@@ -1398,7 +1398,7 @@
 }
 
 .site-experience.page-etp .btn-primary {
-  background: linear-gradient(180deg, #6b8ead 0%, var(--hx-etp-bright) 100%);
+  background: linear-gradient(180deg, var(--hx-etp-bright) 0%, var(--hx-etp) 100%);
   border: 1px solid rgb(var(--hx-etp-rgb) / 0.28);
   box-shadow: 0 2px 8px rgb(var(--hx-etp-rgb) / 0.16);
 }
