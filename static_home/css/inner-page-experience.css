@@ -250,7 +250,7 @@
 }
 
 .site-experience.page-inner--rich .inner-rich-zone.zone--etp .inner-rich-zone__body {
-  background: linear-gradient(180deg, rgba(245, 239, 230, 0.55) 0%, rgba(255, 252, 248, 0.98) 100%);
+  background: linear-gradient(180deg, rgba(238, 243, 250, 0.55) 0%, rgba(251, 252, 255, 0.98) 100%);
 }
 
 .site-experience.page-inner--rich .inner-rich-zone.zone--rwa .inner-rich-zone__body {
@@ -505,7 +505,7 @@
 }
 
 .site-experience.page-inner--rich .inner-rich-zone.zone--etp .pulse-box--etp-split {
-  background: linear-gradient(180deg, var(--hx-etp-soft) 0%, rgb(255 252 247 / 0.9) 100%);
+  background: linear-gradient(180deg, var(--hx-etp-soft) 0%, rgb(248 250 253 / 0.92) 100%);
   border: 1px solid rgb(var(--hx-etp-bright-rgb) / 0.18);
 }
 
@@ -514,7 +514,7 @@
 }
 
 .site-experience.page-inner--rich .inner-rich-zone.zone--etp .data-table thead th {
-  background: linear-gradient(180deg, var(--hx-etp-soft) 0%, rgb(255 252 247 / 0.92) 100%);
+  background: linear-gradient(180deg, var(--hx-etp-soft) 0%, rgb(248 250 253 / 0.92) 100%);
   color: var(--hx-etp);
   border-bottom-color: rgb(var(--hx-etp-bright-rgb) / 0.22);
 }
@@ -575,8 +575,8 @@
 }
 
 .site-experience.page-inner--rich .inner-rich-zone.zone--etp .btn-primary {
-  background: linear-gradient(180deg, #d49248 0%, var(--hx-etp-bright) 100%);
-  border-color: rgb(var(--hx-etp-rgb) / 0.32);
+  background: linear-gradient(180deg, #6b8ead 0%, var(--hx-etp-bright) 100%);
+  border-color: rgb(var(--hx-etp-rgb) / 0.28);
 }
 
 .site-experience.page-inner--rich .inner-rich-zone.zone--rwa .btn-primary {
@@ -831,7 +831,19 @@
   padding-bottom: 0.4rem;
 }
 
-.site-experience.page-inner--rich .rwa-split-table-head,
+.site-experience.page-inner--rich .rwa-split-table-head {
+  margin-bottom: var(--hx-table-gap);
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.site-experience.page-inner--rich .rwa-split-table-head .subsection-head,
+.site-experience.page-inner--rich .rwa-split-table-head__title {
+  margin: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
 .site-experience.page-inner--rich .rwa-split-heading:not(.rwa-split-table-head__title) {
   margin-bottom: var(--hx-table-gap);
 }

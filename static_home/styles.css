@@ -1887,18 +1887,20 @@ a.hub-panel-surface:hover,
 
 .rwa-split-table-head {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   gap: 0.5rem 0.75rem;
   margin-bottom: 0.5rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid var(--line);
 }
 
 .rwa-split-table-head__title {
   margin: 0;
   flex: 1 1 auto;
   min-width: 0;
-  padding-bottom: 0.35rem;
-  border-bottom: 1px solid var(--line);
+  padding-bottom: 0;
+  border-bottom: none;
 }
 
 .rwa-split-table-head__actions {
@@ -1908,6 +1910,8 @@ a.hub-panel-surface:hover,
   justify-content: flex-end;
   gap: 0.35rem;
   min-height: 2rem;
+  margin: 0;
+  padding: 0;
 }
 
 .rwa-split-table-head__actions .table-download-btn {
