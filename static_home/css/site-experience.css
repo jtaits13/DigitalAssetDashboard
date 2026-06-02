@@ -5,13 +5,14 @@
   --hx-rwa-bright: #25809c;
   --hx-rwa-soft: #e8f4f8;
   --hx-rwa-head: linear-gradient(180deg, #f2fafc 0%, #ffffff 100%);
-  --hx-etp: #df6f26;
-  --hx-etp-bright: #e8874a;
-  --hx-etp-rgb: 223 111 38;
-  --hx-etp-bright-rgb: 232 135 74;
-  --hx-etp-soft: #fdf4ec;
-  --hx-etp-surface: #fffbf8;
-  --hx-etp-head: linear-gradient(180deg, #faf0e6 0%, #ffffff 100%);
+  --hx-etp: #5c5470;
+  --hx-etp-bright: #736b8c;
+  --hx-etp-dark: #4e4760;
+  --hx-etp-rgb: 92 84 112;
+  --hx-etp-bright-rgb: 115 107 140;
+  --hx-etp-soft: #f3f2f7;
+  --hx-etp-surface: #faf9fc;
+  --hx-etp-head: linear-gradient(180deg, #eeecf4 0%, #ffffff 100%);
   --hx-crypto: #2a5080;
   --hx-crypto-bright: #3d6a9e;
   --hx-crypto-rgb: 42 80 128;
@@ -683,7 +684,7 @@
 }
 
 .site-experience.page-home .home-zone--etp .btn-primary:hover {
-  background: linear-gradient(180deg, var(--hx-etp) 0%, #c5621f 100%);
+  background: linear-gradient(180deg, var(--hx-etp) 0%, var(--hx-etp-dark) 100%);
   color: #fff;
 }
 
@@ -1452,7 +1453,7 @@
 }
 
 .site-experience.page-etp .btn-primary:hover {
-  background: linear-gradient(180deg, var(--hx-etp) 0%, #c5621f 100%);
+  background: linear-gradient(180deg, var(--hx-etp) 0%, var(--hx-etp-dark) 100%);
   color: #fff;
 }
 

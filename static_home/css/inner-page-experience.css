@@ -703,7 +703,7 @@
 }
 
 .site-experience.page-inner--rich .inner-rich-zone.zone--etp .btn-primary:hover {
-  background: linear-gradient(180deg, var(--hx-etp) 0%, #c5621f 100%);
+  background: linear-gradient(180deg, var(--hx-etp) 0%, var(--hx-etp-dark) 100%);
   color: #fff;
 }
 
@@ -925,6 +925,18 @@
 
 .page-rwa-deep-mmf #js-deep-extra-before-leagues .tmmf-funds-table-wrap {
   margin-top: 0.35rem;
+}
+
+.page-rwa-deep-mmf .tmmf-funds-table-wrap.table-wrap--scroll {
+  max-height: min(22rem, 55vh);
+}
+
+.page-rwa-deep-mmf .tmmf-funds-table-wrap thead th {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: #f0f6fa;
+  box-shadow: 0 1px 0 rgba(199, 216, 232, 0.9);
 }
 
 .site-experience.page-inner--rich .back-link--below-header a,
