@@ -1084,26 +1084,26 @@
       "id": "tokenized_mmf",
       "title": "Tokenized Money Market Funds",
       "anchor_id": "jd-rwa-tokenized-mmf",
-      "kpi_window_note": "Distributed value uses a 30-day (30D) % change vs summed token values 30 days ago. 30D net change is the dollar change in total distributed value across all funds in the same window. Fund universe: tokenized money market funds on RWA.xyz US Treasuries and Non-U.S. Government Debt pages.",
+      "kpi_window_note": "Distributed value uses a 30-day (30D) % change vs summed token values 30 days ago. 30D net change is the dollar change in total distributed value across all funds in the same window. Fund universe: fixed curated TMMF population on RWA.xyz US Treasuries and Non-U.S. Government Debt; KPIs, charts, and league tables use the same fund set.",
       "kpis": [
         {
           "label": "Distributed value",
-          "value_display": "$13.36B",
-          "delta_30d_pct": 0.033550270078551735
+          "value_display": "$13.91B",
+          "delta_30d_pct": -0.002932174877596339
         },
         {
           "label": "Tokenized funds",
-          "value_display": "23",
-          "delta_30d_pct": null
-        },
-        {
-          "label": "Active networks",
           "value_display": "17",
           "delta_30d_pct": null
         },
         {
+          "label": "Active networks",
+          "value_display": "18",
+          "delta_30d_pct": null
+        },
+        {
           "label": "30D net change",
-          "value_display": "+$433.69M",
+          "value_display": "-$40.91M",
           "delta_30d_pct": null
         }
       ],
@@ -1123,84 +1123,84 @@
           "#": 1,
           "Network": "Ethereum",
           "Link": "https://app.rwa.xyz/networks/ethereum",
-          "RWA Count": 22,
-          "Distributed Value": 5722082581.970268,
-          "7D \u0394 value": 0.5805908831373753,
-          "Market Share": 42.82928682677307,
-          "30D \u0394 share": 0.23259121016018236
+          "RWA Count": 17,
+          "Distributed Value": 7266268133.958228,
+          "7D \u0394 value": 0.3100143472456767,
+          "Market Share": 52.23751407222408,
+          "30D \u0394 share": -2.3135550659920123
         },
         {
           "#": 2,
           "Network": "BNB Chain",
           "Link": "https://app.rwa.xyz/networks/bnb-chain",
-          "RWA Count": 5,
-          "Distributed Value": 3069858736.6676135,
-          "7D \u0394 value": -0.6691278151372382,
-          "Market Share": 22.977623700275288,
-          "30D \u0394 share": -5.716061950923415
+          "RWA Count": 6,
+          "Distributed Value": 3071149375.604135,
+          "7D \u0394 value": -0.6764587197846804,
+          "Market Share": 22.07862492388248,
+          "30D \u0394 share": -4.347516979212104
         },
         {
           "#": 3,
           "Network": "Stellar",
           "Link": "https://app.rwa.xyz/networks/stellar",
-          "RWA Count": 6,
-          "Distributed Value": 1652436217.480351,
-          "7D \u0394 value": 27.208744003421607,
-          "Market Share": 12.368340321478719,
-          "30D \u0394 share": 1.9945266956476595
+          "RWA Count": 5,
+          "Distributed Value": 1147881277.3174362,
+          "7D \u0394 value": 53.05642859933706,
+          "Market Share": 8.252167862741414,
+          "30D \u0394 share": 2.45811896773363
         },
         {
           "#": 4,
           "Network": "Solana",
           "Link": "https://app.rwa.xyz/networks/solana",
-          "RWA Count": 7,
-          "Distributed Value": 856472554.692505,
-          "7D \u0394 value": 0.05875608674437911,
-          "Market Share": 6.410622038165996,
-          "30D \u0394 share": 2.3103384703441274
+          "RWA Count": 8,
+          "Distributed Value": 858277764.0064881,
+          "7D \u0394 value": 0.05725394760848476,
+          "Market Share": 6.170195752292297,
+          "30D \u0394 share": 2.3748773145542765
         },
         {
           "#": 5,
-          "Network": "Arbitrum",
-          "Link": "https://app.rwa.xyz/networks/arbitrum",
-          "RWA Count": 7,
-          "Distributed Value": 497468282.1690402,
-          "7D \u0394 value": -1.5314400847385594,
-          "Market Share": 3.7235065099154157,
-          "30D \u0394 share": -0.5270932653325122
+          "Network": "Avalanche C-Chain",
+          "Link": "https://app.rwa.xyz/networks/avalanche-c-chain",
+          "RWA Count": 3,
+          "Distributed Value": 413266146.57240963,
+          "7D \u0394 value": -37.572486536476724,
+          "Market Share": 2.9709880985895047,
+          "30D \u0394 share": 1.2252609918299822
         },
         {
           "#": 6,
-          "Network": "Avalanche C-Chain",
-          "Link": "https://app.rwa.xyz/networks/avalanche-c-chain",
-          "RWA Count": 4,
-          "Distributed Value": 423152972.8666878,
-          "7D \u0394 value": -36.05615869795514,
-          "Market Share": 3.1672629303907627,
-          "30D \u0394 share": 1.2714839046235282
-        },
-        {
-          "#": 7,
           "Network": "XRP Ledger",
           "Link": "https://app.rwa.xyz/networks/xrp-ledger",
           "RWA Count": 1,
-          "Distributed Value": 294159007.98313516,
-          "7D \u0394 value": 0.08259877038145465,
-          "Market Share": 2.2017544041195363,
-          "30D \u0394 share": -0.5116940996749006
+          "Distributed Value": 274184262.07529384,
+          "7D \u0394 value": -6.747603673078217,
+          "Market Share": 1.9711224502719231,
+          "30D \u0394 share": -0.5275169410496809
         },
         {
-          "#": 8,
+          "#": 7,
           "Network": "Aptos",
           "Link": "https://app.rwa.xyz/networks/aptos",
           "RWA Count": 3,
-          "Distributed Value": 269106112.7435426,
-          "7D \u0394 value": 289.759352690975,
-          "Market Share": 2.0142356780811324,
-          "30D \u0394 share": 1.6013560665918045
+          "Distributed Value": 269177460.0299026,
+          "7D \u0394 value": 289.7600844773109,
+          "Market Share": 1.9351283350698332,
+          "30D \u0394 share": 1.5549284567576476
+        },
+        {
+          "#": 8,
+          "Network": "SEI",
+          "Link": "https://app.rwa.xyz/networks/sei",
+          "RWA Count": 1,
+          "Distributed Value": 256728129.07079208,
+          "7D \u0394 value": 0.057361224441815815,
+          "Market Share": 1.845629559470418,
+          "30D \u0394 share": -0.18279388225009782
         }
       ],
-      "preview_note": "Preview: first 8 of 17 networks (Tokenized MMFs), sorted by distributed value.",
+      "preview_note": "Preview: first 8 of 18 networks (curated TMMFs), sorted by distributed value.",
       "info_html": "",
       "warn_html": "",
       "cta": [
@@ -1221,171 +1221,181 @@
           "#": 1,
           "Network": "Ethereum",
           "Link": "https://app.rwa.xyz/networks/ethereum",
-          "RWA Count": 22,
-          "Distributed Value": 5722082581.970268,
-          "7D \u0394 value": 0.5805908831373753,
-          "Market Share": 42.82928682677307,
-          "30D \u0394 share": 0.23259121016018236
+          "RWA Count": 17,
+          "Distributed Value": 7266268133.958228,
+          "7D \u0394 value": 0.3100143472456767,
+          "Market Share": 52.23751407222408,
+          "30D \u0394 share": -2.3135550659920123
         },
         {
           "#": 2,
           "Network": "BNB Chain",
           "Link": "https://app.rwa.xyz/networks/bnb-chain",
-          "RWA Count": 5,
-          "Distributed Value": 3069858736.6676135,
-          "7D \u0394 value": -0.6691278151372382,
-          "Market Share": 22.977623700275288,
-          "30D \u0394 share": -5.716061950923415
+          "RWA Count": 6,
+          "Distributed Value": 3071149375.604135,
+          "7D \u0394 value": -0.6764587197846804,
+          "Market Share": 22.07862492388248,
+          "30D \u0394 share": -4.347516979212104
         },
         {
           "#": 3,
           "Network": "Stellar",
           "Link": "https://app.rwa.xyz/networks/stellar",
-          "RWA Count": 6,
-          "Distributed Value": 1652436217.480351,
-          "7D \u0394 value": 27.208744003421607,
-          "Market Share": 12.368340321478719,
-          "30D \u0394 share": 1.9945266956476595
+          "RWA Count": 5,
+          "Distributed Value": 1147881277.3174362,
+          "7D \u0394 value": 53.05642859933706,
+          "Market Share": 8.252167862741414,
+          "30D \u0394 share": 2.45811896773363
         },
         {
           "#": 4,
           "Network": "Solana",
           "Link": "https://app.rwa.xyz/networks/solana",
-          "RWA Count": 7,
-          "Distributed Value": 856472554.692505,
-          "7D \u0394 value": 0.05875608674437911,
-          "Market Share": 6.410622038165996,
-          "30D \u0394 share": 2.3103384703441274
+          "RWA Count": 8,
+          "Distributed Value": 858277764.0064881,
+          "7D \u0394 value": 0.05725394760848476,
+          "Market Share": 6.170195752292297,
+          "30D \u0394 share": 2.3748773145542765
         },
         {
           "#": 5,
-          "Network": "Arbitrum",
-          "Link": "https://app.rwa.xyz/networks/arbitrum",
-          "RWA Count": 7,
-          "Distributed Value": 497468282.1690402,
-          "7D \u0394 value": -1.5314400847385594,
-          "Market Share": 3.7235065099154157,
-          "30D \u0394 share": -0.5270932653325122
+          "Network": "Avalanche C-Chain",
+          "Link": "https://app.rwa.xyz/networks/avalanche-c-chain",
+          "RWA Count": 3,
+          "Distributed Value": 413266146.57240963,
+          "7D \u0394 value": -37.572486536476724,
+          "Market Share": 2.9709880985895047,
+          "30D \u0394 share": 1.2252609918299822
         },
         {
           "#": 6,
-          "Network": "Avalanche C-Chain",
-          "Link": "https://app.rwa.xyz/networks/avalanche-c-chain",
-          "RWA Count": 4,
-          "Distributed Value": 423152972.8666878,
-          "7D \u0394 value": -36.05615869795514,
-          "Market Share": 3.1672629303907627,
-          "30D \u0394 share": 1.2714839046235282
-        },
-        {
-          "#": 7,
           "Network": "XRP Ledger",
           "Link": "https://app.rwa.xyz/networks/xrp-ledger",
           "RWA Count": 1,
-          "Distributed Value": 294159007.98313516,
-          "7D \u0394 value": 0.08259877038145465,
-          "Market Share": 2.2017544041195363,
-          "30D \u0394 share": -0.5116940996749006
+          "Distributed Value": 274184262.07529384,
+          "7D \u0394 value": -6.747603673078217,
+          "Market Share": 1.9711224502719231,
+          "30D \u0394 share": -0.5275169410496809
         },
         {
-          "#": 8,
+          "#": 7,
           "Network": "Aptos",
           "Link": "https://app.rwa.xyz/networks/aptos",
           "RWA Count": 3,
-          "Distributed Value": 269106112.7435426,
-          "7D \u0394 value": 289.759352690975,
-          "Market Share": 2.0142356780811324,
-          "30D \u0394 share": 1.6013560665918045
+          "Distributed Value": 269177460.0299026,
+          "7D \u0394 value": 289.7600844773109,
+          "Market Share": 1.9351283350698332,
+          "30D \u0394 share": 1.5549284567576476
         },
         {
-          "#": 9,
+          "#": 8,
           "Network": "SEI",
           "Link": "https://app.rwa.xyz/networks/sei",
           "RWA Count": 1,
-          "Distributed Value": 256703594.88373744,
-          "7D \u0394 value": 0.05228799822978872,
-          "Market Share": 1.9214039184582457,
-          "30D \u0394 share": -0.28152974852482976
+          "Distributed Value": 256728129.07079208,
+          "7D \u0394 value": 0.057361224441815815,
+          "Market Share": 1.845629559470418,
+          "30D \u0394 share": -0.18279388225009782
+        },
+        {
+          "#": 9,
+          "Network": "Arbitrum",
+          "Link": "https://app.rwa.xyz/networks/arbitrum",
+          "RWA Count": 6,
+          "Distributed Value": 123747822.38568957,
+          "7D \u0394 value": -0.29586780103930066,
+          "Market Share": 0.8896284164176849,
+          "30D \u0394 share": -0.09698528607832158
         },
         {
           "#": 10,
           "Network": "Polygon",
           "Link": "https://app.rwa.xyz/networks/polygon",
-          "RWA Count": 6,
-          "Distributed Value": 142114411.67997906,
-          "7D \u0394 value": -1.7358697499516633,
-          "Market Share": 1.0637139210885227,
-          "30D \u0394 share": -0.2024411609399597
+          "RWA Count": 4,
+          "Distributed Value": 64367941.47509674,
+          "7D \u0394 value": -0.1735805053917709,
+          "Market Share": 0.462743899153886,
+          "30D \u0394 share": -0.04785577429960676
         },
         {
           "#": 11,
           "Network": "Base",
           "Link": "https://app.rwa.xyz/networks/base",
-          "RWA Count": 5,
-          "Distributed Value": 82367449.40606405,
-          "7D \u0394 value": -0.02661116235999716,
-          "Market Share": 0.6165131427703618,
-          "30D \u0394 share": -0.07474292682581969
+          "RWA Count": 3,
+          "Distributed Value": 60961303.84031394,
+          "7D \u0394 value": 0.04705954816744928,
+          "Market Share": 0.43825343470841893,
+          "30D \u0394 share": -0.02896762103312602
         },
         {
           "#": 12,
           "Network": "Mantle",
           "Link": "https://app.rwa.xyz/networks/mantle",
           "RWA Count": 1,
-          "Distributed Value": 29387593.598557413,
-          "7D \u0394 value": -0.2486663505491226,
-          "Market Share": 0.2199635635017117,
-          "30D \u0394 share": -0.026988253808041304
+          "Distributed Value": 29390402.26868611,
+          "7D \u0394 value": 0.057361158137346144,
+          "Market Share": 0.2112888657278998,
+          "30D \u0394 share": -0.016134839211991592
         },
         {
           "#": 13,
           "Network": "Optimism",
           "Link": "https://app.rwa.xyz/networks/optimism",
           "RWA Count": 1,
-          "Distributed Value": 26187065.90000002,
-          "7D \u0394 value": 0.05991841986017761,
-          "Market Share": 0.19600789406931649,
-          "30D \u0394 share": -0.023239576902691055
+          "Distributed Value": 26193864.20000002,
+          "7D \u0394 value": 0.05187361695011147,
+          "Market Share": 0.18830881609760503,
+          "30D \u0394 share": -0.013582012732290205
         },
         {
           "#": 14,
           "Network": "Sui",
           "Link": "https://app.rwa.xyz/networks/sui",
           "RWA Count": 1,
-          "Distributed Value": 23169502.37,
-          "7D \u0394 value": 0.05736143555486658,
-          "Market Share": 0.17342169540947822,
-          "30D \u0394 share": -0.03275578294166539
+          "Distributed Value": 23171716.77,
+          "7D \u0394 value": 0.057361221758774505,
+          "Market Share": 0.16658246826780587,
+          "30D \u0394 share": -0.023291194205028364
         },
         {
           "#": 15,
           "Network": "Noble",
           "Link": "https://app.rwa.xyz/networks/noble",
           "RWA Count": 1,
-          "Distributed Value": 15176387.28,
-          "7D \u0394 value": 0.057361416205609146,
-          "Market Share": 0.11359392922034688,
-          "30D \u0394 share": -0.013424639829601508
+          "Distributed Value": 15177837.75,
+          "7D \u0394 value": 0.05736127417046043,
+          "Market Share": 0.10911412824779151,
+          "30D \u0394 share": -0.00786024307979458
         },
         {
           "#": 16,
-          "Network": "MANTRA",
-          "Link": "https://app.rwa.xyz/networks/mantra",
-          "RWA Count": 1,
-          "Distributed Value": 367342.40095344477,
-          "7D \u0394 value": 0.05736141612543103,
-          "Market Share": 0.0027495256890635892,
-          "30D \u0394 share": -0.0003249415919427448
+          "Network": "Plume",
+          "Link": "https://app.rwa.xyz/networks/plume",
+          "RWA Count": 3,
+          "Distributed Value": 9746474.477124467,
+          "7D \u0394 value": -0.140688807999217,
+          "Market Share": 0.07006782412473647,
+          "30D \u0394 share": -0.006935635610629692
         },
         {
           "#": 17,
-          "Network": "Plume",
-          "Link": "https://app.rwa.xyz/networks/plume",
+          "Network": "MANTRA",
+          "Link": "https://app.rwa.xyz/networks/mantra",
           "RWA Count": 1,
-          "Distributed Value": 0.07923054121103347,
-          "7D \u0394 value": 0.0,
-          "Market Share": 5.930336597482977e-10,
-          "30D \u0394 share": -7.1925794949098e-11
+          "Distributed Value": 367377.5093327496,
+          "7D \u0394 value": 0.057361224441817085,
+          "Market Share": 0.002641092712213758,
+          "30D \u0394 share": -0.00019025612084996413
+        },
+        {
+          "#": 18,
+          "Network": "Celo",
+          "Link": "https://app.rwa.xyz/networks/celo",
+          "RWA Count": 1,
+          "Distributed Value": 1.1051204470808465e-06,
+          "7D \u0394 value": 0.05310569998951156,
+          "Market Share": 7.944758415409743e-15,
+          "30D \u0394 share": -5.716445120257725e-16
         }
       ]
     }

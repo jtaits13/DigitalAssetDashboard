@@ -1,9 +1,9 @@
 """
 Tokenized money market funds (MMF) from RWA.xyz asset lists.
 
-Funds are drawn from the US Treasuries and Non-U.S. Government Debt pages, filtered to
-money-market products (name contains "money market", major liquidity-fund tickers, excluding yield vaults).
-Networks and platforms are aggregated from per-token ``bridged_token_value_dollar`` on each fund.
+Funds are drawn from the US Treasuries and Non-U.S. Government Debt pages and limited to a
+curated allowlist (``MMF_FUND_SLUGS``). Networks and platforms are aggregated from per-token
+``bridged_token_value_dollar`` on each fund.
 """
 
 from __future__ import annotations
@@ -21,31 +21,36 @@ from rwa_league.client import (
     format_usd_compact,
 )
 
-# Major tokenized liquidity / MMF tickers on RWA Treasuries that do not include "money market" in the name.
-MMF_EXTRA_TICKERS: frozenset[str] = frozenset(
-    {
-        "USYC",
-        "BUIDL",
-        "USDY",
-        "OUSG",
-        "BENJI",
-        "IBENJI",
-        "WTGXX",
-    }
+# Curated TMMF universe on RWA.xyz (17 funds; population table sorted by total value).
+MMF_FUND_SLUGS: tuple[str, ...] = (
+    "blackrock-usd-institutional-digital-liquidity-fund",  # BlackRock USD Institutional Digital Liquidity Fund
+    "benji",  # BENJI
+    "ibenji",  # iBENJI
+    "invesco-short-duration-us-government-securities-fund",  # Invesco Short Duration US Government Securities Fund
+    "ondo-short-term-us-government-bond-fund",  # Ondo Short-Term US Government Bond Fund
+    "ondo-u-s-dollar-yield",  # Ondo US Dollar Yield
+    "wisdomtree-treasury-money-market-digital-fund",  # WisdomTree Treasury Money Market Digital Fund
+    "janus-henderson-anemoy-treasury-fund",  # Janus Henderson Anemoy Treasury Fund
+    "circle-usyc",  # Circle USYC
+    "spiko-us-t-bills-money-market-fund",  # Spiko US T-Bills Money Market Fund
+    "chinaamc-usd-digital-money-market-fund-class-i-usd",  # ChinaAMC USD Digital MMF Class I
+    "chinaamc-usd-digital-money-market-fund-class-b-usd",  # ChinaAMC USD Digital MMF Class B
+    "chinaamc-usd-digital-money-market-fund-class-f-usd",  # ChinaAMC USD Digital MMF Class F
+    "cms-asseto-secure-hodl-cms-usd-money-market-fund",  # CMS USD Money Market Fund
+    "my-onchain-net-yield-fund",  # My OnChain Net Yield Fund (JPMorganChase)
+    "fidelity-international-usd-digital-liquidity-fund-sp",  # Fidelity International USD Digital Liquidity Fund
+    "cmbi-usd-money-market-fund-token",  # CMBI USD Money Market Fund Token
 )
+
+MMF_FUND_SLUG_SET: frozenset[str] = frozenset(MMF_FUND_SLUGS)
 
 
 def is_tokenized_mmf_asset(asset: dict[str, Any]) -> bool:
-    """True when the asset is treated as a tokenized money market fund for this dashboard."""
+    """True when the asset is in the curated tokenized MMF allowlist."""
     if not isinstance(asset, dict):
         return False
-    name = (asset.get("name") or "").lower()
-    tick = (asset.get("ticker") or "").strip().upper()
-    if "yield vault" in name or tick.startswith("XMMF"):
-        return False
-    if "money market" in name:
-        return True
-    return tick in MMF_EXTRA_TICKERS
+    slug = str(asset.get("slug") or "").strip().lower()
+    return bool(slug and slug in MMF_FUND_SLUG_SET)
 
 
 def _asset_slug(asset: dict[str, Any]) -> str:
@@ -121,19 +126,18 @@ def collect_tokenized_mmf_assets() -> tuple[list[dict[str, Any]], str | None]:
         parts = [e for e in (err_tr, err_gb) if e]
         return [], parts[0] if parts else "No asset list returned from RWA.xyz."
 
-    seen: set[str] = set()
-    mmfs: list[dict[str, Any]] = []
+    by_slug: dict[str, dict[str, Any]] = {}
     for a in assets:
-        slug = _asset_slug(a)
-        if not slug or slug in seen:
+        slug = str(a.get("slug") or "").strip().lower()
+        if not slug:
             continue
-        seen.add(slug)
-        if is_tokenized_mmf_asset(a):
-            mmfs.append(a)
+        if slug in MMF_FUND_SLUG_SET and slug not in by_slug:
+            by_slug[slug] = a
 
-    mmfs.sort(key=lambda x: -asset_distributed_value_usd(x))
+    mmfs = [by_slug[s] for s in MMF_FUND_SLUGS if s in by_slug]
     if not mmfs:
-        return [], "No tokenized money market funds matched the fund filter."
+        return [], "No curated tokenized money market funds found on RWA.xyz."
+    mmfs.sort(key=lambda x: -asset_distributed_value_usd(x))
     return mmfs, None
 
 
@@ -338,21 +342,34 @@ def build_mmf_kpis(mmfs: list[dict[str, Any]]) -> list[RwaGlobalKpi]:
     ]
 
 
-def fetch_rwa_tokenized_mmf_data() -> tuple[
+def build_curated_mmf_dashboard_data() -> tuple[
+    list[dict[str, Any]],
     list[RwaTreasuryDistributedNetworkRow],
     list[RwaTreasuryPlatformRow],
     list[RwaGlobalKpi],
     str | None,
 ]:
     """
-    Tokenized MMF dashboard: KPIs plus network and platform tables aggregated from fund token rows.
+    Single snapshot for the TMMF page: curated fund list plus KPI / network / platform aggregates
+    derived only from those funds' on-chain token rows.
     """
     mmfs, err = collect_tokenized_mmf_assets()
     if err:
-        return [], [], [], err
+        return [], [], [], [], err
     kpis = build_mmf_kpis(mmfs)
     net_rows = _aggregate_network_rows(mmfs)
     plat_rows = _aggregate_platform_rows(mmfs)
     if not net_rows and not plat_rows:
-        return [], [], kpis, "Could not build network or platform aggregates for tokenized MMFs."
-    return net_rows, plat_rows, kpis, None
+        return mmfs, [], [], kpis, "Could not build network or platform aggregates for tokenized MMFs."
+    return mmfs, net_rows, plat_rows, kpis, None
+
+
+def fetch_rwa_tokenized_mmf_data() -> tuple[
+    list[RwaTreasuryDistributedNetworkRow],
+    list[RwaTreasuryPlatformRow],
+    list[RwaGlobalKpi],
+    str | None,
+]:
+    """Tokenized MMF dashboard pack (networks, platforms, KPIs) from ``build_curated_mmf_dashboard_data``."""
+    _mmfs, net_rows, plat_rows, kpis, err = build_curated_mmf_dashboard_data()
+    return net_rows, plat_rows, kpis, err

@@ -252,13 +252,12 @@ TREASURIES_RWA_LINK_LABEL = "See US Treasuries on RWA.xyz"
 TOKENIZED_STOCKS_RWA_LINK_LABEL = "See Tokenized Stocks on RWA.xyz"
 MMF_RWA_LINK_LABEL = "See US Treasuries on RWA.xyz"
 MMF_NETWORK_CAPTION = (
-    "Networks table sums **distributed value** across tokenized money market fund token deployments on each chain. "
-    "**7D Δ value** and **market share** are computed from aggregated token rows (RWA.xyz US Treasuries and "
-    "Non-U.S. Government Debt fund lists)."
+    "Networks table sums **distributed value** across the **curated TMMF population** token deployments on each chain. "
+    "**7D Δ value** and **market share** use the same fund universe as the headline KPIs and fund population table."
 )
 MMF_PLATFORM_CAPTION = (
-    "Platforms table groups the same fund universe by **asset manager** (issuer). "
-    "**RWA Count** is the number of distinct MMF products with exposure for that manager."
+    "Platforms table groups the **same curated TMMF population** by **asset manager** (issuer). "
+    "**RWA Count** is the number of distinct funds in that population with exposure for the manager."
 )
 RWA_MMF_CHART_MAX_BARS = 12
 
@@ -1710,14 +1709,14 @@ def load_rwa_treasuries_cached(
 
 @st.cache_data(ttl=3600, show_spinner=False)
 def load_rwa_tokenized_mmf_cached(
-    *, _mmf_schema: int = 2
+    *, _mmf_schema: int = 3
 ) -> tuple[
     list[RwaTreasuryDistributedNetworkRow],
     list[RwaTreasuryPlatformRow],
     list[RwaGlobalKpi],
     str | None,
 ]:
-    """Bump ``_mmf_schema`` when MMF fund-list parsing changes."""
+    """Bump ``_mmf_schema`` when the curated MMF fund universe or aggregates change."""
     _ = _mmf_schema
     from rwa_league.client import fetch_rwa_tokenized_mmf_data
 
@@ -2281,9 +2280,9 @@ def show_rwa_mmf_widget(
             unsafe_allow_html=True,
         )
         st.caption(
-            "Fund universe from "
+            "Curated fund population on "
             f"[RWA.xyz US Treasuries]({APP_TREASURIES}) and "
-            f"[Non-U.S. Government Debt]({APP_GOVERNMENT_BONDS}); tables aggregate each fund's token deployments."
+            f"[Non-U.S. Government Debt]({APP_GOVERNMENT_BONDS}); KPIs, charts, and tables use only those funds."
         )
 
     rows_m, plat_m, kpis_m, err_m = load_rwa_tokenized_mmf_cached()

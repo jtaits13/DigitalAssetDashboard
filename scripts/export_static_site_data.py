@@ -788,7 +788,8 @@ def _kpi_legend_for_mmf() -> str:
     return (
         "Distributed value uses a 30-day (30D) % change vs summed token values 30 days ago. "
         "30D net change is the dollar change in total distributed value across all funds in the same window. "
-        "Fund universe: tokenized money market funds on RWA.xyz US Treasuries and Non-U.S. Government Debt pages."
+        "Fund universe: fixed curated TMMF population on RWA.xyz US Treasuries and Non-U.S. Government Debt; "
+        "KPIs, charts, and league tables use the same fund set."
     )
 
 
@@ -798,7 +799,7 @@ def _build_rwa_tokenized_mmf_deep_payload(
     articles: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     from rwa_league.client import APP_GOVERNMENT_BONDS, APP_TREASURIES
-    from rwa_league.mmf import asset_distributed_value_usd, collect_tokenized_mmf_assets
+    from rwa_league.mmf import asset_distributed_value_usd, build_curated_mmf_dashboard_data
     from rwa_league.dataframe_table import (
         build_us_treasury_network_dataframe,
         build_us_treasury_platform_dataframe,
@@ -810,10 +811,12 @@ def _build_rwa_tokenized_mmf_deep_payload(
         RWA_MMF_CHART_MAX_BARS,
     )
 
-    rows_net: list[Any] = list(mmf_pack[0])
-    rows_plat: list[Any] = list(mmf_pack[1])
-    kpis: list[Any] = list(mmf_pack[2])
-    err_any = mmf_pack[3]
+    fund_assets, rows_net, rows_plat, kpis, collect_err = build_curated_mmf_dashboard_data()
+    err_any = collect_err or mmf_pack[3]
+    if not fund_assets and mmf_pack[0]:
+        rows_net = list(mmf_pack[0])
+        rows_plat = list(mmf_pack[1])
+        kpis = list(mmf_pack[2])
     err_s = "" if err_any is None else str(err_any)
     export_ts = datetime.now(timezone.utc).isoformat()
 
@@ -828,9 +831,9 @@ def _build_rwa_tokenized_mmf_deep_payload(
             "page_title": "Tokenized Money Market Funds — Digital Assets Dashboard",
             "band_label": "Tokenized Money Market Funds",
             "page_subtitle_html": (
-                f"Tokenized money market fund (MMF) exposure aggregated from {sources}. "
-                "Networks and platforms are built from each fund's on-chain token deployments; "
-                "<strong>Distributed Value</strong> columns are current levels."
+                f"Curated tokenized money market fund (TMMF) population from {sources}. "
+                "Headline KPIs, charts, network and platform tables, and the fund population list all use "
+                "the same fixed fund set; <strong>Distributed Value</strong> columns are current levels."
             ),
             "kpi_window_note": _kpi_legend_for_mmf(),
             "kpis": [_rwa_kpi_to_dict(k) for k in kpis],
@@ -957,10 +960,7 @@ def _build_rwa_tokenized_mmf_deep_payload(
         href = f"https://app.rwa.xyz/platforms/{slug}" if slug else ""
         return name, href
 
-    try:
-        fund_assets, fund_err = collect_tokenized_mmf_assets()
-    except Exception as exc:
-        fund_assets, fund_err = [], str(exc)
+    fund_err = collect_err
     if fund_err:
         manifest["errors"].append(f"Tokenized MMF funds table export: {fund_err}")
     if fund_assets:
@@ -1025,8 +1025,7 @@ def _build_rwa_tokenized_mmf_deep_payload(
         b["between_ko_and_leagues_html"] = (
             '<section class="hub-section tmmf-funds-list" id="tmmf-funds-wrap" aria-labelledby="tmmf-funds-h">'
             '<h2 class="subsection-head" id="tmmf-funds-h">Tokenized Money Market Fund Population</h2>'
-            '<p class="rwa-deep-section-intro">Fund population identified based on fund functionality '
-            "(short duration underlying assets, stable/accumulating NAV etc). "
+            '<p class="rwa-deep-section-intro">Curated fund population (fixed list aligned to RWA.xyz). '
             "Population may not include all TMMFs in the market."
             "</p>"
             "</section>"
@@ -1067,7 +1066,7 @@ def _build_rwa_tokenized_mmf_deep_payload(
         caption_md=MMF_NETWORK_CAPTION,
         search_entity="network",
         section_intro_md=(
-            "**Networks** — aggregate distributed value of tokenized money market funds by chain, "
+            "**Networks** — aggregate distributed value of the **curated TMMF population** by chain, "
             "summed from each fund's token deployments."
         ),
         filter_note_suffix_all="networks (Tokenized MMFs).",
@@ -1085,7 +1084,8 @@ def _build_rwa_tokenized_mmf_deep_payload(
         caption_md=MMF_PLATFORM_CAPTION,
         search_entity="platform",
         section_intro_md=(
-            "**Platforms** — issuer / asset-manager aggregates for tokenized MMFs (same measures as Networks)."
+            "**Platforms** — issuer / asset-manager aggregates for the **same curated TMMF population** "
+            "(same measures as Networks)."
         ),
         filter_note_suffix_all="platforms (Tokenized MMFs).",
         filter_note_entity_plural="platforms",

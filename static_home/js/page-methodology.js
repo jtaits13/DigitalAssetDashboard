@@ -28,10 +28,10 @@
       "<strong>Full view</strong> — open the Tokenized Stocks page for complete leagues and charts.",
     ],
     tokenized_mmf: [
-      "<strong>KPI strip</strong> — totals for tokenized <strong>money market funds</strong> drawn from " +
+      "<strong>KPI strip</strong> — totals for a <strong>curated</strong> set of tokenized <strong>money market funds</strong> on " +
         RWA +
         ' <a href="https://app.rwa.xyz/treasuries" target="_blank" rel="noopener noreferrer">US Treasuries</a> and ' +
-        '<a href="https://app.rwa.xyz/government-bonds" target="_blank" rel="noopener noreferrer">Non-U.S. Government Debt</a> fund lists.',
+        '<a href="https://app.rwa.xyz/government-bonds" target="_blank" rel="noopener noreferrer">Non-U.S. Government Debt</a> (fixed fund list).',
       "<strong>Network preview</strong> — distributed value summed across each fund's on-chain token deployments by network.",
       "<strong>Full view</strong> — open the Tokenized MMF page for platform (asset-manager) leagues and full tables.",
     ],
@@ -105,12 +105,12 @@
     "rwa-mmf": {
       before: "#js-deep-kpis",
       bullets: [
-        "<strong>Source</strong> — tokenized <strong>money market funds</strong> from " +
+        "<strong>Source</strong> — a <strong>fixed curated</strong> set of tokenized <strong>money market funds</strong> on " +
           RWA +
           ' <a href="https://app.rwa.xyz/treasuries" target="_blank" rel="noopener noreferrer">US Treasuries</a> and ' +
-          '<a href="https://app.rwa.xyz/government-bonds" target="_blank" rel="noopener noreferrer">Non-U.S. Government Debt</a> asset lists (yield vaults excluded).',
-        "<strong>KPI strip</strong> — <strong>Distributed value</strong> uses a <strong>30-day (30D)</strong> % vs summed token values 30 days ago; <strong>30D net change</strong> is the dollar change in total distributed value across all funds in that window.",
-        "<strong>Networks / Platforms</strong> — aggregates each fund's token rows by chain and by asset manager; <strong>Distributed Value</strong> is a current level.",
+          '<a href="https://app.rwa.xyz/government-bonds" target="_blank" rel="noopener noreferrer">Non-U.S. Government Debt</a>.',
+        "<strong>KPI strip</strong> — <strong>Distributed value</strong> uses a <strong>30-day (30D)</strong> % vs summed token values 30 days ago; <strong>30D net change</strong> is the dollar change across that same fund set.",
+        "<strong>Networks / Platforms / charts</strong> — same curated population; aggregates each fund's token rows by chain and by asset manager.",
       ],
     },
     "rwa-tokenized-stocks": {

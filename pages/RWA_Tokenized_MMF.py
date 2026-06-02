@@ -63,9 +63,9 @@ def main() -> None:
     )
     st.markdown(
         '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">Aggregated view of tokenized money market '
-        "funds from <strong>RWA.xyz</strong> US Treasuries and Non-U.S. Government Debt listings. "
-        "<strong>Networks</strong> and <strong>Platforms</strong> tables sum each fund's on-chain token "
-        "deployments; headline <strong>30-day (30D)</strong> % applies to total distributed value.</p>",
+        "funds from a <strong>fixed curated population</strong> on <strong>RWA.xyz</strong> US Treasuries and Non-U.S. Government Debt. "
+        "Headline KPIs, <strong>Networks</strong>, <strong>Platforms</strong>, charts, and the fund table all use the same fund set; "
+        "headline <strong>30-day (30D)</strong> % applies to total distributed value across that population.</p>",
         unsafe_allow_html=True,
     )
     st.divider()

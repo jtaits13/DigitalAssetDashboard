@@ -43,13 +43,13 @@
       RWA_CLASS_LIST +
       "—where tokens remain on the issuing platform and are not freely transferable between wallets.",
     "distributed value":
-      "Distributed value for the asset type on this page—for example U.S. Treasuries, stablecoins, tokenized stocks, or tokenized money market funds.",
+      "Distributed value for the asset type on this page—for example U.S. Treasuries, stablecoins, tokenized stocks, or (on TMMFs) the fixed curated fund population only.",
     "tokenized funds":
-      "Count of distinct tokenized money market fund products in this view (US Treasuries and Non-U.S. Government Debt listings).",
+      "Count of curated tokenized money market fund products in this view (fixed fund list on RWA.xyz US Treasuries and Non-U.S. Government Debt listings).",
     "active networks":
-      "Blockchain networks with at least one on-chain deployment among the tokenized MMFs in this view.",
+      "Blockchain networks with at least one on-chain deployment among the curated TMMF population on this page.",
     "30d net change":
-      "Net change in total distributed value across all tokenized MMF deployments vs summed token values 30 days ago—a proxy for net inflows/outflows when subscription and redemption data are unavailable.",
+      "Net change in total distributed value across the curated TMMF population vs summed token values 30 days ago—a proxy for net inflows/outflows when subscription and redemption data are unavailable.",
     "represented value":
       "Represented value for the asset type on this page (platform-bound tokens, not freely transferable between wallets).",
     "total asset holders":
