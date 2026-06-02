@@ -669,28 +669,21 @@
   color: var(--hx-etp);
 }
 
-.site-experience.page-inner--rich .inner-rich-zone.zone--crypto .rwa-kpi-row--home-grid .rwa-kpi-val,
-.site-experience.page-crypto .rwa-kpi-row--home-grid .rwa-kpi-val {
-  color: var(--hx-crypto);
-}
-
+.site-experience.page-home .home-zone--etp .rwa-kpi-row--home-grid .rwa-kpi-val,
 .site-experience.page-inner--rich .inner-rich-zone.zone--etp .rwa-kpi-row--home-grid .rwa-kpi-val,
 .site-experience.page-etp .rwa-kpi-row--home-grid .rwa-kpi-val {
   color: var(--hx-etp);
 }
 
-.site-experience.page-inner--rich .inner-rich-zone.zone--rwa .rwa-kpi-row--home-grid .rwa-kpi-val {
+.site-experience.page-home .home-zone--crypto .rwa-kpi-row--home-grid .rwa-kpi-val,
+.site-experience.page-inner--rich .inner-rich-zone.zone--crypto .rwa-kpi-row--home-grid .rwa-kpi-val,
+.site-experience.page-crypto .rwa-kpi-row--home-grid .rwa-kpi-val {
+  color: var(--hx-crypto);
+}
+
+.site-experience.page-inner--rich .inner-rich-zone.zone--rwa .rwa-kpi-row--home-grid .rwa-kpi-val,
+.site-experience.page-home .home-zone--rwa .rwa-kpi-row--home-grid .rwa-kpi-val {
   color: var(--hx-rwa);
-}
-
-.site-experience.page-inner--rich .inner-rich-zone.zone--etp .rwa-kpi-row--home-grid .rwa-kpi-cell,
-.site-experience.page-etp .rwa-kpi-row--home-grid .rwa-kpi-cell {
-  background: linear-gradient(145deg, rgba(240, 239, 250, 0.92) 0%, rgba(255, 255, 255, 0.88) 68%);
-}
-
-.site-experience.page-inner--rich .inner-rich-zone.zone--etp .rwa-kpi-row--home-grid .rwa-kpi-cell:hover,
-.site-experience.page-etp .rwa-kpi-row--home-grid .rwa-kpi-cell:hover {
-  background: linear-gradient(145deg, rgba(240, 239, 250, 0.98) 0%, rgba(255, 255, 255, 0.92) 68%);
 }
 
 .site-experience.page-inner--rich .inner-rich-zone.zone--etp .etp-conc-chart__bar,
