@@ -397,7 +397,11 @@
       var actionRow = attachTableFullscreenButton(
         splitRoot.querySelector(".rwa-split-table-scroll"),
         splitRoot.querySelector("table"),
-        { title: "RWA Global Market Overview networks table" }
+        {
+          title: "RWA Global Market Overview networks table",
+          downloadPlacement: "title-row",
+          downloadAnchor: $("js-rwa-global-table-actions"),
+        }
       );
       if (appendRwaActionLink && actionRow) {
         appendRwaActionLink(actionRow, {

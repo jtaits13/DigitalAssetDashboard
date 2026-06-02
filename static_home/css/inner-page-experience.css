@@ -241,7 +241,7 @@
 }
 
 .site-experience.page-inner--rich .inner-rich-zone.zone--etp .inner-rich-zone__body {
-  background: linear-gradient(180deg, var(--hx-etp-soft) 0%, #f3ece4 100%);
+  background: linear-gradient(180deg, rgba(245, 239, 230, 0.55) 0%, rgba(255, 252, 248, 0.98) 100%);
 }
 
 .site-experience.page-inner--rich .inner-rich-zone.zone--rwa .inner-rich-zone__body {
@@ -566,8 +566,8 @@
 }
 
 .site-experience.page-inner--rich .inner-rich-zone.zone--etp .btn-primary {
-  background: linear-gradient(180deg, #c97a38 0%, var(--hx-etp-bright) 100%);
-  border-color: rgb(var(--hx-etp-rgb) / 0.38);
+  background: linear-gradient(180deg, #d49248 0%, var(--hx-etp-bright) 100%);
+  border-color: rgb(var(--hx-etp-rgb) / 0.32);
 }
 
 .site-experience.page-inner--rich .inner-rich-zone.zone--rwa .btn-primary {
