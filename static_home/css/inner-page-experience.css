@@ -250,7 +250,7 @@
 }
 
 .site-experience.page-inner--rich .inner-rich-zone.zone--etp .inner-rich-zone__body {
-  background: linear-gradient(180deg, rgba(240, 239, 250, 0.55) 0%, rgba(252, 251, 255, 0.98) 100%);
+  background: linear-gradient(180deg, rgba(232, 236, 240, 0.55) 0%, rgba(251, 252, 253, 0.98) 100%);
 }
 
 .site-experience.page-inner--rich .inner-rich-zone.zone--rwa .inner-rich-zone__body {
@@ -505,7 +505,7 @@
 }
 
 .site-experience.page-inner--rich .inner-rich-zone.zone--etp .pulse-box--etp-split {
-  background: linear-gradient(180deg, var(--hx-etp-soft) 0%, rgb(252 251 255 / 0.92) 100%);
+  background: linear-gradient(180deg, var(--hx-etp-soft) 0%, rgb(251 252 253 / 0.92) 100%);
   border: 1px solid rgb(var(--hx-etp-bright-rgb) / 0.18);
 }
 
@@ -514,7 +514,7 @@
 }
 
 .site-experience.page-inner--rich .inner-rich-zone.zone--etp .data-table thead th {
-  background: linear-gradient(180deg, var(--hx-etp-soft) 0%, rgb(252 251 255 / 0.92) 100%);
+  background: linear-gradient(180deg, var(--hx-etp-soft) 0%, rgb(251 252 253 / 0.92) 100%);
   color: var(--hx-etp);
   border-bottom-color: rgb(var(--hx-etp-bright-rgb) / 0.22);
 }
@@ -604,7 +604,7 @@
 
 .site-experience.page-inner--rich .inner-rich-zone.zone--etp .crypto-story-callout {
   border-left-color: var(--hx-etp);
-  background: rgba(240, 239, 250, 0.65);
+  background: rgb(var(--hx-etp-rgb) / 0.06);
 }
 
 .site-experience.page-inner--rich .inner-rich-zone.zone--etp .crypto-story-callout__list a {
@@ -627,7 +627,7 @@
 
 .site-experience.page-home .home-zone--etp .crypto-story-callout {
   border-left-color: var(--hx-etp);
-  background: rgba(240, 239, 250, 0.65);
+  background: rgb(var(--hx-etp-rgb) / 0.06);
 }
 
 .site-experience.page-home .home-zone--crypto .crypto-story-callout {
@@ -661,7 +661,7 @@
 .site-experience.page-etp .crypto-story-callout,
 .site-experience.page-inner--rich.page-etp .crypto-story-callout {
   border-left-color: var(--hx-etp);
-  background: rgba(240, 239, 250, 0.65);
+  background: rgb(var(--hx-etp-rgb) / 0.06);
 }
 
 .site-experience.page-etp .crypto-story-callout__list a,
@@ -939,7 +939,7 @@
 .site-experience.page-inner--rich.page-etp .back-link--below-header a,
 .site-experience.page-inner--rich.page-etp .page-shell > .back-link a {
   border: 1px solid rgb(var(--hx-etp-bright-rgb) / 0.24);
-  background: rgba(252, 251, 255, 0.85);
+  background: rgba(251, 252, 253, 0.85);
 }
 
 .site-experience.page-inner--rich[class*="page-rwa"] .back-link--below-header a,
