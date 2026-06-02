@@ -224,6 +224,7 @@
         attachTableFullscreenButton(tableWrap, tableEl, {
           title: String(sec.table_subheading || sec.title || "RWA preview table"),
           actionRow: ctaRow,
+          downloadPlacement: "above-table",
         });
       }
       section.appendChild(ctaRow);

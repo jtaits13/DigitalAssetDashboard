@@ -5,13 +5,13 @@
   --hx-rwa-bright: #25809c;
   --hx-rwa-soft: #e8f4f8;
   --hx-rwa-head: linear-gradient(180deg, #f2fafc 0%, #ffffff 100%);
-  --hx-etp: #4e3812;
-  --hx-etp-bright: #8a631f;
-  --hx-etp-rgb: 78 56 18;
-  --hx-etp-bright-rgb: 138 99 31;
-  --hx-etp-soft: #e7dece;
-  --hx-etp-surface: #f2ebe1;
-  --hx-etp-head: linear-gradient(180deg, #dbd0be 0%, #efe8dc 100%);
+  --hx-etp: #4a3428;
+  --hx-etp-bright: #b56b2a;
+  --hx-etp-rgb: 74 52 40;
+  --hx-etp-bright-rgb: 181 107 42;
+  --hx-etp-soft: #ede5dc;
+  --hx-etp-surface: #f7f2ec;
+  --hx-etp-head: linear-gradient(180deg, #e8ddd2 0%, #f5f0ea 100%);
   --hx-crypto: #2a5080;
   --hx-crypto-bright: #3d6a9e;
   --hx-crypto-soft: #eef3fa;
@@ -531,7 +531,7 @@
 }
 
 .site-experience.page-home .home-zone--etp .home-zone__badge {
-  background: linear-gradient(145deg, #916b24, var(--hx-etp));
+  background: linear-gradient(145deg, var(--hx-etp-bright), var(--hx-etp));
 }
 
 .site-experience.page-home .home-zone--crypto .home-zone__badge {

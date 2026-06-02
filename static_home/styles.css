@@ -1870,6 +1870,50 @@ a.hub-panel-surface:hover,
   padding: 0;
 }
 
+.table-export-bar--above {
+  margin: 0 0 0.35rem;
+  min-height: 1.75rem;
+}
+
+.table-export-bar--above + .table-wrap,
+.table-export-bar--above + .rwa-split-table-scroll,
+.table-export-bar--above + .tmmf-funds-table-wrap {
+  margin-top: 0;
+}
+
+.rwa-exat-table-wrap {
+  margin: 0.35rem 0 0;
+}
+
+.rwa-split-table-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.rwa-split-table-head__title {
+  margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.rwa-split-table-head__actions {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.35rem;
+  min-height: 2rem;
+}
+
+.rwa-split-table-head__actions .table-download-btn {
+  margin-left: 0;
+}
+
 .table-download-btn {
   display: inline-flex;
   align-items: center;
@@ -3575,10 +3619,6 @@ body.page-article-feed .etf-news-nav {
   color: var(--ink);
   padding-bottom: 0.35rem;
   border-bottom: 1px solid var(--line);
-}
-
-.rwa-exat-table-wrap {
-  margin: 0.35rem 0 0;
 }
 
 .rwa-exat-cta-row {

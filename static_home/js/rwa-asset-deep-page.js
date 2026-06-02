@@ -364,9 +364,13 @@
         String(league.split_body_height_px || 420) +
         'px">' +
         '<div class="rwa-split-pane">' +
-        '<h3 class="subsection-head rwa-deep-table-h">' +
+        '<div class="rwa-split-table-head">' +
+        '<h3 class="subsection-head rwa-deep-table-h rwa-split-table-head__title">' +
         esc(league.table_heading || "Table") +
         "</h3>" +
+        '<div class="rwa-split-table-head__actions" id="' +
+        prefix +
+        '-table-actions"></div></div>' +
         '<div class="rwa-split-table-scroll">' +
         "<table class=\"data-table data-table--dense\"><thead><tr id=\"" +
         prefix +
@@ -400,10 +404,13 @@
       var clr = $(prefix + "-clear");
       var tableWrap = host.querySelector(".rwa-split-table-scroll");
       var tableEl = tableWrap ? tableWrap.querySelector("table") : null;
+      var titleActions = $(prefix + "-table-actions");
       var actionRow = null;
       if (attachTableFullscreenButton) {
         actionRow = attachTableFullscreenButton(tableWrap, tableEl, {
           title: String(league.table_heading || league.block_heading || "RWA table"),
+          downloadPlacement: "title-row",
+          downloadAnchor: titleActions,
         });
       }
 
@@ -696,7 +703,13 @@
           });
         syncFunds();
         if (attachTableFullscreenButton && fWrap && fTable) {
-          var fundsActionRow = attachTableFullscreenButton(fWrap, fTable, fundsDownloadOpts);
+          var fundsActionRow = attachTableFullscreenButton(fWrap, fTable, {
+            title: "Tokenized Money Market Fund Population",
+            filename: "tmmf-fund-population",
+            sheetName: "TMMF Funds",
+            downloadPlacement: "above-table",
+            getExportData: fundsDownloadOpts.getExportData,
+          });
           if (appendRwaActionLink && fundsActionRow && payload.bottom_cta && payload.bottom_cta.href) {
             appendRwaActionLink(fundsActionRow, {
               href: payload.bottom_cta.href,
@@ -721,9 +734,13 @@
 
     var ctaTargetRow = (platView && platView.actionRow) || (netView && netView.actionRow) || null;
     if (appendRwaActionLink && ctaTargetRow && payload.bottom_cta && payload.bottom_cta.href) {
+      var ctaLabel = payload.bottom_cta.label || "RWA.xyz";
+      if (mode === "mmf" && hasPlat) {
+        ctaLabel = "See US Treasuries on RWA.xyz";
+      }
       appendRwaActionLink(ctaTargetRow, {
         href: payload.bottom_cta.href,
-        label: payload.bottom_cta.label || "RWA.xyz",
+        label: ctaLabel,
         className: "btn btn-primary",
       });
       $("js-deep-bottom-cta").hidden = true;

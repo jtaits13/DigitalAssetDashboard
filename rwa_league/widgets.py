@@ -250,7 +250,7 @@ TOKENIZED_STOCKS_RWA_CAPTION = (
 
 TREASURIES_RWA_LINK_LABEL = "See US Treasuries on RWA.xyz"
 TOKENIZED_STOCKS_RWA_LINK_LABEL = "See Tokenized Stocks on RWA.xyz"
-MMF_RWA_LINK_LABEL = "See US Treasuries on RWA.xyz (MMF listings)"
+MMF_RWA_LINK_LABEL = "See US Treasuries on RWA.xyz"
 MMF_NETWORK_CAPTION = (
     "Networks table sums **distributed value** across tokenized money market fund token deployments on each chain. "
     "**7D Δ value** and **market share** are computed from aggregated token rows (RWA.xyz US Treasuries and "

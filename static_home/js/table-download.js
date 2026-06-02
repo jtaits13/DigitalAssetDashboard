@@ -143,17 +143,61 @@
     return bar;
   }
 
+  function resolveDownloadBar(tableWrap, opts) {
+    opts = opts || {};
+    var placement = opts.downloadPlacement;
+    if (!placement) {
+      if (opts.downloadAnchor) placement = "title-row";
+      else if (opts.actionRow) placement = "action-row";
+      else if (
+        tableWrap &&
+        (tableWrap.classList.contains("rwa-exat-table-wrap") ||
+          tableWrap.classList.contains("tmmf-funds-table-wrap"))
+      ) {
+        placement = "above-table";
+      } else if (tableWrap && tableWrap.classList.contains("rwa-split-table-scroll")) {
+        placement = "title-row";
+      } else {
+        placement = "inline";
+      }
+    }
+
+    if (placement === "title-row") {
+      var anchor = opts.downloadAnchor;
+      if (typeof anchor === "string") {
+        var pane = tableWrap && tableWrap.closest ? tableWrap.closest(".rwa-split-pane") : null;
+        anchor = pane ? pane.querySelector(anchor) : document.querySelector(anchor);
+      }
+      if (anchor) return anchor;
+      placement = "above-table";
+    }
+
+    if (placement === "action-row" && opts.actionRow) {
+      return opts.actionRow;
+    }
+
+    if (placement === "above-table" && tableWrap && tableWrap.parentNode) {
+      var prev = tableWrap.previousElementSibling;
+      if (prev && prev.classList && prev.classList.contains("table-export-bar--above")) {
+        return prev;
+      }
+      var bar = document.createElement("div");
+      bar.className = "table-export-bar table-export-bar--above";
+      tableWrap.parentNode.insertBefore(bar, tableWrap);
+      return bar;
+    }
+
+    return ensureExportBar(tableWrap);
+  }
+
   function attachTableDownloadButton(tableWrap, tableEl, opts) {
     if (!tableWrap || !tableEl || tableWrap._rwaDownloadBound) return null;
     tableWrap._rwaDownloadBound = true;
     tableWrap._rwaDownloadOpts = opts || {};
 
-    var bar =
-      opts && opts.actionRow
-        ? opts.actionRow
-        : ensureExportBar(tableWrap);
+    var bar = resolveDownloadBar(tableWrap, opts);
     if (!bar) return null;
-    if (bar.classList) {
+    if (opts.actionRow && bar === opts.actionRow && bar.classList) {
       bar.classList.add("rwa-table-actions");
     }
 
@@ -182,9 +226,7 @@
           btn.classList.remove("is-loading");
         });
     });
-    var fullscreenBtn = bar.querySelector('[data-rwa-fullscreen-btn="1"]');
-    if (fullscreenBtn) bar.insertBefore(btn, fullscreenBtn);
-    else bar.appendChild(btn);
+    bar.appendChild(btn);
     return bar;
   }
 
