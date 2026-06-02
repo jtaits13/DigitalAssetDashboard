@@ -1,5 +1,14 @@
 /* Inner page rich layout — home-zone shell, zone-tinted (revert: remove page-inner--rich + this file) */
 
+.site-experience.page-inner--rich {
+  --hx-body-gap: 1rem;
+  --hx-block-gap: 1rem;
+  --hx-toolbar-gap: 0.65rem;
+  --hx-action-row-gap: 0.75rem;
+  --hx-table-gap: 0.5rem;
+  --hx-back-link-gap: 1.25rem;
+}
+
 .site-experience.page-inner--rich.page-etp {
   background:
     radial-gradient(ellipse 85% 48% at 8% -8%, rgb(var(--hx-etp-bright-rgb) / 0.14), transparent 55%),
@@ -265,7 +274,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 0.35rem 0.45rem;
-  margin: 0 0 0.9rem;
+  margin: 0 0 var(--hx-body-gap);
   padding: 0.55rem 0.7rem;
   border-radius: 8px;
 }
@@ -376,7 +385,7 @@
   background: rgba(255, 255, 255, 0.78);
   border-radius: 12px;
   padding: 1rem 1.15rem 1.15rem;
-  margin-bottom: 1rem;
+  margin-bottom: var(--hx-block-gap);
   box-shadow: 0 2px 10px rgba(2, 29, 65, 0.04);
 }
 
@@ -444,7 +453,7 @@
 .site-experience.page-inner--rich .inner-rich-zone__body > hr.jd-rwa-gmo-soft-rule {
   border: none;
   height: 1px;
-  margin: 0.15rem 0 1rem;
+  margin: 0.15rem 0 var(--hx-block-gap);
   background: linear-gradient(90deg, rgba(199, 216, 232, 0.9), rgba(199, 216, 232, 0.15), transparent);
 }
 
@@ -607,7 +616,7 @@
 .site-experience.page-inner--rich .inner-rich-zone #js-rwa-global-explore,
 .site-experience.page-inner--rich .inner-rich-zone #js-rwa-global-caption,
 .site-experience.page-inner--rich .inner-rich-zone .rwa-deep-optional-msg {
-  margin-bottom: 1rem;
+  margin-bottom: var(--hx-block-gap);
 }
 
 .site-experience.page-inner--rich .inner-rich-zone #js-rwa-global-search-block,
@@ -619,7 +628,12 @@
   border-radius: 12px;
   padding: 1rem 1.15rem 1.15rem;
   box-shadow: 0 2px 10px rgba(26, 107, 130, 0.05);
-  margin-bottom: 1rem;
+  margin-bottom: var(--hx-block-gap);
+}
+
+.site-experience.page-inner--rich .inner-rich-zone #js-rwa-global-search-block .inline-search,
+.site-experience.page-inner--rich .inner-rich-zone #js-rwa-global-search-block .toolbar-note {
+  margin-bottom: 0;
 }
 
 .site-experience.page-inner--rich .inner-rich-zone .rwa-deep-league-panel > .subsection-head:first-child {
@@ -637,7 +651,7 @@
 .site-experience.page-inner--rich .inner-rich-zone .rwa-exat-sections {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--hx-block-gap);
   margin-top: 0.25rem;
 }
 
@@ -749,4 +763,119 @@
   .site-experience.page-inner--rich .inner-rich-zone .home-chip:hover {
     transform: none;
   }
+}
+
+/* —— Cross-page spacing normalization (page-inner--rich) —— */
+
+.site-experience.page-inner--rich .inner-rich-zone__body > .data-banner:not([hidden]) {
+  margin-bottom: var(--hx-toolbar-gap);
+}
+
+.site-experience.page-inner--rich .inner-rich-zone__body .search-field,
+.site-experience.page-inner--rich .inner-rich-zone__body .inline-search,
+.site-experience.page-inner--rich .inner-rich-zone__body .rwa-exat-search-row,
+.site-experience.page-inner--rich .inner-rich-zone__body .home-preview-search-row {
+  margin: 0 0 var(--hx-toolbar-gap);
+}
+
+.site-experience.page-inner--rich .inner-rich-zone__body .toolbar-note,
+.site-experience.page-inner--rich .inner-rich-zone__body .rwa-exat-preview-note {
+  margin: 0 0 var(--hx-toolbar-gap);
+}
+
+.site-experience.page-inner--rich .inner-rich-zone__body .kpi-footnote--block {
+  margin: 0 0 var(--hx-toolbar-gap);
+}
+
+.site-experience.page-inner--rich .inner-rich-zone__body .data-freshness {
+  margin: 0 0 0.5rem;
+}
+
+.site-experience.page-inner--rich .inner-rich-zone__body .crypto-cat-tabs {
+  margin: 0 0 var(--hx-toolbar-gap);
+}
+
+.site-experience.page-inner--rich .inner-rich-zone__body .table-wrap,
+.site-experience.page-inner--rich .inner-rich-zone__body .tmmf-funds-table-wrap {
+  margin: 0 0 var(--hx-body-gap);
+}
+
+.site-experience.page-inner--rich .inner-rich-zone__body .table-export-bar--above {
+  margin: 0 0 0.35rem;
+}
+
+.site-experience.page-inner--rich .inner-rich-zone__body > .article-feed-toolbar {
+  margin-top: 0;
+  margin-bottom: var(--hx-block-gap);
+}
+
+.site-experience.page-inner--rich .inner-rich-zone__body > .article-feed-stream {
+  margin-bottom: var(--hx-block-gap);
+}
+
+.site-experience.page-inner--rich .inner-rich-zone__body .article-feed-toolbar .toolbar-note {
+  margin: 0.5rem 0 0;
+}
+
+.site-experience.page-inner--rich .inner-rich-zone__body .cta-row,
+.site-experience.page-inner--rich .inner-rich-zone__body .rwa-table-actions,
+.site-experience.page-inner--rich .inner-rich-zone__body .rwa-exat-cta-row,
+.site-experience.page-inner--rich .inner-rich-zone__body .rwa-deep-page-cta {
+  margin-top: var(--hx-action-row-gap);
+}
+
+.site-experience.page-inner--rich .inner-rich-zone__body .subsection-head,
+.site-experience.page-inner--rich .inner-rich-zone__body .rwa-exat-subhead {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.4rem;
+}
+
+.site-experience.page-inner--rich .rwa-split-table-head,
+.site-experience.page-inner--rich .rwa-split-heading:not(.rwa-split-table-head__title) {
+  margin-bottom: var(--hx-table-gap);
+}
+
+.site-experience.page-inner--rich .inner-rich-zone__body .split-two.rwa-split {
+  margin: 0;
+}
+
+.site-experience.page-inner--rich .inner-rich-zone__body .source-cap,
+.site-experience.page-inner--rich .inner-rich-zone__body .method-note,
+.site-experience.page-inner--rich .inner-rich-zone__body .chart-placeholder__cap,
+.site-experience.page-inner--rich .inner-rich-zone__body .timestamp-foot {
+  margin-top: 0.65rem;
+}
+
+.site-experience.page-inner--rich .inner-rich-zone__body > .hub-section:last-child,
+.site-experience.page-inner--rich .inner-rich-zone__body > .inner-rich-block:last-child,
+.site-experience.page-inner--rich .inner-rich-zone__body > .rwa-exat-sections:last-child {
+  margin-bottom: 0;
+}
+
+.site-experience.page-inner--rich .inner-rich-zone__body > .back-link {
+  display: none;
+}
+
+.site-experience.page-inner--rich .page-shell > .back-link {
+  margin: var(--hx-back-link-gap) 0 0;
+}
+
+.site-experience.page-inner--rich .inner-rich-zone__body .rwa-kpi-panel-static {
+  margin-bottom: 0.65rem;
+}
+
+.site-experience.page-inner--rich .inner-rich-zone__body .rwa-caption-html,
+.site-experience.page-inner--rich .inner-rich-zone__body .rwa-deep-caption {
+  margin-top: 0.5rem;
+}
+
+.site-experience.page-inner--rich .inner-rich-zone__body .jd-hub-cta-note {
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+
+.site-experience.page-inner--rich .inner-rich-zone__body .cta-note {
+  margin-top: 0.65rem;
+  margin-bottom: 0;
 }
