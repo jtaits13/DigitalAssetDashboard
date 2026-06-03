@@ -1,0 +1,597 @@
+/* Design mock — fresh unified blue ladder (home only; overrides legacy teal tokens) */
+
+.mock-five-zone {
+  --home-news-rail-top: 6.25rem;
+
+  /* Shared hub accent (explore cards, links, news subheads — replaces page --teal) */
+  --teal: #2a5f82;
+  --teal-soft: #6a8fae;
+
+  /* 1 · On-chain RWA — deep sapphire */
+  --hx-rwa: #1a3d5c;
+  --hx-rwa-bright: #2a5f82;
+  --hx-rwa-dark: #142f47;
+  --hx-rwa-rgb: 26 61 92;
+  --hx-rwa-bright-rgb: 42 95 130;
+  --hx-rwa-soft: #eaf0f6;
+  --hx-rwa-head: linear-gradient(180deg, #eef3f8 0%, #ffffff 100%);
+
+  /* 2 · Stablecoins — ocean */
+  --hx-stable: #2d5f7f;
+  --hx-stable-bright: #3d78a0;
+  --hx-stable-dark: #234c66;
+  --hx-stable-soft: #ebf2f7;
+  --hx-stable-head: linear-gradient(180deg, #f0f6fa 0%, #ffffff 100%);
+
+  /* 3 · TMMF — slate blue */
+  --hx-tmmf: #3e5c74;
+  --hx-tmmf-bright: #507188;
+  --hx-tmmf-dark: #31485c;
+  --hx-tmmf-soft: #eef2f6;
+  --hx-tmmf-head: linear-gradient(180deg, #f2f5f8 0%, #ffffff 100%);
+
+  /* 4 · ETP — deepest navy (listed markets) */
+  --hx-etp: #1e3a58;
+  --hx-etp-bright: #2a5080;
+  --hx-etp-dark: #162d45;
+  --hx-etp-rgb: 30 58 88;
+  --hx-etp-bright-rgb: 42 80 128;
+  --hx-etp-soft: #eef2f7;
+  --hx-etp-head: linear-gradient(180deg, #f0f4f9 0%, #ffffff 100%);
+
+  /* 5 · Crypto — light mist (stack finish) */
+  --hx-crypto: #5a7088;
+  --hx-crypto-bright: #6e869e;
+  --hx-crypto-dark: #485a6e;
+  --hx-crypto-rgb: 90 112 136;
+  --hx-crypto-bright-rgb: 110 134 158;
+  --hx-crypto-soft: #f1f4f7;
+  --hx-crypto-head: linear-gradient(180deg, #f4f6f9 0%, #ffffff 100%);
+}
+
+.mock-five-zone::before {
+  content: "Design mock — blue ladder + formatting pass · not linked from production";
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  padding: 0.45rem 1rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 650;
+  color: #e8f0f6;
+  background: #152536;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mock-five-zone .site-header {
+  top: 1.85rem;
+}
+
+.mock-five-zone.page-home .home-reveal {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+/* Page wash + hero — remove legacy cyan-teal glow */
+.mock-five-zone.site-experience {
+  background:
+    radial-gradient(ellipse 90% 50% at 10% -10%, rgba(42, 95, 130, 0.06), transparent 55%),
+    radial-gradient(ellipse 70% 40% at 95% 0%, rgba(21, 37, 54, 0.05), transparent 50%),
+    var(--wash);
+}
+
+.mock-five-zone.page-home .hero--command::before {
+  background:
+    radial-gradient(ellipse 70% 80% at 8% 20%, rgba(42, 95, 130, 0.18), transparent 58%),
+    radial-gradient(ellipse 55% 60% at 92% 10%, rgba(2, 29, 65, 0.12), transparent 52%),
+    linear-gradient(165deg, #03101f 0%, #0a2238 45%, #0f3348 100%);
+}
+
+/* News rail top stripe + feed accents */
+.mock-five-zone.page-home .home-news-rail--terminal::before {
+  background: linear-gradient(90deg, var(--hx-crypto-bright), var(--hx-rwa-bright) 55%, transparent);
+}
+
+.mock-five-zone.page-home .home-news-rail--terminal .home-news-block__heading {
+  color: #b8d0e4;
+}
+
+.mock-five-zone.page-home .home-news-rail--terminal .btn.home-feed-link.home-feed-link--regulatory {
+  border-left-color: var(--hx-stable-bright);
+}
+
+.mock-five-zone.page-home .home-news-rail--terminal .btn.home-feed-link.home-feed-link--etp {
+  border-left-color: var(--hx-etp-bright);
+}
+
+.mock-five-zone.page-home .home-news-rail--terminal .btn.home-feed-link.home-feed-link--custody {
+  border-left-color: var(--hx-tmmf-bright);
+}
+
+/* Explore gateways + subsection titles (were --teal / cyan) */
+.mock-five-zone .jd-hub-explore-eyebrow,
+.mock-five-zone .rwa-market-overview-title {
+  color: var(--hx-rwa-bright);
+}
+
+.mock-five-zone .hub-panel-surface,
+.mock-five-zone .jd-hub-explore-card-static {
+  border-left-color: rgba(42, 95, 130, 0.5);
+}
+
+.mock-five-zone .hub-panel-surface::before,
+.mock-five-zone .jd-hub-explore-card-static::before,
+.mock-five-zone .rwa-explore-card::before {
+  background: linear-gradient(90deg, var(--hx-rwa-bright), var(--teal-soft));
+}
+
+.mock-five-zone .rwa-kpi-pill__val {
+  color: var(--hx-rwa-bright);
+}
+
+/* Jump nav dots */
+.mock-five-zone.page-home .home-jump-nav__link--rwa .home-jump-nav__dot {
+  background: var(--hx-rwa-bright);
+}
+
+.mock-five-zone.page-home .home-jump-nav__link--stable .home-jump-nav__dot {
+  background: var(--hx-stable-bright);
+}
+
+.mock-five-zone.page-home .home-jump-nav__link--tmmf .home-jump-nav__dot {
+  background: var(--hx-tmmf-bright);
+}
+
+.mock-five-zone.page-home .home-jump-nav__link--etp .home-jump-nav__dot {
+  background: var(--hx-etp-bright);
+}
+
+.mock-five-zone.page-home .home-jump-nav__link--crypto .home-jump-nav__dot {
+  background: var(--hx-crypto-bright);
+}
+
+.mock-five-zone.page-home .home-jump-nav__link.is-active.home-jump-nav__link--stable {
+  box-shadow:
+    0 4px 18px rgba(0, 0, 0, 0.14),
+    inset 3px 0 0 var(--hx-stable-bright);
+}
+
+.mock-five-zone.page-home .home-jump-nav__link.is-active.home-jump-nav__link--tmmf {
+  box-shadow:
+    0 4px 18px rgba(0, 0, 0, 0.14),
+    inset 3px 0 0 var(--hx-tmmf-bright);
+}
+
+/* —— Stablecoins —— */
+.mock-five-zone.page-home .home-zone--stable {
+  --hx-stripe: var(--hx-stable-bright);
+}
+
+.mock-five-zone.page-home .home-zone--stable .home-zone__head {
+  background: var(--hx-stable-head);
+}
+
+.mock-five-zone.page-home .home-zone--stable .home-zone__badge {
+  background: var(--hx-stable-bright);
+}
+
+.mock-five-zone.page-home .home-zone--stable .band-label.teal {
+  color: var(--hx-stable);
+}
+
+.mock-five-zone.page-home .home-zone--stable .home-related-chips {
+  border-left-color: var(--hx-stable-bright);
+}
+
+.mock-five-zone.page-home .home-zone--stable .home-related-chips__label {
+  color: var(--hx-stable);
+}
+
+.mock-five-zone.page-home .home-zone--stable .home-chip:hover {
+  border-color: rgba(45, 95, 127, 0.45);
+  color: var(--hx-stable);
+}
+
+.mock-five-zone.page-home .home-zone--stable .search-field__input:focus {
+  border-color: var(--hx-stable-bright);
+  box-shadow: 0 0 0 3px rgba(45, 95, 127, 0.15);
+}
+
+.mock-five-zone.page-home .home-zone--stable .btn-primary {
+  background: var(--hx-stable-bright);
+  border-color: rgba(45, 95, 127, 0.35);
+}
+
+.mock-five-zone.page-home .home-zone--stable .btn-primary:hover {
+  background: var(--hx-stable);
+}
+
+.mock-five-zone.page-home .home-zone--stable .btn-secondary:hover {
+  border-color: var(--hx-stable-bright);
+  color: var(--hx-stable);
+}
+
+.mock-five-zone.page-home .home-zone--stable .th-sortable:hover,
+.mock-five-zone.page-home .home-zone--stable .data-table thead th.th-sortable.is-sorted {
+  color: var(--hx-stable);
+}
+
+.mock-five-zone.page-home .home-zone--stable .rwa-kpi-row--home-grid .rwa-kpi-cell {
+  border: 1px solid rgba(45, 95, 127, 0.18);
+  border-left: 3px solid var(--hx-stable);
+  background: linear-gradient(145deg, var(--hx-stable-soft) 0%, rgba(255, 255, 255, 0.9) 68%);
+}
+
+.mock-five-zone.page-home .home-zone--stable .rwa-kpi-panel-static {
+  background: rgba(45, 95, 127, 0.06);
+  border: 1px solid rgba(45, 95, 127, 0.14);
+  border-radius: 10px;
+}
+
+.mock-five-zone.page-home .home-zone--stable .rwa-kpi-row--home-grid .rwa-kpi-val {
+  color: var(--hx-stable);
+}
+
+/* —— TMMF —— */
+.mock-five-zone.page-home .home-zone--tmmf {
+  --hx-stripe: var(--hx-tmmf-bright);
+}
+
+.mock-five-zone.page-home .home-zone--tmmf .home-zone__head {
+  background: var(--hx-tmmf-head);
+}
+
+.mock-five-zone.page-home .home-zone--tmmf .home-zone__badge {
+  background: var(--hx-tmmf-bright);
+}
+
+.mock-five-zone.page-home .home-zone--tmmf .band-label.teal {
+  color: var(--hx-tmmf);
+}
+
+.mock-five-zone.page-home .home-zone--tmmf .home-related-chips {
+  border-left-color: var(--hx-tmmf-bright);
+}
+
+.mock-five-zone.page-home .home-zone--tmmf .home-related-chips__label {
+  color: var(--hx-tmmf);
+}
+
+.mock-five-zone.page-home .home-zone--tmmf .home-chip:hover {
+  border-color: rgba(62, 92, 116, 0.45);
+  color: var(--hx-tmmf);
+}
+
+.mock-five-zone.page-home .home-zone--tmmf .search-field__input:focus {
+  border-color: var(--hx-tmmf-bright);
+  box-shadow: 0 0 0 3px rgba(62, 92, 116, 0.15);
+}
+
+.mock-five-zone.page-home .home-zone--tmmf .btn-primary {
+  background: var(--hx-tmmf-bright);
+  border-color: rgba(62, 92, 116, 0.35);
+}
+
+.mock-five-zone.page-home .home-zone--tmmf .btn-primary:hover {
+  background: var(--hx-tmmf);
+}
+
+.mock-five-zone.page-home .home-zone--tmmf .btn-secondary:hover {
+  border-color: var(--hx-tmmf-bright);
+  color: var(--hx-tmmf);
+}
+
+.mock-five-zone.page-home .home-zone--tmmf .th-sortable:hover,
+.mock-five-zone.page-home .home-zone--tmmf .data-table thead th.th-sortable.is-sorted {
+  color: var(--hx-tmmf);
+}
+
+.mock-five-zone.page-home .home-zone--tmmf .rwa-kpi-row--home-grid .rwa-kpi-cell {
+  border: 1px solid rgba(62, 92, 116, 0.18);
+  border-left: 3px solid var(--hx-tmmf);
+  background: linear-gradient(145deg, var(--hx-tmmf-soft) 0%, rgba(255, 255, 255, 0.9) 68%);
+}
+
+.mock-five-zone.page-home .home-zone--tmmf .rwa-kpi-panel-static {
+  background: rgba(62, 92, 116, 0.06);
+  border: 1px solid rgba(62, 92, 116, 0.14);
+  border-radius: 10px;
+}
+
+.mock-five-zone.page-home .home-zone--tmmf .rwa-kpi-row--home-grid .rwa-kpi-val {
+  color: var(--hx-tmmf);
+}
+
+.mock-five-zone .headline-list__link--mock {
+  pointer-events: none;
+  cursor: default;
+}
+
+.mock-five-zone .data-table tbody td.mock-empty {
+  color: var(--muted);
+}
+
+/* —— Formatting pass —— */
+
+/* Wider news rail on desktop */
+@media (min-width: 960px) {
+  .mock-five-zone.page-home .home-main-split {
+    grid-template-columns: minmax(16.5rem, 20rem) minmax(0, 1fr);
+    gap: 1.35rem;
+  }
+}
+
+/* No lift on whole panels */
+.mock-five-zone.page-home .home-markets-stack .hub-section--panel:hover,
+.mock-five-zone.page-home .home-news-rail--terminal:hover {
+  transform: none;
+  box-shadow:
+    0 1px 2px rgba(2, 29, 65, 0.04),
+    0 8px 26px rgba(2, 29, 65, 0.06);
+}
+
+.mock-five-zone.page-home .home-markets-stack .hub-section--panel {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mock-five-zone.page-home .home-markets-stack .hub-section--panel:hover {
+  border-color: rgba(42, 95, 130, 0.28);
+}
+
+/* Flat zone badges (no cyan gradient) */
+.mock-five-zone.page-home .home-zone--rwa .home-zone__badge,
+.mock-five-zone.page-home .home-zone--etp .home-zone__badge,
+.mock-five-zone.page-home .home-zone--crypto .home-zone__badge,
+.mock-five-zone.page-home .home-zone--stable .home-zone__badge,
+.mock-five-zone.page-home .home-zone--tmmf .home-zone__badge {
+  background: linear-gradient(145deg, var(--hx-stripe, var(--hx-rwa-bright)), var(--zone-badge-dark, var(--hx-rwa)));
+}
+
+.mock-five-zone.page-home .home-zone--rwa .home-zone__badge {
+  --zone-badge-dark: var(--hx-rwa);
+}
+
+.mock-five-zone.page-home .home-zone--stable .home-zone__badge {
+  --zone-badge-dark: var(--hx-stable);
+}
+
+.mock-five-zone.page-home .home-zone--tmmf .home-zone__badge {
+  --zone-badge-dark: var(--hx-tmmf);
+}
+
+.mock-five-zone.page-home .home-zone--etp .home-zone__badge {
+  --zone-badge-dark: var(--hx-etp);
+}
+
+.mock-five-zone.page-home .home-zone--crypto .home-zone__badge {
+  --zone-badge-dark: var(--hx-crypto);
+}
+
+/* Zone titles (was .teal) */
+.mock-five-zone.page-home .home-zone--rwa .zone-label {
+  color: var(--hx-rwa);
+}
+
+.mock-five-zone.page-home .home-zone--stable .zone-label {
+  color: var(--hx-stable);
+}
+
+.mock-five-zone.page-home .home-zone--tmmf .zone-label {
+  color: var(--hx-tmmf);
+}
+
+.mock-five-zone.page-home .home-zone--etp .zone-label {
+  color: var(--hx-etp);
+}
+
+.mock-five-zone.page-home .home-zone--crypto .zone-label {
+  color: var(--hx-crypto);
+}
+
+.mock-five-zone.page-home .home-news-rail--terminal .zone-label {
+  color: #ffffff;
+}
+
+.mock-five-zone.page-home .home-zone__titles .section-dek--wide {
+  font-size: 0.86rem;
+  line-height: 1.48;
+  max-width: 40rem;
+}
+
+/* Single KPI legend for the stack */
+.mock-five-zone .home-kpi-legend-once {
+  margin: 0 0 1rem;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  background: rgba(42, 95, 130, 0.06);
+  border: 1px solid rgba(42, 95, 130, 0.14);
+  border-radius: 10px;
+}
+
+.mock-five-zone .home-kpi-legend-once strong {
+  color: var(--ink);
+  font-weight: 650;
+}
+
+.mock-five-zone .jd-kpi-window-note {
+  display: none;
+}
+
+.mock-five-zone .rwa-kpi-panel-static--compact {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  padding-top: 0.15rem;
+}
+
+/* Grouped jump nav — On-chain + Markets on one line */
+.mock-five-zone.page-home .home-jump-nav--grouped {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0;
+  max-width: 100%;
+  margin-bottom: 1rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 0.15rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+
+.mock-five-zone.page-home .home-jump-nav__group {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.mock-five-zone.page-home .home-jump-nav__group + .home-jump-nav__group {
+  margin-left: 1.15rem;
+  padding-left: 1.15rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.mock-five-zone.page-home .home-jump-nav__group-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  margin-right: 0.35rem;
+  white-space: nowrap;
+}
+
+.mock-five-zone.page-home .home-jump-nav--grouped .home-jump-nav__link {
+  padding: 0.38rem 0.75rem;
+  font-size: 0.74rem;
+  white-space: nowrap;
+}
+
+.mock-five-zone.page-home .hero-lead--compact {
+  margin-bottom: 0.85rem;
+}
+
+.mock-five-zone.page-home .hero-dek--compact {
+  margin-top: 0.35rem;
+}
+
+/* Slim RWA explore row */
+.mock-five-zone .home-explore-compact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.55rem;
+  margin-top: 0.85rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 8px;
+  background: var(--hx-rwa-soft);
+  border: 1px solid rgba(42, 95, 130, 0.14);
+}
+
+.mock-five-zone .home-explore-compact__label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--hx-rwa);
+  margin-right: 0.15rem;
+}
+
+.mock-five-zone .home-explore-compact__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 650;
+  line-height: 1.2;
+  text-decoration: none;
+  color: var(--hx-rwa);
+  background: #ffffff;
+  border: 1px solid rgba(42, 95, 130, 0.35);
+  box-shadow: 0 1px 2px rgba(2, 29, 65, 0.06);
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    background 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.mock-five-zone .home-explore-compact__btn:hover {
+  color: #ffffff;
+  background: var(--hx-rwa-bright);
+  border-color: var(--hx-rwa-bright);
+  box-shadow: 0 2px 6px rgba(26, 61, 92, 0.18);
+}
+
+.mock-five-zone .home-explore-compact__btn:focus-visible {
+  outline: 2px solid var(--hx-rwa-bright);
+  outline-offset: 2px;
+}
+
+/* Table subcaption */
+.mock-five-zone .home-table-caption {
+  margin: 0 0 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Consistent CTA row */
+.mock-five-zone.page-home .rwa-table-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.65rem;
+  margin-top: 0.75rem;
+}
+
+.mock-five-zone.page-home .rwa-table-actions .btn {
+  margin: 0;
+}
+
+/* Uniform zone body rhythm */
+.mock-five-zone.page-home .home-zone__body > .home-related-chips {
+  margin-bottom: 0.75rem;
+}
+
+.mock-five-zone.page-home .home-preview-search-row {
+  margin-bottom: 0.5rem;
+}
+
+.mock-five-zone.page-home .home-markets-stack {
+  gap: 1.1rem;
+}
+
+.mock-five-zone .home-kpi-legend-once {
+  margin-bottom: 0.85rem;
+}
+
+.mock-five-zone.page-home .home-zone__head {
+  padding-top: 1rem;
+  padding-bottom: 0.85rem;
+}
+
+.mock-five-zone.page-home .home-zone__body {
+  padding-top: 0.9rem;
+  padding-bottom: 1.15rem;
+}
+
+.mock-five-zone.page-home .search-field__label {
+  font-size: 0.72rem;
+}
+
+/* Secondary CTA: text-style on dense home previews */
+.mock-five-zone.page-home .rwa-table-actions .btn-secondary {
+  font-size: 0.78rem;
+  padding: 0.42rem 0.7rem;
+}

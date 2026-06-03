@@ -11,7 +11,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css?v=85" />
-    <link rel="stylesheet" href="css/site-experience.css?v=15" />
+    <link rel="stylesheet" href="css/site-experience.css?v=17" />
   </head>
   <body class="page-home site-experience">
     <header class="site-header" role="banner">
@@ -66,19 +66,28 @@
               <strong>crypto ETPs</strong>, and top-line <strong>crypto prices</strong>—one workspace for market direction,
               policy signals, and where tokenization activity is building.
             </p>
-            <nav class="home-jump-nav" aria-label="Jump to section">
-              <a href="#section-news" class="home-jump-nav__link home-jump-nav__link--news"
-                ><span class="home-jump-nav__dot" aria-hidden="true"></span>News Hub</a
-              >
-              <a href="#section-onchain" class="home-jump-nav__link home-jump-nav__link--rwa"
-                ><span class="home-jump-nav__dot" aria-hidden="true"></span>On-chain RWA</a
-              >
-              <a href="#section-markets" class="home-jump-nav__link home-jump-nav__link--etp"
-                ><span class="home-jump-nav__dot" aria-hidden="true"></span>U.S. ETPs</a
-              >
-              <a href="#section-crypto" class="home-jump-nav__link home-jump-nav__link--crypto"
-                ><span class="home-jump-nav__dot" aria-hidden="true"></span>Crypto Prices</a
-              >
+            <nav class="home-jump-nav home-jump-nav--grouped" aria-label="Jump to data sections">
+              <div class="home-jump-nav__group">
+                <span class="home-jump-nav__group-label">On-chain</span>
+                <a href="#section-tmmf" class="home-jump-nav__link home-jump-nav__link--tmmf"
+                  ><span class="home-jump-nav__dot" aria-hidden="true"></span>TMMFs</a
+                >
+                <a href="#section-stablecoins" class="home-jump-nav__link home-jump-nav__link--stable"
+                  ><span class="home-jump-nav__dot" aria-hidden="true"></span>Stablecoins</a
+                >
+                <a href="#section-onchain" class="home-jump-nav__link home-jump-nav__link--rwa"
+                  ><span class="home-jump-nav__dot" aria-hidden="true"></span>RWA</a
+                >
+              </div>
+              <div class="home-jump-nav__group">
+                <span class="home-jump-nav__group-label">Markets</span>
+                <a href="#section-markets" class="home-jump-nav__link home-jump-nav__link--etp"
+                  ><span class="home-jump-nav__dot" aria-hidden="true"></span>ETPs</a
+                >
+                <a href="#section-crypto" class="home-jump-nav__link home-jump-nav__link--crypto"
+                  ><span class="home-jump-nav__dot" aria-hidden="true"></span>Crypto</a
+                >
+              </div>
             </nav>
             <p class="hero-dek callout hero-dek--compact">
               For <strong>internal digital asset</strong> materials (documentation, product context, and key contacts),
@@ -100,6 +109,108 @@
 
         <div class="home-main-split">
           <div class="home-markets-stack">
+            <p class="home-kpi-legend-once" id="home-kpi-legend">
+              <strong>How to read KPIs:</strong> On-chain figures use 30-day (30D) % from RWA.xyz. U.S. ETP and crypto
+              rows use ~30 calendar days unless noted on the full page.
+            </p>
+
+            <section
+              class="hub-section hub-section--panel home-zone home-zone--tmmf home-reveal"
+              id="section-tmmf"
+              aria-labelledby="tmmf-heading"
+            >
+              <div class="home-zone__stripe" aria-hidden="true"></div>
+              <div class="home-zone__head">
+                <span class="home-zone__badge" aria-hidden="true">MMF</span>
+                <div class="home-zone__titles">
+                  <h2 class="band-label zone-label" id="tmmf-heading">Tokenized Money Market Funds</h2>
+                  <p class="section-dek section-dek--wide">
+                    Curated on-chain fund list — KPIs and searchable preview.
+                  </p>
+                </div>
+              </div>
+              <div class="home-zone__body">
+                <p class="data-freshness" id="js-home-tmmf-as-of" hidden></p>
+                <div class="data-banner" id="js-home-tmmf-banner" role="status" hidden></div>
+                <div id="js-home-tmmf-kpi"></div>
+                <p class="home-table-caption">Funds preview</p>
+                <label class="search-field home-preview-search-row">
+                  <span class="search-field__label">Filter preview by fund or network name</span>
+                  <input
+                    type="search"
+                    class="search-field__input"
+                    id="js-home-tmmf-search"
+                    placeholder="Filter by fund, platform, or network…"
+                  />
+                </label>
+                <p class="toolbar-note" id="js-home-tmmf-toolbar" hidden></p>
+                <div class="table-wrap">
+                  <table class="data-table data-table--dense" aria-label="TMMF funds preview">
+                    <thead>
+                      <tr id="js-home-tmmf-thead-row"></tr>
+                    </thead>
+                    <tbody id="js-home-tmmf-tbody">
+                      <tr>
+                        <td colspan="4">Loading TMMF preview…</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p class="source-cap" id="js-home-tmmf-caption"></p>
+                <div class="cta-row rwa-table-actions">
+                  <a class="btn btn-primary" href="rwa-tokenized-mmf.html">Open full TMMF page</a>
+                </div>
+              </div>
+            </section>
+
+            <section
+              class="hub-section hub-section--panel home-zone home-zone--stable home-reveal"
+              id="section-stablecoins"
+              aria-labelledby="stablecoins-heading"
+            >
+              <div class="home-zone__stripe" aria-hidden="true"></div>
+              <div class="home-zone__head">
+                <span class="home-zone__badge" aria-hidden="true">SC</span>
+                <div class="home-zone__titles">
+                  <h2 class="band-label zone-label" id="stablecoins-heading">Stablecoins</h2>
+                  <p class="section-dek section-dek--wide">
+                    Market cap, holders, and network distribution from RWA.xyz.
+                  </p>
+                </div>
+              </div>
+              <div class="home-zone__body">
+                <p class="data-freshness" id="js-home-stable-as-of" hidden></p>
+                <div class="data-banner" id="js-home-stable-banner" role="status" hidden></div>
+                <div id="js-home-stable-kpi"></div>
+                <p class="home-table-caption">Networks preview</p>
+                <label class="search-field home-preview-search-row">
+                  <span class="search-field__label">Filter preview by network name</span>
+                  <input
+                    type="search"
+                    class="search-field__input"
+                    id="js-home-stable-search"
+                    placeholder="Filter by network…"
+                  />
+                </label>
+                <p class="toolbar-note" id="js-home-stable-toolbar" hidden></p>
+                <div class="table-wrap">
+                  <table class="data-table data-table--dense" aria-label="Stablecoins networks preview">
+                    <thead>
+                      <tr id="js-home-stable-thead-row"></tr>
+                    </thead>
+                    <tbody id="js-home-stable-tbody">
+                      <tr>
+                        <td colspan="4">Loading stablecoins preview…</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="cta-row rwa-table-actions">
+                  <a class="btn btn-primary" href="rwa-stablecoins.html">Open full Stablecoins page</a>
+                </div>
+              </div>
+            </section>
+
             <section
               class="hub-section hub-section--panel home-zone home-zone--rwa home-reveal"
               id="section-onchain"
@@ -109,29 +220,22 @@
               <div class="home-zone__head">
                 <span class="home-zone__badge" aria-hidden="true">RWA</span>
                 <div class="home-zone__titles">
-                  <h2 class="band-label teal" id="onchain-heading">On-chain Data</h2>
+                  <h2 class="band-label zone-label" id="onchain-heading">On-chain Data</h2>
                   <p class="section-dek section-dek--wide">
-                    <strong>RWA Global Market Overview</strong> KPIs and a <strong>Networks</strong> preview from
-                    RWA.xyz, plus <strong>Explore</strong> gateways for stablecoins, U.S. Treasuries, tokenized stocks,
-                    TMMFs, networks, platforms, and asset managers.
+                    Global overview KPIs and a networks preview from RWA.xyz.
                   </p>
                 </div>
               </div>
               <div class="home-zone__body">
                 <div class="home-related-chips" aria-label="Related pages">
                   <span class="home-related-chips__label">Related</span>
-                  <a class="home-chip" href="etps.html">U.S.-listed crypto ETPs</a>
+                  <a class="home-chip" href="etps.html">U.S. ETPs</a>
                   <a class="home-chip" href="crypto-prices.html">Crypto prices</a>
                 </div>
-                <aside class="crypto-story-callout" aria-labelledby="home-rwa-related-title" hidden>
-                  <h3 class="crypto-story-callout__title" id="home-rwa-related-title">Related</h3>
-                </aside>
                 <p class="data-freshness" id="js-rwa-onchain-as-of" hidden></p>
                 <div class="data-banner" id="js-rwa-onchain-banner" role="status" hidden></div>
-                <div class="jd-hub-subsection-head rwa-market-head" id="jd-rwa-market">
-                  <h3 class="rwa-market-overview-title">RWA Global Market Overview</h3>
-                </div>
                 <div id="js-rwa-kpi-host"></div>
+                <p class="home-table-caption">Networks preview</p>
                 <label class="search-field home-preview-search-row">
                   <span class="search-field__label">Filter preview by network name</span>
                   <input
@@ -149,7 +253,7 @@
                     </thead>
                     <tbody id="js-rwa-tbody">
                       <tr>
-                        <td>Loading on-chain preview…</td>
+                        <td colspan="4">Loading on-chain preview…</td>
                       </tr>
                     </tbody>
                   </table>
@@ -158,18 +262,13 @@
                   <a class="btn btn-primary" id="js-rwa-open-full" href="rwa-global.html"
                     >Open full RWA Market Overview</a
                   >
-                  <a
-                    class="btn btn-secondary"
-                    id="js-rwa-see-networks"
-                    href="https://app.rwa.xyz/networks"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >See RWA Networks on RWA.xyz</a
-                  >
                 </div>
                 <p class="source-cap" id="js-rwa-caption"></p>
-                <hr class="section-rule rwa-explore-rule" />
-                <div id="js-rwa-explore-split"></div>
+                <nav class="home-explore-compact" aria-label="Explore RWA">
+                  <span class="home-explore-compact__label">Explore</span>
+                  <a class="home-explore-compact__btn" href="rwa-explore-asset-type.html">By asset type</a>
+                  <a class="home-explore-compact__btn" href="rwa-explore-market-participant.html">By participant</a>
+                </nav>
               </div>
             </section>
 
@@ -182,24 +281,16 @@
               <div class="home-zone__head">
                 <span class="home-zone__badge" aria-hidden="true">ETP</span>
                 <div class="home-zone__titles">
-                  <h2 class="band-label teal" id="markets-heading">U.S. ETP Market</h2>
+                  <h2 class="band-label zone-label" id="markets-heading">U.S. ETP Market</h2>
                   <p class="section-dek section-dek--wide">
-                    U.S. digital-asset ETP prices, a top-line market snapshot, and a direct path to the full ETP page
-                    with a 12-month AUM chart and searchable fund table.
+                    U.S.-listed digital-asset ETP snapshot with fund preview.
                   </p>
                 </div>
               </div>
               <div class="home-zone__body">
-                <div class="home-related-chips" aria-label="Related pages">
-                  <span class="home-related-chips__label">Related</span>
-                  <a class="home-chip" href="rwa-global.html">On-chain RWA overview</a>
-                  <a class="home-chip" href="crypto-prices.html">Crypto prices</a>
-                </div>
-                <aside class="crypto-story-callout" aria-labelledby="home-etp-related-title" hidden>
-                  <h3 class="crypto-story-callout__title" id="home-etp-related-title">Related</h3>
-                </aside>
                 <p class="data-freshness" id="js-home-etp-as-of" hidden></p>
                 <div id="js-home-kpi" aria-label="U.S. ETP KPI strip"></div>
+                <p class="home-table-caption">Funds preview</p>
                 <label class="search-field home-preview-search-row">
                   <span class="search-field__label">Filter preview by fund name or ticker</span>
                   <input
@@ -229,7 +320,7 @@
                   </table>
                 </div>
                 <div class="cta-row rwa-table-actions">
-                  <a class="btn btn-primary" href="etps.html">Open full U.S. ETP page (chart and table)</a>
+                  <a class="btn btn-primary" href="etps.html">Open full U.S. ETP page</a>
                 </div>
               </div>
             </section>
@@ -243,25 +334,17 @@
               <div class="home-zone__head">
                 <span class="home-zone__badge" aria-hidden="true">CRY</span>
                 <div class="home-zone__titles">
-                  <h2 class="band-label teal" id="crypto-heading">Crypto Prices</h2>
+                  <h2 class="band-label zone-label" id="crypto-heading">Crypto Prices</h2>
                   <p class="section-dek section-dek--wide">
-                    Spot crypto prices, a top-line market snapshot, and a direct path to the full crypto page with a
-                    12-month market-cap chart and searchable top-50 table.
+                    Top-line crypto market snapshot and top-50 price preview.
                   </p>
                 </div>
               </div>
               <div class="home-zone__body">
-                <div class="home-related-chips" aria-label="Related pages">
-                  <span class="home-related-chips__label">Related</span>
-                  <a class="home-chip" href="rwa-global.html">On-chain RWA overview</a>
-                  <a class="home-chip" href="etps.html">U.S.-listed crypto ETPs</a>
-                </div>
-                <aside class="crypto-story-callout" aria-labelledby="home-crypto-related-title" hidden>
-                  <h3 class="crypto-story-callout__title" id="home-crypto-related-title">Related</h3>
-                </aside>
                 <p class="data-freshness" id="js-home-crypto-as-of" hidden></p>
                 <div class="data-banner" id="js-home-crypto-banner" role="status" hidden></div>
                 <div id="js-home-crypto-kpi" aria-label="Crypto market KPI strip"></div>
+                <p class="home-table-caption">Top coins preview</p>
                 <label class="search-field home-preview-search-row">
                   <span class="search-field__label">Filter preview by coin name or ticker</span>
                   <input
@@ -294,7 +377,7 @@
                 </div>
                 <p class="source-cap" id="js-home-crypto-source"></p>
                 <div class="cta-row rwa-table-actions">
-                  <a class="btn btn-primary" href="crypto-prices.html">Open full Crypto Prices page (chart and table)</a>
+                  <a class="btn btn-primary" href="crypto-prices.html">Open full Crypto Prices page</a>
                 </div>
               </div>
             </section>
@@ -305,7 +388,7 @@
             id="section-news"
             aria-labelledby="news-heading"
           >
-            <h2 class="band-label teal" id="news-heading">News Hub</h2>
+            <h2 class="band-label zone-label" id="news-heading">News Hub</h2>
             <p class="section-dek section-dek--rail">
               Headlines from CoinDesk, CoinTelegraph, Decrypt, The Block, and The Defiant.
             </p>
@@ -353,8 +436,9 @@
     <script defer src="js/etp-kpi-shared.js?v=3"></script>
     <script defer src="js/crypto-kpi-shared.js?v=9"></script>
     <script defer src="js/home-crypto.js?v=13"></script>
-    <script defer src="js/rwa-onchain-home.js?v=15"></script>
-    <script defer src="js/home-page.js?v=15"></script>
-    <script defer src="js/site-experience.js?v=1"></script>
+    <script defer src="js/rwa-onchain-home.js?v=16"></script>
+    <script defer src="js/home-rwa-asset-zones.js?v=1"></script>
+    <script defer src="js/home-page.js?v=16"></script>
+    <script defer src="js/site-experience.js?v=2"></script>
   </body>
 </html>

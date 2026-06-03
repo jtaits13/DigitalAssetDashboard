@@ -610,8 +610,50 @@
     );
   }
 
+  function attachHomePreviewFullscreen(tbody, options) {
+    var fs = global.__TABLE_FULLSCREEN;
+    if (!fs || !fs.attachTableFullscreenButton || !tbody) return;
+    var wrap = tbody.closest ? tbody.closest(".table-wrap") : null;
+    var table = wrap ? wrap.querySelector("table") : null;
+    if (!wrap || !table) return;
+    var opts = options || {};
+    fs.attachTableFullscreenButton(wrap, table, {
+      title: opts.title || "RWA table preview",
+      filename: opts.filename || "rwa-preview",
+      getExportData: function () {
+        var hp = tbody._rwaHomePreview;
+        if (!hp || !hp.allRows || !hp.allRows.length) return null;
+        var q = hp.searchEl && hp.searchEl.value ? hp.searchEl.value : "";
+        var filtered = filterRwaHomeRows(hp.allRows, q);
+        var sortState = tbody._rwaTableSort || {};
+        var sorted = sortRwaHomeRows(
+          filtered,
+          hp.columns,
+          sortState.sortCol,
+          sortState.sortDir != null ? sortState.sortDir : 1
+        );
+        var cols = (opts.exportColumns || hp.columns || []).filter(function (c) {
+          return c !== "Link";
+        });
+        return {
+          headers: cols,
+          rows: sorted.map(function (row) {
+            return cols.map(function (c) {
+              var v = row[c];
+              return v == null ? "" : v;
+            });
+          }),
+        };
+      },
+    });
+  }
+
   function renderRwaOnchainHome(data) {
     if (!data) return;
+    var isHome =
+      typeof document !== "undefined" &&
+      document.body &&
+      document.body.classList.contains("page-home");
     var banner = document.getElementById("js-rwa-onchain-banner");
     var kpiHost = document.getElementById("js-rwa-kpi-host");
     var theadRow = document.getElementById("js-rwa-thead-row");
@@ -631,7 +673,11 @@
       }
     }
 
-    renderKpis(kpiHost, data.kpis || [], data.kpi_window_note || "");
+    renderKpis(
+      kpiHost,
+      data.kpis || [],
+      isHome ? "" : data.kpi_window_note || ""
+    );
 
     renderTable(theadRow, tbody, data.columns || [], data.rows || [], {
       emptyMsg: "On-chain data is unavailable.",
@@ -640,42 +686,10 @@
       searchInputId: "js-home-rwa-search",
       toolbarId: "js-home-rwa-toolbar",
     });
-    var fs = global.__TABLE_FULLSCREEN;
-    if (fs && fs.attachTableFullscreenButton) {
-      fs.attachTableFullscreenButton(
-        tbody && tbody.closest ? tbody.closest(".table-wrap") : null,
-        tbody && tbody.closest ? tbody.closest("table") : null,
-        {
-          title: "RWA Global Market Overview networks table",
-          filename: "rwa-networks-preview",
-          getExportData: function () {
-            var hp = tbody && tbody._rwaHomePreview;
-            if (!hp || !hp.allRows || !hp.allRows.length) return null;
-            var q = hp.searchEl && hp.searchEl.value ? hp.searchEl.value : "";
-            var filtered = filterRwaHomeRows(hp.allRows, q);
-            var sortState = tbody._rwaTableSort || {};
-            var sorted = sortRwaHomeRows(
-              filtered,
-              hp.columns,
-              sortState.sortCol,
-              sortState.sortDir != null ? sortState.sortDir : 1
-            );
-            var cols = (hp.columns || []).filter(function (c) {
-              return c !== "Link";
-            });
-            return {
-              headers: cols,
-              rows: sorted.map(function (row) {
-                return cols.map(function (c) {
-                  var v = row[c];
-                  return v == null ? "" : v;
-                });
-              }),
-            };
-          },
-        }
-      );
-    }
+    attachHomePreviewFullscreen(tbody, {
+      title: "RWA Global Market Overview networks table",
+      filename: "rwa-networks-preview",
+    });
 
     var links = data.links || {};
     if (openFull) {
@@ -693,7 +707,7 @@
 
     if (captionEl) captionEl.textContent = data.caption || "";
 
-    if (exploreHost) {
+    if (exploreHost && !exploreHost.classList.contains("home-explore-compact")) {
       exploreHost.innerHTML = exploreSplitHtml(links);
       if (typeof global.finalizeHubAnchors === "function") {
         global.finalizeHubAnchors(exploreHost);
@@ -708,5 +722,6 @@
     renderKeyObservationsCallout: renderKeyObservationsCallout,
     renderKpis: renderKpis,
     renderTable: renderTable,
+    attachHomePreviewFullscreen: attachHomePreviewFullscreen,
   });
 })(typeof window !== "undefined" ? window : this);

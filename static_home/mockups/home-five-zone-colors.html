@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mock — Home five-zone colors</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../styles.css?v=85" />
+    <link rel="stylesheet" href="../css/site-experience.css?v=17" />
+    <link rel="stylesheet" href="home-five-zone-mock.css?v=9" />
+  </head>
+  <body class="page-home site-experience mock-five-zone">
+    <header class="site-header" role="banner">
+      <div class="site-header__inner">
+        <a class="site-brand" href="#">Digital Assets Dashboard</a>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="#" class="is-active">Home</a>
+          <a href="#section-news">News Hub</a>
+          <div class="site-nav__dropdown">
+            <span class="site-nav__trigger">RWA Market</span>
+            <ul class="site-nav__sub">
+              <li><a href="#">Market Overview</a></li>
+              <li class="site-nav__item site-nav__item--flyout">
+                <a href="#" class="site-nav__parent-link">RWA · Assets</a>
+                <ul class="site-nav__sub site-nav__sub--nested" aria-label="RWA asset pages">
+                  <li><a href="#">Stablecoins</a></li>
+                  <li><a href="#">U.S. Treasuries</a></li>
+                  <li><a href="#">Tokenized Stocks</a></li>
+                  <li><a href="#">TMMFs</a></li>
+                </ul>
+              </li>
+              <li class="site-nav__item site-nav__item--flyout">
+                <a href="#" class="site-nav__parent-link">RWA · Participants</a>
+                <ul class="site-nav__sub site-nav__sub--nested" aria-label="RWA participant pages">
+                  <li><a href="#">Networks</a></li>
+                  <li><a href="#">Platforms</a></li>
+                  <li><a href="#">Asset Managers</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+          <div class="site-nav__dropdown">
+            <span class="site-nav__trigger">U.S. ETPs</span>
+            <ul class="site-nav__sub">
+              <li><a href="#">U.S. ETP Overview</a></li>
+              <li><a href="#">ETF/ETP News</a></li>
+            </ul>
+          </div>
+          <a href="#">Crypto Prices</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero hero--command" aria-labelledby="page-title">
+        <div class="hero-inner hero-inner--single hero-inner--experience">
+          <div class="hero-copy hero-copy--lead">
+            <p class="home-hero-eyebrow">Market dashboard</p>
+            <h1 id="page-title">Digital Assets Dashboard</h1>
+            <p class="hero-lead hero-lead--compact">
+              <strong>On-chain RWA</strong> from <strong>RWA.xyz</strong>, curated <strong>news</strong>, U.S.-listed
+              <strong>crypto ETPs</strong>, and top-line <strong>crypto prices</strong>—one workspace for market direction,
+              policy signals, and where tokenization activity is building.
+            </p>
+            <nav class="home-jump-nav home-jump-nav--grouped" aria-label="Jump to data sections">
+              <div class="home-jump-nav__group">
+                <span class="home-jump-nav__group-label">On-chain</span>
+                <a href="#section-onchain" class="home-jump-nav__link home-jump-nav__link--rwa"
+                  ><span class="home-jump-nav__dot" aria-hidden="true"></span>RWA</a
+                >
+                <a href="#section-stablecoins" class="home-jump-nav__link home-jump-nav__link--stable"
+                  ><span class="home-jump-nav__dot" aria-hidden="true"></span>Stablecoins</a
+                >
+                <a href="#section-tmmf" class="home-jump-nav__link home-jump-nav__link--tmmf"
+                  ><span class="home-jump-nav__dot" aria-hidden="true"></span>TMMFs</a
+                >
+              </div>
+              <div class="home-jump-nav__group">
+                <span class="home-jump-nav__group-label">Markets</span>
+                <a href="#section-markets" class="home-jump-nav__link home-jump-nav__link--etp"
+                  ><span class="home-jump-nav__dot" aria-hidden="true"></span>ETPs</a
+                >
+                <a href="#section-crypto" class="home-jump-nav__link home-jump-nav__link--crypto"
+                  ><span class="home-jump-nav__dot" aria-hidden="true"></span>Crypto</a
+                >
+              </div>
+            </nav>
+            <p class="hero-dek callout hero-dek--compact">
+              For <strong>internal digital asset</strong> materials (documentation, product context, and key contacts),
+              see the <a href="#" tabindex="-1">Digital Custody Product Team</a> space on Confluence (internal).
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div class="page-shell">
+        <div class="home-main-split">
+          <aside
+            class="home-news-rail home-news-rail--terminal hub-section hub-section--panel hub-section--news-rail home-reveal is-visible"
+            id="section-news"
+            aria-labelledby="news-heading"
+          >
+            <h2 class="band-label zone-label" id="news-heading">News Hub</h2>
+            <p class="section-dek section-dek--rail">
+              Headlines from CoinDesk, CoinTelegraph, Decrypt, The Block, and The Defiant.
+            </p>
+
+            <div class="home-news-block">
+              <h3 class="home-news-block__heading">Latest Headlines</h3>
+              <ul class="headline-list headline-list--rail">
+                <li>
+                  <span class="headline-list__link headline-list__link--plain headline-list__link--mock"
+                    >Example headline — institutional tokenization update</span
+                  >
+                  <div class="headline-list__meta-row">
+                    <span class="headline-list__source">CoinDesk</span>
+                    <span class="headline-list__time">2h ago</span>
+                  </div>
+                </li>
+                <li>
+                  <span class="headline-list__link headline-list__link--plain headline-list__link--mock"
+                    >Example headline — stablecoin market structure</span
+                  >
+                  <div class="headline-list__meta-row">
+                    <span class="headline-list__source">The Block</span>
+                    <span class="headline-list__time">4h ago</span>
+                  </div>
+                </li>
+                <li>
+                  <span class="headline-list__link headline-list__link--plain headline-list__link--mock"
+                    >Example headline — ETF flows and custody</span
+                  >
+                  <div class="headline-list__meta-row">
+                    <span class="headline-list__source">Decrypt</span>
+                    <span class="headline-list__time">6h ago</span>
+                  </div>
+                </li>
+                <li>
+                  <span class="headline-list__link headline-list__link--plain headline-list__link--mock"
+                    >Example headline — network activity snapshot</span
+                  >
+                  <div class="headline-list__meta-row">
+                    <span class="headline-list__source">CoinTelegraph</span>
+                    <span class="headline-list__time">8h ago</span>
+                  </div>
+                </li>
+              </ul>
+              <div class="home-news-rail__more">
+                <a class="btn btn-secondary home-news-rail__cta" href="#" tabindex="-1"
+                  >All digital asset headlines →</a
+                >
+              </div>
+            </div>
+
+            <div class="home-news-block home-news-block--feeds">
+              <h3 class="home-news-block__heading">Focused News Feeds</h3>
+              <nav class="home-feed-links" aria-label="Focused news feeds">
+                <a class="btn btn-secondary home-feed-link home-feed-link--regulatory" href="#" tabindex="-1"
+                  >Regulatory News</a
+                >
+                <a class="btn btn-secondary home-feed-link home-feed-link--etp" href="#" tabindex="-1"
+                  >ETF / ETP News</a
+                >
+                <a class="btn btn-secondary home-feed-link home-feed-link--custody" href="#" tabindex="-1"
+                  >Custody News</a
+                >
+              </nav>
+            </div>
+          </aside>
+
+          <div class="home-markets-stack">
+            <p class="home-kpi-legend-once" id="home-kpi-legend">
+              <strong>How to read KPIs:</strong> On-chain figures use 30-day (30D) % from RWA.xyz. U.S. ETP and crypto
+              rows use ~30 calendar days unless noted on the full page.
+            </p>
+
+            <!-- RWA -->
+            <section
+              class="hub-section hub-section--panel home-zone home-zone--rwa home-reveal is-visible"
+              id="section-onchain"
+              aria-labelledby="onchain-heading"
+            >
+              <div class="home-zone__stripe" aria-hidden="true"></div>
+              <div class="home-zone__head">
+                <span class="home-zone__badge" aria-hidden="true">RWA</span>
+                <div class="home-zone__titles">
+                  <h2 class="band-label zone-label" id="onchain-heading">On-chain RWA</h2>
+                  <p class="section-dek section-dek--wide">
+                    Global overview KPIs and a networks preview from RWA.xyz.
+                  </p>
+                </div>
+              </div>
+              <div class="home-zone__body">
+                <div class="home-related-chips" aria-label="Related pages">
+                  <span class="home-related-chips__label">Related</span>
+                  <a class="home-chip" href="#" tabindex="-1">U.S. ETPs</a>
+                  <a class="home-chip" href="#" tabindex="-1">Crypto prices</a>
+                </div>
+                <div class="rwa-kpi-panel-static rwa-kpi-panel-static--compact">
+                  <div class="rwa-kpi-row rwa-kpi-row--home-grid">
+                    <div class="rwa-kpi-cell">
+                      <span class="rwa-kpi-label">Distributed value</span>
+                      <span class="rwa-kpi-val">—</span>
+                      <span class="rwa-kpi-delta neutral">—</span>
+                    </div>
+                    <div class="rwa-kpi-cell">
+                      <span class="rwa-kpi-label">Networks</span>
+                      <span class="rwa-kpi-val">—</span>
+                      <span class="rwa-kpi-delta rwa-kpi-delta--placeholder" aria-hidden="true">&nbsp;</span>
+                    </div>
+                    <div class="rwa-kpi-cell">
+                      <span class="rwa-kpi-label">Platforms</span>
+                      <span class="rwa-kpi-val">—</span>
+                      <span class="rwa-kpi-delta rwa-kpi-delta--placeholder" aria-hidden="true">&nbsp;</span>
+                    </div>
+                    <div class="rwa-kpi-cell">
+                      <span class="rwa-kpi-label">Asset managers</span>
+                      <span class="rwa-kpi-val">—</span>
+                      <span class="rwa-kpi-delta rwa-kpi-delta--placeholder" aria-hidden="true">&nbsp;</span>
+                    </div>
+                  </div>
+                </div>
+                <p class="home-table-caption">Networks preview</p>
+                <label class="search-field home-preview-search-row">
+                  <span class="search-field__label">Filter preview by network name</span>
+                  <input type="search" class="search-field__input" placeholder="Filter by network…" />
+                </label>
+                <div class="table-wrap">
+                  <table class="data-table data-table--dense" aria-label="RWA networks preview">
+                    <thead>
+                      <tr>
+                        <th data-sort="Network" class="th-sortable" scope="col">Network</th>
+                        <th class="num th-sortable" data-sort="Distributed Value" scope="col">Distributed Value</th>
+                        <th class="num th-sortable" data-sort="30D %" scope="col">30D %</th>
+                        <th scope="col">Link</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                      </tr>
+                      <tr>
+                        <td class="mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                      </tr>
+                      <tr>
+                        <td class="mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                      </tr>
+                      <tr>
+                        <td class="mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                      </tr>
+                      <tr>
+                        <td class="mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="cta-row rwa-table-actions">
+                  <a class="btn btn-primary" href="#" tabindex="-1">Open full RWA Market Overview</a>
+                  <a class="btn btn-secondary" href="#" tabindex="-1">View table full screen</a>
+                </div>
+                <nav class="home-explore-compact" aria-label="Explore RWA">
+                  <span class="home-explore-compact__label">Explore</span>
+                  <a class="home-explore-compact__btn" href="#" tabindex="-1">By asset type</a>
+                  <a class="home-explore-compact__btn" href="#" tabindex="-1">By participant</a>
+                </nav>
+              </div>
+            </section>
+
+            <!-- Stablecoins -->
+            <section
+              class="hub-section hub-section--panel home-zone home-zone--stable home-reveal is-visible"
+              id="section-stablecoins"
+              aria-labelledby="stablecoins-heading"
+            >
+              <div class="home-zone__stripe" aria-hidden="true"></div>
+              <div class="home-zone__head">
+                <span class="home-zone__badge" aria-hidden="true">SC</span>
+                <div class="home-zone__titles">
+                  <h2 class="band-label zone-label" id="stablecoins-heading">Stablecoins</h2>
+                  <p class="section-dek section-dek--wide">
+                    Market cap, holders, and network distribution from RWA.xyz.
+                  </p>
+                </div>
+              </div>
+              <div class="home-zone__body">
+                <div class="rwa-kpi-panel-static rwa-kpi-panel-static--compact">
+                  <div class="rwa-kpi-row rwa-kpi-row--home-grid">
+                    <div class="rwa-kpi-cell">
+                      <span class="rwa-kpi-label">Market cap</span>
+                      <span class="rwa-kpi-val">—</span>
+                      <span class="rwa-kpi-delta neutral">—</span>
+                    </div>
+                    <div class="rwa-kpi-cell">
+                      <span class="rwa-kpi-label">Holders</span>
+                      <span class="rwa-kpi-val">—</span>
+                      <span class="rwa-kpi-delta neutral">—</span>
+                    </div>
+                    <div class="rwa-kpi-cell">
+                      <span class="rwa-kpi-label">Active addresses</span>
+                      <span class="rwa-kpi-val">—</span>
+                      <span class="rwa-kpi-delta neutral">—</span>
+                    </div>
+                  </div>
+                </div>
+                <p class="home-table-caption">Networks preview</p>
+                <label class="search-field home-preview-search-row">
+                  <span class="search-field__label">Filter preview by network name</span>
+                  <input type="search" class="search-field__input" placeholder="Filter by network…" />
+                </label>
+                <div class="table-wrap">
+                  <table class="data-table data-table--dense" aria-label="Stablecoins networks preview">
+                    <thead>
+                      <tr>
+                        <th class="th-sortable" scope="col">Network</th>
+                        <th class="num th-sortable" scope="col">Market cap</th>
+                        <th class="num th-sortable" scope="col">30D %</th>
+                        <th scope="col">Link</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                      </tr>
+                      <tr>
+                        <td class="mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                      </tr>
+                      <tr>
+                        <td class="mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                      </tr>
+                      <tr>
+                        <td class="mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                      </tr>
+                      <tr>
+                        <td class="mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="cta-row rwa-table-actions">
+                  <a class="btn btn-primary" href="#" tabindex="-1">Open full Stablecoins page</a>
+                  <a class="btn btn-secondary" href="#" tabindex="-1">View table full screen</a>
+                </div>
+              </div>
+            </section>
+
+            <!-- TMMF -->
+            <section
+              class="hub-section hub-section--panel home-zone home-zone--tmmf home-reveal is-visible"
+              id="section-tmmf"
+              aria-labelledby="tmmf-heading"
+            >
+              <div class="home-zone__stripe" aria-hidden="true"></div>
+              <div class="home-zone__head">
+                <span class="home-zone__badge" aria-hidden="true">MMF</span>
+                <div class="home-zone__titles">
+                  <h2 class="band-label zone-label" id="tmmf-heading">Tokenized Money Market Funds</h2>
+                  <p class="section-dek section-dek--wide">
+                    Curated on-chain fund list — KPIs and searchable preview.
+                  </p>
+                </div>
+              </div>
+              <div class="home-zone__body">
+                <div class="rwa-kpi-panel-static rwa-kpi-panel-static--compact">
+                  <div class="rwa-kpi-row rwa-kpi-row--home-grid">
+                    <div class="rwa-kpi-cell">
+                      <span class="rwa-kpi-label">Distributed value</span>
+                      <span class="rwa-kpi-val">—</span>
+                      <span class="rwa-kpi-delta neutral">—</span>
+                    </div>
+                    <div class="rwa-kpi-cell">
+                      <span class="rwa-kpi-label">Funds</span>
+                      <span class="rwa-kpi-val">—</span>
+                      <span class="rwa-kpi-delta rwa-kpi-delta--placeholder" aria-hidden="true">&nbsp;</span>
+                    </div>
+                    <div class="rwa-kpi-cell">
+                      <span class="rwa-kpi-label">30D net flows</span>
+                      <span class="rwa-kpi-val">—</span>
+                      <span class="rwa-kpi-delta neutral">—</span>
+                    </div>
+                  </div>
+                </div>
+                <p class="home-table-caption">Funds preview</p>
+                <label class="search-field home-preview-search-row">
+                  <span class="search-field__label">Filter preview by fund name</span>
+                  <input type="search" class="search-field__input" placeholder="Filter by fund…" />
+                </label>
+                <div class="table-wrap">
+                  <table class="data-table data-table--dense" aria-label="TMMF funds preview">
+                    <thead>
+                      <tr>
+                        <th class="th-sortable" scope="col">Fund</th>
+                        <th class="th-sortable" scope="col">Platform</th>
+                        <th class="num th-sortable" scope="col">Distributed Value</th>
+                        <th class="num th-sortable" scope="col">30D %</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                      </tr>
+                      <tr>
+                        <td class="mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                      </tr>
+                      <tr>
+                        <td class="mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                      </tr>
+                      <tr>
+                        <td class="mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                      </tr>
+                      <tr>
+                        <td class="mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="cta-row rwa-table-actions">
+                  <a class="btn btn-primary" href="#" tabindex="-1">Open full TMMF page</a>
+                  <a class="btn btn-secondary" href="#" tabindex="-1">View table full screen</a>
+                </div>
+              </div>
+            </section>
+
+            <!-- ETP -->
+            <section
+              class="hub-section hub-section--panel home-zone home-zone--etp home-reveal is-visible"
+              id="section-markets"
+              aria-labelledby="markets-heading"
+            >
+              <div class="home-zone__stripe" aria-hidden="true"></div>
+              <div class="home-zone__head">
+                <span class="home-zone__badge" aria-hidden="true">ETP</span>
+                <div class="home-zone__titles">
+                  <h2 class="band-label zone-label" id="markets-heading">U.S. ETP Market</h2>
+                  <p class="section-dek section-dek--wide">
+                    U.S.-listed digital-asset ETP snapshot with fund preview.
+                  </p>
+                </div>
+              </div>
+              <div class="home-zone__body">
+                <div class="rwa-kpi-panel-static rwa-kpi-panel-static--compact">
+                  <div class="rwa-kpi-row rwa-kpi-row--home-grid">
+                    <div class="rwa-kpi-cell">
+                      <span class="rwa-kpi-label">Total AUM (listed)</span>
+                      <span class="rwa-kpi-val">—</span>
+                      <span class="rwa-kpi-delta neutral">—</span>
+                    </div>
+                    <div class="rwa-kpi-cell">
+                      <span class="rwa-kpi-label">BTC &amp; ETH Fund flows (listed)</span>
+                      <span class="rwa-kpi-val">—</span>
+                      <span class="rwa-kpi-delta neutral">—</span>
+                    </div>
+                    <div class="rwa-kpi-cell">
+                      <span class="rwa-kpi-label">IBIT · AUM</span>
+                      <span class="rwa-kpi-val">—</span>
+                      <span class="rwa-kpi-delta neutral">—</span>
+                    </div>
+                    <div class="rwa-kpi-cell">
+                      <span class="rwa-kpi-label">ETHA · AUM</span>
+                      <span class="rwa-kpi-val">—</span>
+                      <span class="rwa-kpi-delta neutral">—</span>
+                    </div>
+                  </div>
+                </div>
+                <p class="home-table-caption">Funds preview</p>
+                <label class="search-field home-preview-search-row">
+                  <span class="search-field__label">Filter preview by fund name or ticker</span>
+                  <input type="search" class="search-field__input" placeholder="Filter by name or ticker…" />
+                </label>
+                <div class="table-wrap">
+                  <table class="data-table data-table--dense" aria-label="U.S. ETP fund preview">
+                    <thead>
+                      <tr>
+                        <th data-sort="symbol" class="th-sortable" scope="col">Symbol</th>
+                        <th data-sort="name" class="th-sortable" scope="col">Fund Name</th>
+                        <th class="num th-sortable" data-sort="price" scope="col">Price</th>
+                        <th class="num th-sortable" data-sort="pct_52w" scope="col">1Y %</th>
+                        <th class="num th-sortable" data-sort="assets_usd" scope="col">Assets (B)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                      </tr>
+                      <tr>
+                        <td class="mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                      </tr>
+                      <tr>
+                        <td class="mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                      </tr>
+                      <tr>
+                        <td class="mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                      </tr>
+                      <tr>
+                        <td class="mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="cta-row rwa-table-actions">
+                  <a class="btn btn-primary" href="#" tabindex="-1">Open full U.S. ETP page</a>
+                  <a class="btn btn-secondary" href="#" tabindex="-1">View table full screen</a>
+                </div>
+              </div>
+            </section>
+
+            <!-- Crypto -->
+            <section
+              class="hub-section hub-section--panel home-zone home-zone--crypto home-reveal is-visible"
+              id="section-crypto"
+              aria-labelledby="crypto-heading"
+            >
+              <div class="home-zone__stripe" aria-hidden="true"></div>
+              <div class="home-zone__head">
+                <span class="home-zone__badge" aria-hidden="true">CRY</span>
+                <div class="home-zone__titles">
+                  <h2 class="band-label zone-label" id="crypto-heading">Crypto Prices</h2>
+                  <p class="section-dek section-dek--wide">
+                    Top-line crypto market snapshot and top-50 price preview.
+                  </p>
+                </div>
+              </div>
+              <div class="home-zone__body">
+                <div class="rwa-kpi-panel-static rwa-kpi-panel-static--compact">
+                  <div class="rwa-kpi-row rwa-kpi-row--home-grid">
+                    <div class="rwa-kpi-cell">
+                      <span class="rwa-kpi-label">Total market cap</span>
+                      <span class="rwa-kpi-val">—</span>
+                      <span class="rwa-kpi-delta neutral">—</span>
+                    </div>
+                    <div class="rwa-kpi-cell">
+                      <span class="rwa-kpi-label">BTC dominance</span>
+                      <span class="rwa-kpi-val">—</span>
+                      <span class="rwa-kpi-delta neutral">—</span>
+                    </div>
+                    <div class="rwa-kpi-cell">
+                      <span class="rwa-kpi-label">Stablecoin share</span>
+                      <span class="rwa-kpi-val">—</span>
+                      <span class="rwa-kpi-delta neutral">—</span>
+                    </div>
+                  </div>
+                </div>
+                <p class="home-table-caption">Top coins preview</p>
+                <label class="search-field home-preview-search-row">
+                  <span class="search-field__label">Filter preview by coin name or ticker</span>
+                  <input type="search" class="search-field__input" placeholder="Filter by name or ticker…" />
+                </label>
+                <div class="table-wrap table-wrap--no-clip">
+                  <table class="data-table data-table--dense" aria-label="Crypto prices preview">
+                    <thead>
+                      <tr>
+                        <th scope="col">Rank</th>
+                        <th scope="col">Ticker</th>
+                        <th scope="col">Coin</th>
+                        <th scope="col">Category</th>
+                        <th class="num" scope="col">Price</th>
+                        <th class="num" scope="col">1M %</th>
+                        <th class="num" scope="col">Market Cap</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                      </tr>
+                      <tr>
+                        <td class="mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                      </tr>
+                      <tr>
+                        <td class="mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                      </tr>
+                      <tr>
+                        <td class="mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                      </tr>
+                      <tr>
+                        <td class="mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                        <td class="mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                        <td class="num mock-empty">—</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="cta-row rwa-table-actions">
+                  <a class="btn btn-primary" href="#" tabindex="-1">Open full Crypto Prices page</a>
+                  <a class="btn btn-secondary" href="#" tabindex="-1">View table full screen</a>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      Digital Assets Dashboard · Home mock (formatting pass) · <time datetime="2026-05">May 2026</time>
+    </footer>
+    <script defer src="../js/site-experience.js?v=1"></script>
+  </body>
+</html>
