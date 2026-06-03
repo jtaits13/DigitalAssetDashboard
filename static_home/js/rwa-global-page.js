@@ -376,11 +376,11 @@
 
     var exploreHost = $("js-rwa-global-explore");
     if (exploreHost) {
-      var exploreHtml = data.explore_gateways_html || "";
-      exploreHtml = exploreHtml
-        .replace(/<li>\s*Stablecoins\s*<\/li>\s*/gi, "")
-        .replace(/<li>\s*Tokenized Money Market Funds\s*<\/li>\s*/gi, "");
-      exploreHost.innerHTML = exploreHtml;
+      if (H.exploreCompactHtml) {
+        exploreHost.innerHTML = H.exploreCompactHtml(data.links || {});
+      } else {
+        exploreHost.innerHTML = data.explore_gateways_html || "";
+      }
       if (typeof global.finalizeHubAnchors === "function") {
         global.finalizeHubAnchors(exploreHost);
       }

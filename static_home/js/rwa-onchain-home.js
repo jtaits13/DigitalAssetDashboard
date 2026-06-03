@@ -576,6 +576,23 @@
     wireRwaTableSortDelegate(theadRow, tbody);
   }
 
+  function exploreCompactHtml(links) {
+    var L = links || {};
+    var at = L.explore_asset_type || "rwa-explore-asset-type.html";
+    var mp = L.explore_market_participant || "rwa-explore-market-participant.html";
+    return (
+      '<nav class="home-explore-compact" aria-label="Explore RWA">' +
+      '<span class="home-explore-compact__label">Explore</span>' +
+      '<a class="home-explore-compact__btn" href="' +
+      esc(at) +
+      '">By asset type</a>' +
+      '<a class="home-explore-compact__btn" href="' +
+      esc(mp) +
+      '">By participant</a>' +
+      "</nav>"
+    );
+  }
+
   function exploreSplitHtml(links) {
     var L = links || {};
     var at = L.explore_asset_type || "rwa-explore-asset-type.html";
@@ -723,5 +740,6 @@
     renderKpis: renderKpis,
     renderTable: renderTable,
     attachHomePreviewFullscreen: attachHomePreviewFullscreen,
+    exploreCompactHtml: exploreCompactHtml,
   });
 })(typeof window !== "undefined" ? window : this);

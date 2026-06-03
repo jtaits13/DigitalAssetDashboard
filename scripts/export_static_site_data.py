@@ -231,30 +231,15 @@ def _webapp_href(path: str) -> str:
 
 
 def _rwa_explore_gateways_static_html(at_href: str, mp_href: str) -> str:
-    """Two Explore cards for static pages (classes align with ``static_home/styles.css``)."""
+    """Compact Explore nav for static pages (matches home ``home-explore-compact``)."""
     ae = html_escape(at_href, quote=True)
     pe = html_escape(mp_href, quote=True)
     return (
-        '<section class="rwa-explore-row" aria-label="Explore gateways">'
-        '<div class="rwa-explore-card">'
-        '<p class="eyebrow">On-chain</p>'
-        '<h3>Explore by Asset Type</h3>'
-        '<ul class="rwa-explore-list">'
-        "<li>US Treasuries</li><li>Tokenized Stocks</li>"
-        "</ul>"
-        '<p class="rwa-explore-tail">Use <strong>Explore</strong> to open the hub and go deeper on the next pages.</p>'
-        f'<a class="btn btn-primary" href="{ae}">Explore</a>'
-        "</div>"
-        '<div class="rwa-explore-card">'
-        '<p class="eyebrow">On-chain</p>'
-        '<h3>Explore by Market Participant</h3>'
-        '<ul class="rwa-explore-list">'
-        "<li>Networks</li><li>Platforms</li><li>Asset Managers</li>"
-        "</ul>"
-        '<p class="rwa-explore-tail">Use <strong>Explore</strong> to open the hub and go deeper on the next pages.</p>'
-        f'<a class="btn btn-primary" href="{pe}">Explore</a>'
-        "</div>"
-        "</section>"
+        '<nav class="home-explore-compact" aria-label="Explore RWA">'
+        '<span class="home-explore-compact__label">Explore</span>'
+        f'<a class="home-explore-compact__btn" href="{ae}">By asset type</a>'
+        f'<a class="home-explore-compact__btn" href="{pe}">By participant</a>'
+        "</nav>"
     )
 
 
