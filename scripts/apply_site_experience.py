@@ -200,9 +200,9 @@ INNER_PAGE_CSS = """
 
 .site-experience.page-crypto .rwa-kpi-row--home-grid .rwa-kpi-cell,
 .site-experience.page-home .home-zone--crypto .rwa-kpi-row--home-grid .rwa-kpi-cell {
-  border: 1px solid rgba(61, 106, 158, 0.14);
-  border-left: 3px solid rgba(61, 106, 158, 0.42);
-  background: linear-gradient(145deg, rgba(238, 243, 250, 0.92) 0%, rgba(255, 255, 255, 0.88) 68%);
+  border: 1px solid rgb(var(--hx-crypto-bright-rgb) / 0.14);
+  border-left: 3px solid rgb(var(--hx-crypto-bright-rgb) / 0.42);
+  background: linear-gradient(145deg, rgb(var(--hx-crypto-rgb) / 0.08) 0%, rgba(255, 255, 255, 0.88) 68%);
 }
 
 .site-experience[class*="page-rwa"] .rwa-kpi-row--home-grid .rwa-kpi-cell:hover,
@@ -221,9 +221,9 @@ INNER_PAGE_CSS = """
 
 .site-experience.page-crypto .rwa-kpi-row--home-grid .rwa-kpi-cell:hover,
 .site-experience.page-home .home-zone--crypto .rwa-kpi-row--home-grid .rwa-kpi-cell:hover {
-  border-color: rgba(61, 106, 158, 0.22);
-  box-shadow: 0 4px 12px rgba(61, 106, 158, 0.1);
-  background: linear-gradient(145deg, rgba(238, 243, 250, 0.98) 0%, rgba(255, 255, 255, 0.92) 68%);
+  border-color: rgb(var(--hx-crypto-bright-rgb) / 0.22);
+  box-shadow: 0 4px 12px rgb(var(--hx-crypto-bright-rgb) / 0.1);
+  background: linear-gradient(145deg, rgb(var(--hx-crypto-rgb) / 0.1) 0%, rgba(255, 255, 255, 0.92) 68%);
 }
 
 .site-experience[class*="page-rwa"] .table-wrap:not(.table-wrap--no-clip),
@@ -244,7 +244,7 @@ INNER_PAGE_CSS = """
 .site-experience.page-home .home-zone--crypto .table-wrap:not(.table-wrap--no-clip) {
   border-radius: 10px;
   overflow: hidden;
-  border: 1px solid rgba(61, 106, 158, 0.14);
+  border: 1px solid rgb(var(--hx-crypto-bright-rgb) / 0.14);
 }
 
 .site-experience .data-table tbody tr {
@@ -311,7 +311,7 @@ INNER_PAGE_CSS = """
 
 .site-experience.page-crypto .search-field__input:focus {
   border-color: var(--hx-crypto-bright);
-  box-shadow: 0 0 0 3px rgba(61, 106, 158, 0.12);
+  box-shadow: 0 0 0 3px rgb(var(--hx-crypto-bright-rgb) / 0.12);
 }
 
 .site-experience .back-link a:focus-visible,
