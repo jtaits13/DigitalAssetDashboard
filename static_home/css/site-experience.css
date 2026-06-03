@@ -1929,6 +1929,40 @@
   padding: 0.42rem 0.7rem;
 }
 
+.site-experience.page-home .home-zone__body > .source-cap {
+  margin: 0.55rem 0 0;
+}
+
+.site-experience.page-home .home-zone--etp .data-table thead th {
+  background: linear-gradient(180deg, var(--hx-etp-soft) 0%, rgb(var(--hx-etp-rgb) / 0.04) 100%);
+  color: var(--hx-etp);
+  border-bottom-color: rgb(var(--hx-etp-bright-rgb) / 0.22);
+}
+
+.site-experience.page-home .home-zone--rwa .data-table thead th {
+  background: linear-gradient(180deg, var(--hx-rwa-soft) 0%, rgb(var(--hx-rwa-rgb) / 0.04) 100%);
+  color: var(--hx-rwa);
+  border-bottom-color: rgb(var(--hx-rwa-bright-rgb) / 0.22);
+}
+
+.site-experience.page-home .home-zone--stable .data-table thead th {
+  background: linear-gradient(180deg, var(--hx-stable-soft) 0%, rgb(45 95 127 / 0.04) 100%);
+  color: var(--hx-stable);
+  border-bottom-color: rgb(61 120 160 / 0.22);
+}
+
+.site-experience.page-home .home-zone--tmmf .data-table thead th {
+  background: linear-gradient(180deg, var(--hx-tmmf-soft) 0%, rgb(62 92 116 / 0.04) 100%);
+  color: var(--hx-tmmf);
+  border-bottom-color: rgb(80 113 136 / 0.22);
+}
+
+.site-experience.page-home .home-zone--crypto .data-table thead th {
+  background: linear-gradient(180deg, var(--hx-crypto-soft) 0%, rgb(var(--hx-crypto-rgb) / 0.04) 100%);
+  color: var(--hx-crypto);
+  border-bottom-color: rgb(var(--hx-crypto-bright-rgb) / 0.22);
+}
+
 /* —— Inner pages polish (non-home) —— */
 
 .site-experience:not(.page-home) .section-dek--wide,
@@ -2057,6 +2091,24 @@
 .site-experience[class*="page-rwa"] .rwa-market-overview-title,
 .site-experience[class*="page-rwa"] .jd-hub-explore-eyebrow {
   color: var(--hx-rwa-bright);
+}
+
+.site-experience[class*="page-rwa"] .data-table thead th {
+  background: linear-gradient(180deg, var(--hx-rwa-soft) 0%, rgb(var(--hx-rwa-rgb) / 0.04) 100%);
+  color: var(--hx-rwa);
+  border-bottom-color: rgb(var(--hx-rwa-bright-rgb) / 0.22);
+}
+
+.site-experience.page-rwa-deep-stablecoins .data-table thead th {
+  background: linear-gradient(180deg, var(--hx-stable-soft) 0%, rgb(45 95 127 / 0.04) 100%);
+  color: var(--hx-stable);
+  border-bottom-color: rgb(61 120 160 / 0.22);
+}
+
+.site-experience.page-rwa-deep-mmf .data-table thead th {
+  background: linear-gradient(180deg, var(--hx-tmmf-soft) 0%, rgb(62 92 116 / 0.04) 100%);
+  color: var(--hx-tmmf);
+  border-bottom-color: rgb(80 113 136 / 0.22);
 }
 
 .site-experience.page-article-feed .headline-list__link:hover {

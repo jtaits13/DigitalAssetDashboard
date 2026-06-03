@@ -85,6 +85,9 @@
   }
 
   function init() {
+    if (typeof applyReferrerBackLinks === "function") {
+      applyReferrerBackLinks(document);
+    }
     if (searchEl) {
       searchEl.addEventListener("input", applyFilter);
     }

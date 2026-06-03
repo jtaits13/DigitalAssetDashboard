@@ -376,7 +376,11 @@
 
     var exploreHost = $("js-rwa-global-explore");
     if (exploreHost) {
-      exploreHost.innerHTML = data.explore_gateways_html || "";
+      var exploreHtml = data.explore_gateways_html || "";
+      exploreHtml = exploreHtml
+        .replace(/<li>\s*Stablecoins\s*<\/li>\s*/gi, "")
+        .replace(/<li>\s*Tokenized Money Market Funds\s*<\/li>\s*/gi, "");
+      exploreHost.innerHTML = exploreHtml;
       if (typeof global.finalizeHubAnchors === "function") {
         global.finalizeHubAnchors(exploreHost);
       }

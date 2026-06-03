@@ -66,7 +66,13 @@
     if (!root) return;
     root.innerHTML = "";
 
-    (data.sections || []).forEach(function (sec) {
+    var EXPLORE_ASSET_SECTION_SKIP = { stablecoins: true, tokenized_mmf: true };
+
+    (data.sections || [])
+      .filter(function (sec) {
+        return !EXPLORE_ASSET_SECTION_SKIP[sec.id];
+      })
+      .forEach(function (sec) {
       var section = document.createElement("section");
       section.className = "hub-section hub-section--panel inner-rich-block rwa-exat-section";
       if (sec.anchor_id) section.id = sec.anchor_id;

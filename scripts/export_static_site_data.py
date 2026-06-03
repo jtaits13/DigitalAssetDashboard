@@ -100,6 +100,8 @@ STATIC_RWA_STABLECOINS_PAGE = "rwa-stablecoins.html"
 STATIC_RWA_US_TREASURIES_PAGE = "rwa-us-treasuries.html"
 STATIC_RWA_TOKENIZED_STOCKS_PAGE = "rwa-tokenized-stocks.html"
 STATIC_RWA_TOKENIZED_MMF_PAGE = "rwa-tokenized-mmf.html"
+STATIC_HOME_STABLECOINS_SECTION = "index.html#section-stablecoins"
+STATIC_HOME_TMMF_SECTION = "index.html#section-tmmf"
 APP_RWA_NETWORKS_URL = "https://app.rwa.xyz/networks"
 COINPAPRIKA_GLOBAL_URL = "https://api.coinpaprika.com/v1/global"
 COINPAPRIKA_MARKET_OVERVIEW_TOTAL_30D_URL = "https://coinpaprika.com/market-overview/data/total/30d/"
@@ -238,8 +240,7 @@ def _rwa_explore_gateways_static_html(at_href: str, mp_href: str) -> str:
         '<p class="eyebrow">On-chain</p>'
         '<h3>Explore by Asset Type</h3>'
         '<ul class="rwa-explore-list">'
-        "<li>Stablecoins</li><li>US Treasuries</li><li>Tokenized Stocks</li>"
-        "<li>Tokenized Money Market Funds</li>"
+        "<li>US Treasuries</li><li>Tokenized Stocks</li>"
         "</ul>"
         '<p class="rwa-explore-tail">Use <strong>Explore</strong> to open the hub and go deeper on the next pages.</p>'
         f'<a class="btn btn-primary" href="{ae}">Explore</a>'
@@ -497,7 +498,7 @@ def _build_rwa_stablecoins_deep_payload(
             "kpi_window_note": _kpi_legend_for_asset("Stablecoins"),
             "kpis": [_rwa_kpi_to_dict(k) for k in kpis],
             "chart_max_bars": RWA_STABLECOINS_CHART_MAX_BARS,
-            "back_href": STATIC_RWA_EXPLORE_ASSET_TYPE_PAGE,
+            "back_href": STATIC_HOME_STABLECOINS_SECTION,
             "footer_note": _static_rwa_footer_text(),
             "bottom_cta": {"href": APP_STABLECOINS, "label": STABLECOINS_RWA_LINK_LABEL},
         }
@@ -838,7 +839,7 @@ def _build_rwa_tokenized_mmf_deep_payload(
             "kpi_window_note": _kpi_legend_for_mmf(),
             "kpis": [_rwa_kpi_to_dict(k) for k in kpis],
             "chart_max_bars": RWA_MMF_CHART_MAX_BARS,
-            "back_href": STATIC_RWA_EXPLORE_ASSET_TYPE_PAGE,
+            "back_href": STATIC_HOME_TMMF_SECTION,
             "footer_note": _static_rwa_footer_text(),
             "bottom_cta": {"href": APP_TREASURIES, "label": MMF_RWA_LINK_LABEL},
         }
@@ -1296,10 +1297,12 @@ def _build_rwa_explore_asset_type_payload(
 
     intro_html = (
         "<p><strong>On-chain RWA</strong> by asset—short previews for "
-        "<strong>Stablecoins</strong>, <strong>US Treasuries</strong>, <strong>Tokenized Stocks</strong>, "
-        "and <strong>Tokenized Money Market Funds</strong> "
-        "(<strong>RWA.xyz</strong>). Use <strong>Open full overview</strong> for search, charts, and full league views.</p>"
+        "<strong>US Treasuries</strong> and <strong>Tokenized Stocks</strong> "
+        "(<strong>RWA.xyz</strong>). Stablecoins and tokenized money market funds are on the "
+        "<strong>home dashboard</strong>. Use <strong>Open full overview</strong> for search, charts, and full league views.</p>"
     )
+
+    sections = [s for s in sections if s.get("id") not in ("stablecoins", "tokenized_mmf")]
 
     return {
         "page_title": "Explore by Asset Type — Digital Assets Dashboard",

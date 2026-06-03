@@ -580,9 +580,9 @@
 }
 
 .site-experience.page-inner--rich .inner-rich-zone.zone--rwa .data-table thead th {
-  background: linear-gradient(180deg, rgb(var(--hx-accent-rgb) / 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
-  color: var(--hx-rwa);
-  border-bottom-color: rgb(var(--hx-accent-bright-rgb) / 0.16);
+  background: linear-gradient(180deg, var(--hx-accent-soft) 0%, rgb(var(--hx-accent-rgb) / 0.04) 100%);
+  color: var(--hx-accent);
+  border-bottom-color: rgb(var(--hx-accent-bright-rgb) / 0.22);
 }
 
 .site-experience.page-inner--rich .inner-rich-zone.zone--crypto .data-table thead th {
@@ -1248,8 +1248,7 @@
 .site-experience.page-inner--rich .inner-rich-zone.zone--rwa .rwa-kpi-row--home-grid .rwa-kpi-val,
 .site-experience.page-inner--rich .inner-rich-zone.zone--rwa .table-download-btn,
 .site-experience.page-inner--rich .inner-rich-zone.zone--rwa .th-sortable:hover,
-.site-experience.page-inner--rich .inner-rich-zone.zone--rwa .data-table thead th.th-sortable.is-sorted,
-.site-experience.page-inner--rich .inner-rich-zone.zone--rwa .data-table thead th {
+.site-experience.page-inner--rich .inner-rich-zone.zone--rwa .data-table thead th.th-sortable.is-sorted {
   color: var(--hx-accent);
 }
 

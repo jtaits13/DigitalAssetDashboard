@@ -604,7 +604,7 @@
     };
     return (
       '<div class="onchain-explore-split">' +
-      card("Explore by Asset Type", ["Stablecoins", "US Treasuries", "Tokenized Stocks", "Tokenized MMFs"], at) +
+      card("Explore by Asset Type", ["US Treasuries", "Tokenized Stocks"], at) +
       card("Explore by Market Participant", ["Networks", "Platforms", "Asset Managers"], mp) +
       "</div>"
     );

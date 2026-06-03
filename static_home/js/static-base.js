@@ -92,6 +92,66 @@
   }
 
   global.finalizeHubAnchors = finalizeHubAnchors;
+
+  function pageNameFromPathname(pathname) {
+    var p = pathname != null ? String(pathname) : "";
+    while (p.length > 1 && p.endsWith("/")) {
+      p = p.slice(0, -1);
+    }
+    var ix = p.lastIndexOf("/");
+    return (ix >= 0 ? p.slice(ix + 1) : p).toLowerCase();
+  }
+
+  function resolveSameSiteReferrerBack(options) {
+    options = options || {};
+    var fallback = options.fallback || {
+      href: "etps.html",
+      label: "← Back to U.S. ETP Overview",
+    };
+    var home = options.home || { href: "index.html", label: "← Back to home" };
+    var etps = options.etps || {
+      href: "etps.html",
+      label: "← Back to U.S. ETP Overview",
+    };
+    var ref = typeof document !== "undefined" ? document.referrer : "";
+    if (!ref) return fallback;
+    try {
+      var refUrl = new URL(ref, window.location.href);
+      var here = new URL(window.location.href);
+      if (refUrl.origin !== here.origin) return fallback;
+      var name = pageNameFromPathname(refUrl.pathname);
+      if (!name || name === "index.html") {
+        return {
+          href: home.href + (refUrl.hash || ""),
+          label: home.label,
+        };
+      }
+      if (name === "etps.html") return etps;
+    } catch (e) {
+      /* ignore malformed referrer */
+    }
+    return fallback;
+  }
+
+  function applyReferrerBackLinks(scope, options) {
+    var target = resolveSameSiteReferrerBack(options);
+    var root = scope && typeof scope.querySelectorAll === "function" ? scope : document;
+    var fn =
+      global.__STATIC && typeof global.__STATIC.assetUrl === "function"
+        ? global.__STATIC.assetUrl
+        : null;
+    var hashIx = target.href.indexOf("#");
+    var pathPart = hashIx >= 0 ? target.href.slice(0, hashIx) : target.href;
+    var hashPart = hashIx >= 0 ? target.href.slice(hashIx) : "";
+    var href = (fn ? fn(pathPart) : pathPart) + hashPart;
+    root.querySelectorAll("a[data-referrer-back]").forEach(function (a) {
+      a.setAttribute("href", href);
+      a.textContent = target.label;
+    });
+  }
+
+  global.resolveSameSiteReferrerBack = resolveSameSiteReferrerBack;
+  global.applyReferrerBackLinks = applyReferrerBackLinks;
   function fixStaticHubHtmlAnchors() {
     if (typeof document === "undefined") return;
     var run = function () {
