@@ -266,7 +266,7 @@
     var kpis = $("js-deep-kpis");
     if (snap && kpis) {
       snap.hidden = false;
-      renderKpis(kpis, payload.kpis || [], payload.kpi_window_note || "", { hideIfEmpty: true });
+      renderKpis(kpis, payload.kpis || [], "", { hideIfEmpty: true });
     }
 
     var ko = $("js-deep-ko");

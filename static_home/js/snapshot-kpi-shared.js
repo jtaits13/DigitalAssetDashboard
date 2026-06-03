@@ -2,17 +2,6 @@
  * Top-line snapshot KPI panel (same framing as RWA overview: panel + legend + grid).
  */
 (function (global) {
-  var CRYPTO_KPI_LEGEND_DEFAULT =
-    "All % changes in this row are approximately one-month (~30 calendar days). " +
-    "Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).";
-
-  var ETP_KPI_LEGEND_DEFAULT =
-    "All % changes in this row are typically one-month (~30 calendar days); " +
-    "IBIT and ETHA may use one-year figures when one-month Yahoo data is unavailable. " +
-    "Aggregate AUM % uses estimated weekly series. " +
-    "Fund-flow % compares 30-day Farside spot BTC/ETH ETF totals vs the prior 30 days. " +
-    "Dollar totals from StockAnalysis.";
-
   function esc(s) {
     if (typeof global.escapeHtml === "function") return global.escapeHtml(s);
     if (s == null) return "";
@@ -70,7 +59,6 @@
 
   function renderCryptoSnapshot(host, payload) {
     payload = payload || {};
-    var legend = payload.kpi_window_note || CRYPTO_KPI_LEGEND_DEFAULT;
     var pct = fmtSnapshotPctDelta;
     var parts = [payload.primary, payload.btc_dominance, payload.stablecoin_share];
     var cells = parts
@@ -88,12 +76,11 @@
         '<div class="rwa-kpi-panel-static"><div class="kpi-cell"><span class="kpi-label">Loading…</span></div></div>';
       return;
     }
-    renderSnapshotPanel(host, legend, cells);
+    renderSnapshotPanel(host, "", cells);
   }
 
   function renderEtpSnapshot(host, k) {
     if (!host || !k) return;
-    var legend = k.kpi_window_note || ETP_KPI_LEGEND_DEFAULT;
     var pct = fmtSnapshotPctDelta;
     var cells =
       snapshotCell("Total AUM (listed)", k.total_aum_display, pct(k.aggregate_pct)) +
@@ -116,7 +103,7 @@
           ? pct(k.etha.delta.pct)
           : '<span class="rwa-kpi-delta neutral">—</span>'
       );
-    renderSnapshotPanel(host, legend, cells);
+    renderSnapshotPanel(host, "", cells);
   }
 
   global.__SNAPSHOT_KPI = {

@@ -344,7 +344,7 @@
     if (errNoRows) {
       hide(snapshot, false);
       hide(detailStack, true);
-      renderKpis($("js-rwa-global-kpis"), data.kpis || [], data.kpi_window_note || "");
+      renderKpis($("js-rwa-global-kpis"), data.kpis || [], "");
       hide(errCta, false);
       renderPrimaryCta(errCta, data);
       return;
@@ -361,7 +361,7 @@
     hide(snapshot, false);
     hide(detailStack, false);
 
-    renderKpis($("js-rwa-global-kpis"), data.kpis || [], data.kpi_window_note || "");
+    renderKpis($("js-rwa-global-kpis"), data.kpis || [], "");
 
     var macroHost = $("js-rwa-global-macro");
     if (macroHost) {

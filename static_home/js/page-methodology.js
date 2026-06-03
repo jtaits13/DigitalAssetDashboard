@@ -193,7 +193,13 @@
     var anchor = document.querySelector(cfg.before);
     if (!anchor || !cfg.bullets) return;
     var el = buildElement(cfg.bullets);
-    if (el) anchor.parentNode.insertBefore(el, anchor);
+    if (el) {
+      if (anchor.nextSibling) {
+        anchor.parentNode.insertBefore(el, anchor.nextSibling);
+      } else {
+        anchor.parentNode.appendChild(el);
+      }
+    }
   }
 
   function exploreBullets(page, sectionId) {

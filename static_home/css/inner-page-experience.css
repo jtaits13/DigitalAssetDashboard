@@ -1199,6 +1199,23 @@
   margin-bottom: 0.65rem;
 }
 
+/* KPI tiles first (like home); definitions in collapsible panel below */
+.site-experience.page-inner--rich .jd-kpi-window-note {
+  display: none;
+}
+
+.site-experience.page-inner--rich .methodology-panel {
+  margin: 0.4rem 0 0.85rem;
+}
+
+.site-experience.page-inner--rich .rwa-exat-kpi-host + .methodology-panel,
+.site-experience.page-inner--rich #js-crypto-kpi + .methodology-panel,
+.site-experience.page-inner--rich #js-etp-kpi + .methodology-panel,
+.site-experience.page-inner--rich #js-rwa-global-kpis + .methodology-panel,
+.site-experience.page-inner--rich #js-deep-kpis + .methodology-panel {
+  margin-top: 0.45rem;
+}
+
 .site-experience.page-inner--rich .inner-rich-zone__body .rwa-caption-html,
 .site-experience.page-inner--rich .inner-rich-zone__body .rwa-deep-caption {
   margin-top: 0.5rem;

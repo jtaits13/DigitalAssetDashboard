@@ -693,7 +693,7 @@
     renderKpis(
       kpiHost,
       data.kpis || [],
-      isHome ? "" : data.kpi_window_note || ""
+      ""
     );
 
     renderTable(theadRow, tbody, data.columns || [], data.rows || [], {

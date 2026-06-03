@@ -82,18 +82,6 @@
       h2.textContent = sec.title || "Section";
       section.appendChild(h2);
 
-      var meth = global.__PAGE_METHODOLOGY;
-      var explorePage = document.body.classList.contains("page-rwa-explore-mp")
-        ? "participant"
-        : "asset";
-      if (meth && typeof meth.exploreBullets === "function" && sec.id) {
-        var bullets = meth.exploreBullets(explorePage, sec.id);
-        if (bullets && typeof meth.buildElement === "function") {
-          var panel = meth.buildElement(bullets);
-          if (panel) section.appendChild(panel);
-        }
-      }
-
       var kpiHost = document.createElement("div");
       kpiHost.className = "rwa-exat-kpi-host";
       section.appendChild(kpiHost);
@@ -105,7 +93,19 @@
           kpiOpts.dropStablecoinHolders = true;
         }
       }
-      renderKpis(kpiHost, sec.kpis || [], sec.kpi_window_note || "", kpiOpts);
+      renderKpis(kpiHost, sec.kpis || [], "", kpiOpts);
+
+      var meth = global.__PAGE_METHODOLOGY;
+      var explorePage = document.body.classList.contains("page-rwa-explore-mp")
+        ? "participant"
+        : "asset";
+      if (meth && typeof meth.exploreBullets === "function" && sec.id) {
+        var bullets = meth.exploreBullets(explorePage, sec.id);
+        if (bullets && typeof meth.buildElement === "function") {
+          var panel = meth.buildElement(bullets);
+          if (panel) section.appendChild(panel);
+        }
+      }
 
       if (sec.info_html_preview) {
         var iprev = document.createElement("div");
@@ -136,6 +136,32 @@
       var previewMeta = previewEntityFromColumns(sec.columns);
       var tableTitle =
         sec.table_subheading || (sec.title ? String(sec.title) + " preview" : "Preview table");
+      var titleActionsEl = null;
+      var tableWrap = null;
+      var tableEl = null;
+
+      var ctaRow = document.createElement("div");
+      ctaRow.className = "cta-row rwa-exat-cta-row";
+      (sec.cta || []).forEach(function (c) {
+        var hrefRaw = String(c.href != null ? c.href : "").trim();
+        var a = document.createElement("a");
+        a.textContent = c.label || "Open";
+        a.className = c.variant === "primary" ? "btn btn-primary" : "btn btn-secondary";
+        if (c.internal) {
+          var rel = hrefRaw.replace(/^\.\//, "");
+          a.href =
+            global.__STATIC && typeof global.__STATIC.assetUrl === "function"
+              ? global.__STATIC.assetUrl(rel)
+              : rel;
+          a.removeAttribute("target");
+          a.removeAttribute("rel");
+        } else {
+          a.href = hrefRaw || "#";
+          a.target = "_blank";
+          a.rel = "noopener noreferrer";
+        }
+        ctaRow.appendChild(a);
+      });
 
       if (sec.columns && sec.columns.length) {
         var tableHead = document.createElement("div");
@@ -147,6 +173,7 @@
           actionsId +
           '"></div>';
         section.appendChild(tableHead);
+        titleActionsEl = tableHead.querySelector(".rwa-split-table-head__actions");
 
         var searchLabel = document.createElement("label");
         searchLabel.className = "search-field home-preview-search-row rwa-exat-search-row";
@@ -174,18 +201,18 @@
           section.appendChild(pn);
         }
 
-        var wrap = document.createElement("div");
-        wrap.className = "table-wrap rwa-exat-table-wrap";
-        var table = document.createElement("table");
-        table.className = "data-table data-table--dense";
+        tableWrap = document.createElement("div");
+        tableWrap.className = "table-wrap rwa-exat-table-wrap";
+        tableEl = document.createElement("table");
+        tableEl.className = "data-table data-table--dense";
         var thead = document.createElement("thead");
         var trh = document.createElement("tr");
         var tbody = document.createElement("tbody");
         thead.appendChild(trh);
-        table.appendChild(thead);
-        table.appendChild(tbody);
-        wrap.appendChild(table);
-        section.appendChild(wrap);
+        tableEl.appendChild(thead);
+        tableEl.appendChild(tbody);
+        tableWrap.appendChild(tableEl);
+        section.appendChild(tableWrap);
 
         var searchInput = searchLabel.querySelector("input");
         var allRows =
@@ -207,37 +234,12 @@
         section.appendChild(pnOnly);
       }
 
-      var ctaRow = document.createElement("div");
-      ctaRow.className = "cta-row rwa-exat-cta-row";
-      (sec.cta || []).forEach(function (c) {
-        var hrefRaw = String(c.href != null ? c.href : "").trim();
-        var a = document.createElement("a");
-        a.textContent = c.label || "Open";
-        a.className = c.variant === "primary" ? "btn btn-primary" : "btn btn-secondary";
-        if (c.internal) {
-          var rel = hrefRaw.replace(/^\.\//, "");
-          a.href =
-            global.__STATIC && typeof global.__STATIC.assetUrl === "function"
-              ? global.__STATIC.assetUrl(rel)
-              : rel;
-          a.removeAttribute("target");
-          a.removeAttribute("rel");
-        } else {
-          a.href = hrefRaw || "#";
-          a.target = "_blank";
-          a.rel = "noopener noreferrer";
-        }
-        ctaRow.appendChild(a);
-      });
-
-      var tableWrap = section.querySelector(".rwa-exat-table-wrap");
-      if (tableWrap && attachTableFullscreenButton) {
-        var tableEl = tableWrap.querySelector("table");
+      if (tableWrap && tableEl && attachTableFullscreenButton) {
         attachTableFullscreenButton(tableWrap, tableEl, {
           title: String(sec.table_subheading || sec.title || "RWA preview table"),
           actionRow: ctaRow,
           downloadPlacement: "title-row",
-          downloadAnchor: document.getElementById(actionsId),
+          downloadAnchor: titleActionsEl,
         });
       }
       section.appendChild(ctaRow);
