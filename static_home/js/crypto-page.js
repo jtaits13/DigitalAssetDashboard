@@ -270,6 +270,8 @@
     fs.attachTableFullscreenButton(wrap, table, {
       title: "Crypto prices table",
       filename: "crypto-prices",
+      downloadPlacement: "title-row",
+      downloadAnchor: document.getElementById("js-crypto-table-actions"),
     });
   }
 

@@ -100,8 +100,8 @@ STATIC_RWA_STABLECOINS_PAGE = "rwa-stablecoins.html"
 STATIC_RWA_US_TREASURIES_PAGE = "rwa-us-treasuries.html"
 STATIC_RWA_TOKENIZED_STOCKS_PAGE = "rwa-tokenized-stocks.html"
 STATIC_RWA_TOKENIZED_MMF_PAGE = "rwa-tokenized-mmf.html"
-STATIC_HOME_STABLECOINS_SECTION = "index.html#section-stablecoins"
-STATIC_HOME_TMMF_SECTION = "index.html#section-tmmf"
+STATIC_HOME_STABLECOINS_SECTION = "index.html"
+STATIC_HOME_TMMF_SECTION = "index.html"
 APP_RWA_NETWORKS_URL = "https://app.rwa.xyz/networks"
 COINPAPRIKA_GLOBAL_URL = "https://api.coinpaprika.com/v1/global"
 COINPAPRIKA_MARKET_OVERVIEW_TOTAL_30D_URL = "https://coinpaprika.com/market-overview/data/total/30d/"
@@ -1286,8 +1286,6 @@ def _build_rwa_explore_asset_type_payload(
         "(<strong>RWA.xyz</strong>). Stablecoins and tokenized money market funds are on the "
         "<strong>home dashboard</strong>. Use <strong>Open full overview</strong> for search, charts, and full league views.</p>"
     )
-
-    sections = [s for s in sections if s.get("id") not in ("stablecoins", "tokenized_mmf")]
 
     return {
         "page_title": "Explore by Asset Type — Digital Assets Dashboard",

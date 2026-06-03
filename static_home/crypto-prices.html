@@ -12,7 +12,7 @@
     />
     <link rel="stylesheet" href="styles.css?v=85" />
     <link rel="stylesheet" href="css/site-experience.css?v=18" />
-    <link rel="stylesheet" href="css/inner-page-experience.css?v=17" />
+    <link rel="stylesheet" href="css/inner-page-experience.css?v=18" />
   </head>
   <body class="page-crypto site-experience page-inner--rich" data-methodology="crypto">
     <header class="site-header" role="banner">
@@ -21,10 +21,10 @@
         <nav class="site-nav" aria-label="Primary">
           <a href="index.html">Home</a>
           <a href="index.html#section-news">News Hub</a>
-          <a href="index.html#section-tmmf">TMMFs</a>
-          <a href="index.html#section-stablecoins">Stablecoins</a>
+          <a href="rwa-tokenized-mmf.html">TMMFs</a>
+          <a href="rwa-stablecoins.html">Stablecoins</a>
           <div class="site-nav__dropdown">
-            <span class="site-nav__trigger">RWA Market</span>
+            <a href="rwa-global.html" class="site-nav__trigger">RWA Market</a>
             <ul class="site-nav__sub">
               <li><a href="rwa-global.html">Market Overview</a></li>
               <li class="site-nav__item site-nav__item--flyout">
@@ -114,7 +114,10 @@
       <hr class="inner-rich-rule" />
 
       <section class="hub-section" aria-labelledby="crypto-table-heading">
-        <h2 class="subsection-head u-vh" id="crypto-table-heading">Crypto table</h2>
+        <div class="rwa-split-table-head inner-table-head">
+          <h2 class="subsection-head rwa-split-table-head__title" id="crypto-table-heading">Prices table</h2>
+          <div class="rwa-split-table-head__actions" id="js-crypto-table-actions"></div>
+        </div>
         <div class="crypto-cat-tabs" id="js-crypto-category-tabs"></div>
         <label class="search-field">
           <span class="search-field__label">Search by coin name or ticker</span>
@@ -177,7 +180,7 @@
     <script defer src="js/snapshot-kpi-shared.js?v=4"></script>
     <script defer src="js/etp-kpi-shared.js"></script>
     <script defer src="js/crypto-kpi-shared.js?v=9"></script>
-    <script defer src="js/crypto-page.js?v=21"></script>
+    <script defer src="js/crypto-page.js?v=22"></script>
     <script defer src="js/site-experience.js?v=1"></script>
   </body>
 </html>

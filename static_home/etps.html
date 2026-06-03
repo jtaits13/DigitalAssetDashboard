@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>U.S. Digital Asset ETPs — Digital Assets Dashboard</title>
+    <title>U.S. Digital Asset ETPs ??? Digital Assets Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -12,7 +12,7 @@
     />
     <link rel="stylesheet" href="styles.css?v=85" />
     <link rel="stylesheet" href="css/site-experience.css?v=18" />
-    <link rel="stylesheet" href="css/inner-page-experience.css?v=17" />
+    <link rel="stylesheet" href="css/inner-page-experience.css?v=18" />
   </head>
   <body class="page-etp site-experience page-inner--rich" data-methodology="etp">
     <header class="site-header" role="banner">
@@ -21,21 +21,21 @@
         <nav class="site-nav" aria-label="Primary">
           <a href="index.html">Home</a>
           <a href="index.html#section-news">News Hub</a>
-          <a href="index.html#section-tmmf">TMMFs</a>
-          <a href="index.html#section-stablecoins">Stablecoins</a>
+          <a href="rwa-tokenized-mmf.html">TMMFs</a>
+          <a href="rwa-stablecoins.html">Stablecoins</a>
           <div class="site-nav__dropdown">
-            <span class="site-nav__trigger">RWA Market</span>
+            <a href="rwa-global.html" class="site-nav__trigger">RWA Market</a>
             <ul class="site-nav__sub">
               <li><a href="rwa-global.html">Market Overview</a></li>
               <li class="site-nav__item site-nav__item--flyout">
-                <a href="rwa-explore-asset-type.html" class="site-nav__parent-link">RWA · Assets</a>
+                <a href="rwa-explore-asset-type.html" class="site-nav__parent-link">RWA ? Assets</a>
                 <ul class="site-nav__sub site-nav__sub--nested" aria-label="RWA asset pages">
                   <li><a href="rwa-us-treasuries.html">U.S. Treasuries</a></li>
                   <li><a href="rwa-tokenized-stocks.html">Tokenized Stocks</a></li>
                 </ul>
               </li>
               <li class="site-nav__item site-nav__item--flyout">
-                <a href="rwa-explore-market-participant.html" class="site-nav__parent-link">RWA · Participants</a>
+                <a href="rwa-explore-market-participant.html" class="site-nav__parent-link">RWA ? Participants</a>
                 <ul class="site-nav__sub site-nav__sub--nested" aria-label="RWA participant pages">
                   <li><a href="rwa-participants-networks.html">Networks</a></li>
                   <li><a href="rwa-participants-platforms.html">Platforms</a></li>
@@ -58,7 +58,7 @@
 
     <div class="page-back-below-header">
       <p class="back-link back-link--below-header">
-        <a href="index.html#section-markets">← Back to home (U.S. ETPs)</a>
+        <a href="index.html">??? Back to home</a>
       </p>
     </div>
 
@@ -68,7 +68,7 @@
         <header class="home-zone__head">
           <span class="home-zone__badge" aria-hidden="true">ETP</span>
           <div class="home-zone__titles">
-            <h1 class="band-label teal" id="page-title">U.S. Digital Asset ETPs — Full List</h1>
+            <h1 class="band-label teal" id="page-title">U.S. Digital Asset ETPs ??? Full List</h1>
             <p class="section-dek section-dek--wide">
               <strong>U.S. crypto-related exchange-traded products</strong>, with a KPI strip, an estimated aggregate AUM
               trend chart, a searchable fund table, and a related ETF/ETP headlines panel. Reference:
@@ -113,7 +113,7 @@
                     Vertical axis: estimated aggregate AUM (<strong>billions USD</strong>; weekly points).
                   </p>
                   <p class="method-note split-panels__method-note">
-                    <strong>Yahoo Finance</strong> weekly closes — each fund’s latest StockAnalysis AUM (constant-share
+                    <strong>Yahoo Finance</strong> weekly closes ??? each fund???s latest StockAnalysis AUM (constant-share
                     approximation), summed across the table. Use the Plotly toolbar to zoom, pan, and reset.
                   </p>
                 </div>
@@ -124,7 +124,7 @@
                 <div class="split-panels__widget split-panels__widget--pulse">
                   <div class="pulse-box pulse-box--etp-split">
                     <ul class="pulse-list" id="js-etf-pulse">
-                      <li class="pulse-list__loading">Loading headlines…</li>
+                      <li class="pulse-list__loading">Loading headlines???</li>
                     </ul>
                   </div>
                   <div
@@ -132,7 +132,7 @@
                     role="navigation"
                     aria-label="Full ETF and ETP headlines"
                   >
-                    <a class="btn btn-primary" href="etf-news.html">All ETF/ETP headlines →</a>
+                    <a class="btn btn-primary" href="etf-news.html">All ETF/ETP headlines ???</a>
                   </div>
                   <p class="cta-note cta-note--etp-feed-hint">
                     Up to five ranked ETF/ETP headlines per UTC calendar day. Use the ETF/ETP headlines page for search
@@ -161,17 +161,20 @@
           <hr class="inner-rich-rule" aria-hidden="true" />
 
           <div class="inner-rich-block" aria-labelledby="table-heading">
-            <h2 class="subsection-head" id="table-heading">Fund table</h2>
+            <div class="rwa-split-table-head inner-table-head">
+              <h2 class="subsection-head rwa-split-table-head__title" id="table-heading">Fund table</h2>
+              <div class="rwa-split-table-head__actions" id="js-etp-table-actions"></div>
+            </div>
             <label class="search-field">
               <span class="search-field__label">Search by fund name or ticker</span>
               <input
                 type="search"
                 class="search-field__input"
                 id="js-etp-search"
-                placeholder="Filter by name or ticker…"
+                placeholder="Filter by name or ticker???"
               />
             </label>
-            <p class="toolbar-note" id="js-etp-toolbar"><p class="toolbar-note" id="js-etp-toolbar">Loading fund list…</p>
+            <p class="toolbar-note" id="js-etp-toolbar"><p class="toolbar-note" id="js-etp-toolbar">Loading fund list???</p>
 
             <div class="table-wrap table-wrap--scroll">
               <table class="data-table data-table--dense data-table--sortable">
@@ -191,7 +194,7 @@
                 </thead>
                 <tbody id="js-etp-tbody">
                   <tr>
-                    <td colspan="10">Loading…</td>
+                    <td colspan="10">Loading???</td>
                   </tr>
                 </tbody>
               </table>
@@ -200,17 +203,17 @@
               Fund data: StockAnalysis (list and AUM). Spot BTC/ETH flows: Farside Investors (daily net
               creations/redemptions, USD).
             </p>
-            <p class="timestamp-foot" id="js-etp-generated">—</p>
+            <p class="timestamp-foot" id="js-etp-generated">???</p>
           </div>
         </div>
       </article>
 
       <p class="back-link">
-        <a href="index.html">← Back to home</a>
+        <a href="index.html">??? Back to home</a>
       </p>
     </main>
 
-    <footer class="site-footer">Digital Assets Dashboard · U.S. ETPs · <time datetime="2026-05">May 2026</time></footer>
+    <footer class="site-footer">Digital Assets Dashboard ? U.S. ETPs ? <time datetime="2026-05">May 2026</time></footer>
     <script defer src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
     <script defer src="js/static-base.js?v=14"></script>
     <script defer src="js/table-fullscreen.js?v=2"></script>
@@ -221,7 +224,7 @@
     <script defer src="js/snapshot-kpi-shared.js?v=4"></script>
     <script defer src="js/etp-kpi-shared.js?v=3"></script>
     <script defer src="js/crypto-kpi-shared.js?v=9"></script>
-    <script defer src="js/etp-page.js?v=20"></script>
+    <script defer src="js/etp-page.js?v=21"></script>
     <script defer src="js/site-experience.js?v=1"></script>
   </body>
 </html>

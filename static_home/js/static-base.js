@@ -106,12 +106,12 @@
     options = options || {};
     var fallback = options.fallback || {
       href: "etps.html",
-      label: "← Back to U.S. ETP Overview",
+      label: "← Back to home",
     };
     var home = options.home || { href: "index.html", label: "← Back to home" };
     var etps = options.etps || {
       href: "etps.html",
-      label: "← Back to U.S. ETP Overview",
+      label: "← Back to home",
     };
     var ref = typeof document !== "undefined" ? document.referrer : "";
     if (!ref) return fallback;

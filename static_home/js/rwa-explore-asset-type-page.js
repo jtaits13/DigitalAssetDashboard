@@ -130,18 +130,24 @@
         }
       }
 
-      if (sec.table_subheading) {
-        var h3 = document.createElement("h3");
-        h3.className = "subsection-head rwa-exat-subhead";
-        h3.textContent = sec.table_subheading;
-        section.appendChild(h3);
-      }
-
       var searchId = "js-exat-search-" + String(sec.id || sec.anchor_id || "section");
       var toolbarId = "js-exat-toolbar-" + String(sec.id || sec.anchor_id || "section");
+      var actionsId = "js-exat-table-actions-" + String(sec.id || sec.anchor_id || "section");
       var previewMeta = previewEntityFromColumns(sec.columns);
+      var tableTitle =
+        sec.table_subheading || (sec.title ? String(sec.title) + " preview" : "Preview table");
 
       if (sec.columns && sec.columns.length) {
+        var tableHead = document.createElement("div");
+        tableHead.className = "rwa-split-table-head inner-table-head";
+        tableHead.innerHTML =
+          '<h3 class="subsection-head rwa-split-table-head__title rwa-exat-subhead">' +
+          tableTitle +
+          '</h3><div class="rwa-split-table-head__actions" id="' +
+          actionsId +
+          '"></div>';
+        section.appendChild(tableHead);
+
         var searchLabel = document.createElement("label");
         searchLabel.className = "search-field home-preview-search-row rwa-exat-search-row";
         searchLabel.setAttribute("for", searchId);
@@ -230,7 +236,8 @@
         attachTableFullscreenButton(tableWrap, tableEl, {
           title: String(sec.table_subheading || sec.title || "RWA preview table"),
           actionRow: ctaRow,
-          downloadPlacement: "above-table",
+          downloadPlacement: "title-row",
+          downloadAnchor: document.getElementById(actionsId),
         });
       }
       section.appendChild(ctaRow);

@@ -635,6 +635,10 @@
           esc(ft.search_placeholder || "Filter funds…") +
           '" /><button type="button" class="btn btn-secondary" id="tmmf-funds-clear">Clear</button></div>' +
           '<p class="toolbar-note" id="tmmf-funds-note"></p>' +
+          '<div class="rwa-split-table-head inner-table-head">' +
+          '<h3 class="subsection-head rwa-split-table-head__title">' +
+          esc(ft.table_heading || "Fund population") +
+          '</h3><div class="rwa-split-table-head__actions" id="tmmf-funds-table-actions"></div></div>' +
           '<div class="table-wrap table-wrap--scroll tmmf-funds-table-wrap" data-fullscreen-title="Tokenized Money Market Fund Population">' +
           '<table class="data-table data-table--dense" aria-label="Tokenized Money Market Fund Population">' +
           '<thead><tr id="tmmf-funds-thead"></tr></thead><tbody id="tmmf-funds-tbody"></tbody></table></div>';
@@ -707,7 +711,8 @@
             title: "Tokenized Money Market Fund Population",
             filename: "tmmf-fund-population",
             sheetName: "TMMF Funds",
-            downloadPlacement: "above-table",
+            downloadPlacement: "title-row",
+            downloadAnchor: $("tmmf-funds-table-actions"),
             getExportData: fundsDownloadOpts.getExportData,
           });
           if (appendRwaActionLink && fundsActionRow && payload.bottom_cta && payload.bottom_cta.href) {

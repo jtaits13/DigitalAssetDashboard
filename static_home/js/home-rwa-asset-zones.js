@@ -47,7 +47,8 @@
     });
   }
 
-  function renderStablecoinsHome(section, generatedAt) {
+  function renderStablecoinsHome(explore, generatedAt) {
+    var section = findSection(explore, "stablecoins");
     var kpiHost = document.getElementById("js-home-stable-kpi");
     var theadRow = document.getElementById("js-home-stable-thead-row");
     var tbody = document.getElementById("js-home-stable-tbody");
@@ -162,7 +163,7 @@
       (mmfPage && mmfPage.generated_at) ||
       (explore && explore.footer_note) ||
       null;
-    renderStablecoinsHome(findSection(explore, "stablecoins"), generatedAt);
+    renderStablecoinsHome(explore, generatedAt);
     renderTmmfHome(findSection(explore, "tokenized_mmf"), mmfPage, generatedAt);
   });
 })();

@@ -1151,14 +1151,16 @@
   padding-bottom: 0.4rem;
 }
 
-.site-experience.page-inner--rich .rwa-split-table-head {
+.site-experience.page-inner--rich .rwa-split-table-head,
+.site-experience.page-inner--rich .inner-table-head {
   margin-bottom: var(--hx-table-gap);
   padding-bottom: 0.35rem;
   border-bottom: 1px solid var(--line);
 }
 
 .site-experience.page-inner--rich .rwa-split-table-head .subsection-head,
-.site-experience.page-inner--rich .rwa-split-table-head__title {
+.site-experience.page-inner--rich .rwa-split-table-head__title,
+.site-experience.page-inner--rich .inner-table-head .subsection-head {
   margin: 0;
   padding-bottom: 0;
   border-bottom: none;

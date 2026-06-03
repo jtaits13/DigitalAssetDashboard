@@ -108,6 +108,12 @@
   border: 1px solid transparent;
 }
 
+.site-experience a.site-nav__trigger {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
 .site-experience .site-nav a:hover,
 .site-experience .site-nav__dropdown:hover > .site-nav__trigger,
 .site-experience .site-nav__dropdown:focus-within > .site-nav__trigger {
@@ -118,6 +124,7 @@
 
 .site-experience .site-nav a.is-active,
 .site-experience .site-nav__parent-link.is-active,
+.site-experience .site-nav__trigger.is-active,
 .site-experience .site-nav__dropdown:has(.site-nav__sub a.is-active) > .site-nav__trigger,
 .site-experience .site-nav__dropdown:has(.site-nav__parent-link.is-active) > .site-nav__trigger {
   color: var(--teal);
