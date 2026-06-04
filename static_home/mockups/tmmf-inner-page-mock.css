@@ -129,3 +129,28 @@
   white-space: nowrap;
 }
 
+.mock-tmmf-inner .tmmf-population-split.etp-mock-dashboard {
+  grid-template-columns: 1fr;
+  margin-bottom: 0.35rem;
+}
+
+@media (min-width: 960px) {
+  .mock-tmmf-inner .tmmf-population-split.etp-mock-dashboard {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+    align-items: stretch;
+  }
+}
+
+.mock-tmmf-inner .tmmf-population-chart-pane .aum-chart-host {
+  min-height: 220px;
+}
+
+.mock-tmmf-inner .tmmf-population-cta {
+  margin-top: 0.65rem;
+  justify-content: flex-start;
+}
+
+.mock-tmmf-inner .tmmf-population-table-pane {
+  min-width: 0;
+}
+

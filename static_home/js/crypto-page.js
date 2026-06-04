@@ -33,7 +33,6 @@
     kpi: document.getElementById("js-crypto-kpi"),
     keyObs: document.getElementById("js-crypto-key-obs"),
     capMix: document.getElementById("js-crypto-cap-mix"),
-    topMovers: document.getElementById("js-crypto-top-movers"),
     chart: document.getElementById("crypto-market-cap-chart"),
     search: document.getElementById("js-crypto-search"),
     tabs: document.getElementById("js-crypto-category-tabs"),
@@ -166,7 +165,6 @@
     renderKpiStrip(payload);
     renderKeyObservationsBlock(payload);
     renderCapMix(payload, priceRows);
-    renderTopMoversBlock(payload, priceRows);
   }
 
   function renderCapMix(kpis, rows) {
@@ -232,21 +230,19 @@
       .join("");
   }
 
-  function renderTopMoversBlock(kpis, rows) {
-    if (!els.topMovers) return;
-    var api = cryptoKpiApi();
-    var block = (kpis && kpis.top_movers) || null;
-    if (!block || !(block.movers && block.movers.length)) {
-      block = {
-        title: "Top movers (1M)",
-        footnote:
-          "Largest 1-month % moves in the top-50 table (stablecoins excluded). Context lines match recent headlines from dashboard news feeds, with Google News as fallback.",
-        movers: api.pickTopMoversFromRows ? api.pickTopMoversFromRows(rows, 3) : [],
-      };
-    }
-    if (api.renderTopMoversCallout) {
-      api.renderTopMoversCallout(els.topMovers, block);
-    }
+  function wireTableFullscreen() {
+    var fs = window.__TABLE_FULLSCREEN;
+    if (!fs || !fs.attachTableFullscreenButton || !els.tbody) return;
+    var wrap = els.tbody.closest ? els.tbody.closest(".table-wrap") : null;
+    var table = wrap ? wrap.querySelector("table") : null;
+    if (!wrap || !table) return;
+    fs.attachTableFullscreenButton(wrap, table, {
+      title: "Crypto prices table",
+      filename: "crypto-prices",
+      downloadPlacement: "title-row",
+      downloadAnchor: document.getElementById("js-crypto-table-actions"),
+      actionRow: document.getElementById("js-crypto-table-fullscreen"),
+    });
   }
 
   function chartWidgetConfig(meta) {
@@ -342,20 +338,6 @@
         applyFilter();
       });
       els.tabs.appendChild(btn);
-    });
-  }
-
-  function wireTableFullscreen() {
-    var fs = window.__TABLE_FULLSCREEN;
-    if (!fs || !fs.attachTableFullscreenButton || !els.tbody) return;
-    var wrap = els.tbody.closest ? els.tbody.closest(".table-wrap") : null;
-    var table = wrap ? wrap.querySelector("table") : null;
-    if (!wrap || !table) return;
-    fs.attachTableFullscreenButton(wrap, table, {
-      title: "Crypto prices table",
-      filename: "crypto-prices",
-      downloadPlacement: "title-row",
-      downloadAnchor: document.getElementById("js-crypto-table-actions"),
     });
   }
 
@@ -551,7 +533,6 @@
       applyFilter();
       renderKeyObservationsBlock(lastKpisPayload);
       renderCapMix(lastKpisPayload, state.rows);
-      renderTopMoversBlock(lastKpisPayload, state.rows);
       if (prices.error) showErr(prices.error);
     });
 

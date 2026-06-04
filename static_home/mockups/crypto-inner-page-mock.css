@@ -69,6 +69,31 @@
   }
 }
 
+.mock-crypto-inner .rwa-kpi-row--home-grid .rwa-kpi-cell {
+  justify-content: flex-start;
+  min-height: 0;
+  padding-bottom: 0.62rem;
+}
+
+.mock-crypto-inner .rwa-kpi-row--home-grid .rwa-kpi-delta {
+  display: block;
+  margin-top: 0.22rem;
+  flex-shrink: 0;
+}
+
+.mock-crypto-inner .etp-mock-dashboard--full-width {
+  grid-template-columns: 1fr;
+}
+
+.mock-crypto-inner .etp-mock-dashboard--full-width .etp-mock-dash__panel--chart {
+  min-height: 0;
+}
+
+.mock-crypto-inner .etp-mock-dashboard--full-width .tv-chart-shell,
+.mock-crypto-inner .etp-mock-dashboard--full-width .tv-chart-shell__widget {
+  min-height: 460px;
+}
+
 /* Chart panel */
 .mock-crypto-inner .etp-mock-chart {
   background:

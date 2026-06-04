@@ -95,6 +95,33 @@
     if (closeBtn) closeBtn.focus();
   }
 
+  var MOCK_EXPAND_ICON =
+    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
+    '<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />' +
+    "</svg>";
+
+  function isMockInnerPage() {
+    var body = document.body;
+    if (!body || !body.classList) return false;
+    return (
+      body.classList.contains("mock-etp-inner") ||
+      body.classList.contains("mock-crypto-inner") ||
+      body.classList.contains("mock-stable-inner") ||
+      body.classList.contains("mock-tmmf-inner")
+    );
+  }
+
+  function styleMockParityExpandButton(row) {
+    if (!row || !isMockInnerPage()) return;
+    var btn = row.querySelector('[data-rwa-fullscreen-btn="1"]');
+    if (!btn) return;
+    btn.className = "etp-mock-table-meta__expand";
+    btn.innerHTML = MOCK_EXPAND_ICON + "<span>Full screen</span>";
+    if (!btn.getAttribute("aria-label")) {
+      btn.setAttribute("aria-label", "View table full screen");
+    }
+  }
+
   function createActionButton(cfg) {
     var btn = document.createElement(cfg.tagName === "button" ? "button" : "a");
     btn.className = cfg.className || "btn btn-secondary";
@@ -154,6 +181,7 @@
       });
       actions.appendChild(btn);
     }
+    styleMockParityExpandButton(actions);
     return actions;
   }
 
@@ -217,8 +245,11 @@
   };
 
   global.__TABLE_FULLSCREEN = api;
+  global.__TABLE_FULLSCREEN.styleMockParityExpandButton = styleMockParityExpandButton;
+  global.__TABLE_FULLSCREEN.isMockInnerPage = isMockInnerPage;
 
   global.__RWA_STATIC_HELPERS = global.__RWA_STATIC_HELPERS || {};
+  global.__RWA_STATIC_HELPERS.styleMockParityExpandButton = styleMockParityExpandButton;
   global.__RWA_STATIC_HELPERS.appendRwaActionLink = appendActionLink;
   global.__RWA_STATIC_HELPERS.attachRwaTableFullscreenButton = function (
     tableWrap,

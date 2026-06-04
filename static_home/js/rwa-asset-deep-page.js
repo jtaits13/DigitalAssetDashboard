@@ -494,31 +494,36 @@
       }
     }
 
-    var TMMF_MOCK_FUND_COLUMNS = [
-      "#",
-      "Fund Name",
-      "Ticker",
-      "Platform",
-      "Networks",
-      "Total Value",
-      "7D Δ value",
-      "Holders",
-    ];
+  var TMMF_MOCK_FUND_COLUMNS = [
+    "#",
+    "Fund Name",
+    "Ticker",
+    "Platform",
+    "Networks",
+    "Total Value",
+    "7D Δ value",
+    "Holders",
+  ];
 
-    var MOCK_TABLE_EXPAND_ICON =
-      '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
-      '<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />' +
-      "</svg>";
+  var STABLE_NETWORKS_PREVIEW_LIMIT = 5;
 
-    function styleMockTableExpandButton(row) {
-      if (!row) return;
-      var btn = row.querySelector('[data-rwa-fullscreen-btn="1"]');
-      if (!btn) return;
-      btn.className = "etp-mock-table-meta__expand";
-      btn.innerHTML = MOCK_TABLE_EXPAND_ICON + "<span>Full screen</span>";
+  function leagueDisplayRows(league, filteredRows, prefix, hasSearch) {
+    if (
+      hasSearch ||
+      prefix !== "deep-net" ||
+      !document.body.classList.contains("mock-stable-inner")
+    ) {
+      return filteredRows;
     }
+    return filteredRows
+      .slice()
+      .sort(function (a, b) {
+        return (Number(b["Market Share"]) || 0) - (Number(a["Market Share"]) || 0);
+      })
+      .slice(0, STABLE_NETWORKS_PREVIEW_LIMIT);
+  }
 
-    function wireTmmfFundsTable(ft, payload) {
+  function wireTmmfFundsTable(ft, payload) {
       var host = $("js-deep-extra-before-leagues");
       if (!host || !ft || !ft.columns || !ft.columns.length) {
         if (host) {
@@ -564,6 +569,14 @@
           '<p class="tmmf-mock-funds-intro">' +
           esc(introHtml) +
           "</p>" +
+          '<div class="tmmf-population-split etp-mock-dashboard">' +
+          '<div class="etp-mock-dash__panel etp-mock-dash__panel--chart tmmf-population-chart-pane">' +
+          '<h3 class="etp-mock-dash__head">Top funds by value</h3>' +
+          '<div id="tmmf-funds-chart" class="aum-chart-host rwa-split-chart-host" role="img" aria-label="Top tokenized money market funds by total value"></div>' +
+          '<p class="etp-mock-chart__cap">Top curated funds by total value (labels include share of population AUM).</p>' +
+          '<div class="cta-row tmmf-population-cta" id="tmmf-population-cta"></div>' +
+          "</div>" +
+          '<div class="etp-mock-dash__panel tmmf-population-table-pane">' +
           '<label class="search-field etp-mock-table-search">' +
           '<span class="search-field__label">' +
           searchLabel +
@@ -576,6 +589,7 @@
           '<div class="table-wrap table-wrap--scroll tmmf-funds-table-wrap" data-fullscreen-title="Tokenized Money Market Fund Population">' +
           '<table class="data-table data-table--dense data-table--sortable" aria-label="Tokenized Money Market Fund Population">' +
           '<thead><tr id="tmmf-funds-thead"></tr></thead><tbody id="tmmf-funds-tbody"></tbody></table></div>' +
+          "</div></div>" +
           '<div class="rwa-table-footnote-row">' +
           '<p class="source-cap rwa-table-footnote-row__cap">Ranked by total value. Full production table includes eligibility, domicile, regulatory framework, and custodian columns (available in full-screen view and Excel export).</p>' +
           "</div>";
@@ -681,8 +695,16 @@
           actionRow: mockLayout ? $("tmmf-funds-meta-actions") : undefined,
           getExportData: fundsDownloadOpts.getExportData,
         });
-        if (mockLayout) styleMockTableExpandButton($("tmmf-funds-meta-actions"));
-        if (appendRwaActionLink && fundsActionRow && payload.bottom_cta && payload.bottom_cta.href) {
+        if (appendRwaActionLink && mockLayout && payload.bottom_cta && payload.bottom_cta.href) {
+          var popCta = $("tmmf-population-cta");
+          if (popCta) {
+            appendRwaActionLink(popCta, {
+              href: payload.bottom_cta.href,
+              label: payload.bottom_cta.label || "RWA.xyz",
+              className: "btn btn-primary",
+            });
+          }
+        } else if (appendRwaActionLink && fundsActionRow && payload.bottom_cta && payload.bottom_cta.href) {
           appendRwaActionLink(fundsActionRow, {
             href: payload.bottom_cta.href,
             label: payload.bottom_cta.label || "RWA.xyz",
@@ -690,6 +712,38 @@
           });
         }
       }
+
+      function syncFundsChart() {
+        if (!mockLayout) return;
+        var chartEl = $("tmmf-funds-chart");
+        if (!chartEl || typeof Plotly === "undefined") return;
+        var ranked = rankFundsByTotalValue(allRows);
+        var totalVal = ranked.reduce(function (s, r) {
+          return s + (Number(r["Total Value"]) || 0);
+        }, 0);
+        var chartRows = ranked.slice(0, 8).map(function (r) {
+          var o = {};
+          Object.keys(r || {}).forEach(function (k) {
+            o[k] = r[k];
+          });
+          o["Market Share"] =
+            totalVal > 0 ? (100 * (Number(r["Total Value"]) || 0)) / totalVal : null;
+          return o;
+        });
+        drawHorizontalBar(
+          chartEl,
+          chartRows,
+          {
+            name_column: "Fund Name",
+            value_column: "Total Value",
+            chart_max_bars: 8,
+            split_body_height_px: 300,
+          },
+          payload
+        );
+      }
+
+      syncFundsChart();
       return { actionRow: fundsActionRow, host: host };
     }
 
@@ -718,7 +772,10 @@
         '<div class="etp-mock-table-meta" aria-live="polite">' +
         '<p class="etp-mock-table-meta__count toolbar-note" id="' +
         prefix +
-        '-note"></p></div>' +
+        '-note"></p>' +
+        '<div class="rwa-table-actions" id="' +
+        prefix +
+        '-meta-actions"></div></div>' +
         '<div class="table-wrap table-wrap--scroll rwa-split-table-scroll">' +
         '<table class="data-table data-table--dense data-table--sortable"><thead><tr id="' +
         prefix +
@@ -735,12 +792,14 @@
       var tableWrap = host.querySelector(".table-wrap");
       var tableEl = tableWrap ? tableWrap.querySelector("table") : null;
       var titleActions = $(prefix + "-table-actions");
+      var metaActions = $(prefix + "-meta-actions");
       var actionRow = null;
       if (attachTableFullscreenButton) {
         actionRow = attachTableFullscreenButton(tableWrap, tableEl, {
           title: String(league.table_heading || league.block_heading || "RWA table"),
           downloadPlacement: "title-row",
           downloadAnchor: titleActions,
+          actionRow: metaActions || undefined,
         });
       }
 
@@ -749,22 +808,36 @@
         var all = league.rows_full || [];
         var nameCol = league.name_column;
         var filt = filterRows(all, nameCol, q);
+        var hasSearch = !!String(q || "").trim();
+        var displayRows = leagueDisplayRows(league, filt, prefix, hasSearch);
         var noteEl = $(prefix + "-note");
         if (noteEl) {
           var tot = all.length;
           var qp = league.filter_note_entity_plural || "rows";
           if (tot <= 0) noteEl.textContent = "";
-          else if (!String(q || "").trim()) {
-            noteEl.textContent =
-              league.filter_note_suffix_all && qp
-                ? "Showing all " + filt.length + " " + league.filter_note_suffix_all
-                : "Showing all " + filt.length + " rows.";
+          else if (!hasSearch) {
+            if (
+              prefix === "deep-net" &&
+              document.body.classList.contains("mock-stable-inner") &&
+              tot > STABLE_NETWORKS_PREVIEW_LIMIT
+            ) {
+              noteEl.textContent =
+                "Showing top " +
+                displayRows.length +
+                " of " +
+                tot +
+                " networks by market share (use search or full screen for all).";
+            } else if (league.filter_note_suffix_all && qp) {
+              noteEl.textContent = "Showing all " + filt.length + " " + league.filter_note_suffix_all;
+            } else {
+              noteEl.textContent = "Showing all " + filt.length + " rows.";
+            }
           } else {
             noteEl.textContent =
               "Showing " + filt.length + " of " + tot + " " + qp + ' matching "' + esc(q.trim()) + '".';
           }
         }
-        renderTable($(prefix + "-thead"), $(prefix + "-tbody"), league.columns, filt, {
+        renderTable($(prefix + "-thead"), $(prefix + "-tbody"), league.columns, displayRows, {
           emptyMsg: "No rows match this filter.",
           linkAria: "Open RWA.xyz",
         });
@@ -1117,7 +1190,17 @@
       (netView && netView.actionRow) ||
       (fundsView && fundsView.actionRow) ||
       null;
-    if (appendRwaActionLink && ctaTargetRow && payload.bottom_cta && payload.bottom_cta.href) {
+    var mmfMockCtaInPopulation =
+      document.body.classList.contains("mock-tmmf-inner") &&
+      payload.bottom_cta &&
+      payload.bottom_cta.href;
+    if (
+      appendRwaActionLink &&
+      ctaTargetRow &&
+      payload.bottom_cta &&
+      payload.bottom_cta.href &&
+      !mmfMockCtaInPopulation
+    ) {
       var ctaLabel = payload.bottom_cta.label || "RWA.xyz";
       if (mode === "mmf" && hasPlat) {
         ctaLabel = "See US Treasuries on RWA.xyz";

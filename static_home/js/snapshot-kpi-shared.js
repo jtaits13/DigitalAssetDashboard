@@ -81,6 +81,9 @@
       })
       .map(function (p) {
         var deltaPct = snapshotDeltaPct(p);
+        if (deltaPct == null && p.delta && p.delta.pct === 0) {
+          deltaPct = 0;
+        }
         var delta =
           deltaPct != null
             ? pct(deltaPct)
@@ -90,10 +93,12 @@
       .join("");
     if (!cells) {
       host.innerHTML =
-        '<div class="rwa-kpi-panel-static"><div class="kpi-cell"><span class="kpi-label">Loading…</span></div></div>';
+        '<div class="rwa-kpi-panel-static rwa-kpi-panel-static--compact"><div class="kpi-cell"><span class="kpi-label">Loading…</span></div></div>';
       return;
     }
     renderSnapshotPanel(host, "", cells);
+    var panel = host.querySelector(".rwa-kpi-panel-static");
+    if (panel) panel.classList.add("rwa-kpi-panel-static--compact");
   }
 
   function renderEtpSnapshot(host, k) {
