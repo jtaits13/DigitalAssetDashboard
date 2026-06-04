@@ -1,0 +1,1327 @@
+/* U.S. ETP inner page — design mock (pairs with home-five-zone-mock.css) */
+
+.mock-etp-inner {
+  --hx-etp: #1e3a58;
+  --hx-etp-bright: #2a5080;
+  --hx-etp-dark: #162d45;
+  --hx-etp-rgb: 30 58 88;
+  --hx-etp-bright-rgb: 42 80 128;
+  --hx-etp-soft: #eef2f7;
+  --hx-etp-head: linear-gradient(180deg, #f0f4f9 0%, #ffffff 100%);
+  --hx-stripe: var(--hx-etp-bright);
+  --zone-badge-dark: var(--hx-etp-dark);
+}
+
+.mock-etp-inner::before,
+.mock-crypto-inner::before,
+.mock-stable-inner::before,
+.mock-tmmf-inner::before {
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  padding: 0.45rem 1rem;
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 650;
+  color: #e8f0f6;
+  background: #152536;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mock-etp-inner::before {
+  content: "Design mock — U.S. ETP inner page · not linked from production · open mockups/etp-inner-page-mock.html";
+}
+
+.mock-etp-inner .site-header,
+.mock-crypto-inner .site-header,
+.mock-tmmf-inner .site-header,
+.mock-stable-inner .site-header {
+  top: 1.85rem;
+}
+
+.mock-etp-inner.site-experience {
+  background:
+    radial-gradient(ellipse 88% 52% at 6% -6%, rgb(var(--hx-etp-bright-rgb) / 0.1), transparent 55%),
+    radial-gradient(ellipse 70% 42% at 98% 2%, rgb(var(--hx-etp-rgb) / 0.12), transparent 50%),
+    var(--wash);
+}
+
+/* —— Page lead (home command hero, ETP-scoped) —— */
+.etp-mock-lead {
+  max-width: var(--content-max, 72rem);
+  margin: 0 auto;
+  padding: 1.25rem 1.25rem 0.65rem;
+}
+
+.etp-mock-lead__eyebrow {
+  margin: 0 0 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--hx-etp-bright);
+}
+
+.etp-mock-lead__title {
+  margin: 0;
+  font-size: clamp(1.65rem, 4vw, 2.15rem);
+  font-weight: 780;
+  line-height: 1.12;
+  color: var(--hx-etp-dark);
+}
+
+.etp-mock-lead__dek {
+  margin: 0.65rem 0 0;
+  max-width: 52rem;
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: var(--ink-muted, #4a5f73);
+}
+
+.etp-mock-lead__dek a {
+  color: var(--hx-etp-bright);
+}
+
+.mock-etp-inner.page-inner--rich .inner-rich-zone .home-related-chips,
+.mock-crypto-inner.page-inner--rich .inner-rich-zone .home-related-chips,
+.mock-tmmf-inner.page-inner--rich .inner-rich-zone .home-related-chips,
+.mock-stable-inner.page-inner--rich .inner-rich-zone .home-related-chips,
+.mock-etp-inner .etp-mock-zone__body > .home-related-chips,
+.mock-crypto-inner .etp-mock-zone__body > .home-related-chips,
+.mock-tmmf-inner .etp-mock-zone__body > .home-related-chips,
+.mock-stable-inner .etp-mock-zone__body > .home-related-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.45rem;
+  margin: 0 0 var(--etp-mock-gap, 1rem);
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  background: var(--hx-etp-soft);
+  border: 1px solid rgb(var(--hx-etp-bright-rgb) / 0.18);
+}
+
+.mock-etp-inner.page-inner--rich .inner-rich-zone .home-related-chips__label,
+.mock-crypto-inner.page-inner--rich .inner-rich-zone .home-related-chips__label,
+.mock-tmmf-inner.page-inner--rich .inner-rich-zone .home-related-chips__label,
+.mock-stable-inner.page-inner--rich .inner-rich-zone .home-related-chips__label,
+.mock-etp-inner .etp-mock-zone__body > .home-related-chips__label,
+.mock-crypto-inner .etp-mock-zone__body > .home-related-chips__label,
+.mock-tmmf-inner .etp-mock-zone__body > .home-related-chips__label,
+.mock-stable-inner .etp-mock-zone__body > .home-related-chips__label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-right: 0.15rem;
+  color: var(--hx-etp);
+}
+
+.mock-etp-inner .inner-rich-zone .home-chip,
+.mock-crypto-inner .inner-rich-zone .home-chip,
+.mock-tmmf-inner .inner-rich-zone .home-chip,
+.mock-stable-inner .inner-rich-zone .home-chip {
+  display: inline-block;
+  padding: 0.22rem 0.58rem;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--hx-etp-dark);
+  background: #fff;
+  border: 1px solid rgb(var(--hx-etp-bright-rgb) / 0.22);
+  text-decoration: none;
+}
+
+.mock-etp-inner .etp-mock-zone__body > .home-related-chips .home-chip:hover,
+.mock-crypto-inner .etp-mock-zone__body > .home-related-chips .home-chip:hover,
+.mock-tmmf-inner .etp-mock-zone__body > .home-related-chips .home-chip:hover,
+.mock-stable-inner .etp-mock-zone__body > .home-related-chips .home-chip:hover,
+.mock-etp-inner .inner-rich-zone .home-chip:hover,
+.mock-crypto-inner .inner-rich-zone .home-chip:hover,
+.mock-tmmf-inner .inner-rich-zone .home-chip:hover,
+.mock-stable-inner .inner-rich-zone .home-chip:hover {
+  border-color: rgb(var(--hx-etp-bright-rgb) / 0.45);
+  color: var(--hx-etp);
+}
+
+.mock-etp-inner .etp-mock-snapshot,
+.mock-crypto-inner .etp-mock-snapshot,
+.mock-tmmf-inner .etp-mock-snapshot,
+.mock-stable-inner .etp-mock-snapshot {
+  margin-bottom: var(--etp-mock-gap, 1rem);
+}
+
+.etp-mock-freshness {
+  margin: 0 0 0.55rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.etp-mock-key-obs-block {
+  margin-bottom: var(--etp-mock-gap-lg, 1.2rem);
+}
+
+.mock-etp-inner .etp-mock-key-obs-block:has(#js-etp-key-obs:empty),
+.mock-crypto-inner .etp-mock-key-obs-block:has(#js-crypto-key-obs:empty),
+.mock-stable-inner .etp-mock-key-obs-block:has(#js-stable-key-obs:empty),
+.mock-tmmf-inner .etp-mock-key-obs-block:has(#js-tmmf-key-obs:empty) {
+  display: none;
+}
+
+/* —— Main panel (home-zone ETP) —— */
+.mock-etp-inner .etp-mock-shell,
+.mock-crypto-inner .etp-mock-shell,
+.mock-tmmf-inner .etp-mock-shell,
+.mock-stable-inner .etp-mock-shell {
+  max-width: var(--content-max, 72rem);
+  margin: 0 auto;
+  padding: 0 1.25rem 2rem;
+}
+
+.mock-etp-inner .etp-mock-zone,
+.mock-crypto-inner .etp-mock-zone,
+.mock-tmmf-inner .etp-mock-zone,
+.mock-stable-inner .etp-mock-zone {
+  --hx-stripe: var(--hx-etp-bright);
+  border: 1px solid rgb(var(--hx-etp-bright-rgb) / 0.2);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--hx-etp-soft);
+  box-shadow:
+    0 1px 2px rgb(var(--hx-etp-rgb) / 0.05),
+    0 10px 28px rgb(var(--hx-etp-rgb) / 0.07);
+}
+
+.mock-etp-inner.page-inner--rich .etp-mock-zone .inner-rich-zone__body,
+.mock-crypto-inner.page-inner--rich .etp-mock-zone .inner-rich-zone__body,
+.mock-tmmf-inner.page-inner--rich .etp-mock-zone .inner-rich-zone__body,
+.mock-stable-inner.page-inner--rich .etp-mock-zone .inner-rich-zone__body,
+.mock-etp-inner .etp-mock-zone__body.inner-rich-zone__body,
+.mock-crypto-inner .etp-mock-zone__body.inner-rich-zone__body,
+.mock-tmmf-inner .etp-mock-zone__body.inner-rich-zone__body,
+.mock-stable-inner .etp-mock-zone__body.inner-rich-zone__body {
+  background: linear-gradient(180deg, rgb(var(--hx-etp-rgb) / 0.06) 0%, rgba(255, 255, 255, 0.98) 100%);
+}
+
+.mock-etp-inner .etp-mock-zone .home-zone__stripe,
+.mock-crypto-inner .etp-mock-zone .home-zone__stripe,
+.mock-tmmf-inner .etp-mock-zone .home-zone__stripe,
+.mock-stable-inner .etp-mock-zone .home-zone__stripe {
+  height: 4px;
+  background: linear-gradient(90deg, var(--hx-etp-bright) 0%, transparent 88%);
+}
+
+/* Panel header — single title + dek inside card */
+.mock-etp-inner.page-inner--rich .etp-mock-zone .home-zone__head,
+.mock-crypto-inner.page-inner--rich .etp-mock-zone .home-zone__head,
+.mock-tmmf-inner.page-inner--rich .etp-mock-zone .home-zone__head,
+.mock-stable-inner.page-inner--rich .etp-mock-zone .home-zone__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 1.15rem 1.25rem 1rem;
+  border-bottom: 1px solid rgb(var(--hx-etp-bright-rgb) / 0.2);
+  background: var(--hx-etp-head, linear-gradient(180deg, #f0f4f9 0%, #ffffff 100%));
+}
+
+.mock-etp-inner.page-inner--rich .etp-mock-zone .home-zone__titles .page-intro__title,
+.mock-crypto-inner.page-inner--rich .etp-mock-zone .home-zone__titles .page-intro__title,
+.mock-tmmf-inner.page-inner--rich .etp-mock-zone .home-zone__titles .page-intro__title,
+.mock-stable-inner.page-inner--rich .etp-mock-zone .home-zone__titles .page-intro__title {
+  margin: 0 0 0.4rem;
+  color: var(--hx-etp-dark);
+  font-size: clamp(1.35rem, 2.8vw, 1.75rem);
+  font-weight: 780;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.mock-etp-inner.page-inner--rich .etp-mock-zone .home-zone__titles .section-dek--wide,
+.mock-crypto-inner.page-inner--rich .etp-mock-zone .home-zone__titles .section-dek--wide,
+.mock-tmmf-inner.page-inner--rich .etp-mock-zone .home-zone__titles .section-dek--wide,
+.mock-stable-inner.page-inner--rich .etp-mock-zone .home-zone__titles .section-dek--wide {
+  margin: 0;
+  max-width: 52rem;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--ink-muted, #4a5f73);
+}
+
+.mock-etp-inner.page-inner--rich .etp-mock-zone .home-zone__titles .section-dek--wide a,
+.mock-crypto-inner.page-inner--rich .etp-mock-zone .home-zone__titles .section-dek--wide a,
+.mock-tmmf-inner.page-inner--rich .etp-mock-zone .home-zone__titles .section-dek--wide a,
+.mock-stable-inner.page-inner--rich .etp-mock-zone .home-zone__titles .section-dek--wide a {
+  color: var(--hx-etp-bright);
+}
+
+.mock-etp-inner .page-back-below-header,
+.mock-crypto-inner .page-back-below-header,
+.mock-tmmf-inner .page-back-below-header,
+.mock-stable-inner .page-back-below-header {
+  margin-bottom: 0.25rem;
+}
+
+.mock-etp-inner .etp-mock-zone__body,
+.mock-crypto-inner .etp-mock-zone__body,
+.mock-tmmf-inner .etp-mock-zone__body,
+.mock-stable-inner .etp-mock-zone__body {
+  padding: 1.15rem 1.25rem 1.35rem;
+  --etp-mock-gap: 1rem;
+  --etp-mock-gap-lg: 1.2rem;
+}
+
+/* KPI — match home ETP zone */
+.mock-etp-inner .rwa-kpi-panel-static,
+.mock-crypto-inner .rwa-kpi-panel-static,
+.mock-tmmf-inner .rwa-kpi-panel-static,
+.mock-stable-inner .rwa-kpi-panel-static {
+  background: rgb(var(--hx-etp-rgb) / 0.05);
+  border: 1px solid rgb(var(--hx-etp-bright-rgb) / 0.14);
+  border-radius: 10px;
+  padding: 0.65rem 0.7rem;
+  margin-bottom: 1.15rem;
+}
+
+.mock-etp-inner .etp-mock-snapshot .rwa-kpi-panel-static,
+.mock-crypto-inner .etp-mock-snapshot .rwa-kpi-panel-static,
+.mock-tmmf-inner .etp-mock-snapshot .rwa-kpi-panel-static,
+.mock-stable-inner .etp-mock-snapshot .rwa-kpi-panel-static {
+  margin-bottom: 0;
+}
+
+.mock-etp-inner .rwa-kpi-row--home-grid,
+.mock-crypto-inner .rwa-kpi-row--home-grid,
+.mock-tmmf-inner .rwa-kpi-row--home-grid,
+.mock-stable-inner .rwa-kpi-row--home-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 0.55rem;
+}
+
+.mock-etp-inner .rwa-kpi-row--home-grid .rwa-kpi-cell,
+.mock-crypto-inner .rwa-kpi-row--home-grid .rwa-kpi-cell,
+.mock-tmmf-inner .rwa-kpi-row--home-grid .rwa-kpi-cell,
+.mock-stable-inner .rwa-kpi-row--home-grid .rwa-kpi-cell {
+  border: 1px solid rgb(var(--hx-etp-bright-rgb) / 0.18);
+  border-left: 3px solid var(--hx-etp-bright);
+  background: linear-gradient(145deg, var(--hx-etp-soft) 0%, rgba(255, 255, 255, 0.92) 70%);
+  border-radius: 8px;
+  padding: 0.55rem 0.65rem;
+}
+
+.mock-etp-inner .etp-mock-snapshot__note,
+.mock-crypto-inner .etp-mock-snapshot__note,
+.mock-tmmf-inner .etp-mock-snapshot__note,
+.mock-stable-inner .etp-mock-snapshot__note,
+.mock-tmmf-inner .etp-mock-snapshot > .etp-mock-chart__method {
+  margin: 0.5rem 0 0;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.mock-etp-inner .rwa-kpi-row--home-grid .rwa-kpi-val,
+.mock-crypto-inner .rwa-kpi-row--home-grid .rwa-kpi-val,
+.mock-tmmf-inner .rwa-kpi-row--home-grid .rwa-kpi-val,
+.mock-stable-inner .rwa-kpi-row--home-grid .rwa-kpi-val {
+  color: var(--hx-etp);
+}
+
+.mock-etp-inner .rwa-kpi-delta.up,
+.mock-crypto-inner .rwa-kpi-delta.up,
+.mock-tmmf-inner .rwa-kpi-delta.up,
+.mock-stable-inner .rwa-kpi-delta.up {
+  color: #0d6b3a;
+}
+
+.mock-etp-inner .rwa-kpi-delta.down,
+.mock-crypto-inner .rwa-kpi-delta.down,
+.mock-tmmf-inner .rwa-kpi-delta.down,
+.mock-stable-inner .rwa-kpi-delta.down {
+  color: #b42318;
+}
+
+/* Insights row: concentration + quick stats */
+.etp-mock-insights {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  clear: both;
+}
+
+.mock-etp-inner .etp-mock-insights,
+.mock-crypto-inner .etp-mock-insights,
+.mock-tmmf-inner .etp-mock-insights,
+.mock-stable-inner .etp-mock-insights {
+  gap: var(--etp-mock-gap);
+  margin-bottom: var(--etp-mock-gap-lg);
+}
+
+@media (min-width: 900px) {
+  .etp-mock-insights {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    align-items: stretch;
+  }
+
+  .etp-mock-insights__panel--conc .etp-mock-conc__rows {
+    flex: 1;
+    justify-content: space-evenly;
+  }
+}
+
+.etp-mock-insights__panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 100%;
+  padding: 0.95rem 1rem;
+  border: 1px solid rgb(var(--hx-etp-bright-rgb) / 0.16);
+  border-radius: 10px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.etp-mock-insights__head {
+  margin: 0 0 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--hx-etp-dark);
+}
+
+.etp-mock-conc__dek {
+  margin: -0.35rem 0 0.85rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.etp-mock-conc__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.etp-mock-conc__row {
+  display: grid;
+  grid-template-columns: 3.25rem 1fr 3.5rem;
+  gap: 0.5rem;
+  align-items: center;
+  font-size: 0.82rem;
+}
+
+.etp-mock-conc__sym {
+  font-weight: 700;
+  color: var(--hx-etp);
+}
+
+.etp-mock-conc__track {
+  height: 0.55rem;
+  border-radius: 4px;
+  background: rgb(var(--hx-etp-rgb) / 0.1);
+  overflow: hidden;
+}
+
+.etp-mock-conc__fill {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--hx-etp-bright), var(--hx-etp));
+}
+
+.etp-mock-conc__pct {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-muted, #4a5f73);
+}
+
+/* At a glance — stacked rows (fits narrow column) */
+.etp-mock-insights__panel--glance .etp-mock-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+@media (min-width: 900px) {
+  .etp-mock-insights__panel--glance .etp-mock-stats {
+    flex: 1;
+    justify-content: space-evenly;
+  }
+}
+
+.etp-mock-insights__panel--glance .etp-mock-stat {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.65rem;
+  align-items: center;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  background: var(--hx-etp-soft);
+  border: 1px solid rgb(var(--hx-etp-bright-rgb) / 0.12);
+}
+
+.etp-mock-insights__panel--glance .etp-mock-stat__lbl {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--hx-etp-dark);
+  text-transform: none;
+  letter-spacing: 0;
+  text-align: left;
+}
+
+.etp-mock-insights__panel--glance .etp-mock-stat__val {
+  font-size: 1.05rem;
+  font-weight: 780;
+  line-height: 1.15;
+  color: var(--hx-etp);
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Full-width insights (mobile): three tiles in a row */
+@media (max-width: 899px) {
+  .etp-mock-insights__panel--glance .etp-mock-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.55rem;
+  }
+
+  .etp-mock-insights__panel--glance .etp-mock-stat {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    padding: 0.65rem 0.5rem;
+  }
+
+  .mock-etp-inner .etp-mock-insights__panel--glance .etp-mock-stat__lbl,
+  .etp-mock-insights__panel--glance .etp-mock-stat__lbl {
+    margin-top: 0.3rem;
+    font-size: 0.62rem;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: var(--muted);
+    line-height: 1.25;
+  }
+
+  .etp-mock-insights__panel--glance .etp-mock-stat__val {
+    font-size: 1.2rem;
+    text-align: center;
+    white-space: normal;
+  }
+}
+
+/* Dashboard: chart + news */
+.etp-mock-dashboard {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  clear: both;
+}
+
+.mock-etp-inner .etp-mock-dashboard,
+.mock-crypto-inner .etp-mock-dashboard,
+.mock-tmmf-inner .etp-mock-dashboard,
+.mock-stable-inner .etp-mock-dashboard {
+  gap: var(--etp-mock-gap);
+  margin-bottom: var(--etp-mock-gap-lg);
+}
+
+@media (min-width: 960px) {
+  .etp-mock-dashboard {
+    grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+    gap: 1.1rem;
+    align-items: stretch;
+  }
+}
+
+.etp-mock-dash__panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 100%;
+  padding: 0.95rem 1rem 1rem;
+  border: 1px solid rgb(var(--hx-etp-bright-rgb) / 0.16);
+  border-radius: 10px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.etp-mock-dash__panel--chart .etp-mock-chart {
+  flex: 1 1 auto;
+  min-height: 220px;
+}
+
+.etp-mock-dash__panel--chart .etp-mock-chart__method {
+  margin-top: auto;
+}
+
+.etp-mock-dash__panel--news .etp-mock-pulse {
+  flex: 1 1 auto;
+}
+
+.etp-mock-dash__panel--news .etp-mock-dash__cta {
+  margin-top: auto;
+  padding-top: 0.65rem;
+}
+
+.etp-mock-dash__head {
+  margin: 0 0 0.65rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--hx-etp-dark);
+}
+
+.etp-mock-chart {
+  position: relative;
+  height: 220px;
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(42, 80, 128, 0.04) 0%, transparent 40%),
+    linear-gradient(
+      165deg,
+      transparent 42%,
+      rgba(42, 80, 128, 0.08) 48%,
+      rgba(42, 80, 128, 0.22) 72%,
+      rgba(30, 58, 88, 0.35) 100%
+    );
+  border: 1px solid rgba(42, 80, 128, 0.12);
+  overflow: hidden;
+}
+
+.etp-mock-chart::before {
+  content: "Aggregate AUM (mock chart area)";
+  position: absolute;
+  left: 0.75rem;
+  top: 0.55rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: rgba(30, 58, 88, 0.55);
+}
+
+.etp-mock-chart__axis {
+  position: absolute;
+  inset: auto 0.65rem 0.5rem 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  color: var(--muted);
+}
+
+.etp-mock-chart__cap {
+  margin: 0.5rem 0 0;
+  font-size: 0.76rem;
+  color: var(--muted);
+}
+
+.etp-mock-chart__method {
+  margin: 0.35rem 0 0;
+  font-size: 0.72rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.etp-mock-pulse {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.etp-mock-pulse li {
+  padding: 0.55rem 0;
+  border-bottom: 1px solid rgba(42, 80, 128, 0.1);
+  font-size: 0.84rem;
+  line-height: 1.4;
+}
+
+.etp-mock-pulse li:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.etp-mock-pulse a {
+  color: var(--hx-etp-dark);
+  text-decoration: none;
+  font-weight: 550;
+}
+
+.etp-mock-pulse a:hover {
+  color: var(--hx-etp-bright);
+}
+
+.etp-mock-pulse__src {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.mock-etp-inner .btn-primary,
+.mock-crypto-inner .btn-primary,
+.mock-tmmf-inner .btn-primary,
+.mock-stable-inner .btn-primary {
+  background: var(--hx-etp-bright);
+  border-color: rgb(var(--hx-etp-bright-rgb) / 0.35);
+}
+
+.mock-etp-inner .btn-primary:hover,
+.mock-crypto-inner .btn-primary:hover,
+.mock-tmmf-inner .btn-primary:hover,
+.mock-stable-inner .btn-primary:hover {
+  background: var(--hx-etp);
+}
+
+/* Fund / prices table section */
+.mock-etp-inner .etp-mock-table-block,
+.mock-crypto-inner .etp-mock-table-block,
+.mock-tmmf-inner .etp-mock-table-block,
+.mock-stable-inner .etp-mock-table-block {
+  margin-top: 0.15rem;
+  padding-top: var(--etp-mock-gap-lg);
+  border-top: 1px solid rgb(var(--hx-etp-bright-rgb) / 0.12);
+}
+
+.etp-mock-table-block .subsection-head {
+  margin: 0;
+  color: var(--hx-etp-dark);
+}
+
+.mock-etp-inner .etp-mock-table-block .inner-table-head,
+.mock-crypto-inner .etp-mock-table-block .inner-table-head,
+.mock-tmmf-inner .etp-mock-table-block .inner-table-head,
+.mock-stable-inner .etp-mock-table-block .inner-table-head {
+  margin-bottom: 0.35rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid rgb(var(--hx-etp-bright-rgb) / 0.14);
+}
+
+.mock-etp-inner .tmmf-mock-funds-intro,
+.mock-etp-inner .tmmf-mock-league-intro,
+.mock-crypto-inner .tmmf-mock-funds-intro,
+.mock-crypto-inner .tmmf-mock-league-intro,
+.mock-tmmf-inner .tmmf-mock-funds-intro,
+.mock-tmmf-inner .tmmf-mock-league-intro,
+.mock-stable-inner .stable-mock-league-intro,
+.mock-stable-inner .tmmf-mock-funds-intro,
+.mock-stable-inner .tmmf-mock-league-intro {
+  margin: 0 0 0.75rem;
+  max-width: 52rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--ink-muted, #4a5f73);
+}
+
+.mock-etp-inner .tmmf-mock-funds-intro strong,
+.mock-etp-inner .tmmf-mock-league-intro strong,
+.mock-crypto-inner .tmmf-mock-funds-intro strong,
+.mock-crypto-inner .tmmf-mock-league-intro strong,
+.mock-tmmf-inner .tmmf-mock-funds-intro strong,
+.mock-tmmf-inner .tmmf-mock-league-intro strong,
+.mock-stable-inner .stable-mock-league-intro strong,
+.mock-stable-inner .tmmf-mock-funds-intro strong,
+.mock-stable-inner .tmmf-mock-league-intro strong {
+  color: var(--hx-etp-dark);
+}
+
+.mock-etp-inner .etp-mock-table-block .rwa-split-table-head__actions,
+.mock-crypto-inner .etp-mock-table-block .rwa-split-table-head__actions,
+.mock-tmmf-inner .etp-mock-table-block .rwa-split-table-head__actions,
+.mock-stable-inner .etp-mock-table-block .rwa-split-table-head__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.mock-etp-inner .etp-mock-table-block .table-download-btn,
+.mock-crypto-inner .etp-mock-table-block .table-download-btn,
+.mock-tmmf-inner .etp-mock-table-block .table-download-btn,
+.mock-stable-inner .etp-mock-table-block .table-download-btn {
+  border-color: rgb(var(--hx-etp-bright-rgb) / 0.22);
+}
+
+.mock-etp-inner .etp-mock-table-block .table-download-btn:hover:not(:disabled),
+.mock-crypto-inner .etp-mock-table-block .table-download-btn:hover:not(:disabled),
+.mock-tmmf-inner .etp-mock-table-block .table-download-btn:hover:not(:disabled),
+.mock-stable-inner .etp-mock-table-block .table-download-btn:hover:not(:disabled) {
+  border-color: var(--hx-etp-bright);
+  background: var(--hx-etp-soft);
+}
+
+/* Table: search + results meta (count left, full screen right) */
+.mock-etp-inner .etp-mock-table-search,
+.mock-crypto-inner .etp-mock-table-search,
+.mock-tmmf-inner .etp-mock-table-search,
+.mock-stable-inner .etp-mock-table-search {
+  display: block;
+  margin: 0.45rem 0 0;
+}
+
+.mock-etp-inner .etp-mock-table-search .search-field__label,
+.mock-crypto-inner .etp-mock-table-search .search-field__label,
+.mock-tmmf-inner .etp-mock-table-search .search-field__label,
+.mock-stable-inner .etp-mock-table-search .search-field__label {
+  margin-bottom: 0.3rem;
+}
+
+.mock-etp-inner .etp-mock-table-search .search-field__input,
+.mock-crypto-inner .etp-mock-table-search .search-field__input,
+.mock-tmmf-inner .etp-mock-table-search .search-field__input,
+.mock-stable-inner .etp-mock-table-search .search-field__input {
+  max-width: 32rem;
+  background: #fff;
+  border-color: rgb(var(--hx-etp-bright-rgb) / 0.22);
+}
+
+.mock-etp-inner .etp-mock-table-search .search-field__input:focus,
+.mock-crypto-inner .etp-mock-table-search .search-field__input:focus,
+.mock-tmmf-inner .etp-mock-table-search .search-field__input:focus,
+.mock-stable-inner .etp-mock-table-search .search-field__input:focus {
+  border-color: var(--hx-etp-bright);
+  box-shadow: 0 0 0 3px rgb(var(--hx-etp-bright-rgb) / 0.14);
+}
+
+.mock-etp-inner .etp-mock-table-meta,
+.mock-crypto-inner .etp-mock-table-meta,
+.mock-tmmf-inner .etp-mock-table-meta,
+.mock-stable-inner .etp-mock-table-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.65rem;
+  margin: 0.4rem 0 0.35rem;
+  padding: 0;
+}
+
+.mock-etp-inner .etp-mock-table-meta__count,
+.mock-etp-inner .etp-mock-table-meta__count.toolbar-note,
+.mock-crypto-inner .etp-mock-table-meta__count,
+.mock-tmmf-inner .etp-mock-table-meta__count,
+.mock-stable-inner .etp-mock-table-meta__count,
+.mock-crypto-inner .etp-mock-table-meta__count.toolbar-note,
+.mock-tmmf-inner .etp-mock-table-meta__count.toolbar-note,
+.mock-stable-inner .etp-mock-table-meta__count.toolbar-note {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.mock-etp-inner .etp-mock-table-meta__expand,
+.mock-crypto-inner .etp-mock-table-meta__expand,
+.mock-tmmf-inner .etp-mock-table-meta__expand,
+.mock-stable-inner .etp-mock-table-meta__expand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0 0 0 auto;
+  padding: 0.32rem 0.5rem;
+  font-family: var(--font);
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--hx-etp-dark);
+  background: #fff;
+  border: 1px solid rgb(var(--hx-etp-bright-rgb) / 0.22);
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.mock-etp-inner .etp-mock-table-meta__expand svg,
+.mock-crypto-inner .etp-mock-table-meta__expand svg,
+.mock-tmmf-inner .etp-mock-table-meta__expand svg,
+.mock-stable-inner .etp-mock-table-meta__expand svg {
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.mock-etp-inner .etp-mock-table-meta__expand:hover:not(:disabled),
+.mock-crypto-inner .etp-mock-table-meta__expand:hover:not(:disabled),
+.mock-tmmf-inner .etp-mock-table-meta__expand:hover:not(:disabled),
+.mock-stable-inner .etp-mock-table-meta__expand:hover:not(:disabled) {
+  background: var(--hx-etp-soft);
+  border-color: var(--hx-etp-bright);
+  color: var(--hx-etp);
+}
+
+.mock-etp-inner .etp-mock-table-meta__expand:focus-visible,
+.mock-crypto-inner .etp-mock-table-meta__expand:focus-visible,
+.mock-tmmf-inner .etp-mock-table-meta__expand:focus-visible,
+.mock-stable-inner .etp-mock-table-meta__expand:focus-visible {
+  outline: 2px solid var(--hx-etp-bright);
+  outline-offset: 2px;
+}
+
+.mock-etp-inner .etp-mock-table-meta__expand:disabled,
+.mock-crypto-inner .etp-mock-table-meta__expand:disabled,
+.mock-tmmf-inner .etp-mock-table-meta__expand:disabled,
+.mock-stable-inner .etp-mock-table-meta__expand:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.mock-etp-inner .etp-mock-table-meta + .table-wrap,
+.mock-crypto-inner .etp-mock-table-meta + .table-wrap,
+.mock-tmmf-inner .etp-mock-table-meta + .table-wrap,
+.mock-stable-inner .etp-mock-table-meta + .table-wrap {
+  margin-top: 0.25rem;
+  margin-bottom: 0.6rem;
+}
+
+.mock-etp-inner .data-table thead th,
+.mock-crypto-inner .data-table thead th,
+.mock-tmmf-inner .data-table thead th,
+.mock-stable-inner .data-table thead th {
+  background: rgb(var(--hx-etp-rgb) / 0.08);
+  color: var(--hx-etp-dark);
+}
+
+.mock-etp-inner .data-table tbody td a,
+.mock-crypto-inner .data-table tbody td a,
+.mock-tmmf-inner .data-table tbody td a,
+.mock-stable-inner .data-table tbody td a {
+  color: var(--hx-etp-bright);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.mock-etp-inner .data-table tbody td a:hover,
+.mock-crypto-inner .data-table tbody td a:hover,
+.mock-tmmf-inner .data-table tbody td a:hover,
+.mock-stable-inner .data-table tbody td a:hover {
+  color: var(--hx-etp);
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+}
+
+.mock-etp-inner .th-sortable:hover,
+.mock-crypto-inner .th-sortable:hover,
+.mock-tmmf-inner .th-sortable:hover,
+.mock-stable-inner .th-sortable:hover,
+.mock-etp-inner .data-table thead th.th-sortable.is-sorted,
+.mock-crypto-inner .data-table thead th.th-sortable.is-sorted,
+.mock-tmmf-inner .data-table thead th.th-sortable.is-sorted,
+.mock-stable-inner .data-table thead th.th-sortable.is-sorted {
+  color: var(--hx-etp-bright);
+}
+
+.mock-etp-inner .table-wrap,
+.mock-crypto-inner .table-wrap,
+.mock-tmmf-inner .table-wrap,
+.mock-stable-inner .table-wrap {
+  border: 1px solid rgb(var(--hx-etp-bright-rgb) / 0.14);
+  border-radius: 10px;
+}
+
+.mock-etp-inner .table-wrap--scroll thead th,
+.mock-crypto-inner .table-wrap--scroll thead th,
+.mock-tmmf-inner .table-wrap--scroll thead th,
+.mock-stable-inner .table-wrap--scroll thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--hx-etp-soft);
+  box-shadow: 0 1px 0 rgb(var(--hx-etp-bright-rgb) / 0.14);
+}
+
+.mock-etp-inner .data-table td.num.up,
+.mock-crypto-inner .data-table td.num.up,
+.mock-tmmf-inner .data-table td.num.up,
+.mock-stable-inner .data-table td.num.up {
+  color: #0d6b3a;
+  font-weight: 600;
+}
+
+.mock-etp-inner .data-table td.num.down,
+.mock-crypto-inner .data-table td.num.down,
+.mock-tmmf-inner .data-table td.num.down,
+.mock-stable-inner .data-table td.num.down {
+  color: #b42318;
+  font-weight: 600;
+}
+
+.mock-etp-inner .rwa-table-footnote-row,
+.mock-crypto-inner .rwa-table-footnote-row,
+.mock-tmmf-inner .rwa-table-footnote-row,
+.mock-stable-inner .rwa-table-footnote-row {
+  margin-top: 0.65rem;
+}
+
+.mock-etp-inner .etp-mock-table-block .rwa-table-footnote-row,
+.mock-crypto-inner .etp-mock-table-block .rwa-table-footnote-row,
+.mock-tmmf-inner .etp-mock-table-block .rwa-table-footnote-row,
+.mock-stable-inner .etp-mock-table-block .rwa-table-footnote-row {
+  margin-top: 0;
+  padding-top: 0.55rem;
+  border-top: 1px solid rgb(var(--hx-etp-bright-rgb) / 0.1);
+}
+
+.mock-etp-inner .etp-mock-table-block .rwa-table-footnote-row__cap,
+.mock-crypto-inner .etp-mock-table-block .rwa-table-footnote-row__cap,
+.mock-tmmf-inner .etp-mock-table-block .rwa-table-footnote-row__cap,
+.mock-stable-inner .etp-mock-table-block .rwa-table-footnote-row__cap {
+  margin: 0;
+  font-size: 0.74rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.mock-etp-inner .etp-mock-zone__body > .timestamp-foot,
+.mock-crypto-inner .etp-mock-zone__body > .timestamp-foot,
+.mock-tmmf-inner .etp-mock-zone__body > .timestamp-foot,
+.mock-stable-inner .etp-mock-zone__body > .timestamp-foot {
+  margin: 0.75rem 0 0;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.mock-etp-inner .etp-mock-bottom-cta,
+.mock-crypto-inner .etp-mock-bottom-cta,
+.mock-tmmf-inner .etp-mock-bottom-cta,
+.mock-stable-inner .etp-mock-bottom-cta {
+  margin-top: var(--etp-mock-gap-lg, 1.2rem);
+}
+
+.mock-etp-inner .etp-mock-method,
+.mock-crypto-inner .etp-mock-method,
+.mock-tmmf-inner .etp-mock-method,
+.mock-stable-inner .etp-mock-method {
+  margin-top: var(--etp-mock-gap-lg, 1.2rem);
+  border-color: rgb(var(--hx-etp-bright-rgb) / 0.28);
+}
+
+.mock-etp-inner .etp-mock-method__summary,
+.mock-crypto-inner .etp-mock-method__summary,
+.mock-tmmf-inner .etp-mock-method__summary,
+.mock-stable-inner .etp-mock-method__summary {
+  color: var(--hx-etp);
+}
+
+.mock-etp-inner .etp-mock-table-block .timestamp-foot,
+.mock-crypto-inner .etp-mock-table-block .timestamp-foot,
+.mock-tmmf-inner .etp-mock-table-block .timestamp-foot,
+.mock-stable-inner .etp-mock-table-block .timestamp-foot {
+  margin: 0.35rem 0 0;
+  font-size: 0.72rem;
+}
+
+.mock-etp-inner .btn-secondary:hover,
+.mock-crypto-inner .btn-secondary:hover,
+.mock-tmmf-inner .btn-secondary:hover,
+.mock-stable-inner .btn-secondary:hover {
+  border-color: var(--hx-etp-bright);
+  color: var(--hx-etp);
+}
+
+/* Key observations — card treatment (beats inner-page .inner-rich-zone .crypto-story-callout) */
+.mock-etp-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout,
+.mock-crypto-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout,
+.mock-tmmf-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout,
+.mock-stable-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout {
+  margin: 0;
+  padding: 1rem 1.1rem 0.9rem;
+  border: 1px solid rgb(var(--hx-etp-bright-rgb) / 0.22);
+  border-left: 4px solid var(--hx-etp-bright);
+  border-radius: 10px;
+  background: linear-gradient(160deg, rgb(var(--hx-etp-rgb) / 0.07) 0%, #fff 55%);
+  box-shadow: 0 1px 4px rgb(var(--hx-etp-rgb) / 0.08);
+}
+
+.mock-etp-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__title,
+.mock-crypto-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__title,
+.mock-tmmf-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__title,
+.mock-stable-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__title {
+  margin-bottom: 0.55rem;
+  padding-bottom: 0.45rem;
+  border-bottom: 1px solid rgb(var(--hx-etp-bright-rgb) / 0.14);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--hx-etp-dark);
+}
+
+.mock-etp-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__list,
+.mock-crypto-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__list,
+.mock-tmmf-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__list,
+.mock-stable-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__list {
+  margin: 0;
+  padding-left: 1.05rem;
+  font-size: 0.79rem;
+  line-height: 1.48;
+}
+
+.mock-etp-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__list li + li,
+.mock-crypto-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__list li + li,
+.mock-tmmf-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__list li + li,
+.mock-stable-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__list li + li {
+  margin-top: 0.4rem;
+}
+
+.mock-etp-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__list a,
+.mock-crypto-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__list a,
+.mock-tmmf-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__list a,
+.mock-stable-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__list a {
+  color: var(--hx-etp-bright);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.mock-etp-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__list a:hover,
+.mock-crypto-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__list a:hover,
+.mock-tmmf-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__list a:hover,
+.mock-stable-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__list a:hover {
+  color: var(--hx-etp);
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+}
+
+.mock-etp-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__note,
+.mock-crypto-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__note,
+.mock-tmmf-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__note,
+.mock-stable-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__note {
+  margin-top: 0.55rem;
+  padding: 0.55rem 0.65rem;
+  border-top: none;
+  border-radius: 8px;
+  background: rgb(var(--hx-etp-rgb) / 0.06);
+  font-size: 0.73rem;
+  line-height: 1.45;
+}
+
+.mock-etp-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .review-note.ko-disclaimer,
+.mock-crypto-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .review-note.ko-disclaimer,
+.mock-tmmf-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .review-note.ko-disclaimer,
+.mock-stable-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .review-note.ko-disclaimer {
+  margin: 0.5rem 0 0;
+  padding: 0.38rem 0.55rem;
+  border: 1px solid rgb(var(--hx-etp-bright-rgb) / 0.16);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.85);
+  font-size: 0.71rem;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+/* Zone-tinted key observations (crypto / stable / TMMF — ETP uses shared block above) */
+.mock-crypto-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout {
+  border-color: rgb(var(--hx-crypto-rgb) / 0.22);
+  border-left-color: var(--hx-crypto-bright);
+  background: linear-gradient(160deg, rgb(var(--hx-crypto-rgb) / 0.07) 0%, #fff 55%);
+  box-shadow: 0 1px 4px rgb(var(--hx-crypto-rgb) / 0.08);
+}
+
+.mock-crypto-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__title {
+  border-bottom-color: rgb(var(--hx-crypto-rgb) / 0.14);
+  color: var(--hx-crypto-dark, var(--hx-crypto));
+}
+
+.mock-crypto-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__list a {
+  color: var(--hx-crypto-bright);
+}
+
+.mock-crypto-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__list a:hover {
+  color: var(--hx-crypto);
+}
+
+.mock-crypto-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__note {
+  background: rgb(var(--hx-crypto-rgb) / 0.06);
+}
+
+.mock-stable-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout {
+  border-color: rgb(61 120 160 / 0.22);
+  border-left-color: var(--hx-stable-bright);
+  background: linear-gradient(160deg, rgb(45 95 127 / 0.07) 0%, #fff 55%);
+  box-shadow: 0 1px 4px rgb(45 95 127 / 0.08);
+}
+
+.mock-stable-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__title {
+  border-bottom-color: rgb(61 120 160 / 0.14);
+  color: var(--hx-stable-dark);
+}
+
+.mock-stable-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__list a {
+  color: var(--hx-stable-bright);
+}
+
+.mock-stable-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__list a:hover {
+  color: var(--hx-stable);
+}
+
+.mock-stable-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__note {
+  background: rgb(45 95 127 / 0.06);
+}
+
+.mock-tmmf-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout {
+  border-color: rgb(80 113 136 / 0.22);
+  border-left-color: var(--hx-tmmf-bright);
+  background: linear-gradient(160deg, rgb(62 92 116 / 0.07) 0%, #fff 55%);
+  box-shadow: 0 1px 4px rgb(62 92 116 / 0.08);
+}
+
+.mock-tmmf-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__title {
+  border-bottom-color: rgb(80 113 136 / 0.14);
+  color: var(--hx-tmmf-dark);
+}
+
+.mock-tmmf-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__list a {
+  color: var(--hx-tmmf-bright);
+}
+
+.mock-tmmf-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__list a:hover {
+  color: var(--hx-tmmf);
+}
+
+.mock-tmmf-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__note {
+  background: rgb(62 92 116 / 0.06);
+}
+
+/* Methodology */
+.mock-etp-inner .etp-mock-method,
+.mock-crypto-inner .etp-mock-method,
+.mock-tmmf-inner .etp-mock-method,
+.mock-stable-inner .etp-mock-method {
+  margin-top: var(--etp-mock-gap-lg);
+}
+
+.etp-mock-method {
+  margin-top: 1.15rem;
+  border: 1px dashed rgba(42, 80, 128, 0.25);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.etp-mock-method__summary {
+  padding: 0.65rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 650;
+  color: var(--hx-etp);
+  cursor: pointer;
+}
+
+.etp-mock-method__body {
+  padding: 0 0.9rem 0.85rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--ink-muted, #4a5f73);
+}
+
+.etp-mock-method__body ul {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.mock-etp-inner .page-back-below-header,
+.mock-crypto-inner .page-back-below-header,
+.mock-tmmf-inner .page-back-below-header,
+.mock-stable-inner .page-back-below-header {
+  max-width: var(--content-max, 72rem);
+  margin: 0 auto;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+.mock-etp-inner .back-link--below-header a:hover,
+.mock-crypto-inner .back-link--below-header a:hover,
+.mock-tmmf-inner .back-link--below-header a:hover,
+.mock-stable-inner .back-link--below-header a:hover {
+  color: var(--hx-etp-bright);
+}
+
+.mock-etp-inner .etp-mock-shell > .back-link,
+.mock-crypto-inner .etp-mock-shell > .back-link,
+.mock-tmmf-inner .etp-mock-shell > .back-link,
+.mock-stable-inner .etp-mock-shell > .back-link {
+  margin: 1rem 0 0;
+  font-size: 0.84rem;
+}
+
+.mock-etp-inner .etp-mock-insights__head,
+.mock-etp-inner .etp-mock-dash__head,
+.mock-crypto-inner .etp-mock-insights__head,
+.mock-tmmf-inner .etp-mock-insights__head,
+.mock-stable-inner .etp-mock-insights__head,
+.mock-crypto-inner .etp-mock-dash__head,
+.mock-tmmf-inner .etp-mock-dash__head,
+.mock-stable-inner .etp-mock-dash__head {
+  margin-bottom: 0.6rem;
+}
+
+.mock-etp-inner .etp-mock-conc__dek,
+.mock-crypto-inner .etp-mock-conc__dek,
+.mock-tmmf-inner .etp-mock-conc__dek,
+.mock-stable-inner .etp-mock-conc__dek {
+  margin: -0.25rem 0 0.75rem;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.mock-etp-inner .etp-mock-insights__panel,
+.mock-crypto-inner .etp-mock-insights__panel,
+.mock-tmmf-inner .etp-mock-insights__panel,
+.mock-stable-inner .etp-mock-insights__panel,
+.mock-etp-inner .etp-mock-dash__panel,
+.mock-crypto-inner .etp-mock-dash__panel,
+.mock-tmmf-inner .etp-mock-dash__panel,
+.mock-stable-inner .etp-mock-dash__panel {
+  border-color: rgb(var(--hx-etp-bright-rgb) / 0.16);
+}
+
+.mock-etp-inner .etp-mock-insights__head,
+.mock-crypto-inner .etp-mock-insights__head,
+.mock-tmmf-inner .etp-mock-insights__head,
+.mock-stable-inner .etp-mock-insights__head,
+.mock-etp-inner .etp-mock-dash__head,
+.mock-crypto-inner .etp-mock-dash__head,
+.mock-tmmf-inner .etp-mock-dash__head,
+.mock-stable-inner .etp-mock-dash__head {
+  color: var(--hx-etp-dark);
+}
+
+.mock-etp-inner .etp-mock-conc__pct,
+.mock-crypto-inner .etp-mock-conc__pct,
+.mock-tmmf-inner .etp-mock-conc__pct,
+.mock-stable-inner .etp-mock-conc__pct {
+  color: var(--ink-muted, #4a5f73);
+}
+
+.mock-etp-inner .home-zone__badge,
+.mock-crypto-inner .home-zone__badge,
+.mock-tmmf-inner .home-zone__badge,
+.mock-stable-inner .home-zone__badge {
+  background: var(--zone-badge-dark, var(--hx-etp-dark));
+  color: #fff;
+}
+
+@media (max-width: 520px) {
+  .mock-etp-inner .etp-mock-table-meta__expand,
+  .mock-crypto-inner .etp-mock-table-meta__expand,
+  .mock-tmmf-inner .etp-mock-table-meta__expand,
+  .mock-stable-inner .etp-mock-table-meta__expand {
+    margin-left: 0;
+  }
+
+  .mock-etp-inner .etp-mock-table-search .search-field__input,
+  .mock-crypto-inner .etp-mock-table-search .search-field__input,
+  .mock-tmmf-inner .etp-mock-table-search .search-field__input,
+  .mock-stable-inner .etp-mock-table-search .search-field__input {
+    max-width: none;
+  }
+
+  .mock-etp-inner .etp-mock-table-meta,
+  .mock-crypto-inner .etp-mock-table-meta,
+  .mock-tmmf-inner .etp-mock-table-meta,
+  .mock-stable-inner .etp-mock-table-meta {
+    flex-wrap: wrap;
+  }
+}

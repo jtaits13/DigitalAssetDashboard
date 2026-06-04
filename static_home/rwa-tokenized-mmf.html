@@ -12,9 +12,14 @@
     />
     <link rel="stylesheet" href="styles.css?v=85" />
     <link rel="stylesheet" href="css/site-experience.css?v=21" />
-    <link rel="stylesheet" href="css/inner-page-experience.css?v=20" />
+    <link rel="stylesheet" href="css/inner-page-experience.css?v=23" />
+    <link rel="stylesheet" href="css/inner-page-zone-parity.css?v=1" />
   </head>
-  <body class="page-rwa-deep page-rwa-deep-mmf site-experience page-inner--rich" data-rwa-deep-json="rwa_tokenized_mmf.json" data-methodology="rwa-mmf">
+  <body
+    class="page-rwa-deep page-rwa-deep-mmf site-experience page-inner--rich"
+    data-rwa-deep-json="rwa_tokenized_mmf.json"
+    data-methodology="rwa-mmf"
+  >
     <header class="site-header" role="banner">
       <div class="site-header__inner">
         <a class="site-brand" href="index.html">Digital Assets Dashboard</a>
@@ -58,72 +63,80 @@
 
     <div class="page-back-below-header">
       <p class="back-link back-link--below-header">
-        <a data-deep-back="explore" href="index.html">← Back to home</a>
+        <a data-deep-back="explore" href="index.html#section-tmmf">&larr; Back to home &middot; TMMF preview</a>
       </p>
     </div>
 
     <main class="page-shell">
-      <article class="hub-section hub-section--panel inner-rich-zone zone--rwa home-zone home-zone--rwa">
+      <article class="hub-section hub-section--panel inner-rich-zone zone--tmmf home-zone home-zone--tmmf">
         <div class="home-zone__stripe" aria-hidden="true"></div>
         <header class="home-zone__head">
-          <span class="home-zone__badge" aria-hidden="true">RWA</span>
+          <span class="home-zone__badge" aria-hidden="true">MMF</span>
           <div class="home-zone__titles">
             <p class="band-label teal" id="js-deep-band"></p>
-        <h1 class="page-intro__title" id="js-deep-title"></h1>
-        <div class="page-intro__dek" id="js-deep-subtitle"></div>
+            <h1 class="page-intro__title" id="js-deep-title"></h1>
+            <div class="section-dek section-dek--wide page-intro__dek" id="js-deep-subtitle"></div>
           </div>
         </header>
         <div class="home-zone__body inner-rich-zone__body">
+          <div class="home-related-chips" aria-label="Related pages">
+            <span class="home-related-chips__label">Related</span>
+            <a class="home-chip" href="index.html#section-tmmf">Home TMMF preview</a>
+            <a class="home-chip" href="rwa-stablecoins.html">Stablecoins</a>
+            <a class="home-chip" href="etps.html">U.S. ETPs</a>
+            <a class="home-chip" href="rwa-global.html">RWA market overview</a>
+          </div>
+
           <div class="data-banner" id="js-deep-banner" role="status" hidden></div>
-      <hr class="inner-rich-rule" />
 
-      <section class="hub-section" id="js-deep-snapshot" aria-labelledby="js-deep-snap-h">
-        <h2 class="subsection-head" id="js-deep-snap-h">Top-Line Market Snapshot</h2>
-        <div id="js-deep-kpis" aria-label="Tokenized money market funds headline KPI strip"></div>
-      </section>
+          <section class="inner-rich-block" id="js-deep-snapshot" aria-labelledby="js-deep-snap-h">
+            <h2 class="subsection-head" id="js-deep-snap-h">Top-Line Market Snapshot</h2>
+            <div id="js-deep-kpis" aria-label="Tokenized money market funds headline KPI strip"></div>
+          </section>
 
-      <section class="hub-section" id="js-deep-ko-section" hidden aria-labelledby="js-deep-ko-h">
-        <h2 class="subsection-head u-vh" id="js-deep-ko-h">Key Observations</h2>
-        <p class="data-freshness" id="js-deep-ko-as-of" hidden></p>
-        <div id="js-deep-ko"></div>
-      </section>
+          <section class="inner-rich-block inner-key-obs-block" id="js-deep-ko-section" hidden aria-labelledby="js-deep-ko-h">
+            <h2 class="subsection-head u-vh" id="js-deep-ko-h">Key Observations</h2>
+            <p class="data-freshness" id="js-deep-ko-as-of" hidden></p>
+            <div id="js-deep-ko"></div>
+          </section>
 
-      <hr class="jd-rwa-gmo-soft-rule" id="js-deep-rule-after-ko" hidden aria-hidden="true" />
+          <div id="js-deep-extra-before-leagues" hidden></div>
 
-      <div id="js-deep-extra-before-leagues" hidden></div>
+          <div id="deep-net-wrap"></div>
 
-      <div id="deep-net-wrap"></div>
+          <div id="js-deep-extra-after-network" hidden></div>
 
-      <div id="js-deep-extra-after-network" hidden></div>
+          <hr class="jd-divider" id="js-deep-rule-mid" hidden aria-hidden="true" />
 
-      <hr class="jd-divider" id="js-deep-rule-mid" hidden aria-hidden="true" />
+          <div id="deep-plat-wrap"></div>
 
-      <div id="deep-plat-wrap"></div>
+          <div id="js-deep-bottom-cta" class="cta-row rwa-deep-page-cta"></div>
 
-      <div id="js-deep-bottom-cta" class="cta-row rwa-deep-page-cta"></div>
+          <p class="timestamp-foot" id="js-deep-footer-note"></p>
         </div>
       </article>
 
-
       <p class="back-link">
-        <a data-deep-back="explore" href="index.html">← Back to home</a>
+        <a data-deep-back="explore" href="index.html">&larr; Back to home</a>
       </p>
     </main>
 
     <footer class="site-footer">
-      <span id="js-deep-footer-note"></span>
-      <span class="site-footer__meta"> · Digital Assets Dashboard · </span><time datetime="2026-05">May 2026</time>
+      <span class="site-footer__meta">Digital Assets Dashboard &middot; Tokenized MMFs &middot; </span
+      ><time datetime="2026-05">May 2026</time>
     </footer>
 
     <script defer src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
     <script defer src="js/static-base.js?v=14"></script>
     <script defer src="js/table-fullscreen.js?v=2"></script>
     <script defer src="js/table-download.js?v=4"></script>
-    <script defer src="js/data-freshness.js?v=1"></script>
     <script defer src="js/kpi-hints.js?v=3"></script>
+    <script defer src="js/data-freshness.js?v=1"></script>
     <script defer src="js/page-methodology.js?v=4"></script>
-    <script defer src="js/rwa-onchain-home.js?v=15"></script>
-    <script defer src="js/rwa-asset-deep-page.js?v=14"></script>
+    <script defer src="js/snapshot-kpi-shared.js?v=7"></script>
+    <script defer src="js/crypto-kpi-shared.js?v=11"></script>
+    <script defer src="js/rwa-onchain-home.js?v=22"></script>
+    <script defer src="js/rwa-asset-deep-page.js?v=18"></script>
     <script defer src="js/site-experience.js?v=1"></script>
   </body>
 </html>

@@ -12,7 +12,8 @@
     />
     <link rel="stylesheet" href="styles.css?v=85" />
     <link rel="stylesheet" href="css/site-experience.css?v=21" />
-    <link rel="stylesheet" href="css/inner-page-experience.css?v=21" />
+    <link rel="stylesheet" href="css/inner-page-experience.css?v=23" />
+    <link rel="stylesheet" href="css/inner-page-zone-parity.css?v=1" />
   </head>
   <body class="page-etp site-experience page-inner--rich" data-methodology="etp">
     <header class="site-header" role="banner">
@@ -68,7 +69,7 @@
         <header class="home-zone__head">
           <span class="home-zone__badge" aria-hidden="true">ETP</span>
           <div class="home-zone__titles">
-            <h1 class="band-label teal" id="page-title">U.S. Digital Asset ETPs &mdash; Full List</h1>
+            <h1 class="page-intro__title" id="page-title">U.S. Digital Asset ETPs</h1>
             <p class="section-dek section-dek--wide">
               <strong>U.S. crypto-related exchange-traded products</strong>, with a KPI strip, an estimated aggregate AUM
               trend chart, a searchable fund table, and a related ETF/ETP headlines panel. Reference:
@@ -85,18 +86,19 @@
             <span class="home-related-chips__label">Related</span>
             <a class="home-chip" href="index.html#section-markets">Home ETP preview</a>
             <a class="home-chip" href="crypto-prices.html">Crypto prices</a>
+            <a class="home-chip" href="rwa-tokenized-mmf.html">TMMFs</a>
             <a class="home-chip" href="etf-news.html">All ETF/ETP headlines</a>
           </div>
 
           <div class="data-banner" id="js-data-banner" role="status" hidden></div>
 
-          <div class="inner-rich-block" aria-labelledby="snapshot-heading">
-            <h2 class="subsection-head" id="snapshot-heading">Top-Line Market Snapshot</h2>
+          <section class="inner-rich-block etp-inner-snapshot" aria-labelledby="snapshot-heading">
+            <h2 class="subsection-head u-vh" id="snapshot-heading">Top-line snapshot</h2>
             <p class="data-freshness" id="js-etp-snapshot-as-of" hidden></p>
             <div id="js-etp-kpi" aria-label="U.S. ETP KPI strip"></div>
-          </div>
+          </section>
 
-          <div class="inner-rich-block" aria-labelledby="obs-heading">
+          <div class="inner-rich-block inner-key-obs-block" aria-labelledby="obs-heading">
             <h2 class="subsection-head u-vh" id="obs-heading">Key Observations</h2>
             <div id="js-etp-key-obs" hidden></div>
           </div>
@@ -206,8 +208,8 @@
               </p>
               <div class="rwa-table-footnote-row__actions rwa-table-actions" id="js-etp-table-actions"></div>
             </div>
-            <p class="timestamp-foot" id="js-etp-generated">&mdash;</p>
           </div>
+          <p class="timestamp-foot" id="js-etp-generated">&mdash;</p>
         </div>
       </article>
 

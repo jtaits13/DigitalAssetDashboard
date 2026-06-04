@@ -680,6 +680,36 @@
   color: var(--hx-crypto);
 }
 
+.site-experience.page-inner--rich .inner-rich-zone.zone--stable .crypto-story-callout {
+  border-left-color: var(--hx-stable-bright);
+  background: rgb(45 95 127 / 0.06);
+}
+
+.site-experience.page-inner--rich .inner-rich-zone.zone--stable .crypto-story-callout__list a {
+  color: var(--hx-stable);
+}
+
+.site-experience.page-inner--rich .inner-rich-zone.zone--tmmf .crypto-story-callout {
+  border-left-color: var(--hx-tmmf-bright);
+  background: rgb(62 92 116 / 0.06);
+}
+
+.site-experience.page-inner--rich .inner-rich-zone.zone--tmmf .crypto-story-callout__list a {
+  color: var(--hx-tmmf);
+}
+
+.site-experience.page-inner--rich .inner-rich-zone.zone--stable .inner-rich-block,
+.site-experience.page-inner--rich .inner-rich-zone.zone--stable .inner-rich-zone__body > .hub-section {
+  border: 1px solid rgb(61 120 160 / 0.14);
+  box-shadow: 0 2px 10px rgb(45 95 127 / 0.05);
+}
+
+.site-experience.page-inner--rich .inner-rich-zone.zone--tmmf .inner-rich-block,
+.site-experience.page-inner--rich .inner-rich-zone.zone--tmmf .inner-rich-zone__body > .hub-section {
+  border: 1px solid rgb(80 113 136 / 0.14);
+  box-shadow: 0 2px 10px rgb(62 92 116 / 0.05);
+}
+
 .site-experience.page-home .home-zone--rwa .crypto-story-callout {
   border-left-color: var(--hx-rwa-bright);
   background: rgb(var(--hx-accent-rgb) / 0.55);

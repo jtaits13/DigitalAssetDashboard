@@ -1,0 +1,111 @@
+/* Tokenized MMF inner page mock — zone tokens + layout (parity with crypto / stable mocks) */
+
+.mock-tmmf-inner {
+  --hx-etp: #3e5c74;
+  --hx-etp-bright: #507188;
+  --hx-etp-dark: #31485c;
+  --hx-etp-rgb: 62 92 116;
+  --hx-etp-bright-rgb: 80 113 136;
+  --hx-etp-soft: #eef2f6;
+  --hx-etp-head: linear-gradient(180deg, #f2f5f8 0%, #ffffff 100%);
+  --hx-stripe: var(--hx-etp-bright);
+  --zone-badge-dark: var(--hx-etp-dark);
+}
+
+.mock-tmmf-inner::before {
+  content: "Design mock — Tokenized MMF inner page · not linked from production · open mockups/tmmf-inner-page-mock.html";
+}
+
+/* Page wash — match crypto / stable / ETP mocks */
+.mock-tmmf-inner.site-experience {
+  background:
+    radial-gradient(ellipse 88% 52% at 6% -6%, rgb(var(--hx-etp-bright-rgb) / 0.1), transparent 55%),
+    radial-gradient(ellipse 70% 42% at 98% 2%, rgb(var(--hx-etp-rgb) / 0.12), transparent 50%),
+    var(--wash);
+}
+
+/* Insights + dashboard panels */
+.mock-tmmf-inner .etp-mock-insights__panel,
+.mock-tmmf-inner .etp-mock-dash__panel {
+  border-color: rgb(var(--hx-etp-bright-rgb) / 0.16);
+}
+
+.mock-tmmf-inner .etp-mock-insights__head,
+.mock-tmmf-inner .etp-mock-dash__head {
+  color: var(--hx-etp-dark);
+}
+
+.mock-tmmf-inner .etp-mock-conc__sym {
+  color: var(--hx-etp);
+}
+
+.mock-tmmf-inner .etp-mock-conc__track {
+  background: rgb(var(--hx-etp-rgb) / 0.1);
+}
+
+.mock-tmmf-inner .etp-mock-conc__fill {
+  background: linear-gradient(90deg, var(--hx-etp-bright), var(--hx-etp));
+}
+
+.mock-tmmf-inner .etp-mock-insights--crypto-full {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 720px) {
+  .mock-tmmf-inner .etp-mock-insights:not(.etp-mock-insights--crypto-full) {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  }
+}
+
+.mock-tmmf-inner .etp-mock-chart {
+  background:
+    linear-gradient(180deg, rgb(var(--hx-etp-bright-rgb) / 0.05) 0%, transparent 40%),
+    linear-gradient(
+      165deg,
+      transparent 38%,
+      rgb(var(--hx-etp-bright-rgb) / 0.1) 50%,
+      rgb(var(--hx-etp-rgb) / 0.2) 74%,
+      rgb(var(--hx-etp-dark) / 0.32) 100%
+    );
+  border-color: rgb(var(--hx-etp-bright-rgb) / 0.14);
+}
+
+.mock-tmmf-inner .etp-mock-chart::before {
+  content: "Top networks by distributed value (mock chart area)";
+  color: rgb(var(--hx-etp-dark) / 0.55);
+}
+
+.mock-tmmf-inner .btn-primary {
+  background: var(--hx-etp-bright);
+  border-color: rgb(var(--hx-etp-bright-rgb) / 0.35);
+}
+
+.mock-tmmf-inner .btn-primary:hover {
+  background: var(--hx-etp);
+}
+
+.mock-tmmf-inner .back-link--below-header a:hover {
+  color: var(--hx-etp-bright);
+}
+
+/* At a glance — largest-fund ticker */
+.mock-tmmf-inner .etp-mock-stat__val--ticker {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+.mock-tmmf-inner .etp-mock-table-block--funds .data-table {
+  font-size: 0.78rem;
+}
+
+.mock-tmmf-inner .etp-mock-table-block--funds .data-table th:nth-child(n + 6),
+.mock-tmmf-inner .etp-mock-table-block--funds .data-table td:nth-child(n + 6) {
+  min-width: 5.5rem;
+}
+
+.mock-tmmf-inner .tmmf-mock-net-icons {
+  font-size: 0.72rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+

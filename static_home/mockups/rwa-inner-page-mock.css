@@ -1,0 +1,141 @@
+/* RWA deep pages (TMMF, Stablecoins) — league blocks + horizontal bar mocks */
+
+.rwa-mock-section-intro {
+  margin: 0 0 0.75rem;
+  max-width: 52rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--ink-muted, #4a5f73);
+}
+
+.rwa-mock-section-intro strong {
+  color: var(--hx-etp-dark);
+}
+
+.rwa-mock-league {
+  margin-bottom: var(--etp-mock-gap-lg, 1.25rem);
+}
+
+.rwa-mock-league .etp-mock-dash__panel--chart .etp-mock-chart::before {
+  content: "Top entities by value (mock chart area)";
+}
+
+.rwa-mock-hbar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.42rem;
+  margin: 0 0 0.65rem;
+}
+
+.rwa-mock-hbar__row {
+  display: grid;
+  grid-template-columns: minmax(4.5rem, 6.5rem) 1fr minmax(3.25rem, 4.25rem);
+  gap: 0.45rem;
+  align-items: center;
+  font-size: 0.76rem;
+}
+
+.rwa-mock-hbar__lbl {
+  font-weight: 650;
+  color: var(--hx-etp-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rwa-mock-hbar__track {
+  height: 0.55rem;
+  border-radius: 4px;
+  background: rgb(var(--hx-etp-bright-rgb) / 0.12);
+  overflow: hidden;
+}
+
+.rwa-mock-hbar__fill {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--hx-etp-bright), var(--hx-etp));
+}
+
+.rwa-mock-hbar__pct {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--hx-etp-dark);
+}
+
+.rwa-mock-league__chart-note {
+  margin: 0.35rem 0 0;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.rwa-mock-league__split {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-bottom: 0.85rem;
+}
+
+@media (min-width: 960px) {
+  .rwa-mock-league__split {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+    align-items: start;
+  }
+}
+
+.rwa-mock-movers {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rwa-mock-mover {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgb(var(--hx-etp-bright-rgb) / 0.12);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.rwa-mock-mover:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.rwa-mock-mover__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  align-items: baseline;
+}
+
+.rwa-mock-mover__lbl {
+  font-weight: 600;
+  color: var(--hx-etp-dark);
+}
+
+.rwa-mock-mover__ctx {
+  margin: 0.25rem 0 0;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.mock-tmmf-inner .etp-mock-table-block--funds .data-table {
+  font-size: 0.78rem;
+}
+
+.mock-tmmf-inner .etp-mock-table-block--funds .data-table th:nth-child(n + 6),
+.mock-tmmf-inner .etp-mock-table-block--funds .data-table td:nth-child(n + 6) {
+  min-width: 5.5rem;
+}
+
+.mock-tmmf-inner .etp-mock-bottom-cta {
+  margin-top: var(--etp-mock-gap-lg, 1.2rem);
+}
+
+.mock-tmmf-inner .tmmf-mock-net-icons {
+  font-size: 0.72rem;
+  color: var(--muted);
+  white-space: nowrap;
+}

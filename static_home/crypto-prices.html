@@ -12,7 +12,8 @@
     />
     <link rel="stylesheet" href="styles.css?v=85" />
     <link rel="stylesheet" href="css/site-experience.css?v=21" />
-    <link rel="stylesheet" href="css/inner-page-experience.css?v=20" />
+    <link rel="stylesheet" href="css/inner-page-experience.css?v=23" />
+    <link rel="stylesheet" href="css/inner-page-zone-parity.css?v=1" />
   </head>
   <body class="page-crypto site-experience page-inner--rich" data-methodology="crypto">
     <header class="site-header" role="banner">
@@ -58,7 +59,7 @@
 
     <div class="page-back-below-header">
       <p class="back-link back-link--below-header">
-        <a href="index.html">← Back to home</a>
+        <a href="index.html#section-crypto">&larr; Back to home &middot; Crypto preview</a>
       </p>
     </div>
 
@@ -68,109 +69,128 @@
         <header class="home-zone__head">
           <span class="home-zone__badge" aria-hidden="true">CRY</span>
           <div class="home-zone__titles">
-            <h1 class="page-intro__title">Crypto Prices — Top 50 Snapshot</h1>
-        <p class="page-intro__dek">
-          A dedicated crypto market page with a KPI strip, a 12-month market-cap trend chart, and a searchable
-          <strong>top 50</strong> spot-price table.
-        </p>
+            <h1 class="page-intro__title">Crypto Prices &mdash; Top 50 Snapshot</h1>
+            <p class="section-dek section-dek--wide">
+              Top-line crypto market snapshot with a KPI strip, a 12-month total market-cap trend chart, category
+              filters, and a searchable <strong>top 50</strong> spot-price table. Sources:
+              <a href="https://coinpaprika.com/" target="_blank" rel="noopener noreferrer">CoinPaprika</a>
+              (total cap),
+              <a href="https://www.coingecko.com/" target="_blank" rel="noopener noreferrer">CoinGecko</a>
+              (top 50; CoinCap fallback), and
+              <a href="https://www.tradingview.com/symbols/TOTAL/" target="_blank" rel="noopener noreferrer"
+                >TradingView TOTAL</a
+              >
+              (chart).
+            </p>
           </div>
         </header>
         <div class="home-zone__body inner-rich-zone__body">
+          <div class="home-related-chips" aria-label="Related pages">
+            <span class="home-related-chips__label">Related</span>
+            <a class="home-chip" href="index.html#section-crypto">Home crypto preview</a>
+            <a class="home-chip" href="etps.html">U.S. ETPs</a>
+            <a class="home-chip" href="rwa-stablecoins.html">Stablecoins</a>
+            <a class="home-chip" href="index.html#section-news">News Hub</a>
+          </div>
+
           <div class="data-banner" id="js-data-banner" role="status" hidden></div>
 
-      <hr class="inner-rich-rule" />
+          <section class="inner-rich-block" aria-labelledby="crypto-snapshot-heading">
+            <h2 class="subsection-head u-vh" id="crypto-snapshot-heading">Top-line snapshot</h2>
+            <p class="data-freshness" id="js-crypto-snapshot-as-of" hidden></p>
+            <div id="js-crypto-kpi" aria-label="Crypto KPI strip"></div>
+          </section>
 
-      <section class="hub-section" aria-labelledby="crypto-snapshot-heading">
-        <h2 class="subsection-head" id="crypto-snapshot-heading">Top-Line Market Snapshot</h2>
-        <p class="data-freshness" id="js-crypto-snapshot-as-of" hidden></p>
-        <div id="js-crypto-kpi" aria-label="Crypto KPI strip"></div>
-      </section>
+          <div class="inner-rich-block inner-key-obs-block" aria-labelledby="crypto-ko-heading">
+            <h2 class="subsection-head u-vh" id="crypto-ko-heading">Key observations</h2>
+            <div id="js-crypto-key-obs" hidden></div>
+          </div>
 
-      <section class="hub-section" aria-labelledby="crypto-ko-heading">
-        <h2 class="subsection-head u-vh" id="crypto-ko-heading">Key observations</h2>
-        <div id="js-crypto-key-obs" hidden></div>
-      </section>
+          <section class="inner-rich-block etp-mock-dashboard" aria-labelledby="js-crypto-chart-heading">
+            <h2 class="subsection-head" id="js-crypto-chart-heading">Crypto total market cap</h2>
+            <div id="crypto-market-cap-chart" class="aum-chart-host" role="img" aria-label="Crypto market cap chart"></div>
+            <p class="chart-placeholder__cap" id="js-crypto-chart-caption">
+              TradingView TOTAL represents crypto market capitalization using the top 125 coins.
+            </p>
+            <p class="method-note etp-mock-chart__method" id="js-crypto-chart-method">
+              The chart is powered by TradingView's TOTAL index so it does not rely on rate-limited local historical
+              exports.
+            </p>
+            <p class="source-cap">
+              The top-line total market cap uses CoinPaprika, while the chart uses TradingView TOTAL, so the figures may
+              differ because the two sources use different market coverage and calculation methods.
+            </p>
+            <p class="cta-note">
+              <a
+                id="js-crypto-chart-link"
+                href="https://www.tradingview.com/symbols/TOTAL/"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Open the full TradingView TOTAL chart &rarr;</a
+              >
+            </p>
+          </section>
 
-      <section class="hub-section" aria-labelledby="js-crypto-chart-heading">
-        <h2 class="subsection-head" id="js-crypto-chart-heading">Crypto total market cap</h2>
-        <div id="crypto-market-cap-chart" class="aum-chart-host" role="img" aria-label="Crypto market cap chart"></div>
-        <p class="chart-placeholder__cap" id="js-crypto-chart-caption">
-          TradingView TOTAL represents crypto market capitalization using the top 125 coins.
-        </p>
-        <p class="method-note" id="js-crypto-chart-method">
-          The chart is powered by TradingView's TOTAL index so it does not rely on rate-limited local historical exports.
-        </p>
-        <p class="source-cap">
-          The top-line total market cap uses CoinPaprika, while the chart uses TradingView TOTAL, so the figures may
-          differ because the two sources use different market coverage and calculation methods.
-        </p>
-        <p class="cta-note">
-          <a id="js-crypto-chart-link" href="https://www.tradingview.com/symbols/TOTAL/" target="_blank" rel="noopener noreferrer"
-            >Open the full TradingView TOTAL chart →</a
-          >
-        </p>
-      </section>
+          <section class="inner-rich-block etp-mock-table-block" aria-labelledby="crypto-table-heading">
+            <div class="rwa-split-table-head inner-table-head">
+              <h2 class="subsection-head rwa-split-table-head__title" id="crypto-table-heading">Prices table</h2>
+              <div class="rwa-split-table-head__actions" id="js-crypto-table-actions"></div>
+            </div>
+            <div class="crypto-cat-tabs" id="js-crypto-category-tabs"></div>
+            <label class="search-field etp-mock-table-search">
+              <span class="search-field__label">Search by coin name or ticker</span>
+              <input
+                type="search"
+                class="search-field__input"
+                id="js-crypto-search"
+                placeholder="Filter by name or ticker&hellip;"
+              />
+            </label>
+            <p class="toolbar-note" id="js-crypto-toolbar">Loading market table&hellip;</p>
+            <p class="kpi-footnote kpi-footnote--block">
+              Hover a <strong>Ticker</strong> or <strong>Coin</strong> name for a short summary from CoinGecko&rsquo;s
+              About copy (mainstream adoption and uses, plus a brief lead).
+            </p>
 
-      <hr class="inner-rich-rule" />
+            <div class="table-wrap table-wrap--scroll">
+              <table class="data-table data-table--dense data-table--sortable" aria-label="Top 50 cryptocurrencies">
+                <thead id="js-crypto-thead">
+                  <tr>
+                    <th class="th-sortable" data-sort="rank">Rank</th>
+                    <th class="th-sortable" data-sort="symbol">Ticker</th>
+                    <th class="th-sortable" data-sort="name">Coin</th>
+                    <th class="th-sortable" data-sort="category">Category</th>
+                    <th class="num th-sortable" data-sort="price_usd">Price</th>
+                    <th class="num th-sortable" data-sort="pct_30d">1M %</th>
+                    <th class="num th-sortable" data-sort="market_cap_usd">Market Cap</th>
+                    <th>Market Page</th>
+                  </tr>
+                </thead>
+                <tbody id="js-crypto-tbody">
+                  <tr>
+                    <td colspan="8">Loading&hellip;</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="rwa-table-footnote-row">
+              <p class="source-cap rwa-table-footnote-row__cap">
+                Top-line market-cap source: CoinPaprika. Spot market source: CoinGecko with CoinCap fallback. Market-cap
+                chart source: TradingView TOTAL.
+              </p>
+            </div>
+          </section>
 
-      <section class="hub-section" aria-labelledby="crypto-table-heading">
-        <div class="rwa-split-table-head inner-table-head">
-          <h2 class="subsection-head rwa-split-table-head__title" id="crypto-table-heading">Prices table</h2>
-          <div class="rwa-split-table-head__actions" id="js-crypto-table-actions"></div>
-        </div>
-        <div class="crypto-cat-tabs" id="js-crypto-category-tabs"></div>
-        <label class="search-field">
-          <span class="search-field__label">Search by coin name or ticker</span>
-          <input
-            type="search"
-            class="search-field__input"
-            id="js-crypto-search"
-            placeholder="Filter by name or ticker…"
-          />
-        </label>
-        <p class="toolbar-note" id="js-crypto-toolbar">Loading market table…</p>
-        <p class="kpi-footnote kpi-footnote--block">
-          Hover a <strong>Ticker</strong> or <strong>Coin</strong> name for a short summary from CoinGecko’s About copy
-          (mainstream adoption and uses, plus a brief lead).
-        </p>
-
-        <div class="table-wrap table-wrap--scroll">
-          <table class="data-table data-table--dense data-table--sortable" aria-label="Top 50 cryptocurrencies">
-            <thead id="js-crypto-thead">
-              <tr>
-                <th class="th-sortable" data-sort="rank">Rank</th>
-                <th class="th-sortable" data-sort="symbol">Ticker</th>
-                <th class="th-sortable" data-sort="name">Coin</th>
-                <th class="th-sortable" data-sort="category">Category</th>
-                <th class="num th-sortable" data-sort="price_usd">Price</th>
-                <th class="num th-sortable" data-sort="pct_30d">1M %</th>
-                <th class="num th-sortable" data-sort="market_cap_usd">Market Cap</th>
-                <th>Market Page</th>
-              </tr>
-            </thead>
-            <tbody id="js-crypto-tbody">
-              <tr>
-                <td colspan="8">Loading…</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="source-cap">
-          Top-line market-cap source: CoinPaprika. Spot market source: CoinGecko with CoinCap fallback. Market-cap chart
-          source: TradingView TOTAL.
-        </p>
-        <p class="timestamp-foot" id="js-crypto-generated">—</p>
-      </section>
+          <p class="timestamp-foot" id="js-crypto-generated">&mdash;</p>
         </div>
       </article>
 
-
       <p class="back-link">
-        <a href="index.html">← Back to home</a>
+        <a href="index.html">&larr; Back to home</a>
       </p>
     </main>
 
-    <footer class="site-footer">Digital Assets Dashboard · Crypto Prices · <time datetime="2026-05">May 2026</time></footer>
+    <footer class="site-footer">Digital Assets Dashboard &middot; Crypto Prices &middot; <time datetime="2026-05">May 2026</time></footer>
     <script defer src="js/static-base.js?v=14"></script>
     <script defer src="js/table-fullscreen.js?v=2"></script>
     <script defer src="js/table-download.js?v=4"></script>

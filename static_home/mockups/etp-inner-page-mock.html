@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mock — U.S. ETP inner page</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../styles.css?v=85" />
+    <link rel="stylesheet" href="../css/site-experience.css?v=21" />
+    <link rel="stylesheet" href="../css/inner-page-experience.css?v=22" />
+    <link rel="stylesheet" href="home-five-zone-mock.css?v=9" />
+    <link rel="stylesheet" href="etp-inner-page-mock.css?v=15" />
+  </head>
+  <body class="page-etp site-experience page-inner--rich mock-five-zone mock-etp-inner">
+    <header class="site-header" role="banner">
+      <div class="site-header__inner">
+        <a class="site-brand" href="../index.html">Digital Assets Dashboard</a>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="../index.html">Home</a>
+          <a href="../index.html#section-news">News Hub</a>
+          <a href="tmmf-inner-page-mock.html">TMMFs</a>
+          <a href="stable-inner-page-mock.html">Stablecoins</a>
+          <div class="site-nav__dropdown">
+            <a href="../rwa-global.html" class="site-nav__trigger">RWA Market</a>
+            <ul class="site-nav__sub">
+              <li><a href="../rwa-global.html">Market Overview</a></li>
+            </ul>
+          </div>
+          <div class="site-nav__dropdown">
+            <span class="site-nav__trigger">U.S. ETPs</span>
+            <ul class="site-nav__sub">
+              <li><a href="../etps.html" class="is-active">U.S. ETP Overview</a></li>
+              <li><a href="../etf-news.html">ETF/ETP News</a></li>
+            </ul>
+          </div>
+          <a href="../crypto-prices.html">Crypto Prices</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="page-back-below-header">
+      <p class="back-link back-link--below-header">
+        <a href="../index.html#section-markets">&larr; Back to home &middot; ETP preview</a>
+      </p>
+    </div>
+
+    <main class="etp-mock-shell">
+      <article
+        class="hub-section hub-section--panel home-zone home-zone--etp etp-mock-zone inner-rich-zone zone--etp"
+        aria-labelledby="page-title"
+      >
+        <div class="home-zone__stripe" aria-hidden="true"></div>
+        <header class="home-zone__head">
+          <span class="home-zone__badge" aria-hidden="true">ETP</span>
+          <div class="home-zone__titles">
+            <h1 class="page-intro__title" id="page-title">U.S. Digital Asset ETPs</h1>
+            <p class="section-dek section-dek--wide">
+              Full fund universe with snapshot KPIs, aggregate AUM trend, concentration view, searchable league table, and
+              ranked ETF/ETP headlines. Reference:
+              <a href="https://stockanalysis.com/list/crypto-etfs/" target="_blank" rel="noopener noreferrer"
+                >StockAnalysis.com</a
+              >
+              (issuer, inception, <strong>1Y %</strong> total return).
+            </p>
+          </div>
+        </header>
+
+        <div class="etp-mock-zone__body home-zone__body inner-rich-zone__body">
+          <div class="home-related-chips" aria-label="Related pages">
+            <span class="home-related-chips__label">Related</span>
+            <a class="home-chip" href="../index.html#section-markets">Home ETP preview</a>
+            <a class="home-chip" href="crypto-inner-page-mock.html">Crypto prices (mock)</a>
+            <a class="home-chip" href="tmmf-inner-page-mock.html">TMMFs (mock)</a>
+            <a class="home-chip" href="../etf-news.html">All ETF/ETP headlines</a>
+          </div>
+
+          <section id="etp-snapshot" class="etp-mock-snapshot" aria-labelledby="snapshot-heading">
+            <h2 class="subsection-head u-vh" id="snapshot-heading">Top-line snapshot</h2>
+            <p class="data-freshness etp-mock-freshness">
+              Snapshot as of <time datetime="2026-06-02">2 Jun 2026</time> (UTC)
+            </p>
+            <div class="rwa-kpi-panel-static rwa-kpi-panel-static--compact" aria-label="U.S. ETP KPI strip">
+              <div class="rwa-kpi-row rwa-kpi-row--home-grid">
+                <div class="rwa-kpi-cell">
+                  <span class="rwa-kpi-label">Total AUM (listed)</span>
+                  <span class="rwa-kpi-val">$116.13B</span>
+                  <span class="rwa-kpi-delta down">-14.39%</span>
+                </div>
+                <div class="rwa-kpi-cell">
+                  <span class="rwa-kpi-label">BTC &amp; ETH fund flows (listed)</span>
+                  <span class="rwa-kpi-val">+$1.66B</span>
+                  <span class="rwa-kpi-delta down">-69.83%</span>
+                </div>
+                <div class="rwa-kpi-cell">
+                  <span class="rwa-kpi-label">IBIT &middot; AUM</span>
+                  <span class="rwa-kpi-val">$58.12B</span>
+                  <span class="rwa-kpi-delta down">-14.35%</span>
+                </div>
+                <div class="rwa-kpi-cell">
+                  <span class="rwa-kpi-label">ETHA &middot; AUM</span>
+                  <span class="rwa-kpi-val">$5.91B</span>
+                  <span class="rwa-kpi-delta down">-17.19%</span>
+                </div>
+              </div>
+            </div>
+
+          </section>
+
+          <div class="inner-rich-block etp-mock-key-obs-block" aria-labelledby="obs-heading">
+            <h2 class="subsection-head u-vh" id="obs-heading">Key Observations</h2>
+            <div id="js-etp-key-obs">
+              <aside class="crypto-story-callout" aria-labelledby="crypto-key-obs-title">
+                <h3 class="crypto-story-callout__title" id="crypto-key-obs-title">Key observations</h3>
+                <ul class="crypto-story-callout__list">
+                  <li>
+                    <strong>Forward market-size scenarios are large, but still assumptions-driven:</strong> Public
+                    analyst commentary continues to frame the next few years in a broad range&mdash;for example, one
+                    widely cited 2026 scenario set points to roughly <strong>$180B&ndash;$220B</strong> for Bitcoin ETF
+                    assets, compared with about <strong>$90.15B</strong> across U.S. spot Bitcoin ETPs on this page
+                    today (see
+                    <a
+                      href="https://www.dlnews.com/articles/markets/bitcoin-etfs-to-top-180-billion-usd-in-2026-say-analysts/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >DL News summary of analyst estimates</a
+                    >). Treat these as directional planning ranges, not a base-case forecast.
+                  </li>
+                  <li>
+                    <strong>The launch pipeline is crowded:</strong> This page lists <strong>168</strong> U.S. crypto
+                    ETPs; industry filing trackers and analyst snapshots still cite
+                    <strong>120+ crypto ETP filings</strong> in the U.S. queue (example:
+                    <a
+                      href="https://www.cfbenchmarks.com/blog/what-a-huge-wall-of-filings-tells-us-about-the-next-wave-of-us-crypto-etfs"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >CF Benchmarks, citing Bloomberg analysts</a
+                    >). Filing volume does <strong>not</strong> mean all products launch or scale, but it does point to a
+                    heavier near-term slate of spot and spot-adjacent product attempts.
+                  </li>
+                  <li>
+                    <strong>Industry headlines emphasize SEC &amp; exchange approvals:</strong> Recent coverage includes
+                    <a
+                      href="https://thedefiant.io/news/markets/harvard-endowment-cuts-bitcoin-ethereum-etf-holdings-djwmny"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >Harvard Endowment Cuts Bitcoin ETF Holdings by 43%, Exits Ethereum Fund Entirely</a
+                    >
+                    (The Defiant);
+                    <a
+                      href="https://news.google.com/rss/articles/CBMie0FVX3lxTE9OTEFGVGkxS3pjYm5uTFdtNVppMjA4NEdoYXRIWDEzVmJoNUNYQW5YQ01zay1XalhsRXJPLXVERXFVS3U0bmR6dTVxTmx1MEtYT3pfU3VGQlN4WWxnSjRacENnRkZORThSMnZOa01MQ2c1QnR3ZzFTdGF6QQ?oc=5"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >SEC Approves Nasdaq Bitcoin Index Options in 2026 - Memeburn</a
+                    >
+                    (Google News). Approval and listing headlines shape which products can scale on U.S.
+                    exchanges&mdash;watch whether coverage names issuers or structures already listed in the fund table.
+                  </li>
+                  <li>
+                    <strong>Industry headlines emphasize ETF flows &amp; inflows:</strong> Recent coverage includes
+                    <a
+                      href="https://news.google.com/rss/articles/CBMif0FVX3lxTE1SNEtpNmwwb0hqcGp2dTV5X3JmLUFhclZGdG9CRDZIcXlvTjNCelNleDdSUF9DWnY1NWRoVTZlZWloWk1mcEZRNzNpdGJpUmtFdHdPTWJwNUFpc1VROTlIbi1zdWtDZ2hlMWZ0S0JqaW9WOUJOckRGNTAzVWdTZlU?oc=5"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >Bitcoin Tests $72,000 Support as Spot ETF Outflows Surpass $2.4 Billion in May - FinanceFeeds</a
+                    >
+                    (Google News (spot Bitcoin ETF));
+                    <a
+                      href="https://news.google.com/rss/articles/CBMi0AFBVV95cUxNeDgtRnVURG5Td2d4WkdCcVF1RlJFLTJpblVfT3FxaWl5M241elFWMVhsajcxMW9oRkU1MnBQaC1BWUwyUkN3MHlnZzIyT1BtcFRqeWE5Y01XM1NBNjZnYjJNWXhsY20wWUtKU1hFdjFpNlJuVWZYSnozVFF4eDdsRnhDeTdzb3p4VHlpRXo2SkVNY3NTTElMXzFaMV9PeHZEUUlhcGhOanlra2t1U3VOS3VHMlVWdktROFU5NW91TGFWTThLM093WThwaGUtU3Fp?oc=5"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >Bitcoin remains under pressure as ETF outflows, higher oil prices weigh on crypto markets -
+                      CoinDesk</a
+                    >
+                    (Google News (spot Bitcoin ETF)). Flow headlines can front-run AUM changes in the KPI strip and
+                    aggregate chart&mdash;compare cited inflow/outflow themes with the 30-day Farside net-flow figure and
+                    fund-table AUM.
+                  </li>
+                  <li>
+                    <strong>Product access expanded quickly, then concentrated:</strong> U.S. spot Bitcoin ETP
+                    approvals in 2024 (see
+                    <a
+                      href="https://www.sec.gov/files/rules/sro/nysearca/2024/34-99306.pdf"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >SEC order</a
+                    >) widened listed access fast&mdash;yet the top three funds still carry about <strong>71%</strong> of
+                    listed AUM here (IBIT ($58.12B), FBTC ($13.40B), GBTC ($10.75B)). For allocators and service
+                    providers, scale and distribution economics now matter at least as much as first-mover timing.
+                  </li>
+                </ul>
+                <p class="crypto-story-callout__note">
+                  Context for strategy only (not investment advice). Ranked from on-page fund data, 30-day Farside flows,
+                  and recent ETF/ETP headlines (dashboard RSS plus Google News fallback).
+                </p>
+              </aside>
+              <p class="review-note ko-disclaimer">
+                Key observations are AI generated and should be reviewed for accuracy.
+              </p>
+            </div>
+          </div>
+
+          <section id="etp-insights" class="etp-mock-insights" aria-labelledby="insights-heading">
+            <h2 class="u-vh" id="insights-heading">Market structure</h2>
+            <div class="etp-mock-insights__panel etp-mock-insights__panel--conc">
+              <h3 class="etp-mock-insights__head">AUM concentration (top 5 funds)</h3>
+              <p class="etp-mock-conc__dek">Share of total listed AUM (StockAnalysis snapshot).</p>
+              <div class="etp-mock-conc__rows" role="img" aria-label="Top five funds by share of total AUM">
+                <div class="etp-mock-conc__row">
+                  <span class="etp-mock-conc__sym">IBIT</span>
+                  <span class="etp-mock-conc__track"
+                    ><span class="etp-mock-conc__fill" style="width: 50%"></span
+                  ></span>
+                  <span class="etp-mock-conc__pct">50.0%</span>
+                </div>
+                <div class="etp-mock-conc__row">
+                  <span class="etp-mock-conc__sym">FBTC</span>
+                  <span class="etp-mock-conc__track"
+                    ><span class="etp-mock-conc__fill" style="width: 11.5%"></span
+                  ></span>
+                  <span class="etp-mock-conc__pct">11.5%</span>
+                </div>
+                <div class="etp-mock-conc__row">
+                  <span class="etp-mock-conc__sym">GBTC</span>
+                  <span class="etp-mock-conc__track"
+                    ><span class="etp-mock-conc__fill" style="width: 9.3%"></span
+                  ></span>
+                  <span class="etp-mock-conc__pct">9.3%</span>
+                </div>
+                <div class="etp-mock-conc__row">
+                  <span class="etp-mock-conc__sym">ETHA</span>
+                  <span class="etp-mock-conc__track"
+                    ><span class="etp-mock-conc__fill" style="width: 5.1%"></span
+                  ></span>
+                  <span class="etp-mock-conc__pct">5.1%</span>
+                </div>
+                <div class="etp-mock-conc__row">
+                  <span class="etp-mock-conc__sym">BITB</span>
+                  <span class="etp-mock-conc__track"
+                    ><span class="etp-mock-conc__fill" style="width: 3.2%"></span
+                  ></span>
+                  <span class="etp-mock-conc__pct">3.2%</span>
+                </div>
+              </div>
+            </div>
+            <div class="etp-mock-insights__panel etp-mock-insights__panel--glance">
+              <h3 class="etp-mock-insights__head">At a glance</h3>
+              <div class="etp-mock-stats">
+                <div class="etp-mock-stat">
+                  <span class="etp-mock-stat__lbl">Listed funds</span>
+                  <span class="etp-mock-stat__val">168</span>
+                </div>
+                <div class="etp-mock-stat">
+                  <span class="etp-mock-stat__lbl">Top 3 AUM share</span>
+                  <span class="etp-mock-stat__val">71%</span>
+                </div>
+                <div class="etp-mock-stat">
+                  <span class="etp-mock-stat__lbl">30D spot BTC &amp; ETH flows</span>
+                  <span class="etp-mock-stat__val">+$1.66B</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="etp-dashboard" class="etp-mock-dashboard" aria-labelledby="dashboard-heading">
+            <h2 class="u-vh" id="dashboard-heading">Chart and headlines</h2>
+            <div class="etp-mock-dash__panel etp-mock-dash__panel--chart">
+              <h3 class="etp-mock-dash__head">Aggregate AUM trend (12 months)</h3>
+              <div class="etp-mock-chart" role="img" aria-label="Mock aggregate AUM area chart">
+                <div class="etp-mock-chart__axis" aria-hidden="true">
+                  <span>Jun</span><span>Sep</span><span>Dec</span><span>Mar</span><span>Jun</span>
+                </div>
+              </div>
+              <p class="etp-mock-chart__cap">
+                Vertical axis: estimated aggregate AUM (<strong>billions USD</strong>; weekly points).
+              </p>
+              <p class="etp-mock-chart__method">
+                <strong>Yahoo Finance</strong> weekly closes — each fund&rsquo;s latest StockAnalysis AUM (constant-share
+                approximation), summed across the table.
+              </p>
+            </div>
+            <div class="etp-mock-dash__panel etp-mock-dash__panel--news">
+              <h3 class="etp-mock-dash__head">ETF/ETP news feed</h3>
+              <ul class="etp-mock-pulse">
+                <li>
+                  <a href="#" tabindex="-1"
+                    >Bitcoin Tests $72,000 Support as Spot ETF Outflows Surpass $2.4 Billion in May</a
+                  >
+                  <span class="etp-mock-pulse__src">FinanceFeeds</span>
+                </li>
+                <li>
+                  <a href="#" tabindex="-1"
+                    >Harvard Endowment Cuts Bitcoin ETF Holdings by 43%, Exits Ethereum Fund Entirely</a
+                  >
+                  <span class="etp-mock-pulse__src">The Defiant</span>
+                </li>
+                <li>
+                  <a href="#" tabindex="-1"
+                    >Bitcoin remains under pressure as ETF outflows, higher oil prices weigh on crypto markets</a
+                  >
+                  <span class="etp-mock-pulse__src">CoinDesk</span>
+                </li>
+                <li>
+                  <a href="#" tabindex="-1">SEC Approves Nasdaq Bitcoin Index Options in 2026</a>
+                  <span class="etp-mock-pulse__src">Memeburn</span>
+                </li>
+                <li>
+                  <a href="#" tabindex="-1">Analysts frame 2026 Bitcoin ETF AUM scenarios in $180B&ndash;$220B range</a>
+                  <span class="etp-mock-pulse__src">DL News</span>
+                </li>
+              </ul>
+              <div class="etp-mock-dash__cta">
+                <a class="btn btn-primary" href="../etf-news.html">All ETF/ETP headlines &rarr;</a>
+              </div>
+            </div>
+          </section>
+
+          <section id="etp-funds" class="etp-mock-table-block" aria-labelledby="table-heading">
+            <div class="rwa-split-table-head inner-table-head">
+              <h2 class="subsection-head rwa-split-table-head__title" id="table-heading">Fund table</h2>
+              <div class="rwa-split-table-head__actions" id="js-etp-table-download">
+                <button
+                  type="button"
+                  class="table-download-btn"
+                  data-table-download-btn="1"
+                  aria-label="Download table as Excel"
+                  title="Download as Excel (.xlsx)"
+                  disabled
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <label class="search-field etp-mock-table-search">
+              <span class="search-field__label">Search by fund name or ticker</span>
+              <input
+                type="search"
+                class="search-field__input"
+                placeholder="Filter by name or ticker&hellip;"
+                value=""
+              />
+            </label>
+
+            <div class="etp-mock-table-meta" aria-live="polite">
+              <p class="etp-mock-table-meta__count toolbar-note">Showing 8 of 168 funds (mock)</p>
+              <button
+                type="button"
+                class="etp-mock-table-meta__expand"
+                disabled
+                aria-label="View fund table full screen"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"
+                  />
+                </svg>
+                <span>Full screen</span>
+              </button>
+            </div>
+
+            <div class="table-wrap table-wrap--scroll">
+              <table class="data-table data-table--dense data-table--sortable">
+                <thead>
+                  <tr>
+                    <th class="th-sortable is-sorted" scope="col">Symbol</th>
+                    <th class="th-sortable" scope="col">Fund Name</th>
+                    <th class="num th-sortable" scope="col">Price</th>
+                    <th class="num th-sortable" scope="col">1Y %</th>
+                    <th class="num th-sortable" scope="col">1Y Flow</th>
+                    <th class="num th-sortable" scope="col">Assets (B)</th>
+                    <th class="th-sortable" scope="col">Issuer</th>
+                    <th class="th-sortable" scope="col">Custodian</th>
+                    <th class="th-sortable" scope="col">Inception</th>
+                    <th scope="col">Fund Filing</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>IBIT</strong></td>
+                    <td>iShares Bitcoin Trust ETF</td>
+                    <td class="num">$52.18</td>
+                    <td class="num up">+42.1%</td>
+                    <td class="num">+$12.4B</td>
+                    <td class="num">58.12</td>
+                    <td>BlackRock</td>
+                    <td>Coinbase Custody</td>
+                    <td>Jan 2024</td>
+                    <td><a href="#" tabindex="-1">SEC filing</a></td>
+                  </tr>
+                  <tr>
+                    <td><strong>FBTC</strong></td>
+                    <td>Fidelity Wise Origin Bitcoin Fund</td>
+                    <td class="num">$48.92</td>
+                    <td class="num up">+38.6%</td>
+                    <td class="num">+$4.1B</td>
+                    <td class="num">13.40</td>
+                    <td>Fidelity</td>
+                    <td>Fidelity Digital</td>
+                    <td>Jan 2024</td>
+                    <td><a href="#" tabindex="-1">SEC filing</a></td>
+                  </tr>
+                  <tr>
+                    <td><strong>GBTC</strong></td>
+                    <td>Grayscale Bitcoin Trust ETF</td>
+                    <td class="num">$61.05</td>
+                    <td class="num up">+35.2%</td>
+                    <td class="num">-$1.2B</td>
+                    <td class="num">10.75</td>
+                    <td>Grayscale</td>
+                    <td>Coinbase Custody</td>
+                    <td>Jan 2024</td>
+                    <td><a href="#" tabindex="-1">SEC filing</a></td>
+                  </tr>
+                  <tr>
+                    <td><strong>ETHA</strong></td>
+                    <td>iShares Ethereum Trust ETF</td>
+                    <td class="num">$22.44</td>
+                    <td class="num down">-8.4%</td>
+                    <td class="num">+$0.9B</td>
+                    <td class="num">5.91</td>
+                    <td>BlackRock</td>
+                    <td>Coinbase Custody</td>
+                    <td>Jul 2024</td>
+                    <td><a href="#" tabindex="-1">SEC filing</a></td>
+                  </tr>
+                  <tr>
+                    <td><strong>BITB</strong></td>
+                    <td>Bitwise Bitcoin ETF</td>
+                    <td class="num">$38.71</td>
+                    <td class="num up">+41.0%</td>
+                    <td class="num">+$0.6B</td>
+                    <td class="num">3.72</td>
+                    <td>Bitwise</td>
+                    <td>Coinbase Custody</td>
+                    <td>Jan 2024</td>
+                    <td><a href="#" tabindex="-1">SEC filing</a></td>
+                  </tr>
+                  <tr>
+                    <td><strong>ARKB</strong></td>
+                    <td>ARK 21Shares Bitcoin ETF</td>
+                    <td class="num">$36.55</td>
+                    <td class="num up">+39.8%</td>
+                    <td class="num">+$0.4B</td>
+                    <td class="num">2.89</td>
+                    <td>ARK / 21Shares</td>
+                    <td>Coinbase Custody</td>
+                    <td>Jan 2024</td>
+                    <td><a href="#" tabindex="-1">SEC filing</a></td>
+                  </tr>
+                  <tr>
+                    <td><strong>BTCO</strong></td>
+                    <td>Invesco Galaxy Bitcoin ETF</td>
+                    <td class="num">$52.01</td>
+                    <td class="num up">+40.5%</td>
+                    <td class="num">+$0.2B</td>
+                    <td class="num">1.95</td>
+                    <td>Invesco</td>
+                    <td>Coinbase Custody</td>
+                    <td>Jan 2024</td>
+                    <td><a href="#" tabindex="-1">SEC filing</a></td>
+                  </tr>
+                  <tr>
+                    <td><strong>HODL</strong></td>
+                    <td>VanEck Bitcoin Trust</td>
+                    <td class="num">$48.33</td>
+                    <td class="num up">+37.9%</td>
+                    <td class="num">+$0.1B</td>
+                    <td class="num">1.42</td>
+                    <td>VanEck</td>
+                    <td>Gemini Trust</td>
+                    <td>Jan 2024</td>
+                    <td><a href="#" tabindex="-1">SEC filing</a></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="rwa-table-footnote-row">
+              <p class="source-cap rwa-table-footnote-row__cap">
+                Fund data: StockAnalysis (list and AUM). Spot BTC/ETH flows: Farside Investors (daily net
+                creations/redemptions, USD).
+              </p>
+            </div>
+          </section>
+
+          <p class="timestamp-foot">Generated 2 Jun 2026, 19:54 UTC (mock)</p>
+
+          <details class="etp-mock-method">
+            <summary class="etp-mock-method__summary">Data sources &amp; definitions</summary>
+            <div class="etp-mock-method__body">
+              <ul>
+                <li>
+                  <strong>KPI strip</strong> — total listed AUM and ~1-month % from StockAnalysis; BTC &amp; ETH flows
+                  from Farside (~30-day window vs prior 30 days).
+                </li>
+                <li>
+                  <strong>Aggregate chart</strong> — Yahoo weekly closes with constant-share AUM approximation per fund.
+                </li>
+                <li>
+                  <strong>Fund table</strong> — searchable full list; download and full-screen on production.
+                </li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </article>
+
+      <p class="back-link">
+        <a href="../index.html">&larr; Back to home</a>
+      </p>
+    </main>
+
+    <footer class="site-footer">
+      Digital Assets Dashboard &middot; U.S. ETPs mock &middot; <time datetime="2026-06">Jun 2026</time>
+    </footer>
+    <script defer src="../js/crypto-kpi-shared.js?v=11"></script>
+    <script>
+      /* Optional: refresh key observations when served over HTTP (static HTML is always visible). */
+      document.addEventListener("DOMContentLoaded", function () {
+        var host = document.getElementById("js-etp-key-obs");
+        var api = window.__CRYPTO_KPI;
+        if (!host || !api || typeof api.renderKeyObservationsCallout !== "function") return;
+        fetch("../data/etp_kpis.json")
+          .then(function (r) {
+            return r.json();
+          })
+          .then(function (kpis) {
+            if (kpis && kpis.key_observations_html) {
+              api.renderKeyObservationsCallout(host, kpis.key_observations_html, {
+                title: "Key observations",
+              });
+            }
+          })
+          .catch(function () {});
+      });
+    </script>
+  </body>
+</html>

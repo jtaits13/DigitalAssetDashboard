@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mock — Crypto prices inner page</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../styles.css?v=85" />
+    <link rel="stylesheet" href="../css/site-experience.css?v=21" />
+    <link rel="stylesheet" href="../css/inner-page-experience.css?v=22" />
+    <link rel="stylesheet" href="home-five-zone-mock.css?v=9" />
+    <link rel="stylesheet" href="etp-inner-page-mock.css?v=15" />
+    <link rel="stylesheet" href="crypto-inner-page-mock.css?v=7" />
+  </head>
+  <body class="page-crypto site-experience page-inner--rich mock-five-zone mock-crypto-inner">
+    <header class="site-header" role="banner">
+      <div class="site-header__inner">
+        <a class="site-brand" href="../index.html">Digital Assets Dashboard</a>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="../index.html">Home</a>
+          <a href="../index.html#section-news">News Hub</a>
+          <a href="tmmf-inner-page-mock.html">TMMFs</a>
+          <a href="stable-inner-page-mock.html">Stablecoins</a>
+          <div class="site-nav__dropdown">
+            <a href="../rwa-global.html" class="site-nav__trigger">RWA Market</a>
+            <ul class="site-nav__sub">
+              <li><a href="../rwa-global.html">Market Overview</a></li>
+            </ul>
+          </div>
+          <div class="site-nav__dropdown">
+            <span class="site-nav__trigger">U.S. ETPs</span>
+            <ul class="site-nav__sub">
+              <li><a href="etp-inner-page-mock.html">U.S. ETP Overview (mock)</a></li>
+              <li><a href="../etf-news.html">ETF/ETP News</a></li>
+            </ul>
+          </div>
+          <a href="../crypto-prices.html" class="is-active">Crypto Prices</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="page-back-below-header">
+      <p class="back-link back-link--below-header">
+        <a href="../index.html#section-crypto">&larr; Back to home &middot; Crypto preview</a>
+      </p>
+    </div>
+
+    <main class="etp-mock-shell">
+      <article
+        class="hub-section hub-section--panel home-zone home-zone--crypto etp-mock-zone inner-rich-zone zone--crypto"
+        aria-labelledby="page-title"
+      >
+        <div class="home-zone__stripe" aria-hidden="true"></div>
+        <header class="home-zone__head">
+          <span class="home-zone__badge" aria-hidden="true">CRY</span>
+          <div class="home-zone__titles">
+            <h1 class="page-intro__title" id="page-title">Crypto Prices &mdash; Top 50 Snapshot</h1>
+            <p class="section-dek section-dek--wide">
+              Top-line crypto market snapshot with a KPI strip, a 12-month total market-cap trend chart, category filters,
+              and a searchable <strong>top 50</strong> spot-price table. Sources:
+              <a href="https://coinpaprika.com/" target="_blank" rel="noopener noreferrer">CoinPaprika</a>
+              (total cap),
+              <a href="https://www.coingecko.com/" target="_blank" rel="noopener noreferrer">CoinGecko</a>
+              (top 50; CoinCap fallback), and
+              <a href="https://www.tradingview.com/symbols/TOTAL/" target="_blank" rel="noopener noreferrer"
+                >TradingView TOTAL</a
+              >
+              (chart).
+            </p>
+          </div>
+        </header>
+
+        <div class="etp-mock-zone__body home-zone__body inner-rich-zone__body">
+          <div class="home-related-chips" aria-label="Related pages">
+            <span class="home-related-chips__label">Related</span>
+            <a class="home-chip" href="../index.html#section-crypto">Home crypto preview</a>
+            <a class="home-chip" href="etp-inner-page-mock.html">U.S. ETPs (mock)</a>
+            <a class="home-chip" href="stable-inner-page-mock.html">Stablecoins (mock)</a>
+            <a class="home-chip" href="../index.html#section-news">News Hub</a>
+          </div>
+
+          <section class="etp-mock-snapshot" aria-labelledby="snapshot-heading">
+            <h2 class="subsection-head u-vh" id="snapshot-heading">Top-line snapshot</h2>
+            <p class="data-freshness etp-mock-freshness">
+              Snapshot as of <time datetime="2026-06-02">2 Jun 2026</time> (UTC) &middot; CoinPaprika + CoinGecko
+            </p>
+            <div class="rwa-kpi-panel-static rwa-kpi-panel-static--compact" aria-label="Crypto KPI strip">
+              <div class="rwa-kpi-row rwa-kpi-row--home-grid">
+                <div class="rwa-kpi-cell">
+                  <span class="rwa-kpi-label">Total market cap</span>
+                  <span class="rwa-kpi-val">$2.42T</span>
+                  <span class="rwa-kpi-delta down">-11.15%</span>
+                </div>
+                <div class="rwa-kpi-cell">
+                  <span class="rwa-kpi-label">BTC dominance</span>
+                  <span class="rwa-kpi-val">55.4%</span>
+                  <span class="rwa-kpi-delta down">-3.53%</span>
+                </div>
+                <div class="rwa-kpi-cell">
+                  <span class="rwa-kpi-label">Stablecoin share</span>
+                  <span class="rwa-kpi-val">12.8%</span>
+                  <span class="rwa-kpi-delta up">+11.87%</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div class="inner-rich-block etp-mock-key-obs-block" aria-labelledby="obs-heading">
+            <h2 class="subsection-head u-vh" id="obs-heading">Key Observations</h2>
+            <div id="js-crypto-key-obs">
+              <aside class="crypto-story-callout" aria-labelledby="crypto-key-obs-title">
+                <h3 class="crypto-story-callout__title" id="crypto-key-obs-title">Key observations</h3>
+                <ul class="crypto-story-callout__list">
+                  <li>
+                    <strong>Losses broadened among top-50 alts:</strong> 13 names up more than ~0.5%, 25 down more than
+                    ~0.5%, and 12 roughly flat out of <strong>50</strong> non-stable coins with a valid 1M % (top-50
+                    table).
+                  </li>
+                  <li>
+                    <strong
+                      >Others (top-50 coins outside Layer 1, stablecoins, CEX, DeFi, meme, and RWA tabs, e.g. HYPE, LAB,
+                      MNT, WLFI, RLUSD) outpaced Layer 1s over 1M:</strong
+                    >
+                    the stronger group averaged about <strong>+281.6%</strong> cap-weighted in the top-50, while the
+                    weaker averaged about <strong>-13.5%</strong>—the widest gap among category tabs.
+                  </li>
+                  <li>
+                    <strong>Industry headlines emphasize Crypto market structure</strong> Recent coverage includes
+                    <a
+                      href="https://www.coindesk.com/markets/2026/06/02/bitcoin-set-for-choppy-summer-as-capital-chases-high-flying-ai-stocks-k33-says"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >Bitcoin set for &#x27;choppy summer&#x27; as capital chases high-flying AI stocks, K33 says</a
+                    >
+                    (CoinDesk);
+                    <a
+                      href="https://www.coindesk.com/business/2026/06/02/bitcoin-faces-identity-crisis-as-defi-quietly-builds-its-breakthrough-point"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >Bitcoin faces an &#x27;identity crisis&#x27; and DeFi devs need to stop acting like tech bros</a
+                    >
+                    (CoinDesk). Breadth and dominance narratives help explain whether moves are Bitcoin-led or
+                    alt-led—compare with BTC/ETH 1M % and the category mix in the top-50 table.
+                  </li>
+                  <li>
+                    <strong>Industry headlines emphasize Crypto regulation</strong> Recent coverage includes
+                    <a
+                      href="https://www.coindesk.com/tech/2026/06/02/movement-pivots-to-stablecoin-payments-as-the-layer-2-boom-loses-momentum"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >Movement pivots to stablecoin payments as the layer-2 boom loses momentum</a
+                    >
+                    (CoinDesk);
+                    <a
+                      href="https://www.coindesk.com/markets/2026/06/02/ripple-s-dollar-stablecoin-expands-to-turkey-through-three-local-platforms"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >Ripple&#8217;s dollar stablecoin expands to Turkey through three local platforms</a
+                    >
+                    (CoinDesk). Enforcement and legislation headlines can shift risk appetite across the top-50—watch
+                    whether beta concentrates in majors or spreads into higher-beta categories.
+                  </li>
+                </ul>
+                <p class="crypto-story-callout__note">
+                  Context only—not investment advice. Observations rank the top-50 table and KPI math on this page
+                  against recent crypto and ETF headlines. Bullets are ranked from on-page data and recent industry
+                  headlines (dashboard RSS plus Google News fallback).
+                </p>
+              </aside>
+              <p class="review-note ko-disclaimer">
+                Key observations are AI generated and should be reviewed for accuracy.
+              </p>
+            </div>
+          </div>
+
+          <section class="etp-mock-insights etp-mock-insights--crypto-full" aria-labelledby="insights-heading">
+            <h2 class="u-vh" id="insights-heading">Market structure</h2>
+            <div class="etp-mock-insights__panel etp-mock-insights__panel--conc">
+              <h3 class="etp-mock-insights__head">Market cap mix (top 50)</h3>
+              <p class="etp-mock-conc__dek">
+                Share of top-50 list market cap (CoinGecko snapshot). KPI totals use CoinPaprika and may differ
+                slightly from segment sums.
+              </p>
+              <div class="etp-mock-conc__rows etp-mock-conc__rows--grid" role="img" aria-label="Largest segments of top-50 market cap">
+                <div class="etp-mock-conc__row">
+                  <span class="etp-mock-conc__sym">BTC</span>
+                  <span class="etp-mock-conc__track"
+                    ><span class="etp-mock-conc__fill" style="width: 58.5%"></span
+                  ></span>
+                  <span class="etp-mock-conc__pct">58.5%</span>
+                </div>
+                <div class="etp-mock-conc__row">
+                  <span class="etp-mock-conc__sym">ETH</span>
+                  <span class="etp-mock-conc__track"
+                    ><span class="etp-mock-conc__fill" style="width: 10.0%"></span
+                  ></span>
+                  <span class="etp-mock-conc__pct">10.0%</span>
+                </div>
+                <div class="etp-mock-conc__row">
+                  <span class="etp-mock-conc__sym">Stables</span>
+                  <span class="etp-mock-conc__track"
+                    ><span class="etp-mock-conc__fill" style="width: 12.8%"></span
+                  ></span>
+                  <span class="etp-mock-conc__pct">12.8%</span>
+                </div>
+                <div class="etp-mock-conc__row">
+                  <span class="etp-mock-conc__sym">Other alts</span>
+                  <span class="etp-mock-conc__track"
+                    ><span class="etp-mock-conc__fill" style="width: 18.7%"></span
+                  ></span>
+                  <span class="etp-mock-conc__pct">18.7%</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="etp-mock-dashboard" aria-labelledby="dashboard-heading">
+            <h2 class="u-vh" id="dashboard-heading">Chart and context</h2>
+            <div class="etp-mock-dash__panel etp-mock-dash__panel--chart">
+              <h3 class="etp-mock-dash__head">Crypto total market cap</h3>
+              <div class="etp-mock-chart" role="img" aria-label="Mock TradingView TOTAL chart area">
+                <div class="etp-mock-chart__axis" aria-hidden="true">
+                  <span>Jun</span><span>Sep</span><span>Dec</span><span>Mar</span><span>Jun</span>
+                </div>
+              </div>
+              <p class="etp-mock-chart__cap">
+                TradingView TOTAL represents crypto market capitalization using the top 125 coins.
+              </p>
+              <p class="etp-mock-chart__method">
+                The chart is powered by TradingView&rsquo;s TOTAL index so it does not rely on rate-limited local
+                historical exports. The KPI total uses CoinPaprika; levels can differ because sources and universes
+                differ.
+              </p>
+              <p class="cta-note etp-mock-chart__method">
+                <a href="https://www.tradingview.com/symbols/TOTAL/" target="_blank" rel="noopener noreferrer"
+                  >Open the full TradingView TOTAL chart &rarr;</a
+                >
+              </p>
+            </div>
+            <div class="etp-mock-dash__panel etp-mock-dash__panel--movers">
+              <h3 class="etp-mock-dash__head">Top movers (1M)</h3>
+              <div id="js-crypto-top-movers">
+                <ul class="crypto-top-movers__list">
+                  <li class="crypto-top-mover">
+                    <div class="crypto-top-mover__row">
+                      <span class="crypto-top-mover__label"><strong>LAB</strong> (LAB)</span>
+                      <span class="crypto-top-mover__pct pct up">+947.3%</span>
+                    </div>
+                    <p class="crypto-top-mover__ctx">
+                      <a
+                        href="https://thedefiant.io/news/markets/arkham-lab-token-90-percent-concentration-4-billion-market-cap-c2a0qd"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        >Arkham Intelligence Reports 90%+ Token Concentration in $LAB Project Trading at $4B Market
+                        Cap</a
+                      >
+                      (The Defiant)
+                    </p>
+                  </li>
+                  <li class="crypto-top-mover">
+                    <div class="crypto-top-mover__row">
+                      <span class="crypto-top-mover__label"><strong>NEAR</strong> (NEAR Protocol)</span>
+                      <span class="crypto-top-mover__pct pct up">+105.6%</span>
+                    </div>
+                    <p class="crypto-top-mover__ctx">
+                      <a
+                        href="https://decrypt.co/369708/near-worldcoin-post-double-digit-gains-as-market-sees-714m-in-liquidations"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        >NEAR, Worldcoin Post Double-Digit Gains as Market Sees $714M in Liquidations</a
+                      >
+                      (Decrypt)
+                    </p>
+                  </li>
+                  <li class="crypto-top-mover">
+                    <div class="crypto-top-mover__row">
+                      <span class="crypto-top-mover__label"><strong>RAIN</strong> (Rain)</span>
+                      <span class="crypto-top-mover__pct pct up">+86.8%</span>
+                    </div>
+                    <p class="crypto-top-mover__ctx">
+                      <a
+                        href="https://cointelegraph.com/news/georgias-vice-pm-governmental-crackdown-illegal-bitcoin-mining"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        >Georgia targets illegal crypto mining in Mestia crackdown: Report</a
+                      >
+                      (CoinTelegraph)
+                    </p>
+                  </li>
+                </ul>
+                <p class="crypto-story-callout__note">
+                  Largest 1-month % moves in the top-50 table (stablecoins excluded). Context lines match recent
+                  headlines from dashboard news feeds, with Google News as fallback.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section class="etp-mock-table-block" aria-labelledby="table-heading">
+            <div class="rwa-split-table-head inner-table-head">
+              <h2 class="subsection-head rwa-split-table-head__title" id="table-heading">Prices table</h2>
+              <div class="rwa-split-table-head__actions">
+                <button
+                  type="button"
+                  class="table-download-btn"
+                  data-table-download-btn="1"
+                  aria-label="Download table as Excel"
+                  title="Download as Excel (.xlsx)"
+                  disabled
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="crypto-mock-cat-tabs" role="tablist" aria-label="Filter by asset category">
+              <button type="button" class="crypto-cat-tab is-active" role="tab" aria-selected="true">All</button>
+              <button type="button" class="crypto-cat-tab" role="tab" aria-selected="false">Layer 1</button>
+              <button type="button" class="crypto-cat-tab" role="tab" aria-selected="false">Stablecoin</button>
+              <button type="button" class="crypto-cat-tab" role="tab" aria-selected="false">CEX</button>
+              <button type="button" class="crypto-cat-tab" role="tab" aria-selected="false">DeFi</button>
+              <button type="button" class="crypto-cat-tab" role="tab" aria-selected="false">Meme</button>
+              <button type="button" class="crypto-cat-tab" role="tab" aria-selected="false">RWA / Tokenized</button>
+              <button type="button" class="crypto-cat-tab" role="tab" aria-selected="false">Other</button>
+            </div>
+
+            <label class="search-field etp-mock-table-search">
+              <span class="search-field__label">Search by coin name or ticker</span>
+              <input
+                type="search"
+                class="search-field__input"
+                placeholder="Filter by name or ticker&hellip;"
+                value=""
+              />
+            </label>
+
+            <p class="etp-mock-table-meta__count toolbar-note" aria-live="polite">
+              Showing 8 of 50 coins (mock)
+            </p>
+
+            <div class="crypto-mock-table-actions">
+              <p class="kpi-footnote kpi-footnote--block">
+                Hover a <strong>Ticker</strong> or <strong>Coin</strong> name for a short summary from CoinGecko&rsquo;s
+                About copy (mainstream adoption and uses, plus a brief lead).
+              </p>
+              <button
+                type="button"
+                class="etp-mock-table-meta__expand"
+                disabled
+                aria-label="View prices table full screen"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"
+                  />
+                </svg>
+                <span>Full screen</span>
+              </button>
+            </div>
+
+            <div class="table-wrap table-wrap--scroll">
+              <table class="data-table data-table--dense data-table--sortable" aria-label="Top 50 cryptocurrencies">
+                <thead>
+                  <tr>
+                    <th class="th-sortable" scope="col">Rank</th>
+                    <th class="th-sortable" scope="col">Ticker</th>
+                    <th class="th-sortable" scope="col">Coin</th>
+                    <th class="th-sortable" scope="col">Category</th>
+                    <th class="num th-sortable is-sorted" scope="col">Price</th>
+                    <th class="num th-sortable" scope="col">1M %</th>
+                    <th class="num th-sortable" scope="col">Market Cap</th>
+                    <th scope="col">Market Page</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td><strong>BTC</strong></td>
+                    <td>Bitcoin</td>
+                    <td><span class="crypto-cat crypto-cat--l1">Layer 1</span></td>
+                    <td class="num">$67,287</td>
+                    <td class="num down">-14.53%</td>
+                    <td class="num">$1.34T</td>
+                    <td><a href="#" tabindex="-1">CoinGecko</a></td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td><strong>ETH</strong></td>
+                    <td>Ethereum</td>
+                    <td><span class="crypto-cat crypto-cat--l1">Layer 1</span></td>
+                    <td class="num">$1,912</td>
+                    <td class="num down">-17.92%</td>
+                    <td class="num">$230.0B</td>
+                    <td><a href="#" tabindex="-1">CoinGecko</a></td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td><strong>USDT</strong></td>
+                    <td>Tether</td>
+                    <td><span class="crypto-cat crypto-cat--stablecoin">Stablecoin</span></td>
+                    <td class="num">$1.00</td>
+                    <td class="num down">-0.14%</td>
+                    <td class="num">$188.0B</td>
+                    <td><a href="#" tabindex="-1">CoinGecko</a></td>
+                  </tr>
+                  <tr>
+                    <td>4</td>
+                    <td><strong>BNB</strong></td>
+                    <td>BNB</td>
+                    <td><span class="crypto-cat crypto-cat--cex">CEX</span></td>
+                    <td class="num">$660.69</td>
+                    <td class="num up">+6.66%</td>
+                    <td class="num">$88.8B</td>
+                    <td><a href="#" tabindex="-1">CoinGecko</a></td>
+                  </tr>
+                  <tr>
+                    <td>5</td>
+                    <td><strong>USDC</strong></td>
+                    <td>USDC</td>
+                    <td><span class="crypto-cat crypto-cat--stablecoin">Stablecoin</span></td>
+                    <td class="num">$1.00</td>
+                    <td class="num down">-0.02%</td>
+                    <td class="num">$76.0B</td>
+                    <td><a href="#" tabindex="-1">CoinGecko</a></td>
+                  </tr>
+                  <tr>
+                    <td>6</td>
+                    <td><strong>XRP</strong></td>
+                    <td>XRP</td>
+                    <td><span class="crypto-cat crypto-cat--l1">Layer 1</span></td>
+                    <td class="num">$1.23</td>
+                    <td class="num down">-12.01%</td>
+                    <td class="num">$75.8B</td>
+                    <td><a href="#" tabindex="-1">CoinGecko</a></td>
+                  </tr>
+                  <tr>
+                    <td>7</td>
+                    <td><strong>SOL</strong></td>
+                    <td>Solana</td>
+                    <td><span class="crypto-cat crypto-cat--l1">Layer 1</span></td>
+                    <td class="num">$142.50</td>
+                    <td class="num down">-9.2%</td>
+                    <td class="num">$72.1B</td>
+                    <td><a href="#" tabindex="-1">CoinGecko</a></td>
+                  </tr>
+                  <tr>
+                    <td>8</td>
+                    <td><strong>DOGE</strong></td>
+                    <td>Dogecoin</td>
+                    <td><span class="crypto-cat crypto-cat--meme">Meme</span></td>
+                    <td class="num">$0.19</td>
+                    <td class="num up">+4.1%</td>
+                    <td class="num">$28.4B</td>
+                    <td><a href="#" tabindex="-1">CoinGecko</a></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="rwa-table-footnote-row">
+              <p class="source-cap rwa-table-footnote-row__cap">
+                Top-line market-cap source: CoinPaprika. Spot market source: CoinGecko with CoinCap fallback. Market-cap
+                chart source: TradingView TOTAL.
+              </p>
+            </div>
+          </section>
+
+          <p class="timestamp-foot">Generated 2 Jun 2026, 19:54 UTC (mock)</p>
+
+          <details class="etp-mock-method">
+            <summary class="etp-mock-method__summary">Data sources &amp; definitions</summary>
+            <div class="etp-mock-method__body">
+              <ul>
+                <li>
+                  <strong>KPI strip</strong> — total market cap and ~1-month % from CoinPaprika; BTC dominance and
+                  stablecoin share from the top-50 list.
+                </li>
+                <li>
+                  <strong>Chart</strong> — TradingView TOTAL (~top 125 coins); KPI total may differ from the chart level.
+                </li>
+                <li>
+                  <strong>Prices table</strong> — top 50 from CoinGecko; category tabs, download, and full-screen on
+                  production.
+                </li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </article>
+
+      <p class="back-link">
+        <a href="../index.html">&larr; Back to home</a>
+      </p>
+    </main>
+
+    <footer class="site-footer">
+      Digital Assets Dashboard &middot; Crypto Prices mock &middot; <time datetime="2026-06">Jun 2026</time>
+    </footer>
+    <script defer src="../js/crypto-kpi-shared.js?v=11"></script>
+    <script>
+      /* Optional: refresh key observations and top movers when served over HTTP (static HTML is always visible). */
+      document.addEventListener("DOMContentLoaded", function () {
+        var api = window.__CRYPTO_KPI;
+        if (!api) return;
+        fetch("../data/crypto_kpis.json")
+          .then(function (r) {
+            return r.json();
+          })
+          .then(function (kpis) {
+            if (typeof api.renderKeyObservationsCallout === "function") {
+              api.renderKeyObservationsCallout(
+                document.getElementById("js-crypto-key-obs"),
+                (kpis && kpis.key_observations_html) || "",
+                { title: "Key observations" }
+              );
+            }
+            if (typeof api.renderTopMoversCallout === "function" && kpis && kpis.top_movers) {
+              api.renderTopMoversCallout(document.getElementById("js-crypto-top-movers"), kpis.top_movers);
+            }
+          })
+          .catch(function () {});
+      });
+    </script>
+  </body>
+</html>

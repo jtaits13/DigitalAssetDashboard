@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mock — Tokenized MMF inner page</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../styles.css?v=85" />
+    <link rel="stylesheet" href="../css/site-experience.css?v=21" />
+    <link rel="stylesheet" href="../css/inner-page-experience.css?v=22" />
+    <link rel="stylesheet" href="home-five-zone-mock.css?v=9" />
+    <link rel="stylesheet" href="etp-inner-page-mock.css?v=15" />
+    <link rel="stylesheet" href="tmmf-inner-page-mock.css?v=4" />
+  </head>
+  <body class="page-rwa-deep-mmf site-experience page-inner--rich mock-five-zone mock-tmmf-inner">
+    <header class="site-header" role="banner">
+      <div class="site-header__inner">
+        <a class="site-brand" href="../index.html">Digital Assets Dashboard</a>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="../index.html">Home</a>
+          <a href="../index.html#section-news">News Hub</a>
+          <a href="tmmf-inner-page-mock.html" class="is-active">TMMFs</a>
+          <a href="stable-inner-page-mock.html">Stablecoins</a>
+          <div class="site-nav__dropdown">
+            <a href="../rwa-global.html" class="site-nav__trigger">RWA Market</a>
+            <ul class="site-nav__sub">
+              <li><a href="../rwa-global.html">Market Overview</a></li>
+            </ul>
+          </div>
+          <div class="site-nav__dropdown">
+            <span class="site-nav__trigger">U.S. ETPs</span>
+            <ul class="site-nav__sub">
+              <li><a href="etp-inner-page-mock.html">U.S. ETP Overview (mock)</a></li>
+              <li><a href="../etf-news.html">ETF/ETP News</a></li>
+            </ul>
+          </div>
+          <a href="crypto-inner-page-mock.html">Crypto Prices</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="page-back-below-header">
+      <p class="back-link back-link--below-header">
+        <a href="../index.html#section-tmmf">&larr; Back to home &middot; TMMF preview</a>
+      </p>
+    </div>
+
+    <main class="etp-mock-shell">
+      <article
+        class="hub-section hub-section--panel home-zone home-zone--tmmf etp-mock-zone inner-rich-zone zone--tmmf"
+        aria-labelledby="page-title"
+      >
+        <div class="home-zone__stripe" aria-hidden="true"></div>
+        <header class="home-zone__head">
+          <span class="home-zone__badge" aria-hidden="true">MMF</span>
+          <div class="home-zone__titles">
+            <h1 class="page-intro__title" id="page-title">Tokenized Money Market Funds</h1>
+            <p class="section-dek section-dek--wide">
+              Curated on-chain fund population with snapshot KPIs, searchable fund table, and
+              <strong>Networks</strong> / <strong>Platforms</strong> league views. Aggregated from
+              <a href="https://app.rwa.xyz/treasuries" target="_blank" rel="noopener noreferrer">RWA.xyz US Treasuries</a>
+              and
+              <a href="https://app.rwa.xyz/government-bonds" target="_blank" rel="noopener noreferrer"
+                >Non-U.S. Government Debt</a
+              >; <strong>Distributed Value</strong> columns are current levels.
+            </p>
+          </div>
+        </header>
+
+        <div class="etp-mock-zone__body home-zone__body inner-rich-zone__body">
+          <div class="home-related-chips" aria-label="Related pages">
+            <span class="home-related-chips__label">Related</span>
+            <a class="home-chip" href="../index.html#section-tmmf">Home TMMF preview</a>
+            <a class="home-chip" href="stable-inner-page-mock.html">Stablecoins (mock)</a>
+            <a class="home-chip" href="etp-inner-page-mock.html">U.S. ETPs (mock)</a>
+            <a class="home-chip" href="../rwa-global.html">RWA market overview</a>
+          </div>
+
+          <section class="etp-mock-snapshot" aria-labelledby="snapshot-heading">
+            <h2 class="subsection-head u-vh" id="snapshot-heading">Top-line snapshot</h2>
+            <p class="data-freshness etp-mock-freshness">
+              Snapshot as of <time datetime="2026-06-02">2 Jun 2026</time> (UTC) &middot; RWA.xyz
+            </p>
+            <div class="rwa-kpi-panel-static rwa-kpi-panel-static--compact" aria-label="TMMF KPI strip">
+              <div class="rwa-kpi-row rwa-kpi-row--home-grid">
+                <div class="rwa-kpi-cell">
+                  <span class="rwa-kpi-label">Distributed value</span>
+                  <span class="rwa-kpi-val">$13.81B</span>
+                  <span class="rwa-kpi-delta down">-1.56%</span>
+                </div>
+                <div class="rwa-kpi-cell">
+                  <span class="rwa-kpi-label">Top network share</span>
+                  <span class="rwa-kpi-val">52.4% &middot; Ethereum</span>
+                  <span class="rwa-kpi-delta down">-0.58 pp</span>
+                </div>
+                <div class="rwa-kpi-cell">
+                  <span class="rwa-kpi-label">Tokenized funds</span>
+                  <span class="rwa-kpi-val">17</span>
+                </div>
+                <div class="rwa-kpi-cell">
+                  <span class="rwa-kpi-label">Active networks</span>
+                  <span class="rwa-kpi-val">18</span>
+                </div>
+              </div>
+            </div>
+            <p class="etp-mock-snapshot__note">
+              KPI <strong>30D</strong> % uses distributed value vs summed token values 30 days ago; top network share
+              <strong>30D</strong> is change in market-share percentage points (pp).
+            </p>
+          </section>
+
+          <div class="inner-rich-block etp-mock-key-obs-block" aria-labelledby="obs-heading">
+            <h2 class="subsection-head u-vh" id="obs-heading">Key Observations</h2>
+            <div id="js-tmmf-key-obs">
+            <aside class="crypto-story-callout" aria-labelledby="tmmf-key-obs-title">
+              <h3 class="crypto-story-callout__title" id="tmmf-key-obs-title">Key observations</h3>
+              <ul class="crypto-story-callout__list">
+                <li>
+                  <strong>TMMFs are becoming a de facto settlement layer for institutions:</strong> several of the
+                  largest funds combine very high AUM with small holder counts&mdash;e.g. USYC (44 holders, $2.96B;
+                  ~$67M/holder), iBENJI (28 holders, $1.59B), JTRSY (19 holders, $871M)&mdash;suggesting on-chain cash
+                  and collateral rails rather than broad retail savings. Ethereum still carries ~52% of aggregated MMF
+                  network share.
+                </li>
+                <li>
+                  <strong>Early &ldquo;flight to efficiency&rdquo; shows up in 30D network share:</strong> gainers include
+                  Stellar (+2.46 pp 30D share), Solana (+2.37 pp); losers include BNB Chain (-4.35 pp), Ethereum (-2.31
+                  pp)&mdash;consistent with liquidity migrating toward higher-throughput chains while Ethereum still
+                  dominates levels.
+                </li>
+                <li>
+                  <strong>Issuer strategy and chain migration headlines:</strong> recent coverage spans institutional
+                  rails vs retail yield products and fee/throughput narratives&mdash;compare fund-table holder counts
+                  and AUM per holder with network-share movers in the league tables below.
+                </li>
+              </ul>
+              <p class="crypto-story-callout__note">
+                Context only&mdash;not investment advice. Bullets are ranked from on-page fund and network aggregates
+                and recent industry headlines (dashboard RSS plus Google News fallback).
+              </p>
+            </aside>
+            </div>
+            <p class="review-note ko-disclaimer">
+              Key observations are AI generated and should be reviewed for accuracy.
+            </p>
+          </div>
+
+          <section class="etp-mock-insights" aria-labelledby="insights-heading">
+            <h2 class="u-vh" id="insights-heading">Market structure</h2>
+            <div class="etp-mock-insights__panel etp-mock-insights__panel--conc">
+              <h3 class="etp-mock-insights__head">Network share (top 5)</h3>
+              <p class="etp-mock-conc__dek">Share of aggregated distributed value by chain (RWA.xyz snapshot).</p>
+              <div class="etp-mock-conc__rows" role="img" aria-label="Top five networks by distributed value share">
+                <div class="etp-mock-conc__row">
+                  <span class="etp-mock-conc__sym">ETH</span>
+                  <span class="etp-mock-conc__track"
+                    ><span class="etp-mock-conc__fill" style="width: 52.2%"></span
+                  ></span>
+                  <span class="etp-mock-conc__pct">52.2%</span>
+                </div>
+                <div class="etp-mock-conc__row">
+                  <span class="etp-mock-conc__sym">BNB</span>
+                  <span class="etp-mock-conc__track"
+                    ><span class="etp-mock-conc__fill" style="width: 22.1%"></span
+                  ></span>
+                  <span class="etp-mock-conc__pct">22.1%</span>
+                </div>
+                <div class="etp-mock-conc__row">
+                  <span class="etp-mock-conc__sym">XLM</span>
+                  <span class="etp-mock-conc__track"
+                    ><span class="etp-mock-conc__fill" style="width: 8.3%"></span
+                  ></span>
+                  <span class="etp-mock-conc__pct">8.3%</span>
+                </div>
+                <div class="etp-mock-conc__row">
+                  <span class="etp-mock-conc__sym">SOL</span>
+                  <span class="etp-mock-conc__track"
+                    ><span class="etp-mock-conc__fill" style="width: 6.2%"></span
+                  ></span>
+                  <span class="etp-mock-conc__pct">6.2%</span>
+                </div>
+                <div class="etp-mock-conc__row">
+                  <span class="etp-mock-conc__sym">AVAX</span>
+                  <span class="etp-mock-conc__track"
+                    ><span class="etp-mock-conc__fill" style="width: 3.0%"></span
+                  ></span>
+                  <span class="etp-mock-conc__pct">3.0%</span>
+                </div>
+              </div>
+            </div>
+            <div class="etp-mock-insights__panel etp-mock-insights__panel--glance">
+              <h3 class="etp-mock-insights__head">At a glance</h3>
+              <div class="etp-mock-stats">
+                <div class="etp-mock-stat">
+                  <span class="etp-mock-stat__lbl">Curated funds</span>
+                  <span class="etp-mock-stat__val">17</span>
+                </div>
+                <div class="etp-mock-stat">
+                  <span class="etp-mock-stat__lbl">Active networks</span>
+                  <span class="etp-mock-stat__val">18</span>
+                </div>
+                <div class="etp-mock-stat">
+                  <span class="etp-mock-stat__lbl">Largest fund</span>
+                  <span class="etp-mock-stat__val etp-mock-stat__val--ticker">USYC ($2.96B)</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="etp-mock-table-block etp-mock-table-block--funds" aria-labelledby="funds-heading">
+            <div class="rwa-split-table-head inner-table-head">
+              <h2 class="subsection-head rwa-split-table-head__title" id="funds-heading">
+                Tokenized money market fund population
+              </h2>
+              <div class="rwa-split-table-head__actions">
+                <button
+                  type="button"
+                  class="table-download-btn"
+                  disabled
+                  aria-label="Download table as Excel"
+                  title="Download as Excel (.xlsx)"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    aria-hidden="true"
+                  >
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <p class="tmmf-mock-funds-intro">
+              Curated fund population (fixed list aligned to RWA.xyz). Population may not include all TMMFs in the
+              market.
+            </p>
+            <label class="search-field etp-mock-table-search">
+              <span class="search-field__label">Search funds</span>
+              <input type="search" class="search-field__input" placeholder="Filter funds&hellip;" value="" />
+            </label>
+            <div class="etp-mock-table-meta" aria-live="polite">
+              <p class="etp-mock-table-meta__count toolbar-note">Showing 6 of 17 funds (mock)</p>
+              <button type="button" class="etp-mock-table-meta__expand" disabled>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"
+                  />
+                </svg>
+                <span>Full screen</span>
+              </button>
+            </div>
+            <div class="table-wrap table-wrap--scroll">
+              <table class="data-table data-table--dense data-table--sortable">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th class="th-sortable is-sorted" scope="col">Fund name</th>
+                    <th scope="col">Ticker</th>
+                    <th scope="col">Platform</th>
+                    <th scope="col">Networks</th>
+                    <th class="num th-sortable" scope="col">Total value</th>
+                    <th class="num th-sortable" scope="col">7D &Delta; value</th>
+                    <th class="num th-sortable" scope="col">Holders</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td><a href="https://app.rwa.xyz/assets/circle-usyc" tabindex="-1">Circle USYC</a></td>
+                    <td>USYC</td>
+                    <td>Circle</td>
+                    <td class="tmmf-mock-net-icons">BNB, ETH, SOL</td>
+                    <td class="num">$2.96B</td>
+                    <td class="num down">-0.86%</td>
+                    <td class="num">44</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>
+                      <a href="https://app.rwa.xyz/assets/blackrock-usd-institutional-digital-liquidity-fund" tabindex="-1"
+                        >BlackRock USD Institutional Digital Liquidity Fund</a
+                      >
+                    </td>
+                    <td>BUIDL</td>
+                    <td>Securitize</td>
+                    <td class="tmmf-mock-net-icons">ETH, SOL, +6</td>
+                    <td class="num">$2.42B</td>
+                    <td class="num down">-2.92%</td>
+                    <td class="num">109</td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td><a href="https://app.rwa.xyz/assets/ondo-u-s-dollar-yield" tabindex="-1">Ondo U.S. Dollar Yield</a></td>
+                    <td>USDY</td>
+                    <td>Ondo</td>
+                    <td class="tmmf-mock-net-icons">ETH, XLM, +9</td>
+                    <td class="num">$2.14B</td>
+                    <td class="num down">-0.01%</td>
+                    <td class="num">14,960</td>
+                  </tr>
+                  <tr>
+                    <td>4</td>
+                    <td><a href="https://app.rwa.xyz/assets/ibenji" tabindex="-1">iBENJI</a></td>
+                    <td>iBENJI</td>
+                    <td>Franklin Templeton Benji</td>
+                    <td class="tmmf-mock-net-icons">ETH, BNB</td>
+                    <td class="num">$1.59B</td>
+                    <td class="num up">+1.99%</td>
+                    <td class="num">28</td>
+                  </tr>
+                  <tr>
+                    <td>5</td>
+                    <td>
+                      <a href="https://app.rwa.xyz/assets/wisdomtree-treasury-money-market-digital-fund" tabindex="-1"
+                        >WisdomTree Treasury Money Market Digital Fund</a
+                      >
+                    </td>
+                    <td>WTGXX</td>
+                    <td>WisdomTree</td>
+                    <td class="tmmf-mock-net-icons">ETH, ARB, +6</td>
+                    <td class="num">$895M</td>
+                    <td class="num down">-5.12%</td>
+                    <td class="num">896</td>
+                  </tr>
+                  <tr>
+                    <td>6</td>
+                    <td>
+                      <a href="https://app.rwa.xyz/assets/janus-henderson-anemoy-treasury-fund" tabindex="-1"
+                        >Janus Henderson Anemoy Treasury Fund</a
+                      >
+                    </td>
+                    <td>JTRSY</td>
+                    <td>Anemoy</td>
+                    <td class="tmmf-mock-net-icons">ETH</td>
+                    <td class="num">$871M</td>
+                    <td class="num down">-5.37%</td>
+                    <td class="num">19</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="rwa-table-footnote-row">
+              <p class="source-cap rwa-table-footnote-row__cap">
+                Ranked by total value. Full production table includes eligibility, domicile, regulatory framework, and
+                custodian columns.
+              </p>
+            </div>
+          </section>
+
+          <section class="etp-mock-table-block tmmf-mock-league-block" aria-labelledby="net-heading">
+            <div class="rwa-split-table-head inner-table-head">
+              <h2 class="subsection-head rwa-split-table-head__title" id="net-heading">
+                By network (Tokenized MMFs &middot; Networks)
+              </h2>
+              <div class="rwa-split-table-head__actions">
+                <button
+                  type="button"
+                  class="table-download-btn"
+                  disabled
+                  aria-label="Download networks table as Excel"
+                  title="Download as Excel (.xlsx)"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <p class="tmmf-mock-league-intro">
+              Aggregate <strong>distributed value</strong> by chain, summed from each fund&rsquo;s token deployments.
+              <strong>30D &Delta; share</strong> is change in market-share percentage points (pp).
+            </p>
+            <label class="search-field etp-mock-table-search">
+              <span class="search-field__label">Search networks</span>
+              <input type="search" class="search-field__input" placeholder="Filter by network name&hellip;" />
+            </label>
+            <div class="etp-mock-table-meta" aria-live="polite">
+              <p class="etp-mock-table-meta__count toolbar-note">Showing 6 of 18 networks (mock)</p>
+              <button type="button" class="etp-mock-table-meta__expand" disabled>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"
+                  />
+                </svg>
+                <span>Full screen</span>
+              </button>
+            </div>
+            <div class="table-wrap table-wrap--scroll">
+              <table class="data-table data-table--dense data-table--sortable">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th class="th-sortable is-sorted" scope="col">Network</th>
+                    <th class="num th-sortable" scope="col">Distributed value</th>
+                    <th class="num th-sortable" scope="col">Market share</th>
+                    <th class="num th-sortable" scope="col">30D &Delta; share</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td><a href="https://app.rwa.xyz/networks/ethereum" tabindex="-1">Ethereum</a></td>
+                    <td class="num">$7.27B</td>
+                    <td class="num">52.2%</td>
+                    <td class="num down">-2.31 pp</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td><a href="https://app.rwa.xyz/networks/bnb-chain" tabindex="-1">BNB Chain</a></td>
+                    <td class="num">$3.07B</td>
+                    <td class="num">22.1%</td>
+                    <td class="num down">-4.35 pp</td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td><a href="https://app.rwa.xyz/networks/stellar" tabindex="-1">Stellar</a></td>
+                    <td class="num">$1.15B</td>
+                    <td class="num">8.3%</td>
+                    <td class="num up">+2.46 pp</td>
+                  </tr>
+                  <tr>
+                    <td>4</td>
+                    <td><a href="https://app.rwa.xyz/networks/solana" tabindex="-1">Solana</a></td>
+                    <td class="num">$858M</td>
+                    <td class="num">6.2%</td>
+                    <td class="num up">+2.37 pp</td>
+                  </tr>
+                  <tr>
+                    <td>5</td>
+                    <td><a href="https://app.rwa.xyz/networks/avalanche-c-chain" tabindex="-1">Avalanche C-Chain</a></td>
+                    <td class="num">$413M</td>
+                    <td class="num">3.0%</td>
+                    <td class="num up">+1.23 pp</td>
+                  </tr>
+                  <tr>
+                    <td>6</td>
+                    <td><a href="https://app.rwa.xyz/networks/xrp-ledger" tabindex="-1">XRP Ledger</a></td>
+                    <td class="num">$274M</td>
+                    <td class="num">2.0%</td>
+                    <td class="num down">-0.53 pp</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="rwa-table-footnote-row">
+              <p class="source-cap rwa-table-footnote-row__cap">
+                Networks: RWA.xyz tokenized MMF deployments by chain. Network share chart is in the market structure
+                panel above.
+              </p>
+            </div>
+          </section>
+
+          <section class="etp-mock-table-block tmmf-mock-league-block" aria-labelledby="plat-heading">
+            <div class="rwa-split-table-head inner-table-head">
+              <h2 class="subsection-head rwa-split-table-head__title" id="plat-heading">
+                By platform (Tokenized MMFs &middot; Asset managers)
+              </h2>
+              <div class="rwa-split-table-head__actions">
+                <button
+                  type="button"
+                  class="table-download-btn"
+                  disabled
+                  aria-label="Download platforms table as Excel"
+                  title="Download as Excel (.xlsx)"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <p class="tmmf-mock-league-intro">
+              <strong>Distributed value</strong> aggregated by asset manager / platform (RWA.xyz snapshot).
+            </p>
+            <label class="search-field etp-mock-table-search">
+              <span class="search-field__label">Search platforms</span>
+              <input type="search" class="search-field__input" placeholder="Filter by platform name&hellip;" />
+            </label>
+            <div class="etp-mock-table-meta" aria-live="polite">
+              <p class="etp-mock-table-meta__count toolbar-note">Showing 5 of 12 platforms (mock)</p>
+              <button type="button" class="etp-mock-table-meta__expand" disabled>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"
+                  />
+                </svg>
+                <span>Full screen</span>
+              </button>
+            </div>
+            <div class="table-wrap table-wrap--scroll">
+              <table class="data-table data-table--dense data-table--sortable">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th class="th-sortable is-sorted" scope="col">Platform</th>
+                    <th class="num" scope="col">RWA count</th>
+                    <th class="num th-sortable" scope="col">Total value</th>
+                    <th class="num th-sortable" scope="col">Market share</th>
+                    <th class="num th-sortable" scope="col">30D &Delta; share</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td><a href="https://app.rwa.xyz/asset-managers/circle" tabindex="-1">Circle</a></td>
+                    <td class="num">1</td>
+                    <td class="num">$2.96B</td>
+                    <td class="num">21.3%</td>
+                    <td class="num down">-1.21 pp</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td><a href="https://app.rwa.xyz/asset-managers/ondo" tabindex="-1">Ondo</a></td>
+                    <td class="num">2</td>
+                    <td class="num">$2.74B</td>
+                    <td class="num">19.7%</td>
+                    <td class="num up">+5.66 pp</td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td><a href="https://app.rwa.xyz/asset-managers/blackrock" tabindex="-1">BlackRock</a></td>
+                    <td class="num">1</td>
+                    <td class="num">$2.42B</td>
+                    <td class="num">17.4%</td>
+                    <td class="num down">-0.28 pp</td>
+                  </tr>
+                  <tr>
+                    <td>4</td>
+                    <td>
+                      <a href="https://app.rwa.xyz/asset-managers/franklin-templeton" tabindex="-1"
+                        >Franklin Templeton</a
+                      >
+                    </td>
+                    <td class="num">2</td>
+                    <td class="num">$2.41B</td>
+                    <td class="num">17.3%</td>
+                    <td class="num up">+1.93 pp</td>
+                  </tr>
+                  <tr>
+                    <td>5</td>
+                    <td>
+                      <a href="https://app.rwa.xyz/asset-managers/wisdomtree-digital-management" tabindex="-1"
+                        >WisdomTree Digital Management</a
+                      >
+                    </td>
+                    <td class="num">1</td>
+                    <td class="num">$895M</td>
+                    <td class="num">6.4%</td>
+                    <td class="num down">-1.12 pp</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="rwa-table-footnote-row">
+              <p class="source-cap rwa-table-footnote-row__cap">
+                Platforms: RWA.xyz asset-manager aggregates for the curated TMMF population.
+              </p>
+            </div>
+          </section>
+
+          <div class="cta-row etp-mock-bottom-cta">
+            <a class="btn btn-primary" href="https://app.rwa.xyz/treasuries" target="_blank" rel="noopener noreferrer"
+              >See US Treasuries on RWA.xyz &rarr;</a
+            >
+          </div>
+          <p class="timestamp-foot">Generated 2 Jun 2026, 20:11 UTC (mock) &middot; Source: RWA.xyz</p>
+
+          <details class="etp-mock-method">
+            <summary class="etp-mock-method__summary">Data sources &amp; definitions</summary>
+            <div class="etp-mock-method__body">
+              <ul>
+                <li>
+                  <strong>KPI strip</strong> &mdash; distributed value and network share from RWA.xyz token deployments
+                  (30D % and pp as labeled).
+                </li>
+                <li>
+                  <strong>Fund table</strong> &mdash; curated TMMF population; production adds regulatory and custodian
+                  fields plus network icon stacks.
+                </li>
+                <li>
+                  <strong>League tables</strong> &mdash; searchable networks and platforms tables on production
+                  (<code>rwa-asset-deep-page.js</code>); network share chart sits in the market structure panel.
+                </li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </article>
+
+      <p class="back-link">
+        <a href="../index.html">&larr; Back to home</a>
+      </p>
+    </main>
+
+    <footer class="site-footer">
+      Digital Assets Dashboard &middot; Tokenized MMF mock &middot; <time datetime="2026-06">Jun 2026</time>
+    </footer>
+  </body>
+</html>

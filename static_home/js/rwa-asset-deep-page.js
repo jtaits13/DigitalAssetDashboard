@@ -326,7 +326,7 @@
       }
 
       host.hidden = false;
-      host.className = "rwa-deep-league-panel";
+      host.className = "rwa-deep-league-panel etp-mock-table-block";
 
       var wideNote = league.wide_chart_note_html != null ? String(league.wide_chart_note_html) : "";
       var colNote =

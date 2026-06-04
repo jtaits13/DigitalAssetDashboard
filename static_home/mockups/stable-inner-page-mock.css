@@ -1,0 +1,194 @@
+/* Stablecoins inner page mock — zone tokens + layout (parity with crypto-inner-page-mock.css) */
+
+.mock-stable-inner {
+  --hx-etp: #2d5f7f;
+  --hx-etp-bright: #3d78a0;
+  --hx-etp-dark: #234c66;
+  --hx-etp-rgb: 45 95 127;
+  --hx-etp-bright-rgb: 61 120 160;
+  --hx-etp-soft: #ebf2f7;
+  --hx-etp-head: linear-gradient(180deg, #f0f6fa 0%, #ffffff 100%);
+  --hx-stripe: var(--hx-etp-bright);
+  --zone-badge-dark: var(--hx-etp-dark);
+}
+
+.mock-stable-inner::before {
+  content: "Design mock — Stablecoins inner page · not linked from production · open mockups/stable-inner-page-mock.html";
+}
+
+/* Page wash — match crypto / ETP mocks */
+.mock-stable-inner.site-experience {
+  background:
+    radial-gradient(ellipse 88% 52% at 6% -6%, rgb(var(--hx-etp-bright-rgb) / 0.1), transparent 55%),
+    radial-gradient(ellipse 70% 42% at 98% 2%, rgb(var(--hx-etp-rgb) / 0.12), transparent 50%),
+    var(--wash);
+}
+
+/* Insights + dashboard */
+.mock-stable-inner .etp-mock-insights__panel,
+.mock-stable-inner .etp-mock-dash__panel {
+  border-color: rgb(var(--hx-etp-bright-rgb) / 0.16);
+}
+
+.mock-stable-inner .etp-mock-insights__head,
+.mock-stable-inner .etp-mock-dash__head {
+  color: var(--hx-etp-dark);
+}
+
+.mock-stable-inner .etp-mock-conc__sym {
+  color: var(--hx-etp);
+}
+
+.mock-stable-inner .etp-mock-conc__track {
+  background: rgb(var(--hx-etp-rgb) / 0.1);
+}
+
+.mock-stable-inner .etp-mock-conc__fill {
+  background: linear-gradient(90deg, var(--hx-etp-bright), var(--hx-etp));
+}
+
+.mock-stable-inner .etp-mock-conc__pct {
+  color: var(--ink-muted, #4a5f73);
+}
+
+.mock-stable-inner .etp-mock-insights--crypto-full {
+  grid-template-columns: 1fr;
+}
+
+.mock-stable-inner .etp-mock-insights--crypto-full .etp-mock-insights__panel {
+  min-height: 0;
+}
+
+.mock-stable-inner .etp-mock-insights--crypto-full .etp-mock-conc__rows--grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.55rem;
+}
+
+@media (min-width: 720px) {
+  .mock-stable-inner .etp-mock-insights--crypto-full .etp-mock-conc__rows--grid {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 1.5rem;
+    row-gap: 0.6rem;
+  }
+}
+
+/* Chart */
+.mock-stable-inner .etp-mock-chart {
+  background:
+    linear-gradient(180deg, rgb(var(--hx-etp-bright-rgb) / 0.05) 0%, transparent 40%),
+    linear-gradient(
+      165deg,
+      transparent 38%,
+      rgb(var(--hx-etp-bright-rgb) / 0.1) 50%,
+      rgb(var(--hx-etp-rgb) / 0.2) 74%,
+      rgb(var(--hx-etp-dark) / 0.32) 100%
+    );
+  border-color: rgb(var(--hx-etp-bright-rgb) / 0.14);
+}
+
+.mock-stable-inner .etp-mock-chart::before {
+  content: "Top networks by stablecoin market cap (mock chart area)";
+  color: rgb(var(--hx-etp-dark) / 0.55);
+}
+
+/* Share movers */
+.mock-stable-inner .etp-mock-dash__panel--movers {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.mock-stable-inner .etp-mock-dash__panel--movers #js-stable-share-movers {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.mock-stable-inner .crypto-top-movers__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  flex: 1 1 auto;
+}
+
+.mock-stable-inner .crypto-top-mover {
+  padding: 0.55rem 0;
+  border-bottom: 1px solid rgb(var(--hx-etp-bright-rgb) / 0.12);
+}
+
+.mock-stable-inner .crypto-top-mover:first-child {
+  padding-top: 0.15rem;
+}
+
+.mock-stable-inner .crypto-top-mover:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.mock-stable-inner .crypto-top-mover__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.mock-stable-inner .crypto-top-mover__label {
+  font-size: 0.8rem;
+  color: var(--hx-etp-dark);
+}
+
+.mock-stable-inner .crypto-top-mover__label strong {
+  color: var(--hx-etp);
+}
+
+.mock-stable-inner .crypto-top-mover__pct {
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.mock-stable-inner .crypto-top-mover__pct.up {
+  color: #0d6b3a;
+}
+
+.mock-stable-inner .crypto-top-mover__pct.down {
+  color: #b42318;
+}
+
+.mock-stable-inner .crypto-top-mover__ctx {
+  margin: 0.2rem 0 0;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.mock-stable-inner .etp-mock-dash__panel--movers .crypto-story-callout__note {
+  margin-top: auto;
+  padding: 0.5rem 0.55rem;
+  border-radius: 8px;
+  background: rgb(var(--hx-etp-rgb) / 0.06);
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
+
+.mock-stable-inner .btn-primary {
+  background: var(--hx-etp-bright);
+  border-color: rgb(var(--hx-etp-bright-rgb) / 0.35);
+}
+
+.mock-stable-inner .btn-primary:hover {
+  background: var(--hx-etp);
+}
+
+.mock-stable-inner .btn-secondary:hover {
+  border-color: var(--hx-etp-bright);
+  color: var(--hx-etp);
+}
+
+.mock-stable-inner .back-link--below-header a:hover {
+  color: var(--hx-etp-bright);
+}
+
