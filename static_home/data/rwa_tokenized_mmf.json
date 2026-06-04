@@ -3,12 +3,17 @@
   "page_title": "Tokenized Money Market Funds \u2014 Digital Assets Dashboard",
   "band_label": "Tokenized Money Market Funds",
   "page_subtitle_html": "Tokenized money market fund (MMF) exposure aggregated from <a href=\"https://app.rwa.xyz/treasuries\">RWA.xyz US Treasuries</a> and <a href=\"https://app.rwa.xyz/government-bonds\">Non-U.S. Government Debt</a>. Networks and platforms are built from each fund's on-chain token deployments; <strong>Distributed Value</strong> columns are current levels.",
-  "kpi_window_note": "Distributed value uses a 30-day (30D) % change vs summed token values 30 days ago. 30D net change is the dollar change in total distributed value across all funds in the same window. Fund universe: curated tokenized money market funds on RWA.xyz US Treasuries and Non-U.S. Government Debt pages.",
+  "kpi_window_note": "Distributed value uses a 30-day (30D) % change vs summed token values 30 days ago. Top network share is the largest network by distributed value; the 30D figure is the change in market-share percentage points (pp), not a percent of total. Fund universe: fixed curated TMMF population on RWA.xyz US Treasuries and Non-U.S. Government Debt; KPIs, charts, and league tables use the same fund set.",
   "kpis": [
     {
       "label": "Distributed value",
-      "value_display": "$13.91B",
-      "delta_30d_pct": -0.002932174877596339
+      "value_display": "$13.81B",
+      "delta_30d_pct": -0.01557457016751804
+    },
+    {
+      "label": "Top network share",
+      "value_display": "52.4% \u00b7 Ethereum",
+      "delta_30d_pct": -0.0058428041950430165
     },
     {
       "label": "Tokenized funds",
@@ -18,11 +23,6 @@
     {
       "label": "Active networks",
       "value_display": "18",
-      "delta_30d_pct": null
-    },
-    {
-      "label": "30D net change",
-      "value_display": "-$40.91M",
       "delta_30d_pct": null
     }
   ],

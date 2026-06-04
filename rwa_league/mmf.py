@@ -307,11 +307,6 @@ def _aggregate_platform_rows(mmfs: list[dict[str, Any]]) -> list[RwaTreasuryPlat
     return rows
 
 
-def _format_usd_signed_change(n: float) -> str:
-    sign = "+" if n >= 0 else "-"
-    return sign + format_usd_compact(abs(n))
-
-
 def _total_value_30d_ago(mmfs: list[dict[str, Any]]) -> float:
     total = 0.0
     for asset in mmfs:
@@ -321,7 +316,23 @@ def _total_value_30d_ago(mmfs: list[dict[str, Any]]) -> float:
     return total
 
 
-def build_mmf_kpis(mmfs: list[dict[str, Any]]) -> list[RwaGlobalKpi]:
+def _top_network_share_kpi(
+    net_rows: list[RwaTreasuryDistributedNetworkRow],
+) -> RwaGlobalKpi | None:
+    """Largest network by distributed value; 30D delta is share-point change (pp), not % of total."""
+    if not net_rows:
+        return None
+    top = net_rows[0]
+    ms = float(top.market_share_raw)
+    name = str(top.network or "—").strip() or "—"
+    val_disp = f"{ms * 100:.1f}% · {name}"
+    return RwaGlobalKpi("Top network share", val_disp, top.market_share_change_30d_raw)
+
+
+def build_mmf_kpis(
+    mmfs: list[dict[str, Any]],
+    net_rows: list[RwaTreasuryDistributedNetworkRow] | None = None,
+) -> list[RwaGlobalKpi]:
     total = sum(asset_distributed_value_usd(a) for a in mmfs)
     total_30 = _total_value_30d_ago(mmfs)
     delta_30: float | None = None
@@ -329,17 +340,22 @@ def build_mmf_kpis(mmfs: list[dict[str, Any]]) -> list[RwaGlobalKpi]:
         delta_30 = (total - total_30) / total_30
 
     networks = {slug for a in mmfs for tok in (a.get("tokens") or []) if isinstance(tok, dict) for slug in [str((tok.get("network") or {}).get("slug") or "")] if slug}
-    net_30: float | None = None
-    if total_30 > 0:
-        net_30 = total - total_30
-    net_disp = _format_usd_signed_change(net_30) if net_30 is not None else "—"
+    if net_rows is None:
+        net_rows = _aggregate_network_rows(mmfs)
 
-    return [
+    kpis: list[RwaGlobalKpi] = [
         RwaGlobalKpi("Distributed value", format_usd_compact(total), delta_30),
-        RwaGlobalKpi("Tokenized funds", str(len(mmfs)), None),
-        RwaGlobalKpi("Active networks", str(len(networks)), None),
-        RwaGlobalKpi("30D net change", net_disp, None),
     ]
+    top_share = _top_network_share_kpi(net_rows)
+    if top_share:
+        kpis.append(top_share)
+    kpis.extend(
+        [
+            RwaGlobalKpi("Tokenized funds", str(len(mmfs)), None),
+            RwaGlobalKpi("Active networks", str(len(networks)), None),
+        ]
+    )
+    return kpis
 
 
 def build_curated_mmf_dashboard_data() -> tuple[
@@ -356,9 +372,9 @@ def build_curated_mmf_dashboard_data() -> tuple[
     mmfs, err = collect_tokenized_mmf_assets()
     if err:
         return [], [], [], [], err
-    kpis = build_mmf_kpis(mmfs)
     net_rows = _aggregate_network_rows(mmfs)
     plat_rows = _aggregate_platform_rows(mmfs)
+    kpis = build_mmf_kpis(mmfs, net_rows)
     if not net_rows and not plat_rows:
         return mmfs, [], [], kpis, "Could not build network or platform aggregates for tokenized MMFs."
     return mmfs, net_rows, plat_rows, kpis, None

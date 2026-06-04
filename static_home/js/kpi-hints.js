@@ -48,8 +48,8 @@
       "Count of curated tokenized money market fund products in this view (fixed fund list on RWA.xyz US Treasuries and Non-U.S. Government Debt listings).",
     "active networks":
       "Blockchain networks with at least one on-chain deployment among the curated TMMF population on this page.",
-    "30d net change":
-      "Net change in total distributed value across the curated TMMF population vs summed token values 30 days ago—a proxy for net inflows/outflows when subscription and redemption data are unavailable.",
+    "top network share":
+      "Largest network by summed distributed value across the curated TMMF fund set. The colored 30D figure is the change in market-share percentage points (pp), matching the 30D Δ share column in the network table—not a percent-of-total change.",
     "represented value":
       "Represented value for the asset type on this page (platform-bound tokens, not freely transferable between wallets).",
     "total asset holders":

@@ -773,7 +773,8 @@ def _build_rwa_tokenized_stocks_deep_payload(
 def _kpi_legend_for_mmf() -> str:
     return (
         "Distributed value uses a 30-day (30D) % change vs summed token values 30 days ago. "
-        "30D net change is the dollar change in total distributed value across all funds in the same window. "
+        "Top network share is the largest network by distributed value; the 30D figure is the change in "
+        "market-share percentage points (pp), not a percent of total. "
         "Fund universe: fixed curated TMMF population on RWA.xyz US Treasuries and Non-U.S. Government Debt; "
         "KPIs, charts, and league tables use the same fund set."
     )
