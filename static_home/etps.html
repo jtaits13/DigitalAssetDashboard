@@ -13,9 +13,10 @@
     <link rel="stylesheet" href="styles.css?v=85" />
     <link rel="stylesheet" href="css/site-experience.css?v=21" />
     <link rel="stylesheet" href="css/inner-page-experience.css?v=23" />
-    <link rel="stylesheet" href="css/inner-page-zone-parity.css?v=1" />
+    <link rel="stylesheet" href="css/inner-page-zone-parity.css?v=2" />
+    <link rel="stylesheet" href="mockups/etp-inner-page-mock.css?v=15" />
   </head>
-  <body class="page-etp site-experience page-inner--rich" data-methodology="etp">
+  <body class="page-etp site-experience page-inner--rich mock-etp-inner" data-methodology="etp">
     <header class="site-header" role="banner">
       <div class="site-header__inner">
         <a class="site-brand" href="index.html">Digital Assets Dashboard</a>
@@ -63,8 +64,8 @@
       </p>
     </div>
 
-    <main class="page-shell">
-      <article class="hub-section hub-section--panel inner-rich-zone zone--etp home-zone home-zone--etp">
+    <main class="page-shell etp-mock-shell">
+      <article class="hub-section hub-section--panel inner-rich-zone zone--etp home-zone home-zone--etp etp-mock-zone">
         <div class="home-zone__stripe" aria-hidden="true"></div>
         <header class="home-zone__head">
           <span class="home-zone__badge" aria-hidden="true">ETP</span>
@@ -81,7 +82,7 @@
           </div>
         </header>
 
-        <div class="home-zone__body inner-rich-zone__body">
+        <div class="home-zone__body inner-rich-zone__body etp-mock-zone__body">
           <div class="home-related-chips" aria-label="Related pages">
             <span class="home-related-chips__label">Related</span>
             <a class="home-chip" href="index.html#section-markets">Home ETP preview</a>
@@ -92,82 +93,65 @@
 
           <div class="data-banner" id="js-data-banner" role="status" hidden></div>
 
-          <section class="inner-rich-block etp-inner-snapshot" aria-labelledby="snapshot-heading">
+          <section class="etp-mock-snapshot" aria-labelledby="snapshot-heading">
             <h2 class="subsection-head u-vh" id="snapshot-heading">Top-line snapshot</h2>
-            <p class="data-freshness" id="js-etp-snapshot-as-of" hidden></p>
+            <p class="data-freshness etp-mock-freshness" id="js-etp-snapshot-as-of" hidden></p>
             <div id="js-etp-kpi" aria-label="U.S. ETP KPI strip"></div>
           </section>
 
-          <div class="inner-rich-block inner-key-obs-block" aria-labelledby="obs-heading">
+          <div class="inner-rich-block etp-mock-key-obs-block" aria-labelledby="obs-heading">
             <h2 class="subsection-head u-vh" id="obs-heading">Key Observations</h2>
             <div id="js-etp-key-obs" hidden></div>
           </div>
 
-          <hr class="inner-rich-rule" aria-hidden="true" />
-
-          <div class="inner-rich-block">
-            <div class="split-panels split-panels--etp-equal">
-              <section class="split-panels__col split-panels__col--chart" aria-labelledby="aum-heading">
-                <h2 class="subsection-head" id="aum-heading">Aggregate AUM trend (12 months)</h2>
-                <div class="split-panels__widget split-panels__widget--chart">
-                  <div id="aum-chart" class="aum-chart-host" role="img" aria-label="Aggregate estimated AUM chart"></div>
-                  <p class="chart-placeholder__cap">
-                    Vertical axis: estimated aggregate AUM (<strong>billions USD</strong>; weekly points).
-                  </p>
-                  <p class="method-note split-panels__method-note">
-                    <strong>Yahoo Finance</strong> weekly closes &mdash; each fund&#39;s latest StockAnalysis AUM (constant-share
-                    approximation), summed across the table. Use the Plotly toolbar to zoom, pan, and reset.
-                  </p>
-                </div>
-              </section>
-
-              <section class="split-panels__col split-panels__col--pulse" aria-labelledby="pulse-heading">
-                <h2 class="subsection-head" id="pulse-heading">ETF/ETP News Feed</h2>
-                <div class="split-panels__widget split-panels__widget--pulse">
-                  <div class="pulse-box pulse-box--etp-split">
-                    <ul class="pulse-list" id="js-etf-pulse">
-                      <li class="pulse-list__loading">Loading headlines&hellip;</li>
-                    </ul>
-                  </div>
-                  <div
-                    class="cta-row cta-row--news-full cta-row--etp-feed"
-                    role="navigation"
-                    aria-label="Full ETF and ETP headlines"
-                  >
-                    <a class="btn btn-primary" href="etf-news.html">All ETF/ETP headlines &rarr;</a>
-                  </div>
-                  <p class="cta-note cta-note--etp-feed-hint">
-                    Up to five ranked ETF/ETP headlines per UTC calendar day. Use the ETF/ETP headlines page for search
-                    and pagination.
-                  </p>
-                </div>
-              </section>
+          <section class="etp-mock-insights" aria-labelledby="insights-heading">
+            <h2 class="u-vh" id="insights-heading">Market structure</h2>
+            <div class="etp-mock-insights__panel etp-mock-insights__panel--conc">
+              <h3 class="etp-mock-insights__head">AUM concentration (top 5 funds)</h3>
+              <p class="etp-mock-conc__dek">Share of total listed AUM (StockAnalysis snapshot).</p>
+              <div
+                id="js-etp-insights-conc"
+                class="etp-mock-conc__rows"
+                role="img"
+                aria-label="Top five funds by share of total AUM"
+              ></div>
             </div>
-          </div>
+            <div class="etp-mock-insights__panel etp-mock-insights__panel--glance">
+              <h3 class="etp-mock-insights__head">At a glance</h3>
+              <div class="etp-mock-stats" id="js-etp-at-a-glance"></div>
+            </div>
+          </section>
 
-          <hr class="inner-rich-rule" aria-hidden="true" />
+          <section class="etp-mock-dashboard" aria-labelledby="dashboard-heading">
+            <h2 class="u-vh" id="dashboard-heading">Chart and headlines</h2>
+            <div class="etp-mock-dash__panel etp-mock-dash__panel--chart">
+              <h3 class="etp-mock-dash__head" id="aum-heading">Aggregate AUM trend (12 months)</h3>
+              <div id="aum-chart" class="aum-chart-host etp-mock-chart" role="img" aria-label="Aggregate estimated AUM chart"></div>
+              <p class="etp-mock-chart__cap">
+                Vertical axis: estimated aggregate AUM (<strong>billions USD</strong>; weekly points).
+              </p>
+              <p class="method-note etp-mock-chart__method">
+                <strong>Yahoo Finance</strong> weekly closes &mdash; each fund&#39;s latest StockAnalysis AUM (constant-share
+                approximation), summed across the table. Use the Plotly toolbar to zoom, pan, and reset.
+              </p>
+            </div>
+            <div class="etp-mock-dash__panel etp-mock-dash__panel--news">
+              <h3 class="etp-mock-dash__head" id="pulse-heading">ETF/ETP news feed</h3>
+              <ul class="etp-mock-pulse pulse-list" id="js-etf-pulse">
+                <li class="pulse-list__loading">Loading headlines&hellip;</li>
+              </ul>
+              <div class="etp-mock-dash__cta">
+                <a class="btn btn-primary" href="etf-news.html">All ETF/ETP headlines &rarr;</a>
+              </div>
+            </div>
+          </section>
 
-          <div class="inner-rich-block etp-concentration" aria-labelledby="concentration-heading">
-            <h2 class="subsection-head" id="concentration-heading">AUM concentration (top 5 funds)</h2>
-            <p class="page-intro__dek etp-concentration__dek">
-              Share of total listed AUM held by the five largest funds (StockAnalysis snapshot).
-            </p>
-            <div
-              id="etp-concentration-chart"
-              class="etp-concentration-chart"
-              role="img"
-              aria-label="Top five funds by share of total AUM"
-            ></div>
-          </div>
-
-          <hr class="inner-rich-rule" aria-hidden="true" />
-
-          <div class="inner-rich-block" aria-labelledby="table-heading">
+          <section class="etp-mock-table-block" aria-labelledby="table-heading">
             <div class="rwa-split-table-head inner-table-head">
               <h2 class="subsection-head rwa-split-table-head__title" id="table-heading">Fund table</h2>
               <div class="rwa-split-table-head__actions" id="js-etp-table-download"></div>
             </div>
-            <label class="search-field">
+            <label class="search-field etp-mock-table-search">
               <span class="search-field__label">Search by fund name or ticker</span>
               <input
                 type="search"
@@ -176,7 +160,10 @@
                 placeholder="Filter by name or ticker&hellip;"
               />
             </label>
-            <p class="toolbar-note" id="js-etp-toolbar">Loading fund list&hellip;</p>
+            <div class="etp-mock-table-meta" aria-live="polite">
+              <p class="etp-mock-table-meta__count toolbar-note" id="js-etp-toolbar">Loading fund list&hellip;</p>
+              <div class="rwa-table-footnote-row__actions rwa-table-actions" id="js-etp-table-actions"></div>
+            </div>
 
             <div class="table-wrap table-wrap--scroll">
               <table class="data-table data-table--dense data-table--sortable">
@@ -206,9 +193,8 @@
                 Fund data: StockAnalysis (list and AUM). Spot BTC/ETH flows: Farside Investors (daily net
                 creations/redemptions, USD).
               </p>
-              <div class="rwa-table-footnote-row__actions rwa-table-actions" id="js-etp-table-actions"></div>
             </div>
-          </div>
+          </section>
           <p class="timestamp-foot" id="js-etp-generated">&mdash;</p>
         </div>
       </article>
@@ -229,7 +215,7 @@
     <script defer src="js/snapshot-kpi-shared.js?v=7"></script>
     <script defer src="js/etp-kpi-shared.js?v=3"></script>
     <script defer src="js/crypto-kpi-shared.js?v=11"></script>
-    <script defer src="js/etp-page.js?v=23"></script>
+    <script defer src="js/etp-page.js?v=24"></script>
     <script defer src="js/site-experience.js?v=1"></script>
   </body>
 </html>

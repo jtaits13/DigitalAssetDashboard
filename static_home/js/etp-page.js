@@ -11,7 +11,8 @@
     kpi: document.getElementById("js-etp-kpi"),
     snapshotAsOf: document.getElementById("js-etp-snapshot-as-of"),
     keyObs: document.getElementById("js-etp-key-obs"),
-    concentration: document.getElementById("etp-concentration-chart"),
+    concentration: document.getElementById("js-etp-insights-conc"),
+    atAGlance: document.getElementById("js-etp-at-a-glance"),
     chart: document.getElementById("aum-chart"),
     pulse: document.getElementById("js-etf-pulse"),
     search: document.getElementById("js-etp-search"),
@@ -227,14 +228,7 @@
         pct: (100 * Number(r.assets_usd)) / total,
       };
     });
-    var topSum = series.reduce(function (s, d) {
-      return s + d.pct;
-    }, 0);
-    var restPct = 100 - topSum;
-    if (restPct > 0.15) {
-      series.push({ label: "All other listed", pct: restPct });
-    }
-    return series;
+    return series.slice(0, 5);
   }
 
   function renderConcentration(rows) {
@@ -246,50 +240,66 @@
       return;
     }
 
-    var xMax = Math.min(
-      100,
-      series.reduce(function (m, d) {
-        return d.pct > m ? d.pct : m;
-      }, 0) + 8
-    );
-    var parts = [
-      '<figure class="etp-conc-chart" role="img" aria-labelledby="etp-conc-chart-title">',
-      '<p class="u-vh" id="etp-conc-chart-title">AUM concentration: largest funds as a percent of listed AUM</p>',
-      '<div class="etp-conc-chart__grid">',
-      '<div class="etp-conc-chart__head">',
-      '<span class="etp-conc-chart__y-head">Ticker (company)</span>',
-      '<span class="etp-conc-chart__bar-head" aria-hidden="true"></span>',
-      '<span class="etp-conc-chart__pct-head" aria-hidden="true"></span>',
-      "</div>",
-    ];
-
+    var maxPct = series.reduce(function (m, d) {
+      return d.pct > m ? d.pct : m;
+    }, 0);
+    var parts = [];
     series.forEach(function (d) {
-      var barWidth = xMax > 0 ? (d.pct / xMax) * 100 : 0;
-      var tip = d.label + ": " + d.pct.toFixed(1) + "% of listed AUM";
+      var sym = String(d.label || "").split(" ")[0];
+      var barWidth = maxPct > 0 ? (d.pct / maxPct) * 100 : 0;
       parts.push(
-        '<div class="etp-conc-chart__row">',
-        '<span class="etp-conc-chart__label" title="' +
-          escapeHtml(tip) +
-          '">' +
-          escapeHtml(d.label) +
-          "</span>",
-        '<div class="etp-conc-chart__track" aria-hidden="true">',
-        '<span class="etp-conc-chart__bar" style="width:' +
-          barWidth.toFixed(2) +
-          '%"></span>',
-        "</div>",
-        '<span class="etp-conc-chart__pct">' + d.pct.toFixed(1) + "%</span>",
+        '<div class="etp-mock-conc__row">',
+        '<span class="etp-mock-conc__sym">' + escapeHtml(sym) + "</span>",
+        '<span class="etp-mock-conc__track"><span class="etp-mock-conc__fill" style="width:' +
+          barWidth.toFixed(1) +
+          '%"></span></span>',
+        '<span class="etp-mock-conc__pct">' + d.pct.toFixed(1) + "%</span>",
         "</div>"
       );
     });
-
-    parts.push(
-      "</div>",
-      '<p class="etp-conc-chart__x-label">% of listed AUM</p>',
-      "</figure>"
-    );
-
     els.concentration.innerHTML = parts.join("");
+  }
+
+  function renderAtAGlance(rows, kpis) {
+    if (!els.atAGlance) return;
+    rows = rows || [];
+    kpis = kpis || {};
+    var total = rows.reduce(function (s, r) {
+      return s + (Number(r.assets_usd) || 0);
+    }, 0);
+    var top3 = rows
+      .slice()
+      .sort(function (a, b) {
+        return Number(b.assets_usd) - Number(a.assets_usd);
+      })
+      .slice(0, 3);
+    var top3Share =
+      total > 0
+        ? Math.round(
+            (100 *
+              top3.reduce(function (s, r) {
+                return s + (Number(r.assets_usd) || 0);
+              }, 0)) /
+              total
+          )
+        : null;
+    var flowDisplay = kpis.net_flow_1m_display || "—";
+    els.atAGlance.innerHTML =
+      '<div class="etp-mock-stat">' +
+      '<span class="etp-mock-stat__lbl">Listed funds</span>' +
+      '<span class="etp-mock-stat__val">' +
+      rows.length +
+      "</span></div>" +
+      '<div class="etp-mock-stat">' +
+      '<span class="etp-mock-stat__lbl">Top 3 AUM share</span>' +
+      '<span class="etp-mock-stat__val">' +
+      (top3Share != null ? top3Share + "%" : "—") +
+      "</span></div>" +
+      '<div class="etp-mock-stat">' +
+      '<span class="etp-mock-stat__lbl">30D spot BTC &amp; ETH flows</span>' +
+      '<span class="etp-mock-stat__val">' +
+      escapeHtml(flowDisplay) +
+      "</span></div>";
   }
 
   function renderPulse(items) {
@@ -304,15 +314,14 @@
       var li = document.createElement("li");
       var href = a.link ? escapeHtml(a.link) : "#";
       var title = escapeHtml(a.title || "");
-      var src =
-        escapeHtml(a.source || "") + " · " + escapeHtml(fmtDate(a.published) || "");
+      var src = escapeHtml(a.source || "");
       li.innerHTML =
-        '<a class="pulse-list__a" href="' +
+        '<a href="' +
         href +
         '" target="_blank" rel="noopener noreferrer">' +
         title +
         "</a>" +
-        '<span class="pulse-list__src">' +
+        '<span class="etp-mock-pulse__src">' +
         src +
         "</span>";
       els.pulse.appendChild(li);
@@ -458,6 +467,7 @@
       state.rows = (etps.rows || []).map(prepareRow);
       state.filtered = state.rows.slice();
       renderConcentration(state.rows);
+      renderAtAGlance(state.rows, kpis);
       renderPulse((pulse && pulse.items) || []);
       state.sortKey = "assets_usd";
       state.sortDir = -1;

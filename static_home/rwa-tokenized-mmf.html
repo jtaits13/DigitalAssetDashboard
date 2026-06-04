@@ -13,10 +13,12 @@
     <link rel="stylesheet" href="styles.css?v=85" />
     <link rel="stylesheet" href="css/site-experience.css?v=21" />
     <link rel="stylesheet" href="css/inner-page-experience.css?v=23" />
-    <link rel="stylesheet" href="css/inner-page-zone-parity.css?v=1" />
+    <link rel="stylesheet" href="css/inner-page-zone-parity.css?v=2" />
+    <link rel="stylesheet" href="mockups/etp-inner-page-mock.css?v=15" />
+    <link rel="stylesheet" href="mockups/tmmf-inner-page-mock.css?v=4" />
   </head>
   <body
-    class="page-rwa-deep page-rwa-deep-mmf site-experience page-inner--rich"
+    class="page-rwa-deep page-rwa-deep-mmf site-experience page-inner--rich mock-tmmf-inner"
     data-rwa-deep-json="rwa_tokenized_mmf.json"
     data-methodology="rwa-mmf"
   >
@@ -67,8 +69,8 @@
       </p>
     </div>
 
-    <main class="page-shell">
-      <article class="hub-section hub-section--panel inner-rich-zone zone--tmmf home-zone home-zone--tmmf">
+    <main class="page-shell etp-mock-shell">
+      <article class="hub-section hub-section--panel inner-rich-zone zone--tmmf home-zone home-zone--tmmf etp-mock-zone">
         <div class="home-zone__stripe" aria-hidden="true"></div>
         <header class="home-zone__head">
           <span class="home-zone__badge" aria-hidden="true">MMF</span>
@@ -78,7 +80,7 @@
             <div class="section-dek section-dek--wide page-intro__dek" id="js-deep-subtitle"></div>
           </div>
         </header>
-        <div class="home-zone__body inner-rich-zone__body">
+        <div class="home-zone__body inner-rich-zone__body etp-mock-zone__body">
           <div class="home-related-chips" aria-label="Related pages">
             <span class="home-related-chips__label">Related</span>
             <a class="home-chip" href="index.html#section-tmmf">Home TMMF preview</a>
@@ -89,15 +91,19 @@
 
           <div class="data-banner" id="js-deep-banner" role="status" hidden></div>
 
-          <section class="inner-rich-block" id="js-deep-snapshot" aria-labelledby="js-deep-snap-h">
-            <h2 class="subsection-head" id="js-deep-snap-h">Top-Line Market Snapshot</h2>
+          <section class="etp-mock-snapshot" id="js-deep-snapshot" aria-labelledby="js-deep-snap-h">
+            <h2 class="subsection-head u-vh" id="js-deep-snap-h">Top-line snapshot</h2>
             <div id="js-deep-kpis" aria-label="Tokenized money market funds headline KPI strip"></div>
           </section>
 
-          <section class="inner-rich-block inner-key-obs-block" id="js-deep-ko-section" hidden aria-labelledby="js-deep-ko-h">
+          <div class="inner-rich-block etp-mock-key-obs-block" id="js-deep-ko-section" hidden aria-labelledby="js-deep-ko-h">
             <h2 class="subsection-head u-vh" id="js-deep-ko-h">Key Observations</h2>
             <p class="data-freshness" id="js-deep-ko-as-of" hidden></p>
             <div id="js-deep-ko"></div>
+          </div>
+
+          <section class="etp-mock-insights" id="js-deep-insights" hidden aria-labelledby="js-deep-insights-h">
+            <h2 class="u-vh" id="js-deep-insights-h">Market structure</h2>
           </section>
 
           <div id="js-deep-extra-before-leagues" hidden></div>
@@ -136,7 +142,7 @@
     <script defer src="js/snapshot-kpi-shared.js?v=7"></script>
     <script defer src="js/crypto-kpi-shared.js?v=11"></script>
     <script defer src="js/rwa-onchain-home.js?v=22"></script>
-    <script defer src="js/rwa-asset-deep-page.js?v=18"></script>
+    <script defer src="js/rwa-asset-deep-page.js?v=19"></script>
     <script defer src="js/site-experience.js?v=1"></script>
   </body>
 </html>

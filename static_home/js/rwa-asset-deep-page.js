@@ -318,6 +318,265 @@
       return cols;
     }
 
+    function isMockParityLayout() {
+      return (
+        document.body.classList.contains("mock-stable-inner") ||
+        document.body.classList.contains("mock-tmmf-inner")
+      );
+    }
+
+    function renderConcBarRows(items) {
+      if (!items || !items.length) return "";
+      var maxPct = items.reduce(function (m, d) {
+        return d.pct > m ? d.pct : m;
+      }, 0);
+      return items
+        .map(function (d) {
+          var barWidth = maxPct > 0 ? (d.pct / maxPct) * 100 : 0;
+          return (
+            '<div class="etp-mock-conc__row">' +
+            '<span class="etp-mock-conc__sym">' +
+            esc(d.label) +
+            "</span>" +
+            '<span class="etp-mock-conc__track"><span class="etp-mock-conc__fill" style="width:' +
+            barWidth.toFixed(1) +
+            '%"></span></span>' +
+            '<span class="etp-mock-conc__pct">' +
+            d.pct.toFixed(1) +
+            "%</span></div>"
+          );
+        })
+        .join("");
+    }
+
+    function fmtFundValueUsd(v) {
+      var n = Number(v);
+      if (!isFinite(n)) return "—";
+      if (n >= 1e9) return "$" + (n / 1e9).toFixed(2) + "B";
+      if (n >= 1e6) return "$" + (n / 1e6).toFixed(0) + "M";
+      return "$" + Math.round(n).toLocaleString();
+    }
+
+    function renderMockInsights(payload, mode) {
+      var host = $("js-deep-insights");
+      if (!host || !isMockParityLayout()) return;
+
+      if (mode === "stablecoins") {
+        var plat = payload.platforms || {};
+        var rows = (plat.rows_full || []).slice().sort(function (a, b) {
+          return (Number(b["Market Share"]) || 0) - (Number(a["Market Share"]) || 0);
+        });
+        if (!rows.length) {
+          host.hidden = true;
+          return;
+        }
+        var top3 = rows.slice(0, 3);
+        var top3Sum = top3.reduce(function (s, r) {
+          return s + (Number(r["Market Share"]) || 0);
+        }, 0);
+        var items = top3.map(function (r) {
+          return { label: String(r.Platform || "—"), pct: Number(r["Market Share"]) || 0 };
+        });
+        var otherPct = Math.max(0, 100 - top3Sum);
+        if (otherPct > 0.15) items.push({ label: "Other", pct: otherPct });
+        host.hidden = false;
+        host.innerHTML =
+          '<div class="etp-mock-insights__panel etp-mock-insights__panel--conc">' +
+          '<h3 class="etp-mock-insights__head">Issuer concentration (platforms)</h3>' +
+          '<p class="etp-mock-conc__dek">Share of aggregate stablecoin market cap by platform (RWA.xyz snapshot).</p>' +
+          '<div class="etp-mock-conc__rows etp-mock-conc__rows--grid" role="img" aria-label="Top platforms by stablecoin market cap share">' +
+          renderConcBarRows(items) +
+          "</div></div>";
+        return;
+      }
+
+      if (mode === "mmf") {
+        var net = payload.networks || {};
+        var netRows = (net.rows_full || []).slice().sort(function (a, b) {
+          return (Number(b["Market Share"]) || 0) - (Number(a["Market Share"]) || 0);
+        });
+        var funds = payload.funds_table || {};
+        var fundRows = funds.rows_full || [];
+        if (!netRows.length) {
+          host.hidden = true;
+          return;
+        }
+        var top5 = netRows.slice(0, 5).map(function (r) {
+          var sym = String(r.Network || "—");
+          var short = sym.length > 8 ? sym.slice(0, 6) : sym;
+          return { label: short, pct: Number(r["Market Share"]) || 0 };
+        });
+        var topFund = fundRows.slice().sort(function (a, b) {
+          return (Number(b["Total Value"]) || 0) - (Number(a["Total Value"]) || 0);
+        })[0];
+        var largestFund = topFund
+          ? esc(topFund.Ticker || "—") + " (" + fmtFundValueUsd(topFund["Total Value"]) + ")"
+          : "—";
+        host.hidden = false;
+        host.innerHTML =
+          '<div class="etp-mock-insights__panel etp-mock-insights__panel--conc">' +
+          '<h3 class="etp-mock-insights__head">Network share (top 5)</h3>' +
+          '<p class="etp-mock-conc__dek">Share of aggregated distributed value by chain (RWA.xyz snapshot).</p>' +
+          '<div class="etp-mock-conc__rows" role="img" aria-label="Top five networks by distributed value share">' +
+          renderConcBarRows(top5) +
+          '</div></div><div class="etp-mock-insights__panel etp-mock-insights__panel--glance">' +
+          '<h3 class="etp-mock-insights__head">At a glance</h3>' +
+          '<div class="etp-mock-stats">' +
+          '<div class="etp-mock-stat"><span class="etp-mock-stat__lbl">Curated funds</span><span class="etp-mock-stat__val">' +
+          fundRows.length +
+          '</span></div><div class="etp-mock-stat"><span class="etp-mock-stat__lbl">Active networks</span><span class="etp-mock-stat__val">' +
+          netRows.length +
+          '</span></div><div class="etp-mock-stat"><span class="etp-mock-stat__lbl">Largest fund</span><span class="etp-mock-stat__val etp-mock-stat__val--ticker">' +
+          largestFund +
+          "</span></div></div></div>";
+      }
+    }
+
+    function renderStableDashboard(payload) {
+      var dash = $("js-deep-dashboard");
+      var chartEl = $("js-deep-dashboard-chart");
+      var moversEl = $("js-stable-share-movers");
+      if (!dash || !isMockParityLayout() || !document.body.classList.contains("mock-stable-inner")) return;
+      var net = payload.networks;
+      if (!net || !net.rows_full || !net.rows_full.length) {
+        dash.hidden = true;
+        return;
+      }
+      dash.hidden = false;
+      if (chartEl) {
+        drawHorizontalBar(chartEl, net.rows_full, net, payload);
+      }
+      if (moversEl) {
+        var rows = net.rows_full
+          .slice()
+          .filter(function (r) {
+            return r["30D Δ share"] != null && isFinite(Number(r["30D Δ share"]));
+          })
+          .sort(function (a, b) {
+            return Math.abs(Number(b["30D Δ share"])) - Math.abs(Number(a["30D Δ share"]));
+          })
+          .slice(0, 4);
+        var items = rows
+          .map(function (r) {
+            var n = Number(r["30D Δ share"]);
+            var cls = n >= 0 ? "up" : "down";
+            var d7 = r["7D Δ value"];
+            var ctx =
+              d7 != null && isFinite(Number(d7))
+                ? "7D value " +
+                  (Number(d7) >= 0 ? "+" : "") +
+                  Number(d7).toFixed(2) +
+                  "% · " +
+                  (Number(r["Market Share"]) || 0).toFixed(1) +
+                  "% market share"
+                : (Number(r["Market Share"]) || 0).toFixed(1) + "% market share";
+            return (
+              '<li class="crypto-top-mover"><div class="crypto-top-mover__row">' +
+              '<span class="crypto-top-mover__label"><strong>' +
+              esc(r.Network || "—") +
+              "</strong></span>" +
+              '<span class="crypto-top-mover__pct pct ' +
+              cls +
+              '">' +
+              (n >= 0 ? "+" : "") +
+              n.toFixed(2) +
+              " pp</span></div>" +
+              '<p class="crypto-top-mover__ctx">' +
+              esc(ctx) +
+              "</p></li>"
+            );
+          })
+          .join("");
+        moversEl.innerHTML =
+          '<ul class="crypto-top-movers__list">' +
+          items +
+          '</ul><p class="crypto-story-callout__note"><strong>30D Δ share</strong> is change in market-share percentage points (pp), not percent of total. Compare with the networks table below.</p>';
+      }
+    }
+
+    function wireLeagueTableOnly(league, prefix, data, host) {
+      var introClass = document.body.classList.contains("mock-stable-inner")
+        ? "stable-mock-league-intro"
+        : "tmmf-mock-league-intro";
+      host.innerHTML =
+        '<div class="rwa-split-table-head inner-table-head">' +
+        '<h2 class="subsection-head rwa-split-table-head__title">' +
+        esc(league.block_heading || "") +
+        '</h2><div class="rwa-split-table-head__actions" id="' +
+        prefix +
+        '-table-actions"></div></div>' +
+        (league.section_intro_html
+          ? '<p class="' + introClass + '">' + league.section_intro_html + "</p>"
+          : "") +
+        '<label class="search-field etp-mock-table-search">' +
+        '<span class="search-field__label">' +
+        esc(league.search_label || "Search table") +
+        '</span><input id="' +
+        prefix +
+        '-q" type="search" class="search-field__input" autocomplete="off" placeholder="' +
+        esc(league.search_placeholder || "") +
+        '" /></label>' +
+        '<div class="etp-mock-table-meta" aria-live="polite">' +
+        '<p class="etp-mock-table-meta__count toolbar-note" id="' +
+        prefix +
+        '-note"></p></div>' +
+        '<div class="table-wrap table-wrap--scroll rwa-split-table-scroll">' +
+        '<table class="data-table data-table--dense data-table--sortable"><thead><tr id="' +
+        prefix +
+        '-thead"></tr></thead><tbody id="' +
+        prefix +
+        '-tbody"></tbody></table></div>' +
+        (league.caption_html
+          ? '<div class="rwa-table-footnote-row"><p class="source-cap rwa-table-footnote-row__cap">' +
+            league.caption_html +
+            "</p></div>"
+          : "");
+
+      var inp = $(prefix + "-q");
+      var tableWrap = host.querySelector(".table-wrap");
+      var tableEl = tableWrap ? tableWrap.querySelector("table") : null;
+      var titleActions = $(prefix + "-table-actions");
+      var actionRow = null;
+      if (attachTableFullscreenButton) {
+        actionRow = attachTableFullscreenButton(tableWrap, tableEl, {
+          title: String(league.table_heading || league.block_heading || "RWA table"),
+          downloadPlacement: "title-row",
+          downloadAnchor: titleActions,
+        });
+      }
+
+      function sync() {
+        var q = inp && inp.value !== undefined ? String(inp.value) : "";
+        var all = league.rows_full || [];
+        var nameCol = league.name_column;
+        var filt = filterRows(all, nameCol, q);
+        var noteEl = $(prefix + "-note");
+        if (noteEl) {
+          var tot = all.length;
+          var qp = league.filter_note_entity_plural || "rows";
+          if (tot <= 0) noteEl.textContent = "";
+          else if (!String(q || "").trim()) {
+            noteEl.textContent =
+              league.filter_note_suffix_all && qp
+                ? "Showing all " + filt.length + " " + league.filter_note_suffix_all
+                : "Showing all " + filt.length + " rows.";
+          } else {
+            noteEl.textContent =
+              "Showing " + filt.length + " of " + tot + " " + qp + ' matching "' + esc(q.trim()) + '".';
+          }
+        }
+        renderTable($(prefix + "-thead"), $(prefix + "-tbody"), league.columns, filt, {
+          emptyMsg: "No rows match this filter.",
+          linkAria: "Open RWA.xyz",
+        });
+      }
+
+      if (inp) inp.addEventListener("input", sync);
+      if (inp) inp.value = "";
+      sync();
+      return { actionRow: actionRow, host: host };
+    }
+
     function wireLeague(league, prefix, data) {
       var host = $(prefix + "-wrap");
       if (!host || !league || !league.columns || !league.columns.length) {
@@ -326,7 +585,13 @@
       }
 
       host.hidden = false;
-      host.className = "rwa-deep-league-panel etp-mock-table-block";
+      host.className =
+        "rwa-deep-league-panel etp-mock-table-block" +
+        (prefix === "deep-net" ? " tmmf-mock-league-block stable-mock-league-block" : "");
+
+      if (isMockParityLayout()) {
+        return wireLeagueTableOnly(league, prefix, data, host);
+      }
 
       var wideNote = league.wide_chart_note_html != null ? String(league.wide_chart_note_html) : "";
       var colNote =
@@ -621,6 +886,14 @@
         koAsOf.textContent = "";
       }
     }
+
+    var pageMode = document.body.classList.contains("mock-stable-inner")
+      ? "stablecoins"
+      : document.body.classList.contains("mock-tmmf-inner")
+        ? "mmf"
+        : "";
+    renderMockInsights(payload, pageMode);
+    renderStableDashboard(payload);
 
     setOptionalDeepHtml("js-deep-extra-before-leagues", payload.between_ko_and_leagues_html);
     var extraBefore = $("js-deep-extra-before-leagues");

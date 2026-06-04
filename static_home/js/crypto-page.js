@@ -32,6 +32,8 @@
     banner: document.getElementById("js-data-banner"),
     kpi: document.getElementById("js-crypto-kpi"),
     keyObs: document.getElementById("js-crypto-key-obs"),
+    capMix: document.getElementById("js-crypto-cap-mix"),
+    topMovers: document.getElementById("js-crypto-top-movers"),
     chart: document.getElementById("crypto-market-cap-chart"),
     search: document.getElementById("js-crypto-search"),
     tabs: document.getElementById("js-crypto-category-tabs"),
@@ -163,6 +165,88 @@
     lastKpisPayload = payload || null;
     renderKpiStrip(payload);
     renderKeyObservationsBlock(payload);
+    renderCapMix(payload, priceRows);
+    renderTopMoversBlock(payload, priceRows);
+  }
+
+  function renderCapMix(kpis, rows) {
+    if (!els.capMix) return;
+    var ms = (kpis && kpis.market_structure) || {};
+    var topCap = Number(ms.top50_market_cap_usd) || 0;
+    if (!topCap) {
+      rows = rows || [];
+      topCap = rows.reduce(function (s, r) {
+        return s + (Number(r.market_cap_usd) || 0);
+      }, 0);
+    }
+    var btcPct =
+      ms.btc_dominance_pct != null
+        ? Number(ms.btc_dominance_pct)
+        : topCap > 0
+          ? (100 * (Number(ms.btc_market_cap_usd) || 0)) / topCap
+          : null;
+    var stablePct =
+      ms.stablecoin_share_top50_pct != null
+        ? Number(ms.stablecoin_share_top50_pct)
+        : topCap > 0
+          ? (100 * (Number(ms.stablecoin_market_cap_usd) || 0)) / topCap
+          : null;
+    if (btcPct == null && stablePct == null) {
+      els.capMix.innerHTML = '<p class="chart-fallback">Market cap mix is unavailable right now.</p>';
+      return;
+    }
+    var ethCap = 0;
+    (rows || []).forEach(function (r) {
+      if ((r.symbol || "").toUpperCase() === "ETH") ethCap = Number(r.market_cap_usd) || 0;
+    });
+    var ethPct = topCap > 0 && ethCap ? (100 * ethCap) / topCap : null;
+    btcPct = btcPct != null && isFinite(btcPct) ? btcPct : 0;
+    stablePct = stablePct != null && isFinite(stablePct) ? stablePct : 0;
+    ethPct = ethPct != null && isFinite(ethPct) ? ethPct : 0;
+    var otherPct = Math.max(0, 100 - btcPct - ethPct - stablePct);
+    var segments = [
+      { sym: "BTC", pct: btcPct },
+      { sym: "ETH", pct: ethPct },
+      { sym: "Stables", pct: stablePct },
+      { sym: "Other alts", pct: otherPct },
+    ];
+    var maxPct = segments.reduce(function (m, d) {
+      return d.pct > m ? d.pct : m;
+    }, 0);
+    els.capMix.innerHTML = segments
+      .map(function (d) {
+        var barWidth = maxPct > 0 ? (d.pct / maxPct) * 100 : 0;
+        return (
+          '<div class="etp-mock-conc__row">' +
+          '<span class="etp-mock-conc__sym">' +
+          escapeHtml(d.sym) +
+          "</span>" +
+          '<span class="etp-mock-conc__track"><span class="etp-mock-conc__fill" style="width:' +
+          barWidth.toFixed(1) +
+          '%"></span></span>' +
+          '<span class="etp-mock-conc__pct">' +
+          d.pct.toFixed(1) +
+          "%</span></div>"
+        );
+      })
+      .join("");
+  }
+
+  function renderTopMoversBlock(kpis, rows) {
+    if (!els.topMovers) return;
+    var api = cryptoKpiApi();
+    var block = (kpis && kpis.top_movers) || null;
+    if (!block || !(block.movers && block.movers.length)) {
+      block = {
+        title: "Top movers (1M)",
+        footnote:
+          "Largest 1-month % moves in the top-50 table (stablecoins excluded). Context lines match recent headlines from dashboard news feeds, with Google News as fallback.",
+        movers: api.pickTopMoversFromRows ? api.pickTopMoversFromRows(rows, 3) : [],
+      };
+    }
+    if (api.renderTopMoversCallout) {
+      api.renderTopMoversCallout(els.topMovers, block);
+    }
   }
 
   function chartWidgetConfig(meta) {
@@ -466,6 +550,8 @@
       updateSortClass();
       applyFilter();
       renderKeyObservationsBlock(lastKpisPayload);
+      renderCapMix(lastKpisPayload, state.rows);
+      renderTopMoversBlock(lastKpisPayload, state.rows);
       if (prices.error) showErr(prices.error);
     });
 

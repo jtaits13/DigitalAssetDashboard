@@ -1,5 +1,36 @@
 /* Production inner pages — visual parity with mockups/etp-inner-page-mock.css (no design-mock banner) */
 
+/* mock-*-inner on production body (without mock-five-zone) activates mock CSS without the banner */
+.mock-etp-inner.page-inner--rich:not(.mock-five-zone)::before,
+.mock-crypto-inner.page-inner--rich:not(.mock-five-zone)::before,
+.mock-stable-inner.page-inner--rich:not(.mock-five-zone)::before,
+.mock-tmmf-inner.page-inner--rich:not(.mock-five-zone)::before {
+  display: none !important;
+  content: none !important;
+  padding: 0;
+  height: 0;
+  border: none;
+}
+
+.mock-etp-inner.page-inner--rich:not(.mock-five-zone) .site-header,
+.mock-crypto-inner.page-inner--rich:not(.mock-five-zone) .site-header,
+.mock-stable-inner.page-inner--rich:not(.mock-five-zone) .site-header,
+.mock-tmmf-inner.page-inner--rich:not(.mock-five-zone) .site-header {
+  top: 0;
+}
+
+/* Live Plotly chart hosts inside mock dashboard panels */
+.etp-mock-dash__panel--chart .aum-chart-host {
+  flex: 1 1 auto;
+  min-height: 220px;
+  height: auto;
+}
+
+.etp-mock-dash__panel--chart .split-panels__widget--chart,
+.etp-mock-dash__panel--chart .tradingview-widget-container {
+  min-height: 220px;
+}
+
 /* —— Zone panels: stable + TMMF (match crypto / ETP treatment) —— */
 
 .site-experience.page-inner--rich .inner-rich-zone.zone--stable {
@@ -298,10 +329,9 @@
   color: var(--muted);
 }
 
-/* —— Crypto: section cards + category tabs —— */
+/* —— Crypto: legacy card wrap (skip mock-layout blocks) —— */
 
-.site-experience.page-inner--rich .inner-rich-zone.zone--crypto .inner-rich-zone__body > .hub-section,
-.site-experience.page-inner--rich .inner-rich-zone.zone--crypto .inner-rich-block {
+.site-experience.page-inner--rich .inner-rich-zone.zone--crypto .inner-rich-block:not(.etp-mock-key-obs-block) {
   padding: 0.95rem 1rem 1rem;
   border: 1px solid rgb(var(--hx-crypto-bright-rgb) / 0.16);
   border-radius: 10px;
