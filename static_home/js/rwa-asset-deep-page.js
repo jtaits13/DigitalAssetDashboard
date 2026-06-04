@@ -494,6 +494,205 @@
       }
     }
 
+    var TMMF_MOCK_FUND_COLUMNS = [
+      "#",
+      "Fund Name",
+      "Ticker",
+      "Platform",
+      "Networks",
+      "Total Value",
+      "7D Δ value",
+      "Holders",
+    ];
+
+    var MOCK_TABLE_EXPAND_ICON =
+      '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
+      '<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />' +
+      "</svg>";
+
+    function styleMockTableExpandButton(row) {
+      if (!row) return;
+      var btn = row.querySelector('[data-rwa-fullscreen-btn="1"]');
+      if (!btn) return;
+      btn.className = "etp-mock-table-meta__expand";
+      btn.innerHTML = MOCK_TABLE_EXPAND_ICON + "<span>Full screen</span>";
+    }
+
+    function wireTmmfFundsTable(ft, payload) {
+      var host = $("js-deep-extra-before-leagues");
+      if (!host || !ft || !ft.columns || !ft.columns.length) {
+        if (host) {
+          host.innerHTML = "";
+          host.hidden = true;
+        }
+        return null;
+      }
+
+      var mockLayout = isMockParityLayout() && document.body.classList.contains("mock-tmmf-inner");
+      var heading = esc(
+        ft.table_heading || "Tokenized money market fund population"
+      );
+      var introHtml = mockLayout
+        ? "Curated fund population (fixed list aligned to RWA.xyz). Population may not include all TMMFs in the market."
+        : ft.section_intro_html ||
+          "Curated fund population (fixed list aligned to RWA.xyz). Population may not include all TMMFs in the market.";
+      var searchLabel = mockLayout ? "Search funds" : ft.search_label || "Search funds";
+      var searchPlaceholder = mockLayout
+        ? "Filter funds…"
+        : ft.search_placeholder || "Filter funds…";
+      searchLabel = esc(searchLabel);
+      searchPlaceholder = esc(searchPlaceholder);
+      var displayCols = mockLayout ? TMMF_MOCK_FUND_COLUMNS.slice() : fundsTableColumns(ft);
+      var exportCols = fundsTableColumns(ft);
+      var allRows = ft.rows_full || [];
+
+      host.hidden = false;
+      if (mockLayout) {
+        host.className = "etp-mock-table-block etp-mock-table-block--funds";
+        host.setAttribute("aria-labelledby", "funds-heading");
+      } else {
+        host.className = "";
+        host.removeAttribute("aria-labelledby");
+      }
+
+      if (mockLayout) {
+        host.innerHTML =
+          '<div class="rwa-split-table-head inner-table-head">' +
+          '<h2 class="subsection-head rwa-split-table-head__title" id="funds-heading">' +
+          heading +
+          '</h2><div class="rwa-split-table-head__actions" id="tmmf-funds-table-actions"></div></div>' +
+          '<p class="tmmf-mock-funds-intro">' +
+          esc(introHtml) +
+          "</p>" +
+          '<label class="search-field etp-mock-table-search">' +
+          '<span class="search-field__label">' +
+          searchLabel +
+          '</span><input id="tmmf-funds-q" type="search" class="search-field__input" autocomplete="off" placeholder="' +
+          searchPlaceholder +
+          '" /></label>' +
+          '<div class="etp-mock-table-meta" aria-live="polite">' +
+          '<p class="etp-mock-table-meta__count toolbar-note" id="tmmf-funds-note"></p>' +
+          '<div class="rwa-table-actions" id="tmmf-funds-meta-actions"></div></div>' +
+          '<div class="table-wrap table-wrap--scroll tmmf-funds-table-wrap" data-fullscreen-title="Tokenized Money Market Fund Population">' +
+          '<table class="data-table data-table--dense data-table--sortable" aria-label="Tokenized Money Market Fund Population">' +
+          '<thead><tr id="tmmf-funds-thead"></tr></thead><tbody id="tmmf-funds-tbody"></tbody></table></div>' +
+          '<div class="rwa-table-footnote-row">' +
+          '<p class="source-cap rwa-table-footnote-row__cap">Ranked by total value. Full production table includes eligibility, domicile, regulatory framework, and custodian columns (available in full-screen view and Excel export).</p>' +
+          "</div>";
+      } else {
+        host.innerHTML =
+          '<div class="inline-search" role="search">' +
+          '<label for="tmmf-funds-q">' +
+          searchLabel +
+          '</label><input id="tmmf-funds-q" type="search" autocomplete="off" placeholder="' +
+          searchPlaceholder +
+          '" /><button type="button" class="btn btn-secondary" id="tmmf-funds-clear">Clear</button></div>' +
+          '<p class="toolbar-note" id="tmmf-funds-note"></p>' +
+          '<div class="rwa-split-table-head inner-table-head">' +
+          '<h3 class="subsection-head rwa-split-table-head__title">' +
+          heading +
+          '</h3><div class="rwa-split-table-head__actions" id="tmmf-funds-table-actions"></div></div>' +
+          '<div class="table-wrap table-wrap--scroll tmmf-funds-table-wrap" data-fullscreen-title="Tokenized Money Market Fund Population">' +
+          '<table class="data-table data-table--dense" aria-label="Tokenized Money Market Fund Population">' +
+          '<thead><tr id="tmmf-funds-thead"></tr></thead><tbody id="tmmf-funds-tbody"></tbody></table></div>';
+      }
+
+      var fInp = $("tmmf-funds-q");
+      var fClr = $("tmmf-funds-clear");
+      var fThead = $("tmmf-funds-thead");
+      var fTbody = $("tmmf-funds-tbody");
+      var fNote = $("tmmf-funds-note");
+      var fWrap = host.querySelector(".tmmf-funds-table-wrap");
+      var fTable = fWrap ? fWrap.querySelector("table") : null;
+      var fundsDownloadOpts = {
+        title: "Tokenized Money Market Fund Population",
+        filename: "tmmf-fund-population",
+        sheetName: "TMMF Funds",
+        getExportData: function () {
+          var ranked = rankFundsByTotalValue(allRows);
+          return {
+            sheetName: "TMMF Funds",
+            headers: exportCols,
+            rows: ranked.map(function (r) {
+              return exportCols.map(function (col) {
+                var v = r[col];
+                if (v == null) return "";
+                if (col === "Total Value" || col === "7D Δ value" || col === "Holders") {
+                  return typeof v === "number" ? v : Number(v);
+                }
+                if (col === "Networks" || col === "Terms") {
+                  return String(v).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+                }
+                return String(v);
+              });
+            }),
+          };
+        },
+      };
+
+      function syncFunds() {
+        var q = String((fInp && fInp.value) || "").trim().toLowerCase();
+        var filt = !q
+          ? allRows.slice()
+          : allRows.filter(function (r) {
+              return Object.keys(r || {}).some(function (k) {
+                if (k === "Link" || k === "Fund Link") return false;
+                var v = r[k];
+                return v != null && String(v).toLowerCase().indexOf(q) >= 0;
+              });
+            });
+        if (fNote) {
+          var tot = allRows.length;
+          if (tot <= 0) fNote.textContent = "";
+          else if (!q) {
+            fNote.textContent = mockLayout
+              ? "Showing all " + filt.length + " funds."
+              : "Showing all " + filt.length + " funds (ranked by total value).";
+          } else {
+            fNote.textContent =
+              "Showing " + filt.length + " of " + tot + ' funds matching "' + q + '".';
+          }
+        }
+        renderTable(fThead, fTbody, displayCols, rankFundsByTotalValue(filt), {
+          emptyMsg: "No funds match this filter.",
+          linkAria: "Open RWA.xyz asset page",
+        });
+      }
+
+      if (fInp) fInp.addEventListener("input", syncFunds);
+      if (fClr && fInp) {
+        fClr.addEventListener("click", function () {
+          fInp.value = "";
+          fInp.focus();
+          syncFunds();
+        });
+      }
+      if (fInp) fInp.value = "";
+      syncFunds();
+
+      var fundsActionRow = null;
+      if (attachTableFullscreenButton && fWrap && fTable) {
+        fundsActionRow = attachTableFullscreenButton(fWrap, fTable, {
+          title: "Tokenized Money Market Fund Population",
+          filename: "tmmf-fund-population",
+          sheetName: "TMMF Funds",
+          downloadPlacement: "title-row",
+          downloadAnchor: $("tmmf-funds-table-actions"),
+          actionRow: mockLayout ? $("tmmf-funds-meta-actions") : undefined,
+          getExportData: fundsDownloadOpts.getExportData,
+        });
+        if (mockLayout) styleMockTableExpandButton($("tmmf-funds-meta-actions"));
+        if (appendRwaActionLink && fundsActionRow && payload.bottom_cta && payload.bottom_cta.href) {
+          appendRwaActionLink(fundsActionRow, {
+            href: payload.bottom_cta.href,
+            label: payload.bottom_cta.label || "RWA.xyz",
+            className: "btn btn-primary",
+          });
+        }
+      }
+      return { actionRow: fundsActionRow, host: host };
+    }
+
     function wireLeagueTableOnly(league, prefix, data, host) {
       var introClass = document.body.classList.contains("mock-stable-inner")
         ? "stable-mock-league-intro"
@@ -895,109 +1094,12 @@
     renderMockInsights(payload, pageMode);
     renderStableDashboard(payload);
 
-    setOptionalDeepHtml("js-deep-extra-before-leagues", payload.between_ko_and_leagues_html);
-    var extraBefore = $("js-deep-extra-before-leagues");
-    if (extraBefore) {
-      var ft = payload.funds_table || null;
-      if (ft && ft.columns && ft.columns.length) {
-        extraBefore.innerHTML +=
-          '<div class="inline-search" role="search">' +
-          '<label for="tmmf-funds-q">' +
-          esc(ft.search_label || "Search funds table") +
-          '</label><input id="tmmf-funds-q" type="search" autocomplete="off" placeholder="' +
-          esc(ft.search_placeholder || "Filter funds…") +
-          '" /><button type="button" class="btn btn-secondary" id="tmmf-funds-clear">Clear</button></div>' +
-          '<p class="toolbar-note" id="tmmf-funds-note"></p>' +
-          '<div class="rwa-split-table-head inner-table-head">' +
-          '<h3 class="subsection-head rwa-split-table-head__title">' +
-          esc(ft.table_heading || "Fund population") +
-          '</h3><div class="rwa-split-table-head__actions" id="tmmf-funds-table-actions"></div></div>' +
-          '<div class="table-wrap table-wrap--scroll tmmf-funds-table-wrap" data-fullscreen-title="Tokenized Money Market Fund Population">' +
-          '<table class="data-table data-table--dense" aria-label="Tokenized Money Market Fund Population">' +
-          '<thead><tr id="tmmf-funds-thead"></tr></thead><tbody id="tmmf-funds-tbody"></tbody></table></div>';
-        var fInp = $("tmmf-funds-q");
-        var fClr = $("tmmf-funds-clear");
-        var fThead = $("tmmf-funds-thead");
-        var fTbody = $("tmmf-funds-tbody");
-        var fNote = $("tmmf-funds-note");
-        var fWrap = extraBefore.querySelector(".tmmf-funds-table-wrap");
-        var fTable = fWrap ? fWrap.querySelector("table") : null;
-        var allRows = ft.rows_full || [];
-        var fundCols = fundsTableColumns(ft);
-        var fundsDownloadOpts = {
-          title: "Tokenized Money Market Fund Population",
-          filename: "tmmf-fund-population",
-          sheetName: "TMMF Funds",
-          getExportData: function () {
-            var ranked = rankFundsByTotalValue(allRows);
-            return {
-              sheetName: "TMMF Funds",
-              headers: fundCols,
-              rows: ranked.map(function (r) {
-                return fundCols.map(function (col) {
-                  var v = r[col];
-                  if (v == null) return "";
-                  if (col === "Total Value" || col === "7D Δ value" || col === "Holders") {
-                    return typeof v === "number" ? v : Number(v);
-                  }
-                  if (col === "Networks" || col === "Terms") {
-                    return String(v).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
-                  }
-                  return String(v);
-                });
-              }),
-            };
-          },
-        };
-        function syncFunds() {
-          var q = String((fInp && fInp.value) || "").trim().toLowerCase();
-          var filt = !q
-            ? allRows.slice()
-            : allRows.filter(function (r) {
-                return Object.keys(r || {}).some(function (k) {
-                  if (k === "Link" || k === "Fund Link") return false;
-                  var v = r[k];
-                  return v != null && String(v).toLowerCase().indexOf(q) >= 0;
-                });
-              });
-          if (fNote) {
-            if (!q) fNote.textContent = "Showing all " + filt.length + " funds (ranked by total value).";
-            else
-              fNote.textContent =
-                "Showing " + filt.length + " of " + allRows.length + ' funds matching "' + q + '".';
-          }
-          renderTable(fThead, fTbody, fundCols, rankFundsByTotalValue(filt), {
-            emptyMsg: "No funds match this filter.",
-            linkAria: "Open RWA.xyz asset page",
-          });
-        }
-        if (fInp) fInp.addEventListener("input", syncFunds);
-        if (fClr && fInp)
-          fClr.addEventListener("click", function () {
-            fInp.value = "";
-            fInp.focus();
-            syncFunds();
-          });
-        syncFunds();
-        if (attachTableFullscreenButton && fWrap && fTable) {
-          var fundsActionRow = attachTableFullscreenButton(fWrap, fTable, {
-            title: "Tokenized Money Market Fund Population",
-            filename: "tmmf-fund-population",
-            sheetName: "TMMF Funds",
-            downloadPlacement: "title-row",
-            downloadAnchor: $("tmmf-funds-table-actions"),
-            getExportData: fundsDownloadOpts.getExportData,
-          });
-          if (appendRwaActionLink && fundsActionRow && payload.bottom_cta && payload.bottom_cta.href) {
-            appendRwaActionLink(fundsActionRow, {
-              href: payload.bottom_cta.href,
-              label: payload.bottom_cta.label || "RWA.xyz",
-              className: "btn btn-primary",
-            });
-          }
-        }
-      }
+    if (document.body.classList.contains("mock-tmmf-inner")) {
+      setOptionalDeepHtml("js-deep-extra-before-leagues", "");
+    } else {
+      setOptionalDeepHtml("js-deep-extra-before-leagues", payload.between_ko_and_leagues_html);
     }
+    var fundsView = wireTmmfFundsTable(payload.funds_table || null, payload);
 
     var netView = wireLeague(payload.networks || null, "deep-net", payload);
 
@@ -1010,7 +1112,11 @@
 
     var platView = wireLeague(payload.platforms || null, "deep-plat", payload);
 
-    var ctaTargetRow = (platView && platView.actionRow) || (netView && netView.actionRow) || null;
+    var ctaTargetRow =
+      (platView && platView.actionRow) ||
+      (netView && netView.actionRow) ||
+      (fundsView && fundsView.actionRow) ||
+      null;
     if (appendRwaActionLink && ctaTargetRow && payload.bottom_cta && payload.bottom_cta.href) {
       var ctaLabel = payload.bottom_cta.label || "RWA.xyz";
       if (mode === "mmf" && hasPlat) {

@@ -103,6 +103,26 @@
   min-width: 5.5rem;
 }
 
+.mock-tmmf-inner .etp-mock-table-block--funds .etp-mock-table-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.65rem;
+}
+
+.mock-tmmf-inner .etp-mock-table-block--funds .etp-mock-table-meta .rwa-table-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0 0 0 auto;
+}
+
+@media (max-width: 520px) {
+  .mock-tmmf-inner .etp-mock-table-block--funds .etp-mock-table-meta .rwa-table-actions {
+    margin-left: 0;
+  }
+}
+
 .mock-tmmf-inner .tmmf-mock-net-icons {
   font-size: 0.72rem;
   color: var(--muted);
