@@ -19,16 +19,20 @@
   top: 0;
 }
 
-/* Live Plotly chart hosts inside mock dashboard panels */
-.etp-mock-dash__panel--chart .aum-chart-host {
-  flex: 1 1 auto;
+/* Live chart hosts: suppress mock placeholder art when a real chart is mounted */
+.etp-mock-dash__panel--chart .aum-chart-host:not(:empty),
+.etp-mock-dash__panel--chart .aum-chart-host .js-plotly-plot,
+.etp-mock-dash__panel--chart .aum-chart-host .tradingview-widget-container {
+  background: transparent;
+  border: none;
   min-height: 220px;
-  height: auto;
 }
 
-.etp-mock-dash__panel--chart .split-panels__widget--chart,
-.etp-mock-dash__panel--chart .tradingview-widget-container {
-  min-height: 220px;
+.etp-mock-dash__panel--chart .aum-chart-host:not(:empty)::before,
+.etp-mock-dash__panel--chart .aum-chart-host:has(.js-plotly-plot)::before,
+.etp-mock-dash__panel--chart .aum-chart-host:has(.tradingview-widget-container)::before {
+  content: none;
+  display: none;
 }
 
 /* —— Zone panels: stable + TMMF (match crypto / ETP treatment) —— */
