@@ -57,14 +57,17 @@
     }
     payload = payload || {};
     var parts = [payload.primary, payload.btc_dominance, payload.stablecoin_share];
-    host.innerHTML = parts
-      .filter(function (p) {
-        return p && (p.label || p.value_display);
-      })
-      .map(function (p) {
-        return kpiCell(p, null);
-      })
-      .join("");
+    host.innerHTML =
+      '<div class="rwa-kpi-panel-static"><div class="rwa-kpi-row rwa-kpi-row--home-grid">' +
+      parts
+        .filter(function (p) {
+          return p && (p.label || p.value_display);
+        })
+        .map(function (p) {
+          return kpiCell(p, null);
+        })
+        .join("") +
+      "</div></div>";
     if (global.__KPI_HINTS && typeof global.__KPI_HINTS.bindKpiHints === "function") {
       global.__KPI_HINTS.bindKpiHints(host);
     }

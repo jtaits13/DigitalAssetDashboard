@@ -107,8 +107,6 @@
   }
 
   global.__SNAPSHOT_KPI = {
-    CRYPTO_KPI_LEGEND_DEFAULT: CRYPTO_KPI_LEGEND_DEFAULT,
-    ETP_KPI_LEGEND_DEFAULT: ETP_KPI_LEGEND_DEFAULT,
     fmtSnapshotPctDelta: fmtSnapshotPctDelta,
     snapshotCell: snapshotCell,
     renderSnapshotPanel: renderSnapshotPanel,

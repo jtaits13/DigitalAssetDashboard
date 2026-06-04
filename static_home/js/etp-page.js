@@ -135,12 +135,13 @@
     if (!fs || !fs.attachTableFullscreenButton) return;
     var wrap = document.querySelector(".table-wrap--scroll");
     var table = wrap ? wrap.querySelector("table") : null;
-    if (!wrap || !table) return;
+    var actions = document.getElementById("js-etp-table-actions");
+    if (!wrap || !table || !actions) return;
     fs.attachTableFullscreenButton(wrap, table, {
       title: "U.S. ETP fund table",
       filename: "us-etp-funds",
-      downloadPlacement: "title-row",
-      downloadAnchor: document.getElementById("js-etp-table-actions"),
+      actionRow: actions,
+      downloadPlacement: "action-row",
     });
   }
 

@@ -1,4 +1,4 @@
-ï»¿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -11,8 +11,8 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css?v=85" />
-    <link rel="stylesheet" href="css/site-experience.css?v=18" />
-    <link rel="stylesheet" href="css/inner-page-experience.css?v=19" />
+    <link rel="stylesheet" href="css/site-experience.css?v=20" />
+    <link rel="stylesheet" href="css/inner-page-experience.css?v=20" />
   </head>
   <body class="page-etp site-experience page-inner--rich" data-methodology="etp">
     <header class="site-header" role="banner">
@@ -28,14 +28,14 @@
             <ul class="site-nav__sub">
               <li><a href="rwa-global.html">Market Overview</a></li>
               <li class="site-nav__item site-nav__item--flyout">
-                <a href="rwa-explore-asset-type.html" class="site-nav__parent-link">RWA ï¿½ Assets</a>
+                <a href="rwa-explore-asset-type.html" class="site-nav__parent-link">RWA · Assets</a>
                 <ul class="site-nav__sub site-nav__sub--nested" aria-label="RWA asset pages">
                   <li><a href="rwa-us-treasuries.html">U.S. Treasuries</a></li>
                   <li><a href="rwa-tokenized-stocks.html">Tokenized Stocks</a></li>
                 </ul>
               </li>
               <li class="site-nav__item site-nav__item--flyout">
-                <a href="rwa-explore-market-participant.html" class="site-nav__parent-link">RWA ï¿½ Participants</a>
+                <a href="rwa-explore-market-participant.html" class="site-nav__parent-link">RWA · Participants</a>
                 <ul class="site-nav__sub site-nav__sub--nested" aria-label="RWA participant pages">
                   <li><a href="rwa-participants-networks.html">Networks</a></li>
                   <li><a href="rwa-participants-platforms.html">Platforms</a></li>
@@ -161,10 +161,7 @@
           <hr class="inner-rich-rule" aria-hidden="true" />
 
           <div class="inner-rich-block" aria-labelledby="table-heading">
-            <div class="rwa-split-table-head inner-table-head">
-              <h2 class="subsection-head rwa-split-table-head__title" id="table-heading">Fund table</h2>
-              <div class="rwa-split-table-head__actions" id="js-etp-table-actions"></div>
-            </div>
+            <h2 class="subsection-head" id="table-heading">Fund table</h2>
             <label class="search-field">
               <span class="search-field__label">Search by fund name or ticker</span>
               <input
@@ -199,10 +196,13 @@
                 </tbody>
               </table>
             </div>
-            <p class="source-cap">
-              Fund data: StockAnalysis (list and AUM). Spot BTC/ETH flows: Farside Investors (daily net
-              creations/redemptions, USD).
-            </p>
+            <div class="rwa-table-footnote-row">
+              <p class="source-cap rwa-table-footnote-row__cap">
+                Fund data: StockAnalysis (list and AUM). Spot BTC/ETH flows: Farside Investors (daily net
+                creations/redemptions, USD).
+              </p>
+              <div class="rwa-table-footnote-row__actions rwa-table-actions" id="js-etp-table-actions"></div>
+            </div>
             <p class="timestamp-foot" id="js-etp-generated">?</p>
           </div>
         </div>
@@ -213,7 +213,7 @@
       </p>
     </main>
 
-    <footer class="site-footer">Digital Assets Dashboard ï¿½ U.S. ETPs ï¿½ <time datetime="2026-05">May 2026</time></footer>
+    <footer class="site-footer">Digital Assets Dashboard · U.S. ETPs · <time datetime="2026-05">May 2026</time></footer>
     <script defer src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
     <script defer src="js/static-base.js?v=14"></script>
     <script defer src="js/table-fullscreen.js?v=2"></script>
@@ -221,10 +221,10 @@
     <script defer src="js/kpi-hints.js?v=3"></script>
     <script defer src="js/data-freshness.js?v=1"></script>
     <script defer src="js/page-methodology.js?v=4"></script>
-    <script defer src="js/snapshot-kpi-shared.js?v=5"></script>
+    <script defer src="js/snapshot-kpi-shared.js?v=6"></script>
     <script defer src="js/etp-kpi-shared.js?v=3"></script>
-    <script defer src="js/crypto-kpi-shared.js?v=9"></script>
-    <script defer src="js/etp-page.js?v=21"></script>
+    <script defer src="js/crypto-kpi-shared.js?v=10"></script>
+    <script defer src="js/etp-page.js?v=22"></script>
     <script defer src="js/site-experience.js?v=1"></script>
   </body>
 </html>

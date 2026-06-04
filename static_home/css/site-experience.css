@@ -1312,24 +1312,25 @@
   border-radius: 10px;
 }
 
-.site-experience.page-home .home-zone--etp .rwa-kpi-panel-static,
-.site-experience.page-etp .rwa-kpi-panel-static,
-.site-experience.page-inner--rich .inner-rich-zone.zone--etp .rwa-kpi-panel-static {
+.site-experience.page-home .home-zone--etp .rwa-kpi-panel-static {
   background: rgb(var(--hx-etp-rgb) / 0.04);
   border: 1px solid rgb(var(--hx-etp-bright-rgb) / 0.16);
   border-radius: 10px;
 }
 
 .site-experience.page-crypto .rwa-kpi-panel-static,
-.site-experience.page-inner--rich .inner-rich-zone.zone--crypto .rwa-kpi-panel-static {
-  background: rgb(var(--hx-crypto-rgb) / 0.04);
-  border: 1px solid rgb(var(--hx-crypto-bright-rgb) / 0.16);
-}
-
-.site-experience[class*="page-rwa"] .rwa-kpi-panel-static,
-.site-experience.page-inner--rich .inner-rich-zone.zone--rwa .rwa-kpi-panel-static {
-  background: rgb(var(--hx-rwa-rgb) / 0.04);
-  border: 1px solid rgb(var(--hx-rwa-bright-rgb) / 0.16);
+.site-experience.page-inner--rich .inner-rich-zone.zone--crypto .rwa-kpi-panel-static,
+.site-experience.page-etp .rwa-kpi-panel-static,
+.site-experience.page-inner--rich .inner-rich-zone.zone--etp .rwa-kpi-panel-static,
+.site-experience[class*="page-rwa"]:not(.page-home) .rwa-kpi-panel-static,
+.site-experience.page-inner--rich .inner-rich-zone.zone--rwa .rwa-kpi-panel-static,
+.site-experience.page-inner--rich .inner-rich-zone__body .rwa-kpi-panel-static {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
 }
 
 .site-experience.page-crypto .rwa-kpi-row--home-grid .rwa-kpi-cell:hover,
