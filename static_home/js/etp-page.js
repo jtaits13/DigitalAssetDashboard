@@ -140,8 +140,9 @@
     fs.attachTableFullscreenButton(wrap, table, {
       title: "U.S. ETP fund table",
       filename: "us-etp-funds",
-      actionRow: actions,
-      downloadPlacement: "action-row",
+      actionRow: document.getElementById("js-etp-table-actions"),
+      downloadPlacement: "title-row",
+      downloadAnchor: document.getElementById("js-etp-table-download"),
     });
   }
 

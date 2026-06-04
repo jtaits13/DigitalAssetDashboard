@@ -22,8 +22,14 @@
   function kpiCell(item, fmtDeltaFn) {
     if (!item) return "";
     var delta = item.delta;
-    var deltaHtml =
-      delta && delta.pct != null ? fmtDelta(delta.pct, delta.window || "1M", fmtDeltaFn) : "";
+    var deltaHtml = "";
+    if (delta && delta.pct != null && isFinite(Number(delta.pct))) {
+      var n = Number(delta.pct);
+      var cls = n > 0 ? "up" : n < 0 ? "down" : "neutral";
+      var sign = n > 0 ? "+" : "";
+      deltaHtml =
+        '<span class="rwa-kpi-delta ' + cls + '">' + sign + n.toFixed(2) + "%</span>";
+    }
     var sub = item.subnote
       ? '<span class="kpi-subnote">' + escapeHtml(item.subnote) + "</span>"
       : "";
@@ -32,11 +38,11 @@
         ? global.__KPI_HINTS.wrapKpiLabel(item.label, item.hint)
         : escapeHtml(item.label || "");
     return (
-      '<div class="kpi-cell">' +
-      '<span class="kpi-label">' +
+      '<div class="rwa-kpi-cell">' +
+      '<span class="rwa-kpi-label">' +
       labelHtml +
       "</span>" +
-      '<span class="kpi-val">' +
+      '<span class="rwa-kpi-val">' +
       escapeHtml(item.value_display || "—") +
       "</span>" +
       sub +

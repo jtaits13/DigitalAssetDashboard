@@ -8,6 +8,7 @@ on:
     branches: ["main"]
     paths:
       - "static_home/**"
+      - "scripts/check_static_html_encoding.py"
       - ".github/workflows/deploy-static-home.yml"
       - ".github/workflows/refresh-static-home-data.yml"
   workflow_dispatch:
@@ -30,6 +31,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Validate static HTML text encoding
+        run: python scripts/check_static_html_encoding.py
 
       - name: Upload static_home as site root
         uses: actions/upload-pages-artifact@v3

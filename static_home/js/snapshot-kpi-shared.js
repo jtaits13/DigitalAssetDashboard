@@ -57,6 +57,20 @@
     }
   }
 
+  function snapshotDeltaPct(part) {
+    if (!part) return null;
+    if (part.delta && part.delta.pct != null && isFinite(Number(part.delta.pct))) {
+      return Number(part.delta.pct);
+    }
+    if (part.delta_30d_pct != null && isFinite(Number(part.delta_30d_pct))) {
+      return Number(part.delta_30d_pct);
+    }
+    if (part.pct_30d != null && isFinite(Number(part.pct_30d))) {
+      return Number(part.pct_30d);
+    }
+    return null;
+  }
+
   function renderCryptoSnapshot(host, payload) {
     payload = payload || {};
     var pct = fmtSnapshotPctDelta;
@@ -66,8 +80,11 @@
         return p && (p.label || p.value_display);
       })
       .map(function (p) {
+        var deltaPct = snapshotDeltaPct(p);
         var delta =
-          p.delta && p.delta.pct != null ? pct(p.delta.pct) : '<span class="rwa-kpi-delta neutral">—</span>';
+          deltaPct != null
+            ? pct(deltaPct)
+            : '<span class="rwa-kpi-delta neutral">—</span>';
         return snapshotCell(p.label, p.value_display, delta, p.hint);
       })
       .join("");

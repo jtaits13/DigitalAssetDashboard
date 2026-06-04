@@ -1300,24 +1300,11 @@
   color: var(--hx-etp);
 }
 
-.site-experience.page-home .home-zone--rwa .rwa-kpi-panel-static {
-  background: rgb(var(--hx-rwa-rgb) / 0.04);
-  border: 1px solid rgb(var(--hx-rwa-bright-rgb) / 0.16);
-  border-radius: 10px;
-}
-
-.site-experience.page-home .home-zone--crypto .rwa-kpi-panel-static {
-  background: rgb(var(--hx-crypto-rgb) / 0.04);
-  border: 1px solid rgb(var(--hx-crypto-bright-rgb) / 0.16);
-  border-radius: 10px;
-}
-
-.site-experience.page-home .home-zone--etp .rwa-kpi-panel-static {
-  background: rgb(var(--hx-etp-rgb) / 0.04);
-  border: 1px solid rgb(var(--hx-etp-bright-rgb) / 0.16);
-  border-radius: 10px;
-}
-
+.site-experience.page-home .home-zone--rwa .rwa-kpi-panel-static,
+.site-experience.page-home .home-zone--crypto .rwa-kpi-panel-static,
+.site-experience.page-home .home-zone--etp .rwa-kpi-panel-static,
+.site-experience.page-home .home-zone--stable .rwa-kpi-panel-static,
+.site-experience.page-home .home-zone--tmmf .rwa-kpi-panel-static,
 .site-experience.page-crypto .rwa-kpi-panel-static,
 .site-experience.page-inner--rich .inner-rich-zone.zone--crypto .rwa-kpi-panel-static,
 .site-experience.page-etp .rwa-kpi-panel-static,
@@ -1331,6 +1318,14 @@
   padding: 0;
   margin-top: 0;
   margin-bottom: 0.5rem;
+}
+
+.site-experience.page-crypto .rwa-kpi-row--home-grid .rwa-kpi-delta,
+.site-experience.page-inner--rich .inner-rich-zone.zone--crypto .rwa-kpi-row--home-grid .rwa-kpi-delta,
+.site-experience.page-home .home-zone--crypto .rwa-kpi-row--home-grid .rwa-kpi-delta {
+  display: block;
+  flex-shrink: 0;
+  margin-top: 0.22rem;
 }
 
 .site-experience.page-crypto .rwa-kpi-row--home-grid .rwa-kpi-cell:hover,
@@ -1645,12 +1640,6 @@
   background: linear-gradient(145deg, var(--hx-stable-soft) 0%, rgba(255, 255, 255, 0.9) 68%);
 }
 
-.site-experience.page-home .home-zone--stable .rwa-kpi-panel-static {
-  background: rgba(45, 95, 127, 0.06);
-  border: 1px solid rgba(45, 95, 127, 0.14);
-  border-radius: 10px;
-}
-
 .site-experience.page-home .home-zone--stable .rwa-kpi-row--home-grid .rwa-kpi-val {
   color: var(--hx-stable);
 }
@@ -1683,12 +1672,6 @@
   border: 1px solid rgba(62, 92, 116, 0.18);
   border-left: 3px solid var(--hx-tmmf);
   background: linear-gradient(145deg, var(--hx-tmmf-soft) 0%, rgba(255, 255, 255, 0.9) 68%);
-}
-
-.site-experience.page-home .home-zone--tmmf .rwa-kpi-panel-static {
-  background: rgba(62, 92, 116, 0.06);
-  border: 1px solid rgba(62, 92, 116, 0.14);
-  border-radius: 10px;
 }
 
 .site-experience.page-home .home-zone--tmmf .rwa-kpi-row--home-grid .rwa-kpi-val {
