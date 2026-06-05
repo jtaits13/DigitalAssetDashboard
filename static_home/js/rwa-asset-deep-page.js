@@ -337,6 +337,15 @@
       el.hidden = false;
     }
 
+    function hideDeepLeagueHosts() {
+      var netHost = $("deep-net-wrap");
+      var platHost = $("deep-plat-wrap");
+      var midRule = $("js-deep-rule-mid");
+      if (netHost) netHost.hidden = true;
+      if (platHost) platHost.hidden = true;
+      if (midRule) midRule.hidden = true;
+    }
+
     function rankFundsByTotalValue(rows) {
       return rows
         .slice()
@@ -1219,9 +1228,7 @@
       if (ruleKo) ruleKo.hidden = true;
       setOptionalDeepHtml("js-deep-extra-before-leagues", "");
       setOptionalDeepHtml("js-deep-extra-after-network", "");
-      $("deep-net-wrap").hidden = true;
-      $("deep-plat-wrap").hidden = true;
-      $("js-deep-rule-mid").hidden = true;
+      hideDeepLeagueHosts();
       applyBottomCta();
       if (typeof global.finalizeHubAnchors === "function") global.finalizeHubAnchors(document.body);
       return;
@@ -1237,9 +1244,7 @@
       if (ruleKo) ruleKo.hidden = true;
       setOptionalDeepHtml("js-deep-extra-before-leagues", "");
       setOptionalDeepHtml("js-deep-extra-after-network", "");
-      $("deep-net-wrap").hidden = true;
-      $("deep-plat-wrap").hidden = true;
-      $("js-deep-rule-mid").hidden = true;
+      hideDeepLeagueHosts();
       applyBottomCta();
       if (typeof global.finalizeHubAnchors === "function") global.finalizeHubAnchors(document.body);
       return;
@@ -1302,7 +1307,8 @@
     var hasNet = !!(payload.networks && payload.networks.columns && payload.networks.columns.length);
     var hasPlat = !!(payload.platforms && payload.platforms.columns && payload.platforms.columns.length);
 
-    $("js-deep-rule-mid").hidden = !(hasNet && hasPlat);
+    var midRuleEl = $("js-deep-rule-mid");
+    if (midRuleEl) midRuleEl.hidden = !(hasNet && hasPlat);
 
     setOptionalDeepHtml("js-deep-extra-after-network", payload.after_network_block_html);
 
