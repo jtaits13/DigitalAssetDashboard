@@ -11,6 +11,10 @@
     return document.getElementById(id);
   }
 
+  function isMockParityLayout() {
+    return document.body.classList.contains("mock-rwa-global-inner");
+  }
+
   function estimateChartMargins(yLabels, textLabels, shellWidth) {
     var i;
     var maxLab = 4;
@@ -30,10 +34,7 @@
     var minByWidth = Math.round(sw * 0.44);
     var marginLeft = Math.min(440, Math.max(176, Math.max(fromText, minByWidth)));
 
-    var marginRight = Math.min(
-      210,
-      Math.max(118, Math.round(maxPct * 6 + 84))
-    );
+    var marginRight = Math.min(210, Math.max(118, Math.round(maxPct * 6 + 84)));
 
     return { l: marginLeft, r: marginRight };
   }
@@ -78,23 +79,140 @@
     };
   }
 
-  function renderPrimaryCta(host, data) {
+  function renderPrimaryCta(host, data, mockLayout) {
     if (!host) return;
     var L = data.links || {};
     var label = L.global_market_link_label || "Open RWA.xyz Global Market";
     var href = L.global_market_on_rwa_xyz || "https://app.rwa.xyz/networks";
     host.hidden = false;
-    host.innerHTML =
-      '<p><a class="btn btn-primary" href="' +
-      esc(href) +
-      '" target="_blank" rel="noopener noreferrer">' +
-      esc(label) +
-      "</a></p>";
+    if (mockLayout) {
+      host.className = "cta-row etp-mock-bottom-cta rwa-deep-page-cta";
+      host.innerHTML =
+        '<a class="btn btn-primary" href="' +
+        esc(href) +
+        '" target="_blank" rel="noopener noreferrer">' +
+        esc(label) +
+        "</a>";
+    } else {
+      host.className = "cta-row rwa-deep-page-cta";
+      host.innerHTML =
+        '<p><a class="btn btn-primary" href="' +
+        esc(href) +
+        '" target="_blank" rel="noopener noreferrer">' +
+        esc(label) +
+        "</a></p>";
+    }
   }
 
-  function drawChart(rows, chartMax, heightPx) {
-    var el = $("js-rwa-gmo-chart");
-    var emptyEl = $("js-rwa-gmo-chart-empty");
+  function renderConcBarRows(items) {
+    if (!items || !items.length) return "";
+    var maxPct = items.reduce(function (m, d) {
+      return d.pct > m ? d.pct : m;
+    }, 0);
+    return items
+      .map(function (d) {
+        var barWidth = maxPct > 0 ? (d.pct / maxPct) * 100 : 0;
+        return (
+          '<div class="etp-mock-conc__row">' +
+          '<span class="etp-mock-conc__sym">' +
+          esc(d.label) +
+          "</span>" +
+          '<span class="etp-mock-conc__track"><span class="etp-mock-conc__fill" style="width:' +
+          barWidth.toFixed(1) +
+          '%"></span></span>' +
+          '<span class="etp-mock-conc__pct">' +
+          d.pct.toFixed(1) +
+          "%</span></div>"
+        );
+      })
+      .join("");
+  }
+
+  function renderGlobalInsights(rows) {
+    var host = $("js-rwa-global-insights");
+    if (!host || !isMockParityLayout() || !rows || !rows.length) {
+      if (host) host.hidden = true;
+      return;
+    }
+    var sorted = rows.slice().sort(function (a, b) {
+      return (Number(b["Market Share"]) || 0) - (Number(a["Market Share"]) || 0);
+    });
+    var topFive = sorted.slice(0, 5);
+    var topFiveSum = topFive.reduce(function (s, r) {
+      return s + (Number(r["Market Share"]) || 0);
+    }, 0);
+    var items = topFive.map(function (r) {
+      return { label: String(r.Network || "—"), pct: Number(r["Market Share"]) || 0 };
+    });
+    var otherPct = Math.max(0, 100 - topFiveSum);
+    if (otherPct > 0.15) items.push({ label: "Other", pct: otherPct });
+    host.hidden = false;
+    host.innerHTML =
+      '<div class="etp-mock-insights__panel etp-mock-insights__panel--conc">' +
+      '<h3 class="etp-mock-insights__head">Network share (top 5)</h3>' +
+      '<p class="etp-mock-conc__dek">Share of aggregate total value by chain (RWA.xyz snapshot).</p>' +
+      '<div class="etp-mock-conc__rows etp-mock-conc__rows--grid" role="img" aria-label="Top five networks by total value share">' +
+      renderConcBarRows(items) +
+      "</div></div>";
+  }
+
+  function renderGlobalShareMovers(rows) {
+    var moversEl = $("js-rwa-global-share-movers");
+    if (!moversEl || !isMockParityLayout() || !rows || !rows.length) return;
+    var topNetworks = rows
+      .slice()
+      .sort(function (a, b) {
+        return (Number(b["Total Value"]) || 0) - (Number(a["Total Value"]) || 0);
+      })
+      .slice(0, 15);
+    var moverRows = topNetworks
+      .filter(function (r) {
+        return r["30D Δ share"] != null && isFinite(Number(r["30D Δ share"]));
+      })
+      .sort(function (a, b) {
+        return Math.abs(Number(b["30D Δ share"])) - Math.abs(Number(a["30D Δ share"]));
+      })
+      .slice(0, 4);
+    var items = moverRows
+      .map(function (r) {
+        var n = Number(r["30D Δ share"]);
+        var cls = n >= 0 ? "up" : "down";
+        var d7 = r["7D Δ value"];
+        var ctx =
+          d7 != null && isFinite(Number(d7))
+            ? "7D value " +
+              (Number(d7) >= 0 ? "+" : "") +
+              Number(d7).toFixed(2) +
+              "% · " +
+              (Number(r["Market Share"]) || 0).toFixed(1) +
+              "% market share"
+            : (Number(r["Market Share"]) || 0).toFixed(1) + "% market share";
+        return (
+          '<li class="crypto-top-mover"><div class="crypto-top-mover__row">' +
+          '<span class="crypto-top-mover__label"><strong>' +
+          esc(r.Network || "—") +
+          "</strong></span>" +
+          '<span class="crypto-top-mover__pct pct ' +
+          cls +
+          '">' +
+          (n >= 0 ? "+" : "") +
+          n.toFixed(2) +
+          "%</span></div>" +
+          '<p class="crypto-top-mover__ctx">' +
+          esc(ctx) +
+          "</p></li>"
+        );
+      })
+      .join("");
+    moversEl.innerHTML =
+      '<ul class="crypto-top-movers__list">' +
+      items +
+      '</ul><p class="crypto-story-callout__note"><strong>30D Δ share</strong> is 30-day change in market share (%). Top 15 networks by total value.</p>';
+  }
+
+  function drawChart(rows, chartMax, heightPx, chartElId, emptyElId) {
+    var el = $(chartElId || "js-rwa-gmo-chart");
+    var emptyEl = emptyElId ? $(emptyElId) : $("js-rwa-gmo-chart-empty");
     if (!el || typeof Plotly === "undefined") return;
 
     if (!rows || !rows.length) {
@@ -138,7 +256,12 @@
       return Number(s).toFixed(2) + "% share";
     });
 
-    var shell = el.closest ? el.closest(".rwa-split-chart-shell") : el.parentElement;
+    var shell =
+      el.closest && el.closest(".stable-dash-chart-body")
+        ? el.closest(".stable-dash-chart-body")
+        : el.closest
+          ? el.closest(".rwa-split-chart-shell")
+          : el.parentElement;
     var shellW = shell && shell.clientWidth ? shell.clientWidth : el.offsetParent ? el.offsetWidth : 0;
     var m = estimateChartMargins(y, text, shellW);
     var axisProps = buildCurrencyAxisProps(x, Math.max(120, (shellW || 560) - m.l - m.r));
@@ -155,7 +278,7 @@
       showlegend: false,
       text: text,
       textposition: "outside",
-      textfont: { size: 11, color: "#3E6A7A" },
+      textfont: { size: 11, color: "#3E6A7A", family: "Outfit, system-ui, sans-serif" },
       cliponaxis: false,
       hovertemplate: "<b>%{y}</b><br>Total value: %{x:$,.0f}<br>Market share: %{text}<extra></extra>",
     };
@@ -166,7 +289,7 @@
       margin: { l: m.l, r: m.r, t: 14, b: 60, pad: 4 },
       paper_bgcolor: "rgba(0,0,0,0)",
       plot_bgcolor: "#f8fafc",
-      font: { size: 12, color: "#1F4C67" },
+      font: { size: 12, color: "#1F4C67", family: "Outfit, system-ui, sans-serif" },
       showlegend: false,
       xaxis: {
         title: { text: "Total value (USD)", font: { size: 12, color: "#1F4C67" }, standoff: 18 },
@@ -183,6 +306,7 @@
         categoryorder: "array",
         categoryarray: y,
         showticklabels: true,
+        tickfont: { family: "Outfit, system-ui, sans-serif", size: 11, color: "#1F4C67" },
       },
     };
 
@@ -243,6 +367,84 @@
     }
   }
 
+  function renderGlobalDashboard(rows) {
+    var dash = $("js-rwa-global-dashboard");
+    if (!dash || !isMockParityLayout() || !rows || !rows.length) {
+      if (dash) dash.hidden = true;
+      return;
+    }
+    dash.hidden = false;
+    drawChart(rows, 5, 260, "js-rwa-global-dashboard-chart");
+    renderGlobalShareMovers(rows);
+  }
+
+  function wireLegacySplitHost(data) {
+    var host = $("js-rwa-global-split");
+    if (!host) return null;
+    host.className = "split-two rwa-split";
+    host.style.setProperty("--rwa-split-body-height", String(data.chartHeight || 420) + "px");
+    host.innerHTML =
+      '<div class="rwa-split-pane">' +
+      '<div class="rwa-split-table-head">' +
+      '<h3 class="subsection-head rwa-deep-table-h rwa-split-table-head__title">Networks table</h3>' +
+      '<div class="rwa-split-table-head__actions" id="js-rwa-global-table-actions"></div></div>' +
+      '<div class="rwa-split-table-scroll">' +
+      '<table class="data-table data-table--dense rwa-split-data-table"><thead><tr id="js-rwa-gmo-thead-row"></tr></thead>' +
+      '<tbody id="js-rwa-gmo-tbody"><tr><td>Loading…</td></tr></tbody></table></div></div>' +
+      '<div class="rwa-split-pane rwa-split-pane--chart">' +
+      '<h2 class="subsection-head rwa-split-heading">Top networks by value</h2>' +
+      '<div class="rwa-split-chart-shell"><div id="js-rwa-gmo-chart" class="aum-chart-host rwa-split-chart-host"></div>' +
+      '<p class="muted rwa-split-chart-empty" id="js-rwa-gmo-chart-empty" hidden>No networks match this filter; there is nothing to chart.</p></div>' +
+      '<p class="jd-hub-cta-note jd-rwa-gmo-split-note" id="js-rwa-global-chart-note"></p></div>';
+
+    var searchBlock = $("js-rwa-global-search-block");
+    if (!searchBlock) {
+      var detailStack = $("js-rwa-global-detail-stack");
+      if (detailStack) {
+        searchBlock = document.createElement("div");
+        searchBlock.id = "js-rwa-global-search-block";
+        searchBlock.innerHTML =
+          '<div class="inline-search rwa-global-search" role="search">' +
+          '<label for="rwa-global-q">Search network table</label>' +
+          '<input id="rwa-global-q" type="search" name="q" autocomplete="off" placeholder="Filter by network name…" />' +
+          '<button type="button" class="btn btn-secondary" id="rwa-global-clear">Clear</button></div>' +
+          '<p class="toolbar-note" id="rwa-global-toolbar-note"></p>';
+        detailStack.insertBefore(searchBlock, host);
+      }
+    }
+    return host;
+  }
+
+  function wireMockTableHost(data) {
+    var host = $("js-rwa-global-split");
+    if (!host) return null;
+    var intro =
+      data.section_intro_html ||
+      "<strong>Networks</strong> — total value by chain (RWA.xyz Distributed league). Filter by name below.";
+    var caption = data.caption_html || "";
+    host.className = "etp-mock-table-block rwa-global-mock-league-block";
+    host.innerHTML =
+      '<div class="rwa-split-table-head inner-table-head">' +
+      '<h2 class="subsection-head rwa-split-table-head__title">Networks table</h2>' +
+      '<div class="rwa-split-table-head__actions" id="js-rwa-global-table-actions"></div></div>' +
+      '<p class="rwa-global-mock-league-intro">' +
+      intro +
+      "</p>" +
+      '<label class="search-field etp-mock-table-search">' +
+      '<span class="search-field__label">Search network table</span>' +
+      '<input id="rwa-global-q" type="search" class="search-field__input" autocomplete="off" placeholder="Filter by network name…" /></label>' +
+      '<div class="etp-mock-table-meta" aria-live="polite">' +
+      '<p class="etp-mock-table-meta__count toolbar-note" id="rwa-global-toolbar-note"></p>' +
+      '<div class="rwa-table-actions" id="js-rwa-global-meta-actions"></div></div>' +
+      '<div class="table-wrap table-wrap--scroll rwa-split-table-scroll">' +
+      '<table class="data-table data-table--dense data-table--sortable"><thead><tr id="js-rwa-gmo-thead-row"></tr></thead>' +
+      '<tbody id="js-rwa-gmo-tbody"><tr><td>Loading…</td></tr></tbody></table></div>' +
+      (caption
+        ? '<div class="rwa-table-footnote-row"><p class="source-cap rwa-table-footnote-row__cap">' + caption + "</p></div>"
+        : "");
+    return host;
+  }
+
   function applyFilter(state, renderTable) {
     var q = state.filter.trim().toLowerCase();
     var rows = state.allRows.filter(function (r) {
@@ -256,8 +458,9 @@
       if (total === 0) {
         note.textContent = "";
       } else if (q) {
-        note.textContent =
-          "Showing " + rows.length + " of " + total + ' networks matching "' + q + '".';
+        note.textContent = "Showing " + rows.length + " of " + total + ' networks matching "' + esc(q) + '".';
+      } else if (isMockParityLayout()) {
+        note.textContent = "Showing all " + rows.length + " networks.";
       } else {
         note.textContent =
           "Showing all " + rows.length + " networks from the homepage Global Market table.";
@@ -274,7 +477,9 @@
         '<tr><td colspan="' + colspan + '">No networks match this filter.</td></tr>';
     }
 
-    drawChart(rows, state.chartMax, state.chartHeight);
+    if (!isMockParityLayout()) {
+      drawChart(rows, state.chartMax, state.chartHeight);
+    }
   }
 
   function wireSearch(state, renderTable) {
@@ -307,6 +512,7 @@
     var renderTable = H.renderTable;
     var attachTableFullscreenButton = H.attachRwaTableFullscreenButton;
     var appendRwaActionLink = H.appendRwaActionLink;
+    var mockLayout = isMockParityLayout();
 
     var banner = $("js-rwa-global-banner");
     if (banner) {
@@ -346,7 +552,7 @@
       hide(detailStack, true);
       renderKpis($("js-rwa-global-kpis"), data.kpis || [], "");
       hide(errCta, false);
-      renderPrimaryCta(errCta, data);
+      renderPrimaryCta(errCta, data, mockLayout);
       return;
     }
 
@@ -363,7 +569,10 @@
 
     renderKpis($("js-rwa-global-kpis"), data.kpis || [], "");
 
+    var koSection = $("js-rwa-global-ko-section");
     var macroHost = $("js-rwa-global-macro");
+    var hasKo = !!(data.macro_observations_html && String(data.macro_observations_html).trim());
+    hide(koSection, !hasKo);
     if (macroHost) {
       if (H.renderKeyObservationsCallout) {
         H.renderKeyObservationsCallout(macroHost, data.macro_observations_html || "", {
@@ -386,41 +595,50 @@
       }
     }
 
-    var captionHost = $("js-rwa-global-caption");
-    if (captionHost) captionHost.innerHTML = data.caption_html || "";
-
-    var chartNote = $("js-rwa-global-chart-note");
-    if (chartNote) chartNote.innerHTML = data.chart_note_html || "";
+    if (mockLayout) {
+      renderGlobalInsights(rows);
+      renderGlobalDashboard(rows);
+    }
 
     var chartMax = data.chart_max_bars != null ? Number(data.chart_max_bars) : 12;
     var chartHeight = data.chart_height_px != null ? Number(data.chart_height_px) : 420;
 
+    if (mockLayout) {
+      wireMockTableHost(data);
+    } else {
+      wireLegacySplitHost({ chartHeight: chartHeight });
+      var chartNote = $("js-rwa-global-chart-note");
+      if (chartNote) chartNote.innerHTML = data.chart_note_html || "";
+      var captionHost = $("js-rwa-global-caption");
+      if (captionHost) captionHost.innerHTML = data.caption_html || "";
+    }
+
     var splitRoot = $("js-rwa-global-split");
-    if (splitRoot) splitRoot.style.setProperty("--rwa-split-body-height", String(chartHeight) + "px");
-    if (attachTableFullscreenButton && splitRoot) {
-      var actionRow = attachTableFullscreenButton(
-        splitRoot.querySelector(".rwa-split-table-scroll"),
-        splitRoot.querySelector("table"),
-        {
-          title: "RWA Global Market Overview networks table",
-          downloadPlacement: "title-row",
-          downloadAnchor: $("js-rwa-global-table-actions"),
-        }
-      );
-      if (appendRwaActionLink && actionRow) {
-        appendRwaActionLink(actionRow, {
-          href: (data.links && data.links.global_market_on_rwa_xyz) || "https://app.rwa.xyz/networks",
-          label: (data.links && data.links.global_market_link_label) || "Open RWA.xyz Global Market",
-          className: "btn btn-primary",
-        });
-        hide(bottomCta, true);
-      } else {
-        hide(bottomCta, false);
-        renderPrimaryCta(bottomCta, data);
-      }
+    var tableWrap = splitRoot ? splitRoot.querySelector(".table-wrap, .rwa-split-table-scroll") : null;
+    var tableEl = tableWrap ? tableWrap.querySelector("table") : splitRoot ? splitRoot.querySelector("table") : null;
+    var titleActions = $("js-rwa-global-table-actions");
+    var metaActions = $("js-rwa-global-meta-actions");
+    var actionRow = null;
+
+    if (attachTableFullscreenButton && tableWrap && tableEl) {
+      actionRow = attachTableFullscreenButton(tableWrap, tableEl, {
+        title: "RWA Global Market Overview networks table",
+        downloadPlacement: "title-row",
+        downloadAnchor: titleActions,
+        actionRow: mockLayout && metaActions ? metaActions : undefined,
+      });
+    }
+
+    if (appendRwaActionLink && actionRow && !mockLayout) {
+      appendRwaActionLink(actionRow, {
+        href: (data.links && data.links.global_market_on_rwa_xyz) || "https://app.rwa.xyz/networks",
+        label: (data.links && data.links.global_market_link_label) || "Open RWA.xyz Global Market",
+        className: "btn btn-primary",
+      });
+      hide(bottomCta, true);
     } else {
       hide(bottomCta, false);
-      renderPrimaryCta(bottomCta, data);
+      renderPrimaryCta(bottomCta, data, mockLayout);
     }
 
     var state = {
@@ -436,6 +654,10 @@
 
     wireSearch(state, renderTable);
     applyFilter(state, renderTable);
+
+    if (typeof global.finalizeHubAnchors === "function") {
+      global.finalizeHubAnchors(document.body);
+    }
   }
 
   function boot() {
@@ -452,8 +674,7 @@
         if (banner) {
           banner.hidden = false;
           banner.textContent =
-            (e && e.message) ||
-            "Could not load rwa_global_market.json.";
+            (e && e.message) || "Could not load rwa_global_market.json.";
         }
       });
   }

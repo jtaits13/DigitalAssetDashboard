@@ -13,9 +13,11 @@
     <link rel="stylesheet" href="styles.css?v=87" />
     <link rel="stylesheet" href="css/site-experience.css?v=21" />
     <link rel="stylesheet" href="css/inner-page-experience.css?v=24" />
-    <link rel="stylesheet" href="css/inner-page-zone-parity.css?v=7" />
+    <link rel="stylesheet" href="css/inner-page-zone-parity.css?v=9" />
+    <link rel="stylesheet" href="mockups/etp-inner-page-mock.css?v=20" />
+    <link rel="stylesheet" href="mockups/rwa-global-inner-page-mock.css?v=8" />
   </head>
-  <body class="page-rwa-global site-experience page-inner--rich" data-methodology="rwa-global">
+  <body class="page-rwa-global site-experience page-inner--rich mock-rwa-global-inner" data-methodology="rwa-global">
     <header class="site-header" role="banner">
       <div class="site-header__inner">
         <a class="site-brand" href="index.html">Digital Assets Dashboard</a>
@@ -59,115 +61,117 @@
 
     <div class="page-back-below-header">
       <p class="back-link back-link--below-header">
-        <a href="index.html">← Back to home</a>
+        <a href="index.html">&larr; Back to home</a>
       </p>
     </div>
 
-    <main class="page-shell">
-      <article class="hub-section hub-section--panel inner-rich-zone zone--rwa home-zone home-zone--rwa">
+    <main class="page-shell etp-mock-shell">
+      <article class="hub-section hub-section--panel inner-rich-zone zone--rwa home-zone home-zone--rwa etp-mock-zone">
         <div class="home-zone__stripe" aria-hidden="true"></div>
         <header class="home-zone__head">
           <span class="home-zone__badge" aria-hidden="true">RWA</span>
           <div class="home-zone__titles">
             <h1 class="page-intro__title">RWA Global Market Overview</h1>
-        <div class="page-intro__dek" id="js-rwa-global-dek"></div>
+            <div class="section-dek section-dek--wide page-intro__dek" id="js-rwa-global-dek"></div>
           </div>
         </header>
-        <div class="home-zone__body inner-rich-zone__body">
+        <div class="home-zone__body inner-rich-zone__body etp-mock-zone__body">
+          <div class="home-related-chips" aria-label="Related pages">
+            <span class="home-related-chips__label">Related</span>
+            <a class="home-chip" href="index.html#section-onchain">Home on-chain preview</a>
+            <a class="home-chip" href="rwa-stablecoins.html">Stablecoins</a>
+            <a class="home-chip" href="rwa-us-treasuries.html">U.S. Treasuries</a>
+            <a class="home-chip" href="rwa-tokenized-stocks.html">Tokenized Stocks</a>
+            <a class="home-chip" href="rwa-tokenized-mmf.html">Tokenized MMFs</a>
+            <a class="home-chip" href="crypto-prices.html">Crypto prices</a>
+          </div>
+
           <div class="data-banner" id="js-rwa-global-banner" role="status" hidden></div>
-      <hr class="inner-rich-rule" />
 
-      <p id="js-rwa-global-empty" class="alert info" hidden></p>
+          <p id="js-rwa-global-empty" class="alert info" hidden></p>
 
-      <div id="js-rwa-global-snapshot">
-        <section class="hub-section" aria-labelledby="rwa-gmo-snapshot-heading">
-          <h2 class="subsection-head" id="rwa-gmo-snapshot-heading">Top-Line Market Snapshot</h2>
-          <div id="js-rwa-global-kpis" aria-label="RWA Global Market KPI strip"></div>
-          <div id="js-rwa-global-error-cta" class="cta-row" hidden></div>
-        </section>
-      </div>
+          <section class="etp-mock-snapshot" id="js-rwa-global-snapshot" aria-labelledby="rwa-gmo-snapshot-heading">
+            <h2 class="subsection-head u-vh" id="rwa-gmo-snapshot-heading">Top-line snapshot</h2>
+            <div id="js-rwa-global-kpis" aria-label="RWA Global Market KPI strip"></div>
+            <div id="js-rwa-global-error-cta" class="cta-row" hidden></div>
+          </section>
 
-      <div id="js-rwa-global-detail-stack" hidden>
-        <section class="hub-section" aria-labelledby="rwa-gmo-ko-heading">
-          <h2 class="subsection-head u-vh" id="rwa-gmo-ko-heading">Key Observations</h2>
-          <div id="js-rwa-global-macro"></div>
-        </section>
-
-        <hr class="jd-rwa-gmo-soft-rule" aria-hidden="true" />
-
-        <div id="js-rwa-global-explore"></div>
-
-        <div id="js-rwa-global-search-block">
-          <div class="inline-search rwa-global-search" role="search">
-            <label for="rwa-global-q">Search network table</label>
-            <input
-              id="rwa-global-q"
-              type="search"
-              name="q"
-              autocomplete="off"
-              placeholder="Filter by network name…"
-            />
-            <button type="button" class="btn btn-secondary" id="rwa-global-clear">Clear</button>
-          </div>
-          <p class="toolbar-note" id="rwa-global-toolbar-note"></p>
-        </div>
-
-        <div class="split-two rwa-split" id="js-rwa-global-split" style="--rwa-split-body-height: 420px">
-          <div class="rwa-split-pane">
-            <div class="rwa-split-table-head">
-              <h3 class="subsection-head rwa-deep-table-h rwa-split-table-head__title">Networks table</h3>
-              <div class="rwa-split-table-head__actions" id="js-rwa-global-table-actions"></div>
+          <div id="js-rwa-global-detail-stack" hidden>
+            <div
+              class="inner-rich-block etp-mock-key-obs-block"
+              id="js-rwa-global-ko-section"
+              hidden
+              aria-labelledby="rwa-gmo-ko-heading"
+            >
+              <h2 class="subsection-head u-vh" id="rwa-gmo-ko-heading">Key Observations</h2>
+              <div id="js-rwa-global-macro"></div>
             </div>
-            <div class="rwa-split-table-scroll">
-              <table class="data-table data-table--dense rwa-split-data-table">
-                <thead>
-                  <tr id="js-rwa-gmo-thead-row"></tr>
-                </thead>
-                <tbody id="js-rwa-gmo-tbody">
-                  <tr>
-                    <td>Loading…</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div class="rwa-split-pane rwa-split-pane--chart">
-            <h2 class="subsection-head rwa-split-heading">Top networks by value</h2>
-            <div class="rwa-split-chart-shell">
-              <div id="js-rwa-gmo-chart" class="aum-chart-host rwa-split-chart-host"></div>
-              <p class="muted rwa-split-chart-empty" id="js-rwa-gmo-chart-empty" hidden>
-                No networks match this filter; there is nothing to chart.
-              </p>
-            </div>
-            <p class="jd-hub-cta-note jd-rwa-gmo-split-note" id="js-rwa-global-chart-note"></p>
-          </div>
-        </div>
 
-        <div id="js-rwa-global-caption" class="rwa-caption-html"></div>
-        <div id="js-rwa-global-bottom-cta" class="cta-row" hidden></div>
-      </div>
+            <div id="js-rwa-global-explore"></div>
+
+            <section
+              class="etp-mock-insights etp-mock-insights--crypto-full"
+              id="js-rwa-global-insights"
+              hidden
+              aria-labelledby="js-rwa-global-insights-h"
+            >
+              <h2 class="u-vh" id="js-rwa-global-insights-h">Market structure</h2>
+            </section>
+
+            <section class="etp-mock-dashboard" id="js-rwa-global-dashboard" hidden aria-labelledby="js-rwa-global-dashboard-h">
+              <h2 class="u-vh" id="js-rwa-global-dashboard-h">Chart and share movers</h2>
+              <div class="etp-mock-dash__panel etp-mock-dash__panel--chart">
+                <h3 class="etp-mock-dash__head">Top networks by value</h3>
+                <div class="stable-dash-chart-body">
+                  <div
+                    id="js-rwa-global-dashboard-chart"
+                    class="aum-chart-host"
+                    role="img"
+                    aria-label="Top networks by total value"
+                  ></div>
+                </div>
+                <p class="etp-mock-chart__cap">
+                  Top <strong>5</strong> networks by total value (labels include share).
+                </p>
+                <p class="etp-mock-chart__method">
+                  Plotly horizontal bars synced to the searchable networks table below.
+                </p>
+              </div>
+              <div class="etp-mock-dash__panel etp-mock-dash__panel--movers">
+                <h3 class="etp-mock-dash__head">Largest 30D share shifts (networks)</h3>
+                <div id="js-rwa-global-share-movers"></div>
+              </div>
+            </section>
+
+            <div id="js-rwa-global-split"></div>
+
+            <div id="js-rwa-global-bottom-cta" class="cta-row rwa-deep-page-cta" hidden></div>
+
+            <p class="timestamp-foot" id="js-rwa-global-footer-note"></p>
+          </div>
         </div>
       </article>
 
-
       <p class="back-link">
-        <a href="index.html">← Back to home</a>
+        <a href="index.html">&larr; Back to home</a>
       </p>
     </main>
 
     <footer class="site-footer">
-      <span id="js-rwa-global-footer-note"></span>
-      <span class="site-footer__meta"> · Digital Assets Dashboard · </span><time datetime="2026-05">May 2026</time>
+      <span class="site-footer__meta">Digital Assets Dashboard &middot; RWA Global Market Overview &middot; </span
+      ><time datetime="2026-05">May 2026</time>
     </footer>
 
     <script defer src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
     <script defer src="js/static-base.js?v=14"></script>
-    <script defer src="js/table-fullscreen.js?v=2"></script>
+    <script defer src="js/table-fullscreen.js?v=3"></script>
     <script defer src="js/table-download.js?v=4"></script>
     <script defer src="js/kpi-hints.js?v=3"></script>
+    <script defer src="js/data-freshness.js?v=1"></script>
     <script defer src="js/page-methodology.js?v=4"></script>
+    <script defer src="js/snapshot-kpi-shared.js?v=7"></script>
     <script defer src="js/rwa-onchain-home.js?v=23"></script>
-    <script defer src="js/rwa-global-page.js?v=11"></script>
+    <script defer src="js/rwa-global-page.js?v=12"></script>
     <script defer src="js/site-experience.js?v=1"></script>
   </body>
 </html>
