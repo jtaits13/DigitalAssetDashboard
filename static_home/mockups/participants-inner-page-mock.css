@@ -1,0 +1,59 @@
+/* RWA Participants inner page mocks — shared scoped overrides (Networks · Platforms · Asset Managers) */
+
+.mock-participants-inner {
+  --stable-dash-panel-min: 23rem;
+}
+
+.mock-participants-inner.mock-rwa-global-inner::before {
+  content: "Design mock — RWA Participants inner page · not linked from production";
+}
+
+.mock-participants-networks-inner.mock-rwa-global-inner::before {
+  content: "Design mock — Participants · Networks inner page · not linked from production · open mockups/participants-networks-inner-page-mock.html";
+}
+
+.mock-participants-inner .participants-mock-league-intro {
+  margin: 0 0 0.75rem;
+  max-width: 52rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--ink-muted, #4a5f73);
+}
+
+.mock-participants-inner .participants-mock-league-intro strong {
+  color: var(--hx-rwa-dark);
+}
+
+.mock-participants-inner .etp-mock-table-block + .etp-mock-table-block {
+  margin-top: var(--etp-mock-gap-lg, 1.2rem);
+}
+
+.mock-participants-inner .etp-mock-dashboard {
+  align-items: stretch;
+}
+
+.mock-participants-inner .etp-mock-dash__panel--chart,
+.mock-participants-inner .etp-mock-dash__panel--movers {
+  min-height: var(--stable-dash-panel-min);
+}
+
+.mock-participants-inner .etp-mock-dash__panel--chart .stable-dash-chart-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 12rem;
+  margin-bottom: 0.35rem;
+}
+
+.mock-participants-inner .etp-mock-dash__panel--movers #js-participants-share-movers {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.mock-participants-inner .home-explore-compact__btn--soon {
+  opacity: 0.55;
+  pointer-events: none;
+  cursor: default;
+}

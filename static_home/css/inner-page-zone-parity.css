@@ -7,7 +7,8 @@
 .mock-tmmf-inner.page-inner--rich:not(.mock-five-zone)::before,
 .mock-rwa-global-inner.page-inner--rich:not(.mock-five-zone)::before,
 .mock-treasuries-inner.page-inner--rich:not(.mock-five-zone)::before,
-.mock-stocks-inner.page-inner--rich:not(.mock-five-zone)::before {
+.mock-stocks-inner.page-inner--rich:not(.mock-five-zone)::before,
+.mock-participants-inner.page-inner--rich:not(.mock-five-zone)::before {
   display: none !important;
   content: none !important;
   padding: 0;
@@ -21,7 +22,8 @@
 .mock-tmmf-inner.page-inner--rich:not(.mock-five-zone) .site-header,
 .mock-rwa-global-inner.page-inner--rich:not(.mock-five-zone) .site-header,
 .mock-treasuries-inner.page-inner--rich:not(.mock-five-zone) .site-header,
-.mock-stocks-inner.page-inner--rich:not(.mock-five-zone) .site-header {
+.mock-stocks-inner.page-inner--rich:not(.mock-five-zone) .site-header,
+.mock-participants-inner.page-inner--rich:not(.mock-five-zone) .site-header {
   top: 0;
 }
 

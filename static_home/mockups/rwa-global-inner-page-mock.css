@@ -497,6 +497,14 @@
   padding: 0;
 }
 
+.mock-rwa-global-inner .etp-mock-table-meta > .rwa-table-actions {
+  margin-left: auto;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
 .mock-rwa-global-inner .etp-mock-table-meta__count.toolbar-note {
   margin: 0;
   font-size: 0.78rem;
@@ -508,7 +516,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  margin: 0 0 0 auto;
+  margin: 0;
   padding: 0.32rem 0.5rem;
   font-family: var(--font);
   font-size: 0.76rem;

@@ -107,7 +107,11 @@
       body.classList.contains("mock-etp-inner") ||
       body.classList.contains("mock-crypto-inner") ||
       body.classList.contains("mock-stable-inner") ||
-      body.classList.contains("mock-tmmf-inner")
+      body.classList.contains("mock-tmmf-inner") ||
+      body.classList.contains("mock-rwa-global-inner") ||
+      body.classList.contains("mock-treasuries-inner") ||
+      body.classList.contains("mock-stocks-inner") ||
+      body.classList.contains("mock-participants-inner")
     );
   }
 
