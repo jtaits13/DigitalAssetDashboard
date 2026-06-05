@@ -1,5 +1,9 @@
 /* U.S. Treasuries inner page mock — banner + scoped overrides */
 
+.mock-treasuries-inner {
+  --stable-dash-panel-min: 23rem;
+}
+
 .mock-treasuries-inner.mock-rwa-global-inner::before {
   content: "Design mock — U.S. Treasuries inner page · not linked from production · open mockups/treasuries-inner-page-mock.html";
 }
@@ -23,4 +27,29 @@
 
 .mock-treasuries-inner .etp-mock-table-block + .etp-mock-table-block {
   margin-top: var(--etp-mock-gap-lg, 1.2rem);
+}
+
+.mock-treasuries-inner .etp-mock-dashboard {
+  align-items: stretch;
+}
+
+.mock-treasuries-inner .etp-mock-dash__panel--chart,
+.mock-treasuries-inner .etp-mock-dash__panel--movers {
+  min-height: var(--stable-dash-panel-min);
+}
+
+.mock-treasuries-inner .etp-mock-dash__panel--chart .stable-dash-chart-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 12rem;
+  margin-bottom: 0.35rem;
+}
+
+.mock-treasuries-inner .etp-mock-dash__panel--movers #js-deep-share-movers,
+.mock-treasuries-inner .etp-mock-dash__panel--movers #js-treasuries-share-movers {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }

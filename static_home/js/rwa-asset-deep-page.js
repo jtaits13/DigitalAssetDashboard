@@ -330,8 +330,18 @@
     function isMockParityLayout() {
       return (
         document.body.classList.contains("mock-stable-inner") ||
-        document.body.classList.contains("mock-tmmf-inner")
+        document.body.classList.contains("mock-tmmf-inner") ||
+        document.body.classList.contains("mock-treasuries-inner") ||
+        document.body.classList.contains("mock-stocks-inner")
       );
+    }
+
+    function getMockPageMode() {
+      if (document.body.classList.contains("mock-stable-inner")) return "stablecoins";
+      if (document.body.classList.contains("mock-tmmf-inner")) return "mmf";
+      if (document.body.classList.contains("mock-treasuries-inner")) return "treasuries";
+      if (document.body.classList.contains("mock-stocks-inner")) return "stocks";
+      return "";
     }
 
     function renderConcBarRows(items) {
@@ -439,13 +449,45 @@
           largestFund +
           "</span></div></div></div>";
       }
+
+      if (mode === "treasuries" || mode === "stocks") {
+        var rwaNet = payload.networks || {};
+        var rwaNetRows = (rwaNet.rows_full || []).slice().sort(function (a, b) {
+          return (Number(b["Market Share"]) || 0) - (Number(a["Market Share"]) || 0);
+        });
+        if (!rwaNetRows.length) {
+          host.hidden = true;
+          return;
+        }
+        var rwaTopFive = rwaNetRows.slice(0, 5);
+        var rwaTopFiveSum = rwaTopFive.reduce(function (s, r) {
+          return s + (Number(r["Market Share"]) || 0);
+        }, 0);
+        var rwaNetItems = rwaTopFive.map(function (r) {
+          return { label: String(r.Network || "—"), pct: Number(r["Market Share"]) || 0 };
+        });
+        var rwaOtherPct = Math.max(0, 100 - rwaTopFiveSum);
+        if (rwaOtherPct > 0.15) rwaNetItems.push({ label: "Other", pct: rwaOtherPct });
+        var rwaAssetLabel = mode === "treasuries" ? "U.S. Treasuries" : "tokenized stocks";
+        host.hidden = false;
+        host.innerHTML =
+          '<div class="etp-mock-insights__panel etp-mock-insights__panel--conc">' +
+          '<h3 class="etp-mock-insights__head">Network share (top 5)</h3>' +
+          '<p class="etp-mock-conc__dek">Share of distributed value by chain (RWA.xyz snapshot).</p>' +
+          '<div class="etp-mock-conc__rows etp-mock-conc__rows--grid" role="img" aria-label="Top five networks by ' +
+          esc(rwaAssetLabel) +
+          ' distributed value share">' +
+          renderConcBarRows(rwaNetItems) +
+          "</div></div>";
+      }
     }
 
-    function renderStableDashboard(payload) {
+    function renderAssetDashboard(payload) {
+      var pageMode = getMockPageMode();
       var dash = $("js-deep-dashboard");
       var chartEl = $("js-deep-dashboard-chart");
-      var moversEl = $("js-stable-share-movers");
-      if (!dash || !isMockParityLayout() || !document.body.classList.contains("mock-stable-inner")) return;
+      var moversEl = $("js-deep-share-movers") || $("js-stable-share-movers");
+      if (!dash || !isMockParityLayout() || !pageMode || pageMode === "mmf") return;
       var net = payload.networks;
       if (!net || !net.rows_full || !net.rows_full.length) {
         dash.hidden = true;
@@ -511,10 +553,18 @@
             );
           })
           .join("");
+        var moversFoot =
+          pageMode === "stablecoins"
+            ? "Top 15 networks by stablecoin value."
+            : pageMode === "treasuries"
+              ? "Top 15 networks by distributed value."
+              : "Top 15 networks by tokenized stock value.";
         moversEl.innerHTML =
           '<ul class="crypto-top-movers__list">' +
           items +
-          '</ul><p class="crypto-story-callout__note"><strong>30D Δ share</strong> is 30-day change in market share (%). Top 15 networks by stablecoin value.</p>';
+          '</ul><p class="crypto-story-callout__note"><strong>30D Δ share</strong> is 30-day change in market share (%). ' +
+          esc(moversFoot) +
+          "</p>";
       }
     }
 
@@ -712,9 +762,12 @@
     }
 
     function wireLeagueTableOnly(league, prefix, data, host) {
-      var introClass = document.body.classList.contains("mock-stable-inner")
-        ? "stable-mock-league-intro"
-        : "tmmf-mock-league-intro";
+      var introClass =
+        document.body.classList.contains("mock-stable-inner") ||
+        document.body.classList.contains("mock-treasuries-inner") ||
+        document.body.classList.contains("mock-stocks-inner")
+          ? "stable-mock-league-intro"
+          : "tmmf-mock-league-intro";
       host.innerHTML =
         '<div class="rwa-split-table-head inner-table-head">' +
         '<h2 class="subsection-head rwa-split-table-head__title">' +
@@ -1123,13 +1176,9 @@
       }
     }
 
-    var pageMode = document.body.classList.contains("mock-stable-inner")
-      ? "stablecoins"
-      : document.body.classList.contains("mock-tmmf-inner")
-        ? "mmf"
-        : "";
+    var pageMode = getMockPageMode();
     renderMockInsights(payload, pageMode);
-    renderStableDashboard(payload);
+    renderAssetDashboard(payload);
 
     if (document.body.classList.contains("mock-tmmf-inner")) {
       setOptionalDeepHtml("js-deep-extra-before-leagues", "");
@@ -1154,9 +1203,7 @@
       (netView && netView.actionRow) ||
       (fundsView && fundsView.actionRow) ||
       null;
-    var ctaBelowTables =
-      document.body.classList.contains("mock-stable-inner") ||
-      document.body.classList.contains("mock-tmmf-inner");
+    var ctaBelowTables = isMockParityLayout();
     if (
       appendRwaActionLink &&
       ctaTargetRow &&

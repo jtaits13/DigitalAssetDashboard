@@ -4,7 +4,10 @@
 .mock-etp-inner.page-inner--rich:not(.mock-five-zone)::before,
 .mock-crypto-inner.page-inner--rich:not(.mock-five-zone)::before,
 .mock-stable-inner.page-inner--rich:not(.mock-five-zone)::before,
-.mock-tmmf-inner.page-inner--rich:not(.mock-five-zone)::before {
+.mock-tmmf-inner.page-inner--rich:not(.mock-five-zone)::before,
+.mock-rwa-global-inner.page-inner--rich:not(.mock-five-zone)::before,
+.mock-treasuries-inner.page-inner--rich:not(.mock-five-zone)::before,
+.mock-stocks-inner.page-inner--rich:not(.mock-five-zone)::before {
   display: none !important;
   content: none !important;
   padding: 0;
@@ -15,7 +18,10 @@
 .mock-etp-inner.page-inner--rich:not(.mock-five-zone) .site-header,
 .mock-crypto-inner.page-inner--rich:not(.mock-five-zone) .site-header,
 .mock-stable-inner.page-inner--rich:not(.mock-five-zone) .site-header,
-.mock-tmmf-inner.page-inner--rich:not(.mock-five-zone) .site-header {
+.mock-tmmf-inner.page-inner--rich:not(.mock-five-zone) .site-header,
+.mock-rwa-global-inner.page-inner--rich:not(.mock-five-zone) .site-header,
+.mock-treasuries-inner.page-inner--rich:not(.mock-five-zone) .site-header,
+.mock-stocks-inner.page-inner--rich:not(.mock-five-zone) .site-header {
   top: 0;
 }
 
@@ -73,6 +79,81 @@
 .mock-stable-inner .etp-mock-dash__panel--movers .crypto-story-callout__note {
   padding: 0.55rem 0.65rem;
   line-height: 1.45;
+}
+
+.mock-treasuries-inner .etp-mock-dashboard,
+.mock-stocks-inner .etp-mock-dashboard,
+.mock-rwa-global-inner .etp-mock-dashboard {
+  --stable-dash-panel-min: 23rem;
+  align-items: stretch;
+}
+
+.mock-treasuries-inner .etp-mock-dash__panel--chart,
+.mock-stocks-inner .etp-mock-dash__panel--chart,
+.mock-rwa-global-inner .etp-mock-dash__panel--chart,
+.mock-treasuries-inner .etp-mock-dash__panel--movers,
+.mock-stocks-inner .etp-mock-dash__panel--movers,
+.mock-rwa-global-inner .etp-mock-dash__panel--movers {
+  min-height: var(--stable-dash-panel-min);
+}
+
+.mock-treasuries-inner .etp-mock-dash__panel--chart .stable-dash-chart-body,
+.mock-stocks-inner .etp-mock-dash__panel--chart .stable-dash-chart-body,
+.mock-rwa-global-inner .etp-mock-dash__panel--chart .stable-dash-chart-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 12rem;
+  margin-bottom: 0.35rem;
+}
+
+.mock-treasuries-inner .etp-mock-dash__panel--chart .stable-dash-chart-body .aum-chart-host:not(:empty),
+.mock-stocks-inner .etp-mock-dash__panel--chart .stable-dash-chart-body .aum-chart-host:not(:empty),
+.mock-rwa-global-inner .etp-mock-dash__panel--chart .stable-dash-chart-body .aum-chart-host:not(:empty),
+.mock-treasuries-inner .etp-mock-dash__panel--chart .stable-dash-chart-body .aum-chart-host .js-plotly-plot,
+.mock-stocks-inner .etp-mock-dash__panel--chart .stable-dash-chart-body .aum-chart-host .js-plotly-plot,
+.mock-rwa-global-inner .etp-mock-dash__panel--chart .stable-dash-chart-body .aum-chart-host .js-plotly-plot {
+  flex: 1 1 auto;
+  min-height: 12rem;
+  height: 100%;
+  max-height: none;
+  border: 1px solid rgb(42 95 130 / 0.12);
+  border-radius: 8px;
+  background: #f8fafc;
+  overflow: hidden;
+}
+
+.mock-treasuries-inner .etp-mock-dash__panel--chart .etp-mock-chart__cap,
+.mock-stocks-inner .etp-mock-dash__panel--chart .etp-mock-chart__cap,
+.mock-rwa-global-inner .etp-mock-dash__panel--chart .etp-mock-chart__cap {
+  margin: auto 0 0;
+  font-size: 0.76rem;
+  line-height: 1.4;
+}
+
+.mock-treasuries-inner .etp-mock-dash__panel--chart .etp-mock-chart__method,
+.mock-stocks-inner .etp-mock-dash__panel--chart .etp-mock-chart__method,
+.mock-rwa-global-inner .etp-mock-dash__panel--chart .etp-mock-chart__method {
+  margin: 0.3rem 0 0;
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.mock-treasuries-inner .etp-mock-dash__panel--movers,
+.mock-stocks-inner .etp-mock-dash__panel--movers,
+.mock-rwa-global-inner .etp-mock-dash__panel--movers {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.mock-treasuries-inner .etp-mock-dash__panel--movers #js-deep-share-movers,
+.mock-stocks-inner .etp-mock-dash__panel--movers #js-deep-share-movers,
+.mock-rwa-global-inner .etp-mock-dash__panel--movers #js-deep-share-movers {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .etp-mock-dash__panel--chart .aum-chart-host:not(:empty)::before,
@@ -265,8 +346,19 @@
 
 /* Hide redundant band label when page title is the h1 */
 .site-experience.page-rwa-deep-stablecoins #js-deep-band,
-.site-experience.page-rwa-deep-mmf #js-deep-band {
+.site-experience.page-rwa-deep-mmf #js-deep-band,
+.site-experience.page-rwa-deep-treasuries #js-deep-band,
+.site-experience.page-rwa-deep-stocks #js-deep-band {
   display: none;
+}
+
+.site-experience.page-rwa-deep-treasuries.page-inner--rich .back-link--below-header a:hover,
+.site-experience.page-rwa-deep-treasuries.page-inner--rich .page-shell > .back-link a:hover,
+.site-experience.page-rwa-deep-stocks.page-inner--rich .back-link--below-header a:hover,
+.site-experience.page-rwa-deep-stocks.page-inner--rich .page-shell > .back-link a:hover {
+  color: var(--hx-rwa);
+  border-color: rgb(42 95 130 / 0.35);
+  background: var(--hx-rwa-soft);
 }
 
 /* —— Key observations card (mock-style shaded callout) —— */

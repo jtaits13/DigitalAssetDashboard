@@ -533,7 +533,10 @@
 .mock-etp-inner .etp-mock-dashboard,
 .mock-crypto-inner .etp-mock-dashboard,
 .mock-tmmf-inner .etp-mock-dashboard,
-.mock-stable-inner .etp-mock-dashboard {
+.mock-stable-inner .etp-mock-dashboard,
+.mock-rwa-global-inner .etp-mock-dashboard,
+.mock-treasuries-inner .etp-mock-dashboard,
+.mock-stocks-inner .etp-mock-dashboard {
   gap: var(--etp-mock-gap);
   margin-bottom: var(--etp-mock-gap-lg);
 }

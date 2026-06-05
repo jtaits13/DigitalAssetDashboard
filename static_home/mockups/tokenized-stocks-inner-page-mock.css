@@ -1,5 +1,9 @@
 /* Tokenized Stocks inner page mock — banner + scoped overrides */
 
+.mock-stocks-inner {
+  --stable-dash-panel-min: 23rem;
+}
+
 .mock-stocks-inner.mock-rwa-global-inner::before {
   content: "Design mock — Tokenized Stocks inner page · not linked from production · open mockups/tokenized-stocks-inner-page-mock.html";
 }
@@ -23,4 +27,29 @@
 
 .mock-stocks-inner .etp-mock-table-block + .etp-mock-table-block {
   margin-top: var(--etp-mock-gap-lg, 1.2rem);
+}
+
+.mock-stocks-inner .etp-mock-dashboard {
+  align-items: stretch;
+}
+
+.mock-stocks-inner .etp-mock-dash__panel--chart,
+.mock-stocks-inner .etp-mock-dash__panel--movers {
+  min-height: var(--stable-dash-panel-min);
+}
+
+.mock-stocks-inner .etp-mock-dash__panel--chart .stable-dash-chart-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 12rem;
+  margin-bottom: 0.35rem;
+}
+
+.mock-stocks-inner .etp-mock-dash__panel--movers #js-deep-share-movers,
+.mock-stocks-inner .etp-mock-dash__panel--movers #js-stocks-share-movers {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
