@@ -17,6 +17,8 @@
     return S && typeof S.assetUrl === "function" ? S.assetUrl(rel) : rel;
   }
 
+  var CHART_FONT = 'Outfit, "Segoe UI", system-ui, sans-serif';
+
   function estimateChartMargins(yLabels, textLabels, shellWidth) {
     var i;
     var maxLab = 4;
@@ -74,7 +76,7 @@
       tickangle: -30,
       tickvals: vals,
       ticktext: vals.map(formatUsdAxisTick),
-      tickfont: { size: width < 220 ? 10 : 11 },
+      tickfont: { family: CHART_FONT, size: width < 220 ? 10 : 11, color: "#1F4C67" },
     };
   }
 
@@ -151,7 +153,7 @@
       showlegend: false,
       text: text,
       textposition: "outside",
-      textfont: { size: 11, color: "#3E6A7A" },
+      textfont: { family: CHART_FONT, size: 11, color: "#3E6A7A" },
       cliponaxis: false,
       hovertemplate:
         "<b>%{y}</b><br>Value: %{x:$,.0f}<br>%{text}<extra></extra>",
@@ -175,12 +177,12 @@
       bargap: 0.14,
       paper_bgcolor: "rgba(0,0,0,0)",
       plot_bgcolor: "#f8fafc",
-      font: { size: 12, color: "#1F4C67" },
+      font: { family: CHART_FONT, size: 12, color: "#1F4C67" },
       showlegend: false,
       xaxis: {
         title: {
           text: String(valCol) + " (USD)",
-          font: { size: 12, color: "#1F4C67" },
+          font: { family: CHART_FONT, size: 12, color: "#1F4C67" },
           standoff: 18,
         },
         automargin: true,
@@ -198,6 +200,7 @@
         showticklabels: true,
         automargin: true,
         ticklabelstandoff: 8,
+        tickfont: { family: CHART_FONT, size: 11, color: "#1F4C67" },
       },
     };
 
@@ -462,8 +465,14 @@
         );
       }
       if (moversEl) {
-        var rows = net.rows_full
+        var valCol = net.value_column || "Total Value";
+        var topNetworks = net.rows_full
           .slice()
+          .sort(function (a, b) {
+            return (Number(b[valCol]) || 0) - (Number(a[valCol]) || 0);
+          })
+          .slice(0, 15);
+        var rows = topNetworks
           .filter(function (r) {
             return r["30D Δ share"] != null && isFinite(Number(r["30D Δ share"]));
           })
@@ -495,7 +504,7 @@
               '">' +
               (n >= 0 ? "+" : "") +
               n.toFixed(2) +
-              " pp</span></div>" +
+              "%</span></div>" +
               '<p class="crypto-top-mover__ctx">' +
               esc(ctx) +
               "</p></li>"
@@ -505,7 +514,7 @@
         moversEl.innerHTML =
           '<ul class="crypto-top-movers__list">' +
           items +
-          '</ul><p class="crypto-story-callout__note"><strong>30D Δ share</strong> is percentage-point change in market share (pp).</p>';
+          '</ul><p class="crypto-story-callout__note"><strong>30D Δ share</strong> is 30-day change in market share (%). Top 15 networks by stablecoin value.</p>';
       }
     }
 
