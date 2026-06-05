@@ -453,11 +453,11 @@
         drawHorizontalBar(
           chartEl,
           net.rows_full,
-          Object.assign({}, net, { split_body_height_px: 210 }),
+          Object.assign({}, net, { split_body_height_px: 260 }),
           Object.assign({}, payload, {
             chart_max_bars: 5,
             chart_bar_thickness_bars: 12,
-            chart_height_px: 210,
+            chart_height_px: 260,
           })
         );
       }
@@ -505,7 +505,7 @@
         moversEl.innerHTML =
           '<ul class="crypto-top-movers__list">' +
           items +
-          '</ul><p class="crypto-story-callout__note"><strong>30D Δ share</strong> is change in market-share percentage points (pp), not percent of total. Compare with the networks table below.</p>';
+          '</ul><p class="crypto-story-callout__note"><strong>30D Δ share</strong> is percentage-point change in market share (pp).</p>';
       }
     }
 
@@ -576,7 +576,7 @@
           '<div class="etp-mock-table-meta" aria-live="polite">' +
           '<p class="etp-mock-table-meta__count toolbar-note" id="tmmf-funds-note"></p>' +
           '<div class="rwa-table-actions" id="tmmf-funds-meta-actions"></div></div>' +
-          '<div class="table-wrap table-wrap--scroll tmmf-funds-table-wrap" data-fullscreen-title="Tokenized Money Market Fund Population">' +
+          '<div class="table-wrap table-wrap--scroll rwa-split-table-scroll tmmf-funds-table-wrap" data-fullscreen-title="Tokenized Money Market Fund Population">' +
           '<table class="data-table data-table--dense data-table--sortable" aria-label="Tokenized Money Market Fund Population">' +
           '<thead><tr id="tmmf-funds-thead"></tr></thead><tbody id="tmmf-funds-tbody"></tbody></table></div>' +
           '<div class="rwa-table-footnote-row">' +
@@ -595,7 +595,7 @@
           '<h3 class="subsection-head rwa-split-table-head__title">' +
           heading +
           '</h3><div class="rwa-split-table-head__actions" id="tmmf-funds-table-actions"></div></div>' +
-          '<div class="table-wrap table-wrap--scroll tmmf-funds-table-wrap" data-fullscreen-title="Tokenized Money Market Fund Population">' +
+          '<div class="table-wrap table-wrap--scroll rwa-split-table-scroll tmmf-funds-table-wrap" data-fullscreen-title="Tokenized Money Market Fund Population">' +
           '<table class="data-table data-table--dense" aria-label="Tokenized Money Market Fund Population">' +
           '<thead><tr id="tmmf-funds-thead"></tr></thead><tbody id="tmmf-funds-tbody"></tbody></table></div>';
       }

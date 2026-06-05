@@ -13,9 +13,9 @@
     <link rel="stylesheet" href="styles.css?v=85" />
     <link rel="stylesheet" href="css/site-experience.css?v=21" />
     <link rel="stylesheet" href="css/inner-page-experience.css?v=23" />
-    <link rel="stylesheet" href="css/inner-page-zone-parity.css?v=4" />
+    <link rel="stylesheet" href="css/inner-page-zone-parity.css?v=5" />
     <link rel="stylesheet" href="mockups/etp-inner-page-mock.css?v=19" />
-    <link rel="stylesheet" href="mockups/stable-inner-page-mock.css?v=7" />
+    <link rel="stylesheet" href="mockups/stable-inner-page-mock.css?v=8" />
   </head>
   <body
     class="page-rwa-deep page-rwa-deep-stablecoins site-experience page-inner--rich mock-stable-inner"
@@ -109,13 +109,19 @@
             <h2 class="u-vh" id="js-deep-dashboard-h">Chart and share movers</h2>
             <div class="etp-mock-dash__panel etp-mock-dash__panel--chart">
               <h3 class="etp-mock-dash__head">Stablecoin market cap by network</h3>
-              <div id="js-deep-dashboard-chart" class="aum-chart-host" role="img" aria-label="Stablecoin market cap by network"></div>
+              <div class="stable-dash-chart-body">
+                <div
+                  id="js-deep-dashboard-chart"
+                  class="aum-chart-host"
+                  role="img"
+                  aria-label="Stablecoin market cap by network"
+                ></div>
+              </div>
               <p class="etp-mock-chart__cap">
-                Top <strong>5</strong> networks by total value (labels include market share).
+                Top <strong>5</strong> networks by market cap (labels include share).
               </p>
               <p class="etp-mock-chart__method">
-                Horizontal bar chart uses Plotly. KPI totals follow RWA.xyz Stablecoins Overview; all KPI % changes are
-                <strong>30-day (30D)</strong>.
+                Plotly horizontal bars synced to the searchable networks table below.
               </p>
             </div>
             <div class="etp-mock-dash__panel etp-mock-dash__panel--movers">
@@ -160,7 +166,7 @@
     <script defer src="js/snapshot-kpi-shared.js?v=7"></script>
     <script defer src="js/crypto-kpi-shared.js?v=11"></script>
     <script defer src="js/rwa-onchain-home.js?v=22"></script>
-    <script defer src="js/rwa-asset-deep-page.js?v=23"></script>
+    <script defer src="js/rwa-asset-deep-page.js?v=24"></script>
     <script defer src="js/site-experience.js?v=1"></script>
   </body>
 </html>

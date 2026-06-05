@@ -3273,9 +3273,16 @@ body.page-article-feed .etf-news-nav {
   margin-bottom: 0;
 }
 
-/* ~10 dense rows visible; scroll for the rest of the curated population */
-.page-rwa-deep-mmf .tmmf-funds-table-wrap.table-wrap--scroll {
-  max-height: min(22rem, 55vh);
+/* ~11 dense body rows + header; match networks / platforms league tables */
+.page-rwa-deep-mmf {
+  --tmmf-table-scroll-height: var(--rwa-split-body-height, 420px);
+}
+
+.page-rwa-deep-mmf .tmmf-funds-table-wrap.table-wrap--scroll,
+.page-rwa-deep-mmf .rwa-deep-league-panel .table-wrap--scroll,
+.page-rwa-deep-mmf .rwa-deep-league-panel .rwa-split-table-scroll {
+  height: var(--tmmf-table-scroll-height);
+  max-height: var(--tmmf-table-scroll-height);
 }
 
 .page-rwa-deep-mmf .tmmf-funds-table-wrap thead th {

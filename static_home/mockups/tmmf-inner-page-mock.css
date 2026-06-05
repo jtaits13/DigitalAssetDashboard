@@ -1,6 +1,7 @@
 /* Tokenized MMF inner page mock — zone tokens + layout (parity with crypto / stable mocks) */
 
 .mock-tmmf-inner {
+  --tmmf-table-scroll-height: var(--rwa-split-body-height, 420px);
   --hx-etp: #3e5c74;
   --hx-etp-bright: #507188;
   --hx-etp-dark: #31485c;
@@ -127,6 +128,13 @@
   font-size: 0.72rem;
   color: var(--muted);
   white-space: nowrap;
+}
+
+/* Scroll viewport — header + ~11 dense body rows (parity across fund / league tables) */
+.mock-tmmf-inner .etp-mock-table-block .table-wrap--scroll {
+  height: var(--tmmf-table-scroll-height);
+  max-height: var(--tmmf-table-scroll-height);
+  overflow: auto;
 }
 
 /* Table sections — white panel parity with insights / league blocks */

@@ -199,17 +199,18 @@
             <h2 class="u-vh" id="dashboard-heading">Chart and share movers</h2>
             <div class="etp-mock-dash__panel etp-mock-dash__panel--chart">
               <h3 class="etp-mock-dash__head">Stablecoin market cap by network</h3>
-              <div class="etp-mock-chart" role="img" aria-label="Mock stablecoin market cap by network chart">
-                <div class="etp-mock-chart__axis" aria-hidden="true">
-                  <span>Jun</span><span>Sep</span><span>Dec</span><span>Mar</span><span>Jun</span>
+              <div class="stable-dash-chart-body">
+                <div class="etp-mock-chart" role="img" aria-label="Mock stablecoin market cap by network chart">
+                  <div class="etp-mock-chart__axis" aria-hidden="true">
+                    <span>ETH</span><span>TRON</span><span>Solana</span><span>BNB</span><span>Arbitrum</span>
+                  </div>
                 </div>
               </div>
               <p class="etp-mock-chart__cap">
-                Top <strong>12</strong> networks by total value on production (labels include market share).
+                Top <strong>5</strong> networks by market cap (labels include share).
               </p>
               <p class="etp-mock-chart__method">
-                Horizontal bar chart on production uses Plotly. KPI totals follow RWA.xyz Stablecoins Overview; all KPI
-                % changes are <strong>30-day (30D)</strong>.
+                Plotly horizontal bars synced to the searchable networks table below.
               </p>
             </div>
             <div class="etp-mock-dash__panel etp-mock-dash__panel--movers">
@@ -250,8 +251,7 @@
                   </li>
                 </ul>
                 <p class="crypto-story-callout__note">
-                  <strong>30D &Delta; share</strong> is change in market-share percentage points (pp), not percent of
-                  total. Compare with the networks table below.
+                  <strong>30D &Delta; share</strong> is percentage-point change in market share (pp).
                 </p>
               </div>
             </div>

@@ -1017,8 +1017,10 @@
   margin-top: 0.35rem;
 }
 
-.page-rwa-deep-mmf .tmmf-funds-table-wrap.table-wrap--scroll {
-  max-height: min(22rem, 55vh);
+.page-rwa-deep-mmf .tmmf-funds-table-wrap.table-wrap--scroll,
+.page-rwa-deep-mmf .rwa-deep-league-panel .table-wrap--scroll {
+  height: var(--tmmf-table-scroll-height, var(--rwa-split-body-height, 420px));
+  max-height: var(--tmmf-table-scroll-height, var(--rwa-split-body-height, 420px));
 }
 
 .page-rwa-deep-mmf .tmmf-funds-table-wrap thead th {

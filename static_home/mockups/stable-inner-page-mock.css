@@ -10,6 +10,7 @@
   --hx-etp-head: linear-gradient(180deg, #f0f6fa 0%, #ffffff 100%);
   --hx-stripe: var(--hx-etp-bright);
   --zone-badge-dark: var(--hx-etp-dark);
+  --stable-dash-panel-min: 23rem;
 }
 
 .mock-stable-inner::before {
@@ -32,6 +33,7 @@
 
 .mock-stable-inner .etp-mock-insights__head,
 .mock-stable-inner .etp-mock-dash__head {
+  margin-bottom: 0.6rem;
   color: var(--hx-etp-dark);
 }
 
@@ -73,22 +75,52 @@
   }
 }
 
-/* Dashboard — compact chart column; avoid stretching share-movers panel */
+/* Dashboard — equal-height chart + share-movers columns */
 .mock-stable-inner .etp-mock-dashboard {
-  align-items: start;
+  align-items: stretch;
 }
 
-.mock-stable-inner .etp-mock-dash__panel--chart .aum-chart-host {
-  min-height: 0;
-  height: 210px;
-  max-height: 210px;
-}
-
+.mock-stable-inner .etp-mock-dash__panel--chart,
 .mock-stable-inner .etp-mock-dash__panel--movers {
-  min-height: 0;
+  min-height: var(--stable-dash-panel-min);
 }
 
-/* Chart */
+.mock-stable-inner .etp-mock-dash__panel--chart .stable-dash-chart-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 12rem;
+  margin-bottom: 0.35rem;
+}
+
+.mock-stable-inner .etp-mock-dash__panel--chart .stable-dash-chart-body .aum-chart-host,
+.mock-stable-inner .etp-mock-dash__panel--chart .stable-dash-chart-body .etp-mock-chart {
+  flex: 1 1 auto;
+  min-height: 12rem;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  border: 1px solid rgb(var(--hx-etp-bright-rgb) / 0.12);
+  border-radius: 8px;
+  background: #f8fafc;
+  overflow: hidden;
+}
+
+.mock-stable-inner .etp-mock-dash__panel--chart .etp-mock-chart__cap {
+  margin: auto 0 0;
+  font-size: 0.76rem;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.mock-stable-inner .etp-mock-dash__panel--chart .etp-mock-chart__method {
+  margin: 0.3rem 0 0;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+/* Chart placeholder (static mock) */
 .mock-stable-inner .etp-mock-chart {
   background:
     linear-gradient(180deg, rgb(var(--hx-etp-bright-rgb) / 0.05) 0%, transparent 40%),
@@ -103,7 +135,7 @@
 }
 
 .mock-stable-inner .etp-mock-chart::before {
-  content: "Top networks by stablecoin market cap (mock chart area)";
+  content: "Top 5 networks by stablecoin market cap (mock chart area)";
   color: rgb(var(--hx-etp-dark) / 0.55);
 }
 
@@ -182,11 +214,11 @@
 
 .mock-stable-inner .etp-mock-dash__panel--movers .crypto-story-callout__note {
   margin-top: auto;
-  padding: 0.5rem 0.55rem;
+  padding: 0.55rem 0.65rem;
   border-radius: 8px;
   background: rgb(var(--hx-etp-rgb) / 0.06);
   font-size: 0.72rem;
-  line-height: 1.4;
+  line-height: 1.45;
 }
 
 .mock-stable-inner .btn-primary {
@@ -206,4 +238,3 @@
 .mock-stable-inner .back-link--below-header a:hover {
   color: var(--hx-etp-bright);
 }
-
