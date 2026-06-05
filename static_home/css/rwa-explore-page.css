@@ -1,0 +1,317 @@
+/* RWA Explore hub — production (Assets · Participants) */
+
+.rwa-explore-inner {
+  --rwa-explore-preview-gap: 1.5rem;
+  --rwa-explore-dash-min: 16rem;
+}
+
+.rwa-explore-inner .page-intro__dek {
+  font-size: 0.88rem;
+  line-height: 1.55;
+  max-width: 46rem;
+}
+
+.rwa-explore-inner .etp-mock-zone__body > .home-related-chips,
+.rwa-explore-inner .home-zone__body > .home-related-chips {
+  margin-bottom: 0.85rem;
+}
+
+.rwa-explore-inner .rwa-explore-mock-intro,
+.rwa-explore-inner .rwa-exat-intro.rwa-explore-mock-intro {
+  margin: 0 0 var(--rwa-explore-preview-gap);
+  padding: 0.75rem 0.95rem;
+  border: 1px solid rgb(var(--hx-rwa-bright-rgb) / 0.18);
+  border-radius: 10px;
+  background: rgb(var(--hx-rwa-rgb) / 0.04);
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--ink-muted, #4a5f73);
+}
+
+.rwa-explore-inner .rwa-explore-mock-intro strong,
+.rwa-explore-inner .rwa-exat-intro.rwa-explore-mock-intro strong {
+  color: var(--hx-rwa-dark);
+}
+
+.rwa-explore-inner .rwa-explore-mock-jump {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.55rem;
+  margin: 0 0 var(--rwa-explore-preview-gap);
+}
+
+.rwa-explore-inner .rwa-explore-mock-jump__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.rwa-explore-inner .rwa-explore-mock-jump__link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.38rem 0.72rem;
+  border: 1px solid rgb(var(--hx-rwa-bright-rgb) / 0.22);
+  border-radius: 999px;
+  background: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--hx-rwa);
+  text-decoration: none;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.rwa-explore-inner .rwa-explore-mock-jump__link:hover {
+  background: var(--hx-rwa-soft, #eaf0f6);
+  border-color: var(--hx-rwa-bright);
+}
+
+.rwa-explore-inner .rwa-explore-previews,
+.rwa-explore-inner .rwa-exat-sections.rwa-explore-previews {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--rwa-explore-preview-gap) + 0.35rem);
+}
+
+.rwa-explore-inner .rwa-explore-preview,
+.rwa-explore-inner .rwa-exat-section.rwa-explore-preview {
+  padding: 1.15rem 1.15rem 1.25rem;
+  border: 1px solid rgb(var(--hx-rwa-bright-rgb) / 0.16);
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgb(var(--hx-rwa-rgb) / 0.03) 0%, #fff 42%);
+  box-shadow: 0 1px 3px rgb(var(--hx-rwa-rgb) / 0.06);
+  scroll-margin-top: 5.5rem;
+  margin-bottom: 0;
+}
+
+.rwa-explore-inner .rwa-explore-preview__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  margin-bottom: 1.05rem;
+  padding-bottom: 0.95rem;
+  border-bottom: 1px solid rgb(var(--hx-rwa-bright-rgb) / 0.12);
+}
+
+.rwa-explore-inner .rwa-explore-preview__eyebrow {
+  margin: 0 0 0.2rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--hx-rwa-bright);
+}
+
+.rwa-explore-inner .rwa-explore-preview__head-copy {
+  flex: 1 1 18rem;
+  min-width: 0;
+}
+
+.rwa-explore-inner .rwa-explore-preview__head .subsection-head {
+  margin: 0 0 0.4rem;
+  font-size: clamp(1.12rem, 2.2vw, 1.36rem);
+  font-weight: 780;
+  color: var(--hx-rwa-dark);
+}
+
+.rwa-explore-inner .rwa-explore-preview__dek {
+  margin: 0;
+  max-width: 48rem;
+  font-size: 0.82rem;
+  line-height: 1.52;
+  color: var(--muted);
+}
+
+.rwa-explore-inner .rwa-explore-preview__head-link {
+  flex-shrink: 0;
+  align-self: center;
+  font-size: 0.82rem;
+  font-weight: 650;
+  line-height: 1.3;
+  color: var(--hx-rwa);
+  text-decoration: none;
+  white-space: nowrap;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid transparent;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.rwa-explore-inner .rwa-explore-preview__head-link:hover {
+  color: var(--hx-rwa-dark);
+  border-bottom-color: rgb(var(--hx-rwa-bright-rgb) / 0.45);
+}
+
+.rwa-explore-inner .rwa-explore-preview .etp-mock-freshness,
+.rwa-explore-inner .rwa-explore-preview .data-freshness.etp-mock-freshness {
+  margin-bottom: 0.55rem;
+  font-size: 0.72rem;
+}
+
+.rwa-explore-inner .rwa-explore-preview .etp-mock-snapshot {
+  margin-bottom: 1.05rem;
+}
+
+.rwa-explore-inner .rwa-explore-preview .etp-mock-snapshot__note {
+  font-size: 0.72rem;
+  margin-top: 0.5rem;
+}
+
+.rwa-explore-inner .rwa-explore-preview .rwa-kpi-row--home-grid {
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+}
+
+@media (min-width: 900px) {
+  .rwa-explore-inner .rwa-explore-preview--participants .rwa-kpi-row--home-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+.rwa-explore-inner .rwa-explore-preview .etp-mock-table-block {
+  margin-top: 0.25rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid rgb(var(--hx-rwa-bright-rgb) / 0.1);
+}
+
+.rwa-explore-inner .rwa-explore-preview__table-head {
+  margin-bottom: 0.55rem;
+}
+
+.rwa-explore-inner .rwa-explore-preview .rwa-split-table-head__title {
+  font-size: 0.98rem;
+}
+
+.rwa-explore-inner .rwa-explore-preview__table-head .subsection-head {
+  margin: 0;
+  font-size: 0.98rem;
+  color: var(--hx-rwa-dark);
+}
+
+.rwa-explore-inner .rwa-explore-preview .stable-mock-league-intro,
+.rwa-explore-inner .rwa-explore-preview .rwa-explore-preview__table-intro {
+  margin: 0 0 0.7rem;
+  max-width: 52rem;
+  font-size: 0.8rem;
+  line-height: 1.48;
+  color: var(--ink-muted, #4a5f73);
+}
+
+.rwa-explore-inner .rwa-explore-preview .stable-mock-league-intro strong,
+.rwa-explore-inner .rwa-explore-preview .participants-mock-league-intro strong {
+  color: var(--hx-rwa-dark);
+}
+
+.rwa-explore-inner .rwa-explore-preview .etp-mock-table-search {
+  margin-bottom: 0.45rem;
+}
+
+.rwa-explore-inner .rwa-explore-preview .table-wrap--scroll,
+.rwa-explore-inner .rwa-explore-preview .rwa-exat-table-wrap {
+  width: 100%;
+  max-height: none;
+  overflow-x: auto;
+}
+
+.rwa-explore-inner .rwa-explore-preview .data-table {
+  width: 100%;
+  min-width: 44rem;
+}
+
+.rwa-explore-inner .rwa-explore-preview .etp-mock-table-meta {
+  margin-bottom: 0.35rem;
+}
+
+.rwa-explore-inner .rwa-explore-preview .rwa-table-footnote-row {
+  margin-top: 0.55rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgb(var(--hx-rwa-bright-rgb) / 0.10);
+}
+
+.rwa-explore-inner .rwa-explore-preview .rwa-table-footnote-row__cap,
+.rwa-explore-inner .rwa-explore-preview .rwa-exat-preview-note {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.rwa-explore-inner .rwa-explore-preview .etp-mock-bottom-cta,
+.rwa-explore-inner .rwa-explore-preview .rwa-exat-cta-row.etp-mock-bottom-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem 0.75rem;
+  margin-top: 1.1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgb(var(--hx-rwa-bright-rgb) / 0.1);
+}
+
+.rwa-explore-inner .rwa-explore-preview .etp-mock-bottom-cta .btn,
+.rwa-explore-inner .rwa-explore-preview .rwa-exat-cta-row .btn {
+  margin: 0;
+}
+
+.rwa-explore-inner .etp-mock-table-meta__expand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0 0 0 auto;
+  padding: 0.32rem 0.5rem;
+  font-family: var(--font);
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--hx-rwa-dark);
+  background: #fff;
+  border: 1px solid rgb(var(--hx-rwa-bright-rgb) / 0.22);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.rwa-explore-inner .etp-mock-table-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.65rem;
+  margin: 0.4rem 0 0.35rem;
+}
+
+.rwa-explore-inner .etp-mock-table-meta__count.toolbar-note {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.rwa-explore-inner .etp-mock-zone__body > .timestamp-foot,
+.rwa-explore-inner .home-zone__body > .timestamp-foot {
+  margin-top: 1.25rem;
+  font-size: 0.72rem;
+}
+
+@media (max-width: 640px) {
+  .rwa-explore-inner .rwa-explore-preview__head {
+    align-items: flex-start;
+  }
+
+  .rwa-explore-inner .rwa-explore-preview__head-link {
+    align-self: flex-start;
+  }
+
+  .rwa-explore-inner .rwa-explore-preview .etp-mock-bottom-cta,
+  .rwa-explore-inner .rwa-explore-preview .rwa-exat-cta-row.etp-mock-bottom-cta {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .rwa-explore-inner .rwa-explore-preview .etp-mock-bottom-cta .btn,
+  .rwa-explore-inner .rwa-explore-preview .rwa-exat-cta-row .btn {
+    width: 100%;
+    text-align: center;
+  }
+}

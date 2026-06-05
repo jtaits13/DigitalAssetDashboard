@@ -13,9 +13,15 @@
     <link rel="stylesheet" href="styles.css?v=87" />
     <link rel="stylesheet" href="css/site-experience.css?v=21" />
     <link rel="stylesheet" href="css/inner-page-experience.css?v=24" />
-    <link rel="stylesheet" href="css/inner-page-zone-parity.css?v=7" />
+    <link rel="stylesheet" href="css/inner-page-zone-parity.css?v=11" />
+    <link rel="stylesheet" href="mockups/etp-inner-page-mock.css?v=22" />
+    <link rel="stylesheet" href="mockups/rwa-global-inner-page-mock.css?v=9" />
+    <link rel="stylesheet" href="css/rwa-explore-page.css?v=1" />
   </head>
-  <body class="page-rwa-explore-mp site-experience page-inner--rich" data-explore-json="rwa_explore_market_participant.json">
+  <body
+    class="page-rwa-explore-mp site-experience page-inner--rich mock-rwa-global-inner rwa-explore-inner"
+    data-explore-json="rwa_explore_market_participant.json"
+  >
     <header class="site-header" role="banner">
       <div class="site-header__inner">
         <a class="site-brand" href="index.html">Digital Assets Dashboard</a>
@@ -36,7 +42,9 @@
                 </ul>
               </li>
               <li class="site-nav__item site-nav__item--flyout">
-                <a href="rwa-explore-market-participant.html" class="site-nav__parent-link is-active">RWA · Participants</a>
+                <a href="rwa-explore-market-participant.html" class="site-nav__parent-link is-active"
+                  >RWA · Participants</a
+                >
                 <ul class="site-nav__sub site-nav__sub--nested" aria-label="RWA participant pages">
                   <li><a href="rwa-participants-networks.html">Networks</a></li>
                   <li><a href="rwa-participants-platforms.html">Platforms</a></li>
@@ -58,33 +66,47 @@
     </header>
 
     <div class="page-back-below-header">
-      <p class="back-link rwa-exat-back back-link--below-header">
-        <a data-exat-link="global" href="rwa-global.html">← RWA Global Market Overview</a>
+      <p class="back-link back-link--below-header">
+        <a data-exat-link="global" href="rwa-global.html">&larr; RWA Global Market Overview</a>
       </p>
     </div>
 
-    <main class="page-shell">
-      <article class="hub-section hub-section--panel inner-rich-zone zone--rwa home-zone home-zone--rwa">
+    <main class="page-shell etp-mock-shell">
+      <article
+        class="hub-section hub-section--panel inner-rich-zone zone--rwa home-zone home-zone--rwa etp-mock-zone"
+        aria-labelledby="page-title"
+      >
         <div class="home-zone__stripe" aria-hidden="true"></div>
         <header class="home-zone__head">
           <span class="home-zone__badge" aria-hidden="true">RWA</span>
           <div class="home-zone__titles">
             <p class="band-label teal">RWA · Participants</p>
-        <h1 class="page-intro__title">Explore by Market Participant</h1>
-        <div class="page-intro__dek" id="js-exat-subtitle"></div>
-        <div class="rwa-exat-intro" id="js-exat-intro"></div>
+            <h1 class="page-intro__title" id="page-title">Explore by Market Participant</h1>
+            <div class="section-dek section-dek--wide page-intro__dek" id="js-exat-subtitle"></div>
           </div>
         </header>
-        <div class="home-zone__body inner-rich-zone__body">
+        <div class="home-zone__body inner-rich-zone__body etp-mock-zone__body">
+          <div class="home-related-chips" aria-label="Related pages">
+            <span class="home-related-chips__label">Related</span>
+            <a class="home-chip" href="rwa-global.html">RWA market overview</a>
+            <a class="home-chip" href="rwa-explore-asset-type.html">Explore by asset type</a>
+            <a class="home-chip" href="rwa-participants-networks.html">Networks</a>
+            <a class="home-chip" href="rwa-participants-platforms.html">Platforms</a>
+            <a class="home-chip" href="rwa-participants-asset-managers.html">Asset Managers</a>
+            <a class="home-chip" href="index.html#section-onchain">Home on-chain preview</a>
+          </div>
+
           <div class="data-banner" id="js-exat-banner" role="status" hidden></div>
 
+          <div class="rwa-exat-intro rwa-explore-mock-intro" id="js-exat-intro"></div>
+
+          <nav class="rwa-explore-mock-jump" id="js-exat-jump" aria-label="Jump to participant previews" hidden></nav>
+
           <div id="js-exat-sections" class="rwa-exat-sections"></div>
+
+          <p class="timestamp-foot" id="js-exat-timestamp"></p>
         </div>
       </article>
-
-      <p class="back-link rwa-exat-back">
-        <a data-exat-link="global" href="rwa-global.html">← RWA Global Market Overview</a>
-      </p>
     </main>
 
     <footer class="site-footer">
@@ -98,7 +120,7 @@
     <script defer src="js/kpi-hints.js?v=3"></script>
     <script defer src="js/page-methodology.js?v=4"></script>
     <script defer src="js/rwa-onchain-home.js?v=23"></script>
-    <script defer src="js/rwa-explore-asset-type-page.js?v=17"></script>
+    <script defer src="js/rwa-explore-asset-type-page.js?v=18"></script>
     <script defer src="js/site-experience.js?v=1"></script>
   </body>
 </html>
