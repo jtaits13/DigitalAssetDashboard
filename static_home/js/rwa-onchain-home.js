@@ -29,8 +29,8 @@
   function pctCellCls(v) {
     if (v == null || !isFinite(Number(v))) return "";
     var x = Number(v);
-    if (x > 0) return " pct up";
-    if (x < 0) return " pct down";
+    if (x > 0) return " up";
+    if (x < 0) return " down";
     return "";
   }
 

@@ -73,7 +73,7 @@
   function fmtFlowCell(usd) {
     if (usd == null || usd === "" || isNaN(Number(usd))) return '<td class="num">—</td>';
     var n = Number(usd);
-    var cls = n >= 0 ? "pct up" : "pct down";
+    var cls = n >= 0 ? "up" : "down";
     return '<td class="num ' + cls + '">' + fmtFlowUsd(n) + "</td>";
   }
 

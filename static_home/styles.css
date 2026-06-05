@@ -1995,12 +1995,16 @@ a.hub-panel-surface:hover,
   font-variant-numeric: tabular-nums;
 }
 
-.data-table .pct.up {
+.data-table .pct.up,
+.data-table td.num.up,
+.data-table td.num.pct.up {
   color: #28794e;
   font-weight: 600;
 }
 
-.data-table .pct.down {
+.data-table .pct.down,
+.data-table td.num.down,
+.data-table td.num.pct.down {
   color: #dc2626;
   font-weight: 600;
 }
@@ -2040,6 +2044,8 @@ a.hub-panel-surface:hover,
   color: var(--ink);
 }
 
+.data-table td.num.up,
+.data-table td.num.down,
 .data-table td.num.pct.up,
 .data-table td.num.pct.down {
   font-weight: 600;

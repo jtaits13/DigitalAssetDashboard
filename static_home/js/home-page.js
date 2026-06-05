@@ -169,7 +169,7 @@
   function fmt52cell(p) {
     if (p == null) return '<td class="num">—</td>';
     var n = Number(p);
-    var cls = n >= 0 ? "pct up" : "pct down";
+    var cls = n >= 0 ? "up" : "down";
     return (
       '<td class="num ' + cls + '">' + (n >= 0 ? "+" : "") + n.toFixed(1) + "%</td>"
     );

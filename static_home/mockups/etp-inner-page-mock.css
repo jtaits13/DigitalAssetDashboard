@@ -951,7 +951,11 @@
 .mock-etp-inner .data-table td.num.up,
 .mock-crypto-inner .data-table td.num.up,
 .mock-tmmf-inner .data-table td.num.up,
-.mock-stable-inner .data-table td.num.up {
+.mock-stable-inner .data-table td.num.up,
+.mock-etp-inner .data-table td.num.pct.up,
+.mock-crypto-inner .data-table td.num.pct.up,
+.mock-tmmf-inner .data-table td.num.pct.up,
+.mock-stable-inner .data-table td.num.pct.up {
   color: #0d6b3a;
   font-weight: 600;
 }
@@ -959,7 +963,11 @@
 .mock-etp-inner .data-table td.num.down,
 .mock-crypto-inner .data-table td.num.down,
 .mock-tmmf-inner .data-table td.num.down,
-.mock-stable-inner .data-table td.num.down {
+.mock-stable-inner .data-table td.num.down,
+.mock-etp-inner .data-table td.num.pct.down,
+.mock-crypto-inner .data-table td.num.pct.down,
+.mock-tmmf-inner .data-table td.num.pct.down,
+.mock-stable-inner .data-table td.num.pct.down {
   color: #b42318;
   font-weight: 600;
 }

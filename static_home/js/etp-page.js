@@ -45,7 +45,7 @@
   function fmt52wTd(n) {
     if (n == null || isNaN(n)) return '<td class="num">—</td>';
     var v = Number(n);
-    var cls = v >= 0 ? "pct up" : "pct down";
+    var cls = v >= 0 ? "up" : "down";
     return (
       '<td class="num ' + cls + '">' + (v >= 0 ? "+" : "") + v.toFixed(1) + "%</td>"
     );

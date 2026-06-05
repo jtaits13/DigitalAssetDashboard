@@ -103,7 +103,7 @@
     if (pct == null) return '<td class="num">—</td>';
     var n = Number(pct);
     if (!isFinite(n)) return '<td class="num">—</td>';
-    var cls = n >= 0 ? "pct up" : "pct down";
+    var cls = n >= 0 ? "up" : "down";
     return '<td class="num ' + cls + '">' + (n >= 0 ? "+" : "") + n.toFixed(2) + "%</td>";
   }
 
