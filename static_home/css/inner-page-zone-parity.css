@@ -158,6 +158,86 @@
   min-height: 0;
 }
 
+.mock-participants-inner .etp-mock-dashboard {
+  --stable-dash-panel-min: 23rem;
+  align-items: stretch;
+}
+
+.mock-participants-inner .etp-mock-dash__panel--chart,
+.mock-participants-inner .etp-mock-dash__panel--movers {
+  min-height: var(--stable-dash-panel-min);
+}
+
+.mock-participants-inner .etp-mock-dash__panel--chart .stable-dash-chart-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 12rem;
+  margin-bottom: 0.35rem;
+}
+
+.mock-participants-inner .etp-mock-dash__panel--chart .stable-dash-chart-body .aum-chart-host:not(:empty),
+.mock-participants-inner .etp-mock-dash__panel--chart .stable-dash-chart-body .aum-chart-host .js-plotly-plot {
+  flex: 1 1 auto;
+  min-height: 12rem;
+  height: 100%;
+  max-height: none;
+  border: 1px solid rgb(42 95 130 / 0.12);
+  border-radius: 8px;
+  background: #f8fafc;
+  overflow: hidden;
+}
+
+.mock-participants-inner .etp-mock-dash__panel--chart .etp-mock-chart__cap {
+  margin: auto 0 0;
+  font-size: 0.76rem;
+  line-height: 1.4;
+}
+
+.mock-participants-inner .etp-mock-dash__panel--chart .etp-mock-chart__method {
+  margin: 0.3rem 0 0;
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.mock-participants-inner .etp-mock-dash__panel--movers {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.mock-participants-inner .etp-mock-dash__panel--movers #js-deep-share-movers {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.mock-participants-inner .etp-mock-snapshot .rwa-kpi-row--home-grid {
+  grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
+}
+
+@media (min-width: 960px) {
+  .mock-participants-inner .etp-mock-snapshot .rwa-kpi-row--home-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+.mock-participants-inner .participants-mock-league-block .table-wrap--scroll {
+  width: 100%;
+  max-height: none;
+  overflow-x: auto;
+}
+
+.mock-participants-inner .participants-mock-league-block .data-table {
+  width: 100%;
+  min-width: 48rem;
+}
+
+.mock-participants-inner.page-inner--rich .etp-mock-zone .home-zone__titles .band-label.teal {
+  color: var(--hx-rwa-bright);
+}
+
 .etp-mock-dash__panel--chart .aum-chart-host:not(:empty)::before,
 .etp-mock-dash__panel--chart .aum-chart-host:has(.js-plotly-plot)::before,
 .etp-mock-dash__panel--chart .aum-chart-host:has(.tradingview-widget-container)::before {

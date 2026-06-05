@@ -252,17 +252,45 @@
     if (payload.page_title) document.title = payload.page_title;
 
     var band = $("js-deep-band");
-    if (band) band.textContent = payload.band_label || "";
+    if (band) {
+      if (document.body.classList.contains("mock-participants-inner")) {
+        var bandParts = String(payload.band_label || "")
+          .split(/\s*[—–-]\s*/)
+          .map(function (p) {
+            return p.trim();
+          })
+          .filter(Boolean);
+        band.textContent = bandParts.length >= 2 ? bandParts[0] : payload.band_label || "";
+      } else {
+        band.textContent = payload.band_label || "";
+      }
+    }
 
     var titleEl = $("js-deep-title");
     if (titleEl) {
-      var titleText = payload.page_title || "";
-      titleText = titleText.replace(/\s*[—–-]\s*Digital Assets Dashboard\s*$/i, "").trim();
-      titleEl.textContent = titleText || payload.band_label || "";
+      if (document.body.classList.contains("mock-participants-inner")) {
+        var titleParts = String(payload.band_label || "")
+          .split(/\s*[—–-]\s*/)
+          .map(function (p) {
+            return p.trim();
+          })
+          .filter(Boolean);
+        titleEl.textContent =
+          titleParts.length >= 2 ? titleParts.slice(1).join(" — ") : payload.band_label || "";
+      } else {
+        var titleText = payload.page_title || "";
+        titleText = titleText.replace(/\s*[—–-]\s*Digital Assets Dashboard\s*$/i, "").trim();
+        titleEl.textContent = titleText || payload.band_label || "";
+      }
     }
 
     var sub = $("js-deep-subtitle");
-    if (sub) sub.innerHTML = payload.page_subtitle_html || "";
+    if (sub) {
+      sub.innerHTML = payload.page_subtitle_html || "";
+      if (document.body.classList.contains("mock-participants-inner")) {
+        sub.classList.add("section-dek", "section-dek--wide");
+      }
+    }
 
     var banner = $("js-deep-banner");
     if (banner) {
@@ -275,7 +303,11 @@
     var kpis = $("js-deep-kpis");
     if (snap && kpis) {
       snap.hidden = false;
-      renderKpis(kpis, payload.kpis || [], "", { hideIfEmpty: true });
+      renderKpis(kpis, payload.kpis || [], payload.kpi_window_note || "", { hideIfEmpty: true });
+      if (document.body.classList.contains("mock-participants-inner")) {
+        var kpiPanel = kpis.querySelector(".rwa-kpi-panel-static");
+        if (kpiPanel) kpiPanel.classList.add("rwa-kpi-panel-static--compact");
+      }
     }
 
     var ko = $("js-deep-ko");
@@ -332,7 +364,8 @@
         document.body.classList.contains("mock-stable-inner") ||
         document.body.classList.contains("mock-tmmf-inner") ||
         document.body.classList.contains("mock-treasuries-inner") ||
-        document.body.classList.contains("mock-stocks-inner")
+        document.body.classList.contains("mock-stocks-inner") ||
+        document.body.classList.contains("mock-participants-inner")
       );
     }
 
@@ -341,7 +374,18 @@
       if (document.body.classList.contains("mock-tmmf-inner")) return "mmf";
       if (document.body.classList.contains("mock-treasuries-inner")) return "treasuries";
       if (document.body.classList.contains("mock-stocks-inner")) return "stocks";
+      if (document.body.classList.contains("page-rwa-deep-participants-networks")) return "participants-networks";
+      if (document.body.classList.contains("page-rwa-deep-participants-platforms")) return "participants-platforms";
+      if (document.body.classList.contains("page-rwa-deep-participants-am")) return "participants-am";
       return "";
+    }
+
+    function isParticipantsMockMode(mode) {
+      return (
+        mode === "participants-networks" ||
+        mode === "participants-platforms" ||
+        mode === "participants-am"
+      );
     }
 
     function renderConcBarRows(items) {
@@ -479,6 +523,53 @@
           ' distributed value share">' +
           renderConcBarRows(rwaNetItems) +
           "</div></div>";
+        return;
+      }
+
+      if (isParticipantsMockMode(mode)) {
+        var pLeague = payload.networks || {};
+        var pRows = (pLeague.rows_full || []).slice().sort(function (a, b) {
+          return (Number(b["Market Share"]) || 0) - (Number(a["Market Share"]) || 0);
+        });
+        if (!pRows.length) {
+          host.hidden = true;
+          return;
+        }
+        var pNameCol = pLeague.name_column || "Network";
+        var pTopFive = pRows.slice(0, 5);
+        var pTopFiveSum = pTopFive.reduce(function (s, r) {
+          return s + (Number(r["Market Share"]) || 0);
+        }, 0);
+        var pItems = pTopFive.map(function (r) {
+          return { label: String(r[pNameCol] || "—"), pct: Number(r["Market Share"]) || 0 };
+        });
+        var pOtherPct = Math.max(0, 100 - pTopFiveSum);
+        if (pOtherPct > 0.15) pItems.push({ label: "Other", pct: pOtherPct });
+        var pHead =
+          mode === "participants-platforms"
+            ? "Platform share (top 5)"
+            : mode === "participants-am"
+              ? "Asset manager share (top 5)"
+              : "Network share (top 5)";
+        var pDek =
+          mode === "participants-platforms"
+            ? "Share of aggregate distributed RWA value by platform (RWA.xyz snapshot)."
+            : mode === "participants-am"
+              ? "Share of aggregate distributed RWA value by asset manager (RWA.xyz snapshot)."
+              : "Share of aggregate distributed RWA value by chain (RWA.xyz snapshot).";
+        host.hidden = false;
+        host.innerHTML =
+          '<div class="etp-mock-insights__panel etp-mock-insights__panel--conc">' +
+          '<h3 class="etp-mock-insights__head">' +
+          esc(pHead) +
+          "</h3>" +
+          '<p class="etp-mock-conc__dek">' +
+          esc(pDek) +
+          '</p><div class="etp-mock-conc__rows etp-mock-conc__rows--grid" role="img" aria-label="' +
+          esc(pHead) +
+          '">' +
+          renderConcBarRows(pItems) +
+          "</div></div>";
       }
     }
 
@@ -507,6 +598,7 @@
         );
       }
       if (moversEl) {
+        var nameCol = net.name_column || "Network";
         var valCol = net.value_column || "Total Value";
         var topNetworks = net.rows_full
           .slice()
@@ -539,7 +631,7 @@
             return (
               '<li class="crypto-top-mover"><div class="crypto-top-mover__row">' +
               '<span class="crypto-top-mover__label"><strong>' +
-              esc(r.Network || "—") +
+              esc(r[nameCol] || "—") +
               "</strong></span>" +
               '<span class="crypto-top-mover__pct pct ' +
               cls +
@@ -558,7 +650,13 @@
             ? "Top 15 networks by stablecoin value."
             : pageMode === "treasuries"
               ? "Top 15 networks by distributed value."
-              : "Top 15 networks by tokenized stock value.";
+              : pageMode === "participants-networks"
+                ? "Top 15 networks by distributed value."
+                : pageMode === "participants-platforms"
+                  ? "Top 15 platforms by distributed value."
+                  : pageMode === "participants-am"
+                    ? "Top 15 asset managers by distributed value."
+                    : "Top 15 networks by tokenized stock value.";
         moversEl.innerHTML =
           '<ul class="crypto-top-movers__list">' +
           items +
@@ -762,16 +860,17 @@
     }
 
     function wireLeagueTableOnly(league, prefix, data, host) {
-      var introClass =
-        document.body.classList.contains("mock-stable-inner") ||
-        document.body.classList.contains("mock-treasuries-inner") ||
-        document.body.classList.contains("mock-stocks-inner")
-          ? "stable-mock-league-intro"
-          : "tmmf-mock-league-intro";
+      var introClass = "stable-mock-league-intro";
+      if (document.body.classList.contains("mock-tmmf-inner")) {
+        introClass = "tmmf-mock-league-intro";
+      } else if (document.body.classList.contains("mock-participants-inner")) {
+        introClass = "participants-mock-league-intro stable-mock-league-intro";
+      }
+      var tableTitle = league.table_heading || league.block_heading || "";
       host.innerHTML =
         '<div class="rwa-split-table-head inner-table-head">' +
         '<h2 class="subsection-head rwa-split-table-head__title">' +
-        esc(league.block_heading || "") +
+        esc(tableTitle) +
         '</h2><div class="rwa-split-table-head__actions" id="' +
         prefix +
         '-table-actions"></div></div>' +
@@ -863,9 +962,13 @@
       }
 
       host.hidden = false;
+      var leagueBlockExtra = "";
+      if (document.body.classList.contains("mock-participants-inner")) {
+        leagueBlockExtra = " participants-mock-league-block";
+      }
       host.className =
         "rwa-deep-league-panel etp-mock-table-block" +
-        (prefix === "deep-net" ? " tmmf-mock-league-block stable-mock-league-block" : "");
+        (prefix === "deep-net" ? " tmmf-mock-league-block stable-mock-league-block" + leagueBlockExtra : "");
 
       if (isMockParityLayout()) {
         return wireLeagueTableOnly(league, prefix, data, host);
@@ -1179,6 +1282,13 @@
     var pageMode = getMockPageMode();
     renderMockInsights(payload, pageMode);
     renderAssetDashboard(payload);
+
+    if (document.body.classList.contains("mock-participants-inner")) {
+      var platHost = $("deep-plat-wrap");
+      if (platHost) platHost.hidden = true;
+      var midRule = $("js-deep-rule-mid");
+      if (midRule) midRule.hidden = true;
+    }
 
     if (document.body.classList.contains("mock-tmmf-inner")) {
       setOptionalDeepHtml("js-deep-extra-before-leagues", "");

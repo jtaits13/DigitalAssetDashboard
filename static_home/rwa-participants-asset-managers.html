@@ -13,9 +13,16 @@
     <link rel="stylesheet" href="styles.css?v=87" />
     <link rel="stylesheet" href="css/site-experience.css?v=21" />
     <link rel="stylesheet" href="css/inner-page-experience.css?v=24" />
-    <link rel="stylesheet" href="css/inner-page-zone-parity.css?v=7" />
+    <link rel="stylesheet" href="css/inner-page-zone-parity.css?v=11" />
+    <link rel="stylesheet" href="mockups/etp-inner-page-mock.css?v=22" />
+    <link rel="stylesheet" href="mockups/rwa-global-inner-page-mock.css?v=9" />
+    <link rel="stylesheet" href="mockups/participants-inner-page-mock.css?v=4" />
   </head>
-  <body class="page-rwa-deep page-rwa-deep-participants-am site-experience page-inner--rich" data-rwa-deep-json="rwa_participants_asset_managers.json" data-methodology="rwa-participants-asset-managers">
+  <body
+    class="page-rwa-deep page-rwa-deep-participants-am site-experience page-inner--rich mock-participants-inner mock-rwa-global-inner"
+    data-rwa-deep-json="rwa_participants_asset_managers.json"
+    data-methodology="rwa-participants-asset-managers"
+  >
     <header class="site-header" role="banner">
       <div class="site-header__inner">
         <a class="site-brand" href="index.html">Digital Assets Dashboard</a>
@@ -59,70 +66,110 @@
 
     <div class="page-back-below-header">
       <p class="back-link back-link--below-header">
-        <a data-deep-back="explore" href="rwa-explore-market-participant.html">← Explore by Market Participant</a>
+        <a data-deep-back="explore" href="rwa-explore-market-participant.html">&larr; Explore by Market Participant</a>
       </p>
     </div>
 
-    <main class="page-shell">
-      <article class="hub-section hub-section--panel inner-rich-zone zone--rwa home-zone home-zone--rwa">
+    <main class="page-shell etp-mock-shell">
+      <article class="hub-section hub-section--panel inner-rich-zone zone--rwa home-zone home-zone--rwa etp-mock-zone">
         <div class="home-zone__stripe" aria-hidden="true"></div>
         <header class="home-zone__head">
           <span class="home-zone__badge" aria-hidden="true">RWA</span>
           <div class="home-zone__titles">
             <p class="band-label teal" id="js-deep-band"></p>
-        <h1 class="page-intro__title" id="js-deep-title"></h1>
-        <div class="page-intro__dek" id="js-deep-subtitle"></div>
+            <h1 class="page-intro__title" id="js-deep-title"></h1>
+            <div class="section-dek section-dek--wide page-intro__dek" id="js-deep-subtitle"></div>
           </div>
         </header>
-        <div class="home-zone__body inner-rich-zone__body">
+        <div class="home-zone__body inner-rich-zone__body etp-mock-zone__body">
+          <div class="home-related-chips" aria-label="Related pages">
+            <span class="home-related-chips__label">Related</span>
+            <a class="home-chip" href="rwa-explore-market-participant.html">Explore by participant</a>
+            <a class="home-chip" href="rwa-global.html">RWA market overview</a>
+            <a class="home-chip" href="rwa-explore-asset-type.html">Explore by asset type</a>
+            <a class="home-chip" href="rwa-participants-networks.html">Networks</a>
+            <a class="home-chip" href="rwa-participants-platforms.html">Platforms</a>
+          </div>
+
           <div class="data-banner" id="js-deep-banner" role="status" hidden></div>
-      <hr class="inner-rich-rule" />
 
-      <section class="hub-section" id="js-deep-snapshot" aria-labelledby="js-deep-snap-h">
-        <h2 class="subsection-head" id="js-deep-snap-h">Top-Line Market Snapshot</h2>
-        <div id="js-deep-kpis" aria-label="Participants headline KPI strip"></div>
-      </section>
+          <section class="etp-mock-snapshot" id="js-deep-snapshot" aria-labelledby="js-deep-snap-h">
+            <h2 class="subsection-head u-vh" id="js-deep-snap-h">Top-line snapshot</h2>
+            <div id="js-deep-kpis" aria-label="Participants Asset Managers KPI strip"></div>
+          </section>
 
-      <section class="hub-section" id="js-deep-ko-section" hidden aria-labelledby="js-deep-ko-h">
-        <h2 class="subsection-head u-vh" id="js-deep-ko-h">Key Observations</h2>
-        <div id="js-deep-ko"></div>
-      </section>
+          <div class="inner-rich-block etp-mock-key-obs-block" id="js-deep-ko-section" hidden aria-labelledby="js-deep-ko-h">
+            <h2 class="subsection-head u-vh" id="js-deep-ko-h">Key Observations</h2>
+            <div id="js-deep-ko"></div>
+          </div>
 
-      <hr class="jd-rwa-gmo-soft-rule" id="js-deep-rule-after-ko" hidden aria-hidden="true" />
+          <nav class="home-explore-compact" aria-label="Explore RWA">
+            <span class="home-explore-compact__label">Explore</span>
+            <a class="home-explore-compact__btn" href="rwa-explore-asset-type.html">By asset type</a>
+            <a class="home-explore-compact__btn" href="rwa-explore-market-participant.html">By participant</a>
+          </nav>
 
-      <div id="js-deep-extra-before-leagues" class="rwa-deep-optional-msg" hidden></div>
+          <section class="etp-mock-insights etp-mock-insights--crypto-full" id="js-deep-insights" hidden aria-labelledby="js-deep-insights-h">
+            <h2 class="u-vh" id="js-deep-insights-h">Market structure</h2>
+          </section>
 
-      <div id="deep-net-wrap"></div>
+          <section class="etp-mock-dashboard" id="js-deep-dashboard" hidden aria-labelledby="js-deep-dashboard-h">
+            <h2 class="u-vh" id="js-deep-dashboard-h">Chart and share movers</h2>
+            <div class="etp-mock-dash__panel etp-mock-dash__panel--chart">
+              <h3 class="etp-mock-dash__head">Top asset managers by distributed value</h3>
+              <div class="stable-dash-chart-body">
+                <div
+                  id="js-deep-dashboard-chart"
+                  class="aum-chart-host"
+                  role="img"
+                  aria-label="Top asset managers by distributed RWA value"
+                ></div>
+              </div>
+              <p class="etp-mock-chart__cap">
+                Top <strong>5</strong> asset managers by distributed value (labels include share).
+              </p>
+              <p class="etp-mock-chart__method">
+                Plotly horizontal bars synced to the searchable asset managers table below.
+              </p>
+            </div>
+            <div class="etp-mock-dash__panel etp-mock-dash__panel--movers">
+              <h3 class="etp-mock-dash__head">Largest 30D share shifts (asset managers)</h3>
+              <div id="js-deep-share-movers"></div>
+            </div>
+          </section>
 
-      <div id="js-deep-extra-after-network" class="rwa-deep-optional-msg" hidden></div>
+          <div id="js-deep-extra-before-leagues" class="rwa-deep-optional-msg" hidden></div>
 
-      <hr class="jd-divider" id="js-deep-rule-mid" hidden aria-hidden="true" />
+          <div id="deep-net-wrap"></div>
 
-      <div id="deep-plat-wrap"></div>
+          <div id="js-deep-extra-after-network" class="rwa-deep-optional-msg" hidden></div>
 
-      <div id="js-deep-bottom-cta" class="cta-row rwa-deep-page-cta"></div>
+          <div id="deep-plat-wrap" hidden></div>
+
+          <div id="js-deep-bottom-cta" class="cta-row rwa-deep-page-cta"></div>
+
+          <p class="timestamp-foot" id="js-deep-footer-note"></p>
         </div>
       </article>
 
-
       <p class="back-link">
-        <a data-deep-back="explore" href="rwa-explore-market-participant.html">← Explore by Market Participant</a>
+        <a data-deep-back="explore" href="rwa-explore-market-participant.html">&larr; Explore by Market Participant</a>
       </p>
     </main>
 
     <footer class="site-footer">
-      <span id="js-deep-footer-note"></span>
-      <span class="site-footer__meta"> · Digital Assets Dashboard · </span><time datetime="2026-05">May 2026</time>
+      <span class="site-footer__meta">Digital Assets Dashboard &middot; Participants &middot; Asset Managers &middot; </span
+      ><time datetime="2026-05">May 2026</time>
     </footer>
 
     <script defer src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
     <script defer src="js/static-base.js?v=14"></script>
-    <script defer src="js/table-fullscreen.js?v=2"></script>
+    <script defer src="js/table-fullscreen.js?v=4"></script>
     <script defer src="js/table-download.js?v=4"></script>
     <script defer src="js/kpi-hints.js?v=3"></script>
     <script defer src="js/page-methodology.js?v=4"></script>
     <script defer src="js/rwa-onchain-home.js?v=23"></script>
-    <script defer src="js/rwa-asset-deep-page.js?v=25"></script>
+    <script defer src="js/rwa-asset-deep-page.js?v=27"></script>
     <script defer src="js/site-experience.js?v=1"></script>
   </body>
 </html>

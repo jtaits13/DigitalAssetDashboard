@@ -113,7 +113,8 @@
 }
 
 .mock-rwa-global-inner .etp-mock-dash__panel--movers #js-rwa-global-share-movers,
-.mock-rwa-global-inner .etp-mock-dash__panel--movers #js-deep-share-movers {
+.mock-rwa-global-inner .etp-mock-dash__panel--movers #js-deep-share-movers,
+.mock-rwa-global-inner .etp-mock-dash__panel--movers #js-participants-share-movers {
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;

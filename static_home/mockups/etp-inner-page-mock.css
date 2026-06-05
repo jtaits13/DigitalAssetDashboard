@@ -43,7 +43,8 @@
 .mock-stable-inner .site-header,
 .mock-rwa-global-inner .site-header,
 .mock-treasuries-inner .site-header,
-.mock-stocks-inner .site-header {
+.mock-stocks-inner .site-header,
+.mock-participants-inner .site-header {
   top: 1.85rem;
 }
 
@@ -537,7 +538,8 @@
 .mock-stable-inner .etp-mock-dashboard,
 .mock-rwa-global-inner .etp-mock-dashboard,
 .mock-treasuries-inner .etp-mock-dashboard,
-.mock-stocks-inner .etp-mock-dashboard {
+.mock-stocks-inner .etp-mock-dashboard,
+.mock-participants-inner .etp-mock-dashboard {
   gap: var(--etp-mock-gap);
   margin-bottom: var(--etp-mock-gap-lg);
 }
@@ -801,7 +803,8 @@
 .mock-stable-inner .etp-mock-table-meta,
 .mock-rwa-global-inner .etp-mock-table-meta,
 .mock-treasuries-inner .etp-mock-table-meta,
-.mock-stocks-inner .etp-mock-table-meta {
+.mock-stocks-inner .etp-mock-table-meta,
+.mock-participants-inner .etp-mock-table-meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -816,7 +819,8 @@
 .mock-tmmf-inner .etp-mock-table-meta > .rwa-table-actions,
 .mock-rwa-global-inner .etp-mock-table-meta > .rwa-table-actions,
 .mock-treasuries-inner .etp-mock-table-meta > .rwa-table-actions,
-.mock-stocks-inner .etp-mock-table-meta > .rwa-table-actions {
+.mock-stocks-inner .etp-mock-table-meta > .rwa-table-actions,
+.mock-participants-inner .etp-mock-table-meta > .rwa-table-actions {
   margin-left: auto;
   flex-shrink: 0;
   display: flex;
@@ -832,12 +836,14 @@
 .mock-rwa-global-inner .etp-mock-table-meta__count,
 .mock-treasuries-inner .etp-mock-table-meta__count,
 .mock-stocks-inner .etp-mock-table-meta__count,
+.mock-participants-inner .etp-mock-table-meta__count,
 .mock-crypto-inner .etp-mock-table-meta__count.toolbar-note,
 .mock-tmmf-inner .etp-mock-table-meta__count.toolbar-note,
 .mock-stable-inner .etp-mock-table-meta__count.toolbar-note,
 .mock-rwa-global-inner .etp-mock-table-meta__count.toolbar-note,
 .mock-treasuries-inner .etp-mock-table-meta__count.toolbar-note,
-.mock-stocks-inner .etp-mock-table-meta__count.toolbar-note {
+.mock-stocks-inner .etp-mock-table-meta__count.toolbar-note,
+.mock-participants-inner .etp-mock-table-meta__count.toolbar-note {
   margin: 0;
   font-size: 0.78rem;
   color: var(--muted);
@@ -850,7 +856,8 @@
 .mock-stable-inner .etp-mock-table-meta__expand,
 .mock-rwa-global-inner .etp-mock-table-meta__expand,
 .mock-treasuries-inner .etp-mock-table-meta__expand,
-.mock-stocks-inner .etp-mock-table-meta__expand {
+.mock-stocks-inner .etp-mock-table-meta__expand,
+.mock-participants-inner .etp-mock-table-meta__expand {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
@@ -877,7 +884,8 @@
 .mock-stable-inner .etp-mock-table-meta__expand svg,
 .mock-rwa-global-inner .etp-mock-table-meta__expand svg,
 .mock-treasuries-inner .etp-mock-table-meta__expand svg,
-.mock-stocks-inner .etp-mock-table-meta__expand svg {
+.mock-stocks-inner .etp-mock-table-meta__expand svg,
+.mock-participants-inner .etp-mock-table-meta__expand svg {
   flex-shrink: 0;
   opacity: 0.85;
 }
@@ -888,7 +896,8 @@
 .mock-stable-inner .etp-mock-table-meta__expand:hover:not(:disabled),
 .mock-rwa-global-inner .etp-mock-table-meta__expand:hover:not(:disabled),
 .mock-treasuries-inner .etp-mock-table-meta__expand:hover:not(:disabled),
-.mock-stocks-inner .etp-mock-table-meta__expand:hover:not(:disabled) {
+.mock-stocks-inner .etp-mock-table-meta__expand:hover:not(:disabled),
+.mock-participants-inner .etp-mock-table-meta__expand:hover:not(:disabled) {
   background: var(--hx-etp-soft);
   border-color: var(--hx-etp-bright);
   color: var(--hx-etp);
@@ -900,7 +909,8 @@
 .mock-stable-inner .etp-mock-table-meta__expand:focus-visible,
 .mock-rwa-global-inner .etp-mock-table-meta__expand:focus-visible,
 .mock-treasuries-inner .etp-mock-table-meta__expand:focus-visible,
-.mock-stocks-inner .etp-mock-table-meta__expand:focus-visible {
+.mock-stocks-inner .etp-mock-table-meta__expand:focus-visible,
+.mock-participants-inner .etp-mock-table-meta__expand:focus-visible {
   outline: 2px solid var(--hx-etp-bright);
   outline-offset: 2px;
 }
@@ -911,7 +921,8 @@
 .mock-stable-inner .etp-mock-table-meta__expand:disabled,
 .mock-rwa-global-inner .etp-mock-table-meta__expand:disabled,
 .mock-treasuries-inner .etp-mock-table-meta__expand:disabled,
-.mock-stocks-inner .etp-mock-table-meta__expand:disabled {
+.mock-stocks-inner .etp-mock-table-meta__expand:disabled,
+.mock-participants-inner .etp-mock-table-meta__expand:disabled {
   opacity: 0.55;
   cursor: default;
 }
@@ -922,7 +933,8 @@
 .mock-stable-inner .etp-mock-table-meta + .table-wrap,
 .mock-rwa-global-inner .etp-mock-table-meta + .table-wrap,
 .mock-treasuries-inner .etp-mock-table-meta + .table-wrap,
-.mock-stocks-inner .etp-mock-table-meta + .table-wrap {
+.mock-stocks-inner .etp-mock-table-meta + .table-wrap,
+.mock-participants-inner .etp-mock-table-meta + .table-wrap {
   margin-top: 0.25rem;
   margin-bottom: 0.6rem;
 }
@@ -1369,7 +1381,8 @@
   .mock-stable-inner .etp-mock-table-meta__expand,
   .mock-rwa-global-inner .etp-mock-table-meta__expand,
   .mock-treasuries-inner .etp-mock-table-meta__expand,
-  .mock-stocks-inner .etp-mock-table-meta__expand {
+  .mock-stocks-inner .etp-mock-table-meta__expand,
+  .mock-participants-inner .etp-mock-table-meta__expand {
     margin-left: 0;
   }
 
@@ -1386,7 +1399,8 @@
   .mock-stable-inner .etp-mock-table-meta,
   .mock-rwa-global-inner .etp-mock-table-meta,
   .mock-treasuries-inner .etp-mock-table-meta,
-  .mock-stocks-inner .etp-mock-table-meta {
+  .mock-stocks-inner .etp-mock-table-meta,
+  .mock-participants-inner .etp-mock-table-meta {
     flex-wrap: wrap;
   }
 }

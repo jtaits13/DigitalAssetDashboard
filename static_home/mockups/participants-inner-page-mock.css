@@ -1,17 +1,19 @@
 /* RWA Participants inner page mocks — shared scoped overrides (Networks · Platforms · Asset Managers) */
 
-.mock-participants-inner {
-  --stable-dash-panel-min: 23rem;
-}
-
-.mock-participants-inner.mock-rwa-global-inner::before {
-  content: "Design mock — RWA Participants inner page · not linked from production";
-}
-
 .mock-participants-networks-inner.mock-rwa-global-inner::before {
   content: "Design mock — Participants · Networks inner page · not linked from production · open mockups/participants-networks-inner-page-mock.html";
 }
 
+.mock-participants-inner .etp-mock-chart::before {
+  content: "Top networks by distributed value (mock chart area)";
+  color: rgb(var(--hx-rwa-dark) / 0.55);
+}
+
+.mock-participants-inner.page-inner--rich .etp-mock-zone .home-zone__titles .band-label.teal {
+  color: var(--hx-rwa-bright);
+}
+
+.mock-participants-inner .stable-mock-league-intro,
 .mock-participants-inner .participants-mock-league-intro {
   margin: 0 0 0.75rem;
   max-width: 52rem;
@@ -20,40 +22,54 @@
   color: var(--ink-muted, #4a5f73);
 }
 
+.mock-participants-inner .stable-mock-league-intro strong,
 .mock-participants-inner .participants-mock-league-intro strong {
   color: var(--hx-rwa-dark);
+}
+
+.mock-participants-inner .etp-mock-key-obs-block {
+  margin-bottom: var(--etp-mock-gap-lg, 1.2rem);
+}
+
+.mock-participants-inner .etp-mock-snapshot .rwa-kpi-row--home-grid {
+  grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
+}
+
+@media (min-width: 960px) {
+  .mock-participants-inner .etp-mock-snapshot .rwa-kpi-row--home-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
 }
 
 .mock-participants-inner .etp-mock-table-block + .etp-mock-table-block {
   margin-top: var(--etp-mock-gap-lg, 1.2rem);
 }
 
-.mock-participants-inner .etp-mock-dashboard {
-  align-items: stretch;
+.mock-participants-inner .participants-mock-league-block .table-wrap--scroll {
+  width: 100%;
+  max-height: none;
+  overflow-x: auto;
 }
 
-.mock-participants-inner .etp-mock-dash__panel--chart,
-.mock-participants-inner .etp-mock-dash__panel--movers {
-  min-height: var(--stable-dash-panel-min);
+.mock-participants-inner .participants-mock-league-block .data-table {
+  width: 100%;
+  min-width: 48rem;
 }
 
-.mock-participants-inner .etp-mock-dash__panel--chart .stable-dash-chart-body {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  min-height: 12rem;
-  margin-bottom: 0.35rem;
-}
-
-.mock-participants-inner .etp-mock-dash__panel--movers #js-participants-share-movers {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-}
-
-.mock-participants-inner .home-explore-compact__btn--soon {
-  opacity: 0.55;
+.mock-participants-inner .home-chip--soon {
+  opacity: 0.72;
+  cursor: default;
   pointer-events: none;
+  border-style: dashed;
+  border-color: rgb(var(--hx-rwa-bright-rgb) / 0.35);
+  background: rgb(var(--hx-rwa-rgb) / 0.04);
+  color: var(--muted);
+}
+
+.mock-participants-inner .site-nav__sub .is-disabled {
+  display: block;
+  padding: 0.42rem 0.85rem;
+  font-size: 0.82rem;
+  color: var(--muted);
   cursor: default;
 }
