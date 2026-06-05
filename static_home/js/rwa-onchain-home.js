@@ -20,11 +20,6 @@
     return sign + x.toFixed(digits != null ? digits : 2) + "%";
   }
 
-  function fmtPctSignedNoPlus(v, digits) {
-    if (v == null || !isFinite(Number(v))) return "—";
-    return Number(v).toFixed(digits != null ? digits : 2) + "%";
-  }
-
   /** Level / ratio as percent (no leading +), for **% distributed** vs signed deltas (7D, share changes). */
   function fmtPctLevel(v, digits) {
     if (v == null || !isFinite(Number(v))) return "—";
@@ -164,11 +159,6 @@
   function fillRwaTableBody(tbody, columns, rows, opts) {
     var emptyMsg = opts.emptyMsg;
     var linkAria = opts.linkAria || "Open link";
-    var isTmmfPage =
-      typeof document !== "undefined" &&
-      document.body &&
-      document.body.classList &&
-      document.body.classList.contains("page-rwa-deep-mmf");
     tbody.innerHTML = "";
     if (!rows || !rows.length) {
       var colspan = columns && columns.length ? columns.length : 1;
@@ -226,9 +216,9 @@
         } else if (col === "% distributed") {
           tds.push('<td class="num">' + fmtPctLevel(v, 2) + "</td>");
         } else if (col === "Market Share") {
-          tds.push('<td class="num">' + (isTmmfPage ? fmtPctLevel(v, 2) : fmtPctPts(v, 2)) + "</td>");
+          tds.push('<td class="num">' + fmtPctLevel(v, 2) + "</td>");
         } else if (col === "30D Δ share") {
-          tds.push('<td class="num">' + (isTmmfPage ? fmtPctSignedNoPlus(v, 2) : fmtPctPts(v, 2)) + "</td>");
+          tds.push('<td class="num' + pctCellCls(v) + '">' + fmtPctPts(v, 2) + "</td>");
         } else if (col === "Terms" || col === "Networks") {
           tds.push('<td class="data-table__text">' + (v != null ? String(v) : "—") + "</td>");
         } else if (col === "Holders") {
