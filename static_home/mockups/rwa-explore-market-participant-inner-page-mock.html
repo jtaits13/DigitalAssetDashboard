@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="home-five-zone-mock.css?v=9" />
     <link rel="stylesheet" href="etp-inner-page-mock.css?v=22" />
     <link rel="stylesheet" href="rwa-global-inner-page-mock.css?v=9" />
-    <link rel="stylesheet" href="rwa-explore-inner-page-mock.css?v=1" />
+    <link rel="stylesheet" href="rwa-explore-inner-page-mock.css?v=3" />
   </head>
   <body
     class="page-rwa-explore-mp site-experience page-inner--rich mock-five-zone mock-rwa-global-inner mock-rwa-explore-inner mock-rwa-explore-mp-inner"
@@ -130,7 +130,7 @@
               aria-labelledby="preview-networks-heading"
             >
               <div class="rwa-explore-preview__head">
-                <div>
+                <div class="rwa-explore-preview__head-copy">
                   <p class="rwa-explore-preview__eyebrow">Participant deep page</p>
                   <h2 class="subsection-head" id="preview-networks-heading">Networks</h2>
                   <p class="rwa-explore-preview__dek">
@@ -138,7 +138,7 @@
                     <a href="participants-networks-inner-page-mock.html">Networks inner page (mock)</a>.
                   </p>
                 </div>
-                <a class="btn btn-secondary rwa-explore-preview__full-link" href="participants-networks-inner-page-mock.html"
+                <a class="rwa-explore-preview__head-link" href="participants-networks-inner-page-mock.html"
                   >Full overview &rarr;</a
                 >
               </div>
@@ -189,7 +189,7 @@
               >
                 <h3 class="u-vh" id="networks-insights-heading">Networks market structure</h3>
                 <div class="etp-mock-insights__panel etp-mock-insights__panel--conc">
-                  <h4 class="etp-mock-insights__head">Network share (top 5)</h4>
+                  <h3 class="etp-mock-insights__head">Network share (top 5)</h3>
                   <p class="etp-mock-conc__dek">Share of aggregate distributed RWA value by chain (RWA.xyz snapshot).</p>
                   <div
                     class="etp-mock-conc__rows etp-mock-conc__rows--grid"
@@ -241,7 +241,7 @@
               >
                 <h3 class="u-vh" id="networks-dashboard-heading">Networks chart and share movers</h3>
                 <div class="etp-mock-dash__panel etp-mock-dash__panel--chart">
-                  <h4 class="etp-mock-dash__head">Top networks by distributed value</h4>
+                  <h3 class="etp-mock-dash__head">Top networks by distributed value</h3>
                   <div class="stable-dash-chart-body">
                     <div
                       class="etp-mock-chart"
@@ -258,7 +258,7 @@
                   </p>
                 </div>
                 <div class="etp-mock-dash__panel etp-mock-dash__panel--movers">
-                  <h4 class="etp-mock-dash__head">Largest 30D share shifts (networks)</h4>
+                  <h3 class="etp-mock-dash__head">Largest 30D share shifts (networks)</h3>
                   <ul class="crypto-top-movers__list">
                     <li class="crypto-top-mover">
                       <div class="crypto-top-mover__row">
@@ -285,13 +285,40 @@
                 </div>
               </section>
 
-              <div class="rwa-explore-preview__table-head">
-                <h3 class="subsection-head">Networks table</h3>
-              </div>
-              <p class="rwa-explore-preview__table-intro">
-                <strong>Networks</strong> &mdash; distributed and represented RWA value by chain (RWA.xyz). Filter by
-                name below.
-              </p>
+              <div class="etp-mock-table-block stable-mock-league-block participants-mock-league-block">
+                <div class="rwa-explore-preview__table-head rwa-split-table-head inner-table-head">
+                  <h3 class="subsection-head rwa-split-table-head__title" id="networks-net-heading">Networks table</h3>
+                  <div class="rwa-split-table-head__actions">
+                    <button
+                      type="button"
+                      class="table-download-btn"
+                      disabled
+                      aria-label="Download networks table as Excel"
+                      title="Download as Excel (.xlsx)"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <p class="stable-mock-league-intro participants-mock-league-intro rwa-explore-preview__table-intro">
+                  <strong>Networks</strong> &mdash; distributed and represented RWA value by chain (RWA.xyz). Filter by
+                  name below.
+                </p>
               <label class="search-field etp-mock-table-search">
                 <span class="search-field__label">Search network table</span>
                 <input type="search" class="search-field__input" placeholder="Filter by network name&hellip;" />
@@ -410,6 +437,7 @@
                   Preview: first 8 of 35 networks (Distributed &middot; Networks).
                 </p>
               </div>
+              </div>
 
               <div class="cta-row etp-mock-bottom-cta">
                 <a class="btn btn-primary" href="participants-networks-inner-page-mock.html"
@@ -432,7 +460,7 @@
               aria-labelledby="preview-platforms-heading"
             >
               <div class="rwa-explore-preview__head">
-                <div>
+                <div class="rwa-explore-preview__head-copy">
                   <p class="rwa-explore-preview__eyebrow">Participant deep page</p>
                   <h2 class="subsection-head" id="preview-platforms-heading">Platforms</h2>
                   <p class="rwa-explore-preview__dek">
@@ -440,7 +468,7 @@
                     <a href="../rwa-participants-platforms.html">Platforms production page</a>.
                   </p>
                 </div>
-                <a class="btn btn-secondary rwa-explore-preview__full-link" href="../rwa-participants-platforms.html"
+                <a class="rwa-explore-preview__head-link" href="../rwa-participants-platforms.html"
                   >Full overview &rarr;</a
                 >
               </div>
@@ -491,7 +519,7 @@
               >
                 <h3 class="u-vh" id="platforms-insights-heading">Platforms market structure</h3>
                 <div class="etp-mock-insights__panel etp-mock-insights__panel--conc">
-                  <h4 class="etp-mock-insights__head">Platform share (top 5)</h4>
+                  <h3 class="etp-mock-insights__head">Platform share (top 5)</h3>
                   <p class="etp-mock-conc__dek">Share of aggregate distributed RWA value by platform (RWA.xyz snapshot).</p>
                   <div
                     class="etp-mock-conc__rows etp-mock-conc__rows--grid"
@@ -543,7 +571,7 @@
               >
                 <h3 class="u-vh" id="platforms-dashboard-heading">Platforms chart and share movers</h3>
                 <div class="etp-mock-dash__panel etp-mock-dash__panel--chart">
-                  <h4 class="etp-mock-dash__head">Top platforms by distributed value</h4>
+                  <h3 class="etp-mock-dash__head">Top platforms by distributed value</h3>
                   <div class="stable-dash-chart-body">
                     <div
                       class="etp-mock-chart"
@@ -561,7 +589,7 @@
                   </p>
                 </div>
                 <div class="etp-mock-dash__panel etp-mock-dash__panel--movers">
-                  <h4 class="etp-mock-dash__head">Largest 30D share shifts (platforms)</h4>
+                  <h3 class="etp-mock-dash__head">Largest 30D share shifts (platforms)</h3>
                   <ul class="crypto-top-movers__list">
                     <li class="crypto-top-mover">
                       <div class="crypto-top-mover__row">
@@ -588,13 +616,40 @@
                 </div>
               </section>
 
-              <div class="rwa-explore-preview__table-head">
-                <h3 class="subsection-head">Platforms table</h3>
-              </div>
-              <p class="rwa-explore-preview__table-intro">
-                <strong>Platforms</strong> &mdash; distributed RWA value by issuance platform (RWA.xyz). Filter by name
-                below.
-              </p>
+              <div class="etp-mock-table-block stable-mock-league-block participants-mock-league-block">
+                <div class="rwa-explore-preview__table-head rwa-split-table-head inner-table-head">
+                  <h3 class="subsection-head rwa-split-table-head__title" id="platforms-table-heading">Platforms table</h3>
+                  <div class="rwa-split-table-head__actions">
+                    <button
+                      type="button"
+                      class="table-download-btn"
+                      disabled
+                      aria-label="Download platforms table as Excel"
+                      title="Download as Excel (.xlsx)"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <p class="stable-mock-league-intro participants-mock-league-intro rwa-explore-preview__table-intro">
+                  <strong>Platforms</strong> &mdash; distributed RWA value by issuance platform (RWA.xyz). Filter by name
+                  below.
+                </p>
               <label class="search-field etp-mock-table-search">
                 <span class="search-field__label">Search platform table</span>
                 <input type="search" class="search-field__input" placeholder="Filter by platform name&hellip;" />
@@ -708,6 +763,7 @@
                   Preview: first 8 of 181 platforms (Distributed &middot; Platforms).
                 </p>
               </div>
+              </div>
 
               <div class="cta-row etp-mock-bottom-cta">
                 <a class="btn btn-primary" href="../rwa-participants-platforms.html"
@@ -730,7 +786,7 @@
               aria-labelledby="preview-am-heading"
             >
               <div class="rwa-explore-preview__head">
-                <div>
+                <div class="rwa-explore-preview__head-copy">
                   <p class="rwa-explore-preview__eyebrow">Participant deep page</p>
                   <h2 class="subsection-head" id="preview-am-heading">Asset Managers</h2>
                   <p class="rwa-explore-preview__dek">
@@ -738,9 +794,7 @@
                     <a href="../rwa-participants-asset-managers.html">Asset Managers production page</a>.
                   </p>
                 </div>
-                <a
-                  class="btn btn-secondary rwa-explore-preview__full-link"
-                  href="../rwa-participants-asset-managers.html"
+                <a class="rwa-explore-preview__head-link" href="../rwa-participants-asset-managers.html"
                   >Full overview &rarr;</a
                 >
               </div>
@@ -792,7 +846,7 @@
               >
                 <h3 class="u-vh" id="am-insights-heading">Asset Managers market structure</h3>
                 <div class="etp-mock-insights__panel etp-mock-insights__panel--conc">
-                  <h4 class="etp-mock-insights__head">Asset manager share (top 5)</h4>
+                  <h3 class="etp-mock-insights__head">Asset manager share (top 5)</h3>
                   <p class="etp-mock-conc__dek">
                     Share of aggregate distributed AUM by asset manager (RWA.xyz snapshot).
                   </p>
@@ -843,7 +897,7 @@
               <section class="etp-mock-dashboard rwa-explore-preview__dashboard" aria-labelledby="am-dashboard-heading">
                 <h3 class="u-vh" id="am-dashboard-heading">Asset Managers chart and share movers</h3>
                 <div class="etp-mock-dash__panel etp-mock-dash__panel--chart">
-                  <h4 class="etp-mock-dash__head">Top asset managers by distributed value</h4>
+                  <h3 class="etp-mock-dash__head">Top asset managers by distributed value</h3>
                   <div class="stable-dash-chart-body">
                     <div
                       class="etp-mock-chart"
@@ -861,7 +915,7 @@
                   </p>
                 </div>
                 <div class="etp-mock-dash__panel etp-mock-dash__panel--movers">
-                  <h4 class="etp-mock-dash__head">Largest 30D share shifts (asset managers)</h4>
+                  <h3 class="etp-mock-dash__head">Largest 30D share shifts (asset managers)</h3>
                   <ul class="crypto-top-movers__list">
                     <li class="crypto-top-mover">
                       <div class="crypto-top-mover__row">
@@ -888,12 +942,39 @@
                 </div>
               </section>
 
-              <div class="rwa-explore-preview__table-head">
-                <h3 class="subsection-head">Asset managers table</h3>
-              </div>
-              <p class="rwa-explore-preview__table-intro">
-                <strong>Asset managers</strong> &mdash; distributed AUM by issuer (RWA.xyz). Filter by name below.
-              </p>
+              <div class="etp-mock-table-block stable-mock-league-block participants-mock-league-block">
+                <div class="rwa-explore-preview__table-head rwa-split-table-head inner-table-head">
+                  <h3 class="subsection-head rwa-split-table-head__title" id="am-table-heading">Asset managers table</h3>
+                  <div class="rwa-split-table-head__actions">
+                    <button
+                      type="button"
+                      class="table-download-btn"
+                      disabled
+                      aria-label="Download asset managers table as Excel"
+                      title="Download as Excel (.xlsx)"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <p class="stable-mock-league-intro participants-mock-league-intro rwa-explore-preview__table-intro">
+                  <strong>Asset managers</strong> &mdash; distributed AUM by issuer (RWA.xyz). Filter by name below.
+                </p>
               <label class="search-field etp-mock-table-search">
                 <span class="search-field__label">Search asset manager table</span>
                 <input type="search" class="search-field__input" placeholder="Filter by asset manager name&hellip;" />
@@ -1010,6 +1091,7 @@
                 <p class="source-cap rwa-table-footnote-row__cap">
                   Preview: first 8 of 86 asset managers (Distributed &middot; Asset Managers).
                 </p>
+              </div>
               </div>
 
               <div class="cta-row etp-mock-bottom-cta">
