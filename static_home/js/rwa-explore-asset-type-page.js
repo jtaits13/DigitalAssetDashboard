@@ -14,6 +14,16 @@
 
   var EXPLORE_PREVIEW_ROWS = 8;
 
+  function slugExploreExportFilename(sec) {
+    var base = sec.id || sec.anchor_id || sec.title || "rwa-preview";
+    return (
+      String(base)
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "") || "rwa-preview"
+    );
+  }
+
   function previewEntityFromColumns(columns) {
     var cols = columns || [];
     if (cols.indexOf("Network") >= 0) return { entity: "networks", label: "Filter preview by network name", placeholder: "Filter by network…" };
@@ -29,6 +39,7 @@
     var renderKpis = H.renderKpis;
     var renderTable = H.renderTable;
     var attachTableFullscreenButton = H.attachRwaTableFullscreenButton;
+    var buildPreviewTableExportData = H.buildPreviewTableExportData;
     if (!renderKpis || !renderTable) {
       console.error("rwa-explore-asset-type-page: load rwa-onchain-home.js first.");
       return;
@@ -235,11 +246,22 @@
       }
 
       if (tableWrap && tableEl && attachTableFullscreenButton) {
+        var tbodyEl = tableEl.querySelector("tbody");
         attachTableFullscreenButton(tableWrap, tableEl, {
           title: String(sec.table_subheading || sec.title || "RWA preview table"),
+          filename: slugExploreExportFilename(sec),
           actionRow: ctaRow,
           downloadPlacement: "title-row",
           downloadAnchor: titleActionsEl,
+          getExportData: function () {
+            if (typeof buildPreviewTableExportData === "function" && tbodyEl) {
+              return buildPreviewTableExportData(tbodyEl, {
+                exportColumns: sec.columns,
+                sheetName: String(sec.title || "Data").slice(0, 31),
+              });
+            }
+            return null;
+          },
         });
       }
       section.appendChild(ctaRow);

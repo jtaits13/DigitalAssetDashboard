@@ -627,6 +627,32 @@
     );
   }
 
+  function buildPreviewTableExportData(tbody, options) {
+    var opts = options || {};
+    var hp = tbody && tbody._rwaHomePreview;
+    if (!hp || !hp.allRows || !hp.allRows.length) return null;
+    var sortState = tbody._rwaTableSort || {};
+    var sorted = sortRwaHomeRows(
+      hp.allRows.slice(),
+      hp.columns,
+      sortState.sortCol,
+      sortState.sortDir != null ? sortState.sortDir : 1
+    );
+    var cols = (opts.exportColumns || hp.columns || []).filter(function (c) {
+      return c !== "Link";
+    });
+    return {
+      headers: cols,
+      sheetName: opts.sheetName,
+      rows: sorted.map(function (row) {
+        return cols.map(function (c) {
+          var v = row[c];
+          return v == null ? "" : v;
+        });
+      }),
+    };
+  }
+
   function attachHomePreviewFullscreen(tbody, options) {
     var fs = global.__TABLE_FULLSCREEN;
     if (!fs || !fs.attachTableFullscreenButton || !tbody) return;
@@ -638,29 +664,10 @@
       title: opts.title || "RWA table preview",
       filename: opts.filename || "rwa-preview",
       getExportData: function () {
-        var hp = tbody._rwaHomePreview;
-        if (!hp || !hp.allRows || !hp.allRows.length) return null;
-        var q = hp.searchEl && hp.searchEl.value ? hp.searchEl.value : "";
-        var filtered = filterRwaHomeRows(hp.allRows, q);
-        var sortState = tbody._rwaTableSort || {};
-        var sorted = sortRwaHomeRows(
-          filtered,
-          hp.columns,
-          sortState.sortCol,
-          sortState.sortDir != null ? sortState.sortDir : 1
-        );
-        var cols = (opts.exportColumns || hp.columns || []).filter(function (c) {
-          return c !== "Link";
+        return buildPreviewTableExportData(tbody, {
+          exportColumns: opts.exportColumns,
+          sheetName: opts.sheetName,
         });
-        return {
-          headers: cols,
-          rows: sorted.map(function (row) {
-            return cols.map(function (c) {
-              var v = row[c];
-              return v == null ? "" : v;
-            });
-          }),
-        };
       },
     });
   }
@@ -740,6 +747,7 @@
     renderKpis: renderKpis,
     renderTable: renderTable,
     attachHomePreviewFullscreen: attachHomePreviewFullscreen,
+    buildPreviewTableExportData: buildPreviewTableExportData,
     exploreCompactHtml: exploreCompactHtml,
   });
 })(typeof window !== "undefined" ? window : this);

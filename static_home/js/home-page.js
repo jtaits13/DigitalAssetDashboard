@@ -74,6 +74,12 @@
     return (r.assets_usd / 1e9).toFixed(2);
   }
 
+  function fmtFlowExport(usd) {
+    if (usd == null || usd === "") return "";
+    var fmt = window.__ETP_KPI && window.__ETP_KPI.fmtFlowUsd;
+    return fmt ? fmt(usd) : Number(usd);
+  }
+
   function parsePrice(s) {
     if (s == null || s === "") return NaN;
     var x = String(s).replace(/,/g, "").replace(/^\$/, "");
@@ -109,10 +115,10 @@
     var k = etpSort.key === "price" ? "price_num" : etpSort.key;
     var d = etpSort.dir;
     var base = arr.map(prepareEtpRow);
-    if (k === "assets_usd" || k === "price_num") {
+    if (k === "assets_usd" || k === "price_num" || k === "flow_1y_usd") {
       return base.slice().sort(function (a, b) {
-        var va = k === "assets_usd" ? a.assets_usd : a.price_num;
-        var vb = k === "assets_usd" ? b.assets_usd : b.price_num;
+        var va = k === "assets_usd" ? a.assets_usd : k === "flow_1y_usd" ? a.flow_1y_usd : a.price_num;
+        var vb = k === "assets_usd" ? b.assets_usd : k === "flow_1y_usd" ? b.flow_1y_usd : b.price_num;
         var aBad = va == null || (typeof va === "number" && !isFinite(va));
         var bBad = vb == null || (typeof vb === "number" && !isFinite(vb));
         if (aBad && bBad) return String(a.symbol || "").localeCompare(String(b.symbol || ""));
@@ -188,19 +194,19 @@
     if (!wrap || !table) return;
     fs.attachTableFullscreenButton(wrap, table, {
       title: "U.S. ETP fund table preview",
-      filename: "us-etp-funds-preview",
+      filename: "us-etp-funds",
       getExportData: function () {
         if (!etpAllRows.length) return null;
-        var filtered = filterEtpRows(etpAllRows);
-        var rows = sortEtpPreviewRows(filtered);
+        var rows = sortEtpPreviewRows(etpAllRows);
         return {
-          headers: ["Symbol", "Fund Name", "Price", "1Y %", "Assets (B)"],
+          headers: ["Symbol", "Fund Name", "Price", "1Y %", "1Y Flow", "Assets (B)"],
           rows: rows.map(function (r) {
             return [
               r.symbol || "",
               r.name || "",
               r.price != null ? String(r.price) : "",
               r.pct_52w != null ? Number(r.pct_52w) : "",
+              fmtFlowExport(r.flow_1y_usd),
               r.assets_usd != null ? Number(r.assets_usd) / 1e9 : "",
             ];
           }),
@@ -213,7 +219,7 @@
     if (!tblBody) return;
     tblBody.innerHTML = "";
     if (!etpAllRows || !etpAllRows.length) {
-      tblBody.innerHTML = '<tr><td colspan="5">No ETP data. Export script not run yet.</td></tr>';
+      tblBody.innerHTML = '<tr><td colspan="6">No ETP data. Export script not run yet.</td></tr>';
       if (etpToolbar) etpToolbar.hidden = true;
       return;
     }
@@ -236,7 +242,7 @@
     }
     if (!filtered.length) {
       tblBody.innerHTML =
-        '<tr><td colspan="5">No funds match your filter. Try another name or ticker.</td></tr>';
+        '<tr><td colspan="6">No funds match your filter. Try another name or ticker.</td></tr>';
       return;
     }
     var rows = sortEtpPreviewRows(filtered).slice(0, 5);
@@ -255,6 +261,9 @@
         escapeHtml(String(r.price || "—")) +
         "</td>" +
         fmt52cell(r.pct_52w) +
+        (window.__ETP_KPI && typeof window.__ETP_KPI.fmtFlowCell === "function"
+          ? window.__ETP_KPI.fmtFlowCell(r.flow_1y_usd)
+          : '<td class="num">—</td>') +
         '<td class="num">' +
         assetsB(r) +
         "</td>";

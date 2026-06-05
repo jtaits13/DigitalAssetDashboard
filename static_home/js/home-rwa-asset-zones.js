@@ -6,8 +6,8 @@
   if (!H || typeof H.renderKpis !== "function" || typeof H.renderTable !== "function") return;
 
   var HOME_PREVIEW = 5;
-  var STABLE_HOME_COLS = ["Network", "Total Value", "30D Δ share", "Link"];
-  var TMMF_FUND_COLS = ["Fund Name", "Platform", "Total Value", "7D Δ value"];
+  var STABLE_HOME_COLS = ["Network", "Stablecoins", "Total Value", "Market Share", "30D Δ share"];
+  var TMMF_FUND_COLS = ["Fund Name", "Ticker", "Platform", "Total Value", "7D Δ value"];
   var TMMF_NET_COLS = ["Network", "Distributed Value", "30D Δ share", "Link"];
 
   var freshApi = window.__DATA_FRESHNESS || {};
@@ -56,15 +56,17 @@
     if (!section) {
       showBanner("js-home-stable-banner", "Stablecoins preview data is unavailable.");
       if (kpiHost) kpiHost.innerHTML = "";
-      if (tbody) tbody.innerHTML = '<tr><td colspan="4">Stablecoins data is unavailable.</td></tr>';
+      if (tbody) tbody.innerHTML = '<tr><td colspan="5">Stablecoins data is unavailable.</td></tr>';
       return;
     }
 
     showBanner("js-home-stable-banner", "");
     renderFreshness("js-home-stable-as-of", generatedAt);
     H.renderKpis(kpiHost, section.kpis || [], "");
+    var stableRows =
+      (section.rows_full && section.rows_full.length ? section.rows_full : section.rows) || [];
 
-    H.renderTable(theadRow, tbody, STABLE_HOME_COLS, section.rows || [], {
+    H.renderTable(theadRow, tbody, STABLE_HOME_COLS, stableRows, {
       emptyMsg: "Stablecoins network preview is unavailable.",
       homePreview: true,
       previewLimit: HOME_PREVIEW,
@@ -120,7 +122,7 @@
     if (!exploreSection) {
       showBanner("js-home-tmmf-banner", "TMMF preview data is unavailable.");
       if (kpiHost) kpiHost.innerHTML = "";
-      if (tbody) tbody.innerHTML = '<tr><td colspan="4">TMMF data is unavailable.</td></tr>';
+      if (tbody) tbody.innerHTML = '<tr><td colspan="5">TMMF data is unavailable.</td></tr>';
       return;
     }
 
@@ -130,7 +132,11 @@
     if (captionEl) {
       captionEl.textContent = "Network preview (fund-level table on full TMMF page).";
     }
-    H.renderTable(theadRow, tbody, TMMF_NET_COLS, exploreSection.rows || [], {
+    var netRows =
+      (exploreSection.rows_full && exploreSection.rows_full.length
+        ? exploreSection.rows_full
+        : exploreSection.rows) || [];
+    H.renderTable(theadRow, tbody, TMMF_NET_COLS, netRows, {
       emptyMsg: "TMMF network preview is unavailable.",
       homePreview: true,
       previewLimit: HOME_PREVIEW,
