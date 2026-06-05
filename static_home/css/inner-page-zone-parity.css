@@ -498,13 +498,25 @@
 }
 
 .site-experience.page-inner--rich .inner-rich-zone .data-table td.num.up,
-.site-experience.page-inner--rich .inner-rich-zone .data-table td.num.pct.up {
+.site-experience.page-inner--rich .inner-rich-zone .data-table td.num.pct.up,
+.page-rwa-global .data-table td.num.up,
+.page-rwa-global .data-table td.num.pct.up,
+.page-rwa-explore-at .data-table td.num.up,
+.page-rwa-explore-at .data-table td.num.pct.up,
+.page-rwa-explore-mp .data-table td.num.up,
+.page-rwa-explore-mp .data-table td.num.pct.up {
   color: #0d6b3a;
   font-weight: 600;
 }
 
 .site-experience.page-inner--rich .inner-rich-zone .data-table td.num.down,
-.site-experience.page-inner--rich .inner-rich-zone .data-table td.num.pct.down {
+.site-experience.page-inner--rich .inner-rich-zone .data-table td.num.pct.down,
+.page-rwa-global .data-table td.num.down,
+.page-rwa-global .data-table td.num.pct.down,
+.page-rwa-explore-at .data-table td.num.down,
+.page-rwa-explore-at .data-table td.num.pct.down,
+.page-rwa-explore-mp .data-table td.num.down,
+.page-rwa-explore-mp .data-table td.num.pct.down {
   color: #b42318;
   font-weight: 600;
 }

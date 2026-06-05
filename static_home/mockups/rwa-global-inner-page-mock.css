@@ -542,12 +542,14 @@
   box-shadow: 0 1px 0 rgb(var(--hx-etp-bright-rgb) / 0.14);
 }
 
-.mock-rwa-global-inner .data-table td.num.up {
+.mock-rwa-global-inner .data-table td.num.up,
+.mock-rwa-global-inner .data-table td.num.pct.up {
   color: #0d6b3a;
   font-weight: 600;
 }
 
-.mock-rwa-global-inner .data-table td.num.down {
+.mock-rwa-global-inner .data-table td.num.down,
+.mock-rwa-global-inner .data-table td.num.pct.down {
   color: #b42318;
   font-weight: 600;
 }
