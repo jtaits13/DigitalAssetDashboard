@@ -129,6 +129,18 @@
   white-space: nowrap;
 }
 
+/* Table sections — white panel parity with insights / league blocks */
+.mock-tmmf-inner .etp-mock-table-block.etp-mock-table-block--funds,
+.mock-tmmf-inner .etp-mock-table-block.tmmf-mock-league-block {
+  margin-top: 0;
+  padding: 0.95rem 1rem 1rem;
+  border: 1px solid rgb(var(--hx-etp-bright-rgb) / 0.16);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgb(var(--hx-etp-rgb) / 0.06);
+  margin-bottom: var(--etp-mock-gap-lg, 1.2rem);
+}
+
 .mock-tmmf-inner .tmmf-population-split.etp-mock-dashboard {
   grid-template-columns: 1fr;
   margin-bottom: 0.35rem;

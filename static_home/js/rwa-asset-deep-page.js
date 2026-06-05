@@ -134,7 +134,9 @@
     var m = estimateChartMargins(y, text, shellW);
     var axisProps = buildCurrencyAxisProps(x, Math.max(120, shellW - m.l - m.r));
 
-    var barThickness = Math.min(0.9, Math.max(0.58, 0.86 - y.length * 0.028));
+    var thicknessBars =
+      payload.chart_bar_thickness_bars != null ? Number(payload.chart_bar_thickness_bars) : y.length;
+    var barThickness = Math.min(0.9, Math.max(0.58, 0.86 - thicknessBars * 0.028));
 
     var trace = {
       type: "bar",
@@ -156,8 +158,12 @@
     };
 
     var heightPx =
-      league.split_body_height_px != null ? Number(league.split_body_height_px) : 420;
-    if (shell) {
+      payload.chart_height_px != null
+        ? Number(payload.chart_height_px)
+        : league.split_body_height_px != null
+          ? Number(league.split_body_height_px)
+          : 420;
+    if (payload.chart_height_px == null && shell) {
       var shellH = shell.clientHeight || shell.offsetHeight;
       if (shellH > 0) heightPx = Math.round(shellH);
     }
@@ -447,8 +453,12 @@
         drawHorizontalBar(
           chartEl,
           net.rows_full,
-          net,
-          Object.assign({}, payload, { chart_max_bars: 5 })
+          Object.assign({}, net, { split_body_height_px: 210 }),
+          Object.assign({}, payload, {
+            chart_max_bars: 5,
+            chart_bar_thickness_bars: 12,
+            chart_height_px: 210,
+          })
         );
       }
       if (moversEl) {
@@ -540,7 +550,8 @@
 
       host.hidden = false;
       if (mockLayout) {
-        host.className = "etp-mock-table-block etp-mock-table-block--funds";
+        host.className =
+          "rwa-deep-league-panel etp-mock-table-block etp-mock-table-block--funds";
         host.setAttribute("aria-labelledby", "funds-heading");
       } else {
         host.className = "";

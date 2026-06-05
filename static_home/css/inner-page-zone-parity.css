@@ -28,6 +28,21 @@
   min-height: 220px;
 }
 
+.mock-stable-inner .etp-mock-dashboard {
+  align-items: start;
+}
+
+.mock-stable-inner .etp-mock-dash__panel--chart .aum-chart-host:not(:empty),
+.mock-stable-inner .etp-mock-dash__panel--chart .aum-chart-host .js-plotly-plot {
+  min-height: 0;
+  height: 210px;
+  max-height: 210px;
+}
+
+.mock-stable-inner .etp-mock-dash__panel--movers {
+  min-height: 0;
+}
+
 .etp-mock-dash__panel--chart .aum-chart-host:not(:empty)::before,
 .etp-mock-dash__panel--chart .aum-chart-host:has(.js-plotly-plot)::before,
 .etp-mock-dash__panel--chart .aum-chart-host:has(.tradingview-widget-container)::before {
@@ -360,6 +375,11 @@
   margin-bottom: 1rem;
   padding-top: 0.15rem;
   border-top: 1px solid rgb(var(--hx-accent-bright-rgb) / 0.12);
+}
+
+.page-rwa-deep-mmf #js-deep-extra-before-leagues.rwa-deep-league-panel {
+  padding-top: 1rem;
+  border-top: none;
 }
 
 .site-experience.page-inner--rich .inner-rich-zone .rwa-deep-league-panel:first-of-type {

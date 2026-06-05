@@ -73,6 +73,21 @@
   }
 }
 
+/* Dashboard — compact chart column; avoid stretching share-movers panel */
+.mock-stable-inner .etp-mock-dashboard {
+  align-items: start;
+}
+
+.mock-stable-inner .etp-mock-dash__panel--chart .aum-chart-host {
+  min-height: 0;
+  height: 210px;
+  max-height: 210px;
+}
+
+.mock-stable-inner .etp-mock-dash__panel--movers {
+  min-height: 0;
+}
+
 /* Chart */
 .mock-stable-inner .etp-mock-chart {
   background:
