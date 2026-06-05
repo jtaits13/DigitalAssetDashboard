@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Mock — Stablecoins inner page</title>
+    <title>Mock — Tokenized Stocks inner page</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -14,10 +14,13 @@
     <link rel="stylesheet" href="../css/site-experience.css?v=21" />
     <link rel="stylesheet" href="../css/inner-page-experience.css?v=22" />
     <link rel="stylesheet" href="home-five-zone-mock.css?v=9" />
-    <link rel="stylesheet" href="etp-inner-page-mock.css?v=15" />
-    <link rel="stylesheet" href="stable-inner-page-mock.css?v=6" />
+    <link rel="stylesheet" href="etp-inner-page-mock.css?v=18" />
+    <link rel="stylesheet" href="rwa-global-inner-page-mock.css?v=5" />
+    <link rel="stylesheet" href="tokenized-stocks-inner-page-mock.css?v=2" />
   </head>
-  <body class="page-rwa-deep-stablecoins site-experience page-inner--rich mock-five-zone mock-stable-inner">
+  <body
+    class="page-rwa-deep-stocks site-experience page-inner--rich mock-five-zone mock-rwa-global-inner mock-stocks-inner"
+  >
     <header class="site-header" role="banner">
       <div class="site-header__inner">
         <a class="site-brand" href="../index.html">Digital Assets Dashboard</a>
@@ -25,13 +28,13 @@
           <a href="../index.html">Home</a>
           <a href="../index.html#section-news">News Hub</a>
           <a href="tmmf-inner-page-mock.html">TMMFs</a>
-          <a href="stable-inner-page-mock.html" class="is-active">Stablecoins</a>
+          <a href="stable-inner-page-mock.html">Stablecoins</a>
           <div class="site-nav__dropdown">
             <a href="rwa-global-inner-page-mock.html" class="site-nav__trigger">RWA Market</a>
             <ul class="site-nav__sub">
               <li><a href="rwa-global-inner-page-mock.html">Market Overview (mock)</a></li>
               <li><a href="treasuries-inner-page-mock.html">U.S. Treasuries (mock)</a></li>
-              <li><a href="tokenized-stocks-inner-page-mock.html">Tokenized Stocks (mock)</a></li>
+              <li><a href="tokenized-stocks-inner-page-mock.html" class="is-active">Tokenized Stocks (mock)</a></li>
             </ul>
           </div>
           <div class="site-nav__dropdown">
@@ -48,26 +51,24 @@
 
     <div class="page-back-below-header">
       <p class="back-link back-link--below-header">
-        <a href="../index.html#section-stablecoins">&larr; Back to home &middot; Stablecoins preview</a>
+        <a href="../rwa-explore-asset-type.html">&larr; Explore by Asset Type</a>
       </p>
     </div>
 
     <main class="etp-mock-shell">
       <article
-        class="hub-section hub-section--panel home-zone home-zone--stable etp-mock-zone inner-rich-zone zone--stable"
+        class="hub-section hub-section--panel home-zone home-zone--rwa etp-mock-zone inner-rich-zone zone--rwa"
         aria-labelledby="page-title"
       >
         <div class="home-zone__stripe" aria-hidden="true"></div>
         <header class="home-zone__head">
-          <span class="home-zone__badge" aria-hidden="true">SC</span>
+          <span class="home-zone__badge" aria-hidden="true">RWA</span>
           <div class="home-zone__titles">
-            <h1 class="page-intro__title" id="page-title">Stablecoins</h1>
+            <h1 class="page-intro__title" id="page-title">Tokenized Stocks</h1>
             <p class="section-dek section-dek--wide">
-              Mirrors the
-              <a href="https://app.rwa.xyz/stablecoins" target="_blank" rel="noopener noreferrer">RWA.xyz Stablecoins</a>
-              view: headline <strong>30-day (30D)</strong> KPI changes, plus searchable
-              <strong>Networks</strong> and <strong>Platforms</strong> league tables (aggregate market cap by chain and
-              by issuer).
+              <strong>Networks</strong> and <strong>Platforms</strong> leagues from
+              <a href="https://app.rwa.xyz/stocks" target="_blank" rel="noopener noreferrer">RWA.xyz Tokenized Stocks</a>.
+              KPI % changes are <strong>30-day (30D)</strong>; table columns use 7D value and 30D share (pp) as labeled.
             </p>
           </div>
         </header>
@@ -75,121 +76,121 @@
         <div class="etp-mock-zone__body home-zone__body inner-rich-zone__body">
           <div class="home-related-chips" aria-label="Related pages">
             <span class="home-related-chips__label">Related</span>
-            <a class="home-chip" href="../index.html#section-stablecoins">Home stablecoins preview</a>
-            <a class="home-chip" href="tmmf-inner-page-mock.html">Tokenized MMFs (mock)</a>
+            <a class="home-chip" href="../rwa-explore-asset-type.html">Explore by asset type</a>
             <a class="home-chip" href="treasuries-inner-page-mock.html">U.S. Treasuries (mock)</a>
-            <a class="home-chip" href="tokenized-stocks-inner-page-mock.html">Tokenized Stocks (mock)</a>
-            <a class="home-chip" href="crypto-inner-page-mock.html">Crypto prices (mock)</a>
             <a class="home-chip" href="rwa-global-inner-page-mock.html">RWA market overview (mock)</a>
+            <a class="home-chip" href="tmmf-inner-page-mock.html">Tokenized MMFs (mock)</a>
           </div>
 
           <section class="etp-mock-snapshot" aria-labelledby="snapshot-heading">
             <h2 class="subsection-head u-vh" id="snapshot-heading">Top-line snapshot</h2>
             <p class="data-freshness etp-mock-freshness">
-              Snapshot as of <time datetime="2026-06-02">2 Jun 2026</time> (UTC) &middot; RWA.xyz Stablecoins Overview
+              Snapshot as of <time datetime="2026-06-02">2 Jun 2026</time> (UTC) &middot; RWA.xyz Tokenized Stocks
+              Overview
             </p>
-            <div class="rwa-kpi-panel-static rwa-kpi-panel-static--compact" aria-label="Stablecoins KPI strip">
+            <div class="rwa-kpi-panel-static rwa-kpi-panel-static--compact" aria-label="Tokenized Stocks KPI strip">
               <div class="rwa-kpi-row rwa-kpi-row--home-grid">
                 <div class="rwa-kpi-cell">
-                  <span class="rwa-kpi-label">Market cap</span>
-                  <span class="rwa-kpi-val">$299.03B</span>
-                  <span class="rwa-kpi-delta down">-0.75%</span>
+                  <span class="rwa-kpi-label">Distributed value</span>
+                  <span class="rwa-kpi-val">$412M</span>
+                  <span class="rwa-kpi-delta up">+8.6%</span>
                 </div>
                 <div class="rwa-kpi-cell">
-                  <span class="rwa-kpi-label">Monthly transfer volume</span>
-                  <span class="rwa-kpi-val">$5.79T</span>
-                  <span class="rwa-kpi-delta down">-40.10%</span>
+                  <span class="rwa-kpi-label">Top network share</span>
+                  <span class="rwa-kpi-val">58.4% &middot; Ethereum</span>
+                  <span class="rwa-kpi-delta down">-1.2 pp</span>
                 </div>
                 <div class="rwa-kpi-cell">
-                  <span class="rwa-kpi-label">Monthly active addresses</span>
-                  <span class="rwa-kpi-val">53.0M</span>
-                  <span class="rwa-kpi-delta down">-7.12%</span>
+                  <span class="rwa-kpi-label">Tokenized products</span>
+                  <span class="rwa-kpi-val">186</span>
+                  <span class="rwa-kpi-delta rwa-kpi-delta--placeholder" aria-hidden="true">&nbsp;</span>
                 </div>
                 <div class="rwa-kpi-cell">
-                  <span class="rwa-kpi-label">Holders</span>
-                  <span class="rwa-kpi-val">261.3M</span>
-                  <span class="rwa-kpi-delta up">+5.86%</span>
+                  <span class="rwa-kpi-label">Active networks</span>
+                  <span class="rwa-kpi-val">8</span>
+                  <span class="rwa-kpi-delta rwa-kpi-delta--placeholder" aria-hidden="true">&nbsp;</span>
                 </div>
               </div>
             </div>
             <p class="etp-mock-snapshot__note">
-              All KPI % changes are <strong>30-day (30D)</strong> from RWA.xyz Stablecoins Overview.
+              Distributed value and top network share show <strong>30D</strong> % / pp from RWA.xyz Tokenized Stocks
+              Overview.
             </p>
           </section>
 
           <div class="inner-rich-block etp-mock-key-obs-block" aria-labelledby="obs-heading">
             <h2 class="subsection-head u-vh" id="obs-heading">Key Observations</h2>
-            <div id="js-stable-key-obs">
-            <aside class="crypto-story-callout" aria-labelledby="stable-key-obs-title">
-              <h3 class="crypto-story-callout__title" id="stable-key-obs-title">Key observations</h3>
-              <ul class="crypto-story-callout__list">
-                <li>
-                  <strong>Stablecoin market structure remains concentration-led:</strong> leadership is still defined by
-                  a small set of large issuers/platforms; share shifts matter as much as aggregate market-cap growth.
-                </li>
-                <li>
-                  <strong>Institutional relevance continues to rise:</strong> policy and bank-integration pathways
-                  increasingly frame stablecoins as payment and treasury infrastructure&mdash;not only crypto trading
-                  liquidity.
-                </li>
-                <li>
-                  <strong>Industry headlines emphasize stablecoin policy &amp; reserves:</strong> reserve and policy
-                  headlines can reprice which stablecoins issuers prioritize&mdash;platform concentration on this page
-                  may shift before aggregate market cap does.
-                </li>
-                <li>
-                  <strong>Bank &amp; payments integration:</strong> remittance and card-rail stories frame stablecoins as
-                  settlement infrastructure beyond exchange trading liquidity.
-                </li>
-              </ul>
-              <p class="crypto-story-callout__note">
-                Context only&mdash;not investment advice. Bullets are ranked from on-page data and recent industry
-                headlines (dashboard RSS plus Google News fallback).
+            <div id="js-stocks-key-obs">
+              <aside class="crypto-story-callout" aria-labelledby="stocks-key-obs-title">
+                <h3 class="crypto-story-callout__title" id="stocks-key-obs-title">Key observations</h3>
+                <ul class="crypto-story-callout__list">
+                  <li>
+                    <strong>Niche but fast-growing.</strong> Distributed value remains sub-$500M in this snapshot, but
+                    30D growth outpaces most other RWA asset classes on the dashboard.
+                  </li>
+                  <li>
+                    <strong>Platform-led distribution.</strong> Backed and Dinari dominate platform share&mdash;wrapped
+                    equity on a handful of issuer rails rather than broad on-chain fragmentation.
+                  </li>
+                  <li>
+                    <strong>Multi-chain expansion.</strong> Solana and Base show the largest 30D share gains in the
+                    networks table below as listings move beyond Ethereum mainnet.
+                  </li>
+                </ul>
+                <p class="crypto-story-callout__note">
+                  Context only&mdash;not investment advice. Chart and tables use RWA.xyz only.
+                </p>
+              </aside>
+              <p class="review-note ko-disclaimer">
+                Key observations are AI generated and should be reviewed for accuracy.
               </p>
-            </aside>
-            <p class="review-note ko-disclaimer">
-              Key observations are AI generated and should be reviewed for accuracy.
-            </p>
             </div>
           </div>
 
           <section class="etp-mock-insights etp-mock-insights--crypto-full" aria-labelledby="insights-heading">
             <h2 class="u-vh" id="insights-heading">Market structure</h2>
             <div class="etp-mock-insights__panel etp-mock-insights__panel--conc">
-              <h3 class="etp-mock-insights__head">Issuer concentration (platforms)</h3>
-              <p class="etp-mock-conc__dek">Share of aggregate stablecoin market cap by platform (RWA.xyz snapshot).</p>
+              <h3 class="etp-mock-insights__head">Network share (top 5)</h3>
+              <p class="etp-mock-conc__dek">Share of distributed value by chain (RWA.xyz snapshot).</p>
               <div
                 class="etp-mock-conc__rows etp-mock-conc__rows--grid"
                 role="img"
-                aria-label="Top platforms by stablecoin market cap share"
+                aria-label="Top five networks by tokenized stocks distributed value share"
               >
                 <div class="etp-mock-conc__row">
-                  <span class="etp-mock-conc__sym">Tether</span>
+                  <span class="etp-mock-conc__sym">Ethereum</span>
                   <span class="etp-mock-conc__track"
-                    ><span class="etp-mock-conc__fill" style="width: 59.7%"></span
+                    ><span class="etp-mock-conc__fill" style="width: 58.4%"></span
                   ></span>
-                  <span class="etp-mock-conc__pct">59.7%</span>
+                  <span class="etp-mock-conc__pct">58.4%</span>
                 </div>
                 <div class="etp-mock-conc__row">
-                  <span class="etp-mock-conc__sym">Circle</span>
+                  <span class="etp-mock-conc__sym">Solana</span>
                   <span class="etp-mock-conc__track"
-                    ><span class="etp-mock-conc__fill" style="width: 23.0%"></span
+                    ><span class="etp-mock-conc__fill" style="width: 18.2%"></span
                   ></span>
-                  <span class="etp-mock-conc__pct">23.0%</span>
+                  <span class="etp-mock-conc__pct">18.2%</span>
                 </div>
                 <div class="etp-mock-conc__row">
-                  <span class="etp-mock-conc__sym">Binance</span>
+                  <span class="etp-mock-conc__sym">Base</span>
                   <span class="etp-mock-conc__track"
-                    ><span class="etp-mock-conc__fill" style="width: 3.6%"></span
+                    ><span class="etp-mock-conc__fill" style="width: 11.6%"></span
                   ></span>
-                  <span class="etp-mock-conc__pct">3.6%</span>
+                  <span class="etp-mock-conc__pct">11.6%</span>
+                </div>
+                <div class="etp-mock-conc__row">
+                  <span class="etp-mock-conc__sym">Arbitrum</span>
+                  <span class="etp-mock-conc__track"
+                    ><span class="etp-mock-conc__fill" style="width: 6.8%"></span
+                  ></span>
+                  <span class="etp-mock-conc__pct">6.8%</span>
                 </div>
                 <div class="etp-mock-conc__row">
                   <span class="etp-mock-conc__sym">Other</span>
                   <span class="etp-mock-conc__track"
-                    ><span class="etp-mock-conc__fill" style="width: 13.7%"></span
+                    ><span class="etp-mock-conc__fill" style="width: 5.0%"></span
                   ></span>
-                  <span class="etp-mock-conc__pct">13.7%</span>
+                  <span class="etp-mock-conc__pct">5.0%</span>
                 </div>
               </div>
             </div>
@@ -198,60 +199,47 @@
           <section class="etp-mock-dashboard" aria-labelledby="dashboard-heading">
             <h2 class="u-vh" id="dashboard-heading">Chart and share movers</h2>
             <div class="etp-mock-dash__panel etp-mock-dash__panel--chart">
-              <h3 class="etp-mock-dash__head">Stablecoin market cap by network</h3>
-              <div class="etp-mock-chart" role="img" aria-label="Mock stablecoin market cap by network chart">
+              <h3 class="etp-mock-dash__head">Top networks by value</h3>
+              <div class="etp-mock-chart" role="img" aria-label="Mock tokenized stocks networks bar chart">
                 <div class="etp-mock-chart__axis" aria-hidden="true">
-                  <span>Jun</span><span>Sep</span><span>Dec</span><span>Mar</span><span>Jun</span>
+                  <span>ETH</span><span>Solana</span><span>Base</span><span>Arbitrum</span><span>Polygon</span>
                 </div>
               </div>
               <p class="etp-mock-chart__cap">
-                Top <strong>12</strong> networks by total value on production (labels include market share).
+                Top <strong>12</strong> networks by distributed value on production (labels include market share).
               </p>
               <p class="etp-mock-chart__method">
-                Horizontal bar chart on production uses Plotly. KPI totals follow RWA.xyz Stablecoins Overview; all KPI
-                % changes are <strong>30-day (30D)</strong>.
+                Horizontal bar chart on production uses Plotly, synced to the searchable networks table below.
               </p>
             </div>
             <div class="etp-mock-dash__panel etp-mock-dash__panel--movers">
               <h3 class="etp-mock-dash__head">Largest 30D share shifts (networks)</h3>
-              <div id="js-stable-share-movers">
+              <div id="js-stocks-share-movers">
                 <ul class="crypto-top-movers__list">
                   <li class="crypto-top-mover">
                     <div class="crypto-top-mover__row">
                       <span class="crypto-top-mover__label"><strong>Solana</strong></span>
-                      <span class="crypto-top-mover__pct pct up">+8.95 pp</span>
+                      <span class="crypto-top-mover__pct pct up">+3.8 pp</span>
                     </div>
-                    <p class="crypto-top-mover__ctx">
-                      7D value +8.14% &middot; rising share among alt-L1 stablecoin liquidity.
-                    </p>
-                  </li>
-                  <li class="crypto-top-mover">
-                    <div class="crypto-top-mover__row">
-                      <span class="crypto-top-mover__label"><strong>Polygon</strong></span>
-                      <span class="crypto-top-mover__pct pct up">+4.53 pp</span>
-                    </div>
-                    <p class="crypto-top-mover__ctx">7D value +3.75% &middot; L2 stablecoin depth rebuilding.</p>
+                    <p class="crypto-top-mover__ctx">Fastest 30D share gain in this snapshot.</p>
                   </li>
                   <li class="crypto-top-mover">
                     <div class="crypto-top-mover__row">
                       <span class="crypto-top-mover__label"><strong>Base</strong></span>
-                      <span class="crypto-top-mover__pct pct down">-5.28 pp</span>
+                      <span class="crypto-top-mover__pct pct up">+1.9 pp</span>
                     </div>
-                    <p class="crypto-top-mover__ctx">
-                      7D value -5.98% &middot; largest 30D share loss among top networks in this snapshot.
-                    </p>
+                    <p class="crypto-top-mover__ctx">New listings expanding L2 equity depth.</p>
                   </li>
                   <li class="crypto-top-mover">
                     <div class="crypto-top-mover__row">
                       <span class="crypto-top-mover__label"><strong>Ethereum</strong></span>
-                      <span class="crypto-top-mover__pct pct down">-1.54 pp</span>
+                      <span class="crypto-top-mover__pct pct down">-1.2 pp</span>
                     </div>
-                    <p class="crypto-top-mover__ctx">Still ~54.6% market share &middot; concentration remains ETH-led.</p>
+                    <p class="crypto-top-mover__ctx">Still majority share despite multi-chain expansion.</p>
                   </li>
                 </ul>
                 <p class="crypto-story-callout__note">
-                  <strong>30D &Delta; share</strong> is change in market-share percentage points (pp), not percent of
-                  total. Compare with the networks table below.
+                  <strong>30D &Delta; share</strong> is percentage-point change in market share (pp).
                 </p>
               </div>
             </div>
@@ -259,9 +247,7 @@
 
           <section class="etp-mock-table-block stable-mock-league-block" aria-labelledby="net-heading">
             <div class="rwa-split-table-head inner-table-head">
-              <h2 class="subsection-head rwa-split-table-head__title" id="net-heading">
-                By network (Stablecoins &middot; Networks)
-              </h2>
+              <h2 class="subsection-head rwa-split-table-head__title" id="net-heading">Networks table</h2>
               <div class="rwa-split-table-head__actions">
                 <button
                   type="button"
@@ -290,15 +276,14 @@
               </div>
             </div>
             <p class="stable-mock-league-intro">
-              <strong>Networks</strong> &mdash; aggregate stablecoin market cap by chain. <strong>7-day</strong> % change
-              follows RWA.xyz embed fields; <strong>30D &Delta; share</strong> is percentage-point change in market share.
+              <strong>Networks</strong> &mdash; distributed value by chain (Distributed tab). Filter by name below.
             </p>
             <label class="search-field etp-mock-table-search">
               <span class="search-field__label">Search network table</span>
               <input type="search" class="search-field__input" placeholder="Filter by network name&hellip;" />
             </label>
             <div class="etp-mock-table-meta" aria-live="polite">
-              <p class="etp-mock-table-meta__count toolbar-note">Showing 6 of 24 networks (mock)</p>
+              <p class="etp-mock-table-meta__count toolbar-note">Showing 5 of 8 networks (mock)</p>
               <button type="button" class="etp-mock-table-meta__expand" disabled>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -323,9 +308,10 @@
                   <tr>
                     <th scope="col">#</th>
                     <th class="th-sortable is-sorted" scope="col">Network</th>
-                    <th class="num" scope="col">Stablecoins</th>
-                    <th class="num th-sortable" scope="col">Total value</th>
-                    <th class="num th-sortable" scope="col">Market share</th>
+                    <th class="num" scope="col">RWA Count</th>
+                    <th class="num th-sortable" scope="col">Distributed Value</th>
+                    <th class="num th-sortable" scope="col">7D &Delta; value</th>
+                    <th class="num th-sortable" scope="col">Market Share</th>
                     <th class="num th-sortable" scope="col">30D &Delta; share</th>
                   </tr>
                 </thead>
@@ -333,67 +319,61 @@
                   <tr>
                     <td>1</td>
                     <td><a href="https://app.rwa.xyz/networks/ethereum" tabindex="-1">Ethereum</a></td>
-                    <td class="num">76</td>
-                    <td class="num">$163.30B</td>
-                    <td class="num">54.6%</td>
-                    <td class="num down">-1.54 pp</td>
+                    <td class="num">94</td>
+                    <td class="num">$241M</td>
+                    <td class="num up">+5.2%</td>
+                    <td class="num">58.4%</td>
+                    <td class="num down">-1.2 pp</td>
                   </tr>
                   <tr>
                     <td>2</td>
-                    <td><a href="https://app.rwa.xyz/networks/tron" tabindex="-1">TRON</a></td>
-                    <td class="num">5</td>
-                    <td class="num">$87.71B</td>
-                    <td class="num">29.3%</td>
-                    <td class="num up">+1.41 pp</td>
+                    <td><a href="https://app.rwa.xyz/networks/solana" tabindex="-1">Solana</a></td>
+                    <td class="num">38</td>
+                    <td class="num">$75M</td>
+                    <td class="num up">+18.4%</td>
+                    <td class="num">18.2%</td>
+                    <td class="num up">+3.8 pp</td>
                   </tr>
                   <tr>
                     <td>3</td>
-                    <td><a href="https://app.rwa.xyz/networks/solana" tabindex="-1">Solana</a></td>
-                    <td class="num">34</td>
-                    <td class="num">$15.40B</td>
-                    <td class="num">5.2%</td>
-                    <td class="num up">+8.95 pp</td>
+                    <td><a href="https://app.rwa.xyz/networks/base" tabindex="-1">Base</a></td>
+                    <td class="num">22</td>
+                    <td class="num">$48M</td>
+                    <td class="num up">+22.1%</td>
+                    <td class="num">11.6%</td>
+                    <td class="num up">+1.9 pp</td>
                   </tr>
                   <tr>
                     <td>4</td>
-                    <td><a href="https://app.rwa.xyz/networks/bnb-chain" tabindex="-1">BNB Chain</a></td>
-                    <td class="num">15</td>
-                    <td class="num">$12.88B</td>
-                    <td class="num">4.3%</td>
-                    <td class="num down">-0.08 pp</td>
+                    <td><a href="https://app.rwa.xyz/networks/arbitrum" tabindex="-1">Arbitrum</a></td>
+                    <td class="num">18</td>
+                    <td class="num">$28M</td>
+                    <td class="num up">+4.6%</td>
+                    <td class="num">6.8%</td>
+                    <td class="num up">+0.4 pp</td>
                   </tr>
                   <tr>
                     <td>5</td>
-                    <td><a href="https://app.rwa.xyz/networks/arbitrum" tabindex="-1">Arbitrum</a></td>
-                    <td class="num">15</td>
-                    <td class="num">$7.16B</td>
-                    <td class="num">2.4%</td>
-                    <td class="num up">+0.05 pp</td>
-                  </tr>
-                  <tr>
-                    <td>6</td>
-                    <td><a href="https://app.rwa.xyz/networks/base" tabindex="-1">Base</a></td>
-                    <td class="num">20</td>
-                    <td class="num">$4.29B</td>
-                    <td class="num">1.4%</td>
-                    <td class="num down">-5.28 pp</td>
+                    <td><a href="https://app.rwa.xyz/networks/polygon" tabindex="-1">Polygon</a></td>
+                    <td class="num">14</td>
+                    <td class="num">$12M</td>
+                    <td class="num up">+9.8%</td>
+                    <td class="num">2.9%</td>
+                    <td class="num up">+0.6 pp</td>
                   </tr>
                 </tbody>
               </table>
             </div>
             <div class="rwa-table-footnote-row">
               <p class="source-cap rwa-table-footnote-row__cap">
-                Networks table: RWA.xyz Stablecoins &middot; Networks tab. <strong>Total Value</strong> is aggregate
-                stablecoin market cap on each chain.
+                Networks league from RWA.xyz Tokenized Stocks &middot; Distributed tab.
               </p>
             </div>
           </section>
 
           <section class="etp-mock-table-block stable-mock-league-block" aria-labelledby="plat-heading">
             <div class="rwa-split-table-head inner-table-head">
-              <h2 class="subsection-head rwa-split-table-head__title" id="plat-heading">
-                By platform (Stablecoins &middot; Platforms)
-              </h2>
+              <h2 class="subsection-head rwa-split-table-head__title" id="plat-heading">Platforms table</h2>
               <div class="rwa-split-table-head__actions">
                 <button
                   type="button"
@@ -422,14 +402,14 @@
               </div>
             </div>
             <p class="stable-mock-league-intro">
-              <strong>Platforms</strong> &mdash; aggregate stablecoin market cap by issuer / platform (RWA.xyz snapshot).
+              <strong>Platforms</strong> &mdash; issuer totals (Distributed tab). Filter by name below.
             </p>
             <label class="search-field etp-mock-table-search">
               <span class="search-field__label">Search platform table</span>
               <input type="search" class="search-field__input" placeholder="Filter by platform name&hellip;" />
             </label>
             <div class="etp-mock-table-meta" aria-live="polite">
-              <p class="etp-mock-table-meta__count toolbar-note">Showing 5 of 28 platforms (mock)</p>
+              <p class="etp-mock-table-meta__count toolbar-note">Showing 4 of 7 platforms (mock)</p>
               <button type="button" class="etp-mock-table-meta__expand" disabled>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -454,67 +434,63 @@
                   <tr>
                     <th scope="col">#</th>
                     <th class="th-sortable is-sorted" scope="col">Platform</th>
-                    <th class="num" scope="col">Stablecoins</th>
-                    <th class="num th-sortable" scope="col">Total value</th>
-                    <th class="num th-sortable" scope="col">Market share</th>
+                    <th class="num" scope="col">RWA Count</th>
+                    <th class="num th-sortable" scope="col">Distributed Value</th>
+                    <th class="num th-sortable" scope="col">7D &Delta; value</th>
+                    <th class="num th-sortable" scope="col">Market Share</th>
                     <th class="num th-sortable" scope="col">30D &Delta; share</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
                     <td>1</td>
-                    <td><a href="https://app.rwa.xyz/platforms/tether-holdings" tabindex="-1">Tether Holdings</a></td>
-                    <td class="num">4</td>
-                    <td class="num">$178.52B</td>
-                    <td class="num">59.7%</td>
-                    <td class="num up">+0.10 pp</td>
+                    <td><a href="https://app.rwa.xyz/platforms/backed" tabindex="-1">Backed</a></td>
+                    <td class="num">112</td>
+                    <td class="num">$198M</td>
+                    <td class="num up">+7.4%</td>
+                    <td class="num">48.1%</td>
+                    <td class="num down">-0.9 pp</td>
                   </tr>
                   <tr>
                     <td>2</td>
-                    <td><a href="https://app.rwa.xyz/platforms/circle" tabindex="-1">Circle</a></td>
-                    <td class="num">2</td>
-                    <td class="num">$68.73B</td>
-                    <td class="num">23.0%</td>
-                    <td class="num down">-3.76 pp</td>
+                    <td><a href="https://app.rwa.xyz/platforms/dinari" tabindex="-1">Dinari</a></td>
+                    <td class="num">48</td>
+                    <td class="num">$124M</td>
+                    <td class="num up">+11.2%</td>
+                    <td class="num">30.1%</td>
+                    <td class="num up">+1.4 pp</td>
                   </tr>
                   <tr>
                     <td>3</td>
-                    <td><a href="https://app.rwa.xyz/platforms/binance-bridge" tabindex="-1">Binance Bridge</a></td>
-                    <td class="num">3</td>
-                    <td class="num">$10.74B</td>
-                    <td class="num">3.6%</td>
-                    <td class="num up">+0.63 pp</td>
+                    <td><a href="https://app.rwa.xyz/platforms/superstate" tabindex="-1">Superstate</a></td>
+                    <td class="num">18</td>
+                    <td class="num">$52M</td>
+                    <td class="num up">+14.8%</td>
+                    <td class="num">12.6%</td>
+                    <td class="num up">+0.8 pp</td>
                   </tr>
                   <tr>
                     <td>4</td>
-                    <td><a href="https://app.rwa.xyz/platforms/ethena" tabindex="-1">Ethena</a></td>
-                    <td class="num">1</td>
-                    <td class="num">$6.12B</td>
-                    <td class="num">2.0%</td>
-                    <td class="num down">-0.42 pp</td>
-                  </tr>
-                  <tr>
-                    <td>5</td>
-                    <td><a href="https://app.rwa.xyz/platforms/sky" tabindex="-1">Sky</a></td>
-                    <td class="num">1</td>
-                    <td class="num">$5.48B</td>
-                    <td class="num">1.8%</td>
-                    <td class="num up">+0.21 pp</td>
+                    <td><a href="https://app.rwa.xyz/platforms/swarm" tabindex="-1">Swarm</a></td>
+                    <td class="num">8</td>
+                    <td class="num">$22M</td>
+                    <td class="num up">+6.1%</td>
+                    <td class="num">5.3%</td>
+                    <td class="num up">+0.3 pp</td>
                   </tr>
                 </tbody>
               </table>
             </div>
             <div class="rwa-table-footnote-row">
               <p class="source-cap rwa-table-footnote-row__cap">
-                Platforms table: RWA.xyz Stablecoins &middot; Platforms tab. Issuer concentration above uses the same
-                platform aggregates.
+                Platforms league from RWA.xyz Tokenized Stocks &middot; Distributed tab.
               </p>
             </div>
           </section>
 
           <div class="cta-row etp-mock-bottom-cta">
-            <a class="btn btn-primary" href="https://app.rwa.xyz/stablecoins" target="_blank" rel="noopener noreferrer"
-              >See Stablecoins on RWA.xyz &rarr;</a
+            <a class="btn btn-primary" href="https://app.rwa.xyz/stocks" target="_blank" rel="noopener noreferrer"
+              >See Tokenized Stocks on RWA.xyz &rarr;</a
             >
           </div>
           <p class="timestamp-foot">Generated 2 Jun 2026, 20:11 UTC (mock) &middot; Source: RWA.xyz</p>
@@ -523,17 +499,16 @@
             <summary class="etp-mock-method__summary">Data sources &amp; definitions</summary>
             <div class="etp-mock-method__body">
               <ul>
+                <li><strong>KPI strip</strong> &mdash; RWA.xyz Tokenized Stocks overview; 30D % / pp as labeled.</li>
                 <li>
-                  <strong>KPI strip</strong> &mdash; RWA.xyz Stablecoins Overview (30D % on all four headline metrics).
+                  <strong>Networks table</strong> &mdash; distributed value, 7D &Delta; value, market share, 30D
+                  &Delta; share (pp).
                 </li>
                 <li>
-                  <strong>League tables</strong> &mdash; Networks and Platforms tabs with Plotly charts and search on
-                  production.
+                  <strong>Platforms table</strong> &mdash; distributed value per platform; same delta columns as
+                  networks.
                 </li>
-                <li>
-                  <strong>No fund population table</strong> &mdash; unlike the TMMF deep page; stablecoins are
-                  chain- and issuer-aggregated only.
-                </li>
+                <li><strong>Chart</strong> &mdash; top 12 networks by filtered rows; mock uses a placeholder panel.</li>
               </ul>
             </div>
           </details>
@@ -541,12 +516,12 @@
       </article>
 
       <p class="back-link">
-        <a href="../index.html">&larr; Back to home</a>
+        <a href="../rwa-explore-asset-type.html">&larr; Explore by Asset Type</a>
       </p>
     </main>
 
     <footer class="site-footer">
-      Digital Assets Dashboard &middot; Stablecoins mock &middot; <time datetime="2026-06">Jun 2026</time>
+      Digital Assets Dashboard &middot; Tokenized Stocks mock &middot; <time datetime="2026-06">Jun 2026</time>
     </footer>
   </body>
 </html>

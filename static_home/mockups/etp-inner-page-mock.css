@@ -15,7 +15,10 @@
 .mock-etp-inner::before,
 .mock-crypto-inner::before,
 .mock-stable-inner::before,
-.mock-tmmf-inner::before {
+.mock-tmmf-inner::before,
+.mock-rwa-global-inner::before,
+.mock-treasuries-inner::before,
+.mock-stocks-inner::before {
   display: block;
   position: sticky;
   top: 0;
@@ -36,7 +39,10 @@
 .mock-etp-inner .site-header,
 .mock-crypto-inner .site-header,
 .mock-tmmf-inner .site-header,
-.mock-stable-inner .site-header {
+.mock-stable-inner .site-header,
+.mock-rwa-global-inner .site-header,
+.mock-treasuries-inner .site-header,
+.mock-stocks-inner .site-header {
   top: 1.85rem;
 }
 
@@ -795,6 +801,16 @@
   gap: 0.5rem 0.65rem;
   margin: 0.4rem 0 0.35rem;
   padding: 0;
+}
+
+.mock-etp-inner .etp-mock-table-meta > .rwa-table-actions,
+.mock-stable-inner .etp-mock-table-meta > .rwa-table-actions,
+.mock-tmmf-inner .etp-mock-table-meta > .rwa-table-actions {
+  margin-left: auto;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
 }
 
 .mock-etp-inner .etp-mock-table-meta__count,

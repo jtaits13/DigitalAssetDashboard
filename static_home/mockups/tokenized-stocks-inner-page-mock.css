@@ -1,0 +1,26 @@
+/* Tokenized Stocks inner page mock — banner + scoped overrides */
+
+.mock-stocks-inner.mock-rwa-global-inner::before {
+  content: "Design mock — Tokenized Stocks inner page · not linked from production · open mockups/tokenized-stocks-inner-page-mock.html";
+}
+
+.mock-stocks-inner .etp-mock-chart::before {
+  content: "Top networks by distributed value (mock chart area)";
+  color: rgb(var(--hx-rwa-dark) / 0.55);
+}
+
+.mock-stocks-inner .stable-mock-league-intro {
+  margin: 0 0 0.75rem;
+  max-width: 52rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--ink-muted, #4a5f73);
+}
+
+.mock-stocks-inner .stable-mock-league-intro strong {
+  color: var(--hx-rwa-dark);
+}
+
+.mock-stocks-inner .etp-mock-table-block + .etp-mock-table-block {
+  margin-top: var(--etp-mock-gap-lg, 1.2rem);
+}

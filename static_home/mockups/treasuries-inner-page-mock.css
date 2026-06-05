@@ -1,0 +1,26 @@
+/* U.S. Treasuries inner page mock — banner + scoped overrides */
+
+.mock-treasuries-inner.mock-rwa-global-inner::before {
+  content: "Design mock — U.S. Treasuries inner page · not linked from production · open mockups/treasuries-inner-page-mock.html";
+}
+
+.mock-treasuries-inner .etp-mock-chart::before {
+  content: "Top networks by distributed value (mock chart area)";
+  color: rgb(var(--hx-rwa-dark) / 0.55);
+}
+
+.mock-treasuries-inner .stable-mock-league-intro {
+  margin: 0 0 0.75rem;
+  max-width: 52rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--ink-muted, #4a5f73);
+}
+
+.mock-treasuries-inner .stable-mock-league-intro strong {
+  color: var(--hx-rwa-dark);
+}
+
+.mock-treasuries-inner .etp-mock-table-block + .etp-mock-table-block {
+  margin-top: var(--etp-mock-gap-lg, 1.2rem);
+}
