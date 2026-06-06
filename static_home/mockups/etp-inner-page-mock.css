@@ -277,8 +277,6 @@
 .mock-tmmf-inner .etp-mock-zone__body,
 .mock-stable-inner .etp-mock-zone__body {
   padding: 1.15rem 1.25rem 1.35rem;
-  --etp-mock-gap: 1rem;
-  --etp-mock-gap-lg: 1.2rem;
 }
 
 /* KPI — match home ETP zone */
@@ -677,16 +675,27 @@
 .mock-etp-inner .btn-primary,
 .mock-crypto-inner .btn-primary,
 .mock-tmmf-inner .btn-primary,
-.mock-stable-inner .btn-primary {
-  background: var(--hx-etp-bright);
-  border-color: rgb(var(--hx-etp-bright-rgb) / 0.35);
+.mock-stable-inner .btn-primary,
+.mock-rwa-global-inner .btn-primary,
+.mock-treasuries-inner .btn-primary,
+.mock-stocks-inner .btn-primary,
+.mock-participants-inner .btn-primary {
+  background: linear-gradient(180deg, var(--hx-etp-bright) 0%, var(--hx-etp) 100%);
+  border: 1px solid rgb(var(--hx-etp-rgb) / 0.28);
+  box-shadow: 0 2px 8px rgb(var(--hx-etp-rgb) / 0.16);
+  color: #fff;
 }
 
 .mock-etp-inner .btn-primary:hover,
 .mock-crypto-inner .btn-primary:hover,
 .mock-tmmf-inner .btn-primary:hover,
-.mock-stable-inner .btn-primary:hover {
-  background: var(--hx-etp);
+.mock-stable-inner .btn-primary:hover,
+.mock-rwa-global-inner .btn-primary:hover,
+.mock-treasuries-inner .btn-primary:hover,
+.mock-stocks-inner .btn-primary:hover,
+.mock-participants-inner .btn-primary:hover {
+  background: linear-gradient(180deg, var(--hx-etp) 0%, var(--hx-etp-dark) 100%);
+  color: #fff;
 }
 
 /* Fund / prices table section */

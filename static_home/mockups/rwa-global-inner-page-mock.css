@@ -190,12 +190,15 @@
 }
 
 .mock-rwa-global-inner .btn-primary {
-  background: var(--hx-rwa-bright);
-  border-color: rgb(var(--hx-rwa-bright-rgb) / 0.35);
+  background: linear-gradient(180deg, var(--hx-rwa-bright) 0%, var(--hx-rwa) 100%);
+  border: 1px solid rgb(var(--hx-rwa-rgb) / 0.28);
+  box-shadow: 0 2px 8px rgb(var(--hx-rwa-rgb) / 0.16);
+  color: #fff;
 }
 
 .mock-rwa-global-inner .btn-primary:hover {
-  background: var(--hx-rwa);
+  background: linear-gradient(180deg, var(--hx-rwa) 0%, var(--hx-rwa-dark) 100%);
+  color: #fff;
 }
 
 .mock-rwa-global-inner .btn-secondary:hover {
