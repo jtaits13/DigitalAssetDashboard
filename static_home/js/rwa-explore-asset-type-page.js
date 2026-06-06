@@ -253,6 +253,7 @@
         headLink.className = "rwa-explore-preview__head-action";
         headLink.href = ctaHref(primaryCta);
         headLink.innerHTML = 'Full overview <span aria-hidden="true">&rarr;</span>';
+        headLink.setAttribute("aria-label", "Open full " + (sec.title || "section") + " overview");
         if (!primaryCta.internal) {
           headLink.target = "_blank";
           headLink.rel = "noopener noreferrer";
@@ -371,6 +372,7 @@
         toolbar.hidden = true;
         var metaActions = document.createElement("div");
         metaActions.id = metaActionsId;
+        metaActions.className = "etp-mock-table-meta__actions";
         metaRow.appendChild(toolbar);
         metaRow.appendChild(metaActions);
         tableBlock.appendChild(metaRow);
