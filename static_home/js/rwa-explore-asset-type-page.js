@@ -250,9 +250,9 @@
         "</div>";
       if (primaryCta) {
         var headLink = document.createElement("a");
-        headLink.className = "rwa-explore-preview__head-link";
+        headLink.className = "rwa-explore-preview__head-action";
         headLink.href = ctaHref(primaryCta);
-        headLink.textContent = "Full overview \u2192";
+        headLink.innerHTML = 'Full overview <span aria-hidden="true">&rarr;</span>';
         if (!primaryCta.internal) {
           headLink.target = "_blank";
           headLink.rel = "noopener noreferrer";
@@ -376,7 +376,8 @@
         tableBlock.appendChild(metaRow);
 
         var tableWrap = document.createElement("div");
-        tableWrap.className = "table-wrap table-wrap--scroll rwa-split-table-scroll rwa-exat-table-wrap";
+        tableWrap.className =
+          "table-wrap table-wrap--scroll rwa-split-table-scroll rwa-exat-table-wrap rwa-explore-table-preview";
         tableWrap.setAttribute("data-fullscreen-title", tableTitle);
         var tableEl = document.createElement("table");
         tableEl.className = "data-table data-table--dense data-table--sortable";
