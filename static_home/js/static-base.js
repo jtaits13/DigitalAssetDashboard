@@ -596,6 +596,86 @@
     return '<span class="article-access article-access--unknown">Check site</span>';
   };
 
+  var ZONE_CHART_PREFIX = {
+    rwa: "hx-rwa",
+    stable: "hx-stable",
+    tmmf: "hx-tmmf",
+    etp: "hx-etp",
+    crypto: "hx-crypto",
+  };
+
+  var ZONE_CHART_FALLBACK = {
+    rwa: { bright: "#2a5f82", base: "#1a3d5c", dark: "#142f47", brightRgb: "42, 95, 130" },
+    stable: { bright: "#3d78a0", base: "#2d5f7f", dark: "#234c66", brightRgb: "61, 120, 160" },
+    tmmf: { bright: "#507188", base: "#3e5c74", dark: "#31485c", brightRgb: "80, 113, 136" },
+    etp: { bright: "#2a5080", base: "#1e3a58", dark: "#162d45", brightRgb: "42, 80, 128" },
+    crypto: { bright: "#6e869e", base: "#5a7088", dark: "#485a6e", brightRgb: "110, 134, 158" },
+  };
+
+  function readCssCustomProp(el, name) {
+    if (!el || typeof getComputedStyle !== "function") return "";
+    try {
+      return getComputedStyle(el).getPropertyValue(name).trim();
+    } catch (e) {
+      return "";
+    }
+  }
+
+  function detectZoneChartKey(scope) {
+    var zones = ["rwa", "stable", "tmmf", "etp", "crypto"];
+    var i;
+    if (scope && scope.closest) {
+      for (i = 0; i < zones.length; i++) {
+        if (scope.closest(".zone--" + zones[i])) return zones[i];
+      }
+    }
+    var article = document.querySelector(".inner-rich-zone");
+    if (article && article.classList) {
+      for (i = 0; i < zones.length; i++) {
+        if (article.classList.contains("zone--" + zones[i])) return zones[i];
+      }
+    }
+    var bc = document.body && document.body.className ? document.body.className : "";
+    if (/\bzone--(\w+)\b/.test(bc)) {
+      var m = bc.match(/\bzone--(\w+)\b/);
+      if (m && ZONE_CHART_FALLBACK[m[1]]) return m[1];
+    }
+    if (/home-zone--etp|page-etp|mock-etp|page-inner--etp/.test(bc)) return "etp";
+    if (/home-zone--crypto|page-crypto|mock-crypto/.test(bc)) return "crypto";
+    if (/home-zone--stable|page-stable|mock-stable/.test(bc)) return "stable";
+    if (/home-zone--tmmf|mock-tmmf/.test(bc)) return "tmmf";
+    return "rwa";
+  }
+
+  /** Zone-aware Plotly/chart colors aligned to ``site-experience.css`` inner-page themes. */
+  global.getZoneChartTheme = function (scope) {
+    var key = detectZoneChartKey(scope);
+    var fb = ZONE_CHART_FALLBACK[key] || ZONE_CHART_FALLBACK.rwa;
+    var prefix = ZONE_CHART_PREFIX[key] || ZONE_CHART_PREFIX.rwa;
+    var anchor =
+      scope && scope.closest
+        ? scope.closest(".inner-rich-zone") || scope.closest("[class*='zone--']")
+        : null;
+    if (!anchor) {
+      anchor = document.querySelector(".inner-rich-zone") || document.documentElement;
+    }
+    var bar = readCssCustomProp(anchor, "--" + prefix + "-bright") || fb.bright;
+    var base = readCssCustomProp(anchor, "--" + prefix) || fb.base;
+    var brightRgb =
+      readCssCustomProp(anchor, "--" + prefix + "-bright-rgb") ||
+      readCssCustomProp(document.documentElement, "--" + prefix + "-bright-rgb") ||
+      fb.brightRgb;
+    brightRgb = brightRgb.replace(/\s+/g, " ").trim();
+    return {
+      zone: key,
+      bar: bar,
+      barLine: base,
+      ink: base,
+      inkMuted: bar,
+      barFillRgba: "rgba(" + brightRgb + ", 0.14)",
+    };
+  };
+
   global.renderArticleFeedByDay = function (container, items, options) {
     options = options || {};
     var emptyMsg =

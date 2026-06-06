@@ -169,6 +169,11 @@
     var y = series.map(function (p) {
       return p.aum_billions;
     });
+    var theme =
+      typeof global.getZoneChartTheme === "function" ? global.getZoneChartTheme(els.chart) : null;
+    var lineColor = theme ? theme.bar : "#2a5080";
+    var fillColor = theme && theme.barFillRgba ? theme.barFillRgba : "rgba(42, 80, 128, 0.14)";
+    var ink = theme ? theme.ink : "#1e3a58";
     Plotly.newPlot(
       els.chart,
       [
@@ -178,15 +183,15 @@
           type: "scatter",
           mode: "lines",
           fill: "tozeroy",
-          fillcolor: "rgba(42,80,128,0.14)",
-          line: { color: "#2a5080", width: 2 },
+          fillcolor: fillColor,
+          line: { color: lineColor, width: 2 },
         },
       ],
       {
         margin: { t: 28, r: 16, b: 64, l: 56 },
         paper_bgcolor: "#fafcfd",
         plot_bgcolor: "#f8fafc",
-        font: { family: "Outfit, sans-serif", size: 12, color: "#1f4c67" },
+        font: { family: "Outfit, sans-serif", size: 12, color: ink },
         xaxis: { title: { text: "Week", standoff: 16 }, automargin: true, tickangle: -30 },
         yaxis: { title: { text: "Est. aggregate AUM ($B)", standoff: 8 }, automargin: true },
         showlegend: false,

@@ -56,7 +56,7 @@
     return mult * pow;
   }
 
-  function buildCurrencyAxisProps(values, plotWidth) {
+  function buildCurrencyAxisProps(values, plotWidth, theme) {
     var maxVal = 0;
     var i;
     for (i = 0; i < values.length; i++) {
@@ -71,11 +71,12 @@
       vals.push(i);
       if (vals.length > 8) break;
     }
+    var ink = theme && theme.ink ? theme.ink : "#1a3d5c";
     return {
       tickangle: -30,
       tickvals: vals,
       ticktext: vals.map(formatUsdAxisTick),
-      tickfont: { size: width < 220 ? 10 : 11 },
+      tickfont: { size: width < 220 ? 10 : 11, color: ink, family: "Outfit, system-ui, sans-serif" },
     };
   }
 
@@ -256,6 +257,12 @@
       return Number(s).toFixed(2) + "% share";
     });
 
+    var theme = typeof global.getZoneChartTheme === "function" ? global.getZoneChartTheme(el) : null;
+    var barColor = theme ? theme.bar : "#2a5f82";
+    var barLine = theme ? theme.barLine : "#1a3d5c";
+    var ink = theme ? theme.ink : "#1a3d5c";
+    var inkMuted = theme ? theme.inkMuted : "#2a5f82";
+
     var shell =
       el.closest && el.closest(".stable-dash-chart-body")
         ? el.closest(".stable-dash-chart-body")
@@ -264,7 +271,7 @@
           : el.parentElement;
     var shellW = shell && shell.clientWidth ? shell.clientWidth : el.offsetParent ? el.offsetWidth : 0;
     var m = estimateChartMargins(y, text, shellW);
-    var axisProps = buildCurrencyAxisProps(x, Math.max(120, (shellW || 560) - m.l - m.r));
+    var axisProps = buildCurrencyAxisProps(x, Math.max(120, (shellW || 560) - m.l - m.r), theme);
 
     var trace = {
       type: "bar",
@@ -272,13 +279,13 @@
       y: y,
       orientation: "h",
       marker: {
-        color: "#25809C",
-        line: { color: "#1F4C67", width: 0.5 },
+        color: barColor,
+        line: { color: barLine, width: 0.5 },
       },
       showlegend: false,
       text: text,
       textposition: "outside",
-      textfont: { size: 11, color: "#3E6A7A", family: "Outfit, system-ui, sans-serif" },
+      textfont: { size: 11, color: inkMuted, family: "Outfit, system-ui, sans-serif" },
       cliponaxis: false,
       hovertemplate: "<b>%{y}</b><br>Total value: %{x:$,.0f}<br>Market share: %{text}<extra></extra>",
     };
@@ -289,10 +296,10 @@
       margin: { l: m.l, r: m.r, t: 14, b: 60, pad: 4 },
       paper_bgcolor: "rgba(0,0,0,0)",
       plot_bgcolor: "#f8fafc",
-      font: { size: 12, color: "#1F4C67", family: "Outfit, system-ui, sans-serif" },
+      font: { size: 12, color: ink, family: "Outfit, system-ui, sans-serif" },
       showlegend: false,
       xaxis: {
-        title: { text: "Total value (USD)", font: { size: 12, color: "#1F4C67" }, standoff: 18 },
+        title: { text: "Total value (USD)", font: { size: 12, color: ink }, standoff: 18 },
         automargin: true,
         tickprefix: "$",
         separatethousands: true,
@@ -306,7 +313,7 @@
         categoryorder: "array",
         categoryarray: y,
         showticklabels: true,
-        tickfont: { family: "Outfit, system-ui, sans-serif", size: 11, color: "#1F4C67" },
+        tickfont: { family: "Outfit, system-ui, sans-serif", size: 11, color: ink },
       },
     };
 
@@ -321,7 +328,7 @@
               ? el.offsetWidth
               : shellW || 560;
         var m2 = estimateChartMargins(y, text, wLate);
-        var axisProps2 = buildCurrencyAxisProps(x, Math.max(120, wLate - m2.l - m2.r));
+        var axisProps2 = buildCurrencyAxisProps(x, Math.max(120, wLate - m2.l - m2.r), theme);
         Plotly.relayout(el, {
           margin: { l: m2.l, r: m2.r, t: 14, b: 60, pad: 4 },
           "xaxis.tickangle": axisProps2.tickangle,

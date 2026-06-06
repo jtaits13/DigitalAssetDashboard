@@ -57,7 +57,7 @@
     return mult * pow;
   }
 
-  function buildCurrencyAxisProps(values, plotWidth) {
+  function buildCurrencyAxisProps(values, plotWidth, theme) {
     var maxVal = 0;
     var i;
     for (i = 0; i < values.length; i++) {
@@ -72,11 +72,12 @@
       vals.push(i);
       if (vals.length > 8) break;
     }
+    var ink = theme && theme.ink ? theme.ink : "#1a3d5c";
     return {
       tickangle: -30,
       tickvals: vals,
       ticktext: vals.map(formatUsdAxisTick),
-      tickfont: { family: CHART_FONT, size: width < 220 ? 10 : 11, color: "#1F4C67" },
+      tickfont: { family: CHART_FONT, size: width < 220 ? 10 : 11, color: ink },
     };
   }
 
@@ -128,13 +129,20 @@
       return Number(ms).toFixed(2) + "% share";
     });
 
+    var theme =
+      typeof global.getZoneChartTheme === "function" ? global.getZoneChartTheme(chartEl) : null;
+    var barColor = theme ? theme.bar : "#2a5f82";
+    var barLine = theme ? theme.barLine : "#1a3d5c";
+    var ink = theme ? theme.ink : "#1a3d5c";
+    var inkMuted = theme ? theme.inkMuted : "#2a5f82";
+
     var shell =
       chartEl.closest && chartEl.closest(".rwa-split-chart-shell")
         ? chartEl.closest(".rwa-split-chart-shell")
         : chartEl.parentElement;
     var shellW = shell && shell.clientWidth ? shell.clientWidth : chartEl.offsetWidth || 560;
     var m = estimateChartMargins(y, text, shellW);
-    var axisProps = buildCurrencyAxisProps(x, Math.max(120, shellW - m.l - m.r));
+    var axisProps = buildCurrencyAxisProps(x, Math.max(120, shellW - m.l - m.r), theme);
 
     var thicknessBars =
       payload.chart_bar_thickness_bars != null ? Number(payload.chart_bar_thickness_bars) : y.length;
@@ -147,13 +155,13 @@
       orientation: "h",
       width: barThickness,
       marker: {
-        color: "#25809C",
-        line: { color: "#1F4C67", width: 0.5 },
+        color: barColor,
+        line: { color: barLine, width: 0.5 },
       },
       showlegend: false,
       text: text,
       textposition: "outside",
-      textfont: { family: CHART_FONT, size: 11, color: "#3E6A7A" },
+      textfont: { family: CHART_FONT, size: 11, color: inkMuted },
       cliponaxis: false,
       hovertemplate:
         "<b>%{y}</b><br>Value: %{x:$,.0f}<br>%{text}<extra></extra>",
@@ -177,12 +185,12 @@
       bargap: 0.14,
       paper_bgcolor: "rgba(0,0,0,0)",
       plot_bgcolor: "#f8fafc",
-      font: { family: CHART_FONT, size: 12, color: "#1F4C67" },
+      font: { family: CHART_FONT, size: 12, color: ink },
       showlegend: false,
       xaxis: {
         title: {
           text: String(valCol) + " (USD)",
-          font: { family: CHART_FONT, size: 12, color: "#1F4C67" },
+          font: { family: CHART_FONT, size: 12, color: ink },
           standoff: 18,
         },
         automargin: true,
@@ -200,7 +208,7 @@
         showticklabels: true,
         automargin: true,
         ticklabelstandoff: 8,
-        tickfont: { family: CHART_FONT, size: 11, color: "#1F4C67" },
+        tickfont: { family: CHART_FONT, size: 11, color: ink },
       },
     };
 
@@ -209,7 +217,7 @@
       try {
         var wLate = shell && shell.clientWidth ? shell.clientWidth : chartEl.offsetWidth || shellW || 560;
         var m2 = estimateChartMargins(y, text, wLate);
-        var axisProps2 = buildCurrencyAxisProps(x, Math.max(120, wLate - m2.l - m2.r));
+        var axisProps2 = buildCurrencyAxisProps(x, Math.max(120, wLate - m2.l - m2.r), theme);
         Plotly.relayout(chartEl, {
           margin: { l: m2.l, r: m2.r, t: 12, b: 56, pad: 2 },
           "xaxis.tickangle": axisProps2.tickangle,
