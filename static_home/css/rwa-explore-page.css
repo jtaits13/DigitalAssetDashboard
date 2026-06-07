@@ -42,14 +42,16 @@
   width: 100%;
   margin: 0 0 1rem;
   padding: 0.85rem 1rem 0.85rem 1.05rem;
-  border: 1px solid rgb(var(--hx-rwa-bright-rgb) / 0.16);
+  border: 1px solid rgb(var(--hx-rwa-bright-rgb) / 0.24);
   border-left: 3px solid var(--hx-rwa-bright);
   border-radius: 10px;
-  background: linear-gradient(180deg, #fff 0%, rgb(var(--hx-rwa-rgb) / 0.04) 100%);
+  background: #fff;
   font-size: 0.82rem;
   line-height: 1.55;
   color: var(--ink, #243447);
-  box-shadow: 0 1px 3px rgb(var(--hx-rwa-rgb) / 0.05);
+  box-shadow:
+    0 1px 2px rgb(var(--hx-rwa-rgb) / 0.06),
+    0 4px 14px rgb(var(--hx-rwa-rgb) / 0.1);
 }
 
 .rwa-explore-inner .rwa-explore-mock-intro p,

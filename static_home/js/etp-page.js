@@ -170,7 +170,7 @@
       return p.aum_billions;
     });
     var theme =
-      typeof global.getZoneChartTheme === "function" ? global.getZoneChartTheme(els.chart) : null;
+      typeof window.getZoneChartTheme === "function" ? window.getZoneChartTheme(els.chart) : null;
     var lineColor = theme ? theme.bar : "#2a5080";
     var fillColor = theme && theme.barFillRgba ? theme.barFillRgba : "rgba(42, 80, 128, 0.14)";
     var ink = theme ? theme.ink : "#1e3a58";
@@ -502,7 +502,15 @@
         els.keyObs.hidden = true;
         els.keyObs.innerHTML = "";
       }
-      renderChart((aum && aum.series) || []);
+      try {
+        renderChart((aum && aum.series) || []);
+      } catch (chartErr) {
+        console.error("ETP AUM chart render failed:", chartErr);
+        if (els.chart) {
+          els.chart.innerHTML =
+            '<p class="chart-fallback">Aggregate AUM chart could not be rendered.</p>';
+        }
+      }
       state.rows = (etps.rows || []).map(prepareRow);
       state.filtered = state.rows.slice();
       renderConcentration(state.rows);
