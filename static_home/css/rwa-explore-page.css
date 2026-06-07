@@ -38,6 +38,8 @@
 .rwa-explore-inner .rwa-explore-mock-intro,
 .rwa-explore-inner .rwa-exat-intro.rwa-explore-mock-intro,
 .mock-rwa-explore-inner .rwa-explore-mock-intro {
+  max-width: none;
+  width: 100%;
   margin: 0 0 1rem;
   padding: 0.85rem 1rem 0.85rem 1.05rem;
   border: 1px solid rgb(var(--hx-rwa-bright-rgb) / 0.16);
