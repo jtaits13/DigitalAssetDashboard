@@ -110,6 +110,17 @@
   color: var(--hx-rwa);
 }
 
+.rwa-explore-inner .inner-rich-zone.zone--rwa .inner-rich-zone__body,
+.mock-rwa-explore-inner .inner-rich-zone.zone--rwa .inner-rich-zone__body {
+  background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    rgb(var(--hx-rwa-rgb) / 0.035) 14%,
+    #ffffff 48%,
+    var(--hx-rwa-soft, #eaf0f6) 100%
+  );
+}
+
 .rwa-explore-inner .rwa-explore-previews,
 .rwa-explore-inner .rwa-exat-sections.rwa-explore-previews,
 .mock-rwa-explore-inner .rwa-explore-previews {
@@ -121,13 +132,16 @@
 .rwa-explore-inner .rwa-explore-preview,
 .rwa-explore-inner .rwa-exat-section.rwa-explore-preview,
 .mock-rwa-explore-inner .rwa-explore-preview {
-  padding: 1.15rem 1.15rem 1.25rem;
-  border: 1px solid rgb(var(--hx-rwa-bright-rgb) / 0.16);
+  padding: 0 0 1.25rem;
+  border: 1px solid rgb(var(--hx-rwa-bright-rgb) / 0.24);
   border-radius: 12px;
-  background: linear-gradient(180deg, rgb(var(--hx-rwa-rgb) / 0.03) 0%, #fff 42%);
-  box-shadow: 0 1px 3px rgb(var(--hx-rwa-rgb) / 0.06);
+  background: #ffffff;
+  box-shadow:
+    0 1px 2px rgb(var(--hx-rwa-rgb) / 0.05),
+    0 6px 18px rgb(var(--hx-rwa-rgb) / 0.09);
   scroll-margin-top: 5.5rem;
   margin-bottom: 0;
+  overflow: hidden;
 }
 
 .rwa-explore-inner .rwa-explore-preview__head,
@@ -137,9 +151,11 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem 1rem;
-  margin-bottom: 0.95rem;
-  padding-bottom: 0.85rem;
-  border-bottom: 1px solid rgb(var(--hx-rwa-bright-rgb) / 0.12);
+  margin-bottom: 0;
+  padding: 1rem 1.15rem 0.85rem;
+  border-bottom: 1px solid rgb(var(--hx-rwa-bright-rgb) / 0.16);
+  background: linear-gradient(180deg, #ffffff 0%, rgb(var(--hx-rwa-rgb) / 0.03) 100%);
+  box-shadow: inset 0 3px 0 var(--hx-rwa-bright);
 }
 
 .rwa-explore-inner .rwa-explore-preview__eyebrow,
@@ -212,14 +228,14 @@
 .rwa-explore-inner .rwa-explore-preview .etp-mock-freshness,
 .rwa-explore-inner .rwa-explore-preview .data-freshness.etp-mock-freshness,
 .mock-rwa-explore-inner .rwa-explore-preview .etp-mock-freshness {
-  margin-bottom: 0.55rem;
+  margin: 0.75rem 1.15rem 0.55rem;
   font-size: 0.72rem;
   color: var(--muted);
 }
 
 .rwa-explore-inner .rwa-explore-preview .etp-mock-snapshot,
 .mock-rwa-explore-inner .rwa-explore-preview .etp-mock-snapshot {
-  margin-bottom: 0.9rem;
+  margin: 0 1.15rem 0.9rem;
 }
 
 .rwa-explore-inner .rwa-explore-preview .etp-mock-snapshot__note,
@@ -232,8 +248,8 @@
 
 .rwa-explore-inner .rwa-explore-preview .rwa-kpi-panel-static,
 .mock-rwa-explore-inner .rwa-explore-preview .rwa-kpi-panel-static {
-  background: rgb(var(--hx-rwa-rgb) / 0.05);
-  border: 1px solid rgb(var(--hx-rwa-bright-rgb) / 0.14);
+  background: #ffffff;
+  border: 1px solid rgb(var(--hx-rwa-bright-rgb) / 0.18);
   border-radius: 10px;
   padding: 0.65rem 0.7rem;
   margin-bottom: 0;
@@ -248,11 +264,12 @@
 
 .rwa-explore-inner .rwa-explore-preview .rwa-kpi-row--home-grid .rwa-kpi-cell,
 .mock-rwa-explore-inner .rwa-explore-preview .rwa-kpi-row--home-grid .rwa-kpi-cell {
-  border: 1px solid rgb(var(--hx-rwa-bright-rgb) / 0.18);
+  border: 1px solid rgb(var(--hx-rwa-bright-rgb) / 0.2);
   border-left: 3px solid var(--hx-rwa-bright);
-  background: linear-gradient(145deg, var(--hx-rwa-soft, #eaf0f6) 0%, rgba(255, 255, 255, 0.92) 70%);
+  background: #ffffff;
   border-radius: 8px;
   padding: 0.55rem 0.65rem;
+  box-shadow: 0 1px 2px rgb(var(--hx-rwa-rgb) / 0.04);
 }
 
 .rwa-explore-inner .rwa-explore-preview .rwa-kpi-row--home-grid .rwa-kpi-val,
@@ -269,11 +286,10 @@
 
 .rwa-explore-inner .rwa-explore-preview .etp-mock-table-block,
 .mock-rwa-explore-inner .rwa-explore-preview .etp-mock-table-block {
-  margin-top: 0.25rem;
-  margin-bottom: 0;
+  margin: 0.25rem 1.15rem 0;
   padding-top: 0.75rem;
   padding-bottom: 0;
-  border-top: 1px solid rgb(var(--hx-rwa-bright-rgb) / 0.1);
+  border-top: 1px solid rgb(var(--hx-rwa-bright-rgb) / 0.12);
 }
 
 .rwa-explore-inner .rwa-explore-preview .inner-table-head,
@@ -450,7 +466,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 0.55rem 0.75rem;
-  margin-top: 0.65rem;
+  margin: 0.65rem 1.15rem 0;
   padding-top: 0.65rem;
   border-top: 1px solid rgb(var(--hx-rwa-bright-rgb) / 0.1);
 }
