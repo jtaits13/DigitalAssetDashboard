@@ -9,6 +9,7 @@ on:
     paths:
       - "static_home/**"
       - "scripts/check_static_html_encoding.py"
+      - "scripts/validate_static_json.py"
       - ".github/workflows/deploy-static-home.yml"
       - ".github/workflows/refresh-static-home-data.yml"
   workflow_dispatch:
@@ -34,6 +35,9 @@ jobs:
 
       - name: Validate static HTML text encoding
         run: python scripts/check_static_html_encoding.py
+
+      - name: Validate committed static JSON (ETP bundle)
+        run: python scripts/validate_static_json.py
 
       - name: Upload static_home as site root
         uses: actions/upload-pages-artifact@v3

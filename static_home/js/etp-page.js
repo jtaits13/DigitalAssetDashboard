@@ -401,6 +401,22 @@
     });
   }
 
+  function showDataError(message) {
+    if (els.banner) {
+      els.banner.hidden = false;
+      els.banner.textContent = message;
+    }
+    if (els.tbody) {
+      els.tbody.innerHTML =
+        '<tr><td colspan="10"><p class="chart-fallback">' +
+        escapeHtml(message) +
+        "</p></td></tr>";
+    }
+    if (els.toolbar) {
+      els.toolbar.textContent = "Fund list unavailable.";
+    }
+  }
+
   function init() {
     wireTableFullscreen();
     if (els.search) {
@@ -415,14 +431,17 @@
       loadTimed("manifest.json", 12000).catch(function () {
         return {};
       }),
-      loadTimed("etp_kpis.json", 14000).catch(function () {
-        return null;
+      loadTimed("etp_kpis.json", 14000).catch(function (err) {
+        return { _loadError: err && err.message ? err.message : "etp_kpis.json unavailable" };
       }),
       loadTimed("aum_series.json", 14000).catch(function () {
         return { series: [] };
       }),
-      loadTimed("etps.json", 14000).catch(function () {
-        return { rows: [] };
+      loadTimed("etps.json", 14000).catch(function (err) {
+        return {
+          rows: [],
+          _loadError: err && err.message ? err.message : "etps.json unavailable",
+        };
       }),
       loadTimed("etf_pulse.json", 12000).catch(function () {
         return { items: [] };
@@ -433,6 +452,21 @@
       var aum = out[2];
       var etps = out[3];
       var pulse = out[4];
+      var etpLoadError = etps && etps._loadError;
+      var kpiLoadError = kpis && kpis._loadError;
+      if (etpLoadError || !etps || !etps.rows || !etps.rows.length) {
+        showDataError(
+          "U.S. ETP fund data could not be loaded. The snapshot files may be missing from deploy " +
+            "(etps.json / etp_kpis.json). If you maintain this site, run " +
+            "python scripts/export_etp_static_data.py and commit static_home/data/*.json."
+        );
+      } else if (kpiLoadError) {
+        if (els.banner) {
+          els.banner.hidden = false;
+          els.banner.textContent =
+            "KPI snapshot unavailable; showing fund table from the latest committed export.";
+        }
+      }
       if (manifest.errors && manifest.errors.length && els.banner) {
         els.banner.hidden = false;
         els.banner.textContent =
@@ -453,7 +487,7 @@
       if (tsIso && els.ts) {
         els.ts.textContent = String(tsIso).replace("T", " ").replace(/\.\d+Z$/, " UTC");
       }
-      renderKpi(kpis);
+      renderKpi(kpiLoadError ? null : kpis);
       var koApi = window.__CRYPTO_KPI || {};
       if (typeof koApi.renderKeyObservationsCallout === "function") {
         koApi.renderKeyObservationsCallout(

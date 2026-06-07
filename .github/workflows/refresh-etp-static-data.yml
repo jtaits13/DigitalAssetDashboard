@@ -46,6 +46,9 @@ jobs:
         env:
           STOCKANALYSIS_USER_AGENT: ${{ secrets.STOCKANALYSIS_USER_AGENT }}
 
+      - name: Validate ETP JSON bundle
+        run: python scripts/validate_static_json.py
+
       - name: Upload static_home as site root
         uses: actions/upload-pages-artifact@v3
         with:

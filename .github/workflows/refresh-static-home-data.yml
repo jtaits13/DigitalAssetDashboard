@@ -58,6 +58,9 @@ jobs:
           COINGECKO_DEMO_API_KEY: ${{ secrets.COINGECKO_DEMO_API_KEY }}
           COINGECKO_BLURB_FETCH_LIMIT: "15"
 
+      - name: Validate ETP JSON bundle
+        run: python scripts/validate_static_json.py
+
       - name: Upload static_home as site root
         uses: actions/upload-pages-artifact@v3
         with:
