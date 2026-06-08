@@ -242,7 +242,6 @@
     var y;
     var x;
     var text;
-    var hasOther = false;
     var barCount;
 
     if (includeOther && typeof global.buildTopNPlusOtherChartRows === "function") {
@@ -255,7 +254,6 @@
       y = built.y;
       x = built.x;
       text = built.text;
-      hasOther = built.hasOther;
       barCount = built.barCount;
     } else {
       var sorted = rows.slice().sort(function (a, b) {
@@ -281,13 +279,9 @@
 
     var theme = typeof global.getZoneChartTheme === "function" ? global.getZoneChartTheme(el) : null;
     var barColor = theme ? theme.bar : "#2a5f82";
-    var barOtherColor = theme ? theme.barOther || "#4a7a96" : "#4a7a96";
     var barLine = theme ? theme.barLine : "#1a3d5c";
     var ink = theme ? theme.ink : "#1a3d5c";
     var inkMuted = theme ? theme.inkMuted : "#2a5f82";
-    var barColors = y.map(function (label) {
-      return label === "Other" ? barOtherColor : barColor;
-    });
 
     var shell =
       el.closest && el.closest(".stable-dash-chart-body")
@@ -306,7 +300,7 @@
       orientation: "h",
       width: Math.min(0.9, Math.max(0.52, 0.86 - barCount * 0.028)),
       marker: {
-        color: hasOther ? barColors : barColor,
+        color: barColor,
         line: { color: barLine, width: 0.5 },
       },
       showlegend: false,

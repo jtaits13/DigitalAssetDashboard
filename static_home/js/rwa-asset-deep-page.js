@@ -114,7 +114,6 @@
     var x;
     var text;
     var barCount;
-    var hasOther = false;
 
     if (includeOther && typeof global.buildTopNPlusOtherChartRows === "function") {
       var built = global.buildTopNPlusOtherChartRows(rowsFiltered, {
@@ -127,7 +126,6 @@
       x = built.x;
       text = built.text;
       barCount = built.barCount;
-      hasOther = built.hasOther;
     } else {
       var sortedDesc = rowsFiltered.slice().sort(function (a, b) {
         return (Number(b[valCol]) || 0) - (Number(a[valCol]) || 0);
@@ -153,13 +151,9 @@
     var theme =
       typeof global.getZoneChartTheme === "function" ? global.getZoneChartTheme(chartEl) : null;
     var barColor = theme ? theme.bar : "#2a5f82";
-    var barOtherColor = theme ? theme.barOther || "#4a7a96" : "#4a7a96";
     var barLine = theme ? theme.barLine : "#1a3d5c";
     var ink = theme ? theme.ink : "#1a3d5c";
     var inkMuted = theme ? theme.inkMuted : "#2a5f82";
-    var barColors = y.map(function (label) {
-      return label === "Other" ? barOtherColor : barColor;
-    });
 
     var shell =
       chartEl.closest && chartEl.closest(".rwa-split-chart-shell")
@@ -180,7 +174,7 @@
       orientation: "h",
       width: barThickness,
       marker: {
-        color: hasOther ? barColors : barColor,
+        color: barColor,
         line: { color: barLine, width: 0.5 },
       },
       showlegend: false,
