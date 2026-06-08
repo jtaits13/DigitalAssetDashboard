@@ -317,3 +317,32 @@
     margin-left: 0;
   }
 }
+
+/* Key Observations after dashboard (crypto-inner-page-mock-ko-after-dashboard.html) */
+.mock-crypto-inner.mock-crypto-inner--ko-after-dashboard::before {
+  content: "Design mock — Crypto prices · Key Observations after chart & movers · mockups/crypto-inner-page-mock-ko-after-dashboard.html";
+}
+
+.mock-crypto-inner .crypto-mock-ko-after-dashboard {
+  margin-top: 0.2rem;
+  margin-bottom: 0.35rem;
+}
+
+.mock-crypto-inner .crypto-mock-layout-note {
+  margin: 0 0 0.65rem;
+  padding: 0.45rem 0.65rem;
+  border-radius: 8px;
+  border: 1px dashed rgb(var(--hx-etp-bright-rgb) / 0.35);
+  background: rgb(var(--hx-etp-rgb) / 0.05);
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: var(--hx-etp-dark);
+}
+
+.mock-crypto-inner.mock-crypto-inner--ko-after-dashboard .etp-mock-dashboard {
+  margin-bottom: 0.15rem;
+}
+
+.mock-crypto-inner.mock-crypto-inner--ko-after-dashboard .etp-mock-table-block {
+  margin-top: 0.15rem;
+}

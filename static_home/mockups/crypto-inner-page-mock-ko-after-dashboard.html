@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Mock — Crypto prices inner page</title>
+    <title>Mock — Crypto prices inner page (Key Observations after dashboard)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -17,7 +17,9 @@
     <link rel="stylesheet" href="etp-inner-page-mock.css?v=15" />
     <link rel="stylesheet" href="crypto-inner-page-mock.css?v=8" />
   </head>
-  <body class="page-crypto site-experience page-inner--rich mock-five-zone mock-crypto-inner">
+  <body
+    class="page-crypto site-experience page-inner--rich mock-five-zone mock-crypto-inner mock-crypto-inner--ko-after-dashboard"
+  >
     <header class="site-header" role="banner">
       <div class="site-header__inner">
         <a class="site-brand" href="../index.html">Digital Assets Dashboard</a>
@@ -41,7 +43,7 @@
               <li><a href="../etf-news.html">ETF/ETP News</a></li>
             </ul>
           </div>
-          <a href="../crypto-prices.html" class="is-active">Crypto Prices</a>
+          <a href="crypto-inner-page-mock-ko-after-dashboard.html" class="is-active">Crypto Prices</a>
         </nav>
       </div>
     </header>
@@ -80,7 +82,7 @@
         <div class="etp-mock-zone__body home-zone__body inner-rich-zone__body">
           <div class="home-related-chips" aria-label="Related pages">
             <span class="home-related-chips__label">Related</span>
-            <a class="home-chip" href="crypto-inner-page-mock-ko-after-dashboard.html">KO after dashboard layout mock</a>
+            <a class="home-chip" href="crypto-inner-page-mock.html">Original crypto layout mock</a>
             <a class="home-chip" href="../index.html#section-crypto">Home crypto preview</a>
             <a class="home-chip" href="etp-inner-page-mock.html">U.S. ETPs (mock)</a>
             <a class="home-chip" href="stable-inner-page-mock.html">Stablecoins (mock)</a>
@@ -112,74 +114,6 @@
               </div>
             </div>
           </section>
-
-          <div class="inner-rich-block etp-mock-key-obs-block" aria-labelledby="obs-heading">
-            <h2 class="subsection-head u-vh" id="obs-heading">Key Observations</h2>
-            <div id="js-crypto-key-obs">
-              <aside class="crypto-story-callout" aria-labelledby="crypto-key-obs-title">
-                <h3 class="crypto-story-callout__title" id="crypto-key-obs-title">Key observations</h3>
-                <ul class="crypto-story-callout__list">
-                  <li>
-                    <strong>Losses broadened among top-50 alts:</strong> 13 names up more than ~0.5%, 25 down more than
-                    ~0.5%, and 12 roughly flat out of <strong>50</strong> non-stable coins with a valid 1M % (top-50
-                    table).
-                  </li>
-                  <li>
-                    <strong
-                      >Others (top-50 coins outside Layer 1, stablecoins, CEX, DeFi, meme, and RWA tabs, e.g. HYPE, LAB,
-                      MNT, WLFI, RLUSD) outpaced Layer 1s over 1M:</strong
-                    >
-                    the stronger group averaged about <strong>+281.6%</strong> cap-weighted in the top-50, while the
-                    weaker averaged about <strong>-13.5%</strong>—the widest gap among category tabs.
-                  </li>
-                  <li>
-                    <strong>Industry headlines emphasize Crypto market structure</strong> Recent coverage includes
-                    <a
-                      href="https://www.coindesk.com/markets/2026/06/02/bitcoin-set-for-choppy-summer-as-capital-chases-high-flying-ai-stocks-k33-says"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      >Bitcoin set for &#x27;choppy summer&#x27; as capital chases high-flying AI stocks, K33 says</a
-                    >
-                    (CoinDesk);
-                    <a
-                      href="https://www.coindesk.com/business/2026/06/02/bitcoin-faces-identity-crisis-as-defi-quietly-builds-its-breakthrough-point"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      >Bitcoin faces an &#x27;identity crisis&#x27; and DeFi devs need to stop acting like tech bros</a
-                    >
-                    (CoinDesk). Breadth and dominance narratives help explain whether moves are Bitcoin-led or
-                    alt-led—compare with BTC/ETH 1M % and the category mix in the top-50 table.
-                  </li>
-                  <li>
-                    <strong>Industry headlines emphasize Crypto regulation</strong> Recent coverage includes
-                    <a
-                      href="https://www.coindesk.com/tech/2026/06/02/movement-pivots-to-stablecoin-payments-as-the-layer-2-boom-loses-momentum"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      >Movement pivots to stablecoin payments as the layer-2 boom loses momentum</a
-                    >
-                    (CoinDesk);
-                    <a
-                      href="https://www.coindesk.com/markets/2026/06/02/ripple-s-dollar-stablecoin-expands-to-turkey-through-three-local-platforms"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      >Ripple&#8217;s dollar stablecoin expands to Turkey through three local platforms</a
-                    >
-                    (CoinDesk). Enforcement and legislation headlines can shift risk appetite across the top-50—watch
-                    whether beta concentrates in majors or spreads into higher-beta categories.
-                  </li>
-                </ul>
-                <p class="crypto-story-callout__note">
-                  Context only—not investment advice. Observations rank the top-50 table and KPI math on this page
-                  against recent crypto and ETF headlines. Bullets are ranked from on-page data and recent industry
-                  headlines (dashboard RSS plus Google News fallback).
-                </p>
-              </aside>
-              <p class="review-note ko-disclaimer">
-                Key observations are AI generated and should be reviewed for accuracy.
-              </p>
-            </div>
-          </div>
 
           <section class="etp-mock-insights etp-mock-insights--crypto-full" aria-labelledby="insights-heading">
             <h2 class="u-vh" id="insights-heading">Market structure</h2>
@@ -303,6 +237,78 @@
               </div>
             </div>
           </section>
+
+          <div class="inner-rich-block etp-mock-key-obs-block crypto-mock-ko-after-dashboard" aria-labelledby="obs-heading">
+            <h2 class="subsection-head u-vh" id="obs-heading">Key Observations</h2>
+            <p class="crypto-mock-layout-note">
+              Layout experiment: Key Observations follows the chart and top movers (production places this block
+              immediately after KPIs). Use this as a bridge before the prices table.
+            </p>
+            <div id="js-crypto-key-obs">
+              <aside class="crypto-story-callout" aria-labelledby="crypto-key-obs-title">
+                <h3 class="crypto-story-callout__title" id="crypto-key-obs-title">Key observations</h3>
+                <ul class="crypto-story-callout__list">
+                  <li>
+                    <strong>Losses broadened among top-50 alts:</strong> 13 names up more than ~0.5%, 25 down more than
+                    ~0.5%, and 12 roughly flat out of <strong>50</strong> non-stable coins with a valid 1M % (top-50
+                    table).
+                  </li>
+                  <li>
+                    <strong
+                      >Others (top-50 coins outside Layer 1, stablecoins, CEX, DeFi, meme, and RWA tabs, e.g. HYPE, LAB,
+                      MNT, WLFI, RLUSD) outpaced Layer 1s over 1M:</strong
+                    >
+                    the stronger group averaged about <strong>+281.6%</strong> cap-weighted in the top-50, while the
+                    weaker averaged about <strong>-13.5%</strong>—the widest gap among category tabs.
+                  </li>
+                  <li>
+                    <strong>Industry headlines emphasize Crypto market structure</strong> Recent coverage includes
+                    <a
+                      href="https://www.coindesk.com/markets/2026/06/02/bitcoin-set-for-choppy-summer-as-capital-chases-high-flying-ai-stocks-k33-says"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >Bitcoin set for &#x27;choppy summer&#x27; as capital chases high-flying AI stocks, K33 says</a
+                    >
+                    (CoinDesk);
+                    <a
+                      href="https://www.coindesk.com/business/2026/06/02/bitcoin-faces-identity-crisis-as-defi-quietly-builds-its-breakthrough-point"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >Bitcoin faces an &#x27;identity crisis&#x27; and DeFi devs need to stop acting like tech bros</a
+                    >
+                    (CoinDesk). Breadth and dominance narratives help explain whether moves are Bitcoin-led or
+                    alt-led—compare with BTC/ETH 1M % and the category mix in the top-50 table.
+                  </li>
+                  <li>
+                    <strong>Industry headlines emphasize Crypto regulation</strong> Recent coverage includes
+                    <a
+                      href="https://www.coindesk.com/tech/2026/06/02/movement-pivots-to-stablecoin-payments-as-the-layer-2-boom-loses-momentum"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >Movement pivots to stablecoin payments as the layer-2 boom loses momentum</a
+                    >
+                    (CoinDesk);
+                    <a
+                      href="https://www.coindesk.com/markets/2026/06/02/ripple-s-dollar-stablecoin-expands-to-turkey-through-three-local-platforms"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >Ripple&#8217;s dollar stablecoin expands to Turkey through three local platforms</a
+                    >
+                    (CoinDesk). Enforcement and legislation headlines can shift risk appetite across the top-50—watch
+                    whether beta concentrates in majors or spreads into higher-beta categories.
+                  </li>
+                </ul>
+                <p class="crypto-story-callout__note">
+                  Context only—not investment advice. Observations rank the top-50 table and KPI math on this page
+                  against recent crypto and ETF headlines. Bullets are ranked from on-page data and recent industry
+                  headlines (dashboard RSS plus Google News fallback).
+                </p>
+              </aside>
+              <p class="review-note ko-disclaimer">
+                Key observations are AI generated and should be reviewed for accuracy.
+              </p>
+            </div>
+          </div>
 
           <section class="etp-mock-table-block" aria-labelledby="table-heading">
             <div class="rwa-split-table-head inner-table-head">
@@ -527,7 +533,7 @@
     </main>
 
     <footer class="site-footer">
-      Digital Assets Dashboard &middot; Crypto Prices mock &middot; <time datetime="2026-06">Jun 2026</time>
+      Digital Assets Dashboard &middot; Crypto Prices mock (KO after dashboard) &middot; <time datetime="2026-06">Jun 2026</time>
     </footer>
     <script defer src="../js/crypto-kpi-shared.js?v=11"></script>
     <script>
