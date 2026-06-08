@@ -33,11 +33,11 @@
 .etp-mock-dash__panel--chart .aum-chart-host .tradingview-widget-container {
   background: transparent;
   border: none;
-  min-height: 220px;
+  min-height: 252px;
 }
 
 .mock-stable-inner .etp-mock-dashboard {
-  --stable-dash-panel-min: 23rem;
+  --stable-dash-panel-min: 25.75rem;
   align-items: stretch;
 }
 
@@ -50,14 +50,14 @@
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-  min-height: 12rem;
+  min-height: 13.75rem;
   margin-bottom: 0.35rem;
 }
 
 .mock-stable-inner .etp-mock-dash__panel--chart .stable-dash-chart-body .aum-chart-host:not(:empty),
 .mock-stable-inner .etp-mock-dash__panel--chart .stable-dash-chart-body .aum-chart-host .js-plotly-plot {
   flex: 1 1 auto;
-  min-height: 12rem;
+  min-height: 13.75rem;
   height: 100%;
   max-height: none;
   border: 1px solid rgb(61 120 160 / 0.12);
@@ -86,7 +86,7 @@
 .mock-treasuries-inner .etp-mock-dashboard,
 .mock-stocks-inner .etp-mock-dashboard,
 .mock-rwa-global-inner .etp-mock-dashboard {
-  --stable-dash-panel-min: 23rem;
+  --stable-dash-panel-min: 25.75rem;
   align-items: stretch;
 }
 
@@ -105,7 +105,7 @@
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-  min-height: 12rem;
+  min-height: 13.75rem;
   margin-bottom: 0.35rem;
 }
 
@@ -116,7 +116,7 @@
 .mock-stocks-inner .etp-mock-dash__panel--chart .stable-dash-chart-body .aum-chart-host .js-plotly-plot,
 .mock-rwa-global-inner .etp-mock-dash__panel--chart .stable-dash-chart-body .aum-chart-host .js-plotly-plot {
   flex: 1 1 auto;
-  min-height: 12rem;
+  min-height: 13.75rem;
   height: 100%;
   max-height: none;
   border: 1px solid rgb(42 95 130 / 0.12);
@@ -159,7 +159,7 @@
 }
 
 .mock-participants-inner .etp-mock-dashboard {
-  --stable-dash-panel-min: 23rem;
+  --stable-dash-panel-min: 25.75rem;
   align-items: stretch;
 }
 
@@ -172,14 +172,14 @@
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-  min-height: 12rem;
+  min-height: 13.75rem;
   margin-bottom: 0.35rem;
 }
 
 .mock-participants-inner .etp-mock-dash__panel--chart .stable-dash-chart-body .aum-chart-host:not(:empty),
 .mock-participants-inner .etp-mock-dash__panel--chart .stable-dash-chart-body .aum-chart-host .js-plotly-plot {
   flex: 1 1 auto;
-  min-height: 12rem;
+  min-height: 13.75rem;
   height: 100%;
   max-height: none;
   border: 1px solid rgb(42 95 130 / 0.12);

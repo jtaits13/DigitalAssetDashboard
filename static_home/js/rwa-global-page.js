@@ -211,7 +211,9 @@
       '</ul><p class="crypto-story-callout__note"><strong>30D Δ share</strong> is 30-day change in market share (%). Top 15 networks by total value.</p>';
   }
 
-  function drawChart(rows, chartMax, heightPx, chartElId, emptyElId) {
+  function drawChart(rows, chartMax, heightPx, chartElId, emptyElId, options) {
+    options = options || {};
+    var includeOther = options.includeOther === true;
     var el = $(chartElId || "js-rwa-gmo-chart");
     var emptyEl = emptyElId ? $(emptyElId) : $("js-rwa-gmo-chart-empty");
     if (!el || typeof Plotly === "undefined") return;
@@ -237,31 +239,55 @@
 
     if (emptyEl) emptyEl.hidden = true;
 
-    var sorted = rows.slice().sort(function (a, b) {
-      return (Number(b["Total Value"]) || 0) - (Number(a["Total Value"]) || 0);
-    });
-    var top = sorted.slice(0, chartMax);
-    var asc = top.slice().sort(function (a, b) {
-      return (Number(a["Total Value"]) || 0) - (Number(b["Total Value"]) || 0);
-    });
+    var y;
+    var x;
+    var text;
+    var hasOther = false;
+    var barCount;
 
-    var y = asc.map(function (r) {
-      return String(r.Network != null ? r.Network : "—").trim() || "—";
-    });
-    var x = asc.map(function (r) {
-      return Number(r["Total Value"]) || 0;
-    });
-    var text = asc.map(function (r) {
-      var s = r["Market Share"];
-      if (s == null || !isFinite(Number(s))) return "—% share";
-      return Number(s).toFixed(2) + "% share";
-    });
+    if (includeOther && typeof global.buildTopNPlusOtherChartRows === "function") {
+      var built = global.buildTopNPlusOtherChartRows(rows, {
+        nameCol: "Network",
+        valCol: "Total Value",
+        topN: chartMax,
+        includeOther: true,
+      });
+      y = built.y;
+      x = built.x;
+      text = built.text;
+      hasOther = built.hasOther;
+      barCount = built.barCount;
+    } else {
+      var sorted = rows.slice().sort(function (a, b) {
+        return (Number(b["Total Value"]) || 0) - (Number(a["Total Value"]) || 0);
+      });
+      var top = sorted.slice(0, chartMax);
+      var asc = top.slice().sort(function (a, b) {
+        return (Number(a["Total Value"]) || 0) - (Number(b["Total Value"]) || 0);
+      });
+      y = asc.map(function (r) {
+        return String(r.Network != null ? r.Network : "—").trim() || "—";
+      });
+      x = asc.map(function (r) {
+        return Number(r["Total Value"]) || 0;
+      });
+      text = asc.map(function (r) {
+        var s = r["Market Share"];
+        if (s == null || !isFinite(Number(s))) return "—% share";
+        return Number(s).toFixed(2) + "% share";
+      });
+      barCount = y.length;
+    }
 
     var theme = typeof global.getZoneChartTheme === "function" ? global.getZoneChartTheme(el) : null;
     var barColor = theme ? theme.bar : "#2a5f82";
+    var barOtherColor = theme ? theme.barOther || "#4a7a96" : "#4a7a96";
     var barLine = theme ? theme.barLine : "#1a3d5c";
     var ink = theme ? theme.ink : "#1a3d5c";
     var inkMuted = theme ? theme.inkMuted : "#2a5f82";
+    var barColors = y.map(function (label) {
+      return label === "Other" ? barOtherColor : barColor;
+    });
 
     var shell =
       el.closest && el.closest(".stable-dash-chart-body")
@@ -278,8 +304,9 @@
       x: x,
       y: y,
       orientation: "h",
+      width: Math.min(0.9, Math.max(0.52, 0.86 - barCount * 0.028)),
       marker: {
-        color: barColor,
+        color: hasOther ? barColors : barColor,
         line: { color: barLine, width: 0.5 },
       },
       showlegend: false,
@@ -294,6 +321,7 @@
       height: heightPx,
       autosize: true,
       margin: { l: m.l, r: m.r, t: 14, b: 60, pad: 4 },
+      bargap: barCount >= 6 ? 0.11 : 0.14,
       paper_bgcolor: "rgba(0,0,0,0)",
       plot_bgcolor: "#f8fafc",
       font: { size: 12, color: ink, family: "Outfit, system-ui, sans-serif" },
@@ -381,7 +409,7 @@
       return;
     }
     dash.hidden = false;
-    drawChart(rows, 5, 260, "js-rwa-global-dashboard-chart");
+    drawChart(rows, 5, 286, "js-rwa-global-dashboard-chart", null, { includeOther: true });
     renderGlobalShareMovers(rows);
   }
 

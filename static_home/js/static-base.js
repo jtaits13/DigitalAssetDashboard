@@ -647,6 +647,74 @@
     return "rwa";
   }
 
+  /**
+   * Ranked horizontal-bar series: top N rows plus an optional Other bucket (share sums to ~100%).
+   * Other is pinned to the bottom of the chart; top N stay in rank order above it.
+   */
+  global.buildTopNPlusOtherChartRows = function (rows, opts) {
+    opts = opts || {};
+    var nameCol = opts.nameCol || "Network";
+    var valCol = opts.valCol || "Total Value";
+    var topN = opts.topN != null ? Number(opts.topN) : 5;
+    var otherLabel = opts.otherLabel || "Other";
+    var minOtherShare = opts.minOtherShare != null ? Number(opts.minOtherShare) : 0.05;
+    var includeOther = opts.includeOther !== false;
+
+    var sortedDesc = (rows || []).slice().sort(function (a, b) {
+      return (Number(b[valCol]) || 0) - (Number(a[valCol]) || 0);
+    });
+    if (!sortedDesc.length) {
+      return { y: [], x: [], text: [], hasOther: false, barCount: 0 };
+    }
+
+    function shareOf(r) {
+      var ms = r["Market Share"];
+      return ms != null && isFinite(Number(ms)) ? Number(ms) : 0;
+    }
+
+    var topRanked = sortedDesc.slice(0, topN);
+    var remainder = sortedDesc.slice(topN);
+    var displayRows = topRanked.slice().reverse();
+    var hasOther = false;
+
+    if (includeOther && remainder.length) {
+      var otherValue = remainder.reduce(function (s, r) {
+        return s + (Number(r[valCol]) || 0);
+      }, 0);
+      var otherShare = remainder.reduce(function (s, r) {
+        return s + shareOf(r);
+      }, 0);
+      if (otherShare <= 0) {
+        var topSum = topRanked.reduce(function (s, r) {
+          return s + shareOf(r);
+        }, 0);
+        otherShare = Math.max(0, 100 - topSum);
+      }
+      if (otherValue > 0 || otherShare >= minOtherShare) {
+        var otherRow = {};
+        otherRow[nameCol] = otherLabel;
+        otherRow[valCol] = otherValue;
+        otherRow["Market Share"] = otherShare;
+        displayRows.unshift(otherRow);
+        hasOther = true;
+      }
+    }
+
+    var y = displayRows.map(function (r) {
+      return String(r[nameCol] != null ? r[nameCol] : "—").trim() || "—";
+    });
+    var x = displayRows.map(function (r) {
+      return Number(r[valCol]) || 0;
+    });
+    var text = displayRows.map(function (r) {
+      var ms = r["Market Share"];
+      if (ms == null || !isFinite(Number(ms))) return "—% share";
+      return Number(ms).toFixed(2) + "% share";
+    });
+
+    return { y: y, x: x, text: text, hasOther: hasOther, barCount: displayRows.length };
+  };
+
   /** Zone-aware Plotly/chart colors aligned to ``site-experience.css`` inner-page themes. */
   global.getZoneChartTheme = function (scope) {
     var key = detectZoneChartKey(scope);

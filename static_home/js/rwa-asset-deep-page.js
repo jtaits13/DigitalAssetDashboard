@@ -109,32 +109,57 @@
       return;
     }
 
-    var sortedDesc = rowsFiltered.slice().sort(function (a, b) {
-      return (Number(b[valCol]) || 0) - (Number(a[valCol]) || 0);
-    });
-    var top = sortedDesc.slice(0, maxBars);
-    var asc = top.slice().sort(function (a, b) {
-      return (Number(a[valCol]) || 0) - (Number(b[valCol]) || 0);
-    });
+    var includeOther = payload.chart_include_other === true;
+    var y;
+    var x;
+    var text;
+    var barCount;
+    var hasOther = false;
 
-    var y = asc.map(function (r) {
-      return String(r[nameCol] != null ? r[nameCol] : "—").trim() || "—";
-    });
-    var x = asc.map(function (r) {
-      return Number(r[valCol]) || 0;
-    });
-    var text = asc.map(function (r) {
-      var ms = r["Market Share"];
-      if (ms == null || !isFinite(Number(ms))) return "—% share";
-      return Number(ms).toFixed(2) + "% share";
-    });
+    if (includeOther && typeof global.buildTopNPlusOtherChartRows === "function") {
+      var built = global.buildTopNPlusOtherChartRows(rowsFiltered, {
+        nameCol: nameCol,
+        valCol: valCol,
+        topN: maxBars,
+        includeOther: true,
+      });
+      y = built.y;
+      x = built.x;
+      text = built.text;
+      barCount = built.barCount;
+      hasOther = built.hasOther;
+    } else {
+      var sortedDesc = rowsFiltered.slice().sort(function (a, b) {
+        return (Number(b[valCol]) || 0) - (Number(a[valCol]) || 0);
+      });
+      var top = sortedDesc.slice(0, maxBars);
+      var asc = top.slice().sort(function (a, b) {
+        return (Number(a[valCol]) || 0) - (Number(b[valCol]) || 0);
+      });
+      y = asc.map(function (r) {
+        return String(r[nameCol] != null ? r[nameCol] : "—").trim() || "—";
+      });
+      x = asc.map(function (r) {
+        return Number(r[valCol]) || 0;
+      });
+      text = asc.map(function (r) {
+        var ms = r["Market Share"];
+        if (ms == null || !isFinite(Number(ms))) return "—% share";
+        return Number(ms).toFixed(2) + "% share";
+      });
+      barCount = y.length;
+    }
 
     var theme =
       typeof global.getZoneChartTheme === "function" ? global.getZoneChartTheme(chartEl) : null;
     var barColor = theme ? theme.bar : "#2a5f82";
+    var barOtherColor = theme ? theme.barOther || "#4a7a96" : "#4a7a96";
     var barLine = theme ? theme.barLine : "#1a3d5c";
     var ink = theme ? theme.ink : "#1a3d5c";
     var inkMuted = theme ? theme.inkMuted : "#2a5f82";
+    var barColors = y.map(function (label) {
+      return label === "Other" ? barOtherColor : barColor;
+    });
 
     var shell =
       chartEl.closest && chartEl.closest(".rwa-split-chart-shell")
@@ -145,8 +170,8 @@
     var axisProps = buildCurrencyAxisProps(x, Math.max(120, shellW - m.l - m.r), theme);
 
     var thicknessBars =
-      payload.chart_bar_thickness_bars != null ? Number(payload.chart_bar_thickness_bars) : y.length;
-    var barThickness = Math.min(0.9, Math.max(0.58, 0.86 - thicknessBars * 0.028));
+      payload.chart_bar_thickness_bars != null ? Number(payload.chart_bar_thickness_bars) : barCount;
+    var barThickness = Math.min(0.9, Math.max(0.52, 0.86 - thicknessBars * 0.028));
 
     var trace = {
       type: "bar",
@@ -155,7 +180,7 @@
       orientation: "h",
       width: barThickness,
       marker: {
-        color: barColor,
+        color: hasOther ? barColors : barColor,
         line: { color: barLine, width: 0.5 },
       },
       showlegend: false,
@@ -182,7 +207,7 @@
       height: heightPx,
       autosize: true,
       margin: { l: m.l, r: m.r, t: 12, b: 56, pad: 2 },
-      bargap: 0.14,
+      bargap: barCount >= 6 ? 0.11 : 0.14,
       paper_bgcolor: "rgba(0,0,0,0)",
       plot_bgcolor: "#f8fafc",
       font: { family: CHART_FONT, size: 12, color: ink },
@@ -609,8 +634,9 @@
           Object.assign({}, net, { split_body_height_px: 260 }),
           Object.assign({}, payload, {
             chart_max_bars: 5,
-            chart_bar_thickness_bars: 12,
-            chart_height_px: 260,
+            chart_include_other: true,
+            chart_bar_thickness_bars: 6,
+            chart_height_px: 286,
           })
         );
       }
