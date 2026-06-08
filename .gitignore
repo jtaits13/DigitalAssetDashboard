@@ -14,6 +14,7 @@ static_home/data/*.json
 # ETP page bundle — must be committed or etps.html renders empty after code-only deploys.
 !static_home/data/etps.json
 !static_home/data/etp_kpis.json
+!static_home/data/crypto_kpis.json
 !static_home/data/aum_series.json
 !static_home/data/etf_pulse.json
 !static_home/data/manifest.json

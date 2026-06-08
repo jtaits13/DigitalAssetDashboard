@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mock — Weekly newsletter preview</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #1a3d5c;
+        --muted: #64748b;
+        --line: #d8e2ec;
+        --wash: #eef2f6;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Outfit, "Segoe UI", system-ui, sans-serif;
+        background: var(--wash);
+        color: var(--ink);
+      }
+
+      body::before {
+        content: "Design mock — Weekly newsletter email preview · mockups/weekly-newsletter-mock.html";
+        display: block;
+        padding: 0.45rem 1rem;
+        background: #fef3c7;
+        border-bottom: 1px solid #fcd34d;
+        font-size: 0.78rem;
+        color: #92400e;
+      }
+
+      .wrap {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 1.25rem 1rem 2rem;
+        display: grid;
+        grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+        gap: 1.25rem;
+        align-items: start;
+      }
+
+      .panel {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 1rem 1.05rem;
+        box-shadow: 0 1px 3px rgb(26 61 92 / 0.06);
+      }
+
+      .panel h1 {
+        margin: 0 0 0.5rem;
+        font-size: 1.15rem;
+      }
+
+      .panel p,
+      .panel li {
+        font-size: 0.84rem;
+        line-height: 1.5;
+        color: #334155;
+      }
+
+      .panel ul {
+        margin: 0.5rem 0 0;
+        padding-left: 1.1rem;
+      }
+
+      .panel code {
+        font-size: 0.78rem;
+        background: #f1f5f9;
+        padding: 0.1rem 0.35rem;
+        border-radius: 4px;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.85rem;
+      }
+
+      .btn {
+        display: inline-block;
+        padding: 0.45rem 0.75rem;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-decoration: none;
+        border: 1px solid var(--line);
+        color: var(--ink);
+        background: #fff;
+      }
+
+      .btn--primary {
+        background: #2a5f82;
+        border-color: #2a5f82;
+        color: #fff;
+      }
+
+      .preview-shell {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgb(26 61 92 / 0.06);
+      }
+
+      .preview-shell__bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        padding: 0.55rem 0.85rem;
+        border-bottom: 1px solid var(--line);
+        background: #f8fafc;
+        font-size: 0.78rem;
+        color: var(--muted);
+      }
+
+      .preview-shell iframe {
+        display: block;
+        width: 100%;
+        min-height: 980px;
+        border: 0;
+        background: #eef2f6;
+      }
+
+      @media (max-width: 900px) {
+        .wrap {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <aside class="panel">
+        <h1>Weekly newsletter mock</h1>
+        <p>
+          This preview shows the HTML email that would go to your team each Friday. Content is built from the same JSON
+          and Key observations pipeline as the live dashboard.
+        </p>
+        <ul>
+          <li><strong>Source data:</strong> <code>static_home/data/etp_kpis.json</code>, <code>crypto_kpis.json</code>, <code>rwa_explore_asset_type.json</code></li>
+          <li><strong>Generator:</strong> <code>python scripts/build_weekly_newsletter.py</code></li>
+          <li><strong>Email file:</strong> <code>weekly-newsletter-email.html</code> (inline CSS, ~640px width)</li>
+        </ul>
+        <p>
+          To refresh after a data export, run the generator from the repo root. Set
+          <code>SITE_BASE_URL</code> if your GitHub Pages URL differs.
+        </p>
+        <div class="actions">
+          <a class="btn btn--primary" href="weekly-newsletter-email.html" target="_blank" rel="noopener noreferrer"
+            >Open email HTML</a
+          >
+          <a class="btn" href="../index.html">Live dashboard</a>
+          <a class="btn" href="stable-inner-page-mock.html">Other mocks</a>
+        </div>
+        <p style="margin-top: 0.85rem; font-size: 0.76rem; color: var(--muted);">
+          To test in Outlook: open the email HTML in a browser → Select all → Copy → paste into a new message (or use
+          “Insert as text” / forward as HTML attachment depending on your client).
+        </p>
+      </aside>
+
+      <section class="preview-shell" aria-label="Newsletter email preview">
+        <div class="preview-shell__bar">
+          <span>Preview — as it would appear in an inbox</span>
+          <span>Week ending from latest export timestamps</span>
+        </div>
+        <iframe
+          src="weekly-newsletter-email.html"
+          title="Weekly newsletter email body"
+          loading="lazy"
+        ></iframe>
+      </section>
+    </div>
+  </body>
+</html>
