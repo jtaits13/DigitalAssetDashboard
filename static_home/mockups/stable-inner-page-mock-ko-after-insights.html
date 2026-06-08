@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Mock — Stablecoins inner page</title>
+    <title>Mock — Stablecoins inner page (Key Observations after insights)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -15,9 +15,11 @@
     <link rel="stylesheet" href="../css/inner-page-experience.css?v=22" />
     <link rel="stylesheet" href="home-five-zone-mock.css?v=9" />
     <link rel="stylesheet" href="etp-inner-page-mock.css?v=15" />
-    <link rel="stylesheet" href="stable-inner-page-mock.css?v=6" />
+    <link rel="stylesheet" href="stable-inner-page-mock.css?v=8" />
   </head>
-  <body class="page-rwa-deep-stablecoins site-experience page-inner--rich mock-five-zone mock-stable-inner">
+  <body
+    class="page-rwa-deep-stablecoins site-experience page-inner--rich mock-five-zone mock-stable-inner mock-stable-inner--others-chart mock-stable-inner--ko-after-insights"
+  >
     <header class="site-header" role="banner">
       <div class="site-header__inner">
         <a class="site-brand" href="../index.html">Digital Assets Dashboard</a>
@@ -25,7 +27,7 @@
           <a href="../index.html">Home</a>
           <a href="../index.html#section-news">News Hub</a>
           <a href="tmmf-inner-page-mock.html">TMMFs</a>
-          <a href="stable-inner-page-mock.html" class="is-active">Stablecoins</a>
+          <a href="stable-inner-page-mock-ko-after-insights.html" class="is-active">Stablecoins</a>
           <div class="site-nav__dropdown">
             <a href="rwa-global-inner-page-mock.html" class="site-nav__trigger">RWA Market</a>
             <ul class="site-nav__sub">
@@ -75,8 +77,8 @@
         <div class="etp-mock-zone__body home-zone__body inner-rich-zone__body">
           <div class="home-related-chips" aria-label="Related pages">
             <span class="home-related-chips__label">Related</span>
-            <a class="home-chip" href="stable-inner-page-mock-others-chart.html">Top 5 + Other chart mock</a>
-            <a class="home-chip" href="stable-inner-page-mock-ko-after-insights.html">KO after insights layout mock</a>
+            <a class="home-chip" href="stable-inner-page-mock-others-chart.html">Production-style chart mock</a>
+            <a class="home-chip" href="stable-inner-page-mock.html">Original layout mock</a>
             <a class="home-chip" href="../index.html#section-stablecoins">Home stablecoins preview</a>
             <a class="home-chip" href="tmmf-inner-page-mock.html">Tokenized MMFs (mock)</a>
             <a class="home-chip" href="treasuries-inner-page-mock.html">U.S. Treasuries (mock)</a>
@@ -118,42 +120,6 @@
               All KPI % changes are <strong>30-day (30D)</strong> from RWA.xyz Stablecoins Overview.
             </p>
           </section>
-
-          <div class="inner-rich-block etp-mock-key-obs-block" aria-labelledby="obs-heading">
-            <h2 class="subsection-head u-vh" id="obs-heading">Key Observations</h2>
-            <div id="js-stable-key-obs">
-            <aside class="crypto-story-callout" aria-labelledby="stable-key-obs-title">
-              <h3 class="crypto-story-callout__title" id="stable-key-obs-title">Key observations</h3>
-              <ul class="crypto-story-callout__list">
-                <li>
-                  <strong>Stablecoin market structure remains concentration-led:</strong> leadership is still defined by
-                  a small set of large issuers/platforms; share shifts matter as much as aggregate market-cap growth.
-                </li>
-                <li>
-                  <strong>Institutional relevance continues to rise:</strong> policy and bank-integration pathways
-                  increasingly frame stablecoins as payment and treasury infrastructure&mdash;not only crypto trading
-                  liquidity.
-                </li>
-                <li>
-                  <strong>Industry headlines emphasize stablecoin policy &amp; reserves:</strong> reserve and policy
-                  headlines can reprice which stablecoins issuers prioritize&mdash;platform concentration on this page
-                  may shift before aggregate market cap does.
-                </li>
-                <li>
-                  <strong>Bank &amp; payments integration:</strong> remittance and card-rail stories frame stablecoins as
-                  settlement infrastructure beyond exchange trading liquidity.
-                </li>
-              </ul>
-              <p class="crypto-story-callout__note">
-                Context only&mdash;not investment advice. Bullets are ranked from on-page data and recent industry
-                headlines (dashboard RSS plus Google News fallback).
-              </p>
-            </aside>
-            <p class="review-note ko-disclaimer">
-              Key observations are AI generated and should be reviewed for accuracy.
-            </p>
-            </div>
-          </div>
 
           <section class="etp-mock-insights etp-mock-insights--crypto-full" aria-labelledby="insights-heading">
             <h2 class="u-vh" id="insights-heading">Market structure</h2>
@@ -197,22 +163,128 @@
             </div>
           </section>
 
+          <div class="inner-rich-block etp-mock-key-obs-block stable-mock-ko-after-insights" aria-labelledby="obs-heading">
+            <h2 class="subsection-head u-vh" id="obs-heading">Key Observations</h2>
+            <p class="stable-mock-layout-note">
+              Layout experiment: Key Observations follows market-structure insights (production places this block
+              immediately after KPIs).
+            </p>
+            <div id="js-stable-key-obs">
+            <aside class="crypto-story-callout" aria-labelledby="stable-key-obs-title">
+              <h3 class="crypto-story-callout__title" id="stable-key-obs-title">Key observations</h3>
+              <ul class="crypto-story-callout__list">
+                <li>
+                  <strong>Stablecoin market structure remains concentration-led:</strong> leadership is still defined by
+                  a small set of large issuers/platforms; share shifts matter as much as aggregate market-cap growth.
+                </li>
+                <li>
+                  <strong>Institutional relevance continues to rise:</strong> policy and bank-integration pathways
+                  increasingly frame stablecoins as payment and treasury infrastructure&mdash;not only crypto trading
+                  liquidity.
+                </li>
+                <li>
+                  <strong>Industry headlines emphasize stablecoin policy &amp; reserves:</strong> reserve and policy
+                  headlines can reprice which stablecoins issuers prioritize&mdash;platform concentration on this page
+                  may shift before aggregate market cap does.
+                </li>
+                <li>
+                  <strong>Bank &amp; payments integration:</strong> remittance and card-rail stories frame stablecoins as
+                  settlement infrastructure beyond exchange trading liquidity.
+                </li>
+              </ul>
+              <p class="crypto-story-callout__note">
+                Context only&mdash;not investment advice. Bullets are ranked from on-page data and recent industry
+                headlines (dashboard RSS plus Google News fallback).
+              </p>
+            </aside>
+            <p class="review-note ko-disclaimer">
+              Key observations are AI generated and should be reviewed for accuracy.
+            </p>
+            </div>
+          </div>
+
           <section class="etp-mock-dashboard" aria-labelledby="dashboard-heading">
             <h2 class="u-vh" id="dashboard-heading">Chart and share movers</h2>
             <div class="etp-mock-dash__panel etp-mock-dash__panel--chart">
               <h3 class="etp-mock-dash__head">Stablecoin market cap by network</h3>
               <div class="stable-dash-chart-body">
-                <div class="etp-mock-chart" role="img" aria-label="Mock stablecoin market cap by network chart">
-                  <div class="etp-mock-chart__axis" aria-hidden="true">
-                    <span>ETH</span><span>TRON</span><span>Solana</span><span>BNB</span><span>Arbitrum</span>
+                <div
+                  class="stable-net-hbar-chart aum-chart-host"
+                  role="img"
+                  aria-label="Stablecoin market cap by network: Ethereum 54.6%, TRON 29.3%, Solana 5.2%, BNB Chain 4.3%, Arbitrum 2.4%, Other networks 4.2%"
+                >
+                  <div class="stable-net-hbar-chart__rows">
+                    <div class="stable-net-hbar-chart__row">
+                      <span class="stable-net-hbar-chart__label">Ethereum</span>
+                      <div class="stable-net-hbar-chart__track">
+                        <div class="stable-net-hbar-chart__bar-area">
+                          <span class="stable-net-hbar-chart__bar" style="width: 100%"></span>
+                        </div>
+                        <span class="stable-net-hbar-chart__share">54.60% share</span>
+                      </div>
+                    </div>
+                    <div class="stable-net-hbar-chart__row">
+                      <span class="stable-net-hbar-chart__label">TRON</span>
+                      <div class="stable-net-hbar-chart__track">
+                        <div class="stable-net-hbar-chart__bar-area">
+                          <span class="stable-net-hbar-chart__bar" style="width: 53.71%"></span>
+                        </div>
+                        <span class="stable-net-hbar-chart__share">29.30% share</span>
+                      </div>
+                    </div>
+                    <div class="stable-net-hbar-chart__row">
+                      <span class="stable-net-hbar-chart__label">Solana</span>
+                      <div class="stable-net-hbar-chart__track">
+                        <div class="stable-net-hbar-chart__bar-area">
+                          <span class="stable-net-hbar-chart__bar" style="width: 9.43%"></span>
+                        </div>
+                        <span class="stable-net-hbar-chart__share">5.20% share</span>
+                      </div>
+                    </div>
+                    <div class="stable-net-hbar-chart__row">
+                      <span class="stable-net-hbar-chart__label">BNB Chain</span>
+                      <div class="stable-net-hbar-chart__track">
+                        <div class="stable-net-hbar-chart__bar-area">
+                          <span class="stable-net-hbar-chart__bar" style="width: 7.89%"></span>
+                        </div>
+                        <span class="stable-net-hbar-chart__share">4.30% share</span>
+                      </div>
+                    </div>
+                    <div class="stable-net-hbar-chart__row">
+                      <span class="stable-net-hbar-chart__label">Arbitrum</span>
+                      <div class="stable-net-hbar-chart__track">
+                        <div class="stable-net-hbar-chart__bar-area">
+                          <span class="stable-net-hbar-chart__bar" style="width: 4.38%"></span>
+                        </div>
+                        <span class="stable-net-hbar-chart__share">2.40% share</span>
+                      </div>
+                    </div>
+                    <div class="stable-net-hbar-chart__row stable-net-hbar-chart__row--other">
+                      <span class="stable-net-hbar-chart__label">Other</span>
+                      <div class="stable-net-hbar-chart__track">
+                        <div class="stable-net-hbar-chart__bar-area">
+                          <span class="stable-net-hbar-chart__bar" style="width: 7.7%"></span>
+                        </div>
+                        <span class="stable-net-hbar-chart__share">4.20% share</span>
+                      </div>
+                    </div>
                   </div>
+                  <div class="stable-net-hbar-chart__xaxis" aria-hidden="true">
+                    <span>$0</span>
+                    <span>$50B</span>
+                    <span>$100B</span>
+                    <span>$150B</span>
+                  </div>
+                  <p class="stable-net-hbar-chart__xtitle">Total value (USD)</p>
                 </div>
               </div>
               <p class="etp-mock-chart__cap">
-                Top <strong>5</strong> networks by market cap (labels include share).
+                Top <strong>5</strong> networks plus <strong>Other</strong> (remaining networks); market shares sum to
+                <strong>100%</strong>. Bar length uses total value; labels show share.
               </p>
               <p class="etp-mock-chart__method">
-                Plotly horizontal bars synced to the searchable networks table below.
+                Mock chart from table snapshot (Ethereum $163.30B, TRON $87.71B, Solana $15.40B, BNB Chain $12.88B,
+                Arbitrum $7.16B, Other $12.58B). Production uses Plotly horizontal bars synced to the searchable table.
               </p>
             </div>
             <div class="etp-mock-dash__panel etp-mock-dash__panel--movers">
@@ -548,7 +620,8 @@
     </main>
 
     <footer class="site-footer">
-      Digital Assets Dashboard &middot; Stablecoins mock &middot; <time datetime="2026-06">Jun 2026</time>
+      Digital Assets Dashboard &middot; Stablecoins mock (KO after insights) &middot;
+      <time datetime="2026-06">Jun 2026</time>
     </footer>
   </body>
 </html>
