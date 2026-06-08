@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Mock — Weekly newsletter preview</title>
+    <title>Mock — Executive weekly newsletter</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -30,7 +30,7 @@
       }
 
       body::before {
-        content: "Design mock — Weekly newsletter email preview · mockups/weekly-newsletter-mock.html";
+        content: "Design mock — Executive weekly newsletter · mockups/weekly-newsletter-executive-mock.html";
         display: block;
         padding: 0.45rem 1rem;
         background: #fef3c7;
@@ -126,7 +126,7 @@
       .preview-shell iframe {
         display: block;
         width: 100%;
-        min-height: 980px;
+        min-height: 920px;
         border: 0;
         background: #eef2f6;
       }
@@ -136,29 +136,32 @@
   <body>
     <div class="wrap">
       <section class="panel" style="margin-bottom: 1rem;">
-        <h1>Weekly newsletter mock</h1>
+        <h1>Executive newsletter mock</h1>
         <p>
-          Full-width preview (1100px content) with <strong>Headlines of the week</strong> ranked from RSS via cluster
-          scoring (price-action stories excluded). Built from the same JSON and Key observations pipeline as the live
-          dashboard.
+          Full-width preview (1100px content): <strong>Week in brief</strong>, <strong>Headlines of the week</strong>
+          (cluster-ranked, price stories excluded), 2 &quot;What this means&quot; bullets per zone.
         </p>
         <div class="actions">
-          <a class="btn btn--primary" href="weekly-newsletter-email.html" target="_blank" rel="noopener noreferrer"
+          <a
+            class="btn btn--primary"
+            href="weekly-newsletter-email-executive-mock.html"
+            target="_blank"
+            rel="noopener noreferrer"
             >Open email HTML</a
           >
-          <a class="btn" href="weekly-newsletter-executive-mock.html">Executive variant</a>
+          <a class="btn" href="weekly-newsletter-mock.html">Standard variant</a>
           <a class="btn" href="../index.html">Live dashboard</a>
         </div>
       </section>
 
-      <section class="preview-shell" aria-label="Newsletter email preview">
+      <section class="preview-shell" aria-label="Executive newsletter email preview">
         <div class="preview-shell__bar">
-          <span>Preview — as it would appear in an inbox</span>
-          <span>Week ending from latest export timestamps</span>
+          <span>Preview — executive weekly brief</span>
+          <span>Same data as 08 Jun 2026 export</span>
         </div>
         <iframe
-          src="weekly-newsletter-email.html"
-          title="Weekly newsletter email body"
+          src="weekly-newsletter-email-executive-mock.html"
+          title="Executive weekly newsletter email body"
           loading="lazy"
         ></iframe>
       </section>
