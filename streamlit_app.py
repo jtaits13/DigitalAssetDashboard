@@ -27,12 +27,10 @@ from regulatory_news.widgets import clear_regulatory_cache
 from rwa_league.widgets import clear_rwa_league_cache
 from streamlit_home_static import (
     HOME_PREVIEW_FILTER_JS,
-    build_home_markets_stack_html,
     load_home_zone_data,
+    render_home_markets_stack,
 )
 from streamlit_site_parity import (
-    HOME_LOADING_NEWS_RAIL,
-    HOME_LOADING_STACK,
     JD_SCROLL_MAP,
     build_home_chrome_html,
     build_home_footer_html,
@@ -143,24 +141,16 @@ def main() -> None:
 
     render_home_markdown(build_home_chrome_html(include_refresh=False))
 
-    news_col, markets_col = st.columns([1, 2.85], gap="large")
-    news_slot = news_col.empty()
-    markets_slot = markets_col.empty()
-    news_slot.markdown(HOME_LOADING_NEWS_RAIL.strip(), unsafe_allow_html=True)
-    markets_slot.markdown(
-        f'<div class="home-markets-stack page-shell">{HOME_LOADING_STACK.strip()}</div>',
-        unsafe_allow_html=True,
-    )
-
     etp_ua = resolve_etp_user_agent(get_etp_user_agent_from_secrets())
 
-    with ThreadPoolExecutor(max_workers=4) as pool:
-        f_news = pool.submit(load_all_feeds, DEFAULT_FEEDS)
-        f_reg = pool.submit(load_regulatory_articles)
-        f_data = pool.submit(load_home_zone_data, etp_ua)
-        articles, feed_errors = f_news.result()
-        _, reg_errors = f_reg.result()
-        zone_data = f_data.result()
+    with st.spinner("Loading market data…"):
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            f_news = pool.submit(load_all_feeds, DEFAULT_FEEDS)
+            f_reg = pool.submit(load_regulatory_articles)
+            f_data = pool.submit(load_home_zone_data, etp_ua)
+            articles, feed_errors = f_news.result()
+            _, reg_errors = f_reg.result()
+            zone_data = f_data.result()
 
     errors = [e for e in (feed_errors + reg_errors) if e]
     if errors:
@@ -170,23 +160,26 @@ def main() -> None:
 
     home_news, _ = prepare_home_hub_market_news_lane(articles)
     news_rail = build_static_news_rail_html(home_news)
-    markets_stack = build_home_markets_stack_html(
-        mmf_kpis=zone_data["mmf_kpis"],
-        mmf_funds=zone_data["mmf_funds"],
-        stable_kpis=zone_data["stable_kpis"],
-        stable_df=zone_data["stable_df"],
-        rwa_kpis=zone_data["rwa_kpis"],
-        rwa_df=zone_data["rwa_df"],
-        etp_rows=zone_data["etp_rows"],
-        crypto_rows=zone_data["crypto_rows"],
-        crypto_paprika=zone_data["crypto_paprika"],
-    )
 
-    news_slot.markdown(news_rail.strip(), unsafe_allow_html=True)
-    markets_slot.markdown(
-        f'<div class="home-markets-stack page-shell">{markets_stack.strip()}</div>',
-        unsafe_allow_html=True,
-    )
+    news_col, markets_col = st.columns([1, 2.85], gap="large")
+    with news_col:
+        st.markdown(news_rail.strip(), unsafe_allow_html=True)
+    with markets_col:
+        st.markdown('<div class="home-markets-stack page-shell">', unsafe_allow_html=True)
+        render_home_markets_stack(
+            st,
+            mmf_kpis=zone_data["mmf_kpis"],
+            mmf_funds=zone_data["mmf_funds"],
+            stable_kpis=zone_data["stable_kpis"],
+            stable_df=zone_data["stable_df"],
+            rwa_kpis=zone_data["rwa_kpis"],
+            rwa_df=zone_data["rwa_df"],
+            etp_rows=zone_data["etp_rows"],
+            crypto_rows=zone_data["crypto_rows"],
+            crypto_paprika=zone_data["crypto_paprika"],
+        )
+        st.markdown("</div>", unsafe_allow_html=True)
+
     render_home_markdown(build_home_footer_html(footer_month=footer_month, footer_iso=footer_iso))
 
     components.html(HOME_PREVIEW_FILTER_JS, height=0, width=0)

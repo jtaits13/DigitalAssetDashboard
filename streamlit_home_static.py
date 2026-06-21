@@ -434,6 +434,34 @@ def build_home_markets_stack_html(
     crypto_rows: list[dict[str, Any]],
     crypto_paprika: dict[str, float],
 ) -> str:
+    return "".join(
+        iter_home_markets_stack_html(
+            mmf_kpis=mmf_kpis,
+            mmf_funds=mmf_funds,
+            stable_kpis=stable_kpis,
+            stable_df=stable_df,
+            rwa_kpis=rwa_kpis,
+            rwa_df=rwa_df,
+            etp_rows=etp_rows,
+            crypto_rows=crypto_rows,
+            crypto_paprika=crypto_paprika,
+        )
+    )
+
+
+def iter_home_markets_stack_html(
+    *,
+    mmf_kpis: list[RwaGlobalKpi],
+    mmf_funds: list[dict[str, Any]],
+    stable_kpis: list[RwaGlobalKpi],
+    stable_df: pd.DataFrame,
+    rwa_kpis: list[RwaGlobalKpi],
+    rwa_df: pd.DataFrame,
+    etp_rows: list[CryptoEtpRow],
+    crypto_rows: list[dict[str, Any]],
+    crypto_paprika: dict[str, float],
+) -> list[str]:
+    """One HTML fragment per zone — Streamlit drops extra blocks in a single markdown blob."""
     parts: list[str] = [
         '<p class="home-kpi-legend-once" id="home-kpi-legend">'
         "<strong>How to read KPIs:</strong> On-chain figures use 30-day (30D) % from RWA.xyz. "
@@ -442,71 +470,62 @@ def build_home_markets_stack_html(
     ]
 
     # TMMF
-    parts.append(
+    tmmf: list[str] = [
         _zone_open(
             section_id="section-tmmf",
             badge="MMF",
             title="Tokenized Money Market Funds",
             subtitle="Curated on-chain fund list — KPIs and searchable preview.",
             zone_class="home-zone--tmmf",
-        )
-    )
-    parts.append(rwa_snapshot_kpi_html(mmf_kpis))
-    parts.append('<p class="home-table-caption">Funds preview</p>')
-    parts.append(
+        ),
+        rwa_snapshot_kpi_html(mmf_kpis),
+        '<p class="home-table-caption">Funds preview</p>',
         _search_field_html(
             field_id="js-home-tmmf-search",
             label="Filter preview by fund or network name",
             placeholder="Filter by fund, platform, or network…",
-        )
-    )
-    parts.append(
+        ),
         _data_table_html(
             TMMF_HOME_COLS,
             _mmf_fund_rows(mmf_funds),
             table_id="js-home-tmmf",
             empty_msg="TMMF fund preview is unavailable.",
-        )
-    )
-    parts.append(_cta_html("/RWA_Tokenized_MMF", "Open full TMMF page"))
-    parts.append(
+        ),
+        _cta_html("/RWA_Tokenized_MMF", "Open full TMMF page"),
         _zone_close(
             source_cap="Curated fund population preview. Population may not include all TMMFs in the market."
-        )
-    )
+        ),
+    ]
+    parts.append("".join(tmmf))
 
     # Stablecoins
-    parts.append(
+    stable: list[str] = [
         _zone_open(
             section_id="section-stablecoins",
             badge="SC",
             title="Stablecoins",
             subtitle="Market cap, holders, and network distribution from RWA.xyz.",
             zone_class="home-zone--stable",
-        )
-    )
-    parts.append(rwa_snapshot_kpi_html(stable_kpis))
-    parts.append('<p class="home-table-caption">Networks preview</p>')
-    parts.append(
+        ),
+        rwa_snapshot_kpi_html(stable_kpis),
+        '<p class="home-table-caption">Networks preview</p>',
         _search_field_html(
             field_id="js-home-stable-search",
             label="Filter preview by network name",
             placeholder="Filter by network…",
-        )
-    )
-    stable_rows = _df_to_row_dicts(stable_df, STABLE_HOME_COLS)
-    parts.append(
+        ),
         _data_table_html(
             STABLE_HOME_COLS,
-            stable_rows,
+            _df_to_row_dicts(stable_df, STABLE_HOME_COLS),
             table_id="js-home-stable",
-            empty_msg="Stablecoins network preview is unavailable.",
-        )
-    )
-    parts.append(_cta_html("/RWA_Stablecoins", "Open full Stablecoins page"))
-    parts.append(_zone_close())
+            empty_msg="Stablecoin preview is unavailable.",
+        ),
+        _cta_html("/RWA_Stablecoins", "Open full Stablecoins page"),
+        _zone_close(source_cap="RWA.xyz stablecoin networks"),
+    ]
+    parts.append("".join(stable))
 
-    # RWA global
+    # RWA
     chips = (
         '<div class="home-related-chips" aria-label="Related pages">'
         '<span class="home-related-chips__label">Related</span>'
@@ -514,7 +533,7 @@ def build_home_markets_stack_html(
         '<a class="home-chip" href="/Crypto_Prices">Crypto prices</a>'
         "</div>"
     )
-    parts.append(
+    rwa: list[str] = [
         _zone_open(
             section_id="section-onchain",
             badge="RWA",
@@ -522,96 +541,89 @@ def build_home_markets_stack_html(
             subtitle="Global overview KPIs and a networks preview from RWA.xyz.",
             zone_class="home-zone--rwa",
             extra_body_top=chips,
-        )
-    )
-    parts.append(rwa_snapshot_kpi_html(rwa_kpis))
-    parts.append('<p class="home-table-caption">Networks preview</p>')
-    parts.append(
+        ),
+        rwa_snapshot_kpi_html(rwa_kpis),
+        '<p class="home-table-caption">Networks preview</p>',
         _search_field_html(
             field_id="js-home-rwa-search",
             label="Filter preview by network name",
             placeholder="Filter by network…",
-        )
-    )
-    rwa_preview = _df_to_row_dicts(rwa_df, RWA_HOME_COLS)
-    parts.append(
+        ),
         _data_table_html(
             RWA_HOME_COLS,
-            rwa_preview,
+            _df_to_row_dicts(rwa_df, RWA_HOME_COLS),
             table_id="js-home-rwa",
             empty_msg="On-chain preview is unavailable.",
-        )
-    )
-    parts.append(_cta_html("/RWA_Global_Market_Overview", "Open full RWA Market Overview"))
-    parts.append(_zone_close(explore=True, source_cap="RWA.xyz Global Market Overview · parent networks"))
+        ),
+        _cta_html("/RWA_Global_Market_Overview", "Open full RWA Market Overview"),
+        _zone_close(explore=True, source_cap="RWA.xyz Global Market Overview · parent networks"),
+    ]
+    parts.append("".join(rwa))
 
     # ETP
-    parts.append(
+    flow_series = load_farside_flow_series_cached()
+    etp_sorted = sorted(etp_rows, key=lambda r: -(r.assets_usd or 0))
+    etp_df = build_etp_dataframe(etp_sorted[:HOME_PREVIEW], flow_series=flow_series)
+    etp: list[str] = [
         _zone_open(
             section_id="section-markets",
             badge="ETP",
             title="U.S. ETP Market",
             subtitle="U.S.-listed digital-asset ETP snapshot with fund preview.",
             zone_class="home-zone--etp",
-        )
-    )
-    parts.append(etp_snapshot_kpi_html(etp_rows))
-    parts.append('<p class="home-table-caption">Funds preview</p>')
-    parts.append(
+        ),
+        etp_snapshot_kpi_html(etp_rows),
+        '<p class="home-table-caption">Funds preview</p>',
         _search_field_html(
             field_id="js-home-etp-search",
             label="Filter preview by fund name or ticker",
             placeholder="Filter by name or ticker…",
-        )
-    )
-    flow_series = load_farside_flow_series_cached()
-    etp_sorted = sorted(etp_rows, key=lambda r: -(r.assets_usd or 0))
-    etp_df = build_etp_dataframe(etp_sorted[:HOME_PREVIEW], flow_series=flow_series)
-    etp_preview = _df_to_row_dicts(etp_df, ETP_HOME_COLS)
-    parts.append(
+        ),
         _data_table_html(
             ETP_HOME_COLS,
-            etp_preview,
+            _df_to_row_dicts(etp_df, ETP_HOME_COLS),
             table_id="js-home-etp",
             empty_msg="ETP preview is unavailable.",
-        )
-    )
-    parts.append(_cta_html("/US_Crypto_ETPs", "Open full U.S. ETP page"))
-    parts.append(_zone_close())
+        ),
+        _cta_html("/US_Crypto_ETPs", "Open full U.S. ETP page"),
+        _zone_close(),
+    ]
+    parts.append("".join(etp))
 
     # Crypto
-    parts.append(
+    crypto: list[str] = [
         _zone_open(
             section_id="section-crypto",
             badge="CRY",
             title="Crypto Prices",
             subtitle="Top-line crypto market snapshot and top-50 price preview.",
             zone_class="home-zone--crypto",
-        )
-    )
-    parts.append(crypto_snapshot_kpi_html(crypto_rows, crypto_paprika))
-    parts.append('<p class="home-table-caption">Top coins preview</p>')
-    parts.append(
+        ),
+        crypto_snapshot_kpi_html(crypto_rows, crypto_paprika),
+        '<p class="home-table-caption">Top coins preview</p>',
         _search_field_html(
             field_id="js-home-crypto-search",
             label="Filter preview by coin name or ticker",
             placeholder="Filter by name or ticker…",
-        )
-    )
-    parts.append(
+        ),
         _data_table_html(
             CRYPTO_HOME_COLS,
             _crypto_preview_rows(crypto_rows),
             table_id="js-home-crypto",
             empty_msg="Crypto preview is unavailable.",
-        )
-    )
-    parts.append(_cta_html("/Crypto_Prices", "Open full Crypto Prices page"))
-    parts.append(
-        _zone_close(source_cap="Spot rows: CoinGecko with CoinCap fallback · total cap: CoinPaprika")
-    )
+        ),
+        _cta_html("/Crypto_Prices", "Open full Crypto Prices page"),
+        _zone_close(source_cap="Spot rows: CoinGecko with CoinCap fallback · total cap: CoinPaprika"),
+    ]
+    parts.append("".join(crypto))
 
-    return "".join(parts)
+    return parts
+
+
+def render_home_markets_stack(target: Any, **zone_data: Any) -> None:
+    """Render each home zone as its own markdown block (required on Streamlit Cloud)."""
+    for chunk in iter_home_markets_stack_html(**zone_data):
+        target.markdown(chunk.strip(), unsafe_allow_html=True)
 
 
 HOME_PREVIEW_FILTER_JS = """

@@ -90,6 +90,11 @@ section[data-testid="stSidebar"] { display: none !important; }
   flex: 1 1 0 !important;
   min-width: 0 !important;
 }
+.stApp [data-testid="column"]:has(.home-zone) {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1.1rem !important;
+}
 .stApp .home-markets-stack.page-shell {
   padding: 1.25rem 0 0;
   max-width: none;
