@@ -445,6 +445,7 @@ def show_us_crypto_etps_widget(
     *,
     home_preview: bool = False,
     preview_row_limit: int = 5,
+    zone_layout: bool = False,
 ) -> None:
     """
     U.S. crypto ETP table. On the home page, pass ``home_preview=True`` for a short slice
@@ -458,25 +459,27 @@ def show_us_crypto_etps_widget(
 
     h2_cls = "home-widget-heading" if home_preview else "home-main-heading"
     if data.error and not data.rows:
-        st.markdown(
-            f'<div class="jd-hub-subsection-head">'
-            f'<h2 class="{h2_cls}">U.S. Digital Asset ETPs</h2></div>',
-            unsafe_allow_html=True,
-        )
+        if not zone_layout:
+            st.markdown(
+                f'<div class="jd-hub-subsection-head">'
+                f'<h2 class="{h2_cls}">U.S. Digital Asset ETPs</h2></div>',
+                unsafe_allow_html=True,
+            )
         st.warning(escape(data.error))
         return
 
     rows = data.rows
     total = total_aum_usd(rows)
     aum_s = format_usd_compact(total) if total > 0 else "—"
-    st.markdown(
-        f'<div class="jd-hub-subsection-head">'
-        f'<h2 class="{h2_cls}">U.S. Digital Asset ETPs</h2></div>',
-        unsafe_allow_html=True,
-    )
+    if not zone_layout:
+        st.markdown(
+            f'<div class="jd-hub-subsection-head">'
+            f'<h2 class="{h2_cls}">U.S. Digital Asset ETPs</h2></div>',
+            unsafe_allow_html=True,
+        )
 
     if home_preview:
-        render_etp_summary_kpi_row(rows, include_styles=False)
+        render_etp_summary_kpi_row(rows, include_styles=not zone_layout)
     else:
         st.markdown(
             f'<p class="etp-aum-line">Total AUM (listed, known assets): {escape(aum_s)}</p>',
@@ -490,6 +493,15 @@ def show_us_crypto_etps_widget(
             "",
             key="etf_search_home",
             placeholder="Filter by name or ticker…",
+        )
+    elif zone_layout:
+        st.markdown('<p class="home-table-caption">Funds preview</p>', unsafe_allow_html=True)
+        q = st.text_input(
+            "Filter preview by fund name or ticker",
+            "",
+            key="etf_home_zone_search",
+            placeholder="Filter by name or ticker…",
+            label_visibility="collapsed",
         )
 
     ranked = sorted_by_assets(rows)
@@ -509,7 +521,12 @@ def show_us_crypto_etps_widget(
     if not home_preview:
         st.caption(ETP_DATA_SOURCE_CAPTION)
 
-    if st.button("Open full U.S. ETP page", key="see_full_etf_list", use_container_width=True, type="primary"):
+    if st.button(
+        "Open full U.S. ETP page",
+        key="see_full_etf_list",
+        use_container_width=True,
+        type="primary",
+    ):
         st.switch_page("pages/US_Crypto_ETPs.py")
 
 

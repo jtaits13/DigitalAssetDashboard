@@ -298,84 +298,20 @@ a.jd-nav-dd-item.jd-nav-dd-with-flyout {
 
 
 def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -> None:
-    """
-    Fixed top bar + spacer on the landing page (in-page anchors).
-    Subpages use ``render_subpage_top_bar()`` instead.
-    """
-    if not is_landing:
-        return
+    """Site nav + GitHub Pages CSS on the landing page."""
+    from streamlit_site_parity import inject_site_styles, render_site_nav
 
-    st.markdown(SITE_NAV_CSS, unsafe_allow_html=True)
-    st.markdown(
-        """
-<div class="jd-site-nav-fixed-wrap">
-  <div class="jd-site-nav-inner">
-    <nav class="jd-site-nav" aria-label="Page sections">
-      <span class="jd-site-brand">Digital Assets Dashboard</span>
-      <a class="jd-site-link" href="/?jd_scroll=top">Home</a>
-      <a class="jd-site-link" href="#jd-section-news">Digital Asset News</a>
-      <div class="jd-nav-dd" role="group" aria-label="U.S. ETPs">
-        <a class="jd-site-link jd-nav-dd-head" href="/US_Crypto_ETPs">U.S. ETPs <span class="jd-nav-dd-caret" aria-hidden="true">▾</span></a>
-        <ul class="jd-nav-dd-menu" role="menu">
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/All_ETF_News">ETF/ETP News</a></li>
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/US_Crypto_ETPs">U.S. ETP Overview</a></li>
-        </ul>
-      </div>
-      <div class="jd-nav-dd" role="group" aria-label="RWA Market">
-        <a class="jd-site-link jd-nav-dd-head" href="/RWA_Global_Market_Overview">RWA Market <span class="jd-nav-dd-caret" aria-hidden="true">▾</span></a>
-        <ul class="jd-nav-dd-menu" role="menu">
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-market">Market Overview</a></li>
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-explore-asset-type">RWA · Assets</a></li>
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="#jd-rwa-explore-market-participant">RWA · Participants</a></li>
-        </ul>
-      </div>
-    </nav>
-  </div>
-</div>
-<div class="jd-site-nav-spacer" aria-hidden="true"></div>
-""",
-        unsafe_allow_html=True,
-    )
+    _ = key_suffix
+    inject_site_styles()
+    render_site_nav(active="home", is_landing=is_landing)
 
 
-def render_subpage_top_bar() -> None:
-    """
-    Same fixed banner as the home page. **Home**, **Digital Asset News**, and **RWA Market** subsection links use
-    ``?jd_scroll=`` so returning to the landing page scrolls to the right hub anchor.
-    **U.S. ETPs** and **RWA Market**
-    expose hover submenus (ETF/ETP News / U.S. ETP Overview; Market Overview / Assets / Participants).
-    """
-    st.markdown(SITE_NAV_CSS, unsafe_allow_html=True)
-    st.markdown(
-        """
-<div class="jd-site-nav-fixed-wrap">
-  <div class="jd-site-nav-inner">
-    <nav class="jd-site-nav" aria-label="Page sections">
-      <span class="jd-site-brand">Digital Assets Dashboard</span>
-      <a class="jd-site-link" href="/?jd_scroll=top">Home</a>
-      <a class="jd-site-link" href="/?jd_scroll=news">Digital Asset News</a>
-      <div class="jd-nav-dd" role="group" aria-label="U.S. ETPs">
-        <a class="jd-site-link jd-nav-dd-head" href="/US_Crypto_ETPs">U.S. ETPs <span class="jd-nav-dd-caret" aria-hidden="true">▾</span></a>
-        <ul class="jd-nav-dd-menu" role="menu">
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/All_ETF_News">ETF/ETP News</a></li>
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/US_Crypto_ETPs">U.S. ETP Overview</a></li>
-        </ul>
-      </div>
-      <div class="jd-nav-dd" role="group" aria-label="RWA Market">
-        <a class="jd-site-link jd-nav-dd-head" href="/RWA_Global_Market_Overview">RWA Market <span class="jd-nav-dd-caret" aria-hidden="true">▾</span></a>
-        <ul class="jd-nav-dd-menu" role="menu">
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/?jd_scroll=rwa_global_market">Market Overview</a></li>
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/?jd_scroll=rwa_explore_asset_type">RWA · Assets</a></li>
-          <li role="none"><a class="jd-nav-dd-item" role="menuitem" href="/?jd_scroll=rwa_explore_market_participant">RWA · Participants</a></li>
-        </ul>
-      </div>
-    </nav>
-  </div>
-</div>
-<div class="jd-site-nav-spacer" aria-hidden="true"></div>
-""",
-        unsafe_allow_html=True,
-    )
+def render_subpage_top_bar(*, active: str = "home") -> None:
+    """Same primary nav as static_home (Streamlit multipage routes)."""
+    from streamlit_site_parity import inject_site_styles, render_site_nav
+
+    inject_site_styles()
+    render_site_nav(active=active, is_landing=False)
 
 
 _RWA_EXPLORE_INDEX_PAGES = frozenset(

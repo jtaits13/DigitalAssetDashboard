@@ -1756,6 +1756,7 @@ def show_rwa_stablecoins_widget(
     preview_rows: int = 8,
     full_page_header: bool = False,
     full_page_key_observations_html: str | None = None,
+    zone_layout: bool = False,
 ) -> None:
     """
     RWA.xyz Stablecoins embed: overview KPIs + **Networks** and **Platforms** leagues (same pattern as US Treasuries).
@@ -1766,14 +1767,14 @@ def show_rwa_stablecoins_widget(
     ``full_page_key_observations_html``: rendered after KPI row on the full page.
     """
     h2_sub = "home-widget-heading" if home_preview else "home-main-heading"
-    if home_preview:
+    if home_preview and not zone_layout:
         st.divider()
         st.markdown(
             f'<div class="jd-hub-subsection-head" id="jd-rwa-stablecoins">'
             f'<h2 class="{h2_sub}">Stablecoins</h2></div>',
             unsafe_allow_html=True,
         )
-    else:
+    elif not home_preview:
         st.markdown(WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
         if not full_page_header:
             st.markdown(
@@ -1825,15 +1826,18 @@ def show_rwa_stablecoins_widget(
     _inject_full_page_key_observations(full_page_key_observations_html)
 
     if home_preview:
+        if zone_layout:
+            st.markdown('<p class="home-table-caption">Networks preview</p>', unsafe_allow_html=True)
         if rows_net_sc:
             n = max(1, min(preview_rows, len(rows_net_sc)))
             working_nv = rows_net_sc[:n]
             table_h = rwa_table_height(len(working_nv))
-            st.markdown(
-                '<div class="jd-hub-subsection-head">'
-                '<h2 class="home-widget-heading">By network (Stablecoins · Networks)</h2></div>',
-                unsafe_allow_html=True,
-            )
+            if not zone_layout:
+                st.markdown(
+                    '<div class="jd-hub-subsection-head">'
+                    '<h2 class="home-widget-heading">By network (Stablecoins · Networks)</h2></div>',
+                    unsafe_allow_html=True,
+                )
             df_nv = build_stablecoin_network_dataframe(working_nv)
             _show_stablecoin_network_dataframe(df_nv, height=table_h)
         elif rows_plat_sc:
@@ -1843,18 +1847,19 @@ def show_rwa_stablecoins_widget(
             df_pv = build_stablecoin_platform_dataframe(working_pv)
             _show_stablecoin_platform_dataframe(df_pv, height=table_h)
         if st.button(
-            "Open full Stablecoins table",
+            "Open full Stablecoins page",
             key="see_full_rwa_stablecoins",
             use_container_width=True,
             type="primary",
         ):
             st.switch_page("pages/RWA_Stablecoins.py")
-        st.link_button(
-            STABLECOINS_RWA_LINK_LABEL,
-            "https://app.rwa.xyz/stablecoins",
-            use_container_width=True,
-            key="rwa_sc_rwa_link_home",
-        )
+        if not zone_layout:
+            st.link_button(
+                STABLECOINS_RWA_LINK_LABEL,
+                "https://app.rwa.xyz/stablecoins",
+                use_container_width=True,
+                key="rwa_sc_rwa_link_home",
+            )
         return
 
     if rows_net_sc:
@@ -2261,19 +2266,20 @@ def show_rwa_mmf_widget(
     preview_rows: int = 8,
     full_page_header: bool = False,
     full_page_key_observations_html: str | None = None,
+    zone_layout: bool = False,
 ) -> None:
     """Tokenized money market funds: KPIs + aggregated Networks / Platforms tables."""
     from rwa_league.client import APP_GOVERNMENT_BONDS, APP_TREASURIES
 
     h2_sub = "home-widget-heading" if home_preview else "home-main-heading"
-    if home_preview:
+    if home_preview and not zone_layout:
         st.divider()
         st.markdown(
             f'<div class="jd-hub-subsection-head" id="jd-rwa-tokenized-mmf">'
             f'<h2 class="{h2_sub}">Tokenized Money Market Funds</h2></div>',
             unsafe_allow_html=True,
         )
-    elif not full_page_header:
+    elif not home_preview and not full_page_header:
         st.markdown(
             '<div class="jd-hub-subsection-head" id="jd-rwa-tokenized-mmf">'
             '<h2 class="home-main-heading">Tokenized Money Market Funds</h2></div>',
@@ -2309,6 +2315,8 @@ def show_rwa_mmf_widget(
         if home_preview:
             working = rows_m[: max(1, min(preview_rows, len(rows_m)))]
             table_h = rwa_table_height(len(working))
+            if zone_layout:
+                st.markdown('<p class="home-table-caption">Funds preview</p>', unsafe_allow_html=True)
         else:
             q = st.text_input(
                 "Search network table",
@@ -2323,10 +2331,11 @@ def show_rwa_mmf_widget(
                 else f"Showing all {len(working)} networks (Tokenized MMFs)."
             )
             table_h = rwa_table_height(len(working), max_h=900)
-        st.markdown(
-            f'<div class="jd-hub-subsection-head"><h2 class="{h2_sub}">By network (Tokenized MMFs)</h2></div>',
-            unsafe_allow_html=True,
-        )
+        if not zone_layout:
+            st.markdown(
+                f'<div class="jd-hub-subsection-head"><h2 class="{h2_sub}">By network (Tokenized MMFs)</h2></div>',
+                unsafe_allow_html=True,
+            )
         df_m = build_us_treasury_network_dataframe(working)
         if home_preview:
             _show_us_treasury_network_dataframe(df_m, height=table_h)
@@ -2358,13 +2367,14 @@ def show_rwa_mmf_widget(
 
     if home_preview:
         if st.button(
-            "Open full Tokenized MMF overview",
+            "Open full TMMF page",
             key="see_full_rwa_mmf",
             use_container_width=True,
             type="primary",
         ):
             st.switch_page("pages/RWA_Tokenized_MMF.py")
-        st.link_button(MMF_RWA_LINK_LABEL, APP_TREASURIES, use_container_width=True, key="rwa_mmf_link_home")
+        if not zone_layout:
+            st.link_button(MMF_RWA_LINK_LABEL, APP_TREASURIES, use_container_width=True, key="rwa_mmf_link_home")
     else:
         st.link_button(MMF_RWA_LINK_LABEL, APP_TREASURIES, use_container_width=True, key="rwa_mmf_link_full")
 
@@ -2641,6 +2651,7 @@ def _rwa_global_market_status(
     *,
     home_preview: bool,
     preview_rows: int,
+    zone_layout: bool = False,
 ) -> str:
     """
     Hub block: **RWA Global Market Overview** (heading) + top-line overview KPIs + the homepage Networks table
@@ -2653,18 +2664,20 @@ def _rwa_global_market_status(
 
     if err and not rows:
         st.warning(escape(err))
-        st.markdown(
-            f'<div class="jd-hub-subsection-head" id="jd-rwa-market">'
-            f'<h2 class="{h2_cls}">{RWA_GLOBAL_MARKET_OVERVIEW_HEADING}</h2></div>',
-            unsafe_allow_html=True,
-        )
+        if not zone_layout:
+            st.markdown(
+                f'<div class="jd-hub-subsection-head" id="jd-rwa-market">'
+                f'<h2 class="{h2_cls}">{RWA_GLOBAL_MARKET_OVERVIEW_HEADING}</h2></div>',
+                unsafe_allow_html=True,
+            )
         _render_rwa_global_overview(kpis, kpi_legend_name="Global Market", hub_kpi_emphasis=home_preview)
-        st.link_button(
-            GLOBAL_MARKET_RWA_LINK_LABEL,
-            GLOBAL_MARKET_RWA_URL,
-            use_container_width=True,
-            key="rwa_global_market_err_home" if home_preview else "rwa_global_market_err_full",
-        )
+        if not zone_layout:
+            st.link_button(
+                GLOBAL_MARKET_RWA_LINK_LABEL,
+                GLOBAL_MARKET_RWA_URL,
+                use_container_width=True,
+                key="rwa_global_market_err_home" if home_preview else "rwa_global_market_err_full",
+            )
         return "ERR_HOME" if home_preview else "STOP"
 
     if not rows:
@@ -2672,17 +2685,20 @@ def _rwa_global_market_status(
         st.info("No network rows returned.")
         return "STOP"
 
-    st.markdown(
-        f'<div class="jd-hub-subsection-head" id="jd-rwa-market">'
-        f'<h2 class="{h2_cls}">{RWA_GLOBAL_MARKET_OVERVIEW_HEADING}</h2></div>',
-        unsafe_allow_html=True,
-    )
+    if not zone_layout:
+        st.markdown(
+            f'<div class="jd-hub-subsection-head" id="jd-rwa-market">'
+            f'<h2 class="{h2_cls}">{RWA_GLOBAL_MARKET_OVERVIEW_HEADING}</h2></div>',
+            unsafe_allow_html=True,
+        )
     _render_rwa_global_overview(kpis, kpi_legend_name="Global Market", hub_kpi_emphasis=home_preview)
 
     working = list(rows)
     if home_preview:
         n = max(1, min(preview_rows, len(working)))
         working = working[:n]
+        if zone_layout:
+            st.markdown('<p class="home-table-caption">Networks preview</p>', unsafe_allow_html=True)
     else:
         q = st.text_input(
             "Search network table",
@@ -2706,19 +2722,20 @@ def _rwa_global_market_status(
         st.caption(RWA_GLOBAL_MARKET_DATA_SOURCE_CAPTION)
 
     if home_preview and st.button(
-        "Open full RWA Market Overview table",
+        "Open full RWA Market Overview",
         key="see_full_rwa_league",
         use_container_width=True,
         type="primary",
     ):
         st.switch_page("pages/RWA_Global_Market_Overview.py")
 
-    st.link_button(
-        GLOBAL_MARKET_RWA_LINK_LABEL,
-        GLOBAL_MARKET_RWA_URL,
-        use_container_width=True,
-        key="rwa_global_market_home" if home_preview else "rwa_global_market_full",
-    )
+    if not zone_layout:
+        st.link_button(
+            GLOBAL_MARKET_RWA_LINK_LABEL,
+            GLOBAL_MARKET_RWA_URL,
+            use_container_width=True,
+            key="rwa_global_market_home" if home_preview else "rwa_global_market_full",
+        )
     return "OK"
 
 
@@ -3471,6 +3488,7 @@ def show_rwa_league_widget(
     *,
     home_preview: bool = False,
     preview_rows: int = 8,
+    zone_layout: bool = False,
 ) -> None:
     """
     On-chain Data hub: **RWA Global Market Overview** (KPIs + Networks table), then **Explore by Asset Type** /
@@ -3479,8 +3497,10 @@ def show_rwa_league_widget(
     """
     st.markdown(WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS, unsafe_allow_html=True)
     rows, kpis, err = load_rwa_global_market_cached()
-    status = _rwa_global_market_status(rows, kpis, err, home_preview=home_preview, preview_rows=preview_rows)
+    status = _rwa_global_market_status(
+        rows, kpis, err, home_preview=home_preview, preview_rows=preview_rows, zone_layout=zone_layout
+    )
     if status == "STOP" and not home_preview:
         return
-    if home_preview:
+    if home_preview and not zone_layout:
         show_rwa_onchain_explore_gateways(preview_rows=preview_rows)
