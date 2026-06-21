@@ -86,18 +86,49 @@ section[data-testid="stSidebar"] { display: none !important; }
   max-width: 20rem !important;
   min-width: 13.5rem !important;
 }
-.stApp [data-testid="column"]:has(.home-markets-stack) {
+.stApp [data-testid="column"]:has(.home-kpi-legend-once),
+.stApp [data-testid="column"]:has(.home-zone) {
   flex: 1 1 0 !important;
   min-width: 0 !important;
+  padding-top: 1.25rem;
 }
-.stApp [data-testid="column"]:has(.home-zone) {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 1.1rem !important;
+.stApp [data-testid="stHorizontalBlock"]:has(.home-news-rail) {
+  align-items: flex-start !important;
 }
-.stApp .home-markets-stack.page-shell {
-  padding: 1.25rem 0 0;
-  max-width: none;
+/* Streamlit splits markdown blocks — zones are not inside .home-markets-stack in the DOM. */
+.stApp .home-zone.hub-section--panel {
+  display: block !important;
+  width: 100% !important;
+  margin: 0 0 1.35rem !important;
+  border: 1px solid rgba(199, 216, 232, 0.9);
+  border-radius: 14px;
+  padding: 0;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow:
+    0 1px 2px rgba(2, 29, 65, 0.04),
+    0 8px 26px rgba(2, 29, 65, 0.06);
+}
+.stApp .home-kpi-legend-once {
+  margin: 0 0 0.85rem;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--ink-soft, #1f4c67);
+  background: rgba(42, 95, 130, 0.06);
+  border: 1px solid rgba(42, 95, 130, 0.14);
+  border-radius: 10px;
+}
+.stApp .home-kpi-legend-once strong {
+  color: var(--ink, #021d41);
+  font-weight: 650;
+}
+.stApp [data-testid="column"]:has(.home-zone) [data-testid="stElementContainer"],
+.stApp [data-testid="column"]:has(.home-kpi-legend-once) [data-testid="stElementContainer"] {
+  height: auto !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+  flex-shrink: 0 !important;
 }
 .stApp .st-streamlit-home-root {
   display: block !important;
@@ -159,9 +190,9 @@ section[data-testid="stSidebar"] { display: none !important; }
 .stApp .stExpander { margin: 0.5rem 0 1rem; max-width: 48rem; }
 
 .stApp .site-header {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+  position: relative;
+  top: auto;
+  z-index: 10;
   margin: 0 -0.5rem 0;
   width: calc(100% + 1rem);
 }
@@ -203,6 +234,7 @@ section[data-testid="stSidebar"] { display: none !important; }
   opacity: 0.75;
 }
 
+.stApp .hub-section { scroll-margin-top: 4.5rem; }
 section.hub-section { scroll-margin-top: 4.5rem; }
 </style>
 """
@@ -268,6 +300,11 @@ def _patch_static_css_for_streamlit(css: str) -> str:
         r"\.site-experience\s+(?!\.page-home)",
         ".stApp .site-experience, .stApp ",
         css,
+    )
+    # Zones render as sibling markdown blocks, not nested under .home-markets-stack.
+    css = css.replace(
+        ".home-markets-stack .hub-section--panel",
+        ".home-markets-stack .hub-section--panel, .home-zone.hub-section--panel",
     )
     return css
 

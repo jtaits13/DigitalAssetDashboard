@@ -165,9 +165,8 @@ def main() -> None:
     with news_col:
         st.markdown(news_rail.strip(), unsafe_allow_html=True)
     with markets_col:
-        st.markdown('<div class="home-markets-stack page-shell">', unsafe_allow_html=True)
         render_home_markets_stack(
-            st,
+            markets_col,
             mmf_kpis=zone_data["mmf_kpis"],
             mmf_funds=zone_data["mmf_funds"],
             stable_kpis=zone_data["stable_kpis"],
@@ -178,7 +177,6 @@ def main() -> None:
             crypto_rows=zone_data["crypto_rows"],
             crypto_paprika=zone_data["crypto_paprika"],
         )
-        st.markdown("</div>", unsafe_allow_html=True)
 
     render_home_markdown(build_home_footer_html(footer_month=footer_month, footer_iso=footer_iso))
 

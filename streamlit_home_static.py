@@ -340,8 +340,8 @@ def _zone_open(
     extra_body_top: str = "",
 ) -> str:
     return (
-        f'<section class="hub-section hub-section--panel home-zone {zone_class} home-reveal is-visible site-experience page-home" '
-        f'id="{escape(section_id)}" aria-labelledby="{escape(section_id)}-heading">'
+        f'<div class="hub-section hub-section--panel home-zone {zone_class} home-reveal is-visible site-experience page-home" '
+        f'role="region" id="{escape(section_id)}" aria-labelledby="{escape(section_id)}-heading">'
         '<div class="home-zone__stripe" aria-hidden="true"></div>'
         '<div class="home-zone__head">'
         f'<span class="home-zone__badge" aria-hidden="true">{escape(badge)}</span>'
@@ -363,7 +363,7 @@ def _zone_close(*, explore: bool = False, source_cap: str = "") -> str:
       <a class="home-explore-compact__btn" href="/RWA_Explore_By_Market_Participant">By participant</a>
     </nav>"""
     cap = f'<p class="source-cap">{escape(source_cap)}</p>' if source_cap else ""
-    return f"{cap}{explore_html}</div></section>"
+    return f"{cap}{explore_html}</div></div>"
 
 
 def _mmf_fund_rows(mmfs: list[dict[str, Any]], *, limit: int = HOME_PREVIEW) -> list[dict[str, Any]]:
@@ -621,9 +621,14 @@ def iter_home_markets_stack_html(
 
 
 def render_home_markets_stack(target: Any, **zone_data: Any) -> None:
-    """Render each home zone as its own markdown block (required on Streamlit Cloud)."""
+    """Render each home zone as its own HTML block (required on Streamlit Cloud)."""
+    html_fn = getattr(target, "html", None)
     for chunk in iter_home_markets_stack_html(**zone_data):
-        target.markdown(chunk.strip(), unsafe_allow_html=True)
+        body = chunk.strip()
+        if html_fn is not None:
+            html_fn(body)
+        else:
+            target.markdown(body, unsafe_allow_html=True)
 
 
 HOME_PREVIEW_FILTER_JS = """
