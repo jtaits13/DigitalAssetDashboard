@@ -127,8 +127,41 @@ section[data-testid="stSidebar"] { display: none !important; }
   background: rgba(42, 95, 130, 0.06);
 }
 
+.stApp .home-loading-panel {
+  padding: 2rem 1.5rem;
+  text-align: center;
+  color: var(--ink-soft, #1f4c67);
+}
+.stApp .home-loading-title {
+  margin: 0 0 0.35rem;
+  font-size: 1.05rem;
+  font-weight: 650;
+}
+.stApp .home-loading-hint {
+  margin: 0;
+  font-size: 0.88rem;
+  opacity: 0.75;
+}
+
 section.hub-section { scroll-margin-top: 4.5rem; }
 </style>
+"""
+
+HOME_LOADING_STACK = """
+<p class="home-kpi-legend-once" aria-live="polite">Loading market data…</p>
+<div class="hub-section hub-section--panel home-loading-panel">
+  <p class="home-loading-title">Fetching RWA, ETP, and crypto datasets</p>
+  <p class="home-loading-hint">First load can take 1–2 minutes while upstream APIs and caches warm.</p>
+</div>
+"""
+
+HOME_LOADING_NEWS_RAIL = """
+<aside class="home-news-rail home-news-rail--terminal" aria-labelledby="home-news-rail-title">
+  <div class="home-news-rail__head">
+    <h2 id="home-news-rail-title" class="home-news-rail__title">News Hub</h2>
+  </div>
+  <p class="home-loading-hint" style="padding:1rem 1.1rem">Loading headlines…</p>
+</aside>
 """
 
 JD_SCROLL_MAP = {
@@ -168,20 +201,24 @@ def _patch_static_css_for_streamlit(css: str) -> str:
     return css
 
 
-def _read_static_css() -> str:
+@st.cache_resource(show_spinner=False)
+def _cached_static_stylesheet() -> str:
+    """Load static CSS once per process; only patch site-experience (ancestor selectors)."""
     chunks: list[str] = []
-    for rel in ("styles.css", "css/site-experience.css"):
-        path = _STATIC / rel
-        if path.is_file():
-            chunks.append(path.read_text(encoding="utf-8"))
-    return _patch_static_css_for_streamlit("\n".join(chunks))
+    styles_path = _STATIC / "styles.css"
+    if styles_path.is_file():
+        chunks.append(styles_path.read_text(encoding="utf-8"))
+    sx_path = _STATIC / "css/site-experience.css"
+    if sx_path.is_file():
+        chunks.append(_patch_static_css_for_streamlit(sx_path.read_text(encoding="utf-8")))
+    return "\n".join(chunks)
 
 
 def inject_site_styles(*, include_static: bool = True) -> None:
     """Inject GitHub Pages CSS + Streamlit chrome overrides."""
     css = STREAMLIT_CHROME_CSS
     if include_static:
-        css += f"<style>{_read_static_css()}</style>"
+        css += f"<style>{_cached_static_stylesheet()}</style>"
     st.markdown(css, unsafe_allow_html=True)
 
 
@@ -302,6 +339,17 @@ def render_home_hero() -> None:
 
 def render_home_jump_nav() -> None:
     st.markdown(_home_jump_nav_html(), unsafe_allow_html=True)
+
+
+def build_home_loading_page_html(*, footer_month: str, footer_iso: str) -> str:
+    """Shell shown immediately while slow data fetches run."""
+    return build_home_page_html(
+        markets_stack=HOME_LOADING_STACK,
+        news_rail=HOME_LOADING_NEWS_RAIL,
+        footer_month=footer_month,
+        footer_iso=footer_iso,
+        include_refresh=False,
+    )
 
 
 def build_home_page_html(
