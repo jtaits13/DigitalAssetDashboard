@@ -6,6 +6,7 @@ Loads the same stylesheets as ``static_home/index.html`` and mirrors layout stru
 
 from __future__ import annotations
 
+import re
 from html import escape
 from pathlib import Path
 from typing import Any
@@ -43,56 +44,87 @@ STREAMLIT_CHROME_CSS = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap');
 
-/* Hide Streamlit chrome */
 #MainMenu, footer, header[data-testid="stHeader"] { visibility: hidden !important; height: 0 !important; }
 section[data-testid="stSidebar"] { display: none !important; }
 [data-testid="stSidebarNav"], [data-testid="stSidebarNavItems"] { display: none !important; }
 [data-testid="stDecoration"] { display: none !important; }
 
-/* App canvas = static site wash + typography */
 .stApp {
-  background: var(--wash, #f3f7fb);
   font-family: "Outfit", "Segoe UI", system-ui, sans-serif;
+  color: var(--ink-soft, #1f4c67);
 }
 .block-container {
   padding-top: 0 !important;
   padding-bottom: 2rem !important;
-  max-width: calc(var(--max, 68rem) + 17.5rem) !important;
+  max-width: calc(var(--max, 72rem) + 17.5rem) !important;
   padding-left: 0.5rem !important;
   padding-right: 0.75rem !important;
 }
 
-/* Neutralize Streamlit wrappers inside static home */
-.st-parity-root [data-testid="stMarkdownContainer"] { font-family: inherit; }
-.st-parity-root [data-testid="stMarkdownContainer"] p:empty { display: none; }
-.st-parity-root [data-testid="stVerticalBlock"] { gap: 0 !important; }
-.st-parity-root [data-testid="stVerticalBlock"] > div { gap: 0 !important; }
-.st-parity-root .stExpander { margin: 0.5rem 0 1rem; max-width: 48rem; }
-
-/* Refresh control ≈ static secondary btn */
-.st-parity-root [data-testid="column"]:has(.stRefreshWrap) { margin-bottom: 0.65rem; }
-.st-parity-root .stRefreshWrap + div [data-testid="stButton"] button {
-  font-family: "Outfit", system-ui, sans-serif;
-  font-size: 0.82rem;
-  font-weight: 650;
-  border-radius: 8px;
-  border: 1px solid rgba(42, 95, 130, 0.35);
-  background: #fff;
-  color: var(--ink, #021d41);
-  padding: 0.45rem 0.9rem;
+.stApp [data-testid="stMarkdownContainer"] a { color: inherit; text-decoration: inherit; }
+.stApp .site-brand {
+  color: var(--ink, #021d41) !important;
+  text-decoration: none !important;
+  font-weight: 780 !important;
 }
-.st-parity-root .stRefreshWrap + div [data-testid="stButton"] button:hover {
-  border-color: var(--teal, #2a5f82);
-  background: rgba(42, 95, 130, 0.06);
+.stApp .site-nav a,
+.stApp .site-nav__trigger,
+.stApp .site-nav__parent-link {
+  color: var(--ink-soft, #1f4c67) !important;
+  text-decoration: none !important;
 }
+.stApp .site-nav a.is-active {
+  color: var(--teal, #2a5f82) !important;
+  background: rgba(42, 95, 130, 0.1) !important;
+}
+.stApp .hero--command a {
+  color: #d4eaf2 !important;
+  text-decoration: underline !important;
+  text-underline-offset: 2px;
+}
+.stApp .hero--command a:hover { color: #ffffff !important; }
+.stApp .home-jump-nav__link {
+  color: #f0f7fb !important;
+  text-decoration: none !important;
+}
+.stApp .headline-list__link {
+  color: #d4eef8 !important;
+  text-decoration: none !important;
+}
+.stApp .headline-list__link:hover { color: #ffffff !important; }
+.stApp .btn, .stApp .home-chip, .stApp .home-explore-compact__btn { text-decoration: none !important; }
 
-/* Sticky header inside Streamlit scroll container */
-.st-parity-root .site-header {
+.stApp [data-testid="stMarkdownContainer"] { font-family: inherit; color: inherit; }
+.stApp [data-testid="stVerticalBlock"] { gap: 0 !important; }
+.stApp .stExpander { margin: 0.5rem 0 1rem; max-width: 48rem; }
+
+.stApp .site-header {
   position: sticky;
   top: 0;
   z-index: 1000;
-  margin: 0 -0.5rem;
+  margin: 0 -0.5rem 0;
   width: calc(100% + 1rem);
+}
+.stApp .home-refresh-row {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0.5rem 0 0.85rem;
+  padding: 0 0.15rem;
+}
+.stApp a.home-refresh-btn {
+  display: inline-block;
+  font-size: 0.82rem;
+  font-weight: 650;
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  border: 1px solid rgba(42, 95, 130, 0.35);
+  background: #fff;
+  color: var(--ink, #021d41) !important;
+  text-decoration: none !important;
+}
+.stApp a.home-refresh-btn:hover {
+  border-color: var(--teal, #2a5f82);
+  background: rgba(42, 95, 130, 0.06);
 }
 
 section.hub-section { scroll-margin-top: 4.5rem; }
@@ -116,13 +148,33 @@ JD_SCROLL_MAP = {
 }
 
 
+def _patch_static_css_for_streamlit(css: str) -> str:
+    """
+    Streamlit splits ``st.markdown`` blocks, so ``.site-experience.page-home`` ancestor
+    selectors never match. Duplicate them under ``.stApp`` as well.
+    """
+    css = css.replace(":root {", ":root, .stApp {", 1)
+    css = css.replace(".site-experience {", ".stApp, .site-experience {", 1)
+    css = re.sub(
+        r"\.site-experience\.page-home\s+",
+        ".stApp .site-experience.page-home, .stApp ",
+        css,
+    )
+    css = re.sub(
+        r"\.site-experience\s+(?!\.page-home)",
+        ".stApp .site-experience, .stApp ",
+        css,
+    )
+    return css
+
+
 def _read_static_css() -> str:
     chunks: list[str] = []
     for rel in ("styles.css", "css/site-experience.css"):
         path = _STATIC / rel
         if path.is_file():
             chunks.append(path.read_text(encoding="utf-8"))
-    return "\n".join(chunks)
+    return _patch_static_css_for_streamlit("\n".join(chunks))
 
 
 def inject_site_styles(*, include_static: bool = True) -> None:
@@ -145,12 +197,10 @@ def _page_href(key: str) -> str:
     return f"/{stem}"
 
 
-def render_site_nav(*, active: str = "home", is_landing: bool = False) -> None:
-    """Primary nav matching static_home/index.html (Streamlit routes)."""
+def render_site_nav_html(*, active: str = "home", is_landing: bool = False) -> str:
     news_href = "#section-news" if is_landing else "/?jd_scroll=news"
-    st.markdown(
-        f"""
-<header class="site-header" role="banner">
+    return f"""
+<header class="site-header site-experience" role="banner">
   <div class="site-header__inner">
     <a class="site-brand" href="/?jd_scroll=top">Digital Assets Dashboard</a>
     <nav class="site-nav" aria-label="Primary">
@@ -190,48 +240,15 @@ def render_site_nav(*, active: str = "home", is_landing: bool = False) -> None:
     </nav>
   </div>
 </header>
-""",
-        unsafe_allow_html=True,
-    )
+"""
 
 
-def render_home_hero() -> None:
-    st.markdown(
-        """
-<section class="hero hero--command" aria-labelledby="page-title">
-  <div class="hero-inner hero-inner--single hero-inner--experience">
-    <div class="hero-copy hero-copy--lead">
-      <p class="home-hero-eyebrow">Market dashboard</p>
-      <h1 id="page-title">Digital Assets Dashboard</h1>
-      <p class="hero-lead hero-lead--compact">
-        <strong>On-chain RWA</strong> from <strong>RWA.xyz</strong>, curated <strong>news</strong>, U.S.-listed
-        <strong>crypto ETPs</strong>, and top-line <strong>crypto prices</strong>—one workspace for market direction,
-        policy signals, and where tokenization activity is building.
-      </p>
-""",
-        unsafe_allow_html=True,
-    )
-    render_home_jump_nav()
-    st.markdown(
-        """
-      <p class="hero-dek callout hero-dek--compact">
-        For <strong>internal digital asset</strong> materials (documentation, product context, and key contacts),
-        see the
-        <a href="https://confluence.prod.aws.jpmchase.net/confluence/spaces/viewspace.action?key=DIGITALPRODUCTTEAM"
-           target="_blank" rel="noopener noreferrer">Digital Custody Product Team</a>
-        space on Confluence (internal).
-      </p>
-    </div>
-  </div>
-</section>
-""",
-        unsafe_allow_html=True,
-    )
+def render_site_nav(*, active: str = "home", is_landing: bool = False) -> None:
+    st.markdown(render_site_nav_html(active=active, is_landing=is_landing), unsafe_allow_html=True)
 
 
-def render_home_jump_nav() -> None:
-    st.markdown(
-        """
+def _home_jump_nav_html() -> str:
+    return """
 <nav class="home-jump-nav home-jump-nav--grouped" aria-label="Jump to data sections">
   <div class="home-jump-nav__group">
     <span class="home-jump-nav__group-label">On-chain</span>
@@ -250,9 +267,77 @@ def render_home_jump_nav() -> None:
       <span class="home-jump-nav__dot" aria-hidden="true"></span>Crypto</a>
   </div>
 </nav>
-""",
-        unsafe_allow_html=True,
+"""
+
+
+def render_home_hero_html() -> str:
+    return f"""
+<section class="hero hero--command site-experience page-home" aria-labelledby="page-title">
+  <div class="hero-inner hero-inner--single hero-inner--experience">
+    <div class="hero-copy hero-copy--lead">
+      <p class="home-hero-eyebrow">Market dashboard</p>
+      <h1 id="page-title">Digital Assets Dashboard</h1>
+      <p class="hero-lead hero-lead--compact">
+        <strong>On-chain RWA</strong> from <strong>RWA.xyz</strong>, curated <strong>news</strong>, U.S.-listed
+        <strong>crypto ETPs</strong>, and top-line <strong>crypto prices</strong>—one workspace for market direction,
+        policy signals, and where tokenization activity is building.
+      </p>
+      {_home_jump_nav_html()}
+      <p class="hero-dek callout hero-dek--compact">
+        For <strong>internal digital asset</strong> materials (documentation, product context, and key contacts),
+        see the
+        <a href="https://confluence.prod.aws.jpmchase.net/confluence/spaces/viewspace.action?key=DIGITALPRODUCTTEAM"
+           target="_blank" rel="noopener noreferrer">Digital Custody Product Team</a>
+        space on Confluence (internal).
+      </p>
+    </div>
+  </div>
+</section>
+"""
+
+
+def render_home_hero() -> None:
+    st.markdown(render_home_hero_html(), unsafe_allow_html=True)
+
+
+def render_home_jump_nav() -> None:
+    st.markdown(_home_jump_nav_html(), unsafe_allow_html=True)
+
+
+def build_home_page_html(
+    *,
+    markets_stack: str,
+    news_rail: str,
+    footer_month: str,
+    footer_iso: str,
+    include_refresh: bool = True,
+) -> str:
+    """Single HTML document fragment for the Streamlit home (avoids broken nesting across markdown blocks)."""
+    refresh = (
+        '<div class="home-refresh-row"><a class="home-refresh-btn" href="?home_refresh=1">Refresh data</a></div>'
+        if include_refresh
+        else ""
     )
+    return f"""
+<div class="site-experience page-home st-streamlit-home">
+{render_site_nav_html(active="home", is_landing=True)}
+<main id="top">
+{render_home_hero_html()}
+{refresh}
+<div class="page-shell">
+  <div class="home-main-split">
+    <div class="home-markets-stack">
+      {markets_stack}
+    </div>
+    {news_rail}
+  </div>
+</div>
+</main>
+<footer class="site-footer site-experience">Digital Assets Dashboard · Home ·
+  <time datetime="{escape(footer_iso)}">{escape(footer_month)}</time>
+</footer>
+</div>
+"""
 
 
 def home_zone_open(

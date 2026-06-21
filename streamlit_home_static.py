@@ -340,7 +340,7 @@ def _zone_open(
     extra_body_top: str = "",
 ) -> str:
     return (
-        f'<section class="hub-section hub-section--panel home-zone {zone_class} home-reveal" '
+        f'<section class="hub-section hub-section--panel home-zone {zone_class} home-reveal site-experience page-home" '
         f'id="{escape(section_id)}" aria-labelledby="{escape(section_id)}-heading">'
         '<div class="home-zone__stripe" aria-hidden="true"></div>'
         '<div class="home-zone__head">'
