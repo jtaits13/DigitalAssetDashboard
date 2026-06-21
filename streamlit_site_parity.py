@@ -57,8 +57,50 @@ section[data-testid="stSidebar"] { display: none !important; }
   padding-top: 0 !important;
   padding-bottom: 2rem !important;
   max-width: calc(var(--max, 72rem) + 17.5rem) !important;
+  width: 100% !important;
   padding-left: 0.5rem !important;
   padding-right: 0.75rem !important;
+}
+
+/* Streamlit flex columns collapse custom HTML unless ancestors stretch full width. */
+.stApp section.main,
+.stApp [data-testid="stMainBlockContainer"] {
+  width: 100% !important;
+}
+.stApp [data-testid="stVerticalBlock"] {
+  width: 100% !important;
+  align-items: stretch !important;
+}
+.stApp [data-testid="stElementContainer"] {
+  width: 100% !important;
+  max-width: none !important;
+}
+.stApp [data-testid="stMarkdownContainer"],
+.stApp [data-testid="stHtml"],
+.stApp [data-testid="stHtml"] > div {
+  width: 100% !important;
+  max-width: none !important;
+}
+.stApp [data-testid="stMarkdownContainer"] p:has(.st-streamlit-home) {
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+}
+.stApp .st-streamlit-home {
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.stApp .st-streamlit-home > main {
+  display: block !important;
+  width: 100% !important;
+}
+.stApp .site-experience.page-home .home-reveal {
+  opacity: 1 !important;
+  transform: none !important;
 }
 
 .stApp [data-testid="stMarkdownContainer"] a { color: inherit; text-decoration: inherit; }
@@ -220,6 +262,11 @@ def inject_site_styles(*, include_static: bool = True) -> None:
     if include_static:
         css += f"<style>{_cached_static_stylesheet()}</style>"
     st.markdown(css, unsafe_allow_html=True)
+
+
+def render_home_page_html(html: str, *, target: Any = None) -> None:
+    """Render full-page home HTML via ``st.html`` (avoids markdown width collapse on Cloud)."""
+    (target or st).html(html.strip())
 
 
 def _nav_link(href: str, label: str, *, active: bool = False) -> str:
@@ -384,8 +431,7 @@ def build_home_page_html(
 <footer class="site-footer site-experience">Digital Assets Dashboard · Home ·
   <time datetime="{escape(footer_iso)}">{escape(footer_month)}</time>
 </footer>
-</div>
-"""
+</div>""".strip()
 
 
 def home_zone_open(

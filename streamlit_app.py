@@ -36,6 +36,7 @@ from streamlit_site_parity import (
     build_home_page_html,
     build_static_news_rail_html,
     inject_site_styles,
+    render_home_page_html,
 )
 
 
@@ -139,9 +140,9 @@ def main() -> None:
     footer_iso = now.strftime("%Y-%m")
 
     page_slot = st.empty()
-    page_slot.markdown(
+    render_home_page_html(
         build_home_loading_page_html(footer_month=footer_month, footer_iso=footer_iso),
-        unsafe_allow_html=True,
+        target=page_slot,
     )
 
     etp_ua = resolve_etp_user_agent(get_etp_user_agent_from_secrets())
@@ -174,14 +175,14 @@ def main() -> None:
         crypto_paprika=zone_data["crypto_paprika"],
     )
 
-    page_slot.markdown(
+    render_home_page_html(
         build_home_page_html(
             markets_stack=markets_stack,
             news_rail=news_rail,
             footer_month=footer_month,
             footer_iso=footer_iso,
         ),
-        unsafe_allow_html=True,
+        target=page_slot,
     )
     components.html(HOME_PREVIEW_FILTER_JS, height=0, width=0)
     _jd_inject_scroll_to_section()
