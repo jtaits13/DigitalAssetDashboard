@@ -133,7 +133,7 @@ def main() -> None:
 
     _consume_home_refresh_query()
     _jd_consume_scroll_query()
-    inject_site_styles()
+    inject_site_styles(include_static=False)
 
     now = datetime.now(timezone.utc)
     footer_month = now.strftime("%b %Y")

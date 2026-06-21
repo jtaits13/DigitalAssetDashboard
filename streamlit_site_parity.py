@@ -81,26 +81,43 @@ section[data-testid="stSidebar"] { display: none !important; }
   width: 100% !important;
   max-width: none !important;
 }
-.stApp [data-testid="stMarkdownContainer"] p:has(.st-streamlit-home) {
+.stApp [data-testid="stElementContainer"]:has(.st-streamlit-home-root),
+.stApp [data-testid="stMarkdownContainer"]:has(.st-streamlit-home-root) {
+  width: 100% !important;
+  max-width: none !important;
+  flex: 1 1 auto !important;
+  align-self: stretch !important;
+}
+.stApp [data-testid="stMarkdownContainer"] p:has(.st-streamlit-home-root) {
   display: block !important;
   width: 100% !important;
   max-width: none !important;
   margin: 0 !important;
 }
-.stApp .st-streamlit-home {
+.stApp .st-streamlit-home-root {
   display: block !important;
   width: 100% !important;
   max-width: none !important;
   min-width: 0;
   box-sizing: border-box;
 }
-.stApp .st-streamlit-home > main {
+.stApp .st-streamlit-home-root > main {
   display: block !important;
   width: 100% !important;
 }
-.stApp .site-experience.page-home .home-reveal {
+.stApp .site-experience.page-home .home-reveal,
+.stApp .st-streamlit-home-root .home-reveal {
   opacity: 1 !important;
   transform: none !important;
+}
+.stApp iframe[height="0"],
+.stApp iframe[width="0"] {
+  position: absolute !important;
+  width: 0 !important;
+  height: 0 !important;
+  border: 0 !important;
+  overflow: hidden !important;
+  visibility: hidden !important;
 }
 
 .stApp [data-testid="stMarkdownContainer"] a { color: inherit; text-decoration: inherit; }
@@ -198,7 +215,7 @@ HOME_LOADING_STACK = """
 """
 
 HOME_LOADING_NEWS_RAIL = """
-<aside class="home-news-rail home-news-rail--terminal" aria-labelledby="home-news-rail-title">
+<aside class="home-news-rail home-news-rail--terminal home-reveal is-visible" aria-labelledby="home-news-rail-title">
   <div class="home-news-rail__head">
     <h2 id="home-news-rail-title" class="home-news-rail__title">News Hub</h2>
   </div>
@@ -223,6 +240,17 @@ JD_SCROLL_MAP = {
 }
 
 
+def _patch_styles_css_for_streamlit(css: str) -> str:
+    """Duplicate page-home selectors under ``.stApp`` for Streamlit's DOM."""
+    css = css.replace(":root {", ":root, .stApp {", 1)
+    css = re.sub(
+        r"(?<![\w-])\.page-home\s+",
+        ".stApp .st-streamlit-home-root, .stApp .page-home, .page-home ",
+        css,
+    )
+    return css
+
+
 def _patch_static_css_for_streamlit(css: str) -> str:
     """
     Streamlit splits ``st.markdown`` blocks, so ``.site-experience.page-home`` ancestor
@@ -245,15 +273,20 @@ def _patch_static_css_for_streamlit(css: str) -> str:
 
 @st.cache_resource(show_spinner=False)
 def _cached_static_stylesheet() -> str:
-    """Load static CSS once per process; only patch site-experience (ancestor selectors)."""
+    """Load static CSS once per process; patch ancestor selectors for Streamlit."""
     chunks: list[str] = []
     styles_path = _STATIC / "styles.css"
     if styles_path.is_file():
-        chunks.append(styles_path.read_text(encoding="utf-8"))
+        chunks.append(_patch_styles_css_for_streamlit(styles_path.read_text(encoding="utf-8")))
     sx_path = _STATIC / "css/site-experience.css"
     if sx_path.is_file():
         chunks.append(_patch_static_css_for_streamlit(sx_path.read_text(encoding="utf-8")))
     return "\n".join(chunks)
+
+
+def _embedded_home_styles_html() -> str:
+    """Styles in the same markdown block as home HTML so selectors apply on Cloud."""
+    return f"<style>{_cached_static_stylesheet()}</style>"
 
 
 def inject_site_styles(*, include_static: bool = True) -> None:
@@ -265,8 +298,8 @@ def inject_site_styles(*, include_static: bool = True) -> None:
 
 
 def render_home_page_html(html: str, *, target: Any = None) -> None:
-    """Render full-page home HTML via ``st.html`` (avoids markdown width collapse on Cloud)."""
-    (target or st).html(html.strip())
+    """Render home HTML in one markdown block with embedded CSS (reliable on Cloud)."""
+    (target or st).markdown(html.strip(), unsafe_allow_html=True)
 
 
 def _nav_link(href: str, label: str, *, active: bool = False) -> str:
@@ -413,8 +446,8 @@ def build_home_page_html(
         if include_refresh
         else ""
     )
-    return f"""
-<div class="site-experience page-home st-streamlit-home">
+    return f"""{_embedded_home_styles_html()}
+<div class="site-experience page-home st-streamlit-home-root">
 {render_site_nav_html(active="home", is_landing=True)}
 <main id="top">
 {render_home_hero_html()}
@@ -526,7 +559,7 @@ def build_static_news_rail_html(articles: list[dict[str, Any]]) -> str:
         items_html.append('<li class="headline-list__empty">No headlines loaded yet.</li>')
     list_body = "".join(items_html)
     return f"""
-<aside class="home-news-rail home-news-rail--terminal hub-section hub-section--panel hub-section--news-rail home-reveal"
+<aside class="home-news-rail home-news-rail--terminal hub-section hub-section--panel hub-section--news-rail home-reveal is-visible"
        id="section-news" aria-labelledby="news-heading">
   <h2 class="band-label zone-label" id="news-heading">News Hub</h2>
   <p class="section-dek section-dek--rail">
