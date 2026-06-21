@@ -81,18 +81,18 @@ section[data-testid="stSidebar"] { display: none !important; }
   width: 100% !important;
   max-width: none !important;
 }
-.stApp [data-testid="stElementContainer"]:has(.st-streamlit-home-root),
-.stApp [data-testid="stMarkdownContainer"]:has(.st-streamlit-home-root) {
-  width: 100% !important;
-  max-width: none !important;
-  flex: 1 1 auto !important;
-  align-self: stretch !important;
+.stApp [data-testid="column"]:has(.home-news-rail) {
+  flex: 0 1 18rem !important;
+  max-width: 20rem !important;
+  min-width: 13.5rem !important;
 }
-.stApp [data-testid="stMarkdownContainer"] p:has(.st-streamlit-home-root) {
-  display: block !important;
-  width: 100% !important;
-  max-width: none !important;
-  margin: 0 !important;
+.stApp [data-testid="column"]:has(.home-markets-stack) {
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+}
+.stApp .home-markets-stack.page-shell {
+  padding: 1.25rem 0 0;
+  max-width: none;
 }
 .stApp .st-streamlit-home-root {
   display: block !important;
@@ -100,10 +100,6 @@ section[data-testid="stSidebar"] { display: none !important; }
   max-width: none !important;
   min-width: 0;
   box-sizing: border-box;
-}
-.stApp .st-streamlit-home-root > main {
-  display: block !important;
-  width: 100% !important;
 }
 .stApp .site-experience.page-home .home-reveal,
 .stApp .st-streamlit-home-root .home-reveal {
@@ -285,21 +281,47 @@ def _cached_static_stylesheet() -> str:
 
 
 def _embedded_home_styles_html() -> str:
-    """Styles in the same markdown block as home HTML so selectors apply on Cloud."""
+    """Return static CSS for injection via ``st.html`` (style-only → event container)."""
     return f"<style>{_cached_static_stylesheet()}</style>"
 
 
 def inject_site_styles(*, include_static: bool = True) -> None:
     """Inject GitHub Pages CSS + Streamlit chrome overrides."""
-    css = STREAMLIT_CHROME_CSS
+    st.markdown(STREAMLIT_CHROME_CSS, unsafe_allow_html=True)
     if include_static:
-        css += f"<style>{_cached_static_stylesheet()}</style>"
-    st.markdown(css, unsafe_allow_html=True)
+        # Style-only HTML is routed to Streamlit's event container (no layout slot).
+        st.html(_embedded_home_styles_html())
 
 
-def render_home_page_html(html: str, *, target: Any = None) -> None:
-    """Render home HTML in one markdown block with embedded CSS (reliable on Cloud)."""
+def render_home_markdown(html: str, *, target: Any = None) -> None:
+    """Render a compact HTML fragment; must not include ``<style>`` tags."""
     (target or st).markdown(html.strip(), unsafe_allow_html=True)
+
+
+def build_home_chrome_html(*, include_refresh: bool = True) -> str:
+    """Nav + hero (self-contained HTML fragment)."""
+    refresh = (
+        '<div class="home-refresh-row"><a class="home-refresh-btn" href="?home_refresh=1">Refresh data</a></div>'
+        if include_refresh
+        else ""
+    )
+    return "".join(
+        [
+            '<div class="site-experience page-home st-streamlit-home-root">',
+            render_site_nav_html(active="home", is_landing=True).strip(),
+            render_home_hero_html().strip(),
+            refresh,
+            "</div>",
+        ]
+    )
+
+
+def build_home_footer_html(*, footer_month: str, footer_iso: str) -> str:
+    return (
+        f'<footer class="site-footer site-experience">Digital Assets Dashboard · Home · '
+        f'<time datetime="{escape(footer_iso)}">{escape(footer_month)}</time>'
+        f"</footer>"
+    )
 
 
 def _nav_link(href: str, label: str, *, active: bool = False) -> str:
@@ -422,13 +444,14 @@ def render_home_jump_nav() -> None:
 
 
 def build_home_loading_page_html(*, footer_month: str, footer_iso: str) -> str:
-    """Shell shown immediately while slow data fetches run."""
+    """Deprecated monolithic loader; kept for tests. Prefer column layout in streamlit_app."""
     return build_home_page_html(
-        markets_stack=HOME_LOADING_STACK,
-        news_rail=HOME_LOADING_NEWS_RAIL,
+        markets_stack=HOME_LOADING_STACK.strip(),
+        news_rail=HOME_LOADING_NEWS_RAIL.strip(),
         footer_month=footer_month,
         footer_iso=footer_iso,
         include_refresh=False,
+        embed_styles=False,
     )
 
 
@@ -439,32 +462,31 @@ def build_home_page_html(
     footer_month: str,
     footer_iso: str,
     include_refresh: bool = True,
+    embed_styles: bool = False,
 ) -> str:
-    """Single HTML document fragment for the Streamlit home (avoids broken nesting across markdown blocks)."""
+    """Monolithic home HTML (fallback). Prefer column layout in ``streamlit_app``."""
     refresh = (
         '<div class="home-refresh-row"><a class="home-refresh-btn" href="?home_refresh=1">Refresh data</a></div>'
         if include_refresh
         else ""
     )
-    return f"""{_embedded_home_styles_html()}
-<div class="site-experience page-home st-streamlit-home-root">
-{render_site_nav_html(active="home", is_landing=True)}
-<main id="top">
-{render_home_hero_html()}
-{refresh}
-<div class="page-shell">
-  <div class="home-main-split">
-    <div class="home-markets-stack">
-      {markets_stack}
-    </div>
-    {news_rail}
-  </div>
-</div>
-</main>
-<footer class="site-footer site-experience">Digital Assets Dashboard · Home ·
-  <time datetime="{escape(footer_iso)}">{escape(footer_month)}</time>
-</footer>
-</div>""".strip()
+    styles = _embedded_home_styles_html() if embed_styles else ""
+    return "".join(
+        [
+            styles,
+            '<div class="site-experience page-home st-streamlit-home-root">',
+            render_site_nav_html(active="home", is_landing=True).strip(),
+            render_home_hero_html().strip(),
+            refresh,
+            '<div class="page-shell"><div class="home-main-split"><div class="home-markets-stack">',
+            markets_stack.strip(),
+            "</div>",
+            news_rail.strip(),
+            "</div></div>",
+            build_home_footer_html(footer_month=footer_month, footer_iso=footer_iso),
+            "</div>",
+        ]
+    ).strip()
 
 
 def home_zone_open(

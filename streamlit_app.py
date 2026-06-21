@@ -31,12 +31,14 @@ from streamlit_home_static import (
     load_home_zone_data,
 )
 from streamlit_site_parity import (
+    HOME_LOADING_NEWS_RAIL,
+    HOME_LOADING_STACK,
     JD_SCROLL_MAP,
-    build_home_loading_page_html,
-    build_home_page_html,
+    build_home_chrome_html,
+    build_home_footer_html,
     build_static_news_rail_html,
     inject_site_styles,
-    render_home_page_html,
+    render_home_markdown,
 )
 
 
@@ -133,16 +135,21 @@ def main() -> None:
 
     _consume_home_refresh_query()
     _jd_consume_scroll_query()
-    inject_site_styles(include_static=False)
+    inject_site_styles(include_static=True)
 
     now = datetime.now(timezone.utc)
     footer_month = now.strftime("%b %Y")
     footer_iso = now.strftime("%Y-%m")
 
-    page_slot = st.empty()
-    render_home_page_html(
-        build_home_loading_page_html(footer_month=footer_month, footer_iso=footer_iso),
-        target=page_slot,
+    render_home_markdown(build_home_chrome_html(include_refresh=False))
+
+    news_col, markets_col = st.columns([1, 2.85], gap="large")
+    news_slot = news_col.empty()
+    markets_slot = markets_col.empty()
+    news_slot.markdown(HOME_LOADING_NEWS_RAIL.strip(), unsafe_allow_html=True)
+    markets_slot.markdown(
+        f'<div class="home-markets-stack page-shell">{HOME_LOADING_STACK.strip()}</div>',
+        unsafe_allow_html=True,
     )
 
     etp_ua = resolve_etp_user_agent(get_etp_user_agent_from_secrets())
@@ -175,15 +182,13 @@ def main() -> None:
         crypto_paprika=zone_data["crypto_paprika"],
     )
 
-    render_home_page_html(
-        build_home_page_html(
-            markets_stack=markets_stack,
-            news_rail=news_rail,
-            footer_month=footer_month,
-            footer_iso=footer_iso,
-        ),
-        target=page_slot,
+    news_slot.markdown(news_rail.strip(), unsafe_allow_html=True)
+    markets_slot.markdown(
+        f'<div class="home-markets-stack page-shell">{markets_stack.strip()}</div>',
+        unsafe_allow_html=True,
     )
+    render_home_markdown(build_home_footer_html(footer_month=footer_month, footer_iso=footer_iso))
+
     components.html(HOME_PREVIEW_FILTER_JS, height=0, width=0)
     _jd_inject_scroll_to_section()
 
