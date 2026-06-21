@@ -26,7 +26,6 @@ from regulatory_news.client import load_regulatory_articles
 from regulatory_news.widgets import clear_regulatory_cache
 from rwa_league.widgets import clear_rwa_league_cache
 from streamlit_home_static import (
-    HOME_PREVIEW_FILTER_JS,
     load_home_zone_data,
     render_home_markets_stack,
 )
@@ -180,7 +179,6 @@ def main() -> None:
 
     render_home_markdown(build_home_footer_html(footer_month=footer_month, footer_iso=footer_iso))
 
-    components.html(HOME_PREVIEW_FILTER_JS, height=0, width=0)
     _jd_inject_scroll_to_section()
 
 

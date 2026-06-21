@@ -11,6 +11,7 @@ from html import escape
 from typing import Any, Sequence
 
 import pandas as pd
+import streamlit.components.v1 as components
 
 from crypto_categories import (
     btc_dominance_change_pct_1m,
@@ -620,15 +621,89 @@ def iter_home_markets_stack_html(
     return parts
 
 
+def build_home_markets_iframe_html(**zone_data: Any) -> str:
+    """Self-contained markets stack for ``components.html`` (CSS + table filters in iframe)."""
+    from streamlit_site_parity import _cached_iframe_home_stylesheet
+
+    stack = "".join(iter_home_markets_stack_html(**zone_data))
+    css = _cached_iframe_home_stylesheet()
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>{css}</style>
+</head>
+<body class="page-home site-experience">
+<div class="page-shell home-markets-stack">{stack}</div>
+<script>
+(function () {{
+  function applyFilter(input) {{
+    var tid = input.getAttribute("data-table-target") || input.id.replace("-search", "");
+    var tbody = document.getElementById(tid + "-tbody");
+    var toolbar = document.getElementById(input.id + "-toolbar");
+    if (!tbody) return;
+    var rows = tbody.querySelectorAll("tr");
+    var q = (input.value || "").trim().toLowerCase();
+    var shown = 0;
+    rows.forEach(function (tr) {{
+      var blob = (tr.getAttribute("data-search") || tr.textContent || "").toLowerCase();
+      var ok = !q || blob.indexOf(q) !== -1;
+      tr.style.display = ok ? "" : "none";
+      if (ok) shown++;
+    }});
+    if (toolbar) {{
+      toolbar.hidden = !q;
+      toolbar.textContent = q ? ("Showing " + shown + " of " + rows.length + " preview rows.") : "";
+    }}
+  }}
+  function bindFilters() {{
+    document.querySelectorAll("input.home-preview-filter").forEach(function (input) {{
+      if (input.dataset.stBound) return;
+      input.dataset.stBound = "1";
+      input.addEventListener("input", function () {{ applyFilter(input); }});
+    }});
+  }}
+  function sendHeight() {{
+    var h = Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight,
+      document.body.offsetHeight
+    );
+    window.parent.postMessage({{ type: "streamlit:setFrameHeight", height: h + 16 }}, "*");
+  }}
+  bindFilters();
+  sendHeight();
+  window.addEventListener("load", function () {{ bindFilters(); sendHeight(); }});
+  if (typeof ResizeObserver !== "undefined") {{
+    new ResizeObserver(sendHeight).observe(document.body);
+  }} else {{
+    setInterval(sendHeight, 500);
+  }}
+}})();
+</script>
+</body>
+</html>"""
+
+
 def render_home_markets_stack(target: Any, **zone_data: Any) -> None:
-    """Render each home zone as its own HTML block (required on Streamlit Cloud)."""
-    html_fn = getattr(target, "html", None)
-    for chunk in iter_home_markets_stack_html(**zone_data):
-        body = chunk.strip()
-        if html_fn is not None:
-            html_fn(body)
-        else:
-            target.markdown(body, unsafe_allow_html=True)
+    """
+    Render the markets column as one auto-height iframe.
+
+    Streamlit Cloud often fails to style sibling ``st.html`` / markdown blocks with the
+    parent stylesheet; a self-contained iframe matches the static GitHub Pages DOM.
+    """
+    marker = getattr(target, "markdown", None)
+    if marker:
+        marker(
+            '<span class="home-markets-iframe" hidden aria-hidden="true"></span>',
+            unsafe_allow_html=True,
+        )
+    components.html(
+        build_home_markets_iframe_html(**zone_data),
+        height=900,
+        scrolling=False,
+    )
 
 
 HOME_PREVIEW_FILTER_JS = """

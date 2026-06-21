@@ -86,6 +86,7 @@ section[data-testid="stSidebar"] { display: none !important; }
   max-width: 20rem !important;
   min-width: 13.5rem !important;
 }
+.stApp [data-testid="column"]:has(.home-markets-iframe),
 .stApp [data-testid="column"]:has(.home-kpi-legend-once),
 .stApp [data-testid="column"]:has(.home-zone) {
   flex: 1 1 0 !important;
@@ -124,11 +125,34 @@ section[data-testid="stSidebar"] { display: none !important; }
   font-weight: 650;
 }
 .stApp [data-testid="column"]:has(.home-zone) [data-testid="stElementContainer"],
-.stApp [data-testid="column"]:has(.home-kpi-legend-once) [data-testid="stElementContainer"] {
+.stApp [data-testid="column"]:has(.home-kpi-legend-once) [data-testid="stElementContainer"],
+.stApp [data-testid="column"]:has(.home-markets-iframe) [data-testid="stElementContainer"] {
   height: auto !important;
   min-height: 0 !important;
   overflow: visible !important;
   flex-shrink: 0 !important;
+}
+.stApp .block-container,
+.stApp [data-testid="stMainBlockContainer"],
+.stApp [data-testid="stElementContainer"]:has(.st-streamlit-home-root),
+.stApp [data-testid="stMarkdownContainer"]:has(.st-streamlit-home-root) {
+  overflow: visible !important;
+  max-height: none !important;
+}
+.stApp .home-news-rail {
+  position: relative !important;
+  top: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+.stApp .st-streamlit-home-root .hero.hero--command {
+  margin-bottom: 0;
+}
+.stApp iframe.home-markets-iframe {
+  display: block;
+  width: 100% !important;
+  border: 0;
+  overflow: hidden;
 }
 .stApp .st-streamlit-home-root {
   display: block !important;
@@ -322,6 +346,33 @@ def _cached_static_stylesheet() -> str:
     return "\n".join(chunks)
 
 
+@st.cache_resource(show_spinner=False)
+def _cached_iframe_home_stylesheet() -> str:
+    """Unpatched static CSS for self-contained markets iframe (body.page-home.site-experience)."""
+    chunks: list[str] = [
+        "@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap');",
+    ]
+    styles_path = _STATIC / "styles.css"
+    if styles_path.is_file():
+        chunks.append(styles_path.read_text(encoding="utf-8"))
+    sx_path = _STATIC / "css/site-experience.css"
+    if sx_path.is_file():
+        chunks.append(sx_path.read_text(encoding="utf-8"))
+    chunks.append(
+        """
+body.page-home.site-experience {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+}
+.home-reveal { opacity: 1 !important; transform: none !important; }
+body.page-home.site-experience .jd-kpi-window-note { display: none; }
+body.page-home.site-experience .home-news-rail { position: relative; top: auto; max-height: none; }
+"""
+    )
+    return "\n".join(chunks)
+
+
 def _embedded_home_styles_html() -> str:
     """Return static CSS for injection via ``st.html`` (style-only → event container)."""
     return f"<style>{_cached_static_stylesheet()}</style>"
@@ -331,8 +382,8 @@ def inject_site_styles(*, include_static: bool = True) -> None:
     """Inject GitHub Pages CSS + Streamlit chrome overrides."""
     st.markdown(STREAMLIT_CHROME_CSS, unsafe_allow_html=True)
     if include_static:
-        # Style-only HTML is routed to Streamlit's event container (no layout slot).
-        st.html(_embedded_home_styles_html())
+        # Inject into the main document; event-container st.html styles miss sibling blocks on Cloud.
+        st.markdown(f"<style>{_cached_static_stylesheet()}</style>", unsafe_allow_html=True)
 
 
 def render_home_markdown(html: str, *, target: Any = None) -> None:
