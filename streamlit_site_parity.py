@@ -405,7 +405,7 @@ def _cached_static_stylesheet() -> str:
 
 @st.cache_resource(show_spinner=False)
 def _cached_iframe_body_stylesheet() -> str:
-    """CSS for the combined news + markets iframe (native sticky news rail)."""
+    """CSS for combined news + markets iframe (news sets height; markets scroll)."""
     chunks: list[str] = [
         "@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap');",
     ]
@@ -421,26 +421,36 @@ html, body.page-home.site-experience {
   margin: 0;
   padding: 0;
   background: transparent;
-  height: 100%;
-}
-body.page-home.site-experience {
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
 }
 .home-reveal { opacity: 1 !important; transform: none !important; }
 body.page-home.site-experience .jd-kpi-window-note { display: none; }
 body.page-home.site-experience .page-shell {
   max-width: none;
-  padding: 1.25rem 0.5rem 2rem 0.75rem;
+  padding: 1.25rem 0.5rem 0.75rem 0.75rem;
 }
-@media (min-width: 720px) {
-  body.page-home.site-experience .home-news-rail {
-    position: sticky;
-    top: 0.75rem;
-    align-self: start;
-    max-height: calc(100vh - 1.5rem);
-    overflow-y: auto;
-  }
+body.page-home.site-experience .home-main-split {
+  align-items: start;
+}
+body.page-home.site-experience .home-news-rail {
+  position: relative;
+  top: auto;
+  max-height: none;
+  overflow: visible;
+}
+body.page-home.site-experience .home-markets-stack {
+  overflow-x: hidden;
+  overflow-y: auto;
+  min-height: 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(42, 95, 130, 0.35) transparent;
+}
+body.page-home.site-experience .home-markets-stack::-webkit-scrollbar {
+  width: 8px;
+}
+body.page-home.site-experience .home-markets-stack::-webkit-scrollbar-thumb {
+  background: rgba(42, 95, 130, 0.28);
+  border-radius: 999px;
 }
 """
     )
@@ -566,26 +576,24 @@ HOME_BODY_IFRAME_SIZE_JS = """
     return match;
   }
 
-  function chromeBottom() {
-    var bottom = 0;
-    doc.querySelectorAll("iframe").forEach(function (frame) {
-      try {
-        var inner = frame.contentDocument;
-        if (inner && inner.querySelector(".hero--command")) {
-          bottom = Math.max(bottom, frame.getBoundingClientRect().bottom);
-        }
-      } catch (e) {}
-    });
-    return bottom;
-  }
-
   function sizeBodyFrame() {
     var bodyFrame = findBodyFrame();
     if (!bodyFrame) return;
-    var top = chromeBottom();
-    var h = Math.max(480, win.innerHeight - top - 8);
-    bodyFrame.style.height = h + "px";
-    bodyFrame.style.minHeight = h + "px";
+    try {
+      var inner = bodyFrame.contentDocument;
+      if (!inner) return;
+      if (typeof inner.syncHomeSplitHeights === "function") {
+        inner.syncHomeSplitHeights();
+      }
+      var shell = inner.querySelector(".page-shell");
+      var h = shell
+        ? Math.ceil(shell.getBoundingClientRect().height) + 16
+        : inner.documentElement.scrollHeight;
+      if (h > 80) {
+        bodyFrame.style.height = h + "px";
+        bodyFrame.style.minHeight = h + "px";
+      }
+    } catch (e) {}
   }
 
   sizeBodyFrame();

@@ -622,7 +622,7 @@ def iter_home_markets_stack_html(
 
 
 def build_home_body_iframe_html(*, news_rail: str, **zone_data: Any) -> str:
-    """News Hub + markets in one document so CSS sticky matches GitHub Pages."""
+    """News Hub + markets: news sets row height; markets column scrolls internally."""
     from streamlit_site_parity import _cached_iframe_body_stylesheet
 
     markets = "".join(iter_home_markets_stack_html(**zone_data))
@@ -669,11 +669,29 @@ def build_home_body_iframe_html(*, news_rail: str, **zone_data: Any) -> str:
       input.addEventListener("input", function () {{ applyFilter(input); }});
     }});
   }}
+  function syncHomeSplitHeights() {{
+    var rail = document.querySelector(".home-news-rail");
+    var markets = document.querySelector(".home-markets-stack");
+    if (!rail || !markets) return;
+    var h = Math.max(rail.offsetHeight, 1);
+    markets.style.height = h + "px";
+    markets.style.maxHeight = h + "px";
+  }}
+  window.syncHomeSplitHeights = syncHomeSplitHeights;
   document.querySelectorAll('a[href^="/"]').forEach(function (a) {{
     a.target = "_top";
   }});
   bindFilters();
-  window.addEventListener("load", bindFilters);
+  syncHomeSplitHeights();
+  window.addEventListener("load", function () {{
+    bindFilters();
+    syncHomeSplitHeights();
+  }});
+  if (typeof ResizeObserver !== "undefined") {{
+    var rail = document.querySelector(".home-news-rail");
+    if (rail) new ResizeObserver(syncHomeSplitHeights).observe(rail);
+  }}
+  [100, 400, 1000].forEach(function (ms) {{ setTimeout(syncHomeSplitHeights, ms); }});
 }})();
 </script>
 </body>
@@ -682,9 +700,9 @@ def build_home_body_iframe_html(*, news_rail: str, **zone_data: Any) -> str:
 
 def render_home_body_iframe(*, news_rail: str, **zone_data: Any) -> None:
     """
-    Render news + markets in one viewport-height iframe with internal scroll.
+    Render news + markets in one iframe sized to the News Hub height.
 
-    Sticky news rail requires news and markets to share one scroll context (not Streamlit columns).
+    The markets column matches that height and scrolls internally.
     """
     st.markdown(
         '<span class="home-body-iframe-marker" hidden aria-hidden="true"></span>',
@@ -692,8 +710,8 @@ def render_home_body_iframe(*, news_rail: str, **zone_data: Any) -> None:
     )
     components.html(
         build_home_body_iframe_html(news_rail=news_rail, **zone_data),
-        height=680,
-        scrolling=True,
+        height=620,
+        scrolling=False,
     )
 
 
