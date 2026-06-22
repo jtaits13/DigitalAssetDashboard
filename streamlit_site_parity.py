@@ -283,6 +283,9 @@ section[data-testid="stSidebar"] { display: none !important; }
 }
 .stApp [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker) {
   margin-bottom: 0 !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 20 !important;
 }
 .stApp [data-testid="stElementContainer"]:has(.home-body-iframe-marker) {
   margin-top: 0 !important;
@@ -813,10 +816,6 @@ HOME_PAGE_SCROLL_JS = """
     var target = inner.getElementById(sectionId);
     if (!target) return false;
 
-    try {
-      bodyFrame.scrollIntoView({ block: "start", behavior: "auto" });
-    } catch (e) {}
-
     var markets = inner.querySelector(".home-markets-stack");
     if (markets && markets.contains(target)) {
       var top =
@@ -829,10 +828,6 @@ HOME_PAGE_SCROLL_JS = """
       } catch (e) {
         markets.scrollTop = Math.max(0, top - 6);
       }
-    } else {
-      try {
-        target.scrollIntoView({ block: "start", behavior: "auto" });
-      } catch (e) {}
     }
     setActiveSection(sectionId);
     return true;
