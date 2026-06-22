@@ -1882,7 +1882,13 @@ def inner_page_zone_open(
     zone_extra = f" {zone_classes}" if zone_classes else ""
     chips = related_chips or ""
     dek_tag = "div" if "section-dek" in subtitle_class else "p"
-    close = "  </div>\n</article>" if header_only else ""
+    if header_only:
+        if chips:
+            tail = f'  <div class="home-zone__body {body_class}">\n    {chips}\n  </div>\n</article>'
+        else:
+            tail = "</article>"
+    else:
+        tail = f'  <div class="home-zone__body {body_class}">\n    {chips}\n'
     head_class = "home-zone__head home-zone__head--title-row" if badge_title_row else "home-zone__head"
     if badge_title_row:
         head_inner = (
@@ -1913,9 +1919,7 @@ def inner_page_zone_open(
 <article class="hub-section hub-section--panel inner-rich-zone home-reveal is-visible{zone_extra}"
          id="{escape(section_id)}">
   <div class="home-zone__stripe" aria-hidden="true"></div>
-{head_inner}  <div class="home-zone__body {body_class}">
-    {chips}
-{close}""",
+{head_inner}{tail}""",
         unsafe_allow_html=True,
     )
 

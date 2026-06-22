@@ -181,14 +181,104 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 
 .stApp:has(.mock-tmmf-inner) .inner-rich-zone.zone--tmmf .home-zone__body,
 .stApp:has(.mock-tmmf-inner) .etp-mock-zone .home-zone__body {
-  padding: 0.85rem 1.25rem 1rem;
+  padding: 0;
   border-bottom: none;
   background: transparent;
 }
 
+.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .home-related-chips,
+.stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.home-related-chips) .home-related-chips {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 0.35rem 0.45rem !important;
+  margin: 0 0 var(--etp-mock-gap, 1rem) !important;
+  padding: 0.55rem 0.7rem !important;
+  border-radius: 8px !important;
+  background: var(--hx-tmmf-soft, #f3f6f9) !important;
+  border: 1px solid rgb(var(--hx-tmmf-bright-rgb, 80 113 136) / 0.18) !important;
+}
+
+.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .home-related-chips__label,
+.stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.home-related-chips) .home-related-chips__label {
+  font-size: 0.68rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  margin-right: 0.15rem !important;
+  color: var(--hx-tmmf, #3e5c74) !important;
+}
+
+.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .home-related-chips .home-chip,
+.stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.home-related-chips) .home-chip {
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 0.22rem 0.58rem !important;
+  border-radius: 999px !important;
+  font-size: 0.76rem !important;
+  font-weight: 600 !important;
+  line-height: 1.25 !important;
+  color: var(--hx-tmmf-dark, #31485c) !important;
+  background: #fff !important;
+  border: 1px solid rgb(var(--hx-tmmf-bright-rgb, 80 113 136) / 0.22) !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+}
+
+.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .home-related-chips .home-chip:hover,
+.stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.home-related-chips) .home-chip:hover {
+  color: var(--hx-tmmf, #3e5c74) !important;
+  border-color: rgb(var(--hx-tmmf-bright-rgb, 80 113 136) / 0.45) !important;
+  background: #f8fcfe !important;
+}
+
+.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .methodology-panel,
+.stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.methodology-panel) .methodology-panel {
+  display: block;
+  margin: 0.45rem 0 0.85rem !important;
+  border: 1px solid rgb(var(--hx-tmmf-bright-rgb, 80 113 136) / 0.2);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 1px 3px rgb(var(--hx-tmmf-rgb, 62 92 116) / 0.06);
+}
+
+.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .methodology-panel summary,
+.stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.methodology-panel) .methodology-panel summary {
+  padding: 0.65rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 650;
+  color: var(--hx-tmmf, #3e5c74);
+  cursor: pointer;
+  list-style: disclosure-closed;
+}
+
+.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .methodology-panel[open] summary,
+.stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.methodology-panel) .methodology-panel[open] summary {
+  list-style: disclosure-open;
+}
+
+.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .methodology-panel__body,
+.stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.methodology-panel) .methodology-panel__body {
+  padding: 0 0.9rem 0.85rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--ink-muted, #4a5f73);
+}
+
+.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .methodology-panel__body ul,
+.stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.methodology-panel) .methodology-panel__body ul {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .methodology-panel__body li + li,
+.stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.methodology-panel) .methodology-panel__body li + li {
+  margin-top: 0.35rem;
+}
+
 .stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body {
   margin: 0 0 1.25rem;
-  padding: 0.2rem 1.25rem 1.35rem;
+  padding: 0.85rem 1.25rem 1.35rem;
   border: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.2);
   border-top: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.12);
   border-radius: 0 0 14px 14px;

@@ -2365,6 +2365,10 @@ def show_rwa_mmf_widget(
             inner_page_style=inner_page,
             kpi_legend_html=escape(TMMF_KPI_LEGEND_TEXT) if inner_page else None,
         )
+        if inner_page:
+            from rwa_league.mmf import tmmf_methodology_panel_html
+
+            st.markdown(tmmf_methodology_panel_html(), unsafe_allow_html=True)
         _inject_full_page_key_observations(
             full_page_key_observations_html,
             inner_page_style=inner_page,

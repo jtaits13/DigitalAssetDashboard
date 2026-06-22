@@ -39,6 +39,38 @@ TMMF_KPI_LEGEND_TEXT = (
 
 TMMF_KEY_OBS_DEK_HTML = TMMF_INNER_PAGE_SUBTITLE_HTML
 
+
+def tmmf_methodology_panel_html() -> str:
+    """Collapsible Data sources panel (matches static_home/js/page-methodology.js rwa-mmf)."""
+    from rwa_league.client import APP_GOVERNMENT_BONDS, APP_TREASURIES
+
+    treasuries = (
+        f'<a href="{APP_TREASURIES}" target="_blank" rel="noopener noreferrer">US Treasuries</a>'
+    )
+    gov_bonds = (
+        f'<a href="{APP_GOVERNMENT_BONDS}" target="_blank" rel="noopener noreferrer">'
+        "Non-U.S. Government Debt</a>"
+    )
+    bullets = (
+        "<li><strong>Source</strong> — a <strong>fixed curated</strong> set of tokenized "
+        "<strong>money market funds</strong> on "
+        '<a href="https://app.rwa.xyz/" target="_blank" rel="noopener noreferrer">RWA.xyz</a> '
+        f"{treasuries} and {gov_bonds}.</li>"
+        "<li><strong>KPI strip</strong> — <strong>Distributed value</strong> uses a "
+        "<strong>30-day (30D)</strong> % vs summed token values 30 days ago; "
+        "<strong>Top network share</strong> is the leading chain by distributed value, with "
+        "<strong>30D</strong> shown as share-point (pp) change.</li>"
+        "<li><strong>Networks / Platforms / charts</strong> — same curated population; "
+        "aggregates each fund's token rows by chain and by asset manager.</li>"
+    )
+    return (
+        '<details class="methodology-panel">'
+        "<summary>Data sources &amp; definitions</summary>"
+        f'<div class="methodology-panel__body"><ul>{bullets}</ul></div>'
+        "</details>"
+    )
+
+
 # Curated TMMF universe on RWA.xyz (17 funds; population table sorted by total value).
 MMF_FUND_SLUGS: tuple[str, ...] = (
     "blackrock-usd-institutional-digital-liquidity-fund",  # BlackRock USD Institutional Digital Liquidity Fund
