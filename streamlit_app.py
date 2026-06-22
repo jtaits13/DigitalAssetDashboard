@@ -32,6 +32,7 @@ from streamlit_home_static import (
 from streamlit_site_parity import (
     HOME_BODY_IFRAME_SIZE_JS,
     HOME_IFRAME_HEIGHT_SYNC_JS,
+    HOME_PAGE_SCROLL_JS,
     JD_SCROLL_MAP,
     build_home_footer_html,
     build_static_news_rail_html,
@@ -79,33 +80,21 @@ def _jd_inject_scroll_to_section() -> None:
         f"""
 <script>
 (function() {{
-  const p = window.parent;
-  const id = "{safe}";
-  function findByIdDeep(doc) {{
-    if (!doc) return null;
-    let el = doc.getElementById(id);
-    if (el) return el;
-    for (const frame of doc.querySelectorAll("iframe")) {{
-      try {{
-        const hit = findByIdDeep(frame.contentDocument);
-        if (hit) return hit;
-      }} catch (e) {{}}
+  var win = window.parent;
+  var id = "{safe}";
+  function go() {{
+    if (typeof win.jpmPollScrollToHomeSection === "function") {{
+      win.jpmPollScrollToHomeSection(id, 120);
+      return true;
     }}
-    return null;
+    return false;
   }}
-  let n = 0;
-  const t = p.setInterval(function () {{
-    const el = findByIdDeep(p.document);
-    if (el) {{
-      el.scrollIntoView({{ block: "start", behavior: "auto" }});
-      p.clearInterval(t);
-      return;
-    }}
-    if (++n > 80) {{
-      if (id === "page-title") try {{ p.scrollTo(0, 0); }} catch (e) {{}}
-      p.clearInterval(t);
-    }}
-  }}, 40);
+  if (!go()) {{
+    var n = 0;
+    var t = win.setInterval(function () {{
+      if (go() || ++n > 40) win.clearInterval(t);
+    }}, 50);
+  }}
 }})();
 </script>
 """,
@@ -142,6 +131,7 @@ def main() -> None:
     footer_iso = now.strftime("%Y-%m")
 
     render_home_chrome(include_refresh=False)
+    components.html(HOME_PAGE_SCROLL_JS, height=0, width=0)
 
     etp_ua = resolve_etp_user_agent(get_etp_user_agent_from_secrets())
 

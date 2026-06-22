@@ -624,6 +624,136 @@ body.page-home.site-experience .hero.hero--command {
     return "\n".join(chunks)
 
 
+def iframe_jump_nav_script() -> str:
+    """Hero jump pills: post section id to parent (zones live in the body iframe)."""
+    return """
+<script>
+(function () {
+  function bindJumpNav() {
+    document.querySelectorAll(".home-jump-nav__link").forEach(function (link) {
+      if (link.dataset.jpmJumpBound) return;
+      link.dataset.jpmJumpBound = "1";
+      link.addEventListener("click", function (ev) {
+        var href = link.getAttribute("href") || "";
+        var sectionId = "";
+        if (href.charAt(0) === "#") {
+          sectionId = href.slice(1);
+        } else {
+          var m = href.match(/[?&]jd_scroll=([^&]+)/);
+          if (m) sectionId = m[1];
+        }
+        if (!sectionId) return;
+        if (sectionId.indexOf("section-") !== 0) {
+          var map = {
+            tmmf: "section-tmmf",
+            stablecoins: "section-stablecoins",
+            onchain: "section-onchain",
+            rwa: "section-onchain",
+            markets: "section-markets",
+            etps: "section-markets",
+            crypto: "section-crypto"
+          };
+          sectionId = map[sectionId] || sectionId;
+        }
+        ev.preventDefault();
+        try {
+          window.parent.postMessage({ type: "jpm-home-scroll", sectionId: sectionId }, "*");
+        } catch (e) {}
+      });
+    });
+  }
+  bindJumpNav();
+  window.addEventListener("load", bindJumpNav);
+})();
+</script>"""
+
+
+HOME_PAGE_SCROLL_JS = """
+<script>
+(function () {
+  var win = window.parent && window.parent.document ? window.parent : window;
+  var doc = win.document;
+
+  function findBodyFrame() {
+    var match = null;
+    doc.querySelectorAll("iframe").forEach(function (frame) {
+      try {
+        var inner = frame.contentDocument;
+        if (inner && inner.querySelector(".home-main-split")) match = frame;
+      } catch (e) {}
+    });
+    return match;
+  }
+
+  function scrollToSection(sectionId) {
+    if (!sectionId) return false;
+    if (sectionId === "page-title") {
+      try {
+        win.scrollTo({ top: 0, behavior: "auto" });
+      } catch (e) {}
+      return true;
+    }
+    var bodyFrame = findBodyFrame();
+    if (!bodyFrame) return false;
+    var inner;
+    try {
+      inner = bodyFrame.contentDocument;
+    } catch (e) {
+      return false;
+    }
+    if (!inner) return false;
+    var target = inner.getElementById(sectionId);
+    if (!target) return false;
+
+    try {
+      bodyFrame.scrollIntoView({ block: "start", behavior: "auto" });
+    } catch (e) {}
+
+    var markets = inner.querySelector(".home-markets-stack");
+    if (markets && markets.contains(target)) {
+      var top =
+        target.getBoundingClientRect().top -
+        markets.getBoundingClientRect().top +
+        markets.scrollTop;
+      var smooth = !win.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      try {
+        markets.scrollTo({ top: Math.max(0, top - 6), behavior: smooth ? "smooth" : "auto" });
+      } catch (e) {
+        markets.scrollTop = Math.max(0, top - 6);
+      }
+    } else {
+      try {
+        target.scrollIntoView({ block: "start", behavior: "auto" });
+      } catch (e) {}
+    }
+    return true;
+  }
+
+  function pollScroll(sectionId, attempts) {
+    var left = attempts || 120;
+    var timer = win.setInterval(function () {
+      if (scrollToSection(sectionId)) {
+        win.clearInterval(timer);
+        return;
+      }
+      if (--left <= 0) win.clearInterval(timer);
+    }, 50);
+  }
+
+  win.addEventListener("message", function (ev) {
+    if (!ev.data || ev.data.type !== "jpm-home-scroll") return;
+    var id = String(ev.data.sectionId || "").trim();
+    if (!id) return;
+    if (!scrollToSection(id)) pollScroll(id, 120);
+  });
+
+  win.jpmScrollToHomeSection = scrollToSection;
+  win.jpmPollScrollToHomeSection = pollScroll;
+})();
+</script>
+"""
+
+
 def iframe_chrome_height_script() -> str:
     """Resize chrome iframe to the full hero band (callout + blue padding), with a small slack buffer."""
     slack = HOME_CHROME_HEIGHT_SLACK_PX
@@ -916,6 +1046,7 @@ def build_home_chrome_iframe_html(*, include_refresh: bool = False) -> str:
 <body class="page-home site-experience">
 {body}
 {iframe_chrome_height_script()}
+{iframe_jump_nav_script()}
 </body>
 </html>"""
 
@@ -1024,7 +1155,6 @@ def render_site_nav(*, active: str = "home", is_landing: bool = False) -> None:
 
 
 def _home_jump_nav_html(*, for_streamlit: bool = False) -> str:
-    top = ' target="_top"' if for_streamlit else ""
     links = (
         ("tmmf", "section-tmmf", "home-jump-nav__link--tmmf", "TMMFs"),
         ("stablecoins", "section-stablecoins", "home-jump-nav__link--stable", "Stablecoins"),
@@ -1033,16 +1163,16 @@ def _home_jump_nav_html(*, for_streamlit: bool = False) -> str:
         ("crypto", "section-crypto", "home-jump-nav__link--crypto", "Crypto"),
     )
 
-    def href(key: str, anchor: str) -> str:
-        return f"/?jd_scroll={key}" if for_streamlit else f"#{anchor}"
+    def href(_key: str, anchor: str) -> str:
+        return f"#{anchor}"
 
     onchain = "".join(
-        f'<a href="{href(key, anchor)}" class="home-jump-nav__link {cls}"{top}>'
+        f'<a href="{href(key, anchor)}" class="home-jump-nav__link {cls}">'
         f'<span class="home-jump-nav__dot" aria-hidden="true"></span>{label}</a>'
         for key, anchor, cls, label in links[:3]
     )
     markets = "".join(
-        f'<a href="{href(key, anchor)}" class="home-jump-nav__link {cls}"{top}>'
+        f'<a href="{href(key, anchor)}" class="home-jump-nav__link {cls}">'
         f'<span class="home-jump-nav__dot" aria-hidden="true"></span>{label}</a>'
         for key, anchor, cls, label in links[3:]
     )
