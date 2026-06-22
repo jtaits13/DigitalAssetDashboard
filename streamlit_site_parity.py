@@ -534,26 +534,91 @@ SUBPAGE_ROOT_CLASS: dict[str, str] = {
 }
 
 SUBPAGE_STREAMLIT_CSS = """
+.stApp:has(.streamlit-subpage-active) .block-container,
+.stApp:has(.streamlit-subpage-root) .block-container {
+  padding-top: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  max-width: 100% !important;
+}
 .stApp .streamlit-subpage-root {
   display: block;
   width: 100%;
 }
-.stApp:has(.streamlit-subpage-root) .block-container {
-  padding-top: 0 !important;
+.stApp:has(.streamlit-subpage-active) header.site-header,
+.stApp:has(.streamlit-subpage-root) header.site-header {
+  display: block !important;
+  visibility: visible !important;
+  position: sticky !important;
+  top: 0;
+  z-index: 40;
+  width: 100% !important;
+  margin: 0 !important;
+  box-sizing: border-box;
 }
-.stApp .streamlit-subpage-root .page-shell {
-  max-width: calc(var(--max, 72rem) + 17.5rem);
+.stApp:has(.streamlit-subpage-active) .site-header__inner,
+.stApp:has(.streamlit-subpage-root) .site-header__inner {
+  max-width: var(--content-max, var(--max, 72rem));
   margin-left: auto;
   margin-right: auto;
   width: 100%;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  box-sizing: border-box;
+}
+.stApp:has(.streamlit-subpage-active) .page-back-below-header,
+.stApp:has(.streamlit-subpage-root) .page-back-below-header {
+  max-width: var(--content-max, var(--max, 72rem));
+  margin: 0 auto;
+  padding: 0.5rem 1.25rem 0;
+  box-sizing: border-box;
+}
+.stApp:has(.streamlit-subpage-active) .back-link--below-header a,
+.stApp:has(.streamlit-subpage-root) .back-link--below-header a {
+  display: inline-block;
+  font-weight: 650;
+  font-size: 0.84rem;
+  line-height: 1.35;
+  color: var(--ink-soft, #1f4c67) !important;
+  text-decoration: none !important;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.24);
+  background: rgba(255, 255, 255, 0.85);
+  white-space: nowrap;
+}
+.stApp:has(.page-rwa-deep-mmf) .back-link--below-header a:hover {
+  color: var(--hx-etp-bright, #507188) !important;
+  border-color: rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.35);
+  background: rgb(var(--hx-etp-rgb, 62 92 116) / 0.06);
+}
+.stApp .streamlit-subpage-root .page-shell {
+  max-width: var(--content-max, var(--max, 72rem));
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  box-sizing: border-box;
+}
+.stApp:has(.streamlit-subpage-active) footer.site-footer,
+.stApp:has(.streamlit-subpage-root) footer.site-footer {
+  max-width: var(--content-max, var(--max, 72rem));
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
   box-sizing: border-box;
 }
 .stApp .streamlit-subpage-root .inner-rich-zone {
   opacity: 1 !important;
   transform: none !important;
 }
+.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"],
 .stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"],
+.stApp:has(.streamlit-subpage-active) [data-testid="stVerticalBlock"],
 .stApp:has(.streamlit-subpage-root) [data-testid="stVerticalBlock"],
+.stApp:has(.streamlit-subpage-active) [data-testid="stMarkdownContainer"],
 .stApp:has(.streamlit-subpage-root) [data-testid="stMarkdownContainer"] {
   opacity: 1 !important;
   visibility: visible !important;
@@ -1500,13 +1565,22 @@ def configure_subpage(*, page_title: str, active: str, style_kind: str = "articl
     consume_jd_page_query()
     inject_subpage_styles(kind=style_kind)
     inject_streamlit_nav_router()
+    st.markdown(
+        '<span class="streamlit-subpage-active" hidden aria-hidden="true"></span>',
+        unsafe_allow_html=True,
+    )
     render_site_nav(active=active, is_landing=False)
 
 
 def render_subpage_back_link(*, href: str, label: str) -> None:
+    label_html = (
+        escape(label)
+        .replace("\u2190", "&larr;")
+        .replace("\u00b7", "&middot;")
+    )
     st.markdown(
-        f'<div class="page-back-below-header"><p class="back-link back-link--below-header">'
-        f'<a href="{escape(href)}">{escape(label)}</a></p></div>',
+        f'<div class="page-back-below-header site-experience"><p class="back-link back-link--below-header">'
+        f'<a href="{escape(href)}">{label_html}</a></p></div>',
         unsafe_allow_html=True,
     )
 

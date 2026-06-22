@@ -407,9 +407,16 @@ def _render_rwa_treasuries_overview(
     row = "".join(cells)
     legend = _rwa_kpi_window_note_html(overview_title=overview_title) if show_kpi_legend else ""
     if inner_page_style:
+        legend_class = "jd-kpi-window-note rwa-onchain-kpi-legend"
+        legend_html = (
+            f'<p class="{legend_class}">'
+            "All % changes in this row are <strong>30-day (30D)</strong> (<strong>RWA.xyz</strong>). "
+            f"Headline totals from the <strong>RWA.xyz</strong> <strong>{escape(overview_title)}</strong> Overview."
+            "</p>"
+        ) if show_kpi_legend else ""
         treasuries_kpi_html = (
             '<div class="rwa-kpi-panel-static">'
-            + f"{legend}"
+            + legend_html
             + f"<div class='rwa-kpi-row rwa-kpi-row--home-grid'>{row}</div>"
             + "</div>"
         )

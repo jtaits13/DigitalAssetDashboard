@@ -91,13 +91,21 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 <style>
 /* Streamlit TMMF inner page — parity with static_home/rwa-tokenized-mmf.html */
 
-.stApp .mock-tmmf-inner .inner-rich-zone.etp-mock-zone {
+.stApp:has(.mock-tmmf-inner) {
+  background:
+    radial-gradient(ellipse 88% 52% at 6% -6%, rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.1), transparent 55%),
+    radial-gradient(ellipse 70% 42% at 98% 2%, rgb(var(--hx-etp-rgb, 62 92 116) / 0.12), transparent 50%),
+    var(--wash, #eef2f6);
+}
+
+.stApp:has(.mock-tmmf-inner) .inner-rich-zone.etp-mock-zone {
   margin-bottom: 0;
   border-bottom: none;
   border-radius: 14px 14px 0 0;
+  max-width: 100%;
 }
 
-.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body {
+.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body {
   margin: 0 0 1.25rem;
   padding: 0.2rem 1.25rem 1.35rem;
   border: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.2);
@@ -111,17 +119,95 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   box-shadow:
     0 1px 2px rgb(var(--hx-etp-rgb, 62 92 116) / 0.05),
     0 10px 28px rgb(var(--hx-etp-rgb, 62 92 116) / 0.07);
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
-.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body .etp-mock-snapshot {
+.stApp:has(.mock-tmmf-inner) .etp-mock-snapshot {
   margin-bottom: var(--etp-mock-gap, 1rem);
 }
 
-.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body .jd-hub-subsection-head {
+.stApp:has(.mock-tmmf-inner) .rwa-kpi-panel-static {
+  background: rgb(var(--hx-etp-rgb, 62 92 116) / 0.05);
+  border: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.14);
+  border-radius: 10px;
+  padding: 0.65rem 0.7rem;
+  margin-bottom: 0;
+}
+
+.stApp:has(.mock-tmmf-inner) .rwa-kpi-row--home-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)) !important;
+  gap: 0.55rem !important;
+  justify-content: stretch !important;
+  padding: 0 !important;
+  border-bottom: none !important;
+}
+
+.stApp:has(.mock-tmmf-inner) .rwa-kpi-row--home-grid .rwa-kpi-cell {
+  flex: none !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  text-align: left !important;
+  border: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.18);
+  border-left: 3px solid var(--hx-etp-bright, #507188);
+  background: linear-gradient(145deg, var(--hx-etp-soft, #eef2f6) 0%, rgba(255, 255, 255, 0.92) 70%);
+  border-radius: 8px;
+  padding: 0.55rem 0.65rem;
+}
+
+.stApp:has(.mock-tmmf-inner) .rwa-kpi-row--home-grid .rwa-kpi-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 650;
+  color: var(--hx-etp-dark, #31485c);
+  margin-bottom: 0.3rem;
+  line-height: 1.3;
+}
+
+.stApp:has(.mock-tmmf-inner) .rwa-kpi-row--home-grid .rwa-kpi-val {
+  display: block;
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--hx-etp, #3e5c74) !important;
+  line-height: 1.2;
+}
+
+.stApp:has(.mock-tmmf-inner) .rwa-kpi-row--home-grid .rwa-kpi-delta {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin-top: 0.2rem;
+}
+
+.stApp:has(.mock-tmmf-inner) .rwa-kpi-row--home-grid .rwa-kpi-delta.up {
+  color: #0d6b3a !important;
+}
+
+.stApp:has(.mock-tmmf-inner) .rwa-kpi-row--home-grid .rwa-kpi-delta.down {
+  color: #b42318 !important;
+}
+
+.stApp:has(.mock-tmmf-inner) .jd-kpi-window-note,
+.stApp:has(.mock-tmmf-inner) .rwa-onchain-kpi-legend {
+  display: block;
+  margin: 0 0 0.65rem;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: var(--muted, #5a7084);
+  font-weight: 400;
+}
+
+.stApp:has(.mock-tmmf-inner) .jd-kpi-window-note strong {
+  color: var(--hx-etp-dark, #31485c);
+  font-weight: 600;
+}
+
+.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .jd-hub-subsection-head {
   display: none;
 }
 
-.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body .inner-table-head {
+.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .inner-table-head {
   margin-bottom: 0.35rem;
   padding-bottom: 0.4rem;
   border-bottom: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.14);

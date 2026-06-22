@@ -18,7 +18,7 @@ from home_layout import (
     STREAMLIT_TMMF_SUBPAGE_CSS,
 )
 from news_feeds import article_styles_markdown
-from rwa_league.widgets import WIDGET_CSS, show_rwa_mmf_widget
+from rwa_league.widgets import show_rwa_mmf_widget
 from streamlit_site_parity import (
     _streamlit_page_href,
     close_subpage_layout,
@@ -81,7 +81,6 @@ def main() -> None:
     st.markdown(
         article_styles_markdown()
         + STREAMLIT_TMMF_SUBPAGE_CSS
-        + WIDGET_CSS
         + KPI_WINDOW_NOTE_CSS
         + STREAMLIT_TABLE_UNIFY_CSS
         + ETP_FULLPAGE_AUM_LINE_CSS,
