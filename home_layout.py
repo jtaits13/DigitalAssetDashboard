@@ -92,6 +92,7 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 /* Streamlit TMMF inner page — parity with static_home/rwa-tokenized-mmf.html */
 
 .stApp:has(.mock-tmmf-inner) {
+  --tmmf-stack-gap: 0.85rem;
   background:
     radial-gradient(ellipse 88% 52% at 6% -6%, rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.1), transparent 55%),
     radial-gradient(ellipse 70% 42% at 98% 2%, rgb(var(--hx-etp-rgb, 62 92 116) / 0.12), transparent 50%),
@@ -235,11 +236,25 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 .stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .methodology-panel,
 .stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.methodology-panel) .methodology-panel {
   display: block;
-  margin: 0.45rem 0 0.85rem !important;
+  margin: var(--tmmf-stack-gap, 0.85rem) 0 0 !important;
   border: 1px solid rgb(var(--hx-tmmf-bright-rgb, 80 113 136) / 0.2);
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.88);
   box-shadow: 0 1px 3px rgb(var(--hx-tmmf-rgb, 62 92 116) / 0.06);
+}
+
+.stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.rwa-kpi-panel-static),
+.stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.methodology-panel),
+.stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.etp-mock-key-obs-block) {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.stApp:has(.mock-tmmf-inner) [data-testid="stHtml"]:has(.rwa-kpi-panel-static),
+.stApp:has(.mock-tmmf-inner) [data-testid="stHtml"] .rwa-kpi-panel-static {
+  margin-bottom: 0 !important;
 }
 
 .stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .methodology-panel summary,
@@ -295,7 +310,7 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 }
 
 .stApp:has(.mock-tmmf-inner) .etp-mock-snapshot {
-  margin-bottom: var(--etp-mock-gap, 1rem);
+  margin-bottom: 0;
 }
 
 .stApp:has(.mock-tmmf-inner) .rwa-kpi-panel-static {
@@ -437,6 +452,7 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 
 .stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.etp-mock-key-obs-block) .etp-mock-key-obs-block,
 .stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .etp-mock-key-obs-block {
+  margin-top: var(--tmmf-stack-gap, 0.85rem);
   margin-bottom: var(--etp-mock-gap-lg, 1.2rem);
 }
 
