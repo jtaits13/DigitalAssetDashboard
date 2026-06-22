@@ -21,11 +21,11 @@ _STATIC = _REPO / "static_home"
 
 HOME_NEWS_LIMIT = 4
 HOME_PREVIEW_ROWS = 5
-# White band between hero and News Hub on Streamlit (parent doc spacer; static site uses page-shell padding).
-HOME_HERO_TO_CONTENT_GAP = "20px"
-HOME_CHROME_IFRAME_INITIAL_HEIGHT = 440
+# Seam between chrome iframe and body iframe (0 = internal note sits flush below hero).
+HOME_HERO_TO_CONTENT_GAP = "0px"
+HOME_CHROME_IFRAME_INITIAL_HEIGHT = 300
 # Subpixel slack so the hero band is not clipped by the chrome iframe edge.
-HOME_CHROME_HEIGHT_SLACK_PX = 4
+HOME_CHROME_HEIGHT_SLACK_PX = 2
 
 # Streamlit multipage routes (filename stem → path)
 PAGES = {
@@ -290,6 +290,13 @@ section[data-testid="stSidebar"] { display: none !important; }
 .stApp [data-testid="stElementContainer"]:has(.home-body-iframe-marker) {
   margin-top: 0 !important;
   margin-bottom: 0 !important;
+  padding-top: 0 !important;
+}
+.stApp:has(.home-body-iframe-marker) [data-testid="stElementContainer"]:has([data-testid="stSpinner"]) {
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
 }
 .stApp [data-testid="stElementContainer"]:has(.home-body-iframe-marker) iframe {
   display: block !important;
@@ -579,7 +586,7 @@ body.page-home.site-experience .home-internal-note {
   flex-wrap: wrap;
   align-items: baseline;
   gap: 0.4rem 0.55rem;
-  margin: 0 0 0.75rem;
+  margin: 0 0 0.65rem;
   padding: 0.38rem 0.65rem 0.38rem 0.5rem;
   font-size: 0.76rem;
   line-height: 1.42;
@@ -741,7 +748,7 @@ body.page-home.site-experience .site-header { position: relative; top: auto; wid
 body.page-home.site-experience .hero.hero--command {
   width: 100%;
   margin-bottom: 0;
-  padding-bottom: clamp(0.85rem, 2vw, 1.15rem);
+  padding-bottom: 0.25rem !important;
 }
 body.page-home.site-experience .home-jump-nav {
   margin-bottom: 0;

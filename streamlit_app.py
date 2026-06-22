@@ -39,7 +39,6 @@ from streamlit_site_parity import (
     inject_site_styles,
     inject_streamlit_nav_router,
     render_home_chrome,
-    render_home_hero_content_gap,
     render_home_markdown,
 )
 
@@ -154,8 +153,6 @@ def main() -> None:
 
     home_news, _ = prepare_home_hub_market_news_lane(articles)
     news_rail = build_static_news_rail_html(home_news)
-
-    render_home_hero_content_gap()
 
     render_home_body_iframe(
         news_rail=news_rail,
