@@ -479,6 +479,9 @@ body.page-home.site-experience .page-shell {
   overflow: hidden;
   box-sizing: border-box;
 }
+body.page-home.site-experience .home-kpi-legend-once {
+  margin-top: 0;
+}
 body.page-home.site-experience .home-main-split {
   align-items: start;
   overflow: hidden;
@@ -551,7 +554,11 @@ body.page-home.site-experience {
   background: transparent;
   width: 100%;
   min-width: 0;
-  overflow-x: hidden;
+  overflow: hidden;
+  height: auto;
+}
+html {
+  overflow: hidden;
 }
 .home-reveal { opacity: 1 !important; transform: none !important; }
 body.page-home.site-experience .jd-kpi-window-note { display: none; }
@@ -560,10 +567,46 @@ body.page-home.site-experience .site-header { position: relative; top: auto; wid
 body.page-home.site-experience .hero.hero--command {
   width: 100%;
   margin-bottom: 0;
+  padding-bottom: clamp(1.5rem, 3vw, 2rem);
 }
 """
     )
     return "\n".join(chunks)
+
+
+def iframe_chrome_height_script() -> str:
+    """Resize chrome iframe to the hero bottom (no slack below the blue band)."""
+    return """
+<script>
+(function () {
+  function measureChromeHeight() {
+    var hero = document.querySelector(".hero--command");
+    if (!hero) return 0;
+    var docTop = document.documentElement.getBoundingClientRect().top;
+    return Math.ceil(hero.getBoundingClientRect().bottom - docTop);
+  }
+  function sendHeight() {
+    var h = measureChromeHeight();
+    if (h <= 80) return;
+    window.parent.postMessage({ type: "streamlit:setFrameHeight", height: h }, "*");
+    try {
+      window.parent.postMessage({ type: "jpm-chrome-height", height: h }, "*");
+    } catch (e) {}
+  }
+  sendHeight();
+  window.addEventListener("load", sendHeight);
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(sendHeight);
+  }
+  if (typeof ResizeObserver !== "undefined") {
+    var hero = document.querySelector(".hero--command");
+    if (hero) new ResizeObserver(sendHeight).observe(hero);
+  }
+  [50, 150, 400, 800, 1500, 3000].forEach(function (ms) {
+    setTimeout(sendHeight, ms);
+  });
+})();
+</script>"""
 
 
 def iframe_auto_height_script(*, root_selector: str = "body", extra_pad: int = 32) -> str:
@@ -614,34 +657,60 @@ HOME_IFRAME_HEIGHT_SYNC_JS = """
 <script>
 (function () {
   var doc = window.parent && window.parent.document ? window.parent.document : document;
+
+  function measureChromeHeight(inner) {
+    var hero = inner.querySelector(".hero--command");
+    if (!hero) return 0;
+    var docTop = inner.documentElement.getBoundingClientRect().top;
+    return Math.ceil(hero.getBoundingClientRect().bottom - docTop);
+  }
+
+  function applyChromeHeight(frame, h) {
+    if (!frame || h <= 80) return;
+    frame.style.height = h + "px";
+    frame.style.minHeight = "0";
+    frame.style.maxHeight = h + "px";
+  }
+
   function syncHeights() {
     doc.querySelectorAll("iframe").forEach(function (frame) {
       try {
         var inner = frame.contentDocument;
         if (!inner || !inner.body) return;
-        var isBody = inner.querySelector(".home-main-split");
-        if (isBody) return;
+        if (inner.querySelector(".home-main-split")) return;
         var isMarkets = inner.querySelector(".home-markets-stack");
         var isChrome = inner.querySelector(".hero--command");
         if (!isMarkets && !isChrome) return;
-        var h = 0;
-        if (isChrome) {{
-          var hero = inner.querySelector(".hero--command");
-          var top = inner.body.getBoundingClientRect().top;
-          h = Math.ceil(hero.getBoundingClientRect().bottom - top + 2);
-        }} else {{
-          h = Math.max(
-            inner.body.scrollHeight,
-            inner.documentElement.scrollHeight,
-            inner.body.offsetHeight
-          ) + 32;
-        }}
-        if (h > 80) {{
+        if (isChrome) {
+          applyChromeHeight(frame, measureChromeHeight(inner));
+          return;
+        }
+        var h = Math.max(
+          inner.body.scrollHeight,
+          inner.documentElement.scrollHeight,
+          inner.body.offsetHeight
+        ) + 32;
+        if (h > 80) {
           frame.style.height = h + "px";
-        }}
+        }
       } catch (e) {}
     });
   }
+
+  window.addEventListener("message", function (ev) {
+    if (!ev.data || ev.data.type !== "jpm-chrome-height") return;
+    var h = Number(ev.data.height);
+    if (!isFinite(h) || h <= 80) return;
+    doc.querySelectorAll("iframe").forEach(function (frame) {
+      try {
+        var inner = frame.contentDocument;
+        if (inner && inner.querySelector(".hero--command") && !inner.querySelector(".home-main-split")) {
+          applyChromeHeight(frame, h);
+        }
+      } catch (e) {}
+    });
+  });
+
   syncHeights();
   window.addEventListener("load", syncHeights);
   [100, 400, 1000, 2500, 5000].forEach(function (ms) {
@@ -793,7 +862,7 @@ def build_home_chrome_iframe_html(*, include_refresh: bool = False) -> str:
 </head>
 <body class="page-home site-experience">
 {body}
-{iframe_auto_height_script(extra_pad=2)}
+{iframe_chrome_height_script()}
 </body>
 </html>"""
 
@@ -806,7 +875,7 @@ def render_home_chrome(*, include_refresh: bool = False) -> None:
     )
     components.html(
         build_home_chrome_iframe_html(include_refresh=include_refresh),
-        height=520,
+        height=380,
         scrolling=False,
     )
 
