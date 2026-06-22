@@ -268,7 +268,7 @@
 
 /* —— Hero —— */
 .site-experience.page-home .hero--command {
-  padding: clamp(1.75rem, 4vw, 2.75rem) 0 clamp(1.5rem, 3vw, 2rem);
+  padding: clamp(1.75rem, 4vw, 2.75rem) 0 clamp(0.85rem, 2vw, 1.15rem);
   margin-bottom: 0;
 }
 
@@ -364,7 +364,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.45rem;
-  margin: 0 0 1.1rem;
+  margin: 0;
 }
 
 .site-experience.page-home .home-jump-nav__link {
@@ -479,7 +479,53 @@
 
 /* —— Main layout —— */
 .site-experience.page-home .page-shell {
-  padding-top: 1.25rem;
+  padding-top: 0.85rem;
+}
+
+.site-experience.page-home .home-internal-note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem 0.55rem;
+  margin: 0 0 0.75rem;
+  padding: 0.38rem 0.65rem 0.38rem 0.5rem;
+  font-size: 0.76rem;
+  line-height: 1.42;
+  color: #3a6070;
+  background: linear-gradient(90deg, rgba(37, 128, 156, 0.07) 0%, rgba(37, 128, 156, 0.02) 100%);
+  border: 1px solid rgba(37, 128, 156, 0.16);
+  border-left: 3px solid #25809c;
+  border-radius: 0 8px 8px 0;
+}
+
+.site-experience.page-home .home-internal-note__badge {
+  flex-shrink: 0;
+  padding: 0.1rem 0.4rem;
+  font-size: 0.6rem;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #25809c;
+  background: rgba(37, 128, 156, 0.1);
+  border-radius: 4px;
+}
+
+.site-experience.page-home .home-internal-note strong {
+  color: #2a5563;
+  font-weight: 650;
+}
+
+.site-experience.page-home .home-internal-note a {
+  color: #1a6b7e;
+  font-weight: 650;
+  text-decoration: underline;
+  text-decoration-color: rgba(26, 107, 126, 0.35);
+  text-underline-offset: 0.14em;
+}
+
+.site-experience.page-home .home-internal-note a:hover {
+  color: #134d5c;
+  text-decoration-color: rgba(19, 77, 92, 0.55);
 }
 
 .site-experience.page-home .home-markets-stack {

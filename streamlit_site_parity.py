@@ -24,7 +24,7 @@ HOME_PREVIEW_ROWS = 5
 # White band between hero and News Hub on Streamlit (parent doc spacer; static site uses page-shell padding).
 HOME_HERO_TO_CONTENT_GAP = "20px"
 HOME_CHROME_IFRAME_INITIAL_HEIGHT = 440
-# Subpixel/box-shadow slack so the Confluence callout is not clipped by the iframe edge.
+# Subpixel slack so the hero band is not clipped by the chrome iframe edge.
 HOME_CHROME_HEIGHT_SLACK_PX = 4
 
 # Streamlit multipage routes (filename stem → path)
@@ -1602,6 +1602,25 @@ def _home_jump_nav_html(*, for_streamlit: bool = False) -> str:
 </nav>
 """
 
+HOME_CONFLUENCE_TEAM_URL = (
+    "https://confluence.prod.aws.jpmchase.net/confluence/spaces/viewspace.action?key=DIGITALPRODUCTTEAM"
+)
+
+
+def home_internal_note_html() -> str:
+    """Slim internal note at the top of the white content band (not in the hero)."""
+    url = escape(HOME_CONFLUENCE_TEAM_URL)
+    return f"""
+<p class="home-internal-note" role="note">
+  <span class="home-internal-note__badge" aria-hidden="true">Internal</span>
+  <span class="home-internal-note__text">
+    For <strong>internal digital asset</strong> materials (documentation, product context, and key contacts),
+    see the
+    <a href="{url}" target="_blank" rel="noopener noreferrer">Digital Custody Product Team</a>
+    space on Confluence.
+  </span>
+</p>"""
+
 
 def render_home_hero_html(*, for_streamlit: bool = False) -> str:
     return f"""
@@ -1616,13 +1635,6 @@ def render_home_hero_html(*, for_streamlit: bool = False) -> str:
         policy signals, and where tokenization activity is building.
       </p>
       {_home_jump_nav_html(for_streamlit=for_streamlit)}
-      <p class="hero-dek callout hero-dek--compact">
-        For <strong>internal digital asset</strong> materials (documentation, product context, and key contacts),
-        see the
-        <a href="https://confluence.prod.aws.jpmchase.net/confluence/spaces/viewspace.action?key=DIGITALPRODUCTTEAM"
-           target="_blank" rel="noopener noreferrer">Digital Custody Product Team</a>
-        space on Confluence (internal).
-      </p>
     </div>
   </div>
 </div>
@@ -1672,7 +1684,9 @@ def build_home_page_html(
             render_site_nav_html(active="home", is_landing=True).strip(),
             render_home_hero_html().strip(),
             refresh,
-            '<div class="page-shell"><div class="home-main-split"><div class="home-markets-stack">',
+            '<div class="page-shell">',
+            home_internal_note_html().strip(),
+            '<div class="home-main-split"><div class="home-markets-stack">',
             markets_stack.strip(),
             "</div>",
             news_rail.strip(),

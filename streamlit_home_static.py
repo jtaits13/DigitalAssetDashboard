@@ -615,7 +615,11 @@ def iter_home_markets_stack_html(
 
 def build_home_body_iframe_html(*, news_rail: str, **zone_data: Any) -> str:
     """News Hub + markets: news sets row height; markets column scrolls internally."""
-    from streamlit_site_parity import _cached_iframe_body_stylesheet, iframe_internal_link_script
+    from streamlit_site_parity import (
+        _cached_iframe_body_stylesheet,
+        home_internal_note_html,
+        iframe_internal_link_script,
+    )
 
     markets = "".join(iter_home_markets_stack_html(**zone_data))
     css = _cached_iframe_body_stylesheet()
@@ -628,6 +632,7 @@ def build_home_body_iframe_html(*, news_rail: str, **zone_data: Any) -> str:
 </head>
 <body class="page-home site-experience">
 <div class="page-shell">
+{home_internal_note_html().strip()}
 <div class="home-main-split">
 <div class="home-markets-stack">{markets}</div>
 {news_rail.strip()}
