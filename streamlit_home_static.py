@@ -668,7 +668,7 @@ def build_home_markets_iframe_html(**zone_data: Any) -> str:
   window.addEventListener("load", bindFilters);
 }})();
 </script>
-{iframe_auto_height_script()}
+{iframe_auto_height_script(root_selector=".home-markets-stack")}
 </body>
 </html>"""
 
@@ -688,7 +688,7 @@ def render_home_markets_stack(target: Any, **zone_data: Any) -> None:
         )
     components.html(
         build_home_markets_iframe_html(**zone_data),
-        height=900,
+        height=3200,
         scrolling=False,
     )
 

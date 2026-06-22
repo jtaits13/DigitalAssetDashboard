@@ -96,6 +96,34 @@ section[data-testid="stSidebar"] { display: none !important; }
 }
 .stApp [data-testid="stHorizontalBlock"]:has(.home-news-rail) {
   align-items: flex-start !important;
+  overflow: visible !important;
+  height: auto !important;
+  max-height: none !important;
+}
+.stApp [data-testid="stHorizontalBlock"]:has(.home-news-rail) > [data-testid="column"] {
+  align-self: flex-start !important;
+  overflow: visible !important;
+  height: auto !important;
+  max-height: none !important;
+}
+.stApp [data-testid="stHorizontalBlock"]:has(.home-news-rail) [data-testid="stVerticalBlock"],
+.stApp [data-testid="stHorizontalBlock"]:has(.home-news-rail) [data-testid="stElementContainer"] {
+  overflow: visible !important;
+  height: auto !important;
+  max-height: none !important;
+}
+.stApp [data-testid="column"]:has(.home-news-rail) {
+  align-self: flex-start !important;
+}
+.stApp [data-testid="column"]:has(.home-markets-iframe) {
+  align-self: flex-start !important;
+  overflow: visible !important;
+}
+.stApp [data-testid="stHorizontalBlock"]:has(.home-news-rail) iframe {
+  display: block !important;
+  width: 100% !important;
+  max-height: none !important;
+  overflow: hidden !important;
 }
 /* Streamlit splits markdown blocks — zones are not inside .home-markets-stack in the DOM. */
 .stApp .home-zone.hub-section--panel {
@@ -146,10 +174,12 @@ section[data-testid="stSidebar"] { display: none !important; }
   max-height: none !important;
 }
 .stApp .home-news-rail {
-  position: relative !important;
-  top: auto !important;
-  max-height: none !important;
-  overflow: visible !important;
+  position: sticky !important;
+  top: 0.75rem !important;
+  align-self: flex-start !important;
+  max-height: calc(100vh - 1.5rem) !important;
+  overflow-y: auto !important;
+  z-index: 8;
 }
 .stApp .st-streamlit-home-root .hero.hero--command {
   margin-bottom: 0;
@@ -380,28 +410,78 @@ body.page-home.site-experience .site-header { position: relative; top: auto; }
     return "\n".join(chunks)
 
 
-def iframe_auto_height_script() -> str:
+def iframe_auto_height_script(*, root_selector: str = "body") -> str:
     """Resize a Streamlit ``components.html`` iframe to its document height."""
-    return """
+    return f"""
 <script>
-(function () {
-  function sendHeight() {
-    var h = Math.max(
+(function () {{
+  function measureHeight() {{
+    var root = document.querySelector({root_selector!r}) || document.body;
+    return Math.ceil(Math.max(
+      root.scrollHeight,
+      root.offsetHeight,
       document.body.scrollHeight,
       document.documentElement.scrollHeight,
-      document.body.offsetHeight
-    );
-    window.parent.postMessage({ type: "streamlit:setFrameHeight", height: h + 16 }, "*");
-  }
+      document.body.offsetHeight,
+      document.documentElement.offsetHeight
+    )) + 32;
+  }}
+  function sendHeight() {{
+    var h = measureHeight();
+    window.parent.postMessage({{ type: "streamlit:setFrameHeight", height: h }}, "*");
+  }}
   sendHeight();
   window.addEventListener("load", sendHeight);
-  if (typeof ResizeObserver !== "undefined") {
-    new ResizeObserver(sendHeight).observe(document.body);
-  } else {
-    setInterval(sendHeight, 500);
-  }
-})();
+  if (document.fonts && document.fonts.ready) {{
+    document.fonts.ready.then(sendHeight);
+  }}
+  if (typeof ResizeObserver !== "undefined") {{
+    var ro = new ResizeObserver(sendHeight);
+    ro.observe(document.body);
+    ro.observe(document.documentElement);
+    var root = document.querySelector({root_selector!r});
+    if (root) ro.observe(root);
+  }}
+  [50, 150, 400, 800, 1500, 3000, 5000].forEach(function (ms) {{
+    setTimeout(sendHeight, ms);
+  }});
+}})();
 </script>"""
+
+
+HOME_IFRAME_HEIGHT_SYNC_JS = """
+<script>
+(function () {
+  var doc = window.parent && window.parent.document ? window.parent.document : document;
+  function syncHeights() {
+    doc.querySelectorAll("iframe").forEach(function (frame) {
+      try {
+        var inner = frame.contentDocument;
+        if (!inner || !inner.body) return;
+        var isMarkets = inner.querySelector(".home-markets-stack");
+        var isChrome = inner.querySelector(".hero--command");
+        if (!isMarkets && !isChrome) return;
+        var h = Math.max(
+          inner.body.scrollHeight,
+          inner.documentElement.scrollHeight,
+          inner.body.offsetHeight
+        ) + 32;
+        if (h > 80) {
+          frame.style.height = h + "px";
+          frame.style.minHeight = h + "px";
+        }
+      } catch (e) {}
+    });
+  }
+  syncHeights();
+  window.addEventListener("load", syncHeights);
+  [100, 400, 1000, 2500, 5000].forEach(function (ms) {
+    setTimeout(syncHeights, ms);
+  });
+  setInterval(syncHeights, 1200);
+})();
+</script>
+"""
 
 
 def _embedded_home_styles_html() -> str:
