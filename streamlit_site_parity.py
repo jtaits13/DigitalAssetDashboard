@@ -83,40 +83,50 @@ section[data-testid="stSidebar"] { display: none !important; }
   max-width: none !important;
 }
 .stApp [data-testid="column"]:has(.home-news-rail) {
-  flex: 0 1 18rem !important;
+  flex: none !important;
+  width: auto !important;
   max-width: 20rem !important;
   min-width: 13.5rem !important;
 }
 .stApp [data-testid="column"]:has(.home-markets-iframe),
 .stApp [data-testid="column"]:has(.home-kpi-legend-once),
 .stApp [data-testid="column"]:has(.home-zone) {
-  flex: 1 1 0 !important;
+  flex: none !important;
+  width: auto !important;
   min-width: 0 !important;
   padding-top: 1.25rem;
 }
+/* Grid row height follows the markets column so sticky news rail has room to stick. */
 .stApp [data-testid="stHorizontalBlock"]:has(.home-news-rail) {
-  align-items: flex-start !important;
+  display: grid !important;
+  grid-template-columns: minmax(13.5rem, 20rem) minmax(0, 1fr) !important;
+  gap: 1.35rem !important;
+  align-items: stretch !important;
   overflow: visible !important;
   height: auto !important;
   max-height: none !important;
 }
 .stApp [data-testid="stHorizontalBlock"]:has(.home-news-rail) > [data-testid="column"] {
-  align-self: flex-start !important;
+  align-self: stretch !important;
   overflow: visible !important;
   height: auto !important;
+  min-height: 100% !important;
   max-height: none !important;
+  flex: none !important;
+  width: auto !important;
+  max-width: none !important;
 }
-.stApp [data-testid="stHorizontalBlock"]:has(.home-news-rail) [data-testid="stVerticalBlock"],
+.stApp [data-testid="column"]:has(.home-news-rail) [data-testid="stVerticalBlock"] {
+  min-height: 100% !important;
+  height: 100% !important;
+  overflow: visible !important;
+}
 .stApp [data-testid="stHorizontalBlock"]:has(.home-news-rail) [data-testid="stElementContainer"] {
   overflow: visible !important;
   height: auto !important;
   max-height: none !important;
 }
-.stApp [data-testid="column"]:has(.home-news-rail) {
-  align-self: flex-start !important;
-}
 .stApp [data-testid="column"]:has(.home-markets-iframe) {
-  align-self: flex-start !important;
   overflow: visible !important;
 }
 .stApp [data-testid="stHorizontalBlock"]:has(.home-news-rail) iframe {
@@ -176,10 +186,14 @@ section[data-testid="stSidebar"] { display: none !important; }
 .stApp .home-news-rail {
   position: sticky !important;
   top: 0.75rem !important;
-  align-self: flex-start !important;
+  align-self: start !important;
   max-height: calc(100vh - 1.5rem) !important;
   overflow-y: auto !important;
   z-index: 8;
+}
+.stApp .home-news-rail.home-news-rail--st-fixed {
+  position: fixed !important;
+  z-index: 999 !important;
 }
 .stApp .st-streamlit-home-root .hero.hero--command {
   margin-bottom: 0;
@@ -479,6 +493,70 @@ HOME_IFRAME_HEIGHT_SYNC_JS = """
     setTimeout(syncHeights, ms);
   });
   setInterval(syncHeights, 1200);
+})();
+</script>
+"""
+
+HOME_NEWS_STICKY_JS = """
+<script>
+(function () {
+  var win = window.parent;
+  var doc = win.document;
+  var TOP = 12;
+
+  function bindScroll(handler) {
+    win.addEventListener("scroll", handler, { passive: true });
+    win.addEventListener("resize", handler, { passive: true });
+    var view = doc.querySelector('[data-testid="stAppViewContainer"]');
+    if (view) view.addEventListener("scroll", handler, { passive: true });
+  }
+
+  function setup() {
+    var rail = doc.querySelector(".home-news-rail");
+    if (!rail || rail.dataset.stStickyBound === "1") return !!rail;
+    var col = rail.closest('[data-testid="column"]');
+    var row = col && col.closest('[data-testid="stHorizontalBlock"]');
+    if (!col || !row) return false;
+    rail.dataset.stStickyBound = "1";
+
+    function reset() {
+      rail.classList.remove("home-news-rail--st-fixed");
+      rail.style.position = "";
+      rail.style.top = "";
+      rail.style.left = "";
+      rail.style.width = "";
+    }
+
+    function update() {
+      var rowRect = row.getBoundingClientRect();
+      var colRect = col.getBoundingClientRect();
+      var railH = rail.offsetHeight;
+
+      if (rowRect.top > TOP) {
+        reset();
+        return;
+      }
+
+      var pinTop = TOP;
+      var maxTop = rowRect.bottom - railH;
+      if (maxTop < pinTop) pinTop = maxTop;
+
+      rail.classList.add("home-news-rail--st-fixed");
+      rail.style.position = "fixed";
+      rail.style.top = pinTop + "px";
+      rail.style.left = colRect.left + "px";
+      rail.style.width = colRect.width + "px";
+    }
+
+    bindScroll(update);
+    update();
+    return true;
+  }
+
+  var tries = 0;
+  var timer = setInterval(function () {
+    if (setup() || ++tries > 50) clearInterval(timer);
+  }, 200);
 })();
 </script>
 """

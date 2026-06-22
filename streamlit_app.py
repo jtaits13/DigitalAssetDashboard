@@ -31,6 +31,7 @@ from streamlit_home_static import (
 )
 from streamlit_site_parity import (
     HOME_IFRAME_HEIGHT_SYNC_JS,
+    HOME_NEWS_STICKY_JS,
     JD_SCROLL_MAP,
     build_home_footer_html,
     build_static_news_rail_html,
@@ -181,6 +182,7 @@ def main() -> None:
     render_home_markdown(build_home_footer_html(footer_month=footer_month, footer_iso=footer_iso))
 
     components.html(HOME_IFRAME_HEIGHT_SYNC_JS, height=0, width=0)
+    components.html(HOME_NEWS_STICKY_JS, height=0, width=0)
     _jd_inject_scroll_to_section()
 
 
