@@ -676,6 +676,8 @@ def build_home_body_iframe_html(*, news_rail: str, **zone_data: Any) -> str:
     var h = Math.max(rail.offsetHeight, 1);
     markets.style.height = h + "px";
     markets.style.maxHeight = h + "px";
+    markets.style.minHeight = h + "px";
+    markets.style.overflowY = "auto";
   }}
   window.syncHomeSplitHeights = syncHomeSplitHeights;
   document.querySelectorAll('a[href^="/"]').forEach(function (a) {{

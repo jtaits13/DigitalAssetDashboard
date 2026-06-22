@@ -439,11 +439,33 @@ body.page-home.site-experience .home-news-rail {
   overflow: visible;
 }
 body.page-home.site-experience .home-markets-stack {
-  overflow-x: hidden;
-  overflow-y: auto;
+  display: block !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
   min-height: 0;
   scrollbar-width: thin;
   scrollbar-color: rgba(42, 95, 130, 0.35) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+body.page-home.site-experience .home-markets-stack .home-kpi-legend-once,
+body.page-home.site-experience .home-markets-stack .home-zone,
+body.page-home.site-experience .home-markets-stack .hub-section--panel {
+  flex: none !important;
+  flex-shrink: 0 !important;
+  height: auto !important;
+  min-height: auto !important;
+  max-height: none !important;
+}
+body.page-home.site-experience .home-markets-stack .hub-section--panel {
+  overflow: hidden;
+  margin-bottom: 1.35rem;
+}
+body.page-home.site-experience .home-markets-stack .hub-section--panel:last-child {
+  margin-bottom: 0;
+}
+body.page-home.site-experience .home-markets-stack .home-zone__body,
+body.page-home.site-experience .home-markets-stack .table-wrap {
+  overflow: visible !important;
 }
 body.page-home.site-experience .home-markets-stack::-webkit-scrollbar {
   width: 8px;
