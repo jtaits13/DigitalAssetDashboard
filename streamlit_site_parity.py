@@ -24,8 +24,10 @@ HOME_PREVIEW_ROWS = 5
 # Small seam between chrome iframe and body (avoids overlap with jump nav).
 HOME_HERO_TO_CONTENT_GAP = "2px"
 HOME_CHROME_IFRAME_INITIAL_HEIGHT = 360
+SUBPAGE_NAV_IFRAME_INITIAL_HEIGHT = 64
 # Extra pixels so jump-nav pills are not clipped by the chrome iframe edge.
 HOME_CHROME_HEIGHT_SLACK_PX = 10
+SUBPAGE_NAV_HEIGHT_SLACK_PX = 6
 
 # Streamlit multipage routes (filename stem → path)
 PAGES = {
@@ -78,6 +80,7 @@ section[data-testid="stSidebar"] { display: none !important; }
   width: 100% !important;
 }
 .stApp [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker),
+.stApp [data-testid="stElementContainer"]:has(.subpage-chrome-iframe-marker),
 .stApp [data-testid="stElementContainer"]:has(.home-body-iframe-marker),
 .stApp [data-testid="stElementContainer"]:has(.home-hero-content-gap) {
   width: 100vw !important;
@@ -286,6 +289,18 @@ section[data-testid="stSidebar"] { display: none !important; }
   position: sticky !important;
   top: 0 !important;
   z-index: 30 !important;
+}
+.stApp [data-testid="stElementContainer"]:has(.subpage-chrome-iframe-marker) {
+  margin-bottom: 0 !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 40 !important;
+}
+.stApp [data-testid="stElementContainer"]:has(.subpage-chrome-iframe-marker) iframe {
+  display: block !important;
+  width: 100% !important;
+  border: 0;
+  overflow: hidden !important;
 }
 .stApp [data-testid="stElementContainer"]:has(.home-body-iframe-marker) {
   position: relative !important;
@@ -556,81 +571,16 @@ SUBPAGE_STREAMLIT_CSS = """
   overflow-x: clip;
   overflow-y: visible !important;
 }
-.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(header.site-header),
-.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(header.site-header) {
-  width: 100vw !important;
-  max-width: 100vw !important;
-  margin-left: calc(50% - 50vw) !important;
-  margin-right: calc(50% - 50vw) !important;
-  padding: 0 !important;
+.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.subpage-chrome-iframe-marker),
+.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.subpage-chrome-iframe-marker) {
   overflow: visible !important;
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 40 !important;
   flex: none !important;
   height: auto !important;
   min-height: 0 !important;
   max-height: none !important;
 }
-.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(header.site-header) [data-testid="stVerticalBlock"],
-.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(header.site-header) [data-testid="stVerticalBlock"],
-.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(header.site-header) [data-testid="stMarkdownContainer"],
-.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(header.site-header) [data-testid="stMarkdownContainer"] {
-  height: auto !important;
-  min-height: 0 !important;
-  max-height: none !important;
-  align-items: flex-start !important;
-  overflow: visible !important;
-}
-.stApp:has(.streamlit-subpage-active) header.site-header,
-.stApp:has(.streamlit-subpage-root) header.site-header {
-  display: block !important;
-  visibility: visible !important;
-  position: relative !important;
-  top: auto !important;
-  z-index: 40;
-  width: 100% !important;
-  margin: 0 !important;
-  box-sizing: border-box;
-  overflow: visible !important;
-  height: auto !important;
-  min-height: 0 !important;
-  flex: none !important;
-}
-.stApp:has(.streamlit-subpage-active) .site-header__inner,
-.stApp:has(.streamlit-subpage-root) .site-header__inner {
-  max-width: calc(var(--content-max, var(--max, 72rem)) + 17.5rem);
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-  padding-left: 1.25rem;
-  padding-right: 1.25rem;
-  box-sizing: border-box;
-}
-.stApp:has(.streamlit-subpage-active) .site-nav,
-.stApp:has(.streamlit-subpage-root) .site-nav {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  align-items: center !important;
-  gap: 0.18rem !important;
-}
-.stApp:has(.streamlit-subpage-active) .site-nav a,
-.stApp:has(.streamlit-subpage-active) .site-nav__trigger,
-.stApp:has(.streamlit-subpage-active) .site-nav__parent-link,
-.stApp:has(.streamlit-subpage-root) .site-nav a,
-.stApp:has(.streamlit-subpage-root) .site-nav__trigger,
-.stApp:has(.streamlit-subpage-root) .site-nav__parent-link {
-  display: inline-flex !important;
-  align-items: center !important;
-  align-self: center !important;
-  width: auto !important;
-  height: auto !important;
-  min-height: 0 !important;
-  flex: none !important;
-  white-space: nowrap !important;
-}
-.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:not(:has(header.site-header)):not(:has(.streamlit-subpage-active)),
-.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:not(:has(header.site-header)):not(:has(.streamlit-subpage-active)) {
+.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:not(:has(.subpage-chrome-iframe-marker)):not(:has(.streamlit-subpage-active)),
+.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:not(:has(.subpage-chrome-iframe-marker)):not(:has(.streamlit-subpage-active)) {
   max-width: var(--content-max, var(--max, 72rem)) !important;
   width: 100% !important;
   margin-left: auto !important;
@@ -930,6 +880,113 @@ body.page-home.site-experience .home-jump-nav {
 """
     )
     return "\n".join(chunks)
+
+
+@st.cache_resource(show_spinner=False)
+def _cached_iframe_subpage_nav_stylesheet() -> str:
+    """Nav-only iframe CSS — same stylesheets as home chrome header band."""
+    chunks: list[str] = [
+        "@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap');",
+    ]
+    styles_path = _STATIC / "styles.css"
+    if styles_path.is_file():
+        chunks.append(styles_path.read_text(encoding="utf-8"))
+    sx_path = _STATIC / "css/site-experience.css"
+    if sx_path.is_file():
+        chunks.append(sx_path.read_text(encoding="utf-8"))
+    chunks.append(
+        """
+html, body.subpage-nav-chrome.site-experience {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  height: auto;
+}
+body.subpage-nav-chrome.site-experience .site-header {
+  position: relative;
+  top: auto;
+  width: 100%;
+  margin: 0;
+}
+"""
+    )
+    return "\n".join(chunks)
+
+
+def iframe_subpage_nav_height_script() -> str:
+    """Resize subpage nav iframe to the header band height."""
+    slack = SUBPAGE_NAV_HEIGHT_SLACK_PX
+    return f"""
+<script>
+(function () {{
+  var slack = {slack};
+  function measureNavHeight() {{
+    var docTop = document.documentElement.getBoundingClientRect().top;
+    var bottom = docTop;
+    document.querySelectorAll(".site-header").forEach(function (el) {{
+      bottom = Math.max(bottom, el.getBoundingClientRect().bottom);
+    }});
+    return Math.ceil(bottom - docTop + slack);
+  }}
+  function sendHeight() {{
+    var h = measureNavHeight();
+    if (h <= 40) return;
+    window.parent.postMessage({{ type: "streamlit:setFrameHeight", height: h }}, "*");
+    try {{
+      window.parent.postMessage({{ type: "jpm-subpage-nav-height", height: h }}, "*");
+    }} catch (e) {{}}
+  }}
+  sendHeight();
+  window.addEventListener("load", sendHeight);
+  if (document.fonts && document.fonts.ready) {{
+    document.fonts.ready.then(sendHeight);
+  }}
+  if (typeof ResizeObserver !== "undefined") {{
+    var ro = new ResizeObserver(sendHeight);
+    document.querySelectorAll(".site-header").forEach(function (el) {{
+      ro.observe(el);
+    }});
+  }}
+  [50, 150, 400, 800, 1500, 3000].forEach(function (ms) {{
+    setTimeout(sendHeight, ms);
+  }});
+}})();
+</script>"""
+
+
+def build_subpage_nav_iframe_html(*, active: str) -> str:
+    """Self-contained site nav for subpages (matches home chrome nav styling)."""
+    css = _cached_iframe_subpage_nav_stylesheet()
+    body = render_site_nav_html(active=active, is_landing=False, for_streamlit=True).strip()
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>{css}</style>
+</head>
+<body class="subpage-nav-chrome site-experience">
+{body}
+{iframe_subpage_nav_height_script()}
+{iframe_internal_link_script()}
+</body>
+</html>"""
+
+
+def render_subpage_nav(*, active: str) -> None:
+    """Render subpage nav in an auto-height iframe (parity with home chrome nav)."""
+    st.markdown(
+        '<span class="subpage-chrome-iframe-marker" hidden aria-hidden="true"></span>',
+        unsafe_allow_html=True,
+    )
+    components.html(
+        build_subpage_nav_iframe_html(active=active),
+        height=SUBPAGE_NAV_IFRAME_INITIAL_HEIGHT,
+        scrolling=False,
+    )
 
 
 def iframe_internal_link_script() -> str:
@@ -1489,7 +1546,8 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
 <script>
 (function () {{
   var doc = window.parent && window.parent.document ? window.parent.document : document;
-  var slack = {HOME_CHROME_HEIGHT_SLACK_PX};
+  var chromeSlack = {HOME_CHROME_HEIGHT_SLACK_PX};
+  var navSlack = {SUBPAGE_NAV_HEIGHT_SLACK_PX};
 
   function measureChromeHeight(inner) {{
     var docTop = inner.documentElement.getBoundingClientRect().top;
@@ -1501,11 +1559,20 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
     if (jump) {{
       bottom = Math.max(bottom, jump.getBoundingClientRect().bottom);
     }}
-    return Math.ceil(bottom - docTop + slack);
+    return Math.ceil(bottom - docTop + chromeSlack);
   }}
 
-  function applyChromeHeight(frame, h) {{
-    if (!frame || h <= 80) return;
+  function measureSubpageNavHeight(inner) {{
+    var docTop = inner.documentElement.getBoundingClientRect().top;
+    var bottom = docTop;
+    inner.querySelectorAll(".site-header").forEach(function (el) {{
+      bottom = Math.max(bottom, el.getBoundingClientRect().bottom);
+    }});
+    return Math.ceil(bottom - docTop + navSlack);
+  }}
+
+  function applyFrameHeight(frame, h, minH) {{
+    if (!frame || h <= minH) return;
     frame.style.height = h + "px";
     frame.style.minHeight = "0";
     frame.style.maxHeight = h + "px";
@@ -1520,11 +1587,15 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
         var inner = frame.contentDocument;
         if (!inner || !inner.body) return;
         if (inner.querySelector(".home-main-split")) return;
+        if (inner.body.classList.contains("subpage-nav-chrome")) {{
+          applyFrameHeight(frame, measureSubpageNavHeight(inner), 40);
+          return;
+        }}
         var isMarkets = inner.querySelector(".home-markets-stack");
         var isChrome = inner.querySelector(".hero--command");
         if (!isMarkets && !isChrome) return;
         if (isChrome) {{
-          applyChromeHeight(frame, measureChromeHeight(inner));
+          applyFrameHeight(frame, measureChromeHeight(inner), 80);
           return;
         }}
         var h = Math.max(
@@ -1540,17 +1611,32 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
   }}
 
   window.addEventListener("message", function (ev) {{
-    if (!ev.data || ev.data.type !== "jpm-chrome-height") return;
-    var h = Number(ev.data.height);
-    if (!isFinite(h) || h <= 80) return;
-    doc.querySelectorAll("iframe").forEach(function (frame) {{
-      try {{
-        var inner = frame.contentDocument;
-        if (inner && inner.querySelector(".hero--command") && !inner.querySelector(".home-main-split")) {{
-          applyChromeHeight(frame, h);
-        }}
-      }} catch (e) {{}}
-    }});
+    if (!ev.data) return;
+    if (ev.data.type === "jpm-chrome-height") {{
+      var h = Number(ev.data.height);
+      if (!isFinite(h) || h <= 80) return;
+      doc.querySelectorAll("iframe").forEach(function (frame) {{
+        try {{
+          var inner = frame.contentDocument;
+          if (inner && inner.querySelector(".hero--command") && !inner.querySelector(".home-main-split")) {{
+            applyFrameHeight(frame, h, 80);
+          }}
+        }} catch (e) {{}}
+      }});
+      return;
+    }}
+    if (ev.data.type === "jpm-subpage-nav-height") {{
+      var navH = Number(ev.data.height);
+      if (!isFinite(navH) || navH <= 40) return;
+      doc.querySelectorAll("iframe").forEach(function (frame) {{
+        try {{
+          var inner = frame.contentDocument;
+          if (inner && inner.body.classList.contains("subpage-nav-chrome")) {{
+            applyFrameHeight(frame, navH, 40);
+          }}
+        }} catch (e) {{}}
+      }});
+    }}
   }});
 
   syncHeights();
@@ -1665,11 +1751,12 @@ def configure_subpage(*, page_title: str, active: str, style_kind: str = "articl
     consume_jd_page_query()
     inject_subpage_styles(kind=style_kind)
     inject_streamlit_nav_router()
+    components.html(HOME_IFRAME_HEIGHT_SYNC_JS, height=0, width=0)
     st.markdown(
         '<span class="streamlit-subpage-active" hidden aria-hidden="true"></span>',
         unsafe_allow_html=True,
     )
-    render_site_nav(active=active, is_landing=False)
+    render_subpage_nav(active=active)
 
 
 def render_subpage_back_link(*, href: str, label: str) -> None:
@@ -1719,6 +1806,7 @@ def inner_page_zone_open(
     dek = subtitle_html if subtitle_html else escape(subtitle)
     zone_extra = f" {zone_classes}" if zone_classes else ""
     chips = related_chips or ""
+    dek_tag = "div" if "section-dek" in subtitle_class else "p"
     st.markdown(
         f"""
 <article class="hub-section hub-section--panel inner-rich-zone home-reveal is-visible{zone_extra}"
@@ -1728,7 +1816,7 @@ def inner_page_zone_open(
     <span class="home-zone__badge" aria-hidden="true">{escape(badge)}</span>
     <div class="home-zone__titles">
       <h1 class="page-intro__title" id="{escape(section_id)}-heading">{escape(title)}</h1>
-      <p class="{escape(subtitle_class)}">{dek}</p>
+      <{dek_tag} class="{escape(subtitle_class)}">{dek}</{dek_tag}>
     </div>
   </header>
   <div class="home-zone__body {body_class}">

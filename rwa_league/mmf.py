@@ -21,6 +21,22 @@ from rwa_league.client import (
     format_usd_compact,
 )
 
+# Copy shared with static_home/rwa-tokenized-mmf.html (deep page subtitle + KPI legend).
+TMMF_INNER_PAGE_SUBTITLE_HTML = (
+    "Aggregated view of tokenized money market funds from a "
+    "<strong>fixed curated population</strong> on "
+    "<strong>RWA.xyz</strong> US Treasuries and Non-U.S. Government Debt. "
+    "Headline KPIs, <strong>Networks</strong>, <strong>Platforms</strong>, charts, and the fund table "
+    "all use the same fund set; headline <strong>30-day (30D)</strong> % applies to total distributed "
+    "value across that population."
+)
+
+TMMF_KPI_LEGEND_HTML = (
+    "All % changes in this row are <strong>30-day (30D)</strong> (<strong>RWA.xyz</strong>). "
+    "Headline totals from the <strong>RWA.xyz</strong> "
+    "<strong>Tokenized Money Market Funds</strong> Overview."
+)
+
 # Curated TMMF universe on RWA.xyz (17 funds; population table sorted by total value).
 MMF_FUND_SLUGS: tuple[str, ...] = (
     "blackrock-usd-institutional-digital-liquidity-fund",  # BlackRock USD Institutional Digital Liquidity Fund

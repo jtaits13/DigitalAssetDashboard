@@ -13,11 +13,11 @@ import streamlit as st
 
 from home_layout import (
     ETP_FULLPAGE_AUM_LINE_CSS,
-    KPI_WINDOW_NOTE_CSS,
     STREAMLIT_TABLE_UNIFY_CSS,
     STREAMLIT_TMMF_SUBPAGE_CSS,
 )
 from news_feeds import article_styles_markdown
+from rwa_league.mmf import TMMF_INNER_PAGE_SUBTITLE_HTML
 from rwa_league.widgets import show_rwa_mmf_widget
 from streamlit_site_parity import (
     _streamlit_page_href,
@@ -60,14 +60,7 @@ def main() -> None:
         badge="MMF",
         title="Tokenized Money Market Funds",
         subtitle_class="section-dek section-dek--wide page-intro__dek",
-        subtitle_html=(
-            "Aggregated view of tokenized money market funds from a "
-            "<strong>fixed curated population</strong> on "
-            "<strong>RWA.xyz</strong> US Treasuries and Non-U.S. Government Debt. "
-            "Headline KPIs, <strong>Networks</strong>, <strong>Platforms</strong>, charts, and the fund table "
-            "all use the same fund set; headline <strong>30-day (30D)</strong> % applies to total distributed "
-            "value across that population."
-        ),
+        subtitle_html=TMMF_INNER_PAGE_SUBTITLE_HTML,
         zone_classes="zone--tmmf home-zone home-zone--tmmf etp-mock-zone",
         related_chips=related_chips_html(
             ("/?jd_scroll=tmmf", "Home TMMF preview"),
@@ -81,7 +74,6 @@ def main() -> None:
     st.markdown(
         article_styles_markdown()
         + STREAMLIT_TMMF_SUBPAGE_CSS
-        + KPI_WINDOW_NOTE_CSS
         + STREAMLIT_TABLE_UNIFY_CSS
         + ETP_FULLPAGE_AUM_LINE_CSS,
         unsafe_allow_html=True,

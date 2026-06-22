@@ -386,6 +386,7 @@ def _render_rwa_treasuries_overview(
     overview_title: str = "US Treasuries",
     show_kpi_legend: bool = True,
     inner_page_style: bool = False,
+    kpi_legend_html: str | None = None,
 ) -> None:
     """Overview KPI row for US Treasuries or Tokenized Stocks embed (same tile layout as Global Market)."""
     if not kpis:
@@ -408,12 +409,18 @@ def _render_rwa_treasuries_overview(
     legend = _rwa_kpi_window_note_html(overview_title=overview_title) if show_kpi_legend else ""
     if inner_page_style:
         legend_class = "jd-kpi-window-note rwa-onchain-kpi-legend"
-        legend_html = (
-            f'<p class="{legend_class}">'
-            "All % changes in this row are <strong>30-day (30D)</strong> (<strong>RWA.xyz</strong>). "
-            f"Headline totals from the <strong>RWA.xyz</strong> <strong>{escape(overview_title)}</strong> Overview."
-            "</p>"
-        ) if show_kpi_legend else ""
+        if show_kpi_legend:
+            if kpi_legend_html is not None:
+                legend_body = kpi_legend_html
+            else:
+                legend_body = (
+                    "All % changes in this row are <strong>30-day (30D)</strong> (<strong>RWA.xyz</strong>). "
+                    f"Headline totals from the <strong>RWA.xyz</strong> "
+                    f"<strong>{escape(overview_title)}</strong> Overview."
+                )
+            legend_html = f'<p class="{legend_class}">{legend_body}</p>'
+        else:
+            legend_html = ""
         treasuries_kpi_html = (
             '<div class="rwa-kpi-panel-static">'
             + legend_html
@@ -2348,11 +2355,14 @@ def show_rwa_mmf_widget(
             )
         else:
             st.markdown(hub_subsection_heading_html("Top-Line Market Snapshot"), unsafe_allow_html=True)
+        from rwa_league.mmf import TMMF_KPI_LEGEND_HTML
+
         _render_rwa_treasuries_overview(
             kpis_m,
             overview_title="Tokenized Money Market Funds",
             show_kpi_legend=not home_preview,
             inner_page_style=inner_page,
+            kpi_legend_html=TMMF_KPI_LEGEND_HTML if inner_page else None,
         )
         _inject_full_page_key_observations(
             full_page_key_observations_html,

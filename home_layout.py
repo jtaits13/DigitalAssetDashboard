@@ -158,26 +158,29 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 
 .stApp:has(.mock-tmmf-inner) .rwa-kpi-row--home-grid .rwa-kpi-label {
   display: block;
-  font-size: 0.82rem;
-  font-weight: 650;
-  color: var(--hx-etp-dark, #31485c);
-  margin-bottom: 0.3rem;
-  line-height: 1.3;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ink-soft, #1f4c67);
+  margin-bottom: 0.32rem;
+  line-height: 1.28;
 }
 
 .stApp:has(.mock-tmmf-inner) .rwa-kpi-row--home-grid .rwa-kpi-val {
   display: block;
-  font-size: 1.02rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--hx-etp, #3e5c74) !important;
   line-height: 1.2;
+  margin-bottom: 0.18rem;
 }
 
 .stApp:has(.mock-tmmf-inner) .rwa-kpi-row--home-grid .rwa-kpi-delta {
   display: block;
   font-size: 0.78rem;
   font-weight: 600;
-  margin-top: 0.2rem;
+  line-height: 1.2;
+  min-height: 1.15em;
+  margin-top: 0;
 }
 
 .stApp:has(.mock-tmmf-inner) .rwa-kpi-row--home-grid .rwa-kpi-delta.up {
@@ -378,6 +381,15 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   font-size: 0.92rem;
   line-height: 1.5;
   color: var(--ink-muted, #4a5f73);
+}
+
+.stApp .mock-tmmf-inner .etp-mock-zone .page-intro__title {
+  margin: 0 0 0.4rem;
+  color: var(--hx-etp-dark, #31485c);
+  font-size: clamp(1.35rem, 2.8vw, 1.75rem);
+  font-weight: 780;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 
 .stApp .mock-tmmf-inner .page-intro__dek.section-dek--wide strong {
