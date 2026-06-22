@@ -381,6 +381,11 @@ section[data-testid="stSidebar"] { display: none !important; }
   margin: 0 -0.5rem 0;
   width: calc(100% + 1rem);
 }
+.stApp:has(.streamlit-subpage-active) .site-header,
+.stApp:has(.streamlit-subpage-root) .site-header {
+  margin: 0 !important;
+  width: 100% !important;
+}
 .stApp .home-refresh-row {
   display: flex;
   justify-content: flex-end;
@@ -534,31 +539,67 @@ SUBPAGE_ROOT_CLASS: dict[str, str] = {
 }
 
 SUBPAGE_STREAMLIT_CSS = """
+/* Subpages: full-bleed nav band + condensed 72rem content column (matches etp-mock-shell). */
 .stApp:has(.streamlit-subpage-active) .block-container,
 .stApp:has(.streamlit-subpage-root) .block-container {
   padding-top: 0 !important;
   padding-left: 0 !important;
   padding-right: 0 !important;
-  max-width: 100% !important;
+  max-width: none !important;
+  width: 100% !important;
 }
-.stApp .streamlit-subpage-root {
-  display: block;
-  width: 100%;
+.stApp:has(.streamlit-subpage-active) section.main,
+.stApp:has(.streamlit-subpage-root) section.main,
+.stApp:has(.streamlit-subpage-active) [data-testid="stMainBlockContainer"],
+.stApp:has(.streamlit-subpage-root) [data-testid="stMainBlockContainer"] {
+  padding-top: 0 !important;
+  overflow-x: clip;
+  overflow-y: visible !important;
+}
+.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(header.site-header),
+.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(header.site-header) {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  margin-left: calc(50% - 50vw) !important;
+  margin-right: calc(50% - 50vw) !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 40 !important;
+  flex: none !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+}
+.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(header.site-header) [data-testid="stVerticalBlock"],
+.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(header.site-header) [data-testid="stVerticalBlock"],
+.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(header.site-header) [data-testid="stMarkdownContainer"],
+.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(header.site-header) [data-testid="stMarkdownContainer"] {
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  align-items: flex-start !important;
+  overflow: visible !important;
 }
 .stApp:has(.streamlit-subpage-active) header.site-header,
 .stApp:has(.streamlit-subpage-root) header.site-header {
   display: block !important;
   visibility: visible !important;
-  position: sticky !important;
-  top: 0;
+  position: relative !important;
+  top: auto !important;
   z-index: 40;
   width: 100% !important;
   margin: 0 !important;
   box-sizing: border-box;
+  overflow: visible !important;
+  height: auto !important;
+  min-height: 0 !important;
+  flex: none !important;
 }
 .stApp:has(.streamlit-subpage-active) .site-header__inner,
 .stApp:has(.streamlit-subpage-root) .site-header__inner {
-  max-width: var(--content-max, var(--max, 72rem));
+  max-width: calc(var(--content-max, var(--max, 72rem)) + 17.5rem);
   margin-left: auto;
   margin-right: auto;
   width: 100%;
@@ -566,11 +607,50 @@ SUBPAGE_STREAMLIT_CSS = """
   padding-right: 1.25rem;
   box-sizing: border-box;
 }
+.stApp:has(.streamlit-subpage-active) .site-nav,
+.stApp:has(.streamlit-subpage-root) .site-nav {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 0.18rem !important;
+}
+.stApp:has(.streamlit-subpage-active) .site-nav a,
+.stApp:has(.streamlit-subpage-active) .site-nav__trigger,
+.stApp:has(.streamlit-subpage-active) .site-nav__parent-link,
+.stApp:has(.streamlit-subpage-root) .site-nav a,
+.stApp:has(.streamlit-subpage-root) .site-nav__trigger,
+.stApp:has(.streamlit-subpage-root) .site-nav__parent-link {
+  display: inline-flex !important;
+  align-items: center !important;
+  align-self: center !important;
+  width: auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  flex: none !important;
+  white-space: nowrap !important;
+}
+.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:not(:has(header.site-header)):not(:has(.streamlit-subpage-active)),
+.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:not(:has(header.site-header)):not(:has(.streamlit-subpage-active)) {
+  max-width: var(--content-max, var(--max, 72rem)) !important;
+  width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 1.25rem !important;
+  padding-right: 1.25rem !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
+}
+.stApp .streamlit-subpage-root {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+}
 .stApp:has(.streamlit-subpage-active) .page-back-below-header,
 .stApp:has(.streamlit-subpage-root) .page-back-below-header {
-  max-width: var(--content-max, var(--max, 72rem));
-  margin: 0 auto;
-  padding: 0.5rem 1.25rem 0;
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  padding: 0.5rem 0 0;
   box-sizing: border-box;
 }
 .stApp:has(.streamlit-subpage-active) .back-link--below-header a,
@@ -592,27 +672,47 @@ SUBPAGE_STREAMLIT_CSS = """
   border-color: rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.35);
   background: rgb(var(--hx-etp-rgb, 62 92 116) / 0.06);
 }
-.stApp .streamlit-subpage-root .page-shell {
-  max-width: var(--content-max, var(--max, 72rem));
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-  padding-left: 1.25rem;
-  padding-right: 1.25rem;
+.stApp .streamlit-subpage-root .page-shell,
+.stApp .streamlit-subpage-root .etp-mock-shell {
+  max-width: none !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  padding-bottom: 2rem;
   box-sizing: border-box;
 }
 .stApp:has(.streamlit-subpage-active) footer.site-footer,
 .stApp:has(.streamlit-subpage-root) footer.site-footer {
-  max-width: var(--content-max, var(--max, 72rem));
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1.25rem;
-  padding-right: 1.25rem;
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  padding-left: 0;
+  padding-right: 0;
   box-sizing: border-box;
 }
 .stApp .streamlit-subpage-root .inner-rich-zone {
   opacity: 1 !important;
   transform: none !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box;
+}
+.stApp:has(.streamlit-subpage-active) .home-related-chips,
+.stApp:has(.streamlit-subpage-root) .home-related-chips {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 0.35rem 0.45rem !important;
+}
+.stApp:has(.streamlit-subpage-active) .home-related-chips .home-chip,
+.stApp:has(.streamlit-subpage-root) .home-related-chips .home-chip {
+  display: inline-flex !important;
+  align-items: center !important;
+  width: auto !important;
+  height: auto !important;
+  flex: none !important;
+  white-space: nowrap !important;
 }
 .stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"],
 .stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"],
