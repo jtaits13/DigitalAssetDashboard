@@ -656,6 +656,12 @@ def iframe_jump_nav_script() -> str:
           sectionId = map[sectionId] || sectionId;
         }
         ev.preventDefault();
+        document.querySelectorAll(".home-jump-nav__link").forEach(function (item) {
+          item.classList.remove("is-active");
+          item.removeAttribute("aria-current");
+        });
+        link.classList.add("is-active");
+        link.setAttribute("aria-current", "true");
         try {
           window.parent.postMessage({ type: "jpm-home-scroll", sectionId: sectionId }, "*");
         } catch (e) {}
@@ -683,6 +689,108 @@ HOME_PAGE_SCROLL_JS = """
       } catch (e) {}
     });
     return match;
+  }
+
+  function findChromeFrame() {
+    var match = null;
+    doc.querySelectorAll("iframe").forEach(function (frame) {
+      try {
+        var inner = frame.contentDocument;
+        if (inner && inner.querySelector(".hero--command") && !inner.querySelector(".home-main-split")) {
+          match = frame;
+        }
+      } catch (e) {}
+    });
+    return match;
+  }
+
+  function setActiveSection(sectionId) {
+    if (!sectionId) return;
+    var chromeFrame = findChromeFrame();
+    if (!chromeFrame) return;
+    var chromeDoc;
+    try {
+      chromeDoc = chromeFrame.contentDocument;
+    } catch (e) {
+      return;
+    }
+    if (!chromeDoc) return;
+    chromeDoc.querySelectorAll(".home-jump-nav__link").forEach(function (link) {
+      var href = link.getAttribute("href") || "";
+      var on = href === "#" + sectionId;
+      link.classList.toggle("is-active", on);
+      if (on) link.setAttribute("aria-current", "true");
+      else link.removeAttribute("aria-current");
+    });
+  }
+
+  function initSectionSpy() {
+    var bodyFrame = findBodyFrame();
+    if (!bodyFrame) return false;
+    var inner;
+    try {
+      inner = bodyFrame.contentDocument;
+    } catch (e) {
+      return false;
+    }
+    if (!inner) return false;
+    var markets = inner.querySelector(".home-markets-stack");
+    if (!markets) return false;
+    if (markets.dataset.jpmSpyBound === "1") return true;
+
+    var sectionIds = [
+      "section-tmmf",
+      "section-stablecoins",
+      "section-onchain",
+      "section-markets",
+      "section-crypto"
+    ];
+    var sections = [];
+    sectionIds.forEach(function (id) {
+      var el = inner.getElementById(id);
+      if (el) sections.push(el);
+    });
+    if (!sections.length) return false;
+
+    markets.dataset.jpmSpyBound = "1";
+
+    if ("IntersectionObserver" in win) {
+      var navObserver = new IntersectionObserver(
+        function (entries) {
+          var visible = entries
+            .filter(function (e) {
+              return e.isIntersecting;
+            })
+            .sort(function (a, b) {
+              return b.intersectionRatio - a.intersectionRatio;
+            });
+          if (visible.length) setActiveSection(visible[0].target.id);
+        },
+        { root: markets, rootMargin: "-20% 0px -55% 0px", threshold: [0, 0.15, 0.4] }
+      );
+      sections.forEach(function (section) {
+        navObserver.observe(section);
+      });
+    } else {
+      markets.addEventListener("scroll", function () {
+        var best = null;
+        var bestScore = -1;
+        var rootTop = markets.getBoundingClientRect().top;
+        var rootBottom = markets.getBoundingClientRect().bottom;
+        sections.forEach(function (section) {
+          var rect = section.getBoundingClientRect();
+          var visible = Math.min(rect.bottom, rootBottom) - Math.max(rect.top, rootTop);
+          if (visible > bestScore) {
+            bestScore = visible;
+            best = section;
+          }
+        });
+        if (best) setActiveSection(best.id);
+      });
+    }
+
+    setActiveSection(sections[0].id);
+    return true;
   }
 
   function scrollToSection(sectionId) {
@@ -726,6 +834,7 @@ HOME_PAGE_SCROLL_JS = """
         target.scrollIntoView({ block: "start", behavior: "auto" });
       } catch (e) {}
     }
+    setActiveSection(sectionId);
     return true;
   }
 
@@ -744,11 +853,20 @@ HOME_PAGE_SCROLL_JS = """
     if (!ev.data || ev.data.type !== "jpm-home-scroll") return;
     var id = String(ev.data.sectionId || "").trim();
     if (!id) return;
+    setActiveSection(id);
     if (!scrollToSection(id)) pollScroll(id, 120);
   });
 
   win.jpmScrollToHomeSection = scrollToSection;
   win.jpmPollScrollToHomeSection = pollScroll;
+  win.jpmSetActiveHomeSection = setActiveSection;
+
+  (function pollSpy() {
+    var tries = 0;
+    var timer = win.setInterval(function () {
+      if (initSectionSpy() || ++tries > 120) win.clearInterval(timer);
+    }, 50);
+  })();
 })();
 </script>
 """
