@@ -101,7 +101,7 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 }
 
 .stApp:has(.mock-tmmf-inner) .inner-rich-zone.etp-mock-zone {
-  margin-bottom: 0;
+  margin-bottom: 0 !important;
   border: 1px solid rgb(var(--hx-tmmf-bright-rgb, 80 113 136) / 0.22);
   border-bottom: none;
   border-radius: 14px 14px 0 0;
@@ -111,6 +111,11 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
     0 4px 14px rgb(var(--hx-tmmf-rgb, 62 92 116) / 0.06);
   max-width: 100%;
   overflow: hidden;
+}
+
+.stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.inner-rich-zone.etp-mock-zone) {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 .stApp:has(.mock-tmmf-inner) .inner-rich-zone.zone--tmmf .home-zone__stripe,
@@ -188,7 +193,7 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   background: transparent;
 }
 
-.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .home-related-chips,
+.stApp:has(.mock-tmmf-inner) [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .home-related-chips,
 .stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.home-related-chips) .home-related-chips {
   display: flex !important;
   flex-wrap: wrap !important;
@@ -201,7 +206,7 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   border: 1px solid rgb(var(--hx-tmmf-bright-rgb, 80 113 136) / 0.18) !important;
 }
 
-.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .home-related-chips__label,
+.stApp:has(.mock-tmmf-inner) [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .home-related-chips__label,
 .stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.home-related-chips) .home-related-chips__label {
   font-size: 0.68rem !important;
   font-weight: 700 !important;
@@ -211,7 +216,7 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   color: var(--hx-tmmf, #3e5c74) !important;
 }
 
-.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .home-related-chips .home-chip,
+.stApp:has(.mock-tmmf-inner) [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .home-related-chips .home-chip,
 .stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.home-related-chips) .home-chip {
   display: inline-flex !important;
   align-items: center !important;
@@ -227,14 +232,14 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   white-space: nowrap !important;
 }
 
-.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .home-related-chips .home-chip:hover,
+.stApp:has(.mock-tmmf-inner) [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .home-related-chips .home-chip:hover,
 .stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.home-related-chips) .home-chip:hover {
   color: var(--hx-tmmf, #3e5c74) !important;
   border-color: rgb(var(--hx-tmmf-bright-rgb, 80 113 136) / 0.45) !important;
   background: #f8fcfe !important;
 }
 
-.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .methodology-panel,
+.stApp:has(.mock-tmmf-inner) [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .methodology-panel,
 .stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.methodology-panel) .methodology-panel {
   display: block;
   margin: var(--tmmf-stack-gap, 0.85rem) 0 0 !important;
@@ -269,7 +274,7 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   margin-bottom: var(--tmmf-kpi-stack-gap, 1.15rem) !important;
 }
 
-.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .methodology-panel summary,
+.stApp:has(.mock-tmmf-inner) [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .methodology-panel summary,
 .stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.methodology-panel) .methodology-panel summary {
   padding: 0.65rem 0.9rem;
   font-size: 0.85rem;
@@ -279,12 +284,12 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   list-style: disclosure-closed;
 }
 
-.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .methodology-panel[open] summary,
+.stApp:has(.mock-tmmf-inner) [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .methodology-panel[open] summary,
 .stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.methodology-panel) .methodology-panel[open] summary {
   list-style: disclosure-open;
 }
 
-.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .methodology-panel__body,
+.stApp:has(.mock-tmmf-inner) [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .methodology-panel__body,
 .stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.methodology-panel) .methodology-panel__body {
   padding: 0 0.9rem 0.85rem;
   font-size: 0.82rem;
@@ -292,33 +297,58 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   color: var(--ink-muted, #4a5f73);
 }
 
-.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .methodology-panel__body ul,
+.stApp:has(.mock-tmmf-inner) [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .methodology-panel__body ul,
 .stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.methodology-panel) .methodology-panel__body ul {
   margin: 0;
   padding-left: 1.1rem;
 }
 
-.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .methodology-panel__body li + li,
+.stApp:has(.mock-tmmf-inner) [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .methodology-panel__body li + li,
 .stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.methodology-panel) .methodology-panel__body li + li {
   margin-top: 0.35rem;
 }
 
-.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body {
-  margin: 0 0 1.25rem;
-  padding: 0.85rem 1.25rem 1.35rem;
-  border: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.2);
-  border-top: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.12);
-  border-radius: 0 0 14px 14px;
+.stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has([data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel)) {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.stApp:has(.mock-tmmf-inner) [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) {
+  margin: 0 auto 1.25rem !important;
+  padding: 1.15rem 1.25rem 1.35rem !important;
+  border: 1px solid rgb(var(--hx-tmmf-bright-rgb, 80 113 136) / 0.2) !important;
+  border-top: none !important;
+  border-radius: 0 0 14px 14px !important;
   background: linear-gradient(
     180deg,
     rgb(var(--hx-etp-rgb, 62 92 116) / 0.06) 0%,
     rgba(255, 255, 255, 0.98) 100%
-  );
+  ) !important;
   box-shadow:
     0 1px 2px rgb(var(--hx-etp-rgb, 62 92 116) / 0.05),
-    0 10px 28px rgb(var(--hx-etp-rgb, 62 92 116) / 0.07);
-  max-width: 100%;
-  box-sizing: border-box;
+    0 10px 28px rgb(var(--hx-etp-rgb, 62 92 116) / 0.07) !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.stApp:has(.mock-tmmf-inner) [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) [data-testid="stElementContainer"] {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.stApp:has(.mock-tmmf-inner) [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .inner-rich-block.etp-mock-key-obs-block {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
 }
 
 .stApp:has(.mock-tmmf-inner) .etp-mock-snapshot {
@@ -404,17 +434,17 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   font-weight: inherit;
 }
 
-.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .jd-hub-subsection-head {
+.stApp:has(.mock-tmmf-inner) [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .jd-hub-subsection-head {
   display: none;
 }
 
-.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .inner-table-head {
+.stApp:has(.mock-tmmf-inner) [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .inner-table-head {
   margin-bottom: 0.35rem;
   padding-bottom: 0.4rem;
   border-bottom: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.14);
 }
 
-.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body .subsection-head {
+.stApp .mock-tmmf-inner [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .subsection-head {
   margin: 0;
   color: var(--hx-etp-dark, #31485c);
   font-size: 0.95rem;
@@ -422,7 +452,7 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   letter-spacing: -0.01em;
 }
 
-.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body .tmmf-mock-league-intro {
+.stApp .mock-tmmf-inner [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .tmmf-mock-league-intro {
   margin: 0 0 0.75rem;
   max-width: 52rem;
   font-size: 0.82rem;
@@ -430,17 +460,17 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   color: var(--ink-muted, #4a5f73);
 }
 
-.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body .tmmf-mock-league-intro strong {
+.stApp .mock-tmmf-inner [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .tmmf-mock-league-intro strong {
   color: var(--hx-etp-dark, #31485c);
 }
 
-.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body .etp-mock-table-block {
+.stApp .mock-tmmf-inner [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .etp-mock-table-block {
   margin-top: 0.15rem;
   padding-top: var(--etp-mock-gap-lg, 1.2rem);
   border-top: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.12);
 }
 
-.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body .etp-mock-table-block.tmmf-mock-league-block {
+.stApp .mock-tmmf-inner [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .etp-mock-table-block.tmmf-mock-league-block {
   margin-top: 0;
   padding: 0.95rem 1rem 1rem;
   border: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.16);
@@ -450,7 +480,7 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   margin-bottom: var(--etp-mock-gap-lg, 1.2rem);
 }
 
-.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body hr.jd-divider {
+.stApp .mock-tmmf-inner [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) hr.jd-divider {
   border: none;
   border-top: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.14);
   margin: 0.35rem 0 var(--etp-mock-gap-lg, 1.2rem);
@@ -464,13 +494,13 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 
 .stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.etp-mock-key-obs-block) .etp-mock-key-obs-block,
 .stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.etp-mock-key-obs-block) .inner-rich-block.etp-mock-key-obs-block,
-.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .etp-mock-key-obs-block {
+.stApp:has(.mock-tmmf-inner) [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .etp-mock-key-obs-block {
   margin-top: 0 !important;
   margin-bottom: var(--etp-mock-gap-lg, 1.2rem) !important;
 }
 
 .stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.etp-mock-key-obs-block) .crypto-story-callout,
-.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .etp-mock-key-obs-block .crypto-story-callout {
+.stApp:has(.mock-tmmf-inner) [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .etp-mock-key-obs-block .crypto-story-callout {
   display: block;
   margin: 0;
   padding: 1rem 1.1rem 0.9rem;
@@ -482,7 +512,7 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 }
 
 .stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.etp-mock-key-obs-block) .crypto-story-callout__title,
-.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .etp-mock-key-obs-block .crypto-story-callout__title {
+.stApp:has(.mock-tmmf-inner) [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .etp-mock-key-obs-block .crypto-story-callout__title {
   margin: 0 0 0.55rem;
   padding-bottom: 0.45rem;
   border-bottom: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.14);
@@ -495,7 +525,7 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 }
 
 .stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.etp-mock-key-obs-block) .crypto-story-callout__dek,
-.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .etp-mock-key-obs-block .crypto-story-callout__dek {
+.stApp:has(.mock-tmmf-inner) [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .etp-mock-key-obs-block .crypto-story-callout__dek {
   margin: 0 0 0.55rem;
   font-size: 0.78rem !important;
   line-height: 1.45 !important;
@@ -503,7 +533,7 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 }
 
 .stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.etp-mock-key-obs-block) .crypto-story-callout__list,
-.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .etp-mock-key-obs-block .crypto-story-callout__list {
+.stApp:has(.mock-tmmf-inner) [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .etp-mock-key-obs-block .crypto-story-callout__list {
   margin: 0;
   padding-left: 1.05rem;
   font-size: 0.79rem !important;
@@ -512,33 +542,33 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 }
 
 .stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.etp-mock-key-obs-block) .crypto-story-callout__list li,
-.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .etp-mock-key-obs-block .crypto-story-callout__list li {
+.stApp:has(.mock-tmmf-inner) [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .etp-mock-key-obs-block .crypto-story-callout__list li {
   font-size: 0.79rem !important;
   line-height: 1.48 !important;
   color: var(--ink-soft, #1f4c67) !important;
 }
 
 .stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.etp-mock-key-obs-block) .crypto-story-callout__list li + li,
-.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .etp-mock-key-obs-block .crypto-story-callout__list li + li {
+.stApp:has(.mock-tmmf-inner) [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .etp-mock-key-obs-block .crypto-story-callout__list li + li {
   margin-top: 0.4rem;
 }
 
 .stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.etp-mock-key-obs-block) .crypto-story-callout__list a,
-.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .etp-mock-key-obs-block .crypto-story-callout__list a {
+.stApp:has(.mock-tmmf-inner) [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .etp-mock-key-obs-block .crypto-story-callout__list a {
   color: var(--hx-etp-bright, #507188);
   font-weight: 600;
   text-decoration: none;
 }
 
 .stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.etp-mock-key-obs-block) .crypto-story-callout__list a:hover,
-.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .etp-mock-key-obs-block .crypto-story-callout__list a:hover {
+.stApp:has(.mock-tmmf-inner) [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .etp-mock-key-obs-block .crypto-story-callout__list a:hover {
   color: var(--hx-etp, #3e5c74);
   text-decoration: underline;
   text-underline-offset: 0.12em;
 }
 
 .stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.etp-mock-key-obs-block) .crypto-story-callout__note,
-.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .etp-mock-key-obs-block .crypto-story-callout__note {
+.stApp:has(.mock-tmmf-inner) [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .etp-mock-key-obs-block .crypto-story-callout__note {
   margin: 0.55rem 0 0;
   padding: 0.55rem 0.65rem;
   border-top: none;
@@ -550,7 +580,7 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 }
 
 .stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.etp-mock-key-obs-block) .review-note.ko-disclaimer,
-.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .etp-mock-key-obs-block .review-note.ko-disclaimer {
+.stApp:has(.mock-tmmf-inner) [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .etp-mock-key-obs-block .review-note.ko-disclaimer {
   margin: 0.5rem 0 0;
   padding: 0.38rem 0.55rem;
   border: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.16);
@@ -561,39 +591,39 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   color: var(--muted, #5a7084);
 }
 
-.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body .jd-kpi-window-note,
-.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body .etp-mock-snapshot__note {
+.stApp .mock-tmmf-inner [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .jd-kpi-window-note,
+.stApp .mock-tmmf-inner [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) .etp-mock-snapshot__note {
   margin: 0.5rem 0 0;
   font-size: 0.72rem;
   line-height: 1.45;
   color: var(--muted, #5a7084);
 }
 
-.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body [data-testid="stTextInput"] label p {
+.stApp .mock-tmmf-inner [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) [data-testid="stTextInput"] label p {
   font-size: 0.78rem !important;
   font-weight: 600 !important;
   color: var(--hx-etp-dark, #31485c) !important;
   margin-bottom: 0.3rem !important;
 }
 
-.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body [data-testid="stTextInput"] input {
+.stApp .mock-tmmf-inner [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) [data-testid="stTextInput"] input {
   max-width: 32rem;
   font-size: 0.875rem !important;
   border-color: rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.22) !important;
 }
 
-.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body [data-testid="stTextInput"] input:focus {
+.stApp .mock-tmmf-inner [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) [data-testid="stTextInput"] input:focus {
   border-color: var(--hx-etp-bright, #507188) !important;
   box-shadow: 0 0 0 3px rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.14) !important;
 }
 
-.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body p.jd-subpage-toolbar-note {
+.stApp .mock-tmmf-inner [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) p.jd-subpage-toolbar-note {
   font-size: 0.78rem;
   color: var(--muted, #5a7084);
   margin: 0.35rem 0 0.65rem;
 }
 
-.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body [data-testid="stCaptionContainer"] {
+.stApp .mock-tmmf-inner [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) [data-testid="stCaptionContainer"] {
   font-size: 0.72rem !important;
   color: var(--muted, #5a7084) !important;
   line-height: 1.45 !important;
@@ -601,18 +631,18 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   margin: 0.5rem 0 0.65rem !important;
 }
 
-.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body div[data-testid="stDataFrame"] {
+.stApp .mock-tmmf-inner [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) div[data-testid="stDataFrame"] {
   font-size: 0.78rem;
   width: 100%;
   max-width: 100%;
 }
 
-.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body div[data-testid="stDataFrame"] [role="columnheader"],
-.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body div[data-testid="stDataFrame"] [role="gridcell"] {
+.stApp .mock-tmmf-inner [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) div[data-testid="stDataFrame"] [role="columnheader"],
+.stApp .mock-tmmf-inner [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) div[data-testid="stDataFrame"] [role="gridcell"] {
   font-size: 0.78rem !important;
 }
 
-.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body [data-testid="stLinkButton"] a {
+.stApp .mock-tmmf-inner [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) [data-testid="stLinkButton"] a {
   background: var(--hx-etp-bright, #507188) !important;
   border-color: rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.35) !important;
   color: #fff !important;
@@ -621,11 +651,11 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   max-width: 20rem;
 }
 
-.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body [data-testid="stLinkButton"] {
+.stApp .mock-tmmf-inner [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) [data-testid="stLinkButton"] {
   margin-top: var(--etp-mock-gap-lg, 1.2rem);
 }
 
-.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body [data-testid="stVerticalBlock"] > div {
+.stApp .mock-tmmf-inner [data-testid="stVerticalBlockBorderWrapper"]:has(.tmmf-zone-body-panel) [data-testid="stVerticalBlock"] > div {
   max-width: 100%;
 }
 

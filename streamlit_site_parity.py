@@ -535,7 +535,7 @@ def _patch_inner_page_css_for_streamlit(css: str) -> str:
     )
     css = re.sub(
         r"\.mock-tmmf-inner\.page-inner--rich \.inner-rich-zone \.etp-mock-key-obs-block",
-        ".stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .etp-mock-key-obs-block, "
+        ".stApp:has(.mock-tmmf-inner) [data-testid=\"stVerticalBlockBorderWrapper\"]:has(.tmmf-zone-body-panel) .etp-mock-key-obs-block, "
         ".stApp .streamlit-subpage-root.mock-tmmf-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block, "
         ".mock-tmmf-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block",
         css,

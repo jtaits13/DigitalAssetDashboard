@@ -54,6 +54,13 @@ def main() -> None:
         label="← Back to home · TMMF preview",
     )
     open_subpage_layout(style_kind="tmmf", shell_class="etp-mock-shell")
+    st.markdown(
+        article_styles_markdown()
+        + STREAMLIT_TMMF_SUBPAGE_CSS
+        + STREAMLIT_TABLE_UNIFY_CSS
+        + ETP_FULLPAGE_AUM_LINE_CSS,
+        unsafe_allow_html=True,
+    )
     inner_page_zone_open(
         section_id="tmmf-full",
         badge="MMF",
@@ -71,21 +78,19 @@ def main() -> None:
         (_streamlit_page_href("etps"), "U.S. ETPs"),
         (_streamlit_page_href("rwa_global"), "RWA market overview"),
     )
-    st.markdown(
-        article_styles_markdown()
-        + STREAMLIT_TMMF_SUBPAGE_CSS
-        + STREAMLIT_TABLE_UNIFY_CSS
-        + ETP_FULLPAGE_AUM_LINE_CSS,
-        unsafe_allow_html=True,
-    )
-    st.markdown('<div class="tmmf-streamlit-zone-body">', unsafe_allow_html=True)
-    st.markdown(_related, unsafe_allow_html=True)
-    show_rwa_mmf_widget(
-        home_preview=False,
-        full_page_header=True,
-        full_page_key_observations_html=_mmf_takeaway_html(),
-    )
-    st.markdown("</div>", unsafe_allow_html=True)
+    # st.container keeps KPI / methodology / Key Obs in one DOM wrapper (matches static etp-mock-zone__body).
+    with st.container(border=True):
+        st.markdown(
+            '<span class="tmmf-zone-body-panel inner-rich-zone__body etp-mock-zone__body" '
+            'hidden aria-hidden="true"></span>',
+            unsafe_allow_html=True,
+        )
+        st.markdown(_related, unsafe_allow_html=True)
+        show_rwa_mmf_widget(
+            home_preview=False,
+            full_page_header=True,
+            full_page_key_observations_html=_mmf_takeaway_html(),
+        )
     close_subpage_layout(
         back_href="/?jd_scroll=tmmf",
         back_label="← Back to home · TMMF preview",
