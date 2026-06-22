@@ -21,6 +21,8 @@ _STATIC = _REPO / "static_home"
 
 HOME_NEWS_LIMIT = 4
 HOME_PREVIEW_ROWS = 5
+# White space between hero band and News Hub / KPI row (matches static_home site-experience).
+HOME_HERO_TO_CONTENT_GAP = "1.25rem"
 
 # Streamlit multipage routes (filename stem → path)
 PAGES = {
@@ -461,39 +463,43 @@ def _cached_iframe_body_stylesheet() -> str:
     if sx_path.is_file():
         chunks.append(sx_path.read_text(encoding="utf-8"))
     chunks.append(
-        """
-html, body.page-home.site-experience {
+        f"""
+html, body.page-home.site-experience {{
   margin: 0;
   padding: 0;
   background: transparent;
   overflow: hidden;
-}
-.home-reveal { opacity: 1 !important; transform: none !important; }
-body.page-home.site-experience .jd-kpi-window-note { display: none; }
-body.page-home.site-experience .page-shell {
+}}
+.home-reveal {{ opacity: 1 !important; transform: none !important; }}
+body.page-home.site-experience .jd-kpi-window-note {{ display: none; }}
+body.page-home.site-experience .page-shell {{
   max-width: calc(var(--max, 72rem) + 17.5rem);
   margin-left: auto;
   margin-right: auto;
   width: 100%;
-  padding: 1.25rem 0.75rem 0.75rem 0.5rem;
+  padding-top: {HOME_HERO_TO_CONTENT_GAP};
+  padding-right: 0.75rem;
+  padding-bottom: 0.75rem;
+  padding-left: 0.5rem;
   overflow: hidden;
   box-sizing: border-box;
-}
-body.page-home.site-experience .home-kpi-legend-once {
+}}
+body.page-home.site-experience .home-kpi-legend-once {{
   margin-top: 0;
-}
-body.page-home.site-experience .home-main-split {
+}}
+body.page-home.site-experience .home-main-split {{
   align-items: start;
   overflow: hidden;
-}
-body.page-home.site-experience .home-news-rail {
+}}
+body.page-home.site-experience .home-news-rail {{
   position: relative;
   top: auto;
   max-height: none;
   overflow: visible;
   align-self: start;
-}
-body.page-home.site-experience .home-markets-stack {
+  margin-top: 0;
+}}
+body.page-home.site-experience .home-markets-stack {{
   display: block !important;
   overflow-x: hidden !important;
   overflow-y: auto !important;
@@ -501,34 +507,34 @@ body.page-home.site-experience .home-markets-stack {
   scrollbar-width: thin;
   scrollbar-color: rgba(42, 95, 130, 0.35) transparent;
   -webkit-overflow-scrolling: touch;
-}
+}}
 body.page-home.site-experience .home-markets-stack .home-kpi-legend-once,
 body.page-home.site-experience .home-markets-stack .home-zone,
-body.page-home.site-experience .home-markets-stack .hub-section--panel {
+body.page-home.site-experience .home-markets-stack .hub-section--panel {{
   flex: none !important;
   flex-shrink: 0 !important;
   height: auto !important;
   min-height: auto !important;
   max-height: none !important;
-}
-body.page-home.site-experience .home-markets-stack .hub-section--panel {
+}}
+body.page-home.site-experience .home-markets-stack .hub-section--panel {{
   overflow: hidden;
   margin-bottom: 1.35rem;
-}
-body.page-home.site-experience .home-markets-stack .hub-section--panel:last-child {
+}}
+body.page-home.site-experience .home-markets-stack .hub-section--panel:last-child {{
   margin-bottom: 0;
-}
+}}
 body.page-home.site-experience .home-markets-stack .home-zone__body,
-body.page-home.site-experience .home-markets-stack .table-wrap {
+body.page-home.site-experience .home-markets-stack .table-wrap {{
   overflow: visible !important;
-}
-body.page-home.site-experience .home-markets-stack::-webkit-scrollbar {
+}}
+body.page-home.site-experience .home-markets-stack::-webkit-scrollbar {{
   width: 8px;
-}
-body.page-home.site-experience .home-markets-stack::-webkit-scrollbar-thumb {
+}}
+body.page-home.site-experience .home-markets-stack::-webkit-scrollbar-thumb {{
   background: rgba(42, 95, 130, 0.28);
   border-radius: 999px;
-}
+}}
 """
     )
     return "\n".join(chunks)
@@ -554,11 +560,11 @@ body.page-home.site-experience {
   background: transparent;
   width: 100%;
   min-width: 0;
-  overflow: hidden;
+  overflow-x: hidden;
   height: auto;
 }
 html {
-  overflow: hidden;
+  overflow-x: hidden;
 }
 .home-reveal { opacity: 1 !important; transform: none !important; }
 body.page-home.site-experience .jd-kpi-window-note { display: none; }
@@ -575,7 +581,7 @@ body.page-home.site-experience .hero.hero--command {
 
 
 def iframe_chrome_height_script() -> str:
-    """Resize chrome iframe to the hero bottom (no slack below the blue band)."""
+    """Resize chrome iframe to the hero bottom; content gap lives in the body iframe shell."""
     return """
 <script>
 (function () {
@@ -669,7 +675,6 @@ HOME_IFRAME_HEIGHT_SYNC_JS = """
     if (!frame || h <= 80) return;
     frame.style.height = h + "px";
     frame.style.minHeight = "0";
-    frame.style.maxHeight = h + "px";
   }
 
   function syncHeights() {
@@ -763,7 +768,6 @@ HOME_BODY_IFRAME_SIZE_JS = """
     if (!bodyFrame || h <= 80) return;
     bodyFrame.style.height = h + "px";
     bodyFrame.style.minHeight = "0";
-    bodyFrame.style.maxHeight = h + "px";
   }
 
   function sizeBodyFrame() {
