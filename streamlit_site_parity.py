@@ -57,6 +57,7 @@ section[data-testid="stSidebar"] { display: none !important; }
 .stApp {
   font-family: "Outfit", "Segoe UI", system-ui, sans-serif;
   color: var(--ink-soft, #1f4c67);
+  background: var(--wash, #f3f7fb);
 }
 .block-container {
   padding-top: 0 !important;
@@ -74,12 +75,27 @@ section[data-testid="stSidebar"] { display: none !important; }
   width: 100% !important;
 }
 .stApp [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker),
-.stApp [data-testid="stElementContainer"]:has(.home-body-iframe-marker) {
+.stApp [data-testid="stElementContainer"]:has(.home-body-iframe-marker),
+.stApp [data-testid="stElementContainer"]:has(.home-hero-content-gap) {
   width: 100vw !important;
   max-width: 100vw !important;
   margin-left: calc(50% - 50vw) !important;
   margin-right: calc(50% - 50vw) !important;
   padding: 0 !important;
+}
+.stApp .home-hero-content-gap {
+  display: block;
+  width: 100%;
+  height: HOME_HERO_TO_CONTENT_GAP_PLACEHOLDER;
+  min-height: HOME_HERO_TO_CONTENT_GAP_PLACEHOLDER;
+  margin: 0;
+  padding: 0;
+  background: var(--wash, #f3f7fb);
+  border: 0;
+}
+.stApp [data-testid="stElementContainer"]:has(.home-hero-content-gap) {
+  margin: 0 !important;
+  line-height: 0;
 }
 .stApp:has(.home-body-iframe-marker) [data-testid="stMarkdownContainer"]:has(.site-footer) {
   max-width: calc(var(--max, 72rem) + 17.5rem);
@@ -467,7 +483,7 @@ def _cached_iframe_body_stylesheet() -> str:
 html, body.page-home.site-experience {{
   margin: 0;
   padding: 0;
-  background: transparent;
+  background: var(--wash, #f3f7fb);
   overflow: hidden;
 }}
 .home-reveal {{ opacity: 1 !important; transform: none !important; }}
@@ -477,7 +493,7 @@ body.page-home.site-experience .page-shell {{
   margin-left: auto;
   margin-right: auto;
   width: 100%;
-  padding-top: {HOME_HERO_TO_CONTENT_GAP};
+  padding-top: 0;
   padding-right: 0.75rem;
   padding-bottom: 0.75rem;
   padding-left: 0.5rem;
@@ -810,7 +826,11 @@ def _embedded_home_styles_html() -> str:
 
 def inject_site_styles(*, include_static: bool = True) -> None:
     """Inject GitHub Pages CSS + Streamlit chrome overrides."""
-    st.markdown(STREAMLIT_CHROME_CSS, unsafe_allow_html=True)
+    gap_css = HOME_HERO_TO_CONTENT_GAP.replace("'", "\\'")
+    chrome_css = STREAMLIT_CHROME_CSS.replace(
+        "HOME_HERO_TO_CONTENT_GAP_PLACEHOLDER", gap_css
+    )
+    st.markdown(chrome_css, unsafe_allow_html=True)
     if include_static:
         css = _cached_static_stylesheet()
         # Main document: markdown style block for news/footer chrome.
@@ -882,6 +902,11 @@ def render_home_chrome(*, include_refresh: bool = False) -> None:
         height=380,
         scrolling=False,
     )
+
+
+def render_home_hero_content_gap() -> None:
+    """Visible wash band between hero iframe and body iframe (Streamlit-only seam)."""
+    st.markdown('<div class="home-hero-content-gap" aria-hidden="true"></div>', unsafe_allow_html=True)
 
 
 def build_home_footer_html(*, footer_month: str, footer_iso: str) -> str:

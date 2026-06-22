@@ -37,6 +37,7 @@ from streamlit_site_parity import (
     build_static_news_rail_html,
     inject_site_styles,
     render_home_chrome,
+    render_home_hero_content_gap,
     render_home_markdown,
 )
 
@@ -141,6 +142,7 @@ def main() -> None:
     footer_iso = now.strftime("%Y-%m")
 
     render_home_chrome(include_refresh=False)
+    render_home_hero_content_gap()
 
     etp_ua = resolve_etp_user_agent(get_etp_user_agent_from_secrets())
 
