@@ -27,11 +27,11 @@ from regulatory_news.widgets import clear_regulatory_cache
 from rwa_league.widgets import clear_rwa_league_cache
 from streamlit_home_static import (
     load_home_zone_data,
-    render_home_markets_stack,
+    render_home_body_iframe,
 )
 from streamlit_site_parity import (
+    HOME_BODY_IFRAME_SIZE_JS,
     HOME_IFRAME_HEIGHT_SYNC_JS,
-    HOME_NEWS_STICKY_JS,
     JD_SCROLL_MAP,
     build_home_footer_html,
     build_static_news_rail_html,
@@ -162,27 +162,23 @@ def main() -> None:
     home_news, _ = prepare_home_hub_market_news_lane(articles)
     news_rail = build_static_news_rail_html(home_news)
 
-    news_col, markets_col = st.columns([1, 2.85], gap="large")
-    with news_col:
-        st.markdown(news_rail.strip(), unsafe_allow_html=True)
-    with markets_col:
-        render_home_markets_stack(
-            markets_col,
-            mmf_kpis=zone_data["mmf_kpis"],
-            mmf_funds=zone_data["mmf_funds"],
-            stable_kpis=zone_data["stable_kpis"],
-            stable_df=zone_data["stable_df"],
-            rwa_kpis=zone_data["rwa_kpis"],
-            rwa_df=zone_data["rwa_df"],
-            etp_rows=zone_data["etp_rows"],
-            crypto_rows=zone_data["crypto_rows"],
-            crypto_paprika=zone_data["crypto_paprika"],
-        )
+    render_home_body_iframe(
+        news_rail=news_rail,
+        mmf_kpis=zone_data["mmf_kpis"],
+        mmf_funds=zone_data["mmf_funds"],
+        stable_kpis=zone_data["stable_kpis"],
+        stable_df=zone_data["stable_df"],
+        rwa_kpis=zone_data["rwa_kpis"],
+        rwa_df=zone_data["rwa_df"],
+        etp_rows=zone_data["etp_rows"],
+        crypto_rows=zone_data["crypto_rows"],
+        crypto_paprika=zone_data["crypto_paprika"],
+    )
 
     render_home_markdown(build_home_footer_html(footer_month=footer_month, footer_iso=footer_iso))
 
     components.html(HOME_IFRAME_HEIGHT_SYNC_JS, height=0, width=0)
-    components.html(HOME_NEWS_STICKY_JS, height=0, width=0)
+    components.html(HOME_BODY_IFRAME_SIZE_JS, height=0, width=0)
     _jd_inject_scroll_to_section()
 
 

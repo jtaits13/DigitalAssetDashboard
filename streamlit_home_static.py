@@ -10,7 +10,7 @@ import math
 from html import escape
 from typing import Any, Sequence
 
-import pandas as pd
+import streamlit as st
 import streamlit.components.v1 as components
 
 from crypto_categories import (
@@ -619,6 +619,82 @@ def iter_home_markets_stack_html(
     parts.append("".join(crypto))
 
     return parts
+
+
+def build_home_body_iframe_html(*, news_rail: str, **zone_data: Any) -> str:
+    """News Hub + markets in one document so CSS sticky matches GitHub Pages."""
+    from streamlit_site_parity import _cached_iframe_body_stylesheet
+
+    markets = "".join(iter_home_markets_stack_html(**zone_data))
+    css = _cached_iframe_body_stylesheet()
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>{css}</style>
+</head>
+<body class="page-home site-experience">
+<div class="page-shell">
+<div class="home-main-split">
+<div class="home-markets-stack">{markets}</div>
+{news_rail.strip()}
+</div>
+</div>
+<script>
+(function () {{
+  function applyFilter(input) {{
+    var tid = input.getAttribute("data-table-target") || input.id.replace("-search", "");
+    var tbody = document.getElementById(tid + "-tbody");
+    var toolbar = document.getElementById(input.id + "-toolbar");
+    if (!tbody) return;
+    var rows = tbody.querySelectorAll("tr");
+    var q = (input.value || "").trim().toLowerCase();
+    var shown = 0;
+    rows.forEach(function (tr) {{
+      var blob = (tr.getAttribute("data-search") || tr.textContent || "").toLowerCase();
+      var ok = !q || blob.indexOf(q) !== -1;
+      tr.style.display = ok ? "" : "none";
+      if (ok) shown++;
+    }});
+    if (toolbar) {{
+      toolbar.hidden = !q;
+      toolbar.textContent = q ? ("Showing " + shown + " of " + rows.length + " preview rows.") : "";
+    }}
+  }}
+  function bindFilters() {{
+    document.querySelectorAll("input.home-preview-filter").forEach(function (input) {{
+      if (input.dataset.stBound) return;
+      input.dataset.stBound = "1";
+      input.addEventListener("input", function () {{ applyFilter(input); }});
+    }});
+  }}
+  document.querySelectorAll('a[href^="/"]').forEach(function (a) {{
+    a.target = "_top";
+  }});
+  bindFilters();
+  window.addEventListener("load", bindFilters);
+}})();
+</script>
+</body>
+</html>"""
+
+
+def render_home_body_iframe(*, news_rail: str, **zone_data: Any) -> None:
+    """
+    Render news + markets in one viewport-height iframe with internal scroll.
+
+    Sticky news rail requires news and markets to share one scroll context (not Streamlit columns).
+    """
+    st.markdown(
+        '<span class="home-body-iframe-marker" hidden aria-hidden="true"></span>',
+        unsafe_allow_html=True,
+    )
+    components.html(
+        build_home_body_iframe_html(news_rail=news_rail, **zone_data),
+        height=680,
+        scrolling=True,
+    )
 
 
 def build_home_markets_iframe_html(**zone_data: Any) -> str:
