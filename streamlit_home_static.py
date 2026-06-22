@@ -673,28 +673,22 @@ def build_home_body_iframe_html(*, news_rail: str, **zone_data: Any) -> str:
     var rail = document.querySelector(".home-news-rail");
     var markets = document.querySelector(".home-markets-stack");
     var split = document.querySelector(".home-main-split");
-    var shell = document.querySelector(".page-shell");
-    if (!rail || !markets || !split || !shell) return;
+    if (!rail || !markets || !split) return;
     var h = rail.offsetHeight;
     if (h < 200) return;
     markets.style.height = h + "px";
     markets.style.maxHeight = h + "px";
     markets.style.overflowY = "auto";
-    split.style.height = h + "px";
-    split.style.maxHeight = h + "px";
-    split.style.overflow = "hidden";
-    var st = getComputedStyle(shell);
-    var pt = parseFloat(st.paddingTop) || 0;
-    var pb = parseFloat(st.paddingBottom) || 0;
-    var shellH = Math.ceil(h + pt + pb);
-    shell.style.height = shellH + "px";
-    shell.style.maxHeight = shellH + "px";
-    shell.style.overflow = "hidden";
-    var frameH = shellH + 4;
-    try {{
-      window.parent.postMessage({{ type: "streamlit:setFrameHeight", height: frameH }}, "*");
-      window.parent.postMessage({{ type: "jpm-home-body-height", height: frameH }}, "*");
-    }} catch (e) {{}}
+    split.style.minHeight = h + "px";
+    split.style.height = "";
+    split.style.maxHeight = "";
+    split.style.overflow = "";
+    var shell = document.querySelector(".page-shell");
+    if (shell) {{
+      shell.style.height = "";
+      shell.style.maxHeight = "";
+      shell.style.overflow = "";
+    }}
   }}
   window.syncHomeSplitHeights = syncHomeSplitHeights;
   document.querySelectorAll('a[href^="/"]').forEach(function (a) {{
@@ -729,7 +723,7 @@ def render_home_body_iframe(*, news_rail: str, **zone_data: Any) -> None:
     )
     components.html(
         build_home_body_iframe_html(news_rail=news_rail, **zone_data),
-        height=480,
+        height=640,
         scrolling=False,
     )
 

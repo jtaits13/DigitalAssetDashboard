@@ -22,7 +22,7 @@ _STATIC = _REPO / "static_home"
 HOME_NEWS_LIMIT = 4
 HOME_PREVIEW_ROWS = 5
 # White band between hero and News Hub on Streamlit (parent doc spacer; static site uses page-shell padding).
-HOME_HERO_TO_CONTENT_GAP = "2rem"
+HOME_HERO_TO_CONTENT_GAP = "20px"
 
 # Streamlit multipage routes (filename stem → path)
 PAGES = {
@@ -96,8 +96,12 @@ section[data-testid="stSidebar"] { display: none !important; }
 .stApp [data-testid="stElementContainer"]:has(.home-hero-content-gap) {
   margin: 0 !important;
   line-height: 0;
-  position: relative;
-  z-index: 3;
+}
+.stApp [data-testid="stElementContainer"]:has(.home-hero-content-gap) [data-testid="stMarkdownContainer"],
+.stApp [data-testid="stElementContainer"]:has(.home-hero-content-gap) [data-testid="stMarkdownContainer"] > div {
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 0;
 }
 .stApp:has(.home-body-iframe-marker) [data-testid="stMarkdownContainer"]:has(.site-footer) {
   max-width: calc(var(--max, 72rem) + 17.5rem);
@@ -254,14 +258,10 @@ section[data-testid="stSidebar"] { display: none !important; }
 }
 .stApp [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker) {
   margin-bottom: 0 !important;
-  position: relative;
-  z-index: 2;
 }
 .stApp [data-testid="stElementContainer"]:has(.home-body-iframe-marker) {
   margin-top: 0 !important;
   margin-bottom: 0 !important;
-  position: relative;
-  z-index: 1;
 }
 .stApp [data-testid="stElementContainer"]:has(.home-body-iframe-marker) iframe {
   display: block !important;
@@ -488,7 +488,7 @@ html, body.page-home.site-experience {{
   margin: 0;
   padding: 0;
   background: var(--wash, #f3f7fb);
-  overflow: hidden;
+  overflow: visible;
 }}
 .home-reveal {{ opacity: 1 !important; transform: none !important; }}
 body.page-home.site-experience .jd-kpi-window-note {{ display: none; }}
@@ -501,7 +501,7 @@ body.page-home.site-experience .page-shell {{
   padding-right: 0.75rem;
   padding-bottom: 0.75rem;
   padding-left: 0.5rem;
-  overflow: hidden;
+  overflow: visible;
   box-sizing: border-box;
 }}
 body.page-home.site-experience .home-kpi-legend-once {{
@@ -509,7 +509,7 @@ body.page-home.site-experience .home-kpi-legend-once {{
 }}
 body.page-home.site-experience .home-main-split {{
   align-items: start;
-  overflow: hidden;
+  overflow: visible;
 }}
 body.page-home.site-experience .home-news-rail {{
   position: relative;
@@ -574,17 +574,14 @@ def _cached_iframe_home_stylesheet() -> str:
         chunks.append(sx_path.read_text(encoding="utf-8"))
     chunks.append(
         """
-body.page-home.site-experience {
+html, body.page-home.site-experience {
   margin: 0;
   padding: 0;
   background: transparent;
   width: 100%;
   min-width: 0;
-  overflow: visible;
+  overflow: hidden;
   height: auto;
-}
-html {
-  overflow: visible;
 }
 .home-reveal { opacity: 1 !important; transform: none !important; }
 body.page-home.site-experience .jd-kpi-window-note { display: none; }
@@ -601,21 +598,15 @@ body.page-home.site-experience .hero.hero--command {
 
 
 def iframe_chrome_height_script() -> str:
-    """Resize chrome iframe to fit header + full hero (including Confluence callout)."""
+    """Resize chrome iframe to the bottom edge of the hero (nav + hero only; no scrollHeight slack)."""
     return """
 <script>
 (function () {
   function measureChromeHeight() {
     var hero = document.querySelector(".hero--command");
-    var heroBottom = 0;
-    if (hero) {
-      heroBottom = hero.offsetTop + hero.offsetHeight;
-    }
-    return Math.ceil(Math.max(
-      heroBottom,
-      document.body.scrollHeight,
-      document.documentElement.scrollHeight
-    ));
+    if (!hero) return 0;
+    var docTop = document.documentElement.getBoundingClientRect().top;
+    return Math.ceil(hero.getBoundingClientRect().bottom - docTop);
   }
   function sendHeight() {
     var h = measureChromeHeight();
@@ -633,7 +624,6 @@ def iframe_chrome_height_script() -> str:
   if (typeof ResizeObserver !== "undefined") {
     var hero = document.querySelector(".hero--command");
     if (hero) new ResizeObserver(sendHeight).observe(hero);
-    new ResizeObserver(sendHeight).observe(document.body);
   }
   [50, 150, 400, 800, 1500, 3000, 5000].forEach(function (ms) {
     setTimeout(sendHeight, ms);
@@ -693,15 +683,9 @@ HOME_IFRAME_HEIGHT_SYNC_JS = """
 
   function measureChromeHeight(inner) {
     var hero = inner.querySelector(".hero--command");
-    var heroBottom = 0;
-    if (hero) {
-      heroBottom = hero.offsetTop + hero.offsetHeight;
-    }
-    return Math.ceil(Math.max(
-      heroBottom,
-      inner.body.scrollHeight,
-      inner.documentElement.scrollHeight
-    ));
+    if (!hero) return 0;
+    var docTop = inner.documentElement.getBoundingClientRect().top;
+    return Math.ceil(hero.getBoundingClientRect().bottom - docTop);
   }
 
   function applyChromeHeight(frame, h) {
@@ -782,19 +766,13 @@ HOME_BODY_IFRAME_SIZE_JS = """
       inner.syncHomeSplitHeights();
     }
     var shell = inner.querySelector(".page-shell");
-    if (shell && shell.offsetHeight >= 200) {
-      return Math.ceil(shell.getBoundingClientRect().height) + 4;
-    }
     var rail = inner.querySelector(".home-news-rail");
-    if (!rail || rail.offsetHeight < 200) return 0;
-    var pt = 0;
-    var pb = 0;
-    if (shell) {
-      var st = inner.defaultView.getComputedStyle(shell);
-      pt = parseFloat(st.paddingTop) || 0;
-      pb = parseFloat(st.paddingBottom) || 0;
-    }
-    return Math.ceil(rail.offsetHeight + pt + pb + 4);
+    if (!shell || !rail || rail.offsetHeight < 200) return 0;
+    var shellTop = shell.getBoundingClientRect().top;
+    var railRect = rail.getBoundingClientRect();
+    var st = inner.defaultView.getComputedStyle(shell);
+    var pb = parseFloat(st.paddingBottom) || 0;
+    return Math.ceil(railRect.bottom - shellTop + pb + 2);
   }
 
   function applyBodyFrameHeight(bodyFrame, h) {
