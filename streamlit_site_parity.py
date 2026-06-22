@@ -21,8 +21,8 @@ _STATIC = _REPO / "static_home"
 
 HOME_NEWS_LIMIT = 4
 HOME_PREVIEW_ROWS = 5
-# White space between hero band and News Hub / KPI row (matches static_home site-experience).
-HOME_HERO_TO_CONTENT_GAP = "1.25rem"
+# White band between hero and News Hub on Streamlit (parent doc spacer; static site uses page-shell padding).
+HOME_HERO_TO_CONTENT_GAP = "2rem"
 
 # Streamlit multipage routes (filename stem → path)
 PAGES = {
@@ -96,6 +96,8 @@ section[data-testid="stSidebar"] { display: none !important; }
 .stApp [data-testid="stElementContainer"]:has(.home-hero-content-gap) {
   margin: 0 !important;
   line-height: 0;
+  position: relative;
+  z-index: 3;
 }
 .stApp:has(.home-body-iframe-marker) [data-testid="stMarkdownContainer"]:has(.site-footer) {
   max-width: calc(var(--max, 72rem) + 17.5rem);
@@ -252,18 +254,20 @@ section[data-testid="stSidebar"] { display: none !important; }
 }
 .stApp [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker) {
   margin-bottom: 0 !important;
+  position: relative;
+  z-index: 2;
 }
 .stApp [data-testid="stElementContainer"]:has(.home-body-iframe-marker) {
   margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  position: relative;
+  z-index: 1;
 }
 .stApp [data-testid="stElementContainer"]:has(.home-body-iframe-marker) iframe {
   display: block !important;
   width: 100% !important;
   border: 0;
   overflow: hidden !important;
-}
-.stApp [data-testid="stElementContainer"]:has(.home-body-iframe-marker) {
-  margin-bottom: 0 !important;
 }
 .stApp:has(.home-body-iframe-marker) .block-container {
   padding-bottom: 0.5rem !important;
@@ -576,11 +580,11 @@ body.page-home.site-experience {
   background: transparent;
   width: 100%;
   min-width: 0;
-  overflow-x: hidden;
+  overflow: visible;
   height: auto;
 }
 html {
-  overflow-x: hidden;
+  overflow: visible;
 }
 .home-reveal { opacity: 1 !important; transform: none !important; }
 body.page-home.site-experience .jd-kpi-window-note { display: none; }
@@ -597,15 +601,21 @@ body.page-home.site-experience .hero.hero--command {
 
 
 def iframe_chrome_height_script() -> str:
-    """Resize chrome iframe to the hero bottom; content gap lives in the body iframe shell."""
+    """Resize chrome iframe to fit header + full hero (including Confluence callout)."""
     return """
 <script>
 (function () {
   function measureChromeHeight() {
     var hero = document.querySelector(".hero--command");
-    if (!hero) return 0;
-    var docTop = document.documentElement.getBoundingClientRect().top;
-    return Math.ceil(hero.getBoundingClientRect().bottom - docTop);
+    var heroBottom = 0;
+    if (hero) {
+      heroBottom = hero.offsetTop + hero.offsetHeight;
+    }
+    return Math.ceil(Math.max(
+      heroBottom,
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight
+    ));
   }
   function sendHeight() {
     var h = measureChromeHeight();
@@ -623,8 +633,9 @@ def iframe_chrome_height_script() -> str:
   if (typeof ResizeObserver !== "undefined") {
     var hero = document.querySelector(".hero--command");
     if (hero) new ResizeObserver(sendHeight).observe(hero);
+    new ResizeObserver(sendHeight).observe(document.body);
   }
-  [50, 150, 400, 800, 1500, 3000].forEach(function (ms) {
+  [50, 150, 400, 800, 1500, 3000, 5000].forEach(function (ms) {
     setTimeout(sendHeight, ms);
   });
 })();
@@ -682,9 +693,15 @@ HOME_IFRAME_HEIGHT_SYNC_JS = """
 
   function measureChromeHeight(inner) {
     var hero = inner.querySelector(".hero--command");
-    if (!hero) return 0;
-    var docTop = inner.documentElement.getBoundingClientRect().top;
-    return Math.ceil(hero.getBoundingClientRect().bottom - docTop);
+    var heroBottom = 0;
+    if (hero) {
+      heroBottom = hero.offsetTop + hero.offsetHeight;
+    }
+    return Math.ceil(Math.max(
+      heroBottom,
+      inner.body.scrollHeight,
+      inner.documentElement.scrollHeight
+    ));
   }
 
   function applyChromeHeight(frame, h) {
@@ -899,7 +916,7 @@ def render_home_chrome(*, include_refresh: bool = False) -> None:
     )
     components.html(
         build_home_chrome_iframe_html(include_refresh=include_refresh),
-        height=380,
+        height=520,
         scrolling=False,
     )
 
