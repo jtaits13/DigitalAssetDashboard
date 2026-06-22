@@ -535,7 +535,8 @@ def _patch_inner_page_css_for_streamlit(css: str) -> str:
     )
     css = re.sub(
         r"\.mock-tmmf-inner\.page-inner--rich \.inner-rich-zone \.etp-mock-key-obs-block",
-        ".stApp:has(.tmmf-single-block) [data-testid=\"stVerticalBlockBorderWrapper\"]:has(.tmmf-single-block) .etp-mock-key-obs-block, "
+        ".stApp:has(.tmmf-single-block) [data-testid=\"stVerticalBlockBorderWrapper\"].st-key-tmmf_zone_card .etp-mock-key-obs-block, "
+        ".stApp:has(.tmmf-single-block) [data-testid=\"stVerticalBlockBorderWrapper\"] .etp-mock-key-obs-block, "
         ".stApp .streamlit-subpage-root.mock-tmmf-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block, "
         ".mock-tmmf-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block",
         css,
@@ -1801,8 +1802,17 @@ def inject_subpage_styles(*, kind: str = "article") -> None:
     """GitHub Pages base + inner-page CSS for Streamlit subpages."""
     inject_site_styles(include_static=True)
     inner_css = _cached_subpage_stylesheet(kind)
+    tmmf_css = ""
+    if kind == "tmmf":
+        from streamlit_tmmf_layout import STREAMLIT_TMMF_SUBPAGE_CSS
+
+        tmmf_css = (
+            STREAMLIT_TMMF_SUBPAGE_CSS.replace("<style>", "")
+            .replace("</style>", "")
+            .strip()
+        )
     st.markdown(
-        f"<style>{inner_css}\n{SUBPAGE_STREAMLIT_CSS}</style>",
+        f"<style>{inner_css}\n{SUBPAGE_STREAMLIT_CSS}\n{tmmf_css}</style>",
         unsafe_allow_html=True,
     )
 

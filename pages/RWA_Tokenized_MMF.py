@@ -24,7 +24,7 @@ from streamlit_site_parity import (
     render_subpage_back_link,
     render_subpage_footer,
 )
-from streamlit_tmmf_layout import STREAMLIT_TMMF_SUBPAGE_CSS, tmmf_single_block_header_html
+from streamlit_tmmf_layout import TMMF_ZONE_CARD_KEY, tmmf_single_block_header_html
 
 
 def _mmf_takeaway_html() -> str:
@@ -52,7 +52,6 @@ def main() -> None:
     open_subpage_layout(style_kind="tmmf", shell_class="etp-mock-shell")
     st.markdown(
         article_styles_markdown()
-        + STREAMLIT_TMMF_SUBPAGE_CSS
         + STREAMLIT_TABLE_UNIFY_CSS
         + ETP_FULLPAGE_AUM_LINE_CSS,
         unsafe_allow_html=True,
@@ -65,10 +64,9 @@ def main() -> None:
         (_streamlit_page_href("rwa_global"), "RWA market overview"),
     )
 
-    with st.container(border=True):
+    with st.container(border=True, key=TMMF_ZONE_CARD_KEY, gap=None):
         st.markdown(
-            '<span class="tmmf-single-block" hidden aria-hidden="true"></span>'
-            + tmmf_single_block_header_html(
+            tmmf_single_block_header_html(
                 section_id="tmmf-full",
                 badge="MMF",
                 title="Tokenized Money Market Funds",
