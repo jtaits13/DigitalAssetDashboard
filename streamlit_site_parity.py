@@ -64,6 +64,30 @@ section[data-testid="stSidebar"] { display: none !important; }
   padding-left: 0.5rem !important;
   padding-right: 0.75rem !important;
 }
+/* Home: full-bleed nav + hero and body split (match GitHub Pages edge-to-edge bands). */
+.stApp:has(.home-chrome-iframe-marker) .block-container {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  max-width: none !important;
+  width: 100% !important;
+}
+.stApp [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker),
+.stApp [data-testid="stElementContainer"]:has(.home-body-iframe-marker) {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  margin-left: calc(50% - 50vw) !important;
+  margin-right: calc(50% - 50vw) !important;
+  padding: 0 !important;
+}
+.stApp:has(.home-body-iframe-marker) [data-testid="stMarkdownContainer"]:has(.site-footer) {
+  max-width: calc(var(--max, 72rem) + 17.5rem);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 0.5rem;
+  padding-right: 0.75rem;
+  width: 100%;
+  box-sizing: border-box;
+}
 
 /* Streamlit flex columns collapse custom HTML unless ancestors stretch full width. */
 .stApp section.main,
@@ -207,6 +231,12 @@ section[data-testid="stSidebar"] { display: none !important; }
 }
 .stApp .st-streamlit-home-root .hero.hero--command {
   margin-bottom: 0;
+}
+.stApp [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker) {
+  margin-bottom: 0 !important;
+}
+.stApp [data-testid="stElementContainer"]:has(.home-body-iframe-marker) {
+  margin-top: 0 !important;
 }
 .stApp [data-testid="stElementContainer"]:has(.home-body-iframe-marker) iframe {
   display: block !important;
@@ -441,9 +471,13 @@ html, body.page-home.site-experience {
 .home-reveal { opacity: 1 !important; transform: none !important; }
 body.page-home.site-experience .jd-kpi-window-note { display: none; }
 body.page-home.site-experience .page-shell {
-  max-width: none;
-  padding: 1.25rem 0.5rem 0.75rem 0.75rem;
+  max-width: calc(var(--max, 72rem) + 17.5rem);
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  padding: 1.25rem 0.75rem 0.75rem 0.5rem;
   overflow: hidden;
+  box-sizing: border-box;
 }
 body.page-home.site-experience .home-main-split {
   align-items: start;
@@ -515,22 +549,34 @@ body.page-home.site-experience {
   margin: 0;
   padding: 0;
   background: transparent;
+  width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
 }
 .home-reveal { opacity: 1 !important; transform: none !important; }
 body.page-home.site-experience .jd-kpi-window-note { display: none; }
 body.page-home.site-experience .home-news-rail { position: relative; top: auto; max-height: none; }
-body.page-home.site-experience .site-header { position: relative; top: auto; }
+body.page-home.site-experience .site-header { position: relative; top: auto; width: 100%; }
+body.page-home.site-experience .hero.hero--command {
+  width: 100%;
+  margin-bottom: 0;
+}
 """
     )
     return "\n".join(chunks)
 
 
-def iframe_auto_height_script(*, root_selector: str = "body") -> str:
+def iframe_auto_height_script(*, root_selector: str = "body", extra_pad: int = 32) -> str:
     """Resize a Streamlit ``components.html`` iframe to its document height."""
     return f"""
 <script>
 (function () {{
   function measureHeight() {{
+    var hero = document.querySelector(".hero--command");
+    if (hero) {{
+      var top = document.body.getBoundingClientRect().top;
+      return Math.ceil(hero.getBoundingClientRect().bottom - top + {extra_pad});
+    }}
     var root = document.querySelector({root_selector!r}) || document.body;
     return Math.ceil(Math.max(
       root.scrollHeight,
@@ -539,7 +585,7 @@ def iframe_auto_height_script(*, root_selector: str = "body") -> str:
       document.documentElement.scrollHeight,
       document.body.offsetHeight,
       document.documentElement.offsetHeight
-    )) + 32;
+    )) + {extra_pad};
   }}
   function sendHeight() {{
     var h = measureHeight();
@@ -578,14 +624,21 @@ HOME_IFRAME_HEIGHT_SYNC_JS = """
         var isMarkets = inner.querySelector(".home-markets-stack");
         var isChrome = inner.querySelector(".hero--command");
         if (!isMarkets && !isChrome) return;
-        var h = Math.max(
-          inner.body.scrollHeight,
-          inner.documentElement.scrollHeight,
-          inner.body.offsetHeight
-        ) + 32;
-        if (h > 80) {
+        var h = 0;
+        if (isChrome) {{
+          var hero = inner.querySelector(".hero--command");
+          var top = inner.body.getBoundingClientRect().top;
+          h = Math.ceil(hero.getBoundingClientRect().bottom - top + 2);
+        }} else {{
+          h = Math.max(
+            inner.body.scrollHeight,
+            inner.documentElement.scrollHeight,
+            inner.body.offsetHeight
+          ) + 32;
+        }}
+        if (h > 80) {{
           frame.style.height = h + "px";
-        }
+        }}
       } catch (e) {}
     });
   }
@@ -740,7 +793,7 @@ def build_home_chrome_iframe_html(*, include_refresh: bool = False) -> str:
 </head>
 <body class="page-home site-experience">
 {body}
-{iframe_auto_height_script()}
+{iframe_auto_height_script(extra_pad=2)}
 </body>
 </html>"""
 
