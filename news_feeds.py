@@ -299,18 +299,20 @@ a.jd-nav-dd-item.jd-nav-dd-with-flyout {
 
 def render_home_top_bar(key_suffix: str = "page", *, is_landing: bool = False) -> None:
     """Site nav + GitHub Pages CSS on the landing page."""
-    from streamlit_site_parity import inject_site_styles, render_site_nav
+    from streamlit_site_parity import inject_site_styles, inject_streamlit_nav_router, render_site_nav
 
     _ = key_suffix
     inject_site_styles()
+    inject_streamlit_nav_router()
     render_site_nav(active="home", is_landing=is_landing)
 
 
 def render_subpage_top_bar(*, active: str = "home") -> None:
     """Same primary nav as static_home (Streamlit multipage routes)."""
-    from streamlit_site_parity import inject_site_styles, render_site_nav
+    from streamlit_site_parity import inject_site_styles, inject_streamlit_nav_router, render_site_nav
 
     inject_site_styles()
+    inject_streamlit_nav_router()
     render_site_nav(active=active, is_landing=False)
 
 

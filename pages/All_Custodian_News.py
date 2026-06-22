@@ -119,5 +119,4 @@ def main() -> None:
     render_subpage_footer(label="Custody headlines")
 
 
-if __name__ == "__main__":
-    main()
+main()

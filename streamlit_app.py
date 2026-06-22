@@ -37,6 +37,7 @@ from streamlit_site_parity import (
     build_home_footer_html,
     build_static_news_rail_html,
     inject_site_styles,
+    inject_streamlit_nav_router,
     render_home_chrome,
     render_home_hero_content_gap,
     render_home_markdown,
@@ -125,6 +126,7 @@ def main() -> None:
     _consume_home_refresh_query()
     _jd_consume_scroll_query()
     inject_site_styles(include_static=True)
+    inject_streamlit_nav_router()
 
     now = datetime.now(timezone.utc)
     footer_month = now.strftime("%b %Y")

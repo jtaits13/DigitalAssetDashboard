@@ -536,6 +536,13 @@ SUBPAGE_STREAMLIT_CSS = """
   opacity: 1 !important;
   transform: none !important;
 }
+.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"],
+.stApp:has(.streamlit-subpage-root) [data-testid="stVerticalBlock"],
+.stApp:has(.streamlit-subpage-root) [data-testid="stMarkdownContainer"] {
+  opacity: 1 !important;
+  visibility: visible !important;
+  max-height: none !important;
+}
 """
 
 
@@ -844,21 +851,74 @@ def iframe_jump_nav_script() -> str:
 STREAMLIT_SITE_NAV_ROUTER_JS = """
 <script>
 (function () {
-  var win = window;
-  function navigateFromMessage(href) {
+  var win = window.parent && window.parent.document ? window.parent : window;
+  var doc = win.document;
+  if (win.__jpmNavRouterBound) return;
+  win.__jpmNavRouterBound = true;
+
+  function isHomePath() {
+    var p = win.location.pathname || "/";
+    return p === "/" || p.endsWith("/");
+  }
+
+  function navigate(href) {
     href = String(href || "").trim();
     if (!href) return;
+    var scrollKey = null;
     try {
       var u = new URL(href, win.location.origin);
-      win.location.assign(u.pathname + u.search + u.hash);
+      scrollKey = u.searchParams.get("jd_scroll");
+      if (scrollKey && isHomePath() && typeof win.jpmPollScrollToHomeSection === "function") {
+        var map = {
+          top: "page-title",
+          news: "section-news",
+          tmmf: "section-tmmf",
+          stablecoins: "section-stablecoins",
+          onchain: "section-onchain",
+          rwa: "section-onchain",
+          markets: "section-markets",
+          etps: "section-markets",
+          crypto: "section-crypto"
+        };
+        var sectionId = map[scrollKey] || scrollKey;
+        if (sectionId.indexOf("section-") !== 0 && scrollKey === "top") {
+          sectionId = "page-title";
+        }
+        win.jpmPollScrollToHomeSection(sectionId, 120);
+        return;
+      }
+      win.top.location.href = u.pathname + u.search + u.hash;
     } catch (e) {
-      win.location.assign(href);
+      win.top.location.href = href;
     }
   }
+
+  function shouldHandleLink(a) {
+    if (!a) return false;
+    if (a.target === "_blank") return false;
+    var href = (a.getAttribute("href") || "").trim();
+    if (!href || href.charAt(0) === "#") return false;
+    if (/^https?:\\/\\//i.test(href)) return false;
+    return href.charAt(0) === "/" || href.charAt(0) === "?";
+  }
+
   win.addEventListener("message", function (ev) {
     if (!ev.data || ev.data.type !== "jpm-navigate") return;
-    navigateFromMessage(ev.data.href);
+    navigate(ev.data.href);
   });
+
+  doc.addEventListener(
+    "click",
+    function (ev) {
+      var a = ev.target.closest(
+        ".site-experience a, .page-back-below-header a, .back-link a, .home-chip, .btn-primary, .btn-secondary"
+      );
+      if (!shouldHandleLink(a)) return;
+      ev.preventDefault();
+      navigate(a.getAttribute("href"));
+    },
+    true
+  );
 })();
 </script>
 """
@@ -898,7 +958,7 @@ HOME_PAGE_SCROLL_JS = """
       var u = new URL(href, win.location.origin);
       scrollKey = u.searchParams.get("jd_scroll");
       if (u.searchParams.has("home_refresh")) {
-        win.location.assign(u.pathname + u.search);
+        win.top.location.href = u.pathname + u.search;
         return;
       }
     } catch (e) {}
@@ -915,9 +975,9 @@ HOME_PAGE_SCROLL_JS = """
 
     try {
       var target = new URL(href, win.location.origin);
-      win.location.assign(target.pathname + target.search + target.hash);
+      win.top.location.href = target.pathname + target.search + target.hash;
     } catch (e) {
-      win.location.assign(href);
+      win.top.location.href = href;
     }
   }
 
@@ -1546,10 +1606,20 @@ def _nav_link(href: str, label: str, *, active: bool = False, target: str = "") 
 
 
 def _page_href(key: str) -> str:
-    stem = Path(PAGES[key]).stem
     if key == "home":
         return "/?jd_scroll=top"
-    return f"/{stem}"
+    script_path = Path(PAGES[key])
+    if not script_path.is_absolute():
+        script_path = (_REPO / script_path).resolve()
+    try:
+        from streamlit.source_util import page_icon_and_name
+
+        _, url_path = page_icon_and_name(script_path)
+        if url_path:
+            return f"/{url_path}"
+    except Exception:
+        pass
+    return f"/{script_path.stem}"
 
 
 def render_site_nav_html(*, active: str = "home", is_landing: bool = False, for_streamlit: bool = False) -> str:

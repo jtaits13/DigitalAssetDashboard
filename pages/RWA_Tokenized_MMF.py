@@ -80,5 +80,4 @@ def main() -> None:
     st.caption(rwa_xyz_mirror_footer_text())
 
 
-if __name__ == "__main__":
-    main()
+main()

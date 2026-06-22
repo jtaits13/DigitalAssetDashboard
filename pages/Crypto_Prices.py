@@ -64,5 +64,4 @@ def main() -> None:
     render_subpage_footer(label="Crypto Prices")
 
 
-if __name__ == "__main__":
-    main()
+main()
