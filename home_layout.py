@@ -264,10 +264,12 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   max-width: 100% !important;
 }
 
+.stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.etp-mock-key-obs-block) .etp-mock-key-obs-block,
 .stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .etp-mock-key-obs-block {
   margin-bottom: var(--etp-mock-gap-lg, 1.2rem);
 }
 
+.stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.etp-mock-key-obs-block) .crypto-story-callout,
 .stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .etp-mock-key-obs-block .crypto-story-callout {
   display: block;
   margin: 0;
@@ -279,52 +281,75 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   box-shadow: 0 1px 4px rgb(var(--hx-etp-rgb, 62 92 116) / 0.08);
 }
 
+.stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.etp-mock-key-obs-block) .crypto-story-callout__title,
 .stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .etp-mock-key-obs-block .crypto-story-callout__title {
   margin: 0 0 0.55rem;
   padding-bottom: 0.45rem;
   border-bottom: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.14);
-  font-size: 0.9rem;
-  font-weight: 700;
+  font-size: 0.9rem !important;
+  font-weight: 700 !important;
   letter-spacing: 0.02em;
   text-transform: uppercase;
-  color: var(--hx-etp-dark, #31485c);
+  color: var(--hx-etp-dark, #31485c) !important;
+  line-height: 1.3 !important;
 }
 
+.stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.etp-mock-key-obs-block) .crypto-story-callout__dek,
+.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .etp-mock-key-obs-block .crypto-story-callout__dek {
+  margin: 0 0 0.55rem;
+  font-size: 0.78rem !important;
+  line-height: 1.45 !important;
+  color: var(--muted, #5a7084) !important;
+}
+
+.stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.etp-mock-key-obs-block) .crypto-story-callout__list,
 .stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .etp-mock-key-obs-block .crypto-story-callout__list {
   margin: 0;
   padding-left: 1.05rem;
-  font-size: 0.79rem;
-  line-height: 1.48;
-  color: var(--ink-soft, #1f4c67);
+  font-size: 0.79rem !important;
+  line-height: 1.48 !important;
+  color: var(--ink-soft, #1f4c67) !important;
 }
 
+.stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.etp-mock-key-obs-block) .crypto-story-callout__list li,
+.stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .etp-mock-key-obs-block .crypto-story-callout__list li {
+  font-size: 0.79rem !important;
+  line-height: 1.48 !important;
+  color: var(--ink-soft, #1f4c67) !important;
+}
+
+.stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.etp-mock-key-obs-block) .crypto-story-callout__list li + li,
 .stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .etp-mock-key-obs-block .crypto-story-callout__list li + li {
   margin-top: 0.4rem;
 }
 
+.stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.etp-mock-key-obs-block) .crypto-story-callout__list a,
 .stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .etp-mock-key-obs-block .crypto-story-callout__list a {
   color: var(--hx-etp-bright, #507188);
   font-weight: 600;
   text-decoration: none;
 }
 
+.stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.etp-mock-key-obs-block) .crypto-story-callout__list a:hover,
 .stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .etp-mock-key-obs-block .crypto-story-callout__list a:hover {
   color: var(--hx-etp, #3e5c74);
   text-decoration: underline;
   text-underline-offset: 0.12em;
 }
 
+.stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.etp-mock-key-obs-block) .crypto-story-callout__note,
 .stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .etp-mock-key-obs-block .crypto-story-callout__note {
   margin: 0.55rem 0 0;
   padding: 0.55rem 0.65rem;
   border-top: none;
   border-radius: 8px;
   background: rgb(var(--hx-etp-rgb, 62 92 116) / 0.06);
-  font-size: 0.73rem;
-  line-height: 1.45;
-  color: var(--muted, #5a7084);
+  font-size: 0.73rem !important;
+  line-height: 1.45 !important;
+  color: var(--muted, #5a7084) !important;
 }
 
+.stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.etp-mock-key-obs-block) .review-note.ko-disclaimer,
 .stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .etp-mock-key-obs-block .review-note.ko-disclaimer {
   margin: 0.5rem 0 0;
   padding: 0.38rem 0.55rem;

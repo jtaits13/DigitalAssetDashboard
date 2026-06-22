@@ -155,6 +155,7 @@
       return true;
     }
     var listHtml = ul.innerHTML;
+    var dekEl = temp.querySelector(".crypto-story-callout__dek");
     var noteEl = temp.querySelector(
       ".takeaways__note, .etp-takeaway-note, .rwa-gmo-takeaway-note, .crypto-story-callout__note"
     );
@@ -162,11 +163,13 @@
       ? '<p class="crypto-story-callout__note">' + noteEl.innerHTML + "</p>"
       : "";
     var reviewEl = temp.querySelector(".review-note");
+    var dekHtml = dekEl ? dekEl.outerHTML : "";
     host.innerHTML =
       '<aside class="crypto-story-callout" aria-labelledby="crypto-key-obs-title">' +
-      '<h3 class="crypto-story-callout__title" id="crypto-key-obs-title">' +
+      '<p class="crypto-story-callout__title" role="heading" aria-level="3" id="crypto-key-obs-title">' +
       escapeHtml(title) +
-      "</h3>" +
+      "</p>" +
+      dekHtml +
       '<ul class="crypto-story-callout__list">' +
       listHtml +
       "</ul>" +

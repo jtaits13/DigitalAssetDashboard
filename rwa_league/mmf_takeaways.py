@@ -336,6 +336,8 @@ def build_mmf_key_observations_html(
     """Key observations HTML from MMF data + industry headlines."""
     if not mmfs:
         return ""
+    from rwa_league.mmf import TMMF_KEY_OBS_DEK_HTML
+
     return build_key_observations_html(
         "tokenized_mmf",
         mmf_data_candidates(mmfs, net_rows),
@@ -344,4 +346,5 @@ def build_mmf_key_observations_html(
         min_bullets=3,
         max_bullets=5,
         variant="inner_page",
+        intro_dek_html=TMMF_KEY_OBS_DEK_HTML,
     )

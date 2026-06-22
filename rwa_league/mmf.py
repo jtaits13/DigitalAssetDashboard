@@ -39,6 +39,13 @@ TMMF_KPI_LEGEND_TEXT = (
     "KPIs, charts, and league tables use the same fund set."
 )
 
+TMMF_KEY_OBS_DEK_HTML = (
+    "Tokenized money market fund (MMF) exposure aggregated from "
+    "<strong>RWA.xyz</strong> US Treasuries and Non-U.S. Government Debt. "
+    "Networks and platforms are built from each fund's on-chain token deployments; "
+    "<strong>Distributed Value</strong> columns are current levels."
+)
+
 # Curated TMMF universe on RWA.xyz (17 funds; population table sorted by total value).
 MMF_FUND_SLUGS: tuple[str, ...] = (
     "blackrock-usd-institutional-digital-liquidity-fund",  # BlackRock USD Institutional Digital Liquidity Fund

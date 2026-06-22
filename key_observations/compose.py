@@ -97,6 +97,7 @@ def render_observations_html(
     context_note: str,
     variant: Variant = "boxed",
     include_disclaimer: bool = True,
+    intro_dek_html: str = "",
 ) -> str:
     if not selected:
         return ""
@@ -108,9 +109,16 @@ def render_observations_html(
     note = f'<p class="takeaways__note">{note_text}</p>'
     review = key_observations_disclaimer_html() if include_disclaimer else ""
     if variant == "inner_page":
+        dek = (
+            f'<p class="crypto-story-callout__dek">{intro_dek_html.strip()}</p>'
+            if intro_dek_html.strip()
+            else ""
+        )
         return (
             '<aside class="crypto-story-callout" aria-labelledby="key-obs-callout-title">'
-            '<h3 class="crypto-story-callout__title" id="key-obs-callout-title">Key observations</h3>'
+            '<p class="crypto-story-callout__title" role="heading" aria-level="3" '
+            'id="key-obs-callout-title">Key observations</p>'
+            f"{dek}"
             f'<ul class="crypto-story-callout__list">{items}</ul>'
             f'<p class="crypto-story-callout__note">{note_text}</p>'
             "</aside>"
@@ -142,6 +150,7 @@ def build_key_observations_html(
     variant: Variant = "boxed",
     include_monthly_review: bool | None = None,
     pin_candidate_ids: tuple[str, ...] = (),
+    intro_dek_html: str = "",
 ) -> str:
     """Merge data-driven and headline-driven candidates; pick the highest-scoring set."""
     theme_key = resolve_topic_key(topic)
@@ -174,4 +183,5 @@ def build_key_observations_html(
         context_note=context_note,
         variant=variant,
         include_disclaimer=include_disclaimer,
+        intro_dek_html=intro_dek_html,
     )

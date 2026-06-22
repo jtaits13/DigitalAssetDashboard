@@ -1131,6 +1131,16 @@
   color: var(--hx-etp-dark);
 }
 
+.mock-etp-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__dek,
+.mock-crypto-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__dek,
+.mock-tmmf-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__dek,
+.mock-stable-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__dek {
+  margin: 0 0 0.55rem;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
 .mock-etp-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__list,
 .mock-crypto-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__list,
 .mock-tmmf-inner.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout__list,
