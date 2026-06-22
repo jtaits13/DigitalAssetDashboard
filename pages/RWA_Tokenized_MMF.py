@@ -11,9 +11,16 @@ if str(_REPO) not in sys.path:
 
 import streamlit as st
 
-from home_layout import ETP_FULLPAGE_AUM_LINE_CSS, KPI_WINDOW_NOTE_CSS, STREAMLIT_TABLE_UNIFY_CSS
+from home_layout import (
+    ETP_FULLPAGE_AUM_LINE_CSS,
+    KPI_WINDOW_NOTE_CSS,
+    STREAMLIT_TABLE_UNIFY_CSS,
+    STREAMLIT_TMMF_SUBPAGE_CSS,
+)
+from news_feeds import article_styles_markdown
 from rwa_league.widgets import WIDGET_CSS, show_rwa_mmf_widget
 from streamlit_site_parity import (
+    _streamlit_page_href,
     close_subpage_layout,
     configure_subpage,
     inner_page_zone_close,
@@ -52,6 +59,7 @@ def main() -> None:
         section_id="tmmf-full",
         badge="MMF",
         title="Tokenized Money Market Funds",
+        subtitle_class="section-dek section-dek--wide page-intro__dek",
         subtitle_html=(
             "Aggregated view of tokenized money market funds from a "
             "<strong>fixed curated population</strong> on "
@@ -63,22 +71,29 @@ def main() -> None:
         zone_classes="zone--tmmf home-zone home-zone--tmmf etp-mock-zone",
         related_chips=related_chips_html(
             ("/?jd_scroll=tmmf", "Home TMMF preview"),
-            ("/RWA_Stablecoins", "Stablecoins"),
-            ("/US_Crypto_ETPs", "U.S. ETPs"),
-            ("/RWA_Global_Market_Overview", "RWA market overview"),
+            (_streamlit_page_href("stablecoins"), "Stablecoins"),
+            (_streamlit_page_href("etps"), "U.S. ETPs"),
+            (_streamlit_page_href("rwa_global"), "RWA market overview"),
         ),
         body_class="inner-rich-zone__body etp-mock-zone__body",
     )
+    inner_page_zone_close()
     st.markdown(
-        WIDGET_CSS + KPI_WINDOW_NOTE_CSS + STREAMLIT_TABLE_UNIFY_CSS + ETP_FULLPAGE_AUM_LINE_CSS,
+        article_styles_markdown()
+        + STREAMLIT_TMMF_SUBPAGE_CSS
+        + WIDGET_CSS
+        + KPI_WINDOW_NOTE_CSS
+        + STREAMLIT_TABLE_UNIFY_CSS
+        + ETP_FULLPAGE_AUM_LINE_CSS,
         unsafe_allow_html=True,
     )
+    st.markdown('<div class="tmmf-streamlit-zone-body">', unsafe_allow_html=True)
     show_rwa_mmf_widget(
         home_preview=False,
         full_page_header=True,
         full_page_key_observations_html=_mmf_takeaway_html(),
     )
-    inner_page_zone_close()
+    st.markdown("</div>", unsafe_allow_html=True)
     close_subpage_layout(
         back_href="/?jd_scroll=tmmf",
         back_label="← Back to home · TMMF preview",

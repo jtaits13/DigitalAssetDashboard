@@ -14,7 +14,9 @@ from home_layout import (
     RwaExploreTopNavTarget,
     hub_section_anchor,
     hub_subsection_heading_html,
+    inner_subsection_heading_html,
     set_rwa_explore_top_nav_target,
+    subpage_toolbar_note_html,
 )
 from news_feeds import hub_news_panel_header_html
 
@@ -71,9 +73,22 @@ APP_TREASURIES = "https://app.rwa.xyz/treasuries"
 APP_ASSET_MANAGERS = "https://app.rwa.xyz/asset-managers"
 
 
-def _inject_full_page_key_observations(html: str | None) -> None:
+def _inject_full_page_key_observations(
+    html: str | None,
+    *,
+    inner_page_style: bool = False,
+) -> None:
     """Render Key Observations after Top-Line Market Snapshot when ``html`` is provided (full asset pages)."""
     if not html:
+        return
+    if inner_page_style:
+        st.markdown(
+            '<div class="inner-rich-block etp-mock-key-obs-block" aria-labelledby="jd-mmf-key-obs-h">'
+            '<h2 class="subsection-head u-vh" id="jd-mmf-key-obs-h">Key Observations</h2>',
+            unsafe_allow_html=True,
+        )
+        st.markdown(html, unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
         return
     st.markdown(hub_subsection_heading_html("Key Observations"), unsafe_allow_html=True)
     st.markdown(html, unsafe_allow_html=True)
@@ -370,6 +385,7 @@ def _render_rwa_treasuries_overview(
     *,
     overview_title: str = "US Treasuries",
     show_kpi_legend: bool = True,
+    inner_page_style: bool = False,
 ) -> None:
     """Overview KPI row for US Treasuries or Tokenized Stocks embed (same tile layout as Global Market)."""
     if not kpis:
@@ -388,14 +404,23 @@ def _render_rwa_treasuries_overview(
             f"{delta_html}"
             "</div>"
         )
-    row = "<div class='rwa-kpi-row'>" + "".join(cells) + "</div>"
+    row = "".join(cells)
     legend = _rwa_kpi_window_note_html(overview_title=overview_title) if show_kpi_legend else ""
-    treasuries_kpi_html = (
-        f'<div class="rwa-kpi-wrap" style="{_RWA_KPI_PANEL_INLINE_STYLE}">'
-        + f"{legend}"
-        + f"{row}"
-        + "</div>"
-    )
+    if inner_page_style:
+        treasuries_kpi_html = (
+            '<div class="rwa-kpi-panel-static">'
+            + f"{legend}"
+            + f"<div class='rwa-kpi-row rwa-kpi-row--home-grid'>{row}</div>"
+            + "</div>"
+        )
+    else:
+        row = "<div class='rwa-kpi-row'>" + row + "</div>"
+        treasuries_kpi_html = (
+            f'<div class="rwa-kpi-wrap" style="{_RWA_KPI_PANEL_INLINE_STYLE}">'
+            + f"{legend}"
+            + f"{row}"
+            + "</div>"
+        )
     st.html(treasuries_kpi_html)
 
 
@@ -2307,9 +2332,27 @@ def show_rwa_mmf_widget(
         return
 
     if not home_preview:
-        st.markdown(hub_subsection_heading_html("Top-Line Market Snapshot"), unsafe_allow_html=True)
-    _render_rwa_treasuries_overview(kpis_m, overview_title="Tokenized Money Market Funds", show_kpi_legend=not home_preview)
-    _inject_full_page_key_observations(full_page_key_observations_html)
+        inner_page = full_page_header
+        if inner_page:
+            st.markdown(
+                '<section class="etp-mock-snapshot" aria-labelledby="jd-mmf-snapshot-h">'
+                '<h2 class="subsection-head u-vh" id="jd-mmf-snapshot-h">Top-line snapshot</h2>',
+                unsafe_allow_html=True,
+            )
+        else:
+            st.markdown(hub_subsection_heading_html("Top-Line Market Snapshot"), unsafe_allow_html=True)
+        _render_rwa_treasuries_overview(
+            kpis_m,
+            overview_title="Tokenized Money Market Funds",
+            show_kpi_legend=not home_preview,
+            inner_page_style=inner_page,
+        )
+        _inject_full_page_key_observations(
+            full_page_key_observations_html,
+            inner_page_style=inner_page,
+        )
+        if inner_page:
+            st.markdown("</section>", unsafe_allow_html=True)
 
     if rows_m:
         if home_preview:
@@ -2318,6 +2361,21 @@ def show_rwa_mmf_widget(
             if zone_layout:
                 st.markdown('<p class="home-table-caption">Funds preview</p>', unsafe_allow_html=True)
         else:
+            inner_page = full_page_header
+            if inner_page:
+                st.markdown(
+                    '<section class="etp-mock-table-block tmmf-mock-league-block rwa-deep-league-panel" '
+                    'aria-labelledby="net-heading">'
+                    + inner_subsection_heading_html("Networks", element_id="net-heading")
+                    + '<p class="tmmf-mock-league-intro">Aggregated <strong>distributed value</strong> by chain '
+                    "for the curated TMMF fund population.</p>",
+                    unsafe_allow_html=True,
+                )
+            elif not zone_layout:
+                st.markdown(
+                    f'<div class="jd-hub-subsection-head"><h2 class="{h2_sub}">By network (Tokenized MMFs)</h2></div>',
+                    unsafe_allow_html=True,
+                )
             q = st.text_input(
                 "Search network table",
                 "",
@@ -2325,13 +2383,17 @@ def show_rwa_mmf_widget(
                 placeholder="Filter by network name…",
             )
             working = filter_treasury_network_rows(rows_m, q)
-            st.caption(
+            note = (
                 f"Showing {len(working)} of {len(rows_m)} networks (Tokenized MMFs)."
                 if q.strip()
                 else f"Showing all {len(working)} networks (Tokenized MMFs)."
             )
+            if inner_page:
+                st.markdown(subpage_toolbar_note_html(note), unsafe_allow_html=True)
+            else:
+                st.caption(note)
             table_h = rwa_table_height(len(working), max_h=900)
-        if not zone_layout:
+        if home_preview and not zone_layout:
             st.markdown(
                 f'<div class="jd-hub-subsection-head"><h2 class="{h2_sub}">By network (Tokenized MMFs)</h2></div>',
                 unsafe_allow_html=True,
@@ -2340,11 +2402,31 @@ def show_rwa_mmf_widget(
         if home_preview:
             _show_us_treasury_network_dataframe(df_m, height=table_h)
         else:
-            st.caption(MMF_NETWORK_CAPTION)
             _show_us_treasury_network_dataframe(df_m, height=table_h)
+            if full_page_header:
+                st.markdown(
+                    f'<p class="source-cap timestamp-foot">{escape(MMF_NETWORK_CAPTION)}</p>',
+                    unsafe_allow_html=True,
+                )
+            else:
+                st.caption(MMF_NETWORK_CAPTION)
+            if full_page_header:
+                st.markdown("</section>", unsafe_allow_html=True)
 
     if plat_m and not home_preview:
-        st.divider()
+        inner_page = full_page_header
+        if inner_page:
+            st.markdown('<hr class="jd-divider" aria-hidden="true" />', unsafe_allow_html=True)
+            st.markdown(
+                '<section class="etp-mock-table-block tmmf-mock-league-block rwa-deep-league-panel" '
+                'aria-labelledby="plat-heading">'
+                + inner_subsection_heading_html("Platforms", element_id="plat-heading")
+                + '<p class="tmmf-mock-league-intro">Grouped by <strong>asset manager</strong> (issuer) for the '
+                "same curated TMMF fund population.</p>",
+                unsafe_allow_html=True,
+            )
+        else:
+            st.divider()
         qp = st.text_input(
             "Search platform table",
             "",
@@ -2352,18 +2434,30 @@ def show_rwa_mmf_widget(
             placeholder="Filter by platform name…",
         )
         working_p = filter_treasury_platform_rows(plat_m, qp)
-        st.caption(
+        note_p = (
             f"Showing {len(working_p)} of {len(plat_m)} platforms (Tokenized MMFs)."
             if qp.strip()
             else f"Showing all {len(working_p)} platforms (Tokenized MMFs)."
         )
-        st.markdown(
-            hub_subsection_heading_html("By platform (Tokenized MMFs · Asset managers)"),
-            unsafe_allow_html=True,
-        )
+        if inner_page:
+            st.markdown(subpage_toolbar_note_html(note_p), unsafe_allow_html=True)
+        else:
+            st.caption(note_p)
+        if not inner_page:
+            st.markdown(
+                hub_subsection_heading_html("By platform (Tokenized MMFs · Asset managers)"),
+                unsafe_allow_html=True,
+            )
         df_p = build_us_treasury_platform_dataframe(working_p)
         _show_us_treasury_platform_dataframe(df_p, height=rwa_table_height(len(working_p), max_h=900))
-        st.caption(MMF_PLATFORM_CAPTION)
+        if inner_page:
+            st.markdown(
+                f'<p class="source-cap timestamp-foot">{escape(MMF_PLATFORM_CAPTION)}</p>',
+                unsafe_allow_html=True,
+            )
+            st.markdown("</section>", unsafe_allow_html=True)
+        else:
+            st.caption(MMF_PLATFORM_CAPTION)
 
     if home_preview:
         if st.button(
@@ -2376,7 +2470,11 @@ def show_rwa_mmf_widget(
         if not zone_layout:
             st.link_button(MMF_RWA_LINK_LABEL, APP_TREASURIES, use_container_width=True, key="rwa_mmf_link_home")
     else:
+        if full_page_header:
+            st.markdown('<div class="cta-row etp-mock-bottom-cta">', unsafe_allow_html=True)
         st.link_button(MMF_RWA_LINK_LABEL, APP_TREASURIES, use_container_width=True, key="rwa_mmf_link_full")
+        if full_page_header:
+            st.markdown("</div>", unsafe_allow_html=True)
 
 
 def show_rwa_tokenized_stocks_widget(

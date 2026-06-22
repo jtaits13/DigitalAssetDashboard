@@ -508,6 +508,11 @@ def _patch_inner_page_css_for_streamlit(css: str) -> str:
         r".stApp .streamlit-subpage-root.\1, body.\1",
         css,
     )
+    css = re.sub(
+        r"(?<![\w.-])\.(mock-[a-z0-9-]*inner)",
+        r".stApp .streamlit-subpage-root.\1, .\1",
+        css,
+    )
     return css
 
 
@@ -1532,6 +1537,7 @@ def inner_page_zone_open(
     title: str,
     subtitle: str = "",
     subtitle_html: str = "",
+    subtitle_class: str = "page-intro__dek",
     zone_classes: str = "",
     related_chips: str = "",
     body_class: str = "inner-rich-zone__body",
@@ -1548,7 +1554,7 @@ def inner_page_zone_open(
     <span class="home-zone__badge" aria-hidden="true">{escape(badge)}</span>
     <div class="home-zone__titles">
       <h1 class="page-intro__title" id="{escape(section_id)}-heading">{escape(title)}</h1>
-      <p class="page-intro__dek">{dek}</p>
+      <p class="{escape(subtitle_class)}">{dek}</p>
     </div>
   </header>
   <div class="home-zone__body {body_class}">

@@ -87,6 +87,219 @@ ETP_FULLPAGE_AUM_LINE_CSS = """
 </style>
 """
 
+STREAMLIT_TMMF_SUBPAGE_CSS = """
+<style>
+/* Streamlit TMMF inner page — parity with static_home/rwa-tokenized-mmf.html */
+
+.stApp .mock-tmmf-inner .inner-rich-zone.etp-mock-zone {
+  margin-bottom: 0;
+  border-bottom: none;
+  border-radius: 14px 14px 0 0;
+}
+
+.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body {
+  margin: 0 0 1.25rem;
+  padding: 0.2rem 1.25rem 1.35rem;
+  border: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.2);
+  border-top: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.12);
+  border-radius: 0 0 14px 14px;
+  background: linear-gradient(
+    180deg,
+    rgb(var(--hx-etp-rgb, 62 92 116) / 0.06) 0%,
+    rgba(255, 255, 255, 0.98) 100%
+  );
+  box-shadow:
+    0 1px 2px rgb(var(--hx-etp-rgb, 62 92 116) / 0.05),
+    0 10px 28px rgb(var(--hx-etp-rgb, 62 92 116) / 0.07);
+}
+
+.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body .etp-mock-snapshot {
+  margin-bottom: var(--etp-mock-gap, 1rem);
+}
+
+.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body .jd-hub-subsection-head {
+  display: none;
+}
+
+.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body .inner-table-head {
+  margin-bottom: 0.35rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.14);
+}
+
+.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body .subsection-head {
+  margin: 0;
+  color: var(--hx-etp-dark, #31485c);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body .tmmf-mock-league-intro {
+  margin: 0 0 0.75rem;
+  max-width: 52rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--ink-muted, #4a5f73);
+}
+
+.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body .tmmf-mock-league-intro strong {
+  color: var(--hx-etp-dark, #31485c);
+}
+
+.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body .etp-mock-table-block {
+  margin-top: 0.15rem;
+  padding-top: var(--etp-mock-gap-lg, 1.2rem);
+  border-top: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.12);
+}
+
+.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body .etp-mock-table-block.tmmf-mock-league-block {
+  margin-top: 0;
+  padding: 0.95rem 1rem 1rem;
+  border: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.16);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgb(var(--hx-etp-rgb, 62 92 116) / 0.06);
+  margin-bottom: var(--etp-mock-gap-lg, 1.2rem);
+}
+
+.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body hr.jd-divider {
+  border: none;
+  border-top: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.14);
+  margin: 0.35rem 0 var(--etp-mock-gap-lg, 1.2rem);
+}
+
+.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body .etp-mock-key-obs-block {
+  margin-bottom: var(--etp-mock-gap-lg, 1.2rem);
+}
+
+.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body .etp-mock-key-obs-block .crypto-story-callout {
+  margin: 0;
+  padding: 1rem 1.1rem 0.9rem;
+  border: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.22);
+  border-left: 4px solid var(--hx-etp-bright, #507188);
+  border-radius: 10px;
+  background: linear-gradient(160deg, rgb(var(--hx-etp-rgb, 62 92 116) / 0.07) 0%, #fff 55%);
+  box-shadow: 0 1px 4px rgb(var(--hx-etp-rgb, 62 92 116) / 0.08);
+}
+
+.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body .crypto-story-callout__title {
+  margin-bottom: 0.55rem;
+  padding-bottom: 0.45rem;
+  border-bottom: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.14);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--hx-etp-dark, #31485c);
+}
+
+.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body .crypto-story-callout__list {
+  margin: 0;
+  padding-left: 1.05rem;
+  font-size: 0.79rem;
+  line-height: 1.48;
+}
+
+.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body .crypto-story-callout__list a {
+  color: var(--hx-etp-bright, #507188);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body .crypto-story-callout__note,
+.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body .review-note.ko-disclaimer {
+  margin-top: 0.55rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: 8px;
+  background: rgb(var(--hx-etp-rgb, 62 92 116) / 0.06);
+  font-size: 0.73rem;
+  line-height: 1.45;
+  color: var(--muted, #5a7084);
+}
+
+.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body .jd-kpi-window-note,
+.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body .etp-mock-snapshot__note {
+  margin: 0.5rem 0 0;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: var(--muted, #5a7084);
+}
+
+.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body [data-testid="stTextInput"] label p {
+  font-size: 0.78rem !important;
+  font-weight: 600 !important;
+  color: var(--hx-etp-dark, #31485c) !important;
+  margin-bottom: 0.3rem !important;
+}
+
+.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body [data-testid="stTextInput"] input {
+  max-width: 32rem;
+  font-size: 0.875rem !important;
+  border-color: rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.22) !important;
+}
+
+.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body [data-testid="stTextInput"] input:focus {
+  border-color: var(--hx-etp-bright, #507188) !important;
+  box-shadow: 0 0 0 3px rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.14) !important;
+}
+
+.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body p.jd-subpage-toolbar-note {
+  font-size: 0.78rem;
+  color: var(--muted, #5a7084);
+  margin: 0.35rem 0 0.65rem;
+}
+
+.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body [data-testid="stCaptionContainer"] {
+  font-size: 0.72rem !important;
+  color: var(--muted, #5a7084) !important;
+  line-height: 1.45 !important;
+  max-width: 52rem;
+  margin: 0.5rem 0 0.65rem !important;
+}
+
+.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body div[data-testid="stDataFrame"] {
+  font-size: 0.78rem;
+  width: 100%;
+  max-width: 100%;
+}
+
+.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body div[data-testid="stDataFrame"] [role="columnheader"],
+.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body div[data-testid="stDataFrame"] [role="gridcell"] {
+  font-size: 0.78rem !important;
+}
+
+.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body [data-testid="stLinkButton"] a {
+  background: var(--hx-etp-bright, #507188) !important;
+  border-color: rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.35) !important;
+  color: #fff !important;
+  font-size: 0.82rem !important;
+  font-weight: 600 !important;
+  max-width: 20rem;
+}
+
+.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body [data-testid="stLinkButton"] {
+  margin-top: var(--etp-mock-gap-lg, 1.2rem);
+}
+
+.stApp .mock-tmmf-inner .tmmf-streamlit-zone-body [data-testid="stVerticalBlock"] > div {
+  max-width: 100%;
+}
+
+.stApp .mock-tmmf-inner .page-intro__dek.section-dek--wide {
+  margin: 0;
+  max-width: 52rem;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--ink-muted, #4a5f73);
+}
+
+.stApp .mock-tmmf-inner .page-intro__dek.section-dek--wide strong {
+  color: var(--hx-etp-dark, #31485c);
+}
+</style>
+"""
+
 HOME_PAGE_LAYOUT_CSS = """
 <style>
 /* Hub hierarchy: h1 → major section band (largest body heading) → lane/widget (smaller) → dek (smallest) */
@@ -346,6 +559,22 @@ def hub_subsection_heading_html(text: str, *, element_id: Optional[str] = None) 
     return (
         f'<div class="jd-hub-subsection-head"{id_attr}>'
         f'<h2 class="home-main-heading">{escape(text)}</h2></div>'
+    )
+
+
+def inner_subsection_heading_html(
+    text: str,
+    *,
+    element_id: Optional[str] = None,
+    heading_level: int = 2,
+) -> str:
+    """GitHub Pages inner-table heading (``subsection-head`` inside ``inner-table-head``)."""
+    tag = f"h{max(2, min(4, heading_level))}"
+    id_attr = f' id="{escape(element_id, quote=True)}"' if element_id else ""
+    return (
+        f'<div class="inner-table-head">'
+        f'<{tag} class="subsection-head rwa-split-table-head__title"{id_attr}>{escape(text)}</{tag}>'
+        f"</div>"
     )
 
 
