@@ -540,9 +540,11 @@ body.page-home.site-experience .home-news-rail {{
   position: relative;
   top: auto;
   max-height: none;
-  overflow: visible;
   align-self: start;
   margin-top: 0;
+}}
+body.page-home.site-experience .home-news-rail--terminal {{
+  overflow: hidden;
 }}
 body.page-home.site-experience .home-markets-stack {{
   display: block !important;

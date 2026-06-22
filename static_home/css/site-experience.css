@@ -815,6 +815,8 @@
 
 /* —— News rail (high-contrast dark panel) —— */
 .site-experience.page-home .home-news-rail--terminal {
+  position: relative;
+  overflow: hidden;
   background: linear-gradient(175deg, var(--hx-news-bg) 0%, var(--hx-news-surface) 100%);
   border: 1px solid rgba(143, 190, 210, 0.22);
   border-radius: 14px;
@@ -827,11 +829,15 @@
 
 .site-experience.page-home .home-news-rail--terminal::before {
   content: "";
-  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   height: 3px;
-  margin: -1.1rem -1rem 0.85rem;
+  margin: 0;
   border-radius: 14px 14px 0 0;
   background: linear-gradient(90deg, var(--hx-crypto-bright), var(--hx-rwa-bright) 55%, transparent);
+  pointer-events: none;
 }
 
 .site-experience.page-home .home-news-rail--terminal .band-label.teal {
