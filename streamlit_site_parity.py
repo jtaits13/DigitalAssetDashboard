@@ -22,7 +22,7 @@ _STATIC = _REPO / "static_home"
 HOME_NEWS_LIMIT = 4
 HOME_PREVIEW_ROWS = 5
 # Small seam between chrome iframe and body (avoids overlap with jump nav).
-HOME_HERO_TO_CONTENT_GAP = "4px"
+HOME_HERO_TO_CONTENT_GAP = "2px"
 HOME_CHROME_IFRAME_INITIAL_HEIGHT = 360
 # Extra pixels so jump-nav pills are not clipped by the chrome iframe edge.
 HOME_CHROME_HEIGHT_SLACK_PX = 10
