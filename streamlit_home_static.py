@@ -615,7 +615,7 @@ def iter_home_markets_stack_html(
 
 def build_home_body_iframe_html(*, news_rail: str, **zone_data: Any) -> str:
     """News Hub + markets: news sets row height; markets column scrolls internally."""
-    from streamlit_site_parity import _cached_iframe_body_stylesheet
+    from streamlit_site_parity import _cached_iframe_body_stylesheet, iframe_internal_link_script
 
     markets = "".join(iter_home_markets_stack_html(**zone_data))
     css = _cached_iframe_body_stylesheet()
@@ -683,9 +683,6 @@ def build_home_body_iframe_html(*, news_rail: str, **zone_data: Any) -> str:
     }}
   }}
   window.syncHomeSplitHeights = syncHomeSplitHeights;
-  document.querySelectorAll('a[href^="/"]').forEach(function (a) {{
-    a.target = "_top";
-  }});
   bindFilters();
   syncHomeSplitHeights();
   window.addEventListener("load", function () {{
@@ -699,6 +696,7 @@ def build_home_body_iframe_html(*, news_rail: str, **zone_data: Any) -> str:
   [100, 400, 1000].forEach(function (ms) {{ setTimeout(syncHomeSplitHeights, ms); }});
 }})();
 </script>
+{iframe_internal_link_script()}
 </body>
 </html>"""
 

@@ -695,6 +695,53 @@ body.page-home.site-experience .hero.hero--command {
     return "\n".join(chunks)
 
 
+def iframe_internal_link_script() -> str:
+    """
+    Streamlit ``components.html`` iframes are sandboxed without ``allow-top-navigation``,
+    so ``target="_top"`` is ignored. Intercept internal links and ask the host to navigate.
+    """
+    return """
+<script>
+(function () {
+  function normalizeHref(href) {
+    href = String(href || "").trim();
+    if (!href) return "";
+    if (href.charAt(0) === "/") return href;
+    if (href.charAt(0) === "?") return "/" + href;
+    return href;
+  }
+  function isRoutable(href) {
+    if (!href) return false;
+    href = href.trim();
+    if (href.charAt(0) === "#") return false;
+    if (/^https?:\\/\\//i.test(href)) return false;
+    if (href.charAt(0) === "/" || href.charAt(0) === "?") return true;
+    return false;
+  }
+  function bindInternalLinks() {
+    document.querySelectorAll("a[href]").forEach(function (a) {
+      if (a.dataset.jpmNavBound) return;
+      var href = a.getAttribute("href") || "";
+      if (!isRoutable(href)) return;
+      if (a.classList.contains("home-jump-nav__link")) return;
+      a.dataset.jpmNavBound = "1";
+      a.addEventListener("click", function (ev) {
+        ev.preventDefault();
+        try {
+          window.parent.postMessage(
+            { type: "jpm-navigate", href: normalizeHref(href) },
+            "*"
+          );
+        } catch (e) {}
+      });
+    });
+  }
+  bindInternalLinks();
+  window.addEventListener("load", bindInternalLinks);
+})();
+</script>"""
+
+
 def iframe_jump_nav_script() -> str:
     """Hero jump pills: post section id to parent (zones live in the body iframe)."""
     return """
@@ -745,11 +792,85 @@ def iframe_jump_nav_script() -> str:
 </script>"""
 
 
+STREAMLIT_SITE_NAV_ROUTER_JS = """
+<script>
+(function () {
+  var win = window;
+  function navigateFromMessage(href) {
+    href = String(href || "").trim();
+    if (!href) return;
+    try {
+      var u = new URL(href, win.location.origin);
+      win.location.assign(u.pathname + u.search + u.hash);
+    } catch (e) {
+      win.location.assign(href);
+    }
+  }
+  win.addEventListener("message", function (ev) {
+    if (!ev.data || ev.data.type !== "jpm-navigate") return;
+    navigateFromMessage(ev.data.href);
+  });
+})();
+</script>
+"""
+
+
 HOME_PAGE_SCROLL_JS = """
 <script>
 (function () {
   var win = window.parent && window.parent.document ? window.parent : window;
   var doc = win.document;
+  var JD_SCROLL_MAP = {
+    top: "page-title",
+    news: "section-news",
+    tmmf: "section-tmmf",
+    stablecoins: "section-stablecoins",
+    onchain: "section-onchain",
+    rwa: "section-onchain",
+    markets: "section-markets",
+    etps: "section-markets",
+    crypto: "section-crypto",
+    market: "section-markets",
+    rwa_global_market: "section-onchain",
+    rwa_explore_asset_type: "section-onchain",
+    rwa_explore_market_participant: "section-onchain"
+  };
+
+  function isHomePath() {
+    var p = win.location.pathname || "/";
+    return p === "/" || p.endsWith("/");
+  }
+
+  function navigateFromMessage(href) {
+    href = String(href || "").trim();
+    if (!href) return;
+    var scrollKey = null;
+    try {
+      var u = new URL(href, win.location.origin);
+      scrollKey = u.searchParams.get("jd_scroll");
+      if (u.searchParams.has("home_refresh")) {
+        win.location.assign(u.pathname + u.search);
+        return;
+      }
+    } catch (e) {}
+
+    if (scrollKey && isHomePath()) {
+      var sectionId = JD_SCROLL_MAP[scrollKey] || scrollKey;
+      if (sectionId.indexOf("section-") !== 0 && scrollKey === "top") {
+        sectionId = "page-title";
+      }
+      if (sectionId !== "page-title") setActiveSection(sectionId);
+      if (!scrollToSection(sectionId)) pollScroll(sectionId, 120);
+      return;
+    }
+
+    try {
+      var target = new URL(href, win.location.origin);
+      win.location.assign(target.pathname + target.search + target.hash);
+    } catch (e) {
+      win.location.assign(href);
+    }
+  }
 
   function findBodyFrame() {
     var match = null;
@@ -913,7 +1034,12 @@ HOME_PAGE_SCROLL_JS = """
   }
 
   win.addEventListener("message", function (ev) {
-    if (!ev.data || ev.data.type !== "jpm-home-scroll") return;
+    if (!ev.data) return;
+    if (ev.data.type === "jpm-navigate") {
+      navigateFromMessage(ev.data.href);
+      return;
+    }
+    if (ev.data.type !== "jpm-home-scroll") return;
     var id = String(ev.data.sectionId || "").trim();
     if (!id) return;
     setActiveSection(id);
@@ -1174,6 +1300,11 @@ def inject_subpage_styles(*, kind: str = "article") -> None:
     )
 
 
+def inject_streamlit_nav_router() -> None:
+    """Host-side router for iframe ``jpm-navigate`` messages (sandbox blocks target=_top)."""
+    components.html(STREAMLIT_SITE_NAV_ROUTER_JS, height=0, width=0)
+
+
 def configure_subpage(*, page_title: str, active: str, style_kind: str = "article") -> None:
     """Shared subpage setup: collapsed sidebar, nav, and static/inner CSS."""
     st.set_page_config(
@@ -1183,6 +1314,7 @@ def configure_subpage(*, page_title: str, active: str, style_kind: str = "articl
         initial_sidebar_state="collapsed",
     )
     inject_subpage_styles(kind=style_kind)
+    inject_streamlit_nav_router()
     render_site_nav(active=active, is_landing=False)
 
 
@@ -1327,6 +1459,7 @@ def build_home_chrome_iframe_html(*, include_refresh: bool = False) -> str:
 {body}
 {iframe_chrome_height_script()}
 {iframe_jump_nav_script()}
+{iframe_internal_link_script()}
 </body>
 </html>"""
 
