@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from contextlib import nullcontext
 from html import escape
 from typing import TYPE_CHECKING
 
@@ -2349,7 +2350,7 @@ def show_rwa_mmf_widget(
 
     if not home_preview:
         inner_page = full_page_header
-        if inner_page and not flat_streamlit_layout:
+        if inner_page:
             st.markdown(
                 '<section class="etp-mock-snapshot" aria-labelledby="jd-mmf-snapshot-h">'
                 '<h2 class="subsection-head u-vh" id="jd-mmf-snapshot-h">Top-line snapshot</h2>',
@@ -2374,7 +2375,7 @@ def show_rwa_mmf_widget(
             full_page_key_observations_html,
             inner_page_style=inner_page,
         )
-        if inner_page and not flat_streamlit_layout:
+        if inner_page:
             st.markdown("</section>", unsafe_allow_html=True)
 
     if rows_m:
@@ -2383,120 +2384,135 @@ def show_rwa_mmf_widget(
             table_h = rwa_table_height(len(working))
             if zone_layout:
                 st.markdown('<p class="home-table-caption">Funds preview</p>', unsafe_allow_html=True)
-        else:
-            inner_page = full_page_header
-            if inner_page and flat_streamlit_layout:
-                st.markdown(
-                    inner_subsection_heading_html("Networks", element_id="net-heading")
-                    + '<p class="tmmf-mock-league-intro">Aggregated <strong>distributed value</strong> by chain '
-                    "for the curated TMMF fund population.</p>",
-                    unsafe_allow_html=True,
-                )
-            elif inner_page:
-                st.markdown(
-                    '<section class="etp-mock-table-block tmmf-mock-league-block rwa-deep-league-panel" '
-                    'aria-labelledby="net-heading">'
-                    + inner_subsection_heading_html("Networks", element_id="net-heading")
-                    + '<p class="tmmf-mock-league-intro">Aggregated <strong>distributed value</strong> by chain '
-                    "for the curated TMMF fund population.</p>",
-                    unsafe_allow_html=True,
-                )
-            elif not zone_layout:
+            if not zone_layout:
                 st.markdown(
                     f'<div class="jd-hub-subsection-head"><h2 class="{h2_sub}">By network (Tokenized MMFs)</h2></div>',
                     unsafe_allow_html=True,
                 )
-            q = st.text_input(
-                "Search network table",
-                "",
-                key="rwa_mmf_search_net",
-                placeholder="Filter by network name…",
-            )
-            working = filter_treasury_network_rows(rows_m, q)
-            note = (
-                f"Showing {len(working)} of {len(rows_m)} networks (Tokenized MMFs)."
-                if q.strip()
-                else f"Showing all {len(working)} networks (Tokenized MMFs)."
-            )
-            if inner_page:
-                st.markdown(subpage_toolbar_note_html(note), unsafe_allow_html=True)
-            else:
-                st.caption(note)
-            table_h = rwa_table_height(len(working), max_h=900)
-        if home_preview and not zone_layout:
-            st.markdown(
-                f'<div class="jd-hub-subsection-head"><h2 class="{h2_sub}">By network (Tokenized MMFs)</h2></div>',
-                unsafe_allow_html=True,
-            )
-        df_m = build_us_treasury_network_dataframe(working)
-        if home_preview:
+            df_m = build_us_treasury_network_dataframe(working)
             _show_us_treasury_network_dataframe(df_m, height=table_h)
         else:
-            _show_us_treasury_network_dataframe(df_m, height=table_h)
-            if full_page_header:
+            inner_page = full_page_header
+            net_heading = (
+                inner_subsection_heading_html("Networks", element_id="net-heading")
+                + '<p class="tmmf-mock-league-intro">Aggregated <strong>distributed value</strong> by chain '
+                "for the curated TMMF fund population.</p>"
+            )
+            net_table_ctx = (
+                st.container(border=True, key="tmmf_networks_block")
+                if inner_page and flat_streamlit_layout
+                else nullcontext()
+            )
+            if inner_page and not flat_streamlit_layout:
                 st.markdown(
-                    f'<p class="source-cap timestamp-foot">{escape(MMF_NETWORK_CAPTION)}</p>',
+                    '<section class="etp-mock-table-block tmmf-mock-league-block rwa-deep-league-panel" '
+                    'aria-labelledby="net-heading">'
+                    + net_heading,
                     unsafe_allow_html=True,
                 )
-            else:
-                st.caption(MMF_NETWORK_CAPTION)
-            if full_page_header and not flat_streamlit_layout:
+            elif not inner_page and not zone_layout:
+                st.markdown(
+                    f'<div class="jd-hub-subsection-head"><h2 class="{h2_sub}">By network (Tokenized MMFs)</h2></div>',
+                    unsafe_allow_html=True,
+                )
+            with net_table_ctx:
+                if inner_page and flat_streamlit_layout:
+                    st.markdown(
+                        '<span class="tmmf-streamlit-table-block" hidden aria-hidden="true"></span>'
+                        + net_heading,
+                        unsafe_allow_html=True,
+                    )
+                q = st.text_input(
+                    "Search network table",
+                    "",
+                    key="rwa_mmf_search_net",
+                    placeholder="Filter by network name…",
+                )
+                working = filter_treasury_network_rows(rows_m, q)
+                note = (
+                    f"Showing {len(working)} of {len(rows_m)} networks (Tokenized MMFs)."
+                    if q.strip()
+                    else f"Showing all {len(working)} networks (Tokenized MMFs)."
+                )
+                if inner_page:
+                    st.markdown(subpage_toolbar_note_html(note), unsafe_allow_html=True)
+                else:
+                    st.caption(note)
+                table_h = rwa_table_height(len(working), max_h=900)
+                df_m = build_us_treasury_network_dataframe(working)
+                _show_us_treasury_network_dataframe(df_m, height=table_h)
+                if full_page_header:
+                    st.markdown(
+                        f'<p class="source-cap timestamp-foot">{escape(MMF_NETWORK_CAPTION)}</p>',
+                        unsafe_allow_html=True,
+                    )
+                else:
+                    st.caption(MMF_NETWORK_CAPTION)
+            if inner_page and not flat_streamlit_layout:
                 st.markdown("</section>", unsafe_allow_html=True)
 
     if plat_m and not home_preview:
         inner_page = full_page_header
+        plat_heading = (
+            inner_subsection_heading_html("Platforms", element_id="plat-heading")
+            + '<p class="tmmf-mock-league-intro">Grouped by <strong>asset manager</strong> (issuer) for the '
+            "same curated TMMF fund population.</p>"
+        )
+        plat_table_ctx = (
+            st.container(border=True, key="tmmf_platforms_block")
+            if inner_page and flat_streamlit_layout
+            else nullcontext()
+        )
         if inner_page:
             st.markdown('<hr class="jd-divider" aria-hidden="true" />', unsafe_allow_html=True)
-            if flat_streamlit_layout:
-                st.markdown(
-                    inner_subsection_heading_html("Platforms", element_id="plat-heading")
-                    + '<p class="tmmf-mock-league-intro">Grouped by <strong>asset manager</strong> (issuer) for the '
-                    "same curated TMMF fund population.</p>",
-                    unsafe_allow_html=True,
-                )
-            else:
+            if not flat_streamlit_layout:
                 st.markdown(
                     '<section class="etp-mock-table-block tmmf-mock-league-block rwa-deep-league-panel" '
                     'aria-labelledby="plat-heading">'
-                    + inner_subsection_heading_html("Platforms", element_id="plat-heading")
-                    + '<p class="tmmf-mock-league-intro">Grouped by <strong>asset manager</strong> (issuer) for the '
-                    "same curated TMMF fund population.</p>",
+                    + plat_heading,
                     unsafe_allow_html=True,
                 )
         else:
             st.divider()
-        qp = st.text_input(
-            "Search platform table",
-            "",
-            key="rwa_mmf_search_plat",
-            placeholder="Filter by platform name…",
-        )
-        working_p = filter_treasury_platform_rows(plat_m, qp)
-        note_p = (
-            f"Showing {len(working_p)} of {len(plat_m)} platforms (Tokenized MMFs)."
-            if qp.strip()
-            else f"Showing all {len(working_p)} platforms (Tokenized MMFs)."
-        )
-        if inner_page:
-            st.markdown(subpage_toolbar_note_html(note_p), unsafe_allow_html=True)
-        else:
-            st.caption(note_p)
-        if not inner_page:
-            st.markdown(
-                hub_subsection_heading_html("By platform (Tokenized MMFs · Asset managers)"),
-                unsafe_allow_html=True,
+        with plat_table_ctx:
+            if inner_page and flat_streamlit_layout:
+                st.markdown(
+                    '<span class="tmmf-streamlit-table-block" hidden aria-hidden="true"></span>'
+                    + plat_heading,
+                    unsafe_allow_html=True,
+                )
+            qp = st.text_input(
+                "Search platform table",
+                "",
+                key="rwa_mmf_search_plat",
+                placeholder="Filter by platform name…",
             )
-        df_p = build_us_treasury_platform_dataframe(working_p)
-        _show_us_treasury_platform_dataframe(df_p, height=rwa_table_height(len(working_p), max_h=900))
-        if inner_page:
-            st.markdown(
-                f'<p class="source-cap timestamp-foot">{escape(MMF_PLATFORM_CAPTION)}</p>',
-                unsafe_allow_html=True,
+            working_p = filter_treasury_platform_rows(plat_m, qp)
+            note_p = (
+                f"Showing {len(working_p)} of {len(plat_m)} platforms (Tokenized MMFs)."
+                if qp.strip()
+                else f"Showing all {len(working_p)} platforms (Tokenized MMFs)."
             )
-            if not flat_streamlit_layout:
-                st.markdown("</section>", unsafe_allow_html=True)
-        else:
-            st.caption(MMF_PLATFORM_CAPTION)
+            if inner_page:
+                st.markdown(subpage_toolbar_note_html(note_p), unsafe_allow_html=True)
+            else:
+                st.caption(note_p)
+            if not inner_page:
+                st.markdown(
+                    hub_subsection_heading_html("By platform (Tokenized MMFs · Asset managers)"),
+                    unsafe_allow_html=True,
+                )
+            df_p = build_us_treasury_platform_dataframe(working_p)
+            _show_us_treasury_platform_dataframe(df_p, height=rwa_table_height(len(working_p), max_h=900))
+            if inner_page:
+                st.markdown(
+                    f'<p class="source-cap timestamp-foot">{escape(MMF_PLATFORM_CAPTION)}</p>',
+                    unsafe_allow_html=True,
+                )
+            else:
+                st.caption(MMF_PLATFORM_CAPTION)
+        if inner_page and not flat_streamlit_layout:
+            st.markdown("</section>", unsafe_allow_html=True)
 
     if home_preview:
         if st.button(
