@@ -437,10 +437,6 @@ body.page-home.site-experience .page-shell {
 }
 body.page-home.site-experience .home-main-split {
   align-items: start;
-  overflow: hidden;
-}
-body.page-home.site-experience .page-shell {
-  overflow: hidden;
 }
 body.page-home.site-experience .home-news-rail {
   position: relative;
@@ -619,21 +615,19 @@ HOME_BODY_IFRAME_SIZE_JS = """
       }
       var rail = inner.querySelector(".home-news-rail");
       var shell = inner.querySelector(".page-shell");
+      if (!rail || rail.offsetHeight < 200) return;
       var h = 0;
-      if (rail && shell) {
+      if (shell) {
         var st = inner.defaultView.getComputedStyle(shell);
         var pt = parseFloat(st.paddingTop) || 0;
         var pb = parseFloat(st.paddingBottom) || 0;
         h = Math.ceil(rail.offsetHeight + pt + pb + 8);
-      } else if (shell) {
-        h = Math.ceil(shell.getBoundingClientRect().height + 8);
       } else {
-        h = inner.documentElement.scrollHeight;
+        h = Math.ceil(rail.offsetHeight + 8);
       }
       if (h > 80) {
         bodyFrame.style.height = h + "px";
         bodyFrame.style.minHeight = h + "px";
-        bodyFrame.style.maxHeight = h + "px";
       }
     } catch (e) {}
   }
@@ -641,7 +635,7 @@ HOME_BODY_IFRAME_SIZE_JS = """
   sizeBodyFrame();
   win.addEventListener("resize", sizeBodyFrame);
   win.addEventListener("load", sizeBodyFrame);
-  [150, 500, 1200, 2500].forEach(function (ms) { setTimeout(sizeBodyFrame, ms); });
+  [150, 500, 1200, 2500, 4000, 6000].forEach(function (ms) { setTimeout(sizeBodyFrame, ms); });
   setInterval(sizeBodyFrame, 2000);
 })();
 </script>
