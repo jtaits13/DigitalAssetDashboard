@@ -83,26 +83,26 @@ section[data-testid="stSidebar"] { display: none !important; }
   max-width: none !important;
 }
 .stApp [data-testid="column"]:has(.home-news-rail) {
-  flex: none !important;
-  width: auto !important;
+  flex: 0 0 18rem !important;
+  width: 18rem !important;
   max-width: 20rem !important;
   min-width: 13.5rem !important;
 }
 .stApp [data-testid="column"]:has(.home-markets-iframe),
 .stApp [data-testid="column"]:has(.home-kpi-legend-once),
 .stApp [data-testid="column"]:has(.home-zone) {
-  flex: none !important;
-  width: auto !important;
+  flex: 1 1 0 !important;
   min-width: 0 !important;
+  width: auto !important;
   padding-top: 1.25rem;
 }
-/* Grid row height follows the markets column so sticky news rail has room to stick. */
 .stApp [data-testid="stHorizontalBlock"]:has(.home-news-rail) {
-  display: grid !important;
-  grid-template-columns: minmax(13.5rem, 20rem) minmax(0, 1fr) !important;
-  gap: 1.35rem !important;
+  display: flex !important;
+  flex-direction: row !important;
   align-items: stretch !important;
+  gap: 1.35rem !important;
   overflow: visible !important;
+  width: 100% !important;
   height: auto !important;
   max-height: none !important;
 }
@@ -110,16 +110,14 @@ section[data-testid="stSidebar"] { display: none !important; }
   align-self: stretch !important;
   overflow: visible !important;
   height: auto !important;
-  min-height: 100% !important;
+  min-height: 0 !important;
   max-height: none !important;
-  flex: none !important;
-  width: auto !important;
-  max-width: none !important;
 }
 .stApp [data-testid="column"]:has(.home-news-rail) [data-testid="stVerticalBlock"] {
   min-height: 100% !important;
-  height: 100% !important;
+  height: auto !important;
   overflow: visible !important;
+  width: 100% !important;
 }
 .stApp [data-testid="stHorizontalBlock"]:has(.home-news-rail) [data-testid="stElementContainer"] {
   overflow: visible !important;
@@ -128,12 +126,23 @@ section[data-testid="stSidebar"] { display: none !important; }
 }
 .stApp [data-testid="column"]:has(.home-markets-iframe) {
   overflow: visible !important;
+  flex: 1 1 0 !important;
 }
 .stApp [data-testid="stHorizontalBlock"]:has(.home-news-rail) iframe {
   display: block !important;
   width: 100% !important;
   max-height: none !important;
   overflow: hidden !important;
+}
+.stApp .home-news-rail {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+.stApp .home-news-rail-placeholder {
+  width: 100% !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 /* Streamlit splits markdown blocks — zones are not inside .home-markets-stack in the DOM. */
 .stApp .home-zone.hub-section--panel {
@@ -183,16 +192,15 @@ section[data-testid="stSidebar"] { display: none !important; }
   overflow: visible !important;
   max-height: none !important;
 }
-.stApp .home-news-rail {
-  position: sticky !important;
-  top: 0.75rem !important;
-  align-self: start !important;
-  max-height: calc(100vh - 1.5rem) !important;
-  overflow-y: auto !important;
-  z-index: 8;
+.stApp .home-news-rail:not(.home-news-rail--st-fixed) {
+  position: relative !important;
+  top: auto !important;
 }
 .stApp .home-news-rail.home-news-rail--st-fixed {
   position: fixed !important;
+  top: 0.75rem !important;
+  max-height: calc(100vh - 1.5rem) !important;
+  overflow-y: auto !important;
   z-index: 999 !important;
 }
 .stApp .st-streamlit-home-root .hero.hero--command {
@@ -503,6 +511,7 @@ HOME_NEWS_STICKY_JS = """
   var win = window.parent;
   var doc = win.document;
   var TOP = 12;
+  var MIN_W = 216;
 
   function bindScroll(handler) {
     win.addEventListener("scroll", handler, { passive: true });
@@ -519,20 +528,39 @@ HOME_NEWS_STICKY_JS = """
     if (!col || !row) return false;
     rail.dataset.stStickyBound = "1";
 
+    var placeholder = doc.createElement("div");
+    placeholder.className = "home-news-rail-placeholder";
+    placeholder.setAttribute("aria-hidden", "true");
+    rail.parentNode.insertBefore(placeholder, rail);
+
+    var slotWidth = 0;
+    var slotLeft = 0;
+
+    function captureSlot() {
+      var colRect = col.getBoundingClientRect();
+      slotWidth = Math.max(colRect.width, MIN_W);
+      slotLeft = colRect.left;
+    }
+
     function reset() {
       rail.classList.remove("home-news-rail--st-fixed");
       rail.style.position = "";
       rail.style.top = "";
       rail.style.left = "";
       rail.style.width = "";
+      placeholder.style.height = "0";
     }
 
     function update() {
       var rowRect = row.getBoundingClientRect();
       var colRect = col.getBoundingClientRect();
+      slotLeft = colRect.left;
+      if (!rail.classList.contains("home-news-rail--st-fixed")) {
+        slotWidth = Math.max(colRect.width, MIN_W);
+      }
       var railH = rail.offsetHeight;
 
-      if (rowRect.top > TOP) {
+      if (rowRect.top > TOP || rowRect.height <= railH) {
         reset();
         return;
       }
@@ -541,15 +569,23 @@ HOME_NEWS_STICKY_JS = """
       var maxTop = rowRect.bottom - railH;
       if (maxTop < pinTop) pinTop = maxTop;
 
+      placeholder.style.height = railH + "px";
       rail.classList.add("home-news-rail--st-fixed");
       rail.style.position = "fixed";
       rail.style.top = pinTop + "px";
-      rail.style.left = colRect.left + "px";
-      rail.style.width = colRect.width + "px";
+      rail.style.left = slotLeft + "px";
+      rail.style.width = slotWidth + "px";
     }
 
+    captureSlot();
     bindScroll(update);
-    update();
+    win.addEventListener("resize", function () {
+      reset();
+      captureSlot();
+      update();
+    }, { passive: true });
+    setTimeout(update, 100);
+    setTimeout(update, 600);
     return true;
   }
 
