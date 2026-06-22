@@ -2307,6 +2307,7 @@ def show_rwa_mmf_widget(
     full_page_header: bool = False,
     full_page_key_observations_html: str | None = None,
     zone_layout: bool = False,
+    flat_streamlit_layout: bool = False,
 ) -> None:
     """Tokenized money market funds: KPIs + aggregated Networks / Platforms tables."""
     from rwa_league.client import APP_GOVERNMENT_BONDS, APP_TREASURIES
@@ -2348,13 +2349,13 @@ def show_rwa_mmf_widget(
 
     if not home_preview:
         inner_page = full_page_header
-        if inner_page:
+        if inner_page and not flat_streamlit_layout:
             st.markdown(
                 '<section class="etp-mock-snapshot" aria-labelledby="jd-mmf-snapshot-h">'
                 '<h2 class="subsection-head u-vh" id="jd-mmf-snapshot-h">Top-line snapshot</h2>',
                 unsafe_allow_html=True,
             )
-        else:
+        elif not inner_page:
             st.markdown(hub_subsection_heading_html("Top-Line Market Snapshot"), unsafe_allow_html=True)
         from rwa_league.mmf import TMMF_KPI_LEGEND_TEXT
 
@@ -2373,7 +2374,7 @@ def show_rwa_mmf_widget(
             full_page_key_observations_html,
             inner_page_style=inner_page,
         )
-        if inner_page:
+        if inner_page and not flat_streamlit_layout:
             st.markdown("</section>", unsafe_allow_html=True)
 
     if rows_m:
@@ -2384,7 +2385,14 @@ def show_rwa_mmf_widget(
                 st.markdown('<p class="home-table-caption">Funds preview</p>', unsafe_allow_html=True)
         else:
             inner_page = full_page_header
-            if inner_page:
+            if inner_page and flat_streamlit_layout:
+                st.markdown(
+                    inner_subsection_heading_html("Networks", element_id="net-heading")
+                    + '<p class="tmmf-mock-league-intro">Aggregated <strong>distributed value</strong> by chain '
+                    "for the curated TMMF fund population.</p>",
+                    unsafe_allow_html=True,
+                )
+            elif inner_page:
                 st.markdown(
                     '<section class="etp-mock-table-block tmmf-mock-league-block rwa-deep-league-panel" '
                     'aria-labelledby="net-heading">'
@@ -2432,21 +2440,29 @@ def show_rwa_mmf_widget(
                 )
             else:
                 st.caption(MMF_NETWORK_CAPTION)
-            if full_page_header:
+            if full_page_header and not flat_streamlit_layout:
                 st.markdown("</section>", unsafe_allow_html=True)
 
     if plat_m and not home_preview:
         inner_page = full_page_header
         if inner_page:
             st.markdown('<hr class="jd-divider" aria-hidden="true" />', unsafe_allow_html=True)
-            st.markdown(
-                '<section class="etp-mock-table-block tmmf-mock-league-block rwa-deep-league-panel" '
-                'aria-labelledby="plat-heading">'
-                + inner_subsection_heading_html("Platforms", element_id="plat-heading")
-                + '<p class="tmmf-mock-league-intro">Grouped by <strong>asset manager</strong> (issuer) for the '
-                "same curated TMMF fund population.</p>",
-                unsafe_allow_html=True,
-            )
+            if flat_streamlit_layout:
+                st.markdown(
+                    inner_subsection_heading_html("Platforms", element_id="plat-heading")
+                    + '<p class="tmmf-mock-league-intro">Grouped by <strong>asset manager</strong> (issuer) for the '
+                    "same curated TMMF fund population.</p>",
+                    unsafe_allow_html=True,
+                )
+            else:
+                st.markdown(
+                    '<section class="etp-mock-table-block tmmf-mock-league-block rwa-deep-league-panel" '
+                    'aria-labelledby="plat-heading">'
+                    + inner_subsection_heading_html("Platforms", element_id="plat-heading")
+                    + '<p class="tmmf-mock-league-intro">Grouped by <strong>asset manager</strong> (issuer) for the '
+                    "same curated TMMF fund population.</p>",
+                    unsafe_allow_html=True,
+                )
         else:
             st.divider()
         qp = st.text_input(
@@ -2477,7 +2493,8 @@ def show_rwa_mmf_widget(
                 f'<p class="source-cap timestamp-foot">{escape(MMF_PLATFORM_CAPTION)}</p>',
                 unsafe_allow_html=True,
             )
-            st.markdown("</section>", unsafe_allow_html=True)
+            if not flat_streamlit_layout:
+                st.markdown("</section>", unsafe_allow_html=True)
         else:
             st.caption(MMF_PLATFORM_CAPTION)
 

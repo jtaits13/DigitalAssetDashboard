@@ -11,11 +11,7 @@ if str(_REPO) not in sys.path:
 
 import streamlit as st
 
-from home_layout import (
-    ETP_FULLPAGE_AUM_LINE_CSS,
-    STREAMLIT_TABLE_UNIFY_CSS,
-    STREAMLIT_TMMF_SUBPAGE_CSS,
-)
+from home_layout import ETP_FULLPAGE_AUM_LINE_CSS, STREAMLIT_TABLE_UNIFY_CSS
 from news_feeds import article_styles_markdown
 from rwa_league.mmf import TMMF_INNER_PAGE_SUBTITLE_HTML
 from rwa_league.widgets import show_rwa_mmf_widget
@@ -23,12 +19,12 @@ from streamlit_site_parity import (
     _streamlit_page_href,
     close_subpage_layout,
     configure_subpage,
-    inner_page_zone_open,
     open_subpage_layout,
     related_chips_html,
     render_subpage_back_link,
     render_subpage_footer,
 )
+from streamlit_tmmf_layout import STREAMLIT_TMMF_SUBPAGE_CSS, tmmf_single_block_header_html
 
 
 def _mmf_takeaway_html() -> str:
@@ -61,28 +57,23 @@ def main() -> None:
         + ETP_FULLPAGE_AUM_LINE_CSS,
         unsafe_allow_html=True,
     )
-    inner_page_zone_open(
-        section_id="tmmf-full",
-        badge="MMF",
-        title="Tokenized Money Market Funds",
-        subtitle_class="section-dek section-dek--wide page-intro__dek",
-        subtitle_html=TMMF_INNER_PAGE_SUBTITLE_HTML,
-        zone_classes="zone--tmmf home-zone home-zone--tmmf etp-mock-zone",
-        body_class="inner-rich-zone__body etp-mock-zone__body",
-        header_only=True,
-        badge_title_row=True,
-    )
+
     _related = related_chips_html(
         ("/?jd_scroll=tmmf", "Home TMMF preview"),
         (_streamlit_page_href("stablecoins"), "Stablecoins"),
         (_streamlit_page_href("etps"), "U.S. ETPs"),
         (_streamlit_page_href("rwa_global"), "RWA market overview"),
     )
-    # st.container keeps KPI / methodology / Key Obs in one DOM wrapper (matches static etp-mock-zone__body).
+
     with st.container(border=True):
         st.markdown(
-            '<span class="tmmf-zone-body-panel inner-rich-zone__body etp-mock-zone__body" '
-            'hidden aria-hidden="true"></span>',
+            '<span class="tmmf-single-block" hidden aria-hidden="true"></span>'
+            + tmmf_single_block_header_html(
+                section_id="tmmf-full",
+                badge="MMF",
+                title="Tokenized Money Market Funds",
+                subtitle_html=TMMF_INNER_PAGE_SUBTITLE_HTML,
+            ),
             unsafe_allow_html=True,
         )
         st.markdown(_related, unsafe_allow_html=True)
@@ -90,7 +81,9 @@ def main() -> None:
             home_preview=False,
             full_page_header=True,
             full_page_key_observations_html=_mmf_takeaway_html(),
+            flat_streamlit_layout=True,
         )
+
     close_subpage_layout(
         back_href="/?jd_scroll=tmmf",
         back_label="← Back to home · TMMF preview",
