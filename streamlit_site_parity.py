@@ -518,12 +518,14 @@ _SUBPAGE_INNER_CSS = (
 _SUBPAGE_MOCK_CSS: dict[str, tuple[str, ...]] = {
     "etp": ("mockups/etp-inner-page-mock.css",),
     "crypto": ("mockups/etp-inner-page-mock.css", "mockups/crypto-inner-page-mock.css"),
+    "tmmf": ("mockups/etp-inner-page-mock.css", "mockups/tmmf-inner-page-mock.css"),
 }
 SUBPAGE_ROOT_CLASS: dict[str, str] = {
     "article": "page-full-feed page-article-feed page-inner--rich",
     "article_etp": "page-full-feed page-article-feed page-etp page-inner--rich",
     "etp": "page-etp page-inner--rich mock-etp-inner",
     "crypto": "page-crypto page-inner--rich mock-crypto-inner",
+    "tmmf": "page-rwa-deep page-rwa-deep-mmf page-inner--rich mock-tmmf-inner",
 }
 
 SUBPAGE_STREAMLIT_CSS = """
