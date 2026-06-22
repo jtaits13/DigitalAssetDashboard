@@ -623,7 +623,7 @@ def iter_home_markets_stack_html(
 
 def build_home_markets_iframe_html(**zone_data: Any) -> str:
     """Self-contained markets stack for ``components.html`` (CSS + table filters in iframe)."""
-    from streamlit_site_parity import _cached_iframe_home_stylesheet
+    from streamlit_site_parity import _cached_iframe_home_stylesheet, iframe_auto_height_script
 
     stack = "".join(iter_home_markets_stack_html(**zone_data))
     css = _cached_iframe_home_stylesheet()
@@ -664,24 +664,11 @@ def build_home_markets_iframe_html(**zone_data: Any) -> str:
       input.addEventListener("input", function () {{ applyFilter(input); }});
     }});
   }}
-  function sendHeight() {{
-    var h = Math.max(
-      document.body.scrollHeight,
-      document.documentElement.scrollHeight,
-      document.body.offsetHeight
-    );
-    window.parent.postMessage({{ type: "streamlit:setFrameHeight", height: h + 16 }}, "*");
-  }}
   bindFilters();
-  sendHeight();
-  window.addEventListener("load", function () {{ bindFilters(); sendHeight(); }});
-  if (typeof ResizeObserver !== "undefined") {{
-    new ResizeObserver(sendHeight).observe(document.body);
-  }} else {{
-    setInterval(sendHeight, 500);
-  }}
+  window.addEventListener("load", bindFilters);
 }})();
 </script>
+{iframe_auto_height_script()}
 </body>
 </html>"""
 

@@ -31,10 +31,10 @@ from streamlit_home_static import (
 )
 from streamlit_site_parity import (
     JD_SCROLL_MAP,
-    build_home_chrome_html,
     build_home_footer_html,
     build_static_news_rail_html,
     inject_site_styles,
+    render_home_chrome,
     render_home_markdown,
 )
 
@@ -138,7 +138,7 @@ def main() -> None:
     footer_month = now.strftime("%b %Y")
     footer_iso = now.strftime("%Y-%m")
 
-    render_home_markdown(build_home_chrome_html(include_refresh=False))
+    render_home_chrome(include_refresh=False)
 
     etp_ua = resolve_etp_user_agent(get_etp_user_agent_from_secrets())
 

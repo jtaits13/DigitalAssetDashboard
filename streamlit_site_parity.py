@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any
 
 import streamlit as st
+import streamlit.components.v1 as components
 
 _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
@@ -124,13 +125,18 @@ section[data-testid="stSidebar"] { display: none !important; }
   color: var(--ink, #021d41);
   font-weight: 650;
 }
-.stApp [data-testid="column"]:has(.home-zone) [data-testid="stElementContainer"],
-.stApp [data-testid="column"]:has(.home-kpi-legend-once) [data-testid="stElementContainer"],
+.stApp [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker),
 .stApp [data-testid="column"]:has(.home-markets-iframe) [data-testid="stElementContainer"] {
   height: auto !important;
   min-height: 0 !important;
   overflow: visible !important;
   flex-shrink: 0 !important;
+}
+.stApp [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker) iframe {
+  display: block;
+  width: 100% !important;
+  border: 0;
+  overflow: hidden;
 }
 .stApp .block-container,
 .stApp [data-testid="stMainBlockContainer"],
@@ -368,9 +374,34 @@ body.page-home.site-experience {
 .home-reveal { opacity: 1 !important; transform: none !important; }
 body.page-home.site-experience .jd-kpi-window-note { display: none; }
 body.page-home.site-experience .home-news-rail { position: relative; top: auto; max-height: none; }
+body.page-home.site-experience .site-header { position: relative; top: auto; }
 """
     )
     return "\n".join(chunks)
+
+
+def iframe_auto_height_script() -> str:
+    """Resize a Streamlit ``components.html`` iframe to its document height."""
+    return """
+<script>
+(function () {
+  function sendHeight() {
+    var h = Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight,
+      document.body.offsetHeight
+    );
+    window.parent.postMessage({ type: "streamlit:setFrameHeight", height: h + 16 }, "*");
+  }
+  sendHeight();
+  window.addEventListener("load", sendHeight);
+  if (typeof ResizeObserver !== "undefined") {
+    new ResizeObserver(sendHeight).observe(document.body);
+  } else {
+    setInterval(sendHeight, 500);
+  }
+})();
+</script>"""
 
 
 def _embedded_home_styles_html() -> str:
@@ -382,8 +413,11 @@ def inject_site_styles(*, include_static: bool = True) -> None:
     """Inject GitHub Pages CSS + Streamlit chrome overrides."""
     st.markdown(STREAMLIT_CHROME_CSS, unsafe_allow_html=True)
     if include_static:
-        # Inject into the main document; event-container st.html styles miss sibling blocks on Cloud.
-        st.markdown(f"<style>{_cached_static_stylesheet()}</style>", unsafe_allow_html=True)
+        css = _cached_static_stylesheet()
+        # Main document: markdown style block for news/footer chrome.
+        st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
+        # Event container: backup injection for Cloud when markdown style blocks are dropped.
+        st.html(f"<style>{css}</style>")
 
 
 def render_home_markdown(html: str, *, target: Any = None) -> None:
@@ -392,7 +426,7 @@ def render_home_markdown(html: str, *, target: Any = None) -> None:
 
 
 def build_home_chrome_html(*, include_refresh: bool = True) -> str:
-    """Nav + hero (self-contained HTML fragment)."""
+    """Nav + hero (self-contained HTML fragment). Prefer ``render_home_chrome`` on Streamlit."""
     refresh = (
         '<div class="home-refresh-row"><a class="home-refresh-btn" href="?home_refresh=1">Refresh data</a></div>'
         if include_refresh
@@ -401,11 +435,53 @@ def build_home_chrome_html(*, include_refresh: bool = True) -> str:
     return "".join(
         [
             '<div class="site-experience page-home st-streamlit-home-root">',
-            render_site_nav_html(active="home", is_landing=True).strip(),
-            render_home_hero_html().strip(),
+            render_site_nav_html(active="home", is_landing=True, for_streamlit=True).strip(),
+            render_home_hero_html(for_streamlit=True).strip(),
             refresh,
             "</div>",
         ]
+    )
+
+
+def build_home_chrome_iframe_html(*, include_refresh: bool = False) -> str:
+    """Self-contained nav + hero for ``components.html`` (matches GitHub Pages styling on Cloud)."""
+    refresh = (
+        '<div class="home-refresh-row"><a class="home-refresh-btn" href="?home_refresh=1" target="_top">Refresh data</a></div>'
+        if include_refresh
+        else ""
+    )
+    css = _cached_iframe_home_stylesheet()
+    body = "".join(
+        [
+            render_site_nav_html(active="home", is_landing=True, for_streamlit=True).strip(),
+            render_home_hero_html(for_streamlit=True).strip(),
+            refresh,
+        ]
+    )
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>{css}</style>
+</head>
+<body class="page-home site-experience">
+{body}
+{iframe_auto_height_script()}
+</body>
+</html>"""
+
+
+def render_home_chrome(*, include_refresh: bool = False) -> None:
+    """Render nav + hero as an auto-height iframe with embedded static CSS."""
+    st.markdown(
+        '<span class="home-chrome-iframe-marker" hidden aria-hidden="true"></span>',
+        unsafe_allow_html=True,
+    )
+    components.html(
+        build_home_chrome_iframe_html(include_refresh=include_refresh),
+        height=520,
+        scrolling=False,
     )
 
 
@@ -417,9 +493,10 @@ def build_home_footer_html(*, footer_month: str, footer_iso: str) -> str:
     )
 
 
-def _nav_link(href: str, label: str, *, active: bool = False) -> str:
+def _nav_link(href: str, label: str, *, active: bool = False, target: str = "") -> str:
     cls = ' class="is-active"' if active else ""
-    return f'<a href="{escape(href)}"{cls}>{escape(label)}</a>'
+    tgt = f' target="{escape(target)}"' if target else ""
+    return f'<a href="{escape(href)}"{cls}{tgt}>{escape(label)}</a>'
 
 
 def _page_href(key: str) -> str:
@@ -429,34 +506,48 @@ def _page_href(key: str) -> str:
     return f"/{stem}"
 
 
-def render_site_nav_html(*, active: str = "home", is_landing: bool = False) -> str:
-    news_href = "#section-news" if is_landing else "/?jd_scroll=news"
+def render_site_nav_html(*, active: str = "home", is_landing: bool = False, for_streamlit: bool = False) -> str:
+    top = "_top" if for_streamlit else ""
+    news_href = (
+        "/?jd_scroll=news"
+        if for_streamlit or not is_landing
+        else "#section-news"
+    )
+    t = f' target="{top}"' if top else ""
+
+    def a(href: str, label: str, *, active_link: bool = False, extra_cls: str = "") -> str:
+        cls = "is-active" if active_link else ""
+        if extra_cls:
+            cls = f"{extra_cls} {cls}".strip()
+        class_attr = f' class="{cls}"' if cls else ""
+        return f'<a href="{escape(href)}"{class_attr}{t}>{escape(label)}</a>'
+
     return f"""
 <header class="site-header site-experience" role="banner">
   <div class="site-header__inner">
-    <a class="site-brand" href="/?jd_scroll=top">Digital Assets Dashboard</a>
+    {a("/?jd_scroll=top", "Digital Assets Dashboard", extra_cls="site-brand")}
     <nav class="site-nav" aria-label="Primary">
-      {_nav_link("/?jd_scroll=top", "Home", active=active == "home")}
-      {_nav_link(news_href, "News Hub", active=active == "news")}
-      {_nav_link(_page_href("tmmf"), "TMMFs", active=active == "tmmf")}
-      {_nav_link(_page_href("stablecoins"), "Stablecoins", active=active == "stablecoins")}
+      {_nav_link("/?jd_scroll=top", "Home", active=active == "home", target=top)}
+      {_nav_link(news_href, "News Hub", active=active == "news", target=top)}
+      {_nav_link(_page_href("tmmf"), "TMMFs", active=active == "tmmf", target=top)}
+      {_nav_link(_page_href("stablecoins"), "Stablecoins", active=active == "stablecoins", target=top)}
       <div class="site-nav__dropdown">
-        <a href="{_page_href("rwa_global")}" class="site-nav__trigger">RWA Market</a>
+        {a(_page_href("rwa_global"), "RWA Market", extra_cls="site-nav__trigger")}
         <ul class="site-nav__sub">
-          <li><a href="{_page_href("rwa_global")}">Market Overview</a></li>
+          <li>{a(_page_href("rwa_global"), "Market Overview")}</li>
           <li class="site-nav__item site-nav__item--flyout">
-            <a href="{_page_href("explore_asset")}" class="site-nav__parent-link">RWA · Assets</a>
+            {a(_page_href("explore_asset"), "RWA · Assets", extra_cls="site-nav__parent-link")}
             <ul class="site-nav__sub site-nav__sub--nested">
-              <li><a href="{_page_href("treasuries")}">U.S. Treasuries</a></li>
-              <li><a href="{_page_href("stocks")}">Tokenized Stocks</a></li>
+              <li>{a(_page_href("treasuries"), "U.S. Treasuries")}</li>
+              <li>{a(_page_href("stocks"), "Tokenized Stocks")}</li>
             </ul>
           </li>
           <li class="site-nav__item site-nav__item--flyout">
-            <a href="{_page_href("explore_participant")}" class="site-nav__parent-link">RWA · Participants</a>
+            {a(_page_href("explore_participant"), "RWA · Participants", extra_cls="site-nav__parent-link")}
             <ul class="site-nav__sub site-nav__sub--nested">
-              <li><a href="{_page_href("networks")}">Networks</a></li>
-              <li><a href="{_page_href("platforms")}">Platforms</a></li>
-              <li><a href="{_page_href("asset_managers")}">Asset Managers</a></li>
+              <li>{a(_page_href("networks"), "Networks")}</li>
+              <li>{a(_page_href("platforms"), "Platforms")}</li>
+              <li>{a(_page_href("asset_managers"), "Asset Managers")}</li>
             </ul>
           </li>
         </ul>
@@ -464,11 +555,11 @@ def render_site_nav_html(*, active: str = "home", is_landing: bool = False) -> s
       <div class="site-nav__dropdown">
         <span class="site-nav__trigger">U.S. ETPs</span>
         <ul class="site-nav__sub">
-          <li><a href="{_page_href("etps")}">U.S. ETP Overview</a></li>
-          <li><a href="{_page_href("etf_news")}">ETF/ETP News</a></li>
+          <li>{a(_page_href("etps"), "U.S. ETP Overview")}</li>
+          <li>{a(_page_href("etf_news"), "ETF/ETP News")}</li>
         </ul>
       </div>
-      {_nav_link(_page_href("crypto"), "Crypto Prices", active=active == "crypto")}
+      {_nav_link(_page_href("crypto"), "Crypto Prices", active=active == "crypto", target=top)}
     </nav>
   </div>
 </header>
@@ -479,32 +570,46 @@ def render_site_nav(*, active: str = "home", is_landing: bool = False) -> None:
     st.markdown(render_site_nav_html(active=active, is_landing=is_landing), unsafe_allow_html=True)
 
 
-def _home_jump_nav_html() -> str:
-    return """
+def _home_jump_nav_html(*, for_streamlit: bool = False) -> str:
+    top = ' target="_top"' if for_streamlit else ""
+    links = (
+        ("tmmf", "section-tmmf", "home-jump-nav__link--tmmf", "TMMFs"),
+        ("stablecoins", "section-stablecoins", "home-jump-nav__link--stable", "Stablecoins"),
+        ("onchain", "section-onchain", "home-jump-nav__link--rwa", "RWA"),
+        ("markets", "section-markets", "home-jump-nav__link--etp", "ETPs"),
+        ("crypto", "section-crypto", "home-jump-nav__link--crypto", "Crypto"),
+    )
+
+    def href(key: str, anchor: str) -> str:
+        return f"/?jd_scroll={key}" if for_streamlit else f"#{anchor}"
+
+    onchain = "".join(
+        f'<a href="{href(key, anchor)}" class="home-jump-nav__link {cls}"{top}>'
+        f'<span class="home-jump-nav__dot" aria-hidden="true"></span>{label}</a>'
+        for key, anchor, cls, label in links[:3]
+    )
+    markets = "".join(
+        f'<a href="{href(key, anchor)}" class="home-jump-nav__link {cls}"{top}>'
+        f'<span class="home-jump-nav__dot" aria-hidden="true"></span>{label}</a>'
+        for key, anchor, cls, label in links[3:]
+    )
+    return f"""
 <nav class="home-jump-nav home-jump-nav--grouped" aria-label="Jump to data sections">
   <div class="home-jump-nav__group">
     <span class="home-jump-nav__group-label">On-chain</span>
-    <a href="#section-tmmf" class="home-jump-nav__link home-jump-nav__link--tmmf">
-      <span class="home-jump-nav__dot" aria-hidden="true"></span>TMMFs</a>
-    <a href="#section-stablecoins" class="home-jump-nav__link home-jump-nav__link--stable">
-      <span class="home-jump-nav__dot" aria-hidden="true"></span>Stablecoins</a>
-    <a href="#section-onchain" class="home-jump-nav__link home-jump-nav__link--rwa">
-      <span class="home-jump-nav__dot" aria-hidden="true"></span>RWA</a>
+    {onchain}
   </div>
   <div class="home-jump-nav__group">
     <span class="home-jump-nav__group-label">Markets</span>
-    <a href="#section-markets" class="home-jump-nav__link home-jump-nav__link--etp">
-      <span class="home-jump-nav__dot" aria-hidden="true"></span>ETPs</a>
-    <a href="#section-crypto" class="home-jump-nav__link home-jump-nav__link--crypto">
-      <span class="home-jump-nav__dot" aria-hidden="true"></span>Crypto</a>
+    {markets}
   </div>
 </nav>
 """
 
 
-def render_home_hero_html() -> str:
+def render_home_hero_html(*, for_streamlit: bool = False) -> str:
     return f"""
-<section class="hero hero--command site-experience page-home" aria-labelledby="page-title">
+<div class="hero hero--command site-experience page-home" role="region" aria-labelledby="page-title">
   <div class="hero-inner hero-inner--single hero-inner--experience">
     <div class="hero-copy hero-copy--lead">
       <p class="home-hero-eyebrow">Market dashboard</p>
@@ -514,7 +619,7 @@ def render_home_hero_html() -> str:
         <strong>crypto ETPs</strong>, and top-line <strong>crypto prices</strong>—one workspace for market direction,
         policy signals, and where tokenization activity is building.
       </p>
-      {_home_jump_nav_html()}
+      {_home_jump_nav_html(for_streamlit=for_streamlit)}
       <p class="hero-dek callout hero-dek--compact">
         For <strong>internal digital asset</strong> materials (documentation, product context, and key contacts),
         see the
@@ -524,7 +629,7 @@ def render_home_hero_html() -> str:
       </p>
     </div>
   </div>
-</section>
+</div>
 """
 
 
