@@ -527,13 +527,6 @@ def iter_home_markets_stack_html(
     parts.append("".join(stable))
 
     # RWA
-    chips = (
-        '<div class="home-related-chips" aria-label="Related pages">'
-        '<span class="home-related-chips__label">Related</span>'
-        '<a class="home-chip" href="/US_Crypto_ETPs">U.S. ETPs</a>'
-        '<a class="home-chip" href="/Crypto_Prices">Crypto prices</a>'
-        "</div>"
-    )
     rwa: list[str] = [
         _zone_open(
             section_id="section-onchain",
@@ -541,7 +534,6 @@ def iter_home_markets_stack_html(
             title="On-chain Data",
             subtitle="Global overview KPIs and a networks preview from RWA.xyz.",
             zone_class="home-zone--rwa",
-            extra_body_top=chips,
         ),
         rwa_snapshot_kpi_html(rwa_kpis),
         '<p class="home-table-caption">Networks preview</p>',
