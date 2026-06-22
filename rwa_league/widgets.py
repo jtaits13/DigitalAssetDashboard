@@ -82,11 +82,13 @@ def _inject_full_page_key_observations(
     if not html:
         return
     if inner_page_style:
-        st.html(
+        # st.markdown (not st.html): st.html sandbox strips aside/h3/ul, leaving only the disclaimer <p>.
+        st.markdown(
             '<div class="inner-rich-block etp-mock-key-obs-block" aria-labelledby="jd-mmf-key-obs-h">'
             '<h2 class="subsection-head u-vh" id="jd-mmf-key-obs-h">Key Observations</h2>'
             f"{html}"
-            "</div>"
+            "</div>",
+            unsafe_allow_html=True,
         )
         return
     st.markdown(hub_subsection_heading_html("Key Observations"), unsafe_allow_html=True)

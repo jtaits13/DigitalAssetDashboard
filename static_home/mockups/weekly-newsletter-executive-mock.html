@@ -13,9 +13,9 @@
     <style>
       :root {
         --ink: #1a3d5c;
-        --muted: #64748b;
-        --line: #d8e2ec;
-        --wash: #eef2f6;
+        --muted: #5c6b7a;
+        --line: #dde4ec;
+        --wash: #e9eef3;
       }
 
       * {
@@ -29,77 +29,10 @@
         color: var(--ink);
       }
 
-      body::before {
-        content: "Design mock — Executive weekly newsletter · mockups/weekly-newsletter-executive-mock.html";
-        display: block;
-        padding: 0.45rem 1rem;
-        background: #fef3c7;
-        border-bottom: 1px solid #fcd34d;
-        font-size: 0.78rem;
-        color: #92400e;
-      }
-
       .wrap {
         max-width: 1180px;
         margin: 0 auto;
         padding: 1.25rem 1rem 2rem;
-      }
-
-      .panel {
-        background: #fff;
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 1rem 1.05rem;
-        box-shadow: 0 1px 3px rgb(26 61 92 / 0.06);
-      }
-
-      .panel h1 {
-        margin: 0 0 0.5rem;
-        font-size: 1.15rem;
-      }
-
-      .panel p,
-      .panel li {
-        font-size: 0.84rem;
-        line-height: 1.5;
-        color: #334155;
-      }
-
-      .panel ul {
-        margin: 0.5rem 0 0;
-        padding-left: 1.1rem;
-      }
-
-      .panel code {
-        font-size: 0.78rem;
-        background: #f1f5f9;
-        padding: 0.1rem 0.35rem;
-        border-radius: 4px;
-      }
-
-      .actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-top: 0.85rem;
-      }
-
-      .btn {
-        display: inline-block;
-        padding: 0.45rem 0.75rem;
-        border-radius: 8px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        text-decoration: none;
-        border: 1px solid var(--line);
-        color: var(--ink);
-        background: #fff;
-      }
-
-      .btn--primary {
-        background: #2a5f82;
-        border-color: #2a5f82;
-        color: #fff;
       }
 
       .preview-shell {
@@ -110,55 +43,19 @@
         box-shadow: 0 1px 3px rgb(26 61 92 / 0.06);
       }
 
-      .preview-shell__bar {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: space-between;
-        gap: 0.5rem;
-        padding: 0.55rem 0.85rem;
-        border-bottom: 1px solid var(--line);
-        background: #f8fafc;
-        font-size: 0.78rem;
-        color: var(--muted);
-      }
-
       .preview-shell iframe {
         display: block;
         width: 100%;
-        min-height: 920px;
+        min-height: 1480px;
         border: 0;
-        background: #eef2f6;
+        background: #e9eef3;
       }
 
     </style>
   </head>
   <body>
     <div class="wrap">
-      <section class="panel" style="margin-bottom: 1rem;">
-        <h1>Executive newsletter mock</h1>
-        <p>
-          Full-width preview (1100px content): <strong>Week in brief</strong>, <strong>Headlines of the week</strong>
-          (cluster-ranked, price stories excluded), 2 &quot;What this means&quot; bullets per zone.
-        </p>
-        <div class="actions">
-          <a
-            class="btn btn--primary"
-            href="weekly-newsletter-email-executive-mock.html"
-            target="_blank"
-            rel="noopener noreferrer"
-            >Open email HTML</a
-          >
-          <a class="btn" href="weekly-newsletter-mock.html">Standard variant</a>
-          <a class="btn" href="../index.html">Live dashboard</a>
-        </div>
-      </section>
-
       <section class="preview-shell" aria-label="Executive newsletter email preview">
-        <div class="preview-shell__bar">
-          <span>Preview — executive weekly brief</span>
-          <span>Same data as 08 Jun 2026 export</span>
-        </div>
         <iframe
           src="weekly-newsletter-email-executive-mock.html"
           title="Executive weekly newsletter email body"

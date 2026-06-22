@@ -1,15 +1,23 @@
 ---
-description: After coding tasks, commit and push to origin without waiting for a separate request.
+description: After every coding task, commit and push all project changes without waiting for a separate request.
 alwaysApply: true
 ---
 
-# Git: commit and push
+# Git: commit and push (automatic)
 
-When a task changes project files in a way that is ready to share (user did not say to leave work uncommitted or to stop before deploy):
+The user wants **all project changes committed and pushed automatically** at the end of every task. Do not wait for a separate "commit" or "push" request.
 
-1. **Commit** the relevant changes on `main` with a short, specific message in complete sentences.
-2. **Push** to `origin` (typically `git push origin main`).
+When you change project files:
 
-If there is nothing to commit, say so. If push fails (auth, network), try once more with a different approach if reasonable, then report the error clearly.
+1. **Stage** all relevant changes (modified + new files from the task).
+2. **Commit** on `main` with a short, specific message in complete sentences that summarizes the work.
+3. **Push** to `origin` (`git push origin main`).
 
-Do not push secrets or local-only config the user is clearly keeping private. If a change is strictly experimental or the user said “don’t commit,” skip.
+Skip only when:
+- The user explicitly says not to commit, to leave work uncommitted, or to stop before deploy.
+- There is nothing to commit.
+- Files are clearly local-only or secret (`.env`, credentials, personal logs under `logs/`, machine-specific config the user is keeping private).
+
+If push fails (auth, network), retry once if reasonable, then report the error clearly.
+
+Do not use destructive git commands (`push --force`, hard reset) unless the user explicitly requests them.

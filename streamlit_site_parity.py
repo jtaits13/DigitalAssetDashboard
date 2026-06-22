@@ -498,7 +498,7 @@ def _patch_static_css_for_streamlit(css: str) -> str:
     css = css.replace(".site-experience {", ".stApp, .site-experience {", 1)
     css = re.sub(
         r"\.site-experience\.page-home\s+",
-        ".stApp .site-experience.page-home, .stApp ",
+        ".stApp .site-experience.page-home, .stApp .st-streamlit-home-root ",
         css,
     )
     css = re.sub(
@@ -561,6 +561,11 @@ SUBPAGE_ROOT_CLASS: dict[str, str] = {
 }
 
 SUBPAGE_STREAMLIT_CSS = """
+/* Subpages: undo home-only hide rule if patched CSS still targets bare .stApp .crypto-story-callout. */
+.stApp:has(.streamlit-subpage-root) .etp-mock-key-obs-block .crypto-story-callout,
+.stApp:has(.streamlit-subpage-root) .inner-key-obs-block .crypto-story-callout {
+  display: block !important;
+}
 /* Subpages: full-bleed nav band + condensed 72rem content column (matches etp-mock-shell). */
 .stApp:has(.streamlit-subpage-active) .block-container,
 .stApp:has(.streamlit-subpage-root) .block-container {

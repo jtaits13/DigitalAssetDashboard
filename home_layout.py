@@ -258,8 +258,8 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   margin: 0.35rem 0 var(--etp-mock-gap-lg, 1.2rem);
 }
 
-.stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.etp-mock-key-obs-block) [data-testid="stHtml"],
-.stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.etp-mock-key-obs-block) [data-testid="stHtml"] > div {
+.stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.etp-mock-key-obs-block) [data-testid="stMarkdownContainer"],
+.stApp:has(.mock-tmmf-inner) [data-testid="stElementContainer"]:has(.etp-mock-key-obs-block) [data-testid="stMarkdownContainer"] > div {
   width: 100% !important;
   max-width: 100% !important;
 }
@@ -269,6 +269,7 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 }
 
 .stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .etp-mock-key-obs-block .crypto-story-callout {
+  display: block;
   margin: 0;
   padding: 1rem 1.1rem 0.9rem;
   border: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.22);
