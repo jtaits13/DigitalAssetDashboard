@@ -217,6 +217,15 @@ section[data-testid="stSidebar"] { display: none !important; }
 .stApp [data-testid="stElementContainer"]:has(.home-body-iframe-marker) {
   margin-bottom: 0 !important;
 }
+.stApp:has(.home-body-iframe-marker) .block-container {
+  padding-bottom: 0.5rem !important;
+}
+.stApp:has(.home-body-iframe-marker) [data-testid="stVerticalBlock"] {
+  gap: 0 !important;
+}
+.stApp:has(.home-body-iframe-marker) [data-testid="stMainBlockContainer"] {
+  min-height: 0 !important;
+}
 .stApp .st-streamlit-home-root {
   display: block !important;
   width: 100% !important;
@@ -434,15 +443,18 @@ body.page-home.site-experience .jd-kpi-window-note { display: none; }
 body.page-home.site-experience .page-shell {
   max-width: none;
   padding: 1.25rem 0.5rem 0.75rem 0.75rem;
+  overflow: hidden;
 }
 body.page-home.site-experience .home-main-split {
   align-items: start;
+  overflow: hidden;
 }
 body.page-home.site-experience .home-news-rail {
   position: relative;
   top: auto;
   max-height: none;
   overflow: visible;
+  align-self: start;
 }
 body.page-home.site-experience .home-markets-stack {
   display: block !important;
@@ -561,9 +573,10 @@ HOME_IFRAME_HEIGHT_SYNC_JS = """
       try {
         var inner = frame.contentDocument;
         if (!inner || !inner.body) return;
+        var isBody = inner.querySelector(".home-main-split");
+        if (isBody) return;
         var isMarkets = inner.querySelector(".home-markets-stack");
         var isChrome = inner.querySelector(".hero--command");
-        if (inner.querySelector(".home-main-split")) return;
         if (!isMarkets && !isChrome) return;
         var h = Math.max(
           inner.body.scrollHeight,
@@ -572,7 +585,6 @@ HOME_IFRAME_HEIGHT_SYNC_JS = """
         ) + 32;
         if (h > 80) {
           frame.style.height = h + "px";
-          frame.style.minHeight = h + "px";
         }
       } catch (e) {}
     });
@@ -604,33 +616,50 @@ HOME_BODY_IFRAME_SIZE_JS = """
     return match;
   }
 
+  function measureBodyFrameHeight(inner) {
+    if (!inner) return 0;
+    if (typeof inner.syncHomeSplitHeights === "function") {
+      inner.syncHomeSplitHeights();
+    }
+    var shell = inner.querySelector(".page-shell");
+    if (shell && shell.offsetHeight >= 200) {
+      return Math.ceil(shell.getBoundingClientRect().height) + 4;
+    }
+    var rail = inner.querySelector(".home-news-rail");
+    if (!rail || rail.offsetHeight < 200) return 0;
+    var pt = 0;
+    var pb = 0;
+    if (shell) {
+      var st = inner.defaultView.getComputedStyle(shell);
+      pt = parseFloat(st.paddingTop) || 0;
+      pb = parseFloat(st.paddingBottom) || 0;
+    }
+    return Math.ceil(rail.offsetHeight + pt + pb + 4);
+  }
+
+  function applyBodyFrameHeight(bodyFrame, h) {
+    if (!bodyFrame || h <= 80) return;
+    bodyFrame.style.height = h + "px";
+    bodyFrame.style.minHeight = "0";
+    bodyFrame.style.maxHeight = h + "px";
+  }
+
   function sizeBodyFrame() {
     var bodyFrame = findBodyFrame();
     if (!bodyFrame) return;
     try {
       var inner = bodyFrame.contentDocument;
       if (!inner) return;
-      if (typeof inner.syncHomeSplitHeights === "function") {
-        inner.syncHomeSplitHeights();
-      }
-      var rail = inner.querySelector(".home-news-rail");
-      var shell = inner.querySelector(".page-shell");
-      if (!rail || rail.offsetHeight < 200) return;
-      var h = 0;
-      if (shell) {
-        var st = inner.defaultView.getComputedStyle(shell);
-        var pt = parseFloat(st.paddingTop) || 0;
-        var pb = parseFloat(st.paddingBottom) || 0;
-        h = Math.ceil(rail.offsetHeight + pt + pb + 8);
-      } else {
-        h = Math.ceil(rail.offsetHeight + 8);
-      }
-      if (h > 80) {
-        bodyFrame.style.height = h + "px";
-        bodyFrame.style.minHeight = h + "px";
-      }
+      applyBodyFrameHeight(bodyFrame, measureBodyFrameHeight(inner));
     } catch (e) {}
   }
+
+  win.addEventListener("message", function (ev) {
+    if (!ev.data || ev.data.type !== "jpm-home-body-height") return;
+    var h = Number(ev.data.height);
+    if (!isFinite(h) || h <= 80) return;
+    applyBodyFrameHeight(findBodyFrame(), h);
+  });
 
   sizeBodyFrame();
   win.addEventListener("resize", sizeBodyFrame);
