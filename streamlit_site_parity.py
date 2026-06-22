@@ -1875,6 +1875,7 @@ def inner_page_zone_open(
     related_chips: str = "",
     body_class: str = "inner-rich-zone__body",
     header_only: bool = False,
+    badge_title_row: bool = False,
 ) -> None:
     """Open inner-page zone markup. Set ``header_only`` to emit a closed header card in one block."""
     dek = subtitle_html if subtitle_html else escape(subtitle)
@@ -1882,19 +1883,37 @@ def inner_page_zone_open(
     chips = related_chips or ""
     dek_tag = "div" if "section-dek" in subtitle_class else "p"
     close = "  </div>\n</article>" if header_only else ""
+    head_class = "home-zone__head home-zone__head--title-row" if badge_title_row else "home-zone__head"
+    if badge_title_row:
+        head_inner = (
+            f'  <header class="{head_class}">\n'
+            "    <div class=\"home-zone__titles\">\n"
+            '      <div class="home-zone__title-row">\n'
+            f'        <span class="home-zone__badge" aria-hidden="true">{escape(badge)}</span>\n'
+            f'        <p class="page-intro__title" role="heading" aria-level="1" '
+            f'id="{escape(section_id)}-heading">{escape(title)}</p>\n'
+            "      </div>\n"
+            f'      <{dek_tag} class="{escape(subtitle_class)}">{dek}</{dek_tag}>\n'
+            "    </div>\n"
+            "  </header>\n"
+        )
+    else:
+        head_inner = (
+            f'  <header class="{head_class}">\n'
+            f'    <span class="home-zone__badge" aria-hidden="true">{escape(badge)}</span>\n'
+            "    <div class=\"home-zone__titles\">\n"
+            f'      <p class="page-intro__title" role="heading" aria-level="1" '
+            f'id="{escape(section_id)}-heading">{escape(title)}</p>\n'
+            f'      <{dek_tag} class="{escape(subtitle_class)}">{dek}</{dek_tag}>\n'
+            "    </div>\n"
+            "  </header>\n"
+        )
     st.markdown(
         f"""
 <article class="hub-section hub-section--panel inner-rich-zone home-reveal is-visible{zone_extra}"
          id="{escape(section_id)}">
   <div class="home-zone__stripe" aria-hidden="true"></div>
-  <header class="home-zone__head">
-    <span class="home-zone__badge" aria-hidden="true">{escape(badge)}</span>
-    <div class="home-zone__titles">
-      <p class="page-intro__title" role="heading" aria-level="1" id="{escape(section_id)}-heading">{escape(title)}</p>
-      <{dek_tag} class="{escape(subtitle_class)}">{dek}</{dek_tag}>
-    </div>
-  </header>
-  <div class="home-zone__body {body_class}">
+{head_inner}  <div class="home-zone__body {body_class}">
     {chips}
 {close}""",
         unsafe_allow_html=True,

@@ -69,6 +69,7 @@ def main() -> None:
         ),
         body_class="inner-rich-zone__body etp-mock-zone__body",
         header_only=True,
+        badge_title_row=True,
     )
     st.markdown(
         article_styles_markdown()

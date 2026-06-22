@@ -124,12 +124,25 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 
 .stApp:has(.mock-tmmf-inner) .inner-rich-zone.zone--tmmf .home-zone__head,
 .stApp:has(.mock-tmmf-inner) .etp-mock-zone .home-zone__head {
-  display: flex !important;
-  align-items: center !important;
-  gap: 0.85rem;
+  display: block;
   padding: 1.15rem 1.25rem 1rem;
   border-bottom: 1px solid rgb(var(--hx-tmmf-bright-rgb, 80 113 136) / 0.16);
   background: var(--hx-tmmf-head, linear-gradient(180deg, #eef2f6 0%, #ffffff 100%));
+}
+
+.stApp:has(.mock-tmmf-inner) .inner-rich-zone.zone--tmmf .home-zone__head--title-row .home-zone__title-row,
+.stApp:has(.mock-tmmf-inner) .etp-mock-zone .home-zone__head--title-row .home-zone__title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  margin-bottom: 0.4rem;
+}
+
+.stApp:has(.mock-tmmf-inner) .inner-rich-zone.zone--tmmf .home-zone__head--title-row .home-zone__title-row .page-intro__title,
+.stApp:has(.mock-tmmf-inner) .etp-mock-zone .home-zone__head--title-row .home-zone__title-row .page-intro__title {
+  flex: 1;
+  min-width: 0;
+  margin: 0 !important;
 }
 
 .stApp:has(.mock-tmmf-inner) .inner-rich-zone.zone--tmmf .home-zone__badge,
