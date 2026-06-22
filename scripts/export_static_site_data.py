@@ -58,6 +58,7 @@ from news_feeds import (
     DEFAULT_FEEDS,
     ETP_PULSE_PREVIEW_COUNT,
     dedupe_articles,
+    infer_digital_news_lane_topic,
     load_all_etf_etp_news_cached,
     load_all_feeds,
 )
@@ -144,6 +145,9 @@ def _article_json(a: dict) -> dict:
     category = a.get("category")
     if category:
         out["category"] = str(category)
+    topic = infer_digital_news_lane_topic(a)
+    if topic:
+        out["topic"] = topic
     return out
 
 

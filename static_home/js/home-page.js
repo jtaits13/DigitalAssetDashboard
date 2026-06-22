@@ -26,15 +26,28 @@
         '<li class="headline-list__empty">No items are available right now.</li>';
       return;
     }
+    el.classList.add("headline-list--lead-briefs");
     items.slice(0, HOME_NEWS_LIMIT).forEach(function (a, idx) {
       var li = document.createElement("li");
+      var isLead = idx === 0;
+      li.className = isLead
+        ? "headline-list__item headline-list__item--lead"
+        : "headline-list__item headline-list__item--brief";
       var title = escapeHtml(a.title || "Untitled");
       var source = a.source ? escapeHtml(a.source) : "";
-      var timeStr = fmtDate(a.published) ? escapeHtml(fmtDate(a.published)) : "";
-      var linkCls = "headline-list__link";
+      var topic =
+        a.topic && a.topic !== "Digital assets" ? escapeHtml(a.topic) : "";
+      var timeStr =
+        typeof fmtRelativeTime === "function" && fmtRelativeTime(a.published)
+          ? escapeHtml(fmtRelativeTime(a.published))
+          : "";
+      var linkCls = isLead
+        ? "headline-list__link headline-list__link--lead"
+        : "headline-list__link headline-list__link--brief";
       var metaRow =
         '<span class="headline-list__meta-row">' +
         (source ? '<span class="headline-list__source">' + source + "</span>" : "") +
+        (topic ? '<span class="headline-list__topic">' + topic + "</span>" : "") +
         (useCountry && a.country
           ? '<span class="headline-list__time">' + escapeHtml(a.country) + "</span>"
           : "") +
@@ -52,7 +65,10 @@
           metaRow;
       } else {
         li.innerHTML =
-          '<span class="headline-list__link headline-list__link--plain">' +
+          '<span class="' +
+          linkCls +
+          " headline-list__link--plain" +
+          '">' +
           title +
           "</span>" +
           metaRow;

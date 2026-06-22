@@ -14,6 +14,8 @@ from typing import Any
 import streamlit as st
 import streamlit.components.v1 as components
 
+from news_feeds import format_relative_time, infer_digital_news_lane_topic
+
 _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 
@@ -971,40 +973,46 @@ def render_kpi_legend() -> None:
     )
 
 
-def _fmt_article_date(published: Any) -> str:
-    from datetime import datetime, timezone
+def _render_home_news_rail_item_html(item: dict[str, Any], *, is_lead: bool) -> str:
+    from datetime import datetime
 
-    if not published:
-        return ""
-    if isinstance(published, datetime):
-        return published.astimezone(timezone.utc).strftime("%d %b %Y")
-    return str(published)
+    title = escape(str(item.get("title") or "Untitled"))
+    link = str(item.get("link") or "").strip()
+    source = escape(str(item.get("source") or "").strip())
+    pub = item.get("published")
+    when = ""
+    if isinstance(pub, datetime):
+        when = escape(format_relative_time(pub))
+    elif pub:
+        when = escape(str(pub))
+    topic_raw = infer_digital_news_lane_topic(item)
+    topic = escape(topic_raw) if topic_raw and topic_raw != "Digital assets" else ""
+    item_cls = "headline-list__item headline-list__item--lead" if is_lead else "headline-list__item headline-list__item--brief"
+    link_cls = "headline-list__link headline-list__link--lead" if is_lead else "headline-list__link headline-list__link--brief"
+    meta_bits: list[str] = []
+    if source:
+        meta_bits.append(f'<span class="headline-list__source">{source}</span>')
+    if topic:
+        meta_bits.append(f'<span class="headline-list__topic">{topic}</span>')
+    if when:
+        meta_bits.append(f'<span class="headline-list__time">{when}</span>')
+    meta = f'<span class="headline-list__meta-row">{"".join(meta_bits)}</span>' if meta_bits else ""
+    if link:
+        body = (
+            f'<a class="{link_cls}" href="{escape(link, quote=True)}" '
+            f'target="_blank" rel="noopener noreferrer">{title}</a>{meta}'
+        )
+    else:
+        plain_cls = f"{link_cls} headline-list__link--plain"
+        body = f'<span class="{plain_cls}">{title}</span>{meta}'
+    return f"<li class=\"{item_cls}\">{body}</li>"
 
 
 def build_static_news_rail_html(articles: list[dict[str, Any]]) -> str:
-    """News Hub rail matching static_home/index.html."""
+    """News Hub rail: Option B lead story + brief headlines (static_home/index.html parity)."""
     items_html: list[str] = []
-    for item in articles[:HOME_NEWS_LIMIT]:
-        title = escape(str(item.get("title") or "Untitled"))
-        link = str(item.get("link") or "").strip()
-        source = escape(str(item.get("source") or ""))
-        when = escape(_fmt_article_date(item.get("published")))
-        meta = ""
-        if source or when:
-            meta = (
-                '<span class="headline-list__meta-row">'
-                + (f'<span class="headline-list__source">{source}</span>' if source else "")
-                + (f'<span class="headline-list__time">{when}</span>' if when else "")
-                + "</span>"
-            )
-        if link:
-            row = (
-                f'<li><a class="headline-list__link" href="{escape(link)}" '
-                f'target="_blank" rel="noopener noreferrer">{title}</a>{meta}</li>'
-            )
-        else:
-            row = f'<li><span class="headline-list__link headline-list__link--plain">{title}</span>{meta}</li>'
-        items_html.append(row)
+    for idx, item in enumerate(articles[:HOME_NEWS_LIMIT]):
+        items_html.append(_render_home_news_rail_item_html(item, is_lead=(idx == 0)))
     if not items_html:
         items_html.append('<li class="headline-list__empty">No headlines loaded yet.</li>')
     list_body = "".join(items_html)
@@ -1017,7 +1025,7 @@ def build_static_news_rail_html(articles: list[dict[str, Any]]) -> str:
   </p>
   <div class="home-news-block">
     <h3 class="home-news-block__heading">Latest Headlines</h3>
-    <ul class="headline-list headline-list--rail">{list_body}</ul>
+    <ul class="headline-list headline-list--rail headline-list--lead-briefs">{list_body}</ul>
     <div class="home-news-rail__more">
       <a class="btn btn-secondary home-news-rail__cta" href="/All_Articles">All digital asset headlines →</a>
     </div>

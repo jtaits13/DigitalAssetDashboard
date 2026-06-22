@@ -1213,6 +1213,31 @@ def article_styles_markdown() -> str:
     """
 
 
+def format_relative_time(published: Optional[datetime], *, now: Optional[datetime] = None) -> str:
+    """Compact relative label for dashboard headlines (e.g. ``3h ago``)."""
+    if not isinstance(published, datetime):
+        return ""
+    pub = published if published.tzinfo else published.replace(tzinfo=timezone.utc)
+    pub = pub.astimezone(timezone.utc)
+    ref = (now or datetime.now(timezone.utc)).astimezone(timezone.utc)
+    seconds = max(0, int((ref - pub).total_seconds()))
+    if seconds < 60:
+        return "just now"
+    minutes = seconds // 60
+    if minutes < 60:
+        return f"{minutes}m ago"
+    hours = minutes // 60
+    if hours < 24:
+        return f"{hours}h ago"
+    days = hours // 24
+    if days < 7:
+        return f"{days}d ago"
+    weeks = days // 7
+    if weeks < 5:
+        return f"{weeks}w ago"
+    return pub.strftime("%d %b")
+
+
 def format_article_day_label(published: Optional[datetime]) -> str:
     if not published:
         return "Date not listed"

@@ -922,6 +922,26 @@
   color: var(--hx-on-dark-muted);
 }
 
+.site-experience.page-home .home-news-rail--terminal .headline-list__topic {
+  background: rgba(255, 255, 255, 0.1);
+  color: #d8ecf4;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.site-experience.page-home .home-news-rail--terminal .headline-list--lead-briefs .headline-list__item--lead {
+  border-bottom-color: rgba(255, 255, 255, 0.18);
+}
+
+.site-experience.page-home .home-news-rail--terminal .headline-list__link--lead {
+  color: #ffffff;
+  font-size: 1.06rem;
+}
+
+.site-experience.page-home .home-news-rail--terminal .headline-list__link--brief {
+  color: #eef6fa;
+  font-size: 0.86rem;
+}
+
 .site-experience.page-home .home-news-rail--terminal .headline-list__loading,
 .site-experience.page-home .home-news-rail--terminal .headline-list__empty {
   color: var(--hx-on-dark-muted);
