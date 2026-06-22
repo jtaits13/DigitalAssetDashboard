@@ -23,7 +23,9 @@ HOME_NEWS_LIMIT = 4
 HOME_PREVIEW_ROWS = 5
 # White band between hero and News Hub on Streamlit (parent doc spacer; static site uses page-shell padding).
 HOME_HERO_TO_CONTENT_GAP = "20px"
-HOME_CHROME_IFRAME_INITIAL_HEIGHT = 380
+HOME_CHROME_IFRAME_INITIAL_HEIGHT = 440
+# Subpixel/box-shadow slack so the Confluence callout is not clipped by the iframe edge.
+HOME_CHROME_HEIGHT_SLACK_PX = 4
 
 # Streamlit multipage routes (filename stem → path)
 PAGES = {
@@ -613,7 +615,7 @@ body.page-home.site-experience .site-header { position: relative; top: auto; wid
 body.page-home.site-experience .hero.hero--command {
   width: 100%;
   margin-bottom: 0;
-  padding-bottom: 0;
+  padding-bottom: clamp(1.5rem, 3vw, 2rem);
 }
 """
     )
@@ -621,39 +623,39 @@ body.page-home.site-experience .hero.hero--command {
 
 
 def iframe_chrome_height_script() -> str:
-    """Resize chrome iframe to the bottom of the hero callout (no padding or scroll slack)."""
-    return """
+    """Resize chrome iframe to the full hero band (callout + blue padding), with a small slack buffer."""
+    slack = HOME_CHROME_HEIGHT_SLACK_PX
+    return f"""
 <script>
-(function () {
-  function measureChromeHeight() {
-    var anchor = document.querySelector(".hero-dek--compact")
-      || document.querySelector(".hero--command");
-    if (!anchor) return 0;
+(function () {{
+  var slack = {slack};
+  function measureChromeHeight() {{
+    var hero = document.querySelector(".hero--command");
+    if (!hero) return 0;
     var docTop = document.documentElement.getBoundingClientRect().top;
-    return Math.ceil(anchor.getBoundingClientRect().bottom - docTop);
-  }
-  function sendHeight() {
+    return Math.ceil(hero.getBoundingClientRect().bottom - docTop + slack);
+  }}
+  function sendHeight() {{
     var h = measureChromeHeight();
     if (h <= 80) return;
-    window.parent.postMessage({ type: "streamlit:setFrameHeight", height: h }, "*");
-    try {
-      window.parent.postMessage({ type: "jpm-chrome-height", height: h }, "*");
-    } catch (e) {}
-  }
+    window.parent.postMessage({{ type: "streamlit:setFrameHeight", height: h }}, "*");
+    try {{
+      window.parent.postMessage({{ type: "jpm-chrome-height", height: h }}, "*");
+    }} catch (e) {{}}
+  }}
   sendHeight();
   window.addEventListener("load", sendHeight);
-  if (document.fonts && document.fonts.ready) {
+  if (document.fonts && document.fonts.ready) {{
     document.fonts.ready.then(sendHeight);
-  }
-  if (typeof ResizeObserver !== "undefined") {
-    var anchor = document.querySelector(".hero-dek--compact")
-      || document.querySelector(".hero--command");
-    if (anchor) new ResizeObserver(sendHeight).observe(anchor);
-  }
-  [50, 150, 400, 800, 1500, 3000, 5000].forEach(function (ms) {
+  }}
+  if (typeof ResizeObserver !== "undefined") {{
+    var hero = document.querySelector(".hero--command");
+    if (hero) new ResizeObserver(sendHeight).observe(hero);
+  }}
+  [50, 150, 400, 800, 1500, 3000, 5000].forEach(function (ms) {{
     setTimeout(sendHeight, ms);
-  });
-})();
+  }});
+}})();
 </script>"""
 
 
@@ -701,20 +703,20 @@ def iframe_auto_height_script(*, root_selector: str = "body", extra_pad: int = 3
 </script>"""
 
 
-HOME_IFRAME_HEIGHT_SYNC_JS = """
+HOME_IFRAME_HEIGHT_SYNC_JS = f"""
 <script>
-(function () {
+(function () {{
   var doc = window.parent && window.parent.document ? window.parent.document : document;
+  var slack = {HOME_CHROME_HEIGHT_SLACK_PX};
 
-  function measureChromeHeight(inner) {
-    var anchor = inner.querySelector(".hero-dek--compact")
-      || inner.querySelector(".hero--command");
-    if (!anchor) return 0;
+  function measureChromeHeight(inner) {{
+    var hero = inner.querySelector(".hero--command");
+    if (!hero) return 0;
     var docTop = inner.documentElement.getBoundingClientRect().top;
-    return Math.ceil(anchor.getBoundingClientRect().bottom - docTop);
-  }
+    return Math.ceil(hero.getBoundingClientRect().bottom - docTop + slack);
+  }}
 
-  function applyChromeHeight(frame, h) {
+  function applyChromeHeight(frame, h) {{
     if (!frame || h <= 80) return;
     frame.style.height = h + "px";
     frame.style.minHeight = "0";
@@ -722,54 +724,54 @@ HOME_IFRAME_HEIGHT_SYNC_JS = """
     frame.style.marginBottom = "0";
     frame.style.paddingBottom = "0";
     frame.setAttribute("height", String(h));
-  }
+  }}
 
-  function syncHeights() {
-    doc.querySelectorAll("iframe").forEach(function (frame) {
-      try {
+  function syncHeights() {{
+    doc.querySelectorAll("iframe").forEach(function (frame) {{
+      try {{
         var inner = frame.contentDocument;
         if (!inner || !inner.body) return;
         if (inner.querySelector(".home-main-split")) return;
         var isMarkets = inner.querySelector(".home-markets-stack");
         var isChrome = inner.querySelector(".hero--command");
         if (!isMarkets && !isChrome) return;
-        if (isChrome) {
+        if (isChrome) {{
           applyChromeHeight(frame, measureChromeHeight(inner));
           return;
-        }
+        }}
         var h = Math.max(
           inner.body.scrollHeight,
           inner.documentElement.scrollHeight,
           inner.body.offsetHeight
         ) + 32;
-        if (h > 80) {
+        if (h > 80) {{
           frame.style.height = h + "px";
-        }
-      } catch (e) {}
-    });
-  }
+        }}
+      }} catch (e) {{}}
+    }});
+  }}
 
-  window.addEventListener("message", function (ev) {
+  window.addEventListener("message", function (ev) {{
     if (!ev.data || ev.data.type !== "jpm-chrome-height") return;
     var h = Number(ev.data.height);
     if (!isFinite(h) || h <= 80) return;
-    doc.querySelectorAll("iframe").forEach(function (frame) {
-      try {
+    doc.querySelectorAll("iframe").forEach(function (frame) {{
+      try {{
         var inner = frame.contentDocument;
-        if (inner && inner.querySelector(".hero--command") && !inner.querySelector(".home-main-split")) {
+        if (inner && inner.querySelector(".hero--command") && !inner.querySelector(".home-main-split")) {{
           applyChromeHeight(frame, h);
-        }
-      } catch (e) {}
-    });
-  });
+        }}
+      }} catch (e) {{}}
+    }});
+  }});
 
   syncHeights();
   window.addEventListener("load", syncHeights);
-  [100, 400, 1000, 2500, 5000].forEach(function (ms) {
+  [100, 400, 1000, 2500, 5000].forEach(function (ms) {{
     setTimeout(syncHeights, ms);
-  });
+  }});
   setInterval(syncHeights, 1200);
-})();
+}})();
 </script>
 """
 
