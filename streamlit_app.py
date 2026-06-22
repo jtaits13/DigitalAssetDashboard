@@ -142,7 +142,6 @@ def main() -> None:
     footer_iso = now.strftime("%Y-%m")
 
     render_home_chrome(include_refresh=False)
-    render_home_hero_content_gap()
 
     etp_ua = resolve_etp_user_agent(get_etp_user_agent_from_secrets())
 
@@ -163,6 +162,8 @@ def main() -> None:
 
     home_news, _ = prepare_home_hub_market_news_lane(articles)
     news_rail = build_static_news_rail_html(home_news)
+
+    render_home_hero_content_gap()
 
     render_home_body_iframe(
         news_rail=news_rail,

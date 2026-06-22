@@ -23,6 +23,7 @@ HOME_NEWS_LIMIT = 4
 HOME_PREVIEW_ROWS = 5
 # White band between hero and News Hub on Streamlit (parent doc spacer; static site uses page-shell padding).
 HOME_HERO_TO_CONTENT_GAP = "20px"
+HOME_CHROME_IFRAME_INITIAL_HEIGHT = 380
 
 # Streamlit multipage routes (filename stem → path)
 PAGES = {
@@ -88,20 +89,39 @@ section[data-testid="stSidebar"] { display: none !important; }
   width: 100%;
   height: HOME_HERO_TO_CONTENT_GAP_PLACEHOLDER;
   min-height: HOME_HERO_TO_CONTENT_GAP_PLACEHOLDER;
+  max-height: HOME_HERO_TO_CONTENT_GAP_PLACEHOLDER;
   margin: 0;
   padding: 0;
   background: var(--wash, #f3f7fb);
   border: 0;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 .stApp [data-testid="stElementContainer"]:has(.home-hero-content-gap) {
   margin: 0 !important;
+  padding: 0 !important;
+  height: HOME_HERO_TO_CONTENT_GAP_PLACEHOLDER !important;
+  min-height: HOME_HERO_TO_CONTENT_GAP_PLACEHOLDER !important;
+  max-height: HOME_HERO_TO_CONTENT_GAP_PLACEHOLDER !important;
   line-height: 0;
+  overflow: hidden;
+  flex-shrink: 0;
 }
+.stApp [data-testid="stElementContainer"]:has(.home-hero-content-gap) [data-testid="stHtml"],
+.stApp [data-testid="stElementContainer"]:has(.home-hero-content-gap) [data-testid="stHtml"] > div,
 .stApp [data-testid="stElementContainer"]:has(.home-hero-content-gap) [data-testid="stMarkdownContainer"],
 .stApp [data-testid="stElementContainer"]:has(.home-hero-content-gap) [data-testid="stMarkdownContainer"] > div {
   margin: 0 !important;
   padding: 0 !important;
   line-height: 0;
+  height: HOME_HERO_TO_CONTENT_GAP_PLACEHOLDER !important;
+  min-height: HOME_HERO_TO_CONTENT_GAP_PLACEHOLDER !important;
+  max-height: HOME_HERO_TO_CONTENT_GAP_PLACEHOLDER !important;
+}
+.stApp:has(.home-body-iframe-marker) [data-testid="stElementContainer"]:has([data-testid="stSpinner"]) {
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 0 !important;
 }
 .stApp:has(.home-body-iframe-marker) [data-testid="stMarkdownContainer"]:has(.site-footer) {
   max-width: calc(var(--max, 72rem) + 17.5rem);
@@ -234,6 +254,9 @@ section[data-testid="stSidebar"] { display: none !important; }
   width: 100% !important;
   border: 0;
   overflow: hidden;
+  margin: 0 !important;
+  padding: 0 !important;
+  vertical-align: top;
 }
 .stApp .block-container,
 .stApp [data-testid="stMainBlockContainer"],
@@ -590,7 +613,7 @@ body.page-home.site-experience .site-header { position: relative; top: auto; wid
 body.page-home.site-experience .hero.hero--command {
   width: 100%;
   margin-bottom: 0;
-  padding-bottom: clamp(1.5rem, 3vw, 2rem);
+  padding-bottom: 0;
 }
 """
     )
@@ -598,15 +621,16 @@ body.page-home.site-experience .hero.hero--command {
 
 
 def iframe_chrome_height_script() -> str:
-    """Resize chrome iframe to the bottom edge of the hero (nav + hero only; no scrollHeight slack)."""
+    """Resize chrome iframe to the bottom of the hero callout (no padding or scroll slack)."""
     return """
 <script>
 (function () {
   function measureChromeHeight() {
-    var hero = document.querySelector(".hero--command");
-    if (!hero) return 0;
+    var anchor = document.querySelector(".hero-dek--compact")
+      || document.querySelector(".hero--command");
+    if (!anchor) return 0;
     var docTop = document.documentElement.getBoundingClientRect().top;
-    return Math.ceil(hero.getBoundingClientRect().bottom - docTop);
+    return Math.ceil(anchor.getBoundingClientRect().bottom - docTop);
   }
   function sendHeight() {
     var h = measureChromeHeight();
@@ -622,8 +646,9 @@ def iframe_chrome_height_script() -> str:
     document.fonts.ready.then(sendHeight);
   }
   if (typeof ResizeObserver !== "undefined") {
-    var hero = document.querySelector(".hero--command");
-    if (hero) new ResizeObserver(sendHeight).observe(hero);
+    var anchor = document.querySelector(".hero-dek--compact")
+      || document.querySelector(".hero--command");
+    if (anchor) new ResizeObserver(sendHeight).observe(anchor);
   }
   [50, 150, 400, 800, 1500, 3000, 5000].forEach(function (ms) {
     setTimeout(sendHeight, ms);
@@ -682,16 +707,21 @@ HOME_IFRAME_HEIGHT_SYNC_JS = """
   var doc = window.parent && window.parent.document ? window.parent.document : document;
 
   function measureChromeHeight(inner) {
-    var hero = inner.querySelector(".hero--command");
-    if (!hero) return 0;
+    var anchor = inner.querySelector(".hero-dek--compact")
+      || inner.querySelector(".hero--command");
+    if (!anchor) return 0;
     var docTop = inner.documentElement.getBoundingClientRect().top;
-    return Math.ceil(hero.getBoundingClientRect().bottom - docTop);
+    return Math.ceil(anchor.getBoundingClientRect().bottom - docTop);
   }
 
   function applyChromeHeight(frame, h) {
     if (!frame || h <= 80) return;
     frame.style.height = h + "px";
     frame.style.minHeight = "0";
+    frame.style.maxHeight = h + "px";
+    frame.style.marginBottom = "0";
+    frame.style.paddingBottom = "0";
+    frame.setAttribute("height", String(h));
   }
 
   function syncHeights() {
@@ -894,14 +924,14 @@ def render_home_chrome(*, include_refresh: bool = False) -> None:
     )
     components.html(
         build_home_chrome_iframe_html(include_refresh=include_refresh),
-        height=520,
+        height=HOME_CHROME_IFRAME_INITIAL_HEIGHT,
         scrolling=False,
     )
 
 
 def render_home_hero_content_gap() -> None:
     """Visible wash band between hero iframe and body iframe (Streamlit-only seam)."""
-    st.markdown('<div class="home-hero-content-gap" aria-hidden="true"></div>', unsafe_allow_html=True)
+    st.html('<div class="home-hero-content-gap" aria-hidden="true"></div>')
 
 
 def build_home_footer_html(*, footer_month: str, footer_iso: str) -> str:
