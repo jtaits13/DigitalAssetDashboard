@@ -2355,14 +2355,14 @@ def show_rwa_mmf_widget(
             )
         else:
             st.markdown(hub_subsection_heading_html("Top-Line Market Snapshot"), unsafe_allow_html=True)
-        from rwa_league.mmf import TMMF_KPI_LEGEND_HTML
+        from rwa_league.mmf import TMMF_KPI_LEGEND_TEXT
 
         _render_rwa_treasuries_overview(
             kpis_m,
             overview_title="Tokenized Money Market Funds",
             show_kpi_legend=not home_preview,
             inner_page_style=inner_page,
-            kpi_legend_html=TMMF_KPI_LEGEND_HTML if inner_page else None,
+            kpi_legend_html=escape(TMMF_KPI_LEGEND_TEXT) if inner_page else None,
         )
         _inject_full_page_key_observations(
             full_page_key_observations_html,

@@ -202,8 +202,8 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 }
 
 .stApp:has(.mock-tmmf-inner) .jd-kpi-window-note strong {
-  color: var(--hx-etp-dark, #31485c);
-  font-weight: 600;
+  color: inherit;
+  font-weight: inherit;
 }
 
 .stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body .jd-hub-subsection-head {

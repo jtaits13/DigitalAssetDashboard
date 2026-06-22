@@ -31,10 +31,12 @@ TMMF_INNER_PAGE_SUBTITLE_HTML = (
     "value across that population."
 )
 
-TMMF_KPI_LEGEND_HTML = (
-    "All % changes in this row are <strong>30-day (30D)</strong> (<strong>RWA.xyz</strong>). "
-    "Headline totals from the <strong>RWA.xyz</strong> "
-    "<strong>Tokenized Money Market Funds</strong> Overview."
+TMMF_KPI_LEGEND_TEXT = (
+    "Distributed value uses a 30-day (30D) % change vs summed token values 30 days ago. "
+    "Top network share is the largest network by distributed value; the 30D figure is the change in "
+    "market-share percentage points (pp), not a percent of total. "
+    "Fund universe: fixed curated TMMF population on RWA.xyz US Treasuries and Non-U.S. Government Debt; "
+    "KPIs, charts, and league tables use the same fund set."
 )
 
 # Curated TMMF universe on RWA.xyz (17 funds; population table sorted by total value).

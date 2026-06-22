@@ -571,6 +571,23 @@ SUBPAGE_STREAMLIT_CSS = """
   overflow-x: clip;
   overflow-y: visible !important;
 }
+.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(iframe),
+.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(iframe) {
+  max-width: none !important;
+  width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  box-sizing: border-box !important;
+}
+.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(iframe[height]:not([height="0"])),
+.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(iframe[height]:not([height="0"])) {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  margin-left: calc(50% - 50vw) !important;
+  margin-right: calc(50% - 50vw) !important;
+}
 .stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.subpage-chrome-iframe-marker),
 .stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.subpage-chrome-iframe-marker) {
   overflow: visible !important;
@@ -578,9 +595,13 @@ SUBPAGE_STREAMLIT_CSS = """
   height: auto !important;
   min-height: 0 !important;
   max-height: none !important;
+  max-width: none !important;
+  width: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
-.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:not(:has(.subpage-chrome-iframe-marker)):not(:has(.streamlit-subpage-active)),
-.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:not(:has(.subpage-chrome-iframe-marker)):not(:has(.streamlit-subpage-active)) {
+.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:not(:has(iframe)):not(:has(.subpage-chrome-iframe-marker)):not(:has(.streamlit-subpage-active)),
+.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:not(:has(iframe)):not(:has(.subpage-chrome-iframe-marker)):not(:has(.streamlit-subpage-active)) {
   max-width: var(--content-max, var(--max, 72rem)) !important;
   width: 100% !important;
   margin-left: auto !important;
@@ -597,15 +618,43 @@ SUBPAGE_STREAMLIT_CSS = """
 }
 .stApp:has(.streamlit-subpage-active) .page-back-below-header,
 .stApp:has(.streamlit-subpage-root) .page-back-below-header {
-  max-width: none;
+  max-width: calc(var(--content-max, var(--max, 72rem)) + 17.5rem);
   width: 100%;
-  margin: 0;
-  padding: 0.5rem 0 0;
+  margin: 0 auto;
+  padding: 0.5rem 1.25rem 0;
   box-sizing: border-box;
+}
+.stApp:has(.streamlit-subpage-active) p.back-link.back-link--below-header,
+.stApp:has(.streamlit-subpage-root) p.back-link.back-link--below-header {
+  margin: 0.2rem 0 0.85rem;
+  width: auto !important;
+  max-width: none !important;
+}
+.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.page-back-below-header),
+.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.page-back-below-header) {
+  max-width: calc(var(--content-max, var(--max, 72rem)) + 17.5rem) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.page-back-below-header) [data-testid="stVerticalBlock"],
+.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.page-back-below-header) [data-testid="stVerticalBlock"] {
+  align-items: flex-start !important;
+}
+.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.page-back-below-header) [data-testid="stMarkdownContainer"],
+.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.page-back-below-header) [data-testid="stMarkdownContainer"],
+.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.page-back-below-header) [data-testid="stHtml"] > div,
+.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.page-back-below-header) [data-testid="stHtml"] > div {
+  width: auto !important;
+  max-width: 100% !important;
 }
 .stApp:has(.streamlit-subpage-active) .back-link--below-header a,
 .stApp:has(.streamlit-subpage-root) .back-link--below-header a {
-  display: inline-block;
+  display: inline-block !important;
+  width: auto !important;
+  max-width: none !important;
+  flex: none !important;
   font-weight: 650;
   font-size: 0.84rem;
   line-height: 1.35;
@@ -613,14 +662,14 @@ SUBPAGE_STREAMLIT_CSS = """
   text-decoration: none !important;
   padding: 0.35rem 0.65rem;
   border-radius: 999px;
-  border: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.24);
+  border: 1px solid rgba(199, 216, 232, 0.85) !important;
   background: rgba(255, 255, 255, 0.85);
   white-space: nowrap;
 }
 .stApp:has(.page-rwa-deep-mmf) .back-link--below-header a:hover {
-  color: var(--hx-etp-bright, #507188) !important;
-  border-color: rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.35);
-  background: rgb(var(--hx-etp-rgb, 62 92 116) / 0.06);
+  color: var(--teal, #2a5f82) !important;
+  border-color: rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.35) !important;
+  background: #f8fcfe !important;
 }
 .stApp .streamlit-subpage-root .page-shell,
 .stApp .streamlit-subpage-root .etp-mock-shell {
@@ -910,6 +959,17 @@ body.subpage-nav-chrome.site-experience .site-header {
   top: auto;
   width: 100%;
   margin: 0;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(199, 216, 232, 0.85);
+}
+body.subpage-nav-chrome.site-experience .site-header__inner {
+  max-width: calc(var(--max, 72rem) + 17.5rem);
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 """
     )
@@ -1765,10 +1825,10 @@ def render_subpage_back_link(*, href: str, label: str) -> None:
         .replace("\u2190", "&larr;")
         .replace("\u00b7", "&middot;")
     )
-    st.markdown(
-        f'<div class="page-back-below-header site-experience"><p class="back-link back-link--below-header">'
-        f'<a href="{escape(href)}">{label_html}</a></p></div>',
-        unsafe_allow_html=True,
+    st.html(
+        f'<div class="page-back-below-header site-experience">'
+        f'<p class="back-link back-link--below-header">'
+        f'<a href="{escape(href)}">{label_html}</a></p></div>'
     )
 
 
