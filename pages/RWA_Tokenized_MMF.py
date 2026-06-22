@@ -23,7 +23,6 @@ from streamlit_site_parity import (
     _streamlit_page_href,
     close_subpage_layout,
     configure_subpage,
-    inner_page_zone_close,
     inner_page_zone_open,
     open_subpage_layout,
     related_chips_html,
@@ -69,8 +68,8 @@ def main() -> None:
             (_streamlit_page_href("rwa_global"), "RWA market overview"),
         ),
         body_class="inner-rich-zone__body etp-mock-zone__body",
+        header_only=True,
     )
-    inner_page_zone_close()
     st.markdown(
         article_styles_markdown()
         + STREAMLIT_TMMF_SUBPAGE_CSS

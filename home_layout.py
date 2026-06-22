@@ -100,9 +100,77 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 
 .stApp:has(.mock-tmmf-inner) .inner-rich-zone.etp-mock-zone {
   margin-bottom: 0;
+  border: 1px solid rgb(var(--hx-tmmf-bright-rgb, 80 113 136) / 0.22);
   border-bottom: none;
   border-radius: 14px 14px 0 0;
+  background: var(--hx-tmmf-soft, #f3f6f9);
+  box-shadow:
+    0 1px 2px rgb(var(--hx-tmmf-rgb, 62 92 116) / 0.05),
+    0 4px 14px rgb(var(--hx-tmmf-rgb, 62 92 116) / 0.06);
   max-width: 100%;
+  overflow: hidden;
+}
+
+.stApp:has(.mock-tmmf-inner) .inner-rich-zone.zone--tmmf .home-zone__stripe,
+.stApp:has(.mock-tmmf-inner) .etp-mock-zone .home-zone__stripe {
+  display: block;
+  height: 4px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: linear-gradient(90deg, var(--hx-tmmf-bright, #507188) 0%, transparent 88%);
+}
+
+.stApp:has(.mock-tmmf-inner) .inner-rich-zone.zone--tmmf .home-zone__head,
+.stApp:has(.mock-tmmf-inner) .etp-mock-zone .home-zone__head {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.85rem;
+  padding: 1.15rem 1.25rem 1rem;
+  border-bottom: 1px solid rgb(var(--hx-tmmf-bright-rgb, 80 113 136) / 0.16);
+  background: var(--hx-tmmf-head, linear-gradient(180deg, #eef2f6 0%, #ffffff 100%));
+}
+
+.stApp:has(.mock-tmmf-inner) .inner-rich-zone.zone--tmmf .home-zone__badge,
+.stApp:has(.mock-tmmf-inner) .etp-mock-zone .home-zone__badge {
+  flex-shrink: 0;
+  width: 2.4rem;
+  height: 2.4rem;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  border-radius: 10px;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: #ffffff;
+  background: var(--hx-tmmf-dark, #31485c);
+  box-shadow: 0 2px 8px rgb(var(--hx-tmmf-rgb, 62 92 116) / 0.18);
+}
+
+.stApp:has(.mock-tmmf-inner) .inner-rich-zone.zone--tmmf .home-zone__titles,
+.stApp:has(.mock-tmmf-inner) .etp-mock-zone .home-zone__titles {
+  flex: 1;
+  min-width: 0;
+}
+
+.stApp:has(.mock-tmmf-inner) .inner-rich-zone.zone--tmmf .page-intro__title,
+.stApp:has(.mock-tmmf-inner) .etp-mock-zone .home-zone__titles .page-intro__title {
+  margin: 0 0 0.4rem !important;
+  padding: 0 !important;
+  color: var(--hx-tmmf-dark, #31485c) !important;
+  font-size: clamp(1.35rem, 2.8vw, 1.75rem) !important;
+  font-weight: 780 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.2 !important;
+}
+
+.stApp:has(.mock-tmmf-inner) .inner-rich-zone.zone--tmmf .home-zone__body,
+.stApp:has(.mock-tmmf-inner) .etp-mock-zone .home-zone__body {
+  padding: 0.85rem 1.25rem 1rem;
+  border-bottom: none;
+  background: transparent;
 }
 
 .stApp:has(.mock-tmmf-inner) .tmmf-streamlit-zone-body {
@@ -432,18 +500,9 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 .stApp .mock-tmmf-inner .page-intro__dek.section-dek--wide {
   margin: 0;
   max-width: 52rem;
-  font-size: 0.92rem;
-  line-height: 1.5;
-  color: var(--ink-muted, #4a5f73);
-}
-
-.stApp .mock-tmmf-inner .etp-mock-zone .page-intro__title {
-  margin: 0 0 0.4rem;
-  color: var(--hx-etp-dark, #31485c);
-  font-size: clamp(1.35rem, 2.8vw, 1.75rem);
-  font-weight: 780;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
+  font-size: 0.92rem !important;
+  line-height: 1.5 !important;
+  color: var(--ink-muted, #4a5f73) !important;
 }
 
 .stApp .mock-tmmf-inner .page-intro__dek.section-dek--wide strong {

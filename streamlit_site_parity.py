@@ -1874,11 +1874,14 @@ def inner_page_zone_open(
     zone_classes: str = "",
     related_chips: str = "",
     body_class: str = "inner-rich-zone__body",
+    header_only: bool = False,
 ) -> None:
+    """Open inner-page zone markup. Set ``header_only`` to emit a closed header card in one block."""
     dek = subtitle_html if subtitle_html else escape(subtitle)
     zone_extra = f" {zone_classes}" if zone_classes else ""
     chips = related_chips or ""
     dek_tag = "div" if "section-dek" in subtitle_class else "p"
+    close = "  </div>\n</article>" if header_only else ""
     st.markdown(
         f"""
 <article class="hub-section hub-section--panel inner-rich-zone home-reveal is-visible{zone_extra}"
@@ -1887,13 +1890,13 @@ def inner_page_zone_open(
   <header class="home-zone__head">
     <span class="home-zone__badge" aria-hidden="true">{escape(badge)}</span>
     <div class="home-zone__titles">
-      <h1 class="page-intro__title" id="{escape(section_id)}-heading">{escape(title)}</h1>
+      <p class="page-intro__title" role="heading" aria-level="1" id="{escape(section_id)}-heading">{escape(title)}</p>
       <{dek_tag} class="{escape(subtitle_class)}">{dek}</{dek_tag}>
     </div>
   </header>
   <div class="home-zone__body {body_class}">
     {chips}
-""",
+{close}""",
         unsafe_allow_html=True,
     )
 
