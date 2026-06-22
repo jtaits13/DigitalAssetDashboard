@@ -786,7 +786,11 @@ def _build_rwa_tokenized_mmf_deep_payload(
     articles: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     from rwa_league.client import APP_GOVERNMENT_BONDS, APP_TREASURIES
-    from rwa_league.mmf import asset_distributed_value_usd, build_curated_mmf_dashboard_data
+    from rwa_league.mmf import (
+        TMMF_INNER_PAGE_SUBTITLE_HTML,
+        asset_distributed_value_usd,
+        build_curated_mmf_dashboard_data,
+    )
     from rwa_league.dataframe_table import (
         build_us_treasury_network_dataframe,
         build_us_treasury_platform_dataframe,
@@ -817,11 +821,7 @@ def _build_rwa_tokenized_mmf_deep_payload(
             "generated_at": export_ts,
             "page_title": "Tokenized Money Market Funds — Digital Assets Dashboard",
             "band_label": "Tokenized Money Market Funds",
-            "page_subtitle_html": (
-                f"Curated tokenized money market fund (TMMF) population from {sources}. "
-                "Headline KPIs, charts, network and platform tables, and the fund population list all use "
-                "the same fixed fund set; <strong>Distributed Value</strong> columns are current levels."
-            ),
+            "page_subtitle_html": TMMF_INNER_PAGE_SUBTITLE_HTML,
             "kpi_window_note": _kpi_legend_for_mmf(),
             "kpis": [_rwa_kpi_to_dict(k) for k in kpis],
             "chart_max_bars": RWA_MMF_CHART_MAX_BARS,
