@@ -1,0 +1,22 @@
+---
+description: Do not edit GitHub Pages static site unless the user explicitly asks
+alwaysApply: true
+---
+
+# GitHub Pages vs Streamlit
+
+This repo has two deploy targets:
+
+- **GitHub Pages** — `static_home/` (HTML, CSS, JS, data JSON served as static files)
+- **Streamlit** — `streamlit_app.py`, `streamlit_*.py`, `pages/`
+
+## Rule
+
+**Do not modify `static_home/` unless the user explicitly asks to change the GitHub Pages / static site version.**
+
+When improving layout, navigation, or styling for the live app:
+
+- Prefer **Streamlit-only** changes (`streamlit_site_parity.py`, `streamlit_home_static.py`, `pages/`, inline Streamlit CSS patches).
+- If static CSS is shared, add Streamlit-specific overrides in `streamlit_site_parity.py` rather than editing `static_home/css/`.
+
+If the user asks for parity on both surfaces, confirm before touching `static_home/`.

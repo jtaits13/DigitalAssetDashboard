@@ -566,6 +566,51 @@ def _cached_static_stylesheet() -> str:
     return "\n".join(chunks)
 
 
+STREAMLIT_HOME_INTERNAL_NOTE_CSS = """
+body.page-home.site-experience .home-internal-note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem 0.55rem;
+  margin: 0 0 0.75rem;
+  padding: 0.38rem 0.65rem 0.38rem 0.5rem;
+  font-size: 0.76rem;
+  line-height: 1.42;
+  color: #3a6070;
+  background: linear-gradient(90deg, rgba(37, 128, 156, 0.07) 0%, rgba(37, 128, 156, 0.02) 100%);
+  border: 1px solid rgba(37, 128, 156, 0.16);
+  border-left: 3px solid #25809c;
+  border-radius: 0 8px 8px 0;
+}
+body.page-home.site-experience .home-internal-note__badge {
+  flex-shrink: 0;
+  padding: 0.1rem 0.4rem;
+  font-size: 0.6rem;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #25809c;
+  background: rgba(37, 128, 156, 0.1);
+  border-radius: 4px;
+}
+body.page-home.site-experience .home-internal-note strong {
+  color: #2a5563;
+  font-weight: 650;
+}
+body.page-home.site-experience .home-internal-note a {
+  color: #1a6b7e;
+  font-weight: 650;
+  text-decoration: underline;
+  text-decoration-color: rgba(26, 107, 126, 0.35);
+  text-underline-offset: 0.14em;
+}
+body.page-home.site-experience .home-internal-note a:hover {
+  color: #134d5c;
+  text-decoration-color: rgba(19, 77, 92, 0.55);
+}
+"""
+
+
 @st.cache_resource(show_spinner=False)
 def _cached_iframe_body_stylesheet() -> str:
     """CSS for combined news + markets iframe (news sets height; markets scroll)."""
@@ -653,6 +698,7 @@ body.page-home.site-experience .home-markets-stack::-webkit-scrollbar-thumb {{
   background: rgba(42, 95, 130, 0.28);
   border-radius: 999px;
 }}
+{STREAMLIT_HOME_INTERNAL_NOTE_CSS}
 """
     )
     return "\n".join(chunks)
@@ -688,7 +734,10 @@ body.page-home.site-experience .site-header { position: relative; top: auto; wid
 body.page-home.site-experience .hero.hero--command {
   width: 100%;
   margin-bottom: 0;
-  padding-bottom: clamp(1.5rem, 3vw, 2rem);
+  padding-bottom: clamp(0.85rem, 2vw, 1.15rem);
+}
+body.page-home.site-experience .home-jump-nav {
+  margin-bottom: 0;
 }
 """
     )
