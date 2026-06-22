@@ -485,6 +485,74 @@ def _patch_static_css_for_streamlit(css: str) -> str:
     return css
 
 
+def _patch_inner_page_css_for_streamlit(css: str) -> str:
+    """Mirror inner-page ``body`` / ``.site-experience.page-inner--rich`` rules onto the subpage wrapper."""
+    if ":root, .stApp {" not in css:
+        css = css.replace(":root {", ":root, .stApp {", 1)
+    css = re.sub(
+        r"\.site-experience\.page-inner--rich",
+        ".stApp .streamlit-subpage-root.site-experience.page-inner--rich, .site-experience.page-inner--rich",
+        css,
+    )
+    css = re.sub(
+        r"body\.(page-[a-z][a-z0-9-]*)",
+        r".stApp .streamlit-subpage-root.\1, body.\1",
+        css,
+    )
+    return css
+
+
+_SUBPAGE_INNER_CSS = (
+    "css/inner-page-experience.css",
+    "css/inner-page-zone-parity.css",
+)
+_SUBPAGE_MOCK_CSS: dict[str, tuple[str, ...]] = {
+    "etp": ("mockups/etp-inner-page-mock.css",),
+    "crypto": ("mockups/etp-inner-page-mock.css", "mockups/crypto-inner-page-mock.css"),
+}
+SUBPAGE_ROOT_CLASS: dict[str, str] = {
+    "article": "page-full-feed page-article-feed page-inner--rich",
+    "article_etp": "page-full-feed page-article-feed page-etp page-inner--rich",
+    "etp": "page-etp page-inner--rich mock-etp-inner",
+    "crypto": "page-crypto page-inner--rich mock-crypto-inner",
+}
+
+SUBPAGE_STREAMLIT_CSS = """
+.stApp .streamlit-subpage-root {
+  display: block;
+  width: 100%;
+}
+.stApp:has(.streamlit-subpage-root) .block-container {
+  padding-top: 0 !important;
+}
+.stApp .streamlit-subpage-root .page-shell {
+  max-width: calc(var(--max, 72rem) + 17.5rem);
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+.stApp .streamlit-subpage-root .inner-rich-zone {
+  opacity: 1 !important;
+  transform: none !important;
+}
+"""
+
+
+@st.cache_resource(show_spinner=False)
+def _cached_subpage_stylesheet(kind: str) -> str:
+    chunks: list[str] = []
+    for rel in _SUBPAGE_INNER_CSS:
+        path = _STATIC / rel
+        if path.is_file():
+            chunks.append(_patch_inner_page_css_for_streamlit(path.read_text(encoding="utf-8")))
+    for rel in _SUBPAGE_MOCK_CSS.get(kind, ()):
+        path = _STATIC / rel
+        if path.is_file():
+            chunks.append(_patch_inner_page_css_for_streamlit(path.read_text(encoding="utf-8")))
+    return "\n".join(chunks)
+
+
 @st.cache_resource(show_spinner=False)
 def _cached_static_stylesheet() -> str:
     """Load static CSS once per process; patch ancestor selectors for Streamlit."""
@@ -1094,6 +1162,105 @@ HOME_NEWS_STICKY_JS = """
 def _embedded_home_styles_html() -> str:
     """Return static CSS for injection via ``st.html`` (style-only → event container)."""
     return f"<style>{_cached_static_stylesheet()}</style>"
+
+
+def inject_subpage_styles(*, kind: str = "article") -> None:
+    """GitHub Pages base + inner-page CSS for Streamlit subpages."""
+    inject_site_styles(include_static=True)
+    inner_css = _cached_subpage_stylesheet(kind)
+    st.markdown(
+        f"<style>{inner_css}\n{SUBPAGE_STREAMLIT_CSS}</style>",
+        unsafe_allow_html=True,
+    )
+
+
+def configure_subpage(*, page_title: str, active: str, style_kind: str = "article") -> None:
+    """Shared subpage setup: collapsed sidebar, nav, and static/inner CSS."""
+    st.set_page_config(
+        page_title=page_title,
+        page_icon="◆",
+        layout="wide",
+        initial_sidebar_state="collapsed",
+    )
+    inject_subpage_styles(kind=style_kind)
+    render_site_nav(active=active, is_landing=False)
+
+
+def render_subpage_back_link(*, href: str, label: str) -> None:
+    st.markdown(
+        f'<div class="page-back-below-header"><p class="back-link back-link--below-header">'
+        f'<a href="{escape(href)}">{escape(label)}</a></p></div>',
+        unsafe_allow_html=True,
+    )
+
+
+def open_subpage_layout(*, style_kind: str, shell_class: str = "") -> None:
+    root_class = SUBPAGE_ROOT_CLASS.get(style_kind, SUBPAGE_ROOT_CLASS["article"])
+    shell_cls = f"page-shell {shell_class}".strip()
+    st.markdown(
+        f'<div class="streamlit-subpage-root site-experience {root_class}">'
+        f'<main class="{shell_cls}">',
+        unsafe_allow_html=True,
+    )
+
+
+def close_subpage_layout(*, back_href: str = "", back_label: str = "") -> None:
+    back = ""
+    if back_href and back_label:
+        back = (
+            f'<p class="back-link"><a href="{escape(back_href)}">{escape(back_label)}</a></p>'
+        )
+    st.markdown(f"{back}</main></div>", unsafe_allow_html=True)
+
+
+def inner_page_zone_open(
+    *,
+    section_id: str,
+    badge: str,
+    title: str,
+    subtitle: str = "",
+    subtitle_html: str = "",
+    zone_classes: str = "",
+    related_chips: str = "",
+    body_class: str = "inner-rich-zone__body",
+) -> None:
+    dek = subtitle_html if subtitle_html else escape(subtitle)
+    zone_extra = f" {zone_classes}" if zone_classes else ""
+    chips = related_chips or ""
+    st.markdown(
+        f"""
+<article class="hub-section hub-section--panel inner-rich-zone home-reveal is-visible{zone_extra}"
+         id="{escape(section_id)}">
+  <div class="home-zone__stripe" aria-hidden="true"></div>
+  <header class="home-zone__head">
+    <span class="home-zone__badge" aria-hidden="true">{escape(badge)}</span>
+    <div class="home-zone__titles">
+      <h1 class="page-intro__title" id="{escape(section_id)}-heading">{escape(title)}</h1>
+      <p class="page-intro__dek">{dek}</p>
+    </div>
+  </header>
+  <div class="home-zone__body {body_class}">
+    {chips}
+""",
+        unsafe_allow_html=True,
+    )
+
+
+def inner_page_zone_close() -> None:
+    st.markdown("  </div></article>", unsafe_allow_html=True)
+
+
+def render_subpage_footer(*, label: str) -> None:
+    from datetime import datetime, timezone
+
+    now = datetime.now(timezone.utc)
+    month = now.strftime("%b %Y")
+    iso = now.strftime("%Y-%m")
+    st.markdown(
+        f'<footer class="site-footer site-experience">Digital Assets Dashboard · {escape(label)} · '
+        f'<time datetime="{escape(iso)}">{escape(month)}</time></footer>',
+        unsafe_allow_html=True,
+    )
 
 
 def inject_site_styles(*, include_static: bool = True) -> None:

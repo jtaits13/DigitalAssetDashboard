@@ -9,54 +9,59 @@ _REPO = Path(__file__).resolve().parent.parent
 if str(_REPO) not in sys.path:
     sys.path.insert(0, str(_REPO))
 
-from datetime import datetime, timezone
-
 import streamlit as st
 
 from crypto_prices.widgets import show_crypto_prices_page
-from news_feeds import render_subpage_top_bar
-from streamlit_site_parity import home_zone_close, home_zone_open, inject_site_styles
+from streamlit_site_parity import (
+    close_subpage_layout,
+    configure_subpage,
+    inner_page_zone_close,
+    inner_page_zone_open,
+    open_subpage_layout,
+    related_chips_html,
+    render_subpage_back_link,
+    render_subpage_footer,
+)
 
 
 def main() -> None:
-    st.set_page_config(
+    configure_subpage(
         page_title="Crypto Prices — Digital Assets Dashboard",
-        page_icon="◆",
-        layout="wide",
-        initial_sidebar_state="collapsed",
+        active="crypto",
+        style_kind="crypto",
     )
-
-    render_subpage_top_bar(active="crypto")
-    inject_site_styles(include_static=False)
-
-    if st.button("← Back to home · Crypto preview", key="top_home_crypto"):
-        st.switch_page("streamlit_app.py")
-
-    st.markdown('<div class="page-shell site-experience">', unsafe_allow_html=True)
-    home_zone_open(
+    render_subpage_back_link(
+        href="/?jd_scroll=crypto",
+        label="← Back to home · Crypto preview",
+    )
+    open_subpage_layout(style_kind="crypto", shell_class="etp-mock-shell")
+    inner_page_zone_open(
         section_id="crypto-full",
         badge="CRY",
         title="Crypto Prices — Top 50 Snapshot",
-        subtitle=(
-            "Top-line crypto market snapshot with a KPI strip and searchable top-50 spot-price table. "
-            "Sources: CoinPaprika (total cap), CoinGecko (top 50; CoinCap fallback)."
+        subtitle_html=(
+            "Top-line crypto market snapshot with a KPI strip, a 12-month total market-cap trend chart, category "
+            "filters, and a searchable <strong>top 50</strong> spot-price table. Sources: "
+            '<a href="https://coinpaprika.com/" target="_blank" rel="noopener noreferrer">CoinPaprika</a> '
+            "(total cap), "
+            '<a href="https://www.coingecko.com/" target="_blank" rel="noopener noreferrer">CoinGecko</a> '
+            "(top 50; CoinCap fallback)."
         ),
-        zone_class="home-zone--crypto",
-        related_chips=(
-            '<div class="home-related-chips" aria-label="Related pages">'
-            '<span class="home-related-chips__label">Related</span>'
-            '<a class="home-chip" href="/?jd_scroll=crypto">Home crypto preview</a>'
-            '<a class="home-chip" href="/US_Crypto_ETPs">U.S. ETPs</a>'
-            '<a class="home-chip" href="/RWA_Stablecoins">Stablecoins</a>'
-            '<a class="home-chip" href="/?jd_scroll=news">News Hub</a>'
-            "</div>"
+        zone_classes="zone--crypto home-zone home-zone--crypto etp-mock-zone",
+        related_chips=related_chips_html(
+            ("/?jd_scroll=crypto", "Home crypto preview"),
+            ("/US_Crypto_ETPs", "U.S. ETPs"),
+            ("/?jd_scroll=news", "News Hub"),
         ),
+        body_class="inner-rich-zone__body etp-mock-zone__body",
     )
     show_crypto_prices_page(zone_layout=True)
-    home_zone_close()
-    st.markdown("</div>", unsafe_allow_html=True)
-
-    st.caption(f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M')} UTC · CoinGecko/CoinCap · CoinPaprika")
+    inner_page_zone_close()
+    close_subpage_layout(
+        back_href="/?jd_scroll=crypto",
+        back_label="← Back to home · Crypto preview",
+    )
+    render_subpage_footer(label="Crypto Prices")
 
 
 if __name__ == "__main__":
