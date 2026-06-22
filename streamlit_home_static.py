@@ -463,6 +463,8 @@ def iter_home_markets_stack_html(
     crypto_paprika: dict[str, float],
 ) -> list[str]:
     """One HTML fragment per zone — Streamlit drops extra blocks in a single markdown blob."""
+    from streamlit_site_parity import _streamlit_page_href
+
     parts: list[str] = [
         '<p class="home-kpi-legend-once" id="home-kpi-legend">'
         "<strong>How to read KPIs:</strong> On-chain figures use 30-day (30D) % from RWA.xyz. "
@@ -492,7 +494,7 @@ def iter_home_markets_stack_html(
             table_id="js-home-tmmf",
             empty_msg="TMMF fund preview is unavailable.",
         ),
-        _cta_html("/RWA_Tokenized_MMF", "Open full TMMF page"),
+        _cta_html(_streamlit_page_href("tmmf"), "Open full TMMF page"),
         _zone_close(
             source_cap="Curated fund population preview. Population may not include all TMMFs in the market."
         ),
@@ -521,7 +523,7 @@ def iter_home_markets_stack_html(
             table_id="js-home-stable",
             empty_msg="Stablecoin preview is unavailable.",
         ),
-        _cta_html("/RWA_Stablecoins", "Open full Stablecoins page"),
+        _cta_html(_streamlit_page_href("stablecoins"), "Open full Stablecoins page"),
         _zone_close(source_cap="RWA.xyz stablecoin networks"),
     ]
     parts.append("".join(stable))
@@ -548,7 +550,7 @@ def iter_home_markets_stack_html(
             table_id="js-home-rwa",
             empty_msg="On-chain preview is unavailable.",
         ),
-        _cta_html("/RWA_Global_Market_Overview", "Open full RWA Market Overview"),
+        _cta_html(_streamlit_page_href("rwa_global"), "Open full RWA Market Overview"),
         _zone_close(explore=True, source_cap="RWA.xyz Global Market Overview · parent networks"),
     ]
     parts.append("".join(rwa))
@@ -578,7 +580,7 @@ def iter_home_markets_stack_html(
             table_id="js-home-etp",
             empty_msg="ETP preview is unavailable.",
         ),
-        _cta_html("/US_Crypto_ETPs", "Open full U.S. ETP page"),
+        _cta_html(_streamlit_page_href("etps"), "Open full U.S. ETP page"),
         _zone_close(),
     ]
     parts.append("".join(etp))
@@ -605,7 +607,7 @@ def iter_home_markets_stack_html(
             table_id="js-home-crypto",
             empty_msg="Crypto preview is unavailable.",
         ),
-        _cta_html("/Crypto_Prices", "Open full Crypto Prices page"),
+        _cta_html(_streamlit_page_href("crypto"), "Open full Crypto Prices page"),
         _zone_close(source_cap="Spot rows: CoinGecko with CoinCap fallback · total cap: CoinPaprika"),
     ]
     parts.append("".join(crypto))

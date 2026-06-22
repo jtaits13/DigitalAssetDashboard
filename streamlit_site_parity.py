@@ -872,6 +872,31 @@ STREAMLIT_SITE_NAV_ROUTER_JS = """
     return p === "/" || p.endsWith("/");
   }
 
+  function assignNavigate(href) {
+    try {
+      var u = new URL(href, win.location.origin);
+      var path = u.pathname + u.search + u.hash;
+      var a = doc.createElement("a");
+      a.href = path;
+      a.style.display = "none";
+      (doc.body || doc.documentElement).appendChild(a);
+      a.click();
+      setTimeout(function () {
+        try {
+          a.remove();
+        } catch (e) {}
+      }, 0);
+    } catch (e) {
+      try {
+        win.location.assign(href);
+      } catch (e2) {
+        try {
+          win.top.location.href = href;
+        } catch (e3) {}
+      }
+    }
+  }
+
   function navigate(href) {
     href = String(href || "").trim();
     if (!href) return;
@@ -898,9 +923,9 @@ STREAMLIT_SITE_NAV_ROUTER_JS = """
         win.jpmPollScrollToHomeSection(sectionId, 120);
         return;
       }
-      win.top.location.href = u.pathname + u.search + u.hash;
+      assignNavigate(u.pathname + u.search + u.hash);
     } catch (e) {
-      win.top.location.href = href;
+      assignNavigate(href);
     }
   }
 
@@ -961,6 +986,31 @@ HOME_PAGE_SCROLL_JS = """
     return p === "/" || p.endsWith("/");
   }
 
+  function assignNavigate(href) {
+    try {
+      var u = new URL(href, win.location.origin);
+      var path = u.pathname + u.search + u.hash;
+      var a = doc.createElement("a");
+      a.href = path;
+      a.style.display = "none";
+      (doc.body || doc.documentElement).appendChild(a);
+      a.click();
+      setTimeout(function () {
+        try {
+          a.remove();
+        } catch (e) {}
+      }, 0);
+    } catch (e) {
+      try {
+        win.location.assign(href);
+      } catch (e2) {
+        try {
+          win.top.location.href = href;
+        } catch (e3) {}
+      }
+    }
+  }
+
   function navigateFromMessage(href) {
     href = String(href || "").trim();
     if (!href) return;
@@ -969,7 +1019,7 @@ HOME_PAGE_SCROLL_JS = """
       var u = new URL(href, win.location.origin);
       scrollKey = u.searchParams.get("jd_scroll");
       if (u.searchParams.has("home_refresh")) {
-        win.top.location.href = u.pathname + u.search;
+        assignNavigate(u.pathname + u.search);
         return;
       }
     } catch (e) {}
@@ -984,12 +1034,7 @@ HOME_PAGE_SCROLL_JS = """
       return;
     }
 
-    try {
-      var target = new URL(href, win.location.origin);
-      win.top.location.href = target.pathname + target.search + target.hash;
-    } catch (e) {
-      win.top.location.href = href;
-    }
+    assignNavigate(href);
   }
 
   function findBodyFrame() {
@@ -1447,6 +1492,7 @@ def configure_subpage(*, page_title: str, active: str, style_kind: str = "articl
         layout="wide",
         initial_sidebar_state="collapsed",
     )
+    consume_jd_page_query()
     inject_subpage_styles(kind=style_kind)
     inject_streamlit_nav_router()
     render_site_nav(active=active, is_landing=False)
@@ -1647,6 +1693,42 @@ def _page_href(key: str) -> str:
     return f"/{script_path.stem}"
 
 
+JD_PAGE_QUERY_KEY = "jd_page"
+
+
+def _streamlit_page_href(key: str) -> str:
+    """Route via home entry + ``st.switch_page`` (iframe sandbox blocks direct subpage URLs)."""
+    if key == "home":
+        return "/?jd_scroll=top"
+    if key in PAGES and PAGES[key] != "streamlit_app.py":
+        return f"/?{JD_PAGE_QUERY_KEY}={key}"
+    return _page_href(key)
+
+
+def _nav_page_href(key: str, *, for_streamlit: bool, is_landing: bool) -> str:
+    if for_streamlit or not is_landing:
+        return _streamlit_page_href(key)
+    return _page_href(key)
+
+
+def consume_jd_page_query() -> None:
+    """When nav links hit ``/?jd_page=…``, switch to the target multipage script."""
+    raw = st.query_params.get(JD_PAGE_QUERY_KEY)
+    if not raw:
+        return
+    if isinstance(raw, list):
+        raw = raw[0] if raw else ""
+    key = str(raw).strip().lower()
+    script = PAGES.get(key)
+    if not script or script == "streamlit_app.py":
+        return
+    try:
+        del st.query_params[JD_PAGE_QUERY_KEY]
+    except KeyError:
+        pass
+    st.switch_page(script)
+
+
 def render_site_nav_html(*, active: str = "home", is_landing: bool = False, for_streamlit: bool = False) -> str:
     top = "_top" if for_streamlit else ""
     news_href = (
@@ -1655,6 +1737,7 @@ def render_site_nav_html(*, active: str = "home", is_landing: bool = False, for_
         else "#section-news"
     )
     t = f' target="{top}"' if top else ""
+    ph = lambda key: _nav_page_href(key, for_streamlit=for_streamlit, is_landing=is_landing)
 
     def a(href: str, label: str, *, active_link: bool = False, extra_cls: str = "") -> str:
         cls = "is-active" if active_link else ""
@@ -1670,25 +1753,25 @@ def render_site_nav_html(*, active: str = "home", is_landing: bool = False, for_
     <nav class="site-nav" aria-label="Primary">
       {_nav_link("/?jd_scroll=top", "Home", active=active == "home", target=top)}
       {_nav_link(news_href, "News Hub", active=active == "news", target=top)}
-      {_nav_link(_page_href("tmmf"), "TMMFs", active=active == "tmmf", target=top)}
-      {_nav_link(_page_href("stablecoins"), "Stablecoins", active=active == "stablecoins", target=top)}
+      {_nav_link(ph("tmmf"), "TMMFs", active=active == "tmmf", target=top)}
+      {_nav_link(ph("stablecoins"), "Stablecoins", active=active == "stablecoins", target=top)}
       <div class="site-nav__dropdown">
-        {a(_page_href("rwa_global"), "RWA Market", extra_cls="site-nav__trigger")}
+        {a(ph("rwa_global"), "RWA Market", extra_cls="site-nav__trigger")}
         <ul class="site-nav__sub">
-          <li>{a(_page_href("rwa_global"), "Market Overview")}</li>
+          <li>{a(ph("rwa_global"), "Market Overview")}</li>
           <li class="site-nav__item site-nav__item--flyout">
-            {a(_page_href("explore_asset"), "RWA · Assets", extra_cls="site-nav__parent-link")}
+            {a(ph("explore_asset"), "RWA · Assets", extra_cls="site-nav__parent-link")}
             <ul class="site-nav__sub site-nav__sub--nested">
-              <li>{a(_page_href("treasuries"), "U.S. Treasuries")}</li>
-              <li>{a(_page_href("stocks"), "Tokenized Stocks")}</li>
+              <li>{a(ph("treasuries"), "U.S. Treasuries")}</li>
+              <li>{a(ph("stocks"), "Tokenized Stocks")}</li>
             </ul>
           </li>
           <li class="site-nav__item site-nav__item--flyout">
-            {a(_page_href("explore_participant"), "RWA · Participants", extra_cls="site-nav__parent-link")}
+            {a(ph("explore_participant"), "RWA · Participants", extra_cls="site-nav__parent-link")}
             <ul class="site-nav__sub site-nav__sub--nested">
-              <li>{a(_page_href("networks"), "Networks")}</li>
-              <li>{a(_page_href("platforms"), "Platforms")}</li>
-              <li>{a(_page_href("asset_managers"), "Asset Managers")}</li>
+              <li>{a(ph("networks"), "Networks")}</li>
+              <li>{a(ph("platforms"), "Platforms")}</li>
+              <li>{a(ph("asset_managers"), "Asset Managers")}</li>
             </ul>
           </li>
         </ul>
@@ -1696,11 +1779,11 @@ def render_site_nav_html(*, active: str = "home", is_landing: bool = False, for_
       <div class="site-nav__dropdown">
         <span class="site-nav__trigger">U.S. ETPs</span>
         <ul class="site-nav__sub">
-          <li>{a(_page_href("etps"), "U.S. ETP Overview")}</li>
-          <li>{a(_page_href("etf_news"), "ETF/ETP News")}</li>
+          <li>{a(ph("etps"), "U.S. ETP Overview")}</li>
+          <li>{a(ph("etf_news"), "ETF/ETP News")}</li>
         </ul>
       </div>
-      {_nav_link(_page_href("crypto"), "Crypto Prices", active=active == "crypto", target=top)}
+      {_nav_link(ph("crypto"), "Crypto Prices", active=active == "crypto", target=top)}
     </nav>
   </div>
 </header>

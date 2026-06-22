@@ -36,6 +36,7 @@ from streamlit_site_parity import (
     JD_SCROLL_MAP,
     build_home_footer_html,
     build_static_news_rail_html,
+    consume_jd_page_query,
     inject_site_styles,
     inject_streamlit_nav_router,
     render_home_chrome,
@@ -125,6 +126,7 @@ def main() -> None:
 
     _consume_home_refresh_query()
     _jd_consume_scroll_query()
+    consume_jd_page_query()
     inject_site_styles(include_static=True)
     inject_streamlit_nav_router()
 
