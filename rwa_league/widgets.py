@@ -82,13 +82,12 @@ def _inject_full_page_key_observations(
     if not html:
         return
     if inner_page_style:
-        st.markdown(
+        st.html(
             '<div class="inner-rich-block etp-mock-key-obs-block" aria-labelledby="jd-mmf-key-obs-h">'
-            '<h2 class="subsection-head u-vh" id="jd-mmf-key-obs-h">Key Observations</h2>',
-            unsafe_allow_html=True,
+            '<h2 class="subsection-head u-vh" id="jd-mmf-key-obs-h">Key Observations</h2>'
+            f"{html}"
+            "</div>"
         )
-        st.markdown(html, unsafe_allow_html=True)
-        st.markdown("</div>", unsafe_allow_html=True)
         return
     st.markdown(hub_subsection_heading_html("Key Observations"), unsafe_allow_html=True)
     st.markdown(html, unsafe_allow_html=True)

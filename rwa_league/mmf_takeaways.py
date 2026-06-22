@@ -68,7 +68,7 @@ def _fmt_usd_compact(n: float) -> str:
 def _fmt_pp(delta: float | None) -> str:
     if delta is None:
         return "—"
-    return f"{delta * 100:+.2f} pp"
+    return f"{delta * 100:+.2f}%"
 
 
 def _regulatory_cluster(framework: str) -> str | None:
@@ -197,20 +197,22 @@ def _network_shift_candidate(net_rows: list[RwaTreasuryDistributedNetworkRow]) -
     gainers = sorted(with_delta, key=lambda r: r.market_share_change_30d_raw or 0, reverse=True)[:2]
     losers = sorted(with_delta, key=lambda r: r.market_share_change_30d_raw or 0)[:2]
     gain_txt = ", ".join(
-        f"{escape(r.network)} ({_fmt_pp(r.market_share_change_30d_raw)} 30D share)" for r in gainers
+        f"{escape(r.network)} ({_fmt_pp(r.market_share_change_30d_raw)} 30D TMMF network share)"
+        for r in gainers
     )
     loss_txt = ", ".join(
-        f"{escape(r.network)} ({_fmt_pp(r.market_share_change_30d_raw)} 30D share)" for r in losers
+        f"{escape(r.network)} ({_fmt_pp(r.market_share_change_30d_raw)} 30D TMMF network share)"
+        for r in losers
     )
     max_move = max(abs(r.market_share_change_30d_raw or 0) for r in with_delta)
     score = 55.0 + min(18.0, max_move * 400.0)
     return ObservationCandidate(
         id="mmf_chain_shift",
-        lead='Early "flight to efficiency" shows up in 30D network share:',
+        lead='Early "flight to efficiency" shows up in TMMF 30D network share:',
         body=(
-            f"gainers include {gain_txt}; losers include {loss_txt}. "
-            "That pattern is consistent with liquidity migrating toward higher-throughput, lower-fee chains—"
-            "though Ethereum still dominates levels in most snapshots."
+            f"Among tokenized money market funds, gainers include {gain_txt}; losers include {loss_txt}. "
+            "That pattern is consistent with TMMF issuers routing more distributed value toward "
+            "higher-throughput, lower-fee chains—though Ethereum still dominates TMMF share levels in most snapshots."
         ),
         score=score,
         themes=("chain_efficiency",),
@@ -341,4 +343,5 @@ def build_mmf_key_observations_html(
         context_note=_MMF_CONTEXT_NOTE,
         min_bullets=3,
         max_bullets=5,
+        variant="inner_page",
     )

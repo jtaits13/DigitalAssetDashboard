@@ -16,7 +16,7 @@ from key_observations.news import (
 from key_observations.interpretations import resolve_topic_key
 from key_observations.topics import TOPIC_THEMES
 
-Variant = Literal["boxed", "crypto"]
+Variant = Literal["boxed", "crypto", "inner_page"]
 
 
 def _bullet_html(cand: ObservationCandidate) -> str:
@@ -101,11 +101,21 @@ def render_observations_html(
     if not selected:
         return ""
     items = "".join(_bullet_html(c) for c in selected)
-    note = (
-        f'<p class="takeaways__note">{escape(context_note)} '
-        "Bullets are ranked from on-page data and recent industry headlines (dashboard RSS plus Google News fallback).</p>"
+    note_text = (
+        f"{escape(context_note)} "
+        "Bullets are ranked from on-page data and recent industry headlines (dashboard RSS plus Google News fallback)."
     )
+    note = f'<p class="takeaways__note">{note_text}</p>'
     review = key_observations_disclaimer_html() if include_disclaimer else ""
+    if variant == "inner_page":
+        return (
+            '<aside class="crypto-story-callout" aria-labelledby="key-obs-callout-title">'
+            '<h3 class="crypto-story-callout__title" id="key-obs-callout-title">Key observations</h3>'
+            f'<ul class="crypto-story-callout__list">{items}</ul>'
+            f'<p class="crypto-story-callout__note">{note_text}</p>'
+            "</aside>"
+            f"{review}"
+        )
     if variant == "crypto":
         return (
             '<div class="takeaways">'
