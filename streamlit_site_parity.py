@@ -21,11 +21,11 @@ _STATIC = _REPO / "static_home"
 
 HOME_NEWS_LIMIT = 4
 HOME_PREVIEW_ROWS = 5
-# Seam between chrome iframe and body iframe (0 = internal note sits flush below hero).
-HOME_HERO_TO_CONTENT_GAP = "0px"
-HOME_CHROME_IFRAME_INITIAL_HEIGHT = 300
-# Subpixel slack so the hero band is not clipped by the chrome iframe edge.
-HOME_CHROME_HEIGHT_SLACK_PX = 2
+# Small seam between chrome iframe and body (avoids overlap with jump nav).
+HOME_HERO_TO_CONTENT_GAP = "8px"
+HOME_CHROME_IFRAME_INITIAL_HEIGHT = 360
+# Extra pixels so jump-nav pills are not clipped by the chrome iframe edge.
+HOME_CHROME_HEIGHT_SLACK_PX = 10
 
 # Streamlit multipage routes (filename stem → path)
 PAGES = {
@@ -285,9 +285,11 @@ section[data-testid="stSidebar"] { display: none !important; }
   margin-bottom: 0 !important;
   position: sticky !important;
   top: 0 !important;
-  z-index: 20 !important;
+  z-index: 30 !important;
 }
 .stApp [data-testid="stElementContainer"]:has(.home-body-iframe-marker) {
+  position: relative !important;
+  z-index: 1 !important;
   margin-top: 0 !important;
   margin-bottom: 0 !important;
   padding-top: 0 !important;
@@ -748,10 +750,10 @@ body.page-home.site-experience .site-header { position: relative; top: auto; wid
 body.page-home.site-experience .hero.hero--command {
   width: 100%;
   margin-bottom: 0;
-  padding-bottom: 0.25rem !important;
+  padding-bottom: 0.65rem !important;
 }
 body.page-home.site-experience .home-jump-nav {
-  margin-bottom: 0;
+  margin-bottom: 0.35rem;
 }
 """
     )
@@ -1178,17 +1180,23 @@ HOME_PAGE_SCROLL_JS = """
 
 
 def iframe_chrome_height_script() -> str:
-    """Resize chrome iframe to the full hero band (callout + blue padding), with a small slack buffer."""
+    """Resize chrome iframe to nav + hero through jump pills, with slack so nothing is clipped."""
     slack = HOME_CHROME_HEIGHT_SLACK_PX
     return f"""
 <script>
 (function () {{
   var slack = {slack};
   function measureChromeHeight() {{
-    var hero = document.querySelector(".hero--command");
-    if (!hero) return 0;
     var docTop = document.documentElement.getBoundingClientRect().top;
-    return Math.ceil(hero.getBoundingClientRect().bottom - docTop + slack);
+    var bottom = docTop;
+    document.querySelectorAll(".site-header, .hero--command").forEach(function (el) {{
+      bottom = Math.max(bottom, el.getBoundingClientRect().bottom);
+    }});
+    var jump = document.querySelector(".home-jump-nav");
+    if (jump) {{
+      bottom = Math.max(bottom, jump.getBoundingClientRect().bottom);
+    }}
+    return Math.ceil(bottom - docTop + slack);
   }}
   function sendHeight() {{
     var h = measureChromeHeight();
@@ -1204,8 +1212,10 @@ def iframe_chrome_height_script() -> str:
     document.fonts.ready.then(sendHeight);
   }}
   if (typeof ResizeObserver !== "undefined") {{
-    var hero = document.querySelector(".hero--command");
-    if (hero) new ResizeObserver(sendHeight).observe(hero);
+    var ro = new ResizeObserver(sendHeight);
+    document.querySelectorAll(".site-header, .hero--command, .home-jump-nav").forEach(function (el) {{
+      ro.observe(el);
+    }});
   }}
   [50, 150, 400, 800, 1500, 3000, 5000].forEach(function (ms) {{
     setTimeout(sendHeight, ms);
@@ -1265,10 +1275,16 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
   var slack = {HOME_CHROME_HEIGHT_SLACK_PX};
 
   function measureChromeHeight(inner) {{
-    var hero = inner.querySelector(".hero--command");
-    if (!hero) return 0;
     var docTop = inner.documentElement.getBoundingClientRect().top;
-    return Math.ceil(hero.getBoundingClientRect().bottom - docTop + slack);
+    var bottom = docTop;
+    inner.querySelectorAll(".site-header, .hero--command").forEach(function (el) {{
+      bottom = Math.max(bottom, el.getBoundingClientRect().bottom);
+    }});
+    var jump = inner.querySelector(".home-jump-nav");
+    if (jump) {{
+      bottom = Math.max(bottom, jump.getBoundingClientRect().bottom);
+    }}
+    return Math.ceil(bottom - docTop + slack);
   }}
 
   function applyChromeHeight(frame, h) {{
