@@ -672,12 +672,28 @@ def build_home_body_iframe_html(*, news_rail: str, **zone_data: Any) -> str:
   function syncHomeSplitHeights() {{
     var rail = document.querySelector(".home-news-rail");
     var markets = document.querySelector(".home-markets-stack");
+    var split = document.querySelector(".home-main-split");
     if (!rail || !markets) return;
     var h = Math.max(rail.offsetHeight, 1);
     markets.style.height = h + "px";
     markets.style.maxHeight = h + "px";
     markets.style.minHeight = h + "px";
     markets.style.overflowY = "auto";
+    if (split) {{
+      split.style.height = h + "px";
+      split.style.maxHeight = h + "px";
+      split.style.overflow = "hidden";
+    }}
+    try {{
+      var shell = document.querySelector(".page-shell");
+      if (shell && rail) {{
+        var st = getComputedStyle(shell);
+        var pt = parseFloat(st.paddingTop) || 0;
+        var pb = parseFloat(st.paddingBottom) || 0;
+        var frameH = Math.ceil(rail.offsetHeight + pt + pb + 8);
+        window.parent.postMessage({{ type: "streamlit:setFrameHeight", height: frameH }}, "*");
+      }}
+    }} catch (e) {{}}
   }}
   window.syncHomeSplitHeights = syncHomeSplitHeights;
   document.querySelectorAll('a[href^="/"]').forEach(function (a) {{
