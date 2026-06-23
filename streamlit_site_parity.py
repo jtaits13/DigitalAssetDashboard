@@ -466,7 +466,6 @@ section.hub-section { scroll-margin-top: 4.5rem; }
 """
 
 HOME_LOADING_STACK = """
-<p class="home-kpi-legend-once" aria-live="polite">Loading market data…</p>
 <div class="hub-section hub-section--panel home-loading-panel">
   <p class="home-loading-title">Fetching RWA, ETP, and crypto datasets</p>
   <p class="home-loading-hint">First load can take 1–2 minutes while upstream APIs and caches warm.</p>
@@ -2437,7 +2436,9 @@ def build_home_page_html(
             refresh,
             '<div class="page-shell">',
             home_internal_note_html().strip(),
-            '<div class="home-main-split"><div class="home-markets-stack">',
+            '<div class="home-main-split">',
+            home_kpi_legend_html(extra_attrs='aria-live="polite"'),
+            '<div class="home-markets-stack">',
             markets_stack.strip(),
             "</div>",
             news_rail.strip(),
@@ -2490,16 +2491,23 @@ def home_zone_close(*, explore_compact: bool = False) -> None:
     st.markdown(f"{explore}  </div></section>", unsafe_allow_html=True)
 
 
-def render_kpi_legend() -> None:
-    st.markdown(
-        """
-<p class="home-kpi-legend-once">
-  <strong>How to read KPIs:</strong> On-chain figures use 30-day (30D) % from RWA.xyz.
-  U.S. ETP and crypto rows use ~30 calendar days unless noted on the full page.
-</p>
-""",
-        unsafe_allow_html=True,
+def home_kpi_legend_html(*, element_id: str = "home-kpi-legend", extra_attrs: str = "") -> str:
+    attrs = []
+    if element_id:
+        attrs.append(f'id="{element_id}"')
+    if extra_attrs.strip():
+        attrs.append(extra_attrs.strip())
+    attr_str = (" " + " ".join(attrs)) if attrs else ""
+    return (
+        f'<p class="home-kpi-legend-once"{attr_str}>'
+        "<strong>How to read KPIs:</strong> On-chain figures use 30-day (30D) % from RWA.xyz. "
+        "U.S. ETP and crypto rows use ~30 calendar days unless noted on the full page."
+        "</p>"
     )
+
+
+def render_kpi_legend() -> None:
+    st.markdown(home_kpi_legend_html(), unsafe_allow_html=True)
 
 
 def _fmt_article_relative_time(published: Any) -> str:

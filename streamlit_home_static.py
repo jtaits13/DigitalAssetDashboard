@@ -465,12 +465,7 @@ def iter_home_markets_stack_html(
     """One HTML fragment per zone — Streamlit drops extra blocks in a single markdown blob."""
     from streamlit_site_parity import _streamlit_page_href
 
-    parts: list[str] = [
-        '<p class="home-kpi-legend-once" id="home-kpi-legend">'
-        "<strong>How to read KPIs:</strong> On-chain figures use 30-day (30D) % from RWA.xyz. "
-        "U.S. ETP and crypto rows use ~30 calendar days unless noted on the full page."
-        "</p>"
-    ]
+    parts: list[str] = []
 
     # TMMF
     tmmf: list[str] = [
@@ -620,9 +615,11 @@ def build_home_body_iframe_html(*, news_rail: str, **zone_data: Any) -> str:
     from streamlit_site_parity import (
         _cached_iframe_body_stylesheet,
         home_internal_note_html,
+        home_kpi_legend_html,
         iframe_internal_link_script,
     )
 
+    kpi_legend = home_kpi_legend_html()
     markets = "".join(iter_home_markets_stack_html(**zone_data))
     css = _cached_iframe_body_stylesheet()
     return f"""<!DOCTYPE html>
@@ -636,6 +633,7 @@ def build_home_body_iframe_html(*, news_rail: str, **zone_data: Any) -> str:
 <div class="page-shell">
 {home_internal_note_html().strip()}
 <div class="home-main-split">
+{kpi_legend}
 <div class="home-markets-stack">{markets}</div>
 {news_rail.strip()}
 </div>
@@ -671,12 +669,19 @@ def build_home_body_iframe_html(*, news_rail: str, **zone_data: Any) -> str:
   function syncHomeSplitHeights() {{
     var rail = document.querySelector(".home-news-rail");
     var markets = document.querySelector(".home-markets-stack");
+    var legend = document.querySelector(".home-kpi-legend-once");
     var split = document.querySelector(".home-main-split");
     if (!rail || !markets || !split) return;
     var h = rail.offsetHeight;
     if (h < 200) return;
-    markets.style.height = h + "px";
-    markets.style.maxHeight = h + "px";
+    var marketsH = h;
+    if (window.matchMedia("(min-width: 960px)").matches) {{
+      var legendH = legend ? legend.offsetHeight : 0;
+      var rowGap = parseFloat(window.getComputedStyle(split).rowGap) || 0;
+      marketsH = Math.max(120, h - legendH - rowGap);
+    }}
+    markets.style.height = marketsH + "px";
+    markets.style.maxHeight = marketsH + "px";
     markets.style.overflowY = "auto";
     split.style.minHeight = h + "px";
     split.style.height = "";
@@ -699,6 +704,8 @@ def build_home_body_iframe_html(*, news_rail: str, **zone_data: Any) -> str:
   if (typeof ResizeObserver !== "undefined") {{
     var rail = document.querySelector(".home-news-rail");
     if (rail) new ResizeObserver(syncHomeSplitHeights).observe(rail);
+    var legend = document.querySelector(".home-kpi-legend-once");
+    if (legend) new ResizeObserver(syncHomeSplitHeights).observe(legend);
   }}
   [100, 400, 1000].forEach(function (ms) {{ setTimeout(syncHomeSplitHeights, ms); }});
 }})();
@@ -727,9 +734,13 @@ def render_home_body_iframe(*, news_rail: str, **zone_data: Any) -> None:
 
 def build_home_markets_iframe_html(**zone_data: Any) -> str:
     """Self-contained markets stack for ``components.html`` (CSS + table filters in iframe)."""
-    from streamlit_site_parity import _cached_iframe_home_stylesheet, iframe_auto_height_script
+    from streamlit_site_parity import (
+        _cached_iframe_home_stylesheet,
+        home_kpi_legend_html,
+        iframe_auto_height_script,
+    )
 
-    stack = "".join(iter_home_markets_stack_html(**zone_data))
+    stack = home_kpi_legend_html() + "".join(iter_home_markets_stack_html(**zone_data))
     css = _cached_iframe_home_stylesheet()
     return f"""<!DOCTYPE html>
 <html lang="en">
