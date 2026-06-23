@@ -1966,11 +1966,34 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 .stApp:has(.streamlit-tmmf-iframe-page) .block-container {
   padding-bottom: 0 !important;
 }
-body.rwa-table-modal-open {
-  overflow: hidden !important;
+dialog.rwa-table-streamlit-dialog {
+  border: none;
+  padding: 0;
+  margin: auto;
+  background: transparent;
+  overflow: visible;
+  max-width: min(96vw, 1400px);
+  width: min(96vw, 1400px);
 }
-#js-table-fullscreen-modal.rwa-table-modal {
-  z-index: 999999;
+dialog.rwa-table-streamlit-dialog::backdrop {
+  background: rgba(15, 23, 42, 0.62);
+}
+dialog.rwa-table-streamlit-dialog .rwa-table-modal__dialog {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: min(92vh, 980px);
+  background: #fff;
+  border: 1px solid #d4e4ef;
+  border-radius: 14px;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.24);
+  overflow: hidden;
+}
+dialog.rwa-table-streamlit-dialog .rwa-table-modal__body {
+  overflow: auto;
+}
+dialog.rwa-table-streamlit-dialog .rwa-table-modal__table-wrap {
+  max-height: min(70vh, calc(100vh - 12rem));
 }
 </style>
 """

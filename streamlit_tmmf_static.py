@@ -31,7 +31,7 @@ _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH = """
   var fs = window.__TABLE_FULLSCREEN;
   if (!fs || window.parent === window) return;
 
-  var HOST_MODAL_ID = "js-table-fullscreen-modal";
+  var HOST_DIALOG_ID = "js-table-fullscreen-streamlit-dialog";
   var HOST_BODY_ID = "js-table-fullscreen-modal-body";
   var HOST_TITLE_ID = "js-table-fullscreen-modal-title";
   var CLOSE_ATTR = "data-table-fullscreen-close";
@@ -53,31 +53,28 @@ _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH = """
   function closeHostModal() {
     var doc = hostDoc();
     if (!doc) return;
-    var root = doc.getElementById(HOST_MODAL_ID);
-    if (root) root.hidden = true;
-    doc.body.classList.remove("rwa-table-modal-open");
+    var dialog = doc.getElementById(HOST_DIALOG_ID);
+    if (dialog && dialog.open) {
+      try {
+        dialog.close();
+      } catch (e) {}
+    }
     var body = doc.getElementById(HOST_BODY_ID);
     if (body) body.innerHTML = "";
     window.__TMMF_MODAL_OPEN = false;
   }
 
-  function ensureHostModal() {
+  function ensureHostDialog() {
     var doc = hostDoc();
     if (!doc) return null;
-    var root = doc.getElementById(HOST_MODAL_ID);
-    if (root) return root;
+    var dialog = doc.getElementById(HOST_DIALOG_ID);
+    if (dialog) return dialog;
 
-    root = doc.createElement("div");
-    root.id = HOST_MODAL_ID;
-    root.className = "rwa-table-modal";
-    root.hidden = true;
-    root.innerHTML =
-      '<div class="rwa-table-modal__backdrop" ' +
-      CLOSE_ATTR +
-      '="1"></div>' +
-      '<div class="rwa-table-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="' +
-      HOST_TITLE_ID +
-      '">' +
+    dialog = doc.createElement("dialog");
+    dialog.id = HOST_DIALOG_ID;
+    dialog.className = "rwa-table-streamlit-dialog";
+    dialog.innerHTML =
+      '<div class="rwa-table-modal__dialog" role="document">' +
       '<div class="rwa-table-modal__header">' +
       "<div>" +
       '<p class="rwa-table-modal__eyebrow">Full-screen table</p>' +
@@ -93,11 +90,18 @@ _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH = """
       HOST_BODY_ID +
       '"></div>' +
       "</div>";
-    doc.body.appendChild(root);
+    doc.body.appendChild(dialog);
 
-    root.addEventListener("click", function (ev) {
+    dialog.addEventListener("click", function (ev) {
       var closeEl = ev.target.closest ? ev.target.closest("[" + CLOSE_ATTR + "]") : null;
-      if (closeEl) closeHostModal();
+      if (closeEl || ev.target === dialog) closeHostModal();
+    });
+    dialog.addEventListener("cancel", function (ev) {
+      ev.preventDefault();
+      closeHostModal();
+    });
+    dialog.addEventListener("close", function () {
+      window.__TMMF_MODAL_OPEN = false;
     });
 
     if (!doc.body._tableFullscreenHostKeyBound) {
@@ -107,17 +111,17 @@ _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH = """
       });
     }
 
-    return root;
+    return dialog;
   }
 
   function openHostModal(tableEl, opts) {
     var doc = hostDoc();
     if (!doc || !tableEl) return;
 
-    var root = ensureHostModal();
+    var dialog = ensureHostDialog();
     var titleEl = doc.getElementById(HOST_TITLE_ID);
     var body = doc.getElementById(HOST_BODY_ID);
-    if (!root || !titleEl || !body) return;
+    if (!dialog || !titleEl || !body) return;
 
     titleEl.textContent =
       (opts && opts.title ? String(opts.title) : "") || "Full-screen table";
@@ -130,11 +134,18 @@ _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH = """
     wrap.appendChild(clone);
     body.appendChild(wrap);
 
-    root.hidden = false;
-    doc.body.classList.add("rwa-table-modal-open");
     window.__TMMF_MODAL_OPEN = true;
+    if (typeof dialog.showModal === "function") {
+      try {
+        dialog.showModal();
+      } catch (e) {
+        dialog.setAttribute("open", "open");
+      }
+    } else {
+      dialog.setAttribute("open", "open");
+    }
 
-    var closeBtn = root.querySelector(".rwa-table-modal__close");
+    var closeBtn = dialog.querySelector(".rwa-table-modal__close");
     if (closeBtn) closeBtn.focus();
   }
 
