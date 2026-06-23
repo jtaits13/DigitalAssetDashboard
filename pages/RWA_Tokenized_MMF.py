@@ -13,9 +13,7 @@ import streamlit as st
 
 from streamlit_site_parity import (
     _streamlit_page_href,
-    close_subpage_layout,
     configure_subpage,
-    open_subpage_layout,
     related_chips_html,
     render_subpage_back_link,
     render_subpage_footer,
@@ -33,7 +31,6 @@ def main() -> None:
         href="/?jd_scroll=tmmf",
         label="← Back to home · TMMF preview",
     )
-    open_subpage_layout(style_kind="tmmf", shell_class="etp-mock-shell")
 
     related = related_chips_html(
         ("/?jd_scroll=tmmf", "Home TMMF preview"),
@@ -46,10 +43,6 @@ def main() -> None:
         payload = load_tmmf_deep_payload()
     render_tmmf_body_iframe(payload=payload, related_chips=related)
 
-    close_subpage_layout(
-        back_href="/?jd_scroll=tmmf",
-        back_label="← Back to home · TMMF preview",
-    )
     render_subpage_footer(label="Tokenized Money Market Funds")
 
 

@@ -134,6 +134,10 @@ body.page-rwa-deep-mmf .home-reveal {
   opacity: 1 !important;
   transform: none !important;
 }
+body.page-rwa-deep-mmf.mock-tmmf-inner::before {
+  display: none !important;
+  content: none !important;
+}
 """
     )
     return "\n".join(chunks)
@@ -152,7 +156,7 @@ def _read_js_files(names: tuple[str, ...]) -> str:
 
 def build_tmmf_body_iframe_html(*, payload: dict[str, Any], related_chips: str) -> str:
     """Self-contained iframe document — hydrates via ``rwa-asset-deep-page.js``."""
-    from streamlit_site_parity import iframe_auto_height_script, iframe_internal_link_script
+    from streamlit_site_parity import iframe_internal_link_script
 
     css = _cached_iframe_tmmf_stylesheet()
     zone = _TMMF_ZONE_BODY.format(related_chips=related_chips.strip())
@@ -187,7 +191,47 @@ window.loadJson = function () {{
 <script>
 {js_boot}
 </script>
-{iframe_auto_height_script(root_selector=".etp-mock-zone__body", extra_pad=48)}
+<script>
+(function () {{
+  function sendHeight() {{
+    if (typeof window.parent.postMessage !== "function") return;
+    var shell = document.querySelector("main.page-shell.etp-mock-shell");
+    var zone = document.querySelector("article.etp-mock-zone");
+    var root = shell || zone || document.body;
+    var h = Math.ceil(Math.max(
+      root.scrollHeight,
+      root.offsetHeight,
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight
+    )) + 80;
+    window.parent.postMessage({{ type: "streamlit:setFrameHeight", height: h }}, "*");
+  }}
+  function bindObservers() {{
+    if (typeof ResizeObserver === "undefined") return;
+    var ro = new ResizeObserver(sendHeight);
+    ["main.page-shell.etp-mock-shell", "article.etp-mock-zone", "#deep-plat-wrap", "#deep-net-wrap"].forEach(function (sel) {{
+      var el = document.querySelector(sel);
+      if (el) ro.observe(el);
+    }});
+    document.querySelectorAll(".plotly-graph-div").forEach(function (el) {{ ro.observe(el); }});
+  }}
+  window.addEventListener("load", function () {{
+    sendHeight();
+    bindObservers();
+  }});
+  if (typeof MutationObserver !== "undefined") {{
+    var mo = new MutationObserver(function () {{
+      sendHeight();
+      bindObservers();
+    }});
+    ["#deep-plat-wrap", "#deep-net-wrap", "article.etp-mock-zone"].forEach(function (sel) {{
+      var el = document.querySelector(sel);
+      if (el) mo.observe(el, {{ childList: true, subtree: true }});
+    }});
+  }}
+  [100, 400, 1000, 2500, 5000, 8000, 12000].forEach(function (ms) {{ setTimeout(sendHeight, ms); }});
+}})();
+</script>
 {iframe_internal_link_script()}
 </body>
 </html>"""

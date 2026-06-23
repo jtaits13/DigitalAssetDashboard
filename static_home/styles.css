@@ -1242,14 +1242,24 @@ a.hub-panel-surface:hover,
     gap: 1.75rem;
   }
 
-  .home-markets-stack {
+  .home-main-split {
+    grid-template-rows: auto 1fr;
+  }
+
+  .home-kpi-legend-once {
     grid-column: 2;
     grid-row: 1;
+    margin-bottom: 0;
+  }
+
+  .home-markets-stack {
+    grid-column: 2;
+    grid-row: 2;
   }
 
   .home-news-rail {
     grid-column: 1;
-    grid-row: 1;
+    grid-row: 1 / -1;
     align-self: start;
     position: sticky;
     top: var(--home-news-rail-top, 4.25rem);

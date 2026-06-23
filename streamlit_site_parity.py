@@ -1841,9 +1841,13 @@ tmmf_single_block_header_html = tmmf_github_zone_header_html
 
 STREAMLIT_TMMF_SUBPAGE_CSS = """
 <style>
-.stApp:has(.tmmf-body-iframe-marker) .streamlit-subpage-root .page-shell.etp-mock-shell {
-  padding-left: 0;
-  padding-right: 0;
+.stApp .streamlit-subpage-root.mock-tmmf-inner::before,
+.stApp:has(.tmmf-body-iframe-marker) .mock-tmmf-inner::before {
+  display: none !important;
+  content: none !important;
+}
+.stApp:has(.tmmf-body-iframe-marker) .streamlit-subpage-root > main.page-shell.etp-mock-shell {
+  display: none !important;
 }
 .stApp:has(.tmmf-body-iframe-marker) [data-testid="stElementContainer"]:has(.tmmf-body-iframe-marker) {
   padding-left: 0 !important;
@@ -1851,6 +1855,17 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   max-width: var(--content-max, var(--max, 72rem)) !important;
   margin-left: auto !important;
   margin-right: auto !important;
+}
+.stApp:has(.tmmf-body-iframe-marker) [data-testid="stElementContainer"]:has(.tmmf-body-iframe-marker) iframe {
+  max-height: none !important;
+  overflow: visible !important;
+}
+.stApp:has(.tmmf-body-iframe-marker) .block-container {
+  padding-bottom: 2rem !important;
+}
+.stApp:has(.tmmf-body-iframe-marker) [data-testid="stMainBlockContainer"] {
+  overflow-y: visible !important;
+  max-height: none !important;
 }
 </style>
 """
