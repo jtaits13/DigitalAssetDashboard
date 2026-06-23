@@ -24,7 +24,7 @@ from streamlit_site_parity import (
     render_subpage_back_link,
     render_subpage_footer,
 )
-from streamlit_tmmf_layout import TMMF_ZONE_CARD_KEY, tmmf_single_block_header_html
+from streamlit_tmmf_layout import TMMF_ZONE_CARD_KEY, tmmf_github_zone_header_html
 
 
 def _mmf_takeaway_html() -> str:
@@ -66,7 +66,7 @@ def main() -> None:
 
     with st.container(border=True, key=TMMF_ZONE_CARD_KEY, gap=None):
         st.markdown(
-            tmmf_single_block_header_html(
+            tmmf_github_zone_header_html(
                 section_id="tmmf-full",
                 badge="MMF",
                 title="Tokenized Money Market Funds",
