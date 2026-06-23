@@ -16,6 +16,7 @@ from news_feeds import article_styles_markdown
 from rwa_league.mmf import TMMF_INNER_PAGE_SUBTITLE_HTML
 from rwa_league.widgets import show_rwa_mmf_widget
 from streamlit_site_parity import (
+    TMMF_ZONE_CARD_KEY,
     _streamlit_page_href,
     close_subpage_layout,
     configure_subpage,
@@ -23,8 +24,8 @@ from streamlit_site_parity import (
     related_chips_html,
     render_subpage_back_link,
     render_subpage_footer,
+    tmmf_github_zone_header_html,
 )
-from streamlit_tmmf_layout import TMMF_ZONE_CARD_KEY, tmmf_github_zone_header_html
 
 
 def _mmf_takeaway_html() -> str:
