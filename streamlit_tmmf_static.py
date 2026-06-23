@@ -102,7 +102,7 @@ def _json_for_script(payload: dict[str, Any]) -> str:
 
 
 @st.cache_resource(show_spinner=False)
-def _cached_iframe_tmmf_stylesheet_v3() -> str:
+def _cached_iframe_tmmf_stylesheet_v4() -> str:
     """Same CSS stack as ``static_home/rwa-tokenized-mmf.html`` (iframe-safe, no mock banners)."""
     from streamlit_site_parity import _iframe_tmmf_mock_css
 
@@ -209,7 +209,7 @@ def build_tmmf_body_iframe_html(
     """Self-contained iframe document — hydrates via ``rwa-asset-deep-page.js``."""
     from streamlit_site_parity import iframe_internal_link_script
 
-    css = _cached_iframe_tmmf_stylesheet_v3()
+    css = _cached_iframe_tmmf_stylesheet_v4()
     back_link = _tmmf_back_link_html(href=back_href, label=back_label)
     zone = _TMMF_ZONE_BODY.format(related_chips=related_chips.strip())
     payload_json = _json_for_script(payload)
@@ -223,7 +223,7 @@ def build_tmmf_body_iframe_html(
 <style>{css}</style>
 </head>
 <body
-  class="page-rwa-deep page-rwa-deep-mmf site-experience page-inner--rich"
+  class="page-rwa-deep page-rwa-deep-mmf site-experience page-inner--rich mock-tmmf-inner"
   data-rwa-deep-json="rwa_tokenized_mmf.json"
   data-methodology="rwa-mmf"
 >
