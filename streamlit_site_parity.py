@@ -335,6 +335,7 @@ section[data-testid="stSidebar"] { display: none !important; }
   width: 100% !important;
   border: 0;
   overflow: hidden !important;
+  max-height: none !important;
 }
 .stApp:has(.home-body-iframe-marker) .block-container,
 .stApp:has(.streamlit-tmmf-iframe-page) .block-container {
@@ -1689,6 +1690,24 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
     return Math.ceil(bottom - docTop + navSlack);
   }}
 
+  function measureTmmfBodyHeight(inner) {{
+    return Math.ceil(Math.max(
+      inner.body.scrollHeight,
+      inner.documentElement.scrollHeight,
+      inner.body.offsetHeight,
+      inner.documentElement.offsetHeight
+    )) + 48;
+  }}
+
+  function isTmmfBodyIframe(inner) {{
+    return !!(
+      inner &&
+      inner.body &&
+      inner.body.classList &&
+      inner.body.classList.contains("page-rwa-deep-mmf")
+    );
+  }}
+
   function applyFrameHeight(frame, h, minH) {{
     if (!frame || h <= minH) return;
     frame.style.height = h + "px";
@@ -1707,6 +1726,10 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
         if (inner.querySelector(".home-main-split")) return;
         if (inner.body.classList.contains("subpage-nav-chrome")) {{
           applyFrameHeight(frame, measureSubpageNavHeight(inner), 40);
+          return;
+        }}
+        if (isTmmfBodyIframe(inner)) {{
+          applyFrameHeight(frame, measureTmmfBodyHeight(inner), 200);
           return;
         }}
         var isMarkets = inner.querySelector(".home-markets-stack");
@@ -1751,6 +1774,19 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
           var inner = frame.contentDocument;
           if (inner && inner.body.classList.contains("subpage-nav-chrome")) {{
             applyFrameHeight(frame, navH, 40);
+          }}
+        }} catch (e) {{}}
+      }});
+      return;
+    }}
+    if (ev.data.type === "jpm-tmmf-height" || ev.data.type === "streamlit:setFrameHeight") {{
+      var bodyH = Number(ev.data.height);
+      if (!isFinite(bodyH) || bodyH <= 200) return;
+      doc.querySelectorAll("iframe").forEach(function (frame) {{
+        try {{
+          var inner = frame.contentDocument;
+          if (isTmmfBodyIframe(inner)) {{
+            applyFrameHeight(frame, bodyH, 200);
           }}
         }} catch (e) {{}}
       }});
@@ -1902,6 +1938,10 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   margin: 0 !important;
   padding: 0 !important;
   border: none !important;
+}
+.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has(iframe) {
+  overflow: visible !important;
+  max-height: none !important;
 }
 </style>
 """

@@ -102,7 +102,7 @@ def _json_for_script(payload: dict[str, Any]) -> str:
 
 
 @st.cache_resource(show_spinner=False)
-def _cached_iframe_tmmf_stylesheet_v4() -> str:
+def _cached_iframe_tmmf_stylesheet_v5() -> str:
     """Same CSS stack as ``static_home/rwa-tokenized-mmf.html`` (iframe-safe, no mock banners)."""
     from streamlit_site_parity import _iframe_tmmf_mock_css
 
@@ -131,7 +131,7 @@ html, body.page-rwa-deep-mmf.site-experience {
   margin: 0;
   padding: 0;
   background: var(--wash, #f3f7fb);
-  overflow: hidden;
+  overflow: visible;
 }
 html::before,
 html::after,
@@ -209,7 +209,7 @@ def build_tmmf_body_iframe_html(
     """Self-contained iframe document — hydrates via ``rwa-asset-deep-page.js``."""
     from streamlit_site_parity import iframe_internal_link_script
 
-    css = _cached_iframe_tmmf_stylesheet_v4()
+    css = _cached_iframe_tmmf_stylesheet_v5()
     back_link = _tmmf_back_link_html(href=back_href, label=back_label)
     zone = _TMMF_ZONE_BODY.format(related_chips=related_chips.strip())
     payload_json = _json_for_script(payload)
@@ -246,20 +246,34 @@ window.loadJson = function () {{
 </script>
 <script>
 (function () {{
-  function sendHeight() {{
-    if (typeof window.parent.postMessage !== "function") return;
-    var h = Math.ceil(Math.max(
+  function measureHeight() {{
+    return Math.ceil(Math.max(
       document.body.scrollHeight,
       document.body.offsetHeight,
       document.documentElement.scrollHeight,
       document.documentElement.offsetHeight
     )) + 48;
+  }}
+  function sendHeight() {{
+    if (typeof window.parent.postMessage !== "function") return;
+    var h = measureHeight();
     window.parent.postMessage({{ type: "streamlit:setFrameHeight", height: h }}, "*");
+    try {{
+      window.parent.postMessage({{ type: "jpm-tmmf-height", height: h }}, "*");
+    }} catch (e) {{}}
   }}
   function bindObservers() {{
     if (typeof ResizeObserver === "undefined") return;
     var ro = new ResizeObserver(sendHeight);
-    ["body", "main.page-shell.etp-mock-shell", "article.etp-mock-zone", "#deep-plat-wrap", "#deep-net-wrap"].forEach(function (sel) {{
+    [
+      "body",
+      "main.page-shell.etp-mock-shell",
+      "article.etp-mock-zone",
+      "#js-deep-insights",
+      "#js-deep-extra-before-leagues",
+      "#deep-net-wrap",
+      "#deep-plat-wrap",
+    ].forEach(function (sel) {{
       var el = document.querySelector(sel);
       if (el) ro.observe(el);
     }});
@@ -275,12 +289,20 @@ window.loadJson = function () {{
       sendHeight();
       bindObservers();
     }});
-    ["#deep-plat-wrap", "#deep-net-wrap", "article.etp-mock-zone"].forEach(function (sel) {{
+    [
+      "article.etp-mock-zone",
+      "#js-deep-insights",
+      "#js-deep-extra-before-leagues",
+      "#deep-net-wrap",
+      "#deep-plat-wrap",
+    ].forEach(function (sel) {{
       var el = document.querySelector(sel);
-      if (el) mo.observe(el, {{ childList: true, subtree: true }});
+      if (el) mo.observe(el, {{ childList: true, subtree: true, attributes: true }});
     }});
   }}
-  [100, 400, 1000, 2500, 5000, 8000, 12000].forEach(function (ms) {{ setTimeout(sendHeight, ms); }});
+  [100, 400, 1000, 2500, 5000, 8000, 12000, 18000].forEach(function (ms) {{
+    setTimeout(sendHeight, ms);
+  }});
 }})();
 </script>
 {iframe_internal_link_script()}
@@ -308,6 +330,6 @@ def render_tmmf_body_iframe(
             back_href=back_href,
             back_label=back_label,
         ),
-        height=900,
+        height=1200,
         scrolling=False,
     )
