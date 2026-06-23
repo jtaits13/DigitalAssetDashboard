@@ -82,6 +82,7 @@ section[data-testid="stSidebar"] { display: none !important; }
 .stApp [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker),
 .stApp [data-testid="stElementContainer"]:has(.subpage-chrome-iframe-marker),
 .stApp [data-testid="stElementContainer"]:has(.home-body-iframe-marker),
+.stApp [data-testid="stElementContainer"]:has(.tmmf-body-iframe-marker),
 .stApp [data-testid="stElementContainer"]:has(.home-hero-content-gap) {
   width: 100vw !important;
   max-width: 100vw !important;
@@ -302,32 +303,38 @@ section[data-testid="stSidebar"] { display: none !important; }
   border: 0;
   overflow: hidden !important;
 }
-.stApp [data-testid="stElementContainer"]:has(.home-body-iframe-marker) {
+.stApp [data-testid="stElementContainer"]:has(.home-body-iframe-marker),
+.stApp [data-testid="stElementContainer"]:has(.tmmf-body-iframe-marker) {
   position: relative !important;
   z-index: 1 !important;
   margin-top: 0 !important;
   margin-bottom: 0 !important;
   padding-top: 0 !important;
 }
-.stApp:has(.home-body-iframe-marker) [data-testid="stElementContainer"]:has([data-testid="stSpinner"]) {
+.stApp:has(.home-body-iframe-marker) [data-testid="stElementContainer"]:has([data-testid="stSpinner"]),
+.stApp:has(.tmmf-body-iframe-marker) [data-testid="stElementContainer"]:has([data-testid="stSpinner"]) {
   margin: 0 !important;
   padding: 0 !important;
   min-height: 0 !important;
   height: auto !important;
 }
-.stApp [data-testid="stElementContainer"]:has(.home-body-iframe-marker) iframe {
+.stApp [data-testid="stElementContainer"]:has(.home-body-iframe-marker) iframe,
+.stApp [data-testid="stElementContainer"]:has(.tmmf-body-iframe-marker) iframe {
   display: block !important;
   width: 100% !important;
   border: 0;
   overflow: hidden !important;
 }
-.stApp:has(.home-body-iframe-marker) .block-container {
+.stApp:has(.home-body-iframe-marker) .block-container,
+.stApp:has(.tmmf-body-iframe-marker) .block-container {
   padding-bottom: 0.5rem !important;
 }
-.stApp:has(.home-body-iframe-marker) [data-testid="stVerticalBlock"] {
+.stApp:has(.home-body-iframe-marker) [data-testid="stVerticalBlock"],
+.stApp:has(.tmmf-body-iframe-marker) [data-testid="stVerticalBlock"] {
   gap: 0 !important;
 }
-.stApp:has(.home-body-iframe-marker) [data-testid="stMainBlockContainer"] {
+.stApp:has(.home-body-iframe-marker) [data-testid="stMainBlockContainer"],
+.stApp:has(.tmmf-body-iframe-marker) [data-testid="stMainBlockContainer"] {
   min-height: 0 !important;
 }
 .stApp .st-streamlit-home-root {
@@ -1832,113 +1839,19 @@ def tmmf_github_zone_header_html(
 
 tmmf_single_block_header_html = tmmf_github_zone_header_html
 
-STREAMLIT_TMMF_SUBPAGE_CSS = f"""
+STREAMLIT_TMMF_SUBPAGE_CSS = """
 <style>
-.stApp [data-testid="stElementContainer"]:has(.st-key-{TMMF_ZONE_CARD_KEY}) {{
+.stApp:has(.tmmf-body-iframe-marker) .streamlit-subpage-root .page-shell.etp-mock-shell {
+  padding-left: 0;
+  padding-right: 0;
+}
+.stApp:has(.tmmf-body-iframe-marker) [data-testid="stElementContainer"]:has(.tmmf-body-iframe-marker) {
   padding-left: 0 !important;
   padding-right: 0 !important;
   max-width: var(--content-max, var(--max, 72rem)) !important;
-}}
-
-.stApp {_TMMF_CARD} {{
-  display: block !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  margin: 0 auto 1.35rem !important;
-  padding: 0 !important;
-  overflow: hidden !important;
-  box-sizing: border-box !important;
-  --hx-stripe: var(--hx-etp-bright, #507188);
-  border: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.2) !important;
-  border-radius: 14px !important;
-  background: var(--hx-etp-soft, #eef2f6) !important;
-  box-shadow:
-    0 1px 2px rgb(var(--hx-etp-rgb, 62 92 116) / 0.05),
-    0 10px 28px rgb(var(--hx-etp-rgb, 62 92 116) / 0.07) !important;
-}}
-
-.stApp {_TMMF_BODY} {{
-  gap: 0 !important;
-  background: linear-gradient(
-    180deg,
-    rgb(var(--hx-etp-rgb, 62 92 116) / 0.06) 0%,
-    rgba(255, 255, 255, 0.98) 100%
-  ) !important;
-}}
-
-.stApp {_TMMF_CARD} .home-zone__stripe {{
-  height: 4px;
-  background: linear-gradient(90deg, var(--hx-etp-bright, #507188) 0%, transparent 88%);
-}}
-
-.stApp {_TMMF_CARD} .home-zone__head {{
-  display: flex;
-  align-items: flex-start;
-  gap: 0.85rem;
-  padding: 1.15rem 1.25rem 1rem;
-  border-bottom: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.2);
-  background: var(--hx-etp-head, linear-gradient(180deg, #f0f4f9 0%, #ffffff 100%));
-}}
-
-.stApp {_TMMF_CARD} .home-zone__titles .page-intro__title {{
-  margin: 0 0 0.4rem;
-  color: var(--hx-etp-dark, #31485c);
-  font-size: clamp(1.35rem, 2.8vw, 1.75rem);
-  font-weight: 780;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-}}
-
-.stApp {_TMMF_CARD} .home-zone__titles .section-dek--wide {{
-  margin: 0;
-  max-width: 52rem;
-  font-size: 0.92rem;
-  line-height: 1.5;
-  color: var(--ink-muted, #4a5f73);
-}}
-
-.stApp {_TMMF_CARD} .home-zone__titles .section-dek--wide a {{
-  color: var(--hx-etp-bright, #507188);
-}}
-
-.stApp {_TMMF_CARD} [data-testid="stElementContainer"] {{
-  margin: 0 !important;
-  max-width: 100% !important;
-  width: 100% !important;
-  background: transparent !important;
-}}
-
-.stApp {_TMMF_CARD} [data-testid="stElementContainer"]:first-child {{
-  padding: 0 !important;
-}}
-
-.stApp {_TMMF_CARD} [data-testid="stElementContainer"]:not(:first-child) {{
-  padding-top: 0 !important;
-  padding-left: 1.25rem !important;
-  padding-right: 1.25rem !important;
-}}
-
-.stApp {_TMMF_CARD} [data-testid="stElementContainer"]:last-child {{
-  padding-bottom: 1.35rem !important;
-}}
-
-.stApp {_TMMF_TABLE} {{
-  margin: 0 0 var(--etp-mock-gap-lg, 1.2rem) !important;
-  padding: 0.95rem 1rem 1rem !important;
-  border: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.16) !important;
-  border-radius: 10px !important;
-  background: #fff !important;
-  box-shadow: 0 1px 4px rgb(var(--hx-etp-rgb, 62 92 116) / 0.06) !important;
-}}
-
-.stApp {_TMMF_TABLE} > [data-testid="stVerticalBlock"] {{
-  gap: 0.35rem !important;
-}}
-
-.stApp {_TMMF_TABLE} [data-testid="stElementContainer"] {{
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-}}
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
 </style>
 """
 
