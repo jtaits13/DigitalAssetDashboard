@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from html import escape
 from pathlib import Path
 from typing import Any
 
@@ -24,6 +25,14 @@ _TMMF_JS_DEPS = (
     "rwa-onchain-home.js",
 )
 _TMMF_JS_BOOT = ("rwa-asset-deep-page.js",)
+
+_TMMF_IFRAME_BACK_LINK = """
+<div class="page-back-below-header">
+  <p class="back-link back-link--below-header">
+    <a data-deep-back="explore" href="{back_href}">{back_label_html}</a>
+  </p>
+</div>
+"""
 
 _TMMF_ZONE_BODY = """
 <main class="page-shell etp-mock-shell">
@@ -93,7 +102,7 @@ def _json_for_script(payload: dict[str, Any]) -> str:
 
 
 @st.cache_resource(show_spinner=False)
-def _cached_iframe_tmmf_stylesheet_v2() -> str:
+def _cached_iframe_tmmf_stylesheet_v3() -> str:
     """Same CSS stack as ``static_home/rwa-tokenized-mmf.html`` (iframe-safe, no mock banners)."""
     from streamlit_site_parity import _iframe_tmmf_mock_css
 
@@ -122,7 +131,7 @@ html, body.page-rwa-deep-mmf.site-experience {
   margin: 0;
   padding: 0;
   background: var(--wash, #f3f7fb);
-  overflow: visible;
+  overflow: hidden;
 }
 html::before,
 html::after,
@@ -134,6 +143,26 @@ body.page-rwa-deep-mmf::after {
   padding: 0 !important;
   margin: 0 !important;
   border: none !important;
+}
+body.page-rwa-deep-mmf .page-back-below-header {
+  max-width: var(--content-max, 72rem);
+  margin: 0 auto;
+  padding: 0.35rem 1.25rem 0;
+  box-sizing: border-box;
+}
+body.page-rwa-deep-mmf p.back-link.back-link--below-header {
+  margin: 0.2rem 0 0.85rem;
+}
+body.page-rwa-deep-mmf .back-link--below-header a {
+  display: inline-block;
+  font-weight: 650;
+  font-size: 0.84rem;
+  line-height: 1.35;
+  color: var(--ink-soft, #1f4c67);
+  text-decoration: none;
+}
+body.page-rwa-deep-mmf .back-link--below-header a:hover {
+  color: var(--hx-tmmf-bright, #507188);
 }
 body.page-rwa-deep-mmf .page-shell.etp-mock-shell {
   max-width: var(--content-max, 72rem);
@@ -161,11 +190,27 @@ def _read_js_files(names: tuple[str, ...]) -> str:
     return "\n".join(parts)
 
 
-def build_tmmf_body_iframe_html(*, payload: dict[str, Any], related_chips: str) -> str:
+def _tmmf_back_link_html(*, href: str, label: str) -> str:
+    label_html = (
+        escape(label)
+        .replace("\u2190", "&larr;")
+        .replace("\u00b7", "&middot;")
+    )
+    return _TMMF_IFRAME_BACK_LINK.format(back_href=escape(href), back_label_html=label_html)
+
+
+def build_tmmf_body_iframe_html(
+    *,
+    payload: dict[str, Any],
+    related_chips: str,
+    back_href: str = "/?jd_scroll=tmmf",
+    back_label: str = "← Back to home · TMMF preview",
+) -> str:
     """Self-contained iframe document — hydrates via ``rwa-asset-deep-page.js``."""
     from streamlit_site_parity import iframe_internal_link_script
 
-    css = _cached_iframe_tmmf_stylesheet_v2()
+    css = _cached_iframe_tmmf_stylesheet_v3()
+    back_link = _tmmf_back_link_html(href=back_href, label=back_label)
     zone = _TMMF_ZONE_BODY.format(related_chips=related_chips.strip())
     payload_json = _json_for_script(payload)
     js_deps = _read_js_files(_TMMF_JS_DEPS)
@@ -182,6 +227,7 @@ def build_tmmf_body_iframe_html(*, payload: dict[str, Any], related_chips: str) 
   data-rwa-deep-json="rwa_tokenized_mmf.json"
   data-methodology="rwa-mmf"
 >
+{back_link}
 {zone}
 <script>
 window.__RWA_DEEP_PAYLOAD = {payload_json};
@@ -202,26 +248,24 @@ window.loadJson = function () {{
 (function () {{
   function sendHeight() {{
     if (typeof window.parent.postMessage !== "function") return;
-    var shell = document.querySelector("main.page-shell.etp-mock-shell");
-    var zone = document.querySelector("article.etp-mock-zone");
-    var root = shell || zone || document.body;
     var h = Math.ceil(Math.max(
-      root.scrollHeight,
-      root.offsetHeight,
       document.body.scrollHeight,
-      document.documentElement.scrollHeight
-    )) + 80;
+      document.body.offsetHeight,
+      document.documentElement.scrollHeight,
+      document.documentElement.offsetHeight
+    )) + 48;
     window.parent.postMessage({{ type: "streamlit:setFrameHeight", height: h }}, "*");
   }}
   function bindObservers() {{
     if (typeof ResizeObserver === "undefined") return;
     var ro = new ResizeObserver(sendHeight);
-    ["main.page-shell.etp-mock-shell", "article.etp-mock-zone", "#deep-plat-wrap", "#deep-net-wrap"].forEach(function (sel) {{
+    ["body", "main.page-shell.etp-mock-shell", "article.etp-mock-zone", "#deep-plat-wrap", "#deep-net-wrap"].forEach(function (sel) {{
       var el = document.querySelector(sel);
       if (el) ro.observe(el);
     }});
     document.querySelectorAll(".plotly-graph-div").forEach(function (el) {{ ro.observe(el); }});
   }}
+  sendHeight();
   window.addEventListener("load", function () {{
     sendHeight();
     bindObservers();
@@ -249,14 +293,21 @@ def _cached_tmmf_deep_payload() -> dict[str, Any]:
     return load_tmmf_deep_payload()
 
 
-def render_tmmf_body_iframe(*, payload: dict[str, Any], related_chips: str) -> None:
+def render_tmmf_body_iframe(
+    *,
+    payload: dict[str, Any],
+    related_chips: str,
+    back_href: str = "/?jd_scroll=tmmf",
+    back_label: str = "← Back to home · TMMF preview",
+) -> None:
     """Render the GitHub Pages TMMF zone inside a Streamlit iframe."""
-    st.markdown(
-        '<span class="tmmf-body-iframe-marker" hidden aria-hidden="true"></span>',
-        unsafe_allow_html=True,
-    )
     components.html(
-        build_tmmf_body_iframe_html(payload=payload, related_chips=related_chips),
-        height=3200,
+        build_tmmf_body_iframe_html(
+            payload=payload,
+            related_chips=related_chips,
+            back_href=back_href,
+            back_label=back_label,
+        ),
+        height=900,
         scrolling=False,
     )

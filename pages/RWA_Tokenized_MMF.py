@@ -15,7 +15,6 @@ from streamlit_site_parity import (
     _streamlit_page_href,
     configure_subpage,
     related_chips_html,
-    render_subpage_back_link,
     render_subpage_footer,
 )
 from streamlit_tmmf_static import (
@@ -30,11 +29,6 @@ def main() -> None:
         active="tmmf",
         style_kind="tmmf",
     )
-    render_subpage_back_link(
-        href="/?jd_scroll=tmmf",
-        label="← Back to home · TMMF preview",
-    )
-
     related = related_chips_html(
         ("/?jd_scroll=tmmf", "Home TMMF preview"),
         (_streamlit_page_href("stablecoins"), "Stablecoins"),

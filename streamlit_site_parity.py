@@ -82,7 +82,6 @@ section[data-testid="stSidebar"] { display: none !important; }
 .stApp [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker),
 .stApp [data-testid="stElementContainer"]:has(.subpage-chrome-iframe-marker),
 .stApp [data-testid="stElementContainer"]:has(.home-body-iframe-marker),
-.stApp [data-testid="stElementContainer"]:has(.tmmf-body-iframe-marker),
 .stApp [data-testid="stElementContainer"]:has(.home-hero-content-gap) {
   width: 100vw !important;
   max-width: 100vw !important;
@@ -303,39 +302,53 @@ section[data-testid="stSidebar"] { display: none !important; }
   border: 0;
   overflow: hidden !important;
 }
-.stApp [data-testid="stElementContainer"]:has(.home-body-iframe-marker),
-.stApp [data-testid="stElementContainer"]:has(.tmmf-body-iframe-marker) {
+.stApp [data-testid="stElementContainer"]:has(.home-body-iframe-marker) {
   position: relative !important;
   z-index: 1 !important;
   margin-top: 0 !important;
   margin-bottom: 0 !important;
   padding-top: 0 !important;
 }
-.stApp:has(.home-body-iframe-marker) [data-testid="stElementContainer"]:has([data-testid="stSpinner"]),
-.stApp:has(.tmmf-body-iframe-marker) [data-testid="stElementContainer"]:has([data-testid="stSpinner"]) {
+.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has(iframe) {
+  position: relative !important;
+  z-index: 1 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+  max-width: var(--content-max, var(--max, 72rem)) !important;
+  width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  box-sizing: border-box !important;
+}
+.stApp:has(.home-body-iframe-marker) [data-testid="stElementContainer"]:has([data-testid="stSpinner"]) {
   margin: 0 !important;
   padding: 0 !important;
   min-height: 0 !important;
   height: auto !important;
 }
 .stApp [data-testid="stElementContainer"]:has(.home-body-iframe-marker) iframe,
-.stApp [data-testid="stElementContainer"]:has(.tmmf-body-iframe-marker) iframe {
+.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has(iframe) iframe {
   display: block !important;
   width: 100% !important;
   border: 0;
   overflow: hidden !important;
 }
 .stApp:has(.home-body-iframe-marker) .block-container,
-.stApp:has(.tmmf-body-iframe-marker) .block-container {
+.stApp:has(.streamlit-tmmf-iframe-page) .block-container {
   padding-bottom: 0.5rem !important;
 }
 .stApp:has(.home-body-iframe-marker) [data-testid="stVerticalBlock"],
-.stApp:has(.tmmf-body-iframe-marker) [data-testid="stVerticalBlock"] {
+.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stVerticalBlock"] {
   gap: 0 !important;
 }
 .stApp:has(.home-body-iframe-marker) [data-testid="stMainBlockContainer"],
-.stApp:has(.tmmf-body-iframe-marker) [data-testid="stMainBlockContainer"] {
+.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stMainBlockContainer"] {
   min-height: 0 !important;
+  overflow-y: visible !important;
+  max-height: none !important;
 }
 .stApp .st-streamlit-home-root {
   display: block !important;
@@ -1866,11 +1879,10 @@ tmmf_single_block_header_html = tmmf_github_zone_header_html
 
 STREAMLIT_TMMF_SUBPAGE_CSS = """
 <style>
-.stApp:has(.tmmf-body-iframe-marker)::before,
-.stApp:has(.tmmf-body-iframe-marker)::after,
-.stApp .streamlit-subpage-root.mock-tmmf-inner::before,
-.stApp:has(.tmmf-body-iframe-marker) .mock-tmmf-inner::before,
-.stApp:has(.tmmf-body-iframe-marker) .page-intro:empty {
+.stApp:has(.streamlit-tmmf-iframe-page)::before,
+.stApp:has(.streamlit-tmmf-iframe-page)::after,
+.stApp:has(.streamlit-tmmf-iframe-page) .mock-tmmf-inner::before,
+.stApp:has(.streamlit-tmmf-iframe-page) .page-intro:empty {
   display: none !important;
   content: none !important;
   height: 0 !important;
@@ -1878,36 +1890,18 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   margin: 0 !important;
   border: none !important;
 }
-.stApp:has(.tmmf-body-iframe-marker) .streamlit-subpage-root > main.page-shell.etp-mock-shell,
-.stApp:has(.tmmf-body-iframe-marker) article.etp-mock-zone:empty,
-.stApp:has(.tmmf-body-iframe-marker) .inner-rich-zone.etp-mock-zone:not(:has(.home-zone__head)) {
+.stApp:has(.streamlit-tmmf-iframe-page) .streamlit-subpage-root > main.page-shell.etp-mock-shell,
+.stApp:has(.streamlit-tmmf-iframe-page) article.etp-mock-zone:empty,
+.stApp:has(.streamlit-tmmf-iframe-page) .inner-rich-zone.etp-mock-zone:not(:has(.home-zone__head)) {
   display: none !important;
 }
-.stApp:has(.tmmf-body-iframe-marker) [data-testid="stElementContainer"]:has([data-testid="stSpinner"]) {
+.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has([data-testid="stSpinner"]) {
   display: none !important;
   min-height: 0 !important;
   height: 0 !important;
   margin: 0 !important;
   padding: 0 !important;
   border: none !important;
-}
-.stApp:has(.tmmf-body-iframe-marker) [data-testid="stElementContainer"]:has(.tmmf-body-iframe-marker) {
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-  max-width: var(--content-max, var(--max, 72rem)) !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-}
-.stApp:has(.tmmf-body-iframe-marker) [data-testid="stElementContainer"]:has(.tmmf-body-iframe-marker) iframe {
-  max-height: none !important;
-  overflow: visible !important;
-}
-.stApp:has(.tmmf-body-iframe-marker) .block-container {
-  padding-bottom: 2rem !important;
-}
-.stApp:has(.tmmf-body-iframe-marker) [data-testid="stMainBlockContainer"] {
-  overflow-y: visible !important;
-  max-height: none !important;
 }
 </style>
 """
@@ -1947,8 +1941,9 @@ def configure_subpage(*, page_title: str, active: str, style_kind: str = "articl
     inject_subpage_styles(kind=style_kind)
     inject_streamlit_nav_router()
     components.html(HOME_IFRAME_HEIGHT_SYNC_JS, height=0, width=0)
+    tmmf_page_class = " streamlit-tmmf-iframe-page" if style_kind == "tmmf" else ""
     st.markdown(
-        '<span class="streamlit-subpage-active" hidden aria-hidden="true"></span>',
+        f'<span class="streamlit-subpage-active{tmmf_page_class}" hidden aria-hidden="true"></span>',
         unsafe_allow_html=True,
     )
     render_subpage_nav(active=active)
