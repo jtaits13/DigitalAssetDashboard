@@ -93,9 +93,9 @@ def _json_for_script(payload: dict[str, Any]) -> str:
 
 
 @st.cache_resource(show_spinner=False)
-def _cached_iframe_tmmf_stylesheet() -> str:
-    """Same CSS stack as ``static_home/rwa-tokenized-mmf.html``."""
-    from streamlit_site_parity import _patch_inner_page_css_for_streamlit
+def _cached_iframe_tmmf_stylesheet_v2() -> str:
+    """Same CSS stack as ``static_home/rwa-tokenized-mmf.html`` (iframe-safe, no mock banners)."""
+    from streamlit_site_parity import _iframe_tmmf_mock_css
 
     chunks: list[str] = [
         "@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap');",
@@ -111,11 +111,11 @@ def _cached_iframe_tmmf_stylesheet() -> str:
     ):
         path = _STATIC / rel
         if path.is_file():
-            chunks.append(_patch_inner_page_css_for_streamlit(path.read_text(encoding="utf-8")))
+            chunks.append(path.read_text(encoding="utf-8"))
     for rel in ("mockups/etp-inner-page-mock.css", "mockups/tmmf-inner-page-mock.css"):
         path = _STATIC / rel
         if path.is_file():
-            chunks.append(_patch_inner_page_css_for_streamlit(path.read_text(encoding="utf-8")))
+            chunks.append(_iframe_tmmf_mock_css(path.read_text(encoding="utf-8")))
     chunks.append(
         """
 html, body.page-rwa-deep-mmf.site-experience {
@@ -123,6 +123,17 @@ html, body.page-rwa-deep-mmf.site-experience {
   padding: 0;
   background: var(--wash, #f3f7fb);
   overflow: visible;
+}
+html::before,
+html::after,
+body.page-rwa-deep-mmf::before,
+body.page-rwa-deep-mmf::after {
+  display: none !important;
+  content: none !important;
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
 }
 body.page-rwa-deep-mmf .page-shell.etp-mock-shell {
   max-width: var(--content-max, 72rem);
@@ -133,10 +144,6 @@ body.page-rwa-deep-mmf .page-shell.etp-mock-shell {
 body.page-rwa-deep-mmf .home-reveal {
   opacity: 1 !important;
   transform: none !important;
-}
-body.page-rwa-deep-mmf.mock-tmmf-inner::before {
-  display: none !important;
-  content: none !important;
 }
 """
     )
@@ -158,7 +165,7 @@ def build_tmmf_body_iframe_html(*, payload: dict[str, Any], related_chips: str) 
     """Self-contained iframe document — hydrates via ``rwa-asset-deep-page.js``."""
     from streamlit_site_parity import iframe_internal_link_script
 
-    css = _cached_iframe_tmmf_stylesheet()
+    css = _cached_iframe_tmmf_stylesheet_v2()
     zone = _TMMF_ZONE_BODY.format(related_chips=related_chips.strip())
     payload_json = _json_for_script(payload)
     js_deps = _read_js_files(_TMMF_JS_DEPS)
@@ -171,7 +178,7 @@ def build_tmmf_body_iframe_html(*, payload: dict[str, Any], related_chips: str) 
 <style>{css}</style>
 </head>
 <body
-  class="page-rwa-deep page-rwa-deep-mmf site-experience page-inner--rich mock-tmmf-inner"
+  class="page-rwa-deep page-rwa-deep-mmf site-experience page-inner--rich"
   data-rwa-deep-json="rwa_tokenized_mmf.json"
   data-methodology="rwa-mmf"
 >
@@ -235,6 +242,11 @@ window.loadJson = function () {{
 {iframe_internal_link_script()}
 </body>
 </html>"""
+
+
+@st.cache_data(show_spinner="Loading tokenized MMF data…", ttl=300)
+def _cached_tmmf_deep_payload() -> dict[str, Any]:
+    return load_tmmf_deep_payload()
 
 
 def render_tmmf_body_iframe(*, payload: dict[str, Any], related_chips: str) -> None:

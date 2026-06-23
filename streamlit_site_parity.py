@@ -521,6 +521,29 @@ def _patch_static_css_for_streamlit(css: str) -> str:
     return css
 
 
+def _strip_mock_design_banner_css(css: str) -> str:
+    """Remove design-mock ``::before`` banners from mock inner-page CSS."""
+    css = re.sub(
+        r"\.mock-etp-inner::before,\s*\.mock-crypto-inner::before,.*?"
+        r"\.mock-participants-inner::before\s*\{[^}]*\}\s*",
+        "",
+        css,
+        flags=re.S,
+    )
+    css = re.sub(
+        r"\.mock-[a-z0-9-]*inner::before\s*\{[^}]*\}\s*",
+        "",
+        css,
+    )
+    return css
+
+
+def _iframe_tmmf_mock_css(css: str) -> str:
+    """TMMF iframe: no mock banners; scope TMMF mock rules onto the iframe ``body``."""
+    css = _strip_mock_design_banner_css(css)
+    return css.replace(".mock-tmmf-inner", "body.page-rwa-deep-mmf")
+
+
 def _patch_inner_page_css_for_streamlit(css: str) -> str:
     """Mirror inner-page ``body`` / ``.site-experience.page-inner--rich`` rules onto the subpage wrapper."""
     if ":root, .stApp {" not in css:
@@ -753,10 +776,12 @@ def _cached_subpage_stylesheet(kind: str) -> str:
         path = _STATIC / rel
         if path.is_file():
             chunks.append(_patch_inner_page_css_for_streamlit(path.read_text(encoding="utf-8")))
-    for rel in _SUBPAGE_MOCK_CSS.get(kind, ()):
-        path = _STATIC / rel
-        if path.is_file():
-            chunks.append(_patch_inner_page_css_for_streamlit(path.read_text(encoding="utf-8")))
+    # TMMF uses a self-contained iframe; mock CSS on the host only risks stray chrome.
+    if kind != "tmmf":
+        for rel in _SUBPAGE_MOCK_CSS.get(kind, ()):
+            path = _STATIC / rel
+            if path.is_file():
+                chunks.append(_patch_inner_page_css_for_streamlit(path.read_text(encoding="utf-8")))
     return "\n".join(chunks)
 
 
@@ -1841,13 +1866,30 @@ tmmf_single_block_header_html = tmmf_github_zone_header_html
 
 STREAMLIT_TMMF_SUBPAGE_CSS = """
 <style>
+.stApp:has(.tmmf-body-iframe-marker)::before,
+.stApp:has(.tmmf-body-iframe-marker)::after,
 .stApp .streamlit-subpage-root.mock-tmmf-inner::before,
-.stApp:has(.tmmf-body-iframe-marker) .mock-tmmf-inner::before {
+.stApp:has(.tmmf-body-iframe-marker) .mock-tmmf-inner::before,
+.stApp:has(.tmmf-body-iframe-marker) .page-intro:empty {
   display: none !important;
   content: none !important;
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
 }
-.stApp:has(.tmmf-body-iframe-marker) .streamlit-subpage-root > main.page-shell.etp-mock-shell {
+.stApp:has(.tmmf-body-iframe-marker) .streamlit-subpage-root > main.page-shell.etp-mock-shell,
+.stApp:has(.tmmf-body-iframe-marker) article.etp-mock-zone:empty,
+.stApp:has(.tmmf-body-iframe-marker) .inner-rich-zone.etp-mock-zone:not(:has(.home-zone__head)) {
   display: none !important;
+}
+.stApp:has(.tmmf-body-iframe-marker) [data-testid="stElementContainer"]:has([data-testid="stSpinner"]) {
+  display: none !important;
+  min-height: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
 }
 .stApp:has(.tmmf-body-iframe-marker) [data-testid="stElementContainer"]:has(.tmmf-body-iframe-marker) {
   padding-left: 0 !important;
