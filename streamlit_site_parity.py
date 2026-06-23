@@ -1690,12 +1690,33 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
   }}
 
   function measureTmmfBodyHeight(inner) {{
-    return Math.ceil(Math.max(
-      inner.body.scrollHeight,
-      inner.documentElement.scrollHeight,
-      inner.body.offsetHeight,
-      inner.documentElement.offsetHeight
-    )) + 48;
+    var win = inner.defaultView;
+    try {{
+      if (win && win.__TMMF_MODAL_OPEN) return null;
+    }} catch (e) {{}}
+    var scrollY = win ? (win.scrollY || inner.documentElement.scrollTop || 0) : 0;
+    var nodes = [
+      inner.querySelector(".page-back-below-header"),
+      inner.querySelector("main.page-shell.etp-mock-shell"),
+      inner.getElementById("js-deep-footer-note"),
+    ];
+    var maxBottom = 0;
+    nodes.forEach(function (el) {{
+      if (!el) return;
+      var rect = el.getBoundingClientRect();
+      if (rect.height <= 0 && el.id === "js-deep-footer-note" && !(el.textContent || "").trim()) {{
+        return;
+      }}
+      maxBottom = Math.max(maxBottom, rect.bottom + scrollY);
+    }});
+    if (!maxBottom) {{
+      var main = inner.querySelector("main.page-shell.etp-mock-shell");
+      if (main) {{
+        maxBottom = main.getBoundingClientRect().bottom + scrollY;
+      }}
+    }}
+    if (!maxBottom) return null;
+    return Math.ceil(maxBottom + 6);
   }}
 
   function isTmmfBodyIframe(inner) {{
@@ -1728,7 +1749,8 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
           return;
         }}
         if (isTmmfBodyIframe(inner)) {{
-          applyFrameHeight(frame, measureTmmfBodyHeight(inner), 200);
+          var tmmfH = measureTmmfBodyHeight(inner);
+          if (tmmfH !== null) applyFrameHeight(frame, tmmfH, 200);
           return;
         }}
         var isMarkets = inner.querySelector(".home-markets-stack");
@@ -1779,13 +1801,12 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
       return;
     }}
     if (ev.data.type === "jpm-tmmf-height" || ev.data.type === "streamlit:setFrameHeight") {{
-      var bodyH = Number(ev.data.height);
-      if (!isFinite(bodyH) || bodyH <= 200) return;
       doc.querySelectorAll("iframe").forEach(function (frame) {{
         try {{
           var inner = frame.contentDocument;
           if (isTmmfBodyIframe(inner)) {{
-            applyFrameHeight(frame, bodyH, 200);
+            var tmmfH = measureTmmfBodyHeight(inner);
+            if (tmmfH !== null) applyFrameHeight(frame, tmmfH, 200);
           }}
         }} catch (e) {{}}
       }});
@@ -1941,6 +1962,15 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 .stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has(iframe) {
   overflow: visible !important;
   max-height: none !important;
+}
+.stApp:has(.streamlit-tmmf-iframe-page) .block-container {
+  padding-bottom: 0 !important;
+}
+body.rwa-table-modal-open {
+  overflow: hidden !important;
+}
+#js-table-fullscreen-modal.rwa-table-modal {
+  z-index: 999999;
 }
 </style>
 """

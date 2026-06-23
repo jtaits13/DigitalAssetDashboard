@@ -26,6 +26,156 @@ _TMMF_JS_DEPS = (
 )
 _TMMF_JS_BOOT = ("rwa-asset-deep-page.js",)
 
+_STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH = """
+(function () {
+  var fs = window.__TABLE_FULLSCREEN;
+  if (!fs || window.parent === window) return;
+
+  var HOST_MODAL_ID = "js-table-fullscreen-modal";
+  var HOST_BODY_ID = "js-table-fullscreen-modal-body";
+  var HOST_TITLE_ID = "js-table-fullscreen-modal-title";
+  var CLOSE_ATTR = "data-table-fullscreen-close";
+
+  function hostDoc() {
+    try {
+      return window.parent.document;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function stripElementIds(node) {
+    if (!node || node.nodeType !== 1) return;
+    node.removeAttribute("id");
+    Array.prototype.forEach.call(node.children || [], stripElementIds);
+  }
+
+  function closeHostModal() {
+    var doc = hostDoc();
+    if (!doc) return;
+    var root = doc.getElementById(HOST_MODAL_ID);
+    if (root) root.hidden = true;
+    doc.body.classList.remove("rwa-table-modal-open");
+    var body = doc.getElementById(HOST_BODY_ID);
+    if (body) body.innerHTML = "";
+    window.__TMMF_MODAL_OPEN = false;
+  }
+
+  function ensureHostModal() {
+    var doc = hostDoc();
+    if (!doc) return null;
+    var root = doc.getElementById(HOST_MODAL_ID);
+    if (root) return root;
+
+    root = doc.createElement("div");
+    root.id = HOST_MODAL_ID;
+    root.className = "rwa-table-modal";
+    root.hidden = true;
+    root.innerHTML =
+      '<div class="rwa-table-modal__backdrop" ' +
+      CLOSE_ATTR +
+      '="1"></div>' +
+      '<div class="rwa-table-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="' +
+      HOST_TITLE_ID +
+      '">' +
+      '<div class="rwa-table-modal__header">' +
+      "<div>" +
+      '<p class="rwa-table-modal__eyebrow">Full-screen table</p>' +
+      '<h2 class="rwa-table-modal__title" id="' +
+      HOST_TITLE_ID +
+      '">Table</h2>' +
+      "</div>" +
+      '<button type="button" class="btn btn-secondary rwa-table-modal__close" ' +
+      CLOSE_ATTR +
+      '="1">Close</button>' +
+      "</div>" +
+      '<div class="rwa-table-modal__body" id="' +
+      HOST_BODY_ID +
+      '"></div>' +
+      "</div>";
+    doc.body.appendChild(root);
+
+    root.addEventListener("click", function (ev) {
+      var closeEl = ev.target.closest ? ev.target.closest("[" + CLOSE_ATTR + "]") : null;
+      if (closeEl) closeHostModal();
+    });
+
+    if (!doc.body._tableFullscreenHostKeyBound) {
+      doc.body._tableFullscreenHostKeyBound = true;
+      doc.addEventListener("keydown", function (ev) {
+        if (ev.key === "Escape") closeHostModal();
+      });
+    }
+
+    return root;
+  }
+
+  function openHostModal(tableEl, opts) {
+    var doc = hostDoc();
+    if (!doc || !tableEl) return;
+
+    var root = ensureHostModal();
+    var titleEl = doc.getElementById(HOST_TITLE_ID);
+    var body = doc.getElementById(HOST_BODY_ID);
+    if (!root || !titleEl || !body) return;
+
+    titleEl.textContent =
+      (opts && opts.title ? String(opts.title) : "") || "Full-screen table";
+    body.innerHTML = "";
+
+    var wrap = doc.createElement("div");
+    wrap.className = "rwa-table-modal__table-wrap";
+    var clone = tableEl.cloneNode(true);
+    stripElementIds(clone);
+    wrap.appendChild(clone);
+    body.appendChild(wrap);
+
+    root.hidden = false;
+    doc.body.classList.add("rwa-table-modal-open");
+    window.__TMMF_MODAL_OPEN = true;
+
+    var closeBtn = root.querySelector(".rwa-table-modal__close");
+    if (closeBtn) closeBtn.focus();
+  }
+
+  fs.openTableModal = openHostModal;
+  fs.closeTableModal = closeHostModal;
+  if (window.__RWA_STATIC_HELPERS) {
+    window.__RWA_STATIC_HELPERS.openRwaTableModal = openHostModal;
+    window.__RWA_STATIC_HELPERS.closeRwaTableModal = closeHostModal;
+  }
+})();
+"""
+
+_TMMF_MEASURE_HEIGHT_JS = """
+function measureTmmfContentHeight() {
+  if (window.__TMMF_MODAL_OPEN) return null;
+  var scrollY = window.scrollY || document.documentElement.scrollTop || 0;
+  var nodes = [
+    document.querySelector(".page-back-below-header"),
+    document.querySelector("main.page-shell.etp-mock-shell"),
+    document.getElementById("js-deep-footer-note"),
+  ];
+  var maxBottom = 0;
+  nodes.forEach(function (el) {
+    if (!el) return;
+    var rect = el.getBoundingClientRect();
+    if (rect.height <= 0 && el.id === "js-deep-footer-note" && !(el.textContent || "").trim()) {
+      return;
+    }
+    maxBottom = Math.max(maxBottom, rect.bottom + scrollY);
+  });
+  if (!maxBottom) {
+    var main = document.querySelector("main.page-shell.etp-mock-shell");
+    if (main) {
+      maxBottom = main.getBoundingClientRect().bottom + scrollY;
+    }
+  }
+  if (!maxBottom) return null;
+  return Math.ceil(maxBottom + 6);
+}
+"""
+
 _TMMF_IFRAME_BACK_LINK = """
 <div class="page-back-below-header">
   <p class="back-link back-link--below-header">
@@ -131,7 +281,7 @@ html, body.page-rwa-deep-mmf.site-experience {
   margin: 0;
   padding: 0;
   background: var(--wash, #f3f7fb);
-  overflow: visible;
+  overflow: hidden;
 }
 html::before,
 html::after,
@@ -245,18 +395,12 @@ window.loadJson = function () {{
 {js_boot}
 </script>
 <script>
+{_TMMF_MEASURE_HEIGHT_JS}
 (function () {{
-  function measureHeight() {{
-    return Math.ceil(Math.max(
-      document.body.scrollHeight,
-      document.body.offsetHeight,
-      document.documentElement.scrollHeight,
-      document.documentElement.offsetHeight
-    )) + 48;
-  }}
   function sendHeight() {{
     if (typeof window.parent.postMessage !== "function") return;
-    var h = measureHeight();
+    var h = measureTmmfContentHeight();
+    if (h === null || h < 200) return;
     window.parent.postMessage({{ type: "streamlit:setFrameHeight", height: h }}, "*");
     try {{
       window.parent.postMessage({{ type: "jpm-tmmf-height", height: h }}, "*");
@@ -266,13 +410,13 @@ window.loadJson = function () {{
     if (typeof ResizeObserver === "undefined") return;
     var ro = new ResizeObserver(sendHeight);
     [
-      "body",
       "main.page-shell.etp-mock-shell",
       "article.etp-mock-zone",
       "#js-deep-insights",
       "#js-deep-extra-before-leagues",
       "#deep-net-wrap",
       "#deep-plat-wrap",
+      "#js-deep-footer-note",
     ].forEach(function (sel) {{
       var el = document.querySelector(sel);
       if (el) ro.observe(el);
@@ -300,10 +444,13 @@ window.loadJson = function () {{
       if (el) mo.observe(el, {{ childList: true, subtree: true, attributes: true }});
     }});
   }}
-  [100, 400, 1000, 2500, 5000, 8000, 12000, 18000].forEach(function (ms) {{
+  [100, 400, 1000, 2500, 5000, 8000].forEach(function (ms) {{
     setTimeout(sendHeight, ms);
   }});
 }})();
+</script>
+<script>
+{_STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH}
 </script>
 {iframe_internal_link_script()}
 </body>
