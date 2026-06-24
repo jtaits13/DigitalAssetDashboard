@@ -1966,6 +1966,104 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 .stApp:has(.streamlit-tmmf-iframe-page) .block-container {
   padding-bottom: 0 !important;
 }
+.stApp:has(.streamlit-tmmf-iframe-page) .st-tmmf-host-table-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  box-sizing: border-box;
+}
+.stApp:has(.streamlit-tmmf-iframe-page) .st-tmmf-host-table-modal[hidden] {
+  display: none !important;
+}
+.stApp:has(.streamlit-tmmf-iframe-page) .st-tmmf-host-table-modal-open {
+  overflow: hidden !important;
+}
+.stApp:has(.streamlit-tmmf-iframe-page) .st-tmmf-host-table-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.62);
+}
+.stApp:has(.streamlit-tmmf-iframe-page) .st-tmmf-host-table-modal__dialog {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: min(96vw, 1400px);
+  max-height: min(92vh, 980px);
+  background: #fff;
+  border: 1px solid #d4e4ef;
+  border-radius: 14px;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.24);
+  overflow: hidden;
+}
+.stApp:has(.streamlit-tmmf-iframe-page) .st-tmmf-host-table-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.1rem 0.9rem;
+  border-bottom: 1px solid #dbe8f2;
+  background: #f8fbfd;
+}
+.stApp:has(.streamlit-tmmf-iframe-page) .st-tmmf-host-table-modal__eyebrow {
+  margin: 0 0 0.2rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #5a7184;
+}
+.stApp:has(.streamlit-tmmf-iframe-page) .st-tmmf-host-table-modal__title {
+  margin: 0;
+  font-size: 1.05rem;
+  color: #0f2942;
+}
+.stApp:has(.streamlit-tmmf-iframe-page) .st-tmmf-host-table-modal__close {
+  border: 1px solid #c7d8e8;
+  border-radius: 8px;
+  background: #fff;
+  color: #0f2942;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 0.45rem 0.85rem;
+  cursor: pointer;
+}
+.stApp:has(.streamlit-tmmf-iframe-page) .st-tmmf-host-table-modal__body {
+  padding: 1rem 1.1rem 1.15rem;
+  overflow: auto;
+  background: #fff;
+}
+.stApp:has(.streamlit-tmmf-iframe-page) .st-tmmf-host-table-modal__table-wrap {
+  overflow: auto;
+  max-height: min(70vh, calc(100vh - 12rem));
+  border: 1px solid #dbe8f2;
+  border-radius: 10px;
+  background: #fff;
+}
+.stApp:has(.streamlit-tmmf-iframe-page) .st-tmmf-host-table-modal__table-wrap table {
+  min-width: max-content;
+  margin: 0;
+  border-collapse: collapse;
+  width: 100%;
+}
+.stApp:has(.streamlit-tmmf-iframe-page) .st-tmmf-host-table-modal__table-wrap th,
+.stApp:has(.streamlit-tmmf-iframe-page) .st-tmmf-host-table-modal__table-wrap td {
+  white-space: nowrap;
+  padding: 0.45rem 0.65rem;
+  border-bottom: 1px solid #e8f0f6;
+  text-align: left;
+  font-size: 0.88rem;
+}
+.stApp:has(.streamlit-tmmf-iframe-page) .st-tmmf-host-table-modal__table-wrap thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #f0f6fa;
+  font-weight: 650;
+}
 </style>
 """
 

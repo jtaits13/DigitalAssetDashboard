@@ -26,183 +26,254 @@ _TMMF_JS_DEPS = (
 )
 _TMMF_JS_BOOT = ("rwa-asset-deep-page.js",)
 
-_STREAMLIT_TABLE_FULLSCREEN_IFRAME_VIEWPORT_PATCH = """
+_STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH = """
 (function () {
+  // st-tmmf-fullscreen-host-portal
   var fs = window.__TABLE_FULLSCREEN;
-  if (!fs) return;
+  if (!fs || window.__ST_TMMF_FULLSCREEN_PATCHED) return;
+  window.__ST_TMMF_FULLSCREEN_PATCHED = true;
 
-  var MODAL_ID = "js-table-fullscreen-modal";
+  var HOST_ID = "js-table-fullscreen-streamlit-host";
+  var HOST_BODY = "js-table-fullscreen-streamlit-body";
+  var HOST_TITLE = "js-table-fullscreen-streamlit-title";
+  var IFRAME_MODAL_ID = "js-table-fullscreen-modal";
   var CLOSE_ATTR = "data-table-fullscreen-close";
   var origOpen = fs.openTableModal;
   var origClose = fs.closeTableModal;
   var origAttach = fs.attachTableFullscreenButton;
 
-  function findHostIframe() {
-    if (window.frameElement) return window.frameElement;
+  function parentDoc() {
     try {
-      var frames = window.parent.document.querySelectorAll("iframe");
-      for (var i = 0; i < frames.length; i++) {
-        try {
-          if (frames[i].contentWindow === window) return frames[i];
-        } catch (e) {}
+      var parentWin = window.parent;
+      if (parentWin && parentWin !== window && parentWin.document) {
+        return parentWin.document;
       }
     } catch (e) {}
     return null;
   }
 
-  function getVisibleIframeSlice() {
-    var frame = findHostIframe();
-    var parentWin = window.parent;
-    if (!parentWin || parentWin === window) {
-      return {
-        top: 0,
-        left: 0,
-        width: window.innerWidth,
-        height: window.innerHeight,
-      };
-    }
-    if (!frame) {
-      return {
-        top: 0,
-        left: 0,
-        width: window.innerWidth,
-        height: parentWin.visualViewport ? parentWin.visualViewport.height : window.innerHeight,
-      };
-    }
-    var rect = frame.getBoundingClientRect();
-    var vv = parentWin.visualViewport;
-    var vTop = vv ? vv.offsetTop : 0;
-    var vLeft = vv ? vv.offsetLeft : 0;
-    var vBottom = vTop + (vv ? vv.height : parentWin.innerHeight);
-    var vRight = vLeft + (vv ? vv.width : parentWin.innerWidth);
-    var visibleTop = Math.max(rect.top, vTop);
-    var visibleLeft = Math.max(rect.left, vLeft);
-    var visibleBottom = Math.min(rect.bottom, vBottom);
-    var visibleRight = Math.min(rect.right, vRight);
-    return {
-      top: visibleTop - rect.top,
-      left: visibleLeft - rect.left,
-      width: Math.max(0, visibleRight - visibleLeft),
-      height: Math.max(0, visibleBottom - visibleTop),
-    };
+  function stripElementIds(node) {
+    if (!node || node.nodeType !== 1) return;
+    node.removeAttribute("id");
+    Array.prototype.forEach.call(node.children || [], stripElementIds);
   }
 
-  function pinModalToVisibleViewport(root) {
-    if (!root) return;
-    var slice = getVisibleIframeSlice();
-    if (!slice || slice.width < 40) {
-      slice = {
-        top: 0,
-        left: 0,
-        width: window.innerWidth,
-        height: window.innerHeight,
-      };
-    }
-    if (slice.height < 40) {
-      slice.height = window.innerHeight;
-    }
-    root.classList.add("rwa-table-modal--streamlit-viewport");
-    root.style.position = "fixed";
-    root.style.top = slice.top + "px";
-    root.style.left = slice.left + "px";
-    root.style.width = slice.width + "px";
-    root.style.height = slice.height + "px";
-    root.style.right = "auto";
-    root.style.bottom = "auto";
-    root.style.inset = "auto";
-    root.style.margin = "0";
-    root.style.padding = "1.25rem";
-    root.style.boxSizing = "border-box";
-    root.style.display = "flex";
-    root.style.alignItems = "center";
-    root.style.justifyContent = "center";
-    root.style.zIndex = "999999";
-  }
-
-  function unbindViewportSync(root) {
-    if (root && root._viewportUnbind) {
-      root._viewportUnbind();
-      root._viewportUnbind = null;
-    }
-    if (root) root.classList.remove("rwa-table-modal--streamlit-viewport");
-  }
-
-  function bindViewportSync(root) {
-    unbindViewportSync(root);
-    var parentWin = window.parent;
-    var apply = function () {
-      pinModalToVisibleViewport(root);
-    };
-    apply();
-    if (!parentWin || parentWin === window) return;
-    parentWin.addEventListener("scroll", apply, true);
-    parentWin.addEventListener("resize", apply);
-    if (parentWin.visualViewport) {
-      parentWin.visualViewport.addEventListener("resize", apply);
-      parentWin.visualViewport.addEventListener("scroll", apply);
-    }
-    window.addEventListener("resize", apply);
-    root._viewportUnbind = function () {
-      parentWin.removeEventListener("scroll", apply, true);
-      parentWin.removeEventListener("resize", apply);
-      if (parentWin.visualViewport) {
-        parentWin.visualViewport.removeEventListener("resize", apply);
-        parentWin.visualViewport.removeEventListener("scroll", apply);
-      }
-      window.removeEventListener("resize", apply);
-    };
-  }
-
-  function rebindFullscreenButton(actions, tableEl, opts) {
-    if (!actions || !tableEl) return;
-    var btn = actions.querySelector('[data-rwa-fullscreen-btn="1"]');
-    if (!btn) return;
-    var clone = btn.cloneNode(true);
-    btn.parentNode.replaceChild(clone, btn);
-    clone.addEventListener("click", function () {
-      openViewportModal(tableEl, opts || {});
+  function ensureHostModal(doc) {
+    var root = doc.getElementById(HOST_ID);
+    if (root) return root;
+    root = doc.createElement("div");
+    root.id = HOST_ID;
+    root.className = "st-tmmf-host-table-modal";
+    root.hidden = true;
+    root.innerHTML =
+      '<div class="st-tmmf-host-table-modal__backdrop" ' +
+      CLOSE_ATTR +
+      '="1"></div>' +
+      '<div class="st-tmmf-host-table-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="' +
+      HOST_TITLE +
+      '">' +
+      '<div class="st-tmmf-host-table-modal__header">' +
+      "<div>" +
+      '<p class="st-tmmf-host-table-modal__eyebrow">Full-screen table</p>' +
+      '<h2 class="st-tmmf-host-table-modal__title" id="' +
+      HOST_TITLE +
+      '">Table</h2>' +
+      "</div>" +
+      '<button type="button" class="st-tmmf-host-table-modal__close" ' +
+      CLOSE_ATTR +
+      '="1">Close</button>' +
+      "</div>" +
+      '<div class="st-tmmf-host-table-modal__body" id="' +
+      HOST_BODY +
+      '"></div>' +
+      "</div>";
+    doc.body.appendChild(root);
+    root.addEventListener("click", function (ev) {
+      var closeEl = ev.target.closest ? ev.target.closest("[" + CLOSE_ATTR + "]") : null;
+      if (closeEl) closeHostModal();
     });
-  }
-
-  function openViewportModal(tableEl, opts) {
-    origOpen.call(fs, tableEl, opts);
-    var root = document.getElementById(MODAL_ID);
-    window.__TMMF_MODAL_OPEN = true;
-    bindViewportSync(root);
-    if (root && !root.dataset.stViewportClose) {
-      root.dataset.stViewportClose = "1";
-      document.addEventListener(
-        "keydown",
-        function (ev) {
-          if (ev.key !== "Escape") return;
-          var modal = document.getElementById(MODAL_ID);
-          if (modal && !modal.hidden) closeViewportModal();
-        },
-        true
-      );
+    if (!doc._stTmmfHostEscBound) {
+      doc._stTmmfHostEscBound = true;
+      doc.addEventListener("keydown", function (ev) {
+        if (ev.key === "Escape") closeHostModal();
+      });
     }
+    return root;
   }
 
-  function closeViewportModal() {
-    var root = document.getElementById(MODAL_ID);
-    unbindViewportSync(root);
-    window.__TMMF_MODAL_OPEN = false;
+  function openIframeFallbackModal(tableEl, opts) {
+    origOpen.call(fs, tableEl, opts || {});
+    var root = document.getElementById(IFRAME_MODAL_ID);
+    if (!root) return;
+    root.classList.add("rwa-table-modal--streamlit-fallback");
+    root.style.position = "fixed";
+    root.style.top = "0";
+    root.style.left = "0";
+    root.style.right = "0";
+    root.style.bottom = "0";
+    root.style.width = "100%";
+    root.style.height = "100%";
+    root.style.zIndex = "999999";
+    root.style.display = "grid";
+    root.style.placeItems = "center";
+    root.hidden = false;
+    window.__TMMF_MODAL_OPEN = true;
+  }
+
+  function openHostModal(tableEl, opts) {
+    if (!tableEl) return;
+    opts = opts || {};
+    var doc = parentDoc();
+    if (doc) {
+      try {
+        var root = ensureHostModal(doc);
+        var titleEl = doc.getElementById(HOST_TITLE);
+        var body = doc.getElementById(HOST_BODY);
+        if (root && titleEl && body) {
+          titleEl.textContent =
+            opts.title ||
+            tableEl.getAttribute("aria-label") ||
+            "Full-screen table";
+          body.innerHTML = "";
+          var wrap = doc.createElement("div");
+          wrap.className = "st-tmmf-host-table-modal__table-wrap";
+          var clone = doc.importNode(tableEl, true);
+          stripElementIds(clone);
+          wrap.appendChild(clone);
+          body.appendChild(wrap);
+          root.hidden = false;
+          doc.body.classList.add("st-tmmf-host-table-modal-open");
+          window.__TMMF_MODAL_OPEN = true;
+          var closeBtn = root.querySelector(".st-tmmf-host-table-modal__close");
+          if (closeBtn && closeBtn.focus) closeBtn.focus();
+          return;
+        }
+      } catch (e) {}
+    }
+    openIframeFallbackModal(tableEl, opts);
+  }
+
+  function closeHostModal() {
+    var doc = parentDoc();
+    if (doc) {
+      var root = doc.getElementById(HOST_ID);
+      if (root) root.hidden = true;
+      doc.body.classList.remove("st-tmmf-host-table-modal-open");
+      var body = doc.getElementById(HOST_BODY);
+      if (body) body.innerHTML = "";
+    }
+    var iframeRoot = document.getElementById(IFRAME_MODAL_ID);
+    if (iframeRoot) {
+      iframeRoot.hidden = true;
+      iframeRoot.classList.remove("rwa-table-modal--streamlit-fallback");
+    }
     origClose.call(fs);
+    window.__TMMF_MODAL_OPEN = false;
   }
 
-  fs.openTableModal = openViewportModal;
-  fs.closeTableModal = closeViewportModal;
+  function resolveTableFromButton(btn) {
+    var block = btn.closest(
+      ".etp-mock-table-block, .rwa-deep-league-panel, #js-deep-extra-before-leagues"
+    );
+    if (!block) block = btn.closest("section, article, main");
+    if (!block) return null;
+    var wrap = block.querySelector(".table-wrap--scroll, .rwa-split-table-scroll, .table-wrap");
+    if (!wrap) return null;
+    var table = wrap.querySelector("table");
+    if (!table) return null;
+    return {
+      table: table,
+      title:
+        wrap.getAttribute("data-fullscreen-title") ||
+        table.getAttribute("aria-label") ||
+        "Full-screen table",
+    };
+  }
+
+  function handleExpandClick(ev) {
+    var btn =
+      ev.target && ev.target.closest
+        ? ev.target.closest('.etp-mock-table-meta__expand, [data-rwa-fullscreen-btn="1"]')
+        : null;
+    if (!btn || btn.disabled) return;
+    var resolved = resolveTableFromButton(btn);
+    if (!resolved || !resolved.table) return;
+    ev.preventDefault();
+    ev.stopImmediatePropagation();
+    openHostModal(resolved.table, { title: resolved.title });
+  }
+
+  document.addEventListener("click", handleExpandClick, true);
+  document.addEventListener(
+    "keydown",
+    function (ev) {
+      if (ev.key === "Escape" && window.__TMMF_MODAL_OPEN) closeHostModal();
+    },
+    true
+  );
+
+  fs.openTableModal = openHostModal;
+  fs.closeTableModal = closeHostModal;
   fs.attachTableFullscreenButton = function (tableWrap, tableEl, opts) {
-    var actions = origAttach(tableWrap, tableEl, opts);
-    rebindFullscreenButton(actions, tableEl, opts);
+    var actions = origAttach.call(fs, tableWrap, tableEl, opts);
+    if (actions && tableEl) {
+      var btn = actions.querySelector('[data-rwa-fullscreen-btn="1"]');
+      if (btn && !btn._stTmmfHostBound) {
+        btn._stTmmfHostBound = true;
+        btn.addEventListener(
+          "click",
+          function (ev) {
+            ev.preventDefault();
+            ev.stopImmediatePropagation();
+            openHostModal(tableEl, opts || {});
+          },
+          true
+        );
+      }
+    }
     return actions;
   };
 
   if (window.__RWA_STATIC_HELPERS) {
-    window.__RWA_STATIC_HELPERS.openRwaTableModal = openViewportModal;
-    window.__RWA_STATIC_HELPERS.closeRwaTableModal = closeViewportModal;
+    window.__RWA_STATIC_HELPERS.openRwaTableModal = openHostModal;
+    window.__RWA_STATIC_HELPERS.closeRwaTableModal = closeHostModal;
     window.__RWA_STATIC_HELPERS.attachRwaTableFullscreenButton = fs.attachTableFullscreenButton;
   }
+
+  function rewireExistingButtons() {
+    document
+      .querySelectorAll('[data-rwa-fullscreen-btn="1"], .etp-mock-table-meta__expand')
+      .forEach(function (btn) {
+        if (btn._stTmmfHostBound) return;
+        btn._stTmmfHostBound = true;
+        btn.addEventListener(
+          "click",
+          function (ev) {
+            var resolved = resolveTableFromButton(btn);
+            if (!resolved || !resolved.table) return;
+            ev.preventDefault();
+            ev.stopImmediatePropagation();
+            openHostModal(resolved.table, { title: resolved.title });
+          },
+          true
+        );
+      });
+  }
+
+  var loadJsonFn = window.loadJson;
+  if (typeof loadJsonFn === "function" && !loadJsonFn._stTmmfWrapped) {
+    window.loadJson = function () {
+      return Promise.resolve(loadJsonFn.apply(this, arguments)).then(function (payload) {
+        setTimeout(rewireExistingButtons, 0);
+        setTimeout(rewireExistingButtons, 400);
+        return payload;
+      });
+    };
+    window.loadJson._stTmmfWrapped = true;
+  }
+  setTimeout(rewireExistingButtons, 0);
+  setTimeout(rewireExistingButtons, 800);
+  setTimeout(rewireExistingButtons, 2500);
 })();
 """
 
@@ -383,12 +454,13 @@ body.page-rwa-deep-mmf .home-reveal {
   opacity: 1 !important;
   transform: none !important;
 }
-body.page-rwa-deep-mmf .rwa-table-modal--streamlit-viewport:not([hidden]) {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+body.page-rwa-deep-mmf .rwa-table-modal--streamlit-fallback:not([hidden]) {
+  display: grid !important;
+  place-items: center !important;
+  padding: 1.25rem !important;
+  box-sizing: border-box !important;
 }
-body.page-rwa-deep-mmf .rwa-table-modal--streamlit-viewport .rwa-table-modal__dialog {
+body.page-rwa-deep-mmf .rwa-table-modal--streamlit-fallback .rwa-table-modal__dialog {
   max-height: min(92vh, 980px);
   width: min(96%, 1400px);
 }
@@ -455,12 +527,12 @@ window.__RWA_DEEP_PAYLOAD = {payload_json};
 {js_deps}
 </script>
 <script>
-{_STREAMLIT_TABLE_FULLSCREEN_IFRAME_VIEWPORT_PATCH}
-</script>
-<script>
 window.loadJson = function () {{
   return Promise.resolve(window.__RWA_DEEP_PAYLOAD);
 }};
+</script>
+<script>
+{_STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH}
 </script>
 <script>
 {js_boot}
