@@ -29,16 +29,46 @@ _TMMF_JS_BOOT = ("rwa-asset-deep-page.js",)
 _STREAMLIT_TABLE_FULLSCREEN_IFRAME_VIEWPORT_PATCH = """
 (function () {
   var fs = window.__TABLE_FULLSCREEN;
-  if (!fs || !window.frameElement) return;
+  if (!fs) return;
 
   var MODAL_ID = "js-table-fullscreen-modal";
+  var CLOSE_ATTR = "data-table-fullscreen-close";
   var origOpen = fs.openTableModal;
   var origClose = fs.closeTableModal;
+  var origAttach = fs.attachTableFullscreenButton;
+
+  function findHostIframe() {
+    if (window.frameElement) return window.frameElement;
+    try {
+      var frames = window.parent.document.querySelectorAll("iframe");
+      for (var i = 0; i < frames.length; i++) {
+        try {
+          if (frames[i].contentWindow === window) return frames[i];
+        } catch (e) {}
+      }
+    } catch (e) {}
+    return null;
+  }
 
   function getVisibleIframeSlice() {
-    var frame = window.frameElement;
+    var frame = findHostIframe();
     var parentWin = window.parent;
-    if (!frame || !parentWin) return null;
+    if (!parentWin || parentWin === window) {
+      return {
+        top: 0,
+        left: 0,
+        width: window.innerWidth,
+        height: window.innerHeight,
+      };
+    }
+    if (!frame) {
+      return {
+        top: 0,
+        left: 0,
+        width: window.innerWidth,
+        height: parentWin.visualViewport ? parentWin.visualViewport.height : window.innerHeight,
+      };
+    }
     var rect = frame.getBoundingClientRect();
     var vv = parentWin.visualViewport;
     var vTop = vv ? vv.offsetTop : 0;
@@ -60,7 +90,18 @@ _STREAMLIT_TABLE_FULLSCREEN_IFRAME_VIEWPORT_PATCH = """
   function pinModalToVisibleViewport(root) {
     if (!root) return;
     var slice = getVisibleIframeSlice();
-    if (!slice || slice.height < 40 || slice.width < 40) return;
+    if (!slice || slice.width < 40) {
+      slice = {
+        top: 0,
+        left: 0,
+        width: window.innerWidth,
+        height: window.innerHeight,
+      };
+    }
+    if (slice.height < 40) {
+      slice.height = window.innerHeight;
+    }
+    root.classList.add("rwa-table-modal--streamlit-viewport");
     root.style.position = "fixed";
     root.style.top = slice.top + "px";
     root.style.left = slice.left + "px";
@@ -83,16 +124,17 @@ _STREAMLIT_TABLE_FULLSCREEN_IFRAME_VIEWPORT_PATCH = """
       root._viewportUnbind();
       root._viewportUnbind = null;
     }
+    if (root) root.classList.remove("rwa-table-modal--streamlit-viewport");
   }
 
   function bindViewportSync(root) {
     unbindViewportSync(root);
     var parentWin = window.parent;
-    if (!parentWin) return;
     var apply = function () {
       pinModalToVisibleViewport(root);
     };
     apply();
+    if (!parentWin || parentWin === window) return;
     parentWin.addEventListener("scroll", apply, true);
     parentWin.addEventListener("resize", apply);
     if (parentWin.visualViewport) {
@@ -111,11 +153,34 @@ _STREAMLIT_TABLE_FULLSCREEN_IFRAME_VIEWPORT_PATCH = """
     };
   }
 
+  function rebindFullscreenButton(actions, tableEl, opts) {
+    if (!actions || !tableEl) return;
+    var btn = actions.querySelector('[data-rwa-fullscreen-btn="1"]');
+    if (!btn) return;
+    var clone = btn.cloneNode(true);
+    btn.parentNode.replaceChild(clone, btn);
+    clone.addEventListener("click", function () {
+      openViewportModal(tableEl, opts || {});
+    });
+  }
+
   function openViewportModal(tableEl, opts) {
     origOpen.call(fs, tableEl, opts);
     var root = document.getElementById(MODAL_ID);
     window.__TMMF_MODAL_OPEN = true;
     bindViewportSync(root);
+    if (root && !root.dataset.stViewportClose) {
+      root.dataset.stViewportClose = "1";
+      document.addEventListener(
+        "keydown",
+        function (ev) {
+          if (ev.key !== "Escape") return;
+          var modal = document.getElementById(MODAL_ID);
+          if (modal && !modal.hidden) closeViewportModal();
+        },
+        true
+      );
+    }
   }
 
   function closeViewportModal() {
@@ -127,9 +192,16 @@ _STREAMLIT_TABLE_FULLSCREEN_IFRAME_VIEWPORT_PATCH = """
 
   fs.openTableModal = openViewportModal;
   fs.closeTableModal = closeViewportModal;
+  fs.attachTableFullscreenButton = function (tableWrap, tableEl, opts) {
+    var actions = origAttach(tableWrap, tableEl, opts);
+    rebindFullscreenButton(actions, tableEl, opts);
+    return actions;
+  };
+
   if (window.__RWA_STATIC_HELPERS) {
     window.__RWA_STATIC_HELPERS.openRwaTableModal = openViewportModal;
     window.__RWA_STATIC_HELPERS.closeRwaTableModal = closeViewportModal;
+    window.__RWA_STATIC_HELPERS.attachRwaTableFullscreenButton = fs.attachTableFullscreenButton;
   }
 })();
 """
@@ -311,13 +383,12 @@ body.page-rwa-deep-mmf .home-reveal {
   opacity: 1 !important;
   transform: none !important;
 }
-body.page-rwa-deep-mmf .rwa-table-modal:not([hidden]) {
+body.page-rwa-deep-mmf .rwa-table-modal--streamlit-viewport:not([hidden]) {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  inset: auto !important;
 }
-body.page-rwa-deep-mmf .rwa-table-modal__dialog {
+body.page-rwa-deep-mmf .rwa-table-modal--streamlit-viewport .rwa-table-modal__dialog {
   max-height: min(92vh, 980px);
   width: min(96%, 1400px);
 }
@@ -384,6 +455,9 @@ window.__RWA_DEEP_PAYLOAD = {payload_json};
 {js_deps}
 </script>
 <script>
+{_STREAMLIT_TABLE_FULLSCREEN_IFRAME_VIEWPORT_PATCH}
+</script>
+<script>
 window.loadJson = function () {{
   return Promise.resolve(window.__RWA_DEEP_PAYLOAD);
 }};
@@ -445,9 +519,6 @@ window.loadJson = function () {{
     setTimeout(sendHeight, ms);
   }});
 }})();
-</script>
-<script>
-{_STREAMLIT_TABLE_FULLSCREEN_IFRAME_VIEWPORT_PATCH}
 </script>
 {iframe_internal_link_script()}
 </body>
