@@ -2122,22 +2122,17 @@ def export_crypto_json_bundle(
 _ETP_MANIFEST_ERROR_PREFIXES = ("ETP scrape:", "ETP flows:", "AUM chart:")
 
 
-def export_etp_json_bundle(
-    out: Path | None = None,
+def build_etp_page_payloads(
     *,
+    user_agent: str | None = None,
     errors_out: list[str] | None = None,
+    live_cache_path: Path | None = None,
 ) -> dict[str, Any]:
-    """
-    Refresh U.S. ETP JSON only (fund list, KPI strip, aggregate AUM chart series).
-
-    Writes ``etps.json``, ``etp_kpis.json``, and ``aum_series.json`` under ``static_home/data/``.
-    Does not touch crypto, RWA, news, or other payloads.
-    """
-    out_dir = out or OUT
-    out_dir.mkdir(parents=True, exist_ok=True)
+    """Build U.S. ETP page JSON payloads (etps, kpis, aum series, pulse, manifest)."""
+    ua = user_agent or DEFAULT_UA
     etp_errors: list[str] = errors_out if errors_out is not None else []
 
-    etp_result = fetch_crypto_etps_enriched(DEFAULT_UA)
+    etp_result = fetch_crypto_etps_enriched(ua)
     if etp_result.error:
         etp_errors.append(f"ETP scrape: {etp_result.error}")
     rows = sorted_by_assets(etp_result.rows)
@@ -2213,11 +2208,13 @@ def export_etp_json_bundle(
         "etha": {"aum_display": etha_aum, "delta": _kpi_delta("ETHA", etha_r)},
     }
 
+    etf_articles: list[dict[str, Any]] = []
     try:
         from crypto_etps.etp_takeaways import build_etp_key_observations_html
-        from news_feeds import load_all_etf_etp_news_cached
 
-        etf_articles, _etf_feed_errs = load_all_etf_etp_news_cached(extra_feeds=[STATIC_THE_DEFIANT_FEED])
+        etf_articles, etf_feed_errs = load_all_etf_etp_news_cached(extra_feeds=[STATIC_THE_DEFIANT_FEED])
+        for e in etf_feed_errs:
+            etp_errors.append(f"ETF news RSS: {e}")
         kpis["key_observations_html"] = build_etp_key_observations_html(
             rows,
             net_flow_1m_display=kpis["net_flow_1m_display"],
@@ -2228,20 +2225,73 @@ def export_etp_json_bundle(
         kpis["key_observations_html"] = ""
         etp_errors.append(f"ETP key observations HTML: {exc}")
 
-    (out_dir / "etps.json").write_text(
-        json.dumps({"generated_at": refreshed_at, "rows": rows_payload}, indent=2),
-        encoding="utf-8",
-    )
-    (out_dir / "aum_series.json").write_text(
-        json.dumps({"generated_at": refreshed_at, "series": series}, indent=2),
-        encoding="utf-8",
-    )
-    (out_dir / "etp_kpis.json").write_text(json.dumps(kpis, indent=2), encoding="utf-8")
+    pulse_items = [_article_json(a) for a in etf_articles[:ETP_PULSE_PREVIEW_COUNT]]
+    payloads: dict[str, Any] = {
+        "etps.json": {"generated_at": refreshed_at, "rows": rows_payload, "error": etp_result.error or ""},
+        "etp_kpis.json": kpis,
+        "aum_series.json": {"generated_at": refreshed_at, "series": series},
+        "etf_pulse.json": {"generated_at": refreshed_at, "items": pulse_items},
+        "manifest.json": {"errors": etp_errors, "etp_refreshed_at": refreshed_at},
+    }
+
+    from etp_live_cache import apply_etp_live_cache_fallback, load_etp_live_cache, save_etp_live_cache
+
+    cache_path = live_cache_path or (OUT / "etp_live_cache.json")
+    cached = load_etp_live_cache(cache_path, static_dir=OUT)
+    merged_payloads = apply_etp_live_cache_fallback(payloads, cache=cached)
+    used_cached_rows = not rows_payload and bool((merged_payloads.get("etps.json") or {}).get("rows"))
+
+    if rows_payload and not used_cached_rows:
+        save_etp_live_cache(
+            cache_path,
+            {
+                "generated_at": refreshed_at,
+                "payloads": merged_payloads,
+            },
+        )
+
     return {
-        "etp_refreshed_at": refreshed_at,
+        "generated_at": refreshed_at,
+        "payloads": merged_payloads,
         "errors": etp_errors,
-        "etp_count": len(rows_payload),
-        "aum_points": len(series),
+        "etp_count": len((merged_payloads.get("etps.json") or {}).get("rows") or []),
+        "aum_points": len((merged_payloads.get("aum_series.json") or {}).get("series") or []),
+    }
+
+
+def export_etp_json_bundle(
+    out: Path | None = None,
+    *,
+    errors_out: list[str] | None = None,
+) -> dict[str, Any]:
+    """
+    Refresh U.S. ETP JSON only (fund list, KPI strip, aggregate AUM chart series).
+
+    Writes ``etps.json``, ``etp_kpis.json``, and ``aum_series.json`` under ``static_home/data/``.
+    Does not touch crypto, RWA, news, or other payloads.
+    """
+    out_dir = out or OUT
+    out_dir.mkdir(parents=True, exist_ok=True)
+    summary = build_etp_page_payloads(
+        errors_out=errors_out,
+        live_cache_path=out_dir / "etp_live_cache.json",
+    )
+    payloads = summary["payloads"]
+    (out_dir / "etps.json").write_text(json.dumps(payloads["etps.json"], indent=2), encoding="utf-8")
+    (out_dir / "aum_series.json").write_text(
+        json.dumps(payloads["aum_series.json"], indent=2),
+        encoding="utf-8",
+    )
+    (out_dir / "etp_kpis.json").write_text(json.dumps(payloads["etp_kpis.json"], indent=2), encoding="utf-8")
+    (out_dir / "etf_pulse.json").write_text(
+        json.dumps(payloads["etf_pulse.json"], indent=2),
+        encoding="utf-8",
+    )
+    return {
+        "etp_refreshed_at": summary["generated_at"],
+        "errors": summary["errors"],
+        "etp_count": summary["etp_count"],
+        "aum_points": summary["aum_points"],
     }
 
 

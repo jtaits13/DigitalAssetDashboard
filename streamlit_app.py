@@ -117,6 +117,9 @@ def _clear_all_caches() -> None:
     from streamlit_crypto_prices_static import _cached_crypto_prices_iframe_payloads
 
     _cached_crypto_prices_iframe_payloads.clear()
+    from streamlit_etps_static import _cached_etp_iframe_payloads
+
+    _cached_etp_iframe_payloads.clear()
 
 
 def main() -> None:
