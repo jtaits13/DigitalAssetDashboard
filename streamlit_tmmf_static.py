@@ -28,29 +28,15 @@ _TMMF_JS_BOOT = ("rwa-asset-deep-page.js",)
 
 _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH = """
 (function () {
-  // st-tmmf-fullscreen-host-portal
+  // st-tmmf-fullscreen-postmessage
   var fs = window.__TABLE_FULLSCREEN;
   if (!fs || window.__ST_TMMF_FULLSCREEN_PATCHED) return;
   window.__ST_TMMF_FULLSCREEN_PATCHED = true;
 
-  var HOST_ID = "js-table-fullscreen-streamlit-host";
-  var HOST_BODY = "js-table-fullscreen-streamlit-body";
-  var HOST_TITLE = "js-table-fullscreen-streamlit-title";
   var IFRAME_MODAL_ID = "js-table-fullscreen-modal";
-  var CLOSE_ATTR = "data-table-fullscreen-close";
   var origOpen = fs.openTableModal;
   var origClose = fs.closeTableModal;
   var origAttach = fs.attachTableFullscreenButton;
-
-  function parentDoc() {
-    try {
-      var parentWin = window.parent;
-      if (parentWin && parentWin !== window && parentWin.document) {
-        return parentWin.document;
-      }
-    } catch (e) {}
-    return null;
-  }
 
   function stripElementIds(node) {
     if (!node || node.nodeType !== 1) return;
@@ -58,47 +44,107 @@ _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH = """
     Array.prototype.forEach.call(node.children || [], stripElementIds);
   }
 
-  function ensureHostModal(doc) {
-    var root = doc.getElementById(HOST_ID);
-    if (root) return root;
-    root = doc.createElement("div");
-    root.id = HOST_ID;
-    root.className = "st-tmmf-host-table-modal";
-    root.hidden = true;
-    root.innerHTML =
-      '<div class="st-tmmf-host-table-modal__backdrop" ' +
-      CLOSE_ATTR +
-      '="1"></div>' +
-      '<div class="st-tmmf-host-table-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="' +
-      HOST_TITLE +
-      '">' +
-      '<div class="st-tmmf-host-table-modal__header">' +
-      "<div>" +
-      '<p class="st-tmmf-host-table-modal__eyebrow">Full-screen table</p>' +
-      '<h2 class="st-tmmf-host-table-modal__title" id="' +
-      HOST_TITLE +
-      '">Table</h2>' +
-      "</div>" +
-      '<button type="button" class="st-tmmf-host-table-modal__close" ' +
-      CLOSE_ATTR +
-      '="1">Close</button>' +
-      "</div>" +
-      '<div class="st-tmmf-host-table-modal__body" id="' +
-      HOST_BODY +
-      '"></div>' +
-      "</div>";
-    doc.body.appendChild(root);
-    root.addEventListener("click", function (ev) {
-      var closeEl = ev.target.closest ? ev.target.closest("[" + CLOSE_ATTR + "]") : null;
-      if (closeEl) closeHostModal();
-    });
-    if (!doc._stTmmfHostEscBound) {
-      doc._stTmmfHostEscBound = true;
-      doc.addEventListener("keydown", function (ev) {
-        if (ev.key === "Escape") closeHostModal();
-      });
+  function tableHtmlForHost(tableEl) {
+    if (!tableEl || !tableEl.cloneNode) return "";
+    var clone = tableEl.cloneNode(true);
+    stripElementIds(clone);
+    return clone.outerHTML || "";
+  }
+
+  function postOpenToHost(tableEl, opts) {
+    if (typeof window.parent.postMessage !== "function") return false;
+    var html = tableHtmlForHost(tableEl);
+    if (!html) return false;
+    try {
+      window.parent.postMessage(
+        {
+          type: "jpm-tmmf-fullscreen-open",
+          title:
+            (opts && opts.title) ||
+            tableEl.getAttribute("aria-label") ||
+            "Full-screen table",
+          tableHtml: html,
+        },
+        "*"
+      );
+      window.__TMMF_MODAL_OPEN = true;
+      return true;
+    } catch (e) {
+      return false;
     }
-    return root;
+  }
+
+  function postCloseToHost() {
+    if (typeof window.parent.postMessage !== "function") return;
+    try {
+      window.parent.postMessage({ type: "jpm-tmmf-fullscreen-close" }, "*");
+    } catch (e) {}
+  }
+
+  function findHostIframe() {
+    if (window.frameElement) return window.frameElement;
+    try {
+      var frames = window.parent.document.querySelectorAll("iframe");
+      for (var i = 0; i < frames.length; i++) {
+        try {
+          if (frames[i].contentWindow === window) return frames[i];
+        } catch (e) {}
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  function getVisibleIframeSlice() {
+    var frame = findHostIframe();
+    var parentWin = window.parent;
+    if (!parentWin || parentWin === window) {
+      return { top: 0, left: 0, width: window.innerWidth, height: window.innerHeight };
+    }
+    if (!frame) {
+      return {
+        top: 0,
+        left: 0,
+        width: window.innerWidth,
+        height: parentWin.visualViewport ? parentWin.visualViewport.height : window.innerHeight,
+      };
+    }
+    var rect = frame.getBoundingClientRect();
+    var vv = parentWin.visualViewport;
+    var vTop = vv ? vv.offsetTop : 0;
+    var vLeft = vv ? vv.offsetLeft : 0;
+    var vBottom = vTop + (vv ? vv.height : parentWin.innerHeight);
+    var vRight = vLeft + (vv ? vv.width : parentWin.innerWidth);
+    return {
+      top: Math.max(rect.top, vTop) - rect.top,
+      left: Math.max(rect.left, vLeft) - rect.left,
+      width: Math.max(0, Math.min(rect.right, vRight) - Math.max(rect.left, vLeft)),
+      height: Math.max(0, Math.min(rect.bottom, vBottom) - Math.max(rect.top, vTop)),
+    };
+  }
+
+  function pinIframeModalToViewport(root) {
+    if (!root) return;
+    var slice = getVisibleIframeSlice();
+    if (!slice || slice.width < 40 || slice.height < 40) {
+      root.style.position = "fixed";
+      root.style.inset = "0";
+      root.style.width = "100%";
+      root.style.height = "100%";
+    } else {
+      root.style.position = "fixed";
+      root.style.top = slice.top + "px";
+      root.style.left = slice.left + "px";
+      root.style.width = slice.width + "px";
+      root.style.height = slice.height + "px";
+      root.style.right = "auto";
+      root.style.bottom = "auto";
+    }
+    root.style.zIndex = "999999";
+    root.style.display = "grid";
+    root.style.placeItems = "center";
+    root.style.padding = "1.25rem";
+    root.style.boxSizing = "border-box";
+    root.hidden = false;
   }
 
   function openIframeFallbackModal(tableEl, opts) {
@@ -106,62 +152,24 @@ _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH = """
     var root = document.getElementById(IFRAME_MODAL_ID);
     if (!root) return;
     root.classList.add("rwa-table-modal--streamlit-fallback");
-    root.style.position = "fixed";
-    root.style.top = "0";
-    root.style.left = "0";
-    root.style.right = "0";
-    root.style.bottom = "0";
-    root.style.width = "100%";
-    root.style.height = "100%";
-    root.style.zIndex = "999999";
-    root.style.display = "grid";
-    root.style.placeItems = "center";
-    root.hidden = false;
+    pinIframeModalToViewport(root);
     window.__TMMF_MODAL_OPEN = true;
-  }
-
-  function openHostModal(tableEl, opts) {
-    if (!tableEl) return;
-    opts = opts || {};
-    var doc = parentDoc();
-    if (doc) {
+    var dialog = root.querySelector(".rwa-table-modal__dialog");
+    if (dialog && dialog.scrollIntoView) {
       try {
-        var root = ensureHostModal(doc);
-        var titleEl = doc.getElementById(HOST_TITLE);
-        var body = doc.getElementById(HOST_BODY);
-        if (root && titleEl && body) {
-          titleEl.textContent =
-            opts.title ||
-            tableEl.getAttribute("aria-label") ||
-            "Full-screen table";
-          body.innerHTML = "";
-          var wrap = doc.createElement("div");
-          wrap.className = "st-tmmf-host-table-modal__table-wrap";
-          var clone = doc.importNode(tableEl, true);
-          stripElementIds(clone);
-          wrap.appendChild(clone);
-          body.appendChild(wrap);
-          root.hidden = false;
-          doc.body.classList.add("st-tmmf-host-table-modal-open");
-          window.__TMMF_MODAL_OPEN = true;
-          var closeBtn = root.querySelector(".st-tmmf-host-table-modal__close");
-          if (closeBtn && closeBtn.focus) closeBtn.focus();
-          return;
-        }
+        dialog.scrollIntoView({ block: "center", inline: "nearest" });
       } catch (e) {}
     }
+  }
+
+  function openCenteredModal(tableEl, opts) {
+    if (!tableEl) return;
+    if (postOpenToHost(tableEl, opts || {})) return;
     openIframeFallbackModal(tableEl, opts);
   }
 
-  function closeHostModal() {
-    var doc = parentDoc();
-    if (doc) {
-      var root = doc.getElementById(HOST_ID);
-      if (root) root.hidden = true;
-      doc.body.classList.remove("st-tmmf-host-table-modal-open");
-      var body = doc.getElementById(HOST_BODY);
-      if (body) body.innerHTML = "";
-    }
+  function closeCenteredModal() {
+    postCloseToHost();
     var iframeRoot = document.getElementById(IFRAME_MODAL_ID);
     if (iframeRoot) {
       iframeRoot.hidden = true;
@@ -200,20 +208,20 @@ _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH = """
     if (!resolved || !resolved.table) return;
     ev.preventDefault();
     ev.stopImmediatePropagation();
-    openHostModal(resolved.table, { title: resolved.title });
+    openCenteredModal(resolved.table, { title: resolved.title });
   }
 
   document.addEventListener("click", handleExpandClick, true);
   document.addEventListener(
     "keydown",
     function (ev) {
-      if (ev.key === "Escape" && window.__TMMF_MODAL_OPEN) closeHostModal();
+      if (ev.key === "Escape" && window.__TMMF_MODAL_OPEN) closeCenteredModal();
     },
     true
   );
 
-  fs.openTableModal = openHostModal;
-  fs.closeTableModal = closeHostModal;
+  fs.openTableModal = openCenteredModal;
+  fs.closeTableModal = closeCenteredModal;
   fs.attachTableFullscreenButton = function (tableWrap, tableEl, opts) {
     var actions = origAttach.call(fs, tableWrap, tableEl, opts);
     if (actions && tableEl) {
@@ -225,7 +233,7 @@ _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH = """
           function (ev) {
             ev.preventDefault();
             ev.stopImmediatePropagation();
-            openHostModal(tableEl, opts || {});
+            openCenteredModal(tableEl, opts || {});
           },
           true
         );
@@ -235,8 +243,8 @@ _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH = """
   };
 
   if (window.__RWA_STATIC_HELPERS) {
-    window.__RWA_STATIC_HELPERS.openRwaTableModal = openHostModal;
-    window.__RWA_STATIC_HELPERS.closeRwaTableModal = closeHostModal;
+    window.__RWA_STATIC_HELPERS.openRwaTableModal = openCenteredModal;
+    window.__RWA_STATIC_HELPERS.closeRwaTableModal = closeCenteredModal;
     window.__RWA_STATIC_HELPERS.attachRwaTableFullscreenButton = fs.attachTableFullscreenButton;
   }
 
@@ -253,7 +261,7 @@ _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH = """
             if (!resolved || !resolved.table) return;
             ev.preventDefault();
             ev.stopImmediatePropagation();
-            openHostModal(resolved.table, { title: resolved.title });
+            openCenteredModal(resolved.table, { title: resolved.title });
           },
           true
         );

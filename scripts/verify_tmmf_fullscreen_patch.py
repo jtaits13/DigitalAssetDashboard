@@ -26,8 +26,9 @@ def main() -> int:
     patch = patch_match.group(1)
 
     checks = [
-        ("st-tmmf-fullscreen-host-portal" in patch, "host portal marker"),
-        ("parentDoc" in patch and "importNode" in patch, "parent document portal"),
+        ("st-tmmf-fullscreen-postmessage" in patch, "postMessage opener"),
+        ("jpm-tmmf-fullscreen-open" in patch, "host open message"),
+        ("postOpenToHost" in patch, "postOpenToHost helper"),
         ("handleExpandClick" in patch, "click delegation"),
         ("rewireExistingButtons" in patch, "post-render rewire"),
         ("window.loadJson._stTmmfWrapped" in patch, "loadJson hook"),
@@ -46,8 +47,11 @@ def main() -> int:
         print("FAIL: patch template must sit between loadJson and boot in iframe HTML")
         return 1
 
-    if "st-tmmf-host-table-modal" not in parity:
-        print("FAIL: host modal CSS missing from streamlit_site_parity.py")
+    if "jpm-tmmf-fullscreen-open" not in parity:
+        print("FAIL: host fullscreen listener missing from streamlit_site_parity.py")
+        return 1
+    if "inject_streamlit_tmmf_fullscreen_host" not in parity:
+        print("FAIL: TMMF fullscreen host injector missing")
         return 1
 
     from streamlit_tmmf_static import build_tmmf_body_iframe_html
@@ -56,7 +60,7 @@ def main() -> int:
         payload={"page_title": "t", "band_label": "b"},
         related_chips="",
     )
-    portal_idx = html.index("st-tmmf-fullscreen-host-portal")
+    portal_idx = html.index("st-tmmf-fullscreen-postmessage")
     boot_idx = html.index("/* ---- rwa-asset-deep-page.js ---- */")
     if portal_idx > boot_idx:
         print("FAIL: rendered iframe HTML has wrong script order")

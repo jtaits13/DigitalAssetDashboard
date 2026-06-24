@@ -2085,6 +2085,152 @@ def inject_subpage_styles(*, kind: str = "article") -> None:
     )
 
 
+STREAMLIT_TMMF_FULLSCREEN_HOST_JS = """
+<script>
+(function () {
+  var win = window.parent && window.parent !== window ? window.parent : window;
+  var doc = win.document;
+  if (win.__jpmTmmfFullscreenHostBound) return;
+  win.__jpmTmmfFullscreenHostBound = true;
+
+  var HOST_ID = "js-table-fullscreen-streamlit-host";
+  var HOST_BODY = "js-table-fullscreen-streamlit-body";
+  var HOST_TITLE = "js-table-fullscreen-streamlit-title";
+  var CLOSE_ATTR = "data-table-fullscreen-close";
+
+  function injectStyles() {
+    if (doc.getElementById("st-tmmf-host-modal-styles")) return;
+    var style = doc.createElement("style");
+    style.id = "st-tmmf-host-modal-styles";
+    style.textContent =
+      "#" +
+      HOST_ID +
+      "{position:fixed;inset:0;z-index:999999;display:grid;place-items:center;padding:1.25rem;box-sizing:border-box;}" +
+      "#" +
+      HOST_ID +
+      '[hidden]{display:none!important;}' +
+      "body.st-tmmf-host-table-modal-open{overflow:hidden!important;}" +
+      "#" +
+      HOST_ID +
+      " .st-tmmf-host-table-modal__backdrop{position:absolute;inset:0;background:rgba(15,23,42,.62);}" +
+      "#" +
+      HOST_ID +
+      " .st-tmmf-host-table-modal__dialog{position:relative;z-index:1;display:flex;flex-direction:column;width:min(96vw,1400px);max-height:min(92vh,980px);background:#fff;border:1px solid #d4e4ef;border-radius:14px;box-shadow:0 24px 60px rgba(15,23,42,.24);overflow:hidden;}" +
+      "#" +
+      HOST_ID +
+      " .st-tmmf-host-table-modal__header{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 1.1rem .9rem;border-bottom:1px solid #dbe8f2;background:#f8fbfd;}" +
+      "#" +
+      HOST_ID +
+      " .st-tmmf-host-table-modal__eyebrow{margin:0 0 .2rem;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#5a7184;}" +
+      "#" +
+      HOST_ID +
+      " .st-tmmf-host-table-modal__title{margin:0;font-size:1.05rem;color:#0f2942;}" +
+      "#" +
+      HOST_ID +
+      " .st-tmmf-host-table-modal__close{border:1px solid #c7d8e8;border-radius:8px;background:#fff;color:#0f2942;font-size:.88rem;font-weight:600;padding:.45rem .85rem;cursor:pointer;}" +
+      "#" +
+      HOST_ID +
+      " .st-tmmf-host-table-modal__body{padding:1rem 1.1rem 1.15rem;overflow:auto;background:#fff;}" +
+      "#" +
+      HOST_ID +
+      " .st-tmmf-host-table-modal__table-wrap{overflow:auto;max-height:min(70vh,calc(100vh - 12rem));border:1px solid #dbe8f2;border-radius:10px;background:#fff;}" +
+      "#" +
+      HOST_ID +
+      " .st-tmmf-host-table-modal__table-wrap table{min-width:max-content;margin:0;border-collapse:collapse;width:100%;}" +
+      "#" +
+      HOST_ID +
+      " .st-tmmf-host-table-modal__table-wrap th,#" +
+      HOST_ID +
+      " .st-tmmf-host-table-modal__table-wrap td{white-space:nowrap;padding:.45rem .65rem;border-bottom:1px solid #e8f0f6;text-align:left;font-size:.88rem;}" +
+      "#" +
+      HOST_ID +
+      " .st-tmmf-host-table-modal__table-wrap thead th{position:sticky;top:0;z-index:2;background:#f0f6fa;font-weight:650;}";
+    (doc.head || doc.documentElement).appendChild(style);
+  }
+
+  function ensureModal() {
+    injectStyles();
+    var root = doc.getElementById(HOST_ID);
+    if (root) return root;
+    root = doc.createElement("div");
+    root.id = HOST_ID;
+    root.hidden = true;
+    root.innerHTML =
+      '<div class="st-tmmf-host-table-modal__backdrop" ' +
+      CLOSE_ATTR +
+      '="1"></div>' +
+      '<div class="st-tmmf-host-table-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="' +
+      HOST_TITLE +
+      '">' +
+      '<div class="st-tmmf-host-table-modal__header">' +
+      "<div>" +
+      '<p class="st-tmmf-host-table-modal__eyebrow">Full-screen table</p>' +
+      '<h2 class="st-tmmf-host-table-modal__title" id="' +
+      HOST_TITLE +
+      '">Table</h2>' +
+      "</div>" +
+      '<button type="button" class="st-tmmf-host-table-modal__close" ' +
+      CLOSE_ATTR +
+      '="1">Close</button>' +
+      "</div>" +
+      '<div class="st-tmmf-host-table-modal__body" id="' +
+      HOST_BODY +
+      '"></div>' +
+      "</div>";
+    (doc.body || doc.documentElement).appendChild(root);
+    root.addEventListener("click", function (ev) {
+      var closeEl = ev.target.closest ? ev.target.closest("[" + CLOSE_ATTR + "]") : null;
+      if (closeEl) closeHostModal();
+    });
+    doc.addEventListener("keydown", function (ev) {
+      if (ev.key === "Escape") closeHostModal();
+    });
+    return root;
+  }
+
+  function openHostModal(payload) {
+    payload = payload || {};
+    var root = ensureModal();
+    var titleEl = doc.getElementById(HOST_TITLE);
+    var body = doc.getElementById(HOST_BODY);
+    if (titleEl) {
+      titleEl.textContent = payload.title || "Full-screen table";
+    }
+    if (body) {
+      body.innerHTML =
+        '<div class="st-tmmf-host-table-modal__table-wrap">' +
+        (payload.tableHtml || "") +
+        "</div>";
+    }
+    root.hidden = false;
+    doc.body.classList.add("st-tmmf-host-table-modal-open");
+    var closeBtn = root.querySelector(".st-tmmf-host-table-modal__close");
+    if (closeBtn && closeBtn.focus) closeBtn.focus();
+  }
+
+  function closeHostModal() {
+    var root = doc.getElementById(HOST_ID);
+    if (root) root.hidden = true;
+    if (doc.body) doc.body.classList.remove("st-tmmf-host-table-modal-open");
+    var body = doc.getElementById(HOST_BODY);
+    if (body) body.innerHTML = "";
+  }
+
+  win.addEventListener("message", function (ev) {
+    if (!ev.data) return;
+    if (ev.data.type === "jpm-tmmf-fullscreen-open") openHostModal(ev.data);
+    if (ev.data.type === "jpm-tmmf-fullscreen-close") closeHostModal();
+  });
+})();
+</script>
+"""
+
+
+def inject_streamlit_tmmf_fullscreen_host() -> None:
+    """Host-side full-screen table modal for the TMMF iframe (postMessage, viewport-centered)."""
+    components.html(STREAMLIT_TMMF_FULLSCREEN_HOST_JS, height=0, width=0)
+
+
 def inject_streamlit_nav_router() -> None:
     """Host-side router for iframe ``jpm-navigate`` messages (sandbox blocks target=_top)."""
     components.html(STREAMLIT_SITE_NAV_ROUTER_JS, height=0, width=0)
@@ -2102,6 +2248,8 @@ def configure_subpage(*, page_title: str, active: str, style_kind: str = "articl
     inject_subpage_styles(kind=style_kind)
     inject_streamlit_nav_router()
     components.html(HOME_IFRAME_HEIGHT_SYNC_JS, height=0, width=0)
+    if style_kind == "tmmf":
+        inject_streamlit_tmmf_fullscreen_host()
     tmmf_page_class = " streamlit-tmmf-iframe-page" if style_kind == "tmmf" else ""
     st.markdown(
         f'<span class="streamlit-subpage-active{tmmf_page_class}" hidden aria-hidden="true"></span>',
