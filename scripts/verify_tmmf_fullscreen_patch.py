@@ -27,7 +27,7 @@ def main() -> int:
 
     checks = [
         ("st-tmmf-fullscreen-postmessage" in patch, "postMessage opener"),
-        ("jpm-tmmf-fullscreen-open" in patch, "host open message"),
+        ("jpm-table-fullscreen-open" in patch, "host open message"),
         ("postOpenToHost" in patch, "postOpenToHost helper"),
         ("handleExpandClick" in patch, "click delegation"),
         ("rewireExistingButtons" in patch, "post-render rewire"),

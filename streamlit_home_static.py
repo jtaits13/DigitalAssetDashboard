@@ -6,6 +6,7 @@ Avoids st.dataframe / default Streamlit chrome inside home zones.
 
 from __future__ import annotations
 
+import json
 import math
 from html import escape
 from typing import Any, Sequence
@@ -270,8 +271,8 @@ def _cell_display(col: str, val: Any) -> tuple[str, str]:
     return escape(str(val)), ""
 
 
-def _df_to_row_dicts(df: pd.DataFrame, columns: Sequence[str], *, limit: int = HOME_PREVIEW) -> list[dict[str, Any]]:
-    if df.empty:
+def _df_to_row_dicts(df: Any, columns: Sequence[str], *, limit: int = HOME_PREVIEW) -> list[dict[str, Any]]:
+    if df is None or getattr(df, "empty", True):
         return []
     cols = [c for c in columns if c in df.columns]
     out: list[dict[str, Any]] = []
@@ -323,12 +324,177 @@ def _search_field_html(*, field_id: str, label: str, placeholder: str) -> str:
     )
 
 
-def _cta_html(href: str, label: str) -> str:
+def _cta_html(href: str, label: str, *, fullscreen_key: str | None = None) -> str:
+    fullscreen_btn = ""
+    if fullscreen_key:
+        fullscreen_btn = (
+            '<button type="button" class="btn btn-secondary" '
+            f'data-rwa-fullscreen-btn="1" data-home-fullscreen-key="{escape(fullscreen_key)}">'
+            "View table full screen</button>"
+        )
     return (
         f'<div class="cta-row rwa-table-actions">'
         f'<a class="btn btn-primary" href="{escape(href)}">{escape(label)}</a>'
+        f"{fullscreen_btn}"
         "</div>"
     )
+
+
+def _full_table_html(
+    columns: Sequence[str],
+    rows: list[dict[str, Any]],
+    *,
+    aria_label: str,
+) -> str:
+    thead = "".join(
+        f'<th scope="col"{" class=\"num\"" if c in _NUM_COLS else ""}>{escape(c)}</th>'
+        for c in columns
+    )
+    body_rows: list[str] = []
+    for row in rows:
+        tds: list[str] = []
+        for c in columns:
+            txt, cls = _cell_display(c, row.get(c))
+            tds.append(f'<td class="{cls.strip()}">{txt}</td>')
+        body_rows.append(f"<tr>{''.join(tds)}</tr>")
+    tbody = "".join(body_rows) if body_rows else (
+        f'<tr><td colspan="{len(columns)}">No rows available.</td></tr>'
+    )
+    return (
+        f'<table class="data-table data-table--dense" aria-label="{escape(aria_label)}">'
+        f"<thead><tr>{thead}</tr></thead>"
+        f"<tbody>{tbody}</tbody>"
+        "</table>"
+    )
+
+
+def _json_for_script(payload: dict[str, Any]) -> str:
+    return json.dumps(payload, ensure_ascii=False).replace("<", "\\u003c")
+
+
+def _build_home_fullscreen_tables(
+    *,
+    mmf_funds: list[dict[str, Any]],
+    stable_df: Any,
+    rwa_df: Any,
+    etp_rows: list[CryptoEtpRow],
+    crypto_rows: list[dict[str, Any]],
+) -> dict[str, dict[str, str]]:
+    flow_series = load_farside_flow_series_cached()
+    etp_sorted = sorted(etp_rows, key=lambda r: -(r.assets_usd or 0))
+    etp_df = build_etp_dataframe(etp_sorted, flow_series=flow_series)
+
+    def _df_rows(df: Any, columns: Sequence[str]) -> list[dict[str, Any]]:
+        if df is None or getattr(df, "empty", True):
+            return []
+        return _df_to_row_dicts(df, columns, limit=10_000)
+
+    specs: list[tuple[str, str, Sequence[str], list[dict[str, Any]]]] = [
+        (
+            "js-home-tmmf",
+            "Tokenized money market funds preview",
+            TMMF_HOME_COLS,
+            _mmf_fund_rows(mmf_funds, limit=10_000),
+        ),
+        (
+            "js-home-stable",
+            "Stablecoins networks preview",
+            STABLE_HOME_COLS,
+            _df_rows(stable_df, STABLE_HOME_COLS),
+        ),
+        (
+            "js-home-rwa",
+            "RWA Global Market Overview networks table",
+            RWA_HOME_COLS,
+            _df_rows(rwa_df, RWA_HOME_COLS),
+        ),
+        (
+            "js-home-etp",
+            "U.S. ETP fund table preview",
+            ETP_HOME_COLS,
+            _df_to_row_dicts(etp_df, ETP_HOME_COLS, limit=10_000),
+        ),
+        (
+            "js-home-crypto",
+            "Crypto prices preview",
+            CRYPTO_HOME_COLS,
+            _crypto_preview_rows(crypto_rows, limit=10_000),
+        ),
+    ]
+    out: dict[str, dict[str, str]] = {}
+    for key, title, cols, rows in specs:
+        if not rows:
+            continue
+        out[key] = {
+            "title": title,
+            "tableHtml": _full_table_html(cols, rows, aria_label=title),
+        }
+    return out
+
+
+_STREAMLIT_HOME_TABLE_FULLSCREEN_PATCH = """
+(function () {
+  // st-home-fullscreen-postmessage
+  if (window.__ST_HOME_FULLSCREEN_PATCHED) return;
+  window.__ST_HOME_FULLSCREEN_PATCHED = true;
+
+  var tables = window.__HOME_FULLSCREEN_TABLES || {};
+
+  function openFullscreen(key) {
+    var spec = tables[key];
+    if (!spec || !spec.tableHtml) return false;
+    if (typeof window.parent.postMessage !== "function") return false;
+    try {
+      window.parent.postMessage(
+        {
+          type: "jpm-table-fullscreen-open",
+          title: spec.title || "Full-screen table",
+          tableHtml: spec.tableHtml,
+        },
+        "*"
+      );
+      window.__HOME_MODAL_OPEN = true;
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function closeFullscreen() {
+    if (typeof window.parent.postMessage !== "function") return;
+    try {
+      window.parent.postMessage({ type: "jpm-table-fullscreen-close" }, "*");
+    } catch (e) {}
+    window.__HOME_MODAL_OPEN = false;
+  }
+
+  function handleClick(ev) {
+    var btn =
+      ev.target && ev.target.closest
+        ? ev.target.closest('[data-home-fullscreen-key], [data-rwa-fullscreen-btn="1"]')
+        : null;
+    if (!btn || btn.disabled) return;
+    var key = btn.getAttribute("data-home-fullscreen-key");
+    if (!key) {
+      var wrap = btn.closest("[data-home-table]");
+      key = wrap ? wrap.getAttribute("data-home-table") : null;
+    }
+    if (!key || !tables[key]) return;
+    ev.preventDefault();
+    ev.stopImmediatePropagation();
+    openFullscreen(key);
+  }
+
+  document.addEventListener("click", handleClick, true);
+  document.addEventListener(
+    "keydown",
+    function (ev) {
+      if (ev.key === "Escape" && window.__HOME_MODAL_OPEN) closeFullscreen();
+    },
+    true
+  );
+})();
+"""
 
 
 def _zone_open(
@@ -489,7 +655,7 @@ def iter_home_markets_stack_html(
             table_id="js-home-tmmf",
             empty_msg="TMMF fund preview is unavailable.",
         ),
-        _cta_html(_streamlit_page_href("tmmf"), "Open full TMMF page"),
+        _cta_html(_streamlit_page_href("tmmf"), "Open full TMMF page", fullscreen_key="js-home-tmmf"),
         _zone_close(
             source_cap="Curated fund population preview. Population may not include all TMMFs in the market."
         ),
@@ -518,7 +684,7 @@ def iter_home_markets_stack_html(
             table_id="js-home-stable",
             empty_msg="Stablecoin preview is unavailable.",
         ),
-        _cta_html(_streamlit_page_href("stablecoins"), "Open full Stablecoins page"),
+        _cta_html(_streamlit_page_href("stablecoins"), "Open full Stablecoins page", fullscreen_key="js-home-stable"),
         _zone_close(source_cap="RWA.xyz stablecoin networks"),
     ]
     parts.append("".join(stable))
@@ -545,7 +711,7 @@ def iter_home_markets_stack_html(
             table_id="js-home-rwa",
             empty_msg="On-chain preview is unavailable.",
         ),
-        _cta_html(_streamlit_page_href("rwa_global"), "Open full RWA Market Overview"),
+        _cta_html(_streamlit_page_href("rwa_global"), "Open full RWA Market Overview", fullscreen_key="js-home-rwa"),
         _zone_close(explore=True, source_cap="RWA.xyz Global Market Overview · parent networks"),
     ]
     parts.append("".join(rwa))
@@ -575,7 +741,7 @@ def iter_home_markets_stack_html(
             table_id="js-home-etp",
             empty_msg="ETP preview is unavailable.",
         ),
-        _cta_html(_streamlit_page_href("etps"), "Open full U.S. ETP page"),
+        _cta_html(_streamlit_page_href("etps"), "Open full U.S. ETP page", fullscreen_key="js-home-etp"),
         _zone_close(),
     ]
     parts.append("".join(etp))
@@ -602,7 +768,7 @@ def iter_home_markets_stack_html(
             table_id="js-home-crypto",
             empty_msg="Crypto preview is unavailable.",
         ),
-        _cta_html(_streamlit_page_href("crypto"), "Open full Crypto Prices page"),
+        _cta_html(_streamlit_page_href("crypto"), "Open full Crypto Prices page", fullscreen_key="js-home-crypto"),
         _zone_close(source_cap="Spot rows: CoinGecko with CoinCap fallback · total cap: CoinPaprika"),
     ]
     parts.append("".join(crypto))
@@ -622,6 +788,14 @@ def build_home_body_iframe_html(*, news_rail: str, **zone_data: Any) -> str:
     kpi_legend = home_kpi_legend_html()
     markets = "".join(iter_home_markets_stack_html(**zone_data))
     css = _cached_iframe_body_stylesheet()
+    fullscreen_tables = _build_home_fullscreen_tables(
+        mmf_funds=zone_data.get("mmf_funds") or [],
+        stable_df=zone_data.get("stable_df"),
+        rwa_df=zone_data.get("rwa_df"),
+        etp_rows=zone_data.get("etp_rows") or [],
+        crypto_rows=zone_data.get("crypto_rows") or [],
+    )
+    fullscreen_json = _json_for_script(fullscreen_tables)
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -638,6 +812,12 @@ def build_home_body_iframe_html(*, news_rail: str, **zone_data: Any) -> str:
 {news_rail.strip()}
 </div>
 </div>
+<script>
+window.__HOME_FULLSCREEN_TABLES = {fullscreen_json};
+</script>
+<script>
+{_STREAMLIT_HOME_TABLE_FULLSCREEN_PATCH}
+</script>
 <script>
 (function () {{
   function applyFilter(input) {{

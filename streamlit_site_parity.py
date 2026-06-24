@@ -2218,17 +2218,23 @@ STREAMLIT_TMMF_FULLSCREEN_HOST_JS = """
 
   win.addEventListener("message", function (ev) {
     if (!ev.data) return;
-    if (ev.data.type === "jpm-tmmf-fullscreen-open") openHostModal(ev.data);
-    if (ev.data.type === "jpm-tmmf-fullscreen-close") closeHostModal();
+    var t = ev.data.type;
+    if (t === "jpm-table-fullscreen-open" || t === "jpm-tmmf-fullscreen-open") openHostModal(ev.data);
+    if (t === "jpm-table-fullscreen-close" || t === "jpm-tmmf-fullscreen-close") closeHostModal();
   });
 })();
 </script>
 """
 
 
-def inject_streamlit_tmmf_fullscreen_host() -> None:
-    """Host-side full-screen table modal for the TMMF iframe (postMessage, viewport-centered)."""
+def inject_streamlit_table_fullscreen_host() -> None:
+    """Host-side full-screen table modal for Streamlit iframes (postMessage, viewport-centered)."""
     components.html(STREAMLIT_TMMF_FULLSCREEN_HOST_JS, height=0, width=0)
+
+
+def inject_streamlit_tmmf_fullscreen_host() -> None:
+    """Alias for TMMF subpages."""
+    inject_streamlit_table_fullscreen_host()
 
 
 def inject_streamlit_nav_router() -> None:
@@ -2249,7 +2255,7 @@ def configure_subpage(*, page_title: str, active: str, style_kind: str = "articl
     inject_streamlit_nav_router()
     components.html(HOME_IFRAME_HEIGHT_SYNC_JS, height=0, width=0)
     if style_kind == "tmmf":
-        inject_streamlit_tmmf_fullscreen_host()
+        inject_streamlit_table_fullscreen_host()
     tmmf_page_class = " streamlit-tmmf-iframe-page" if style_kind == "tmmf" else ""
     st.markdown(
         f'<span class="streamlit-subpage-active{tmmf_page_class}" hidden aria-hidden="true"></span>',

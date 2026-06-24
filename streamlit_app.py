@@ -130,6 +130,10 @@ def main() -> None:
     inject_site_styles(include_static=True)
     inject_streamlit_nav_router()
 
+    from streamlit_site_parity import inject_streamlit_table_fullscreen_host
+
+    inject_streamlit_table_fullscreen_host()
+
     now = datetime.now(timezone.utc)
     footer_month = now.strftime("%b %Y")
     footer_iso = now.strftime("%Y-%m")

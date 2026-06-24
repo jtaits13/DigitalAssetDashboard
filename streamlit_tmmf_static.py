@@ -58,7 +58,7 @@ _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH = """
     try {
       window.parent.postMessage(
         {
-          type: "jpm-tmmf-fullscreen-open",
+          type: "jpm-table-fullscreen-open",
           title:
             (opts && opts.title) ||
             tableEl.getAttribute("aria-label") ||
@@ -77,7 +77,7 @@ _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH = """
   function postCloseToHost() {
     if (typeof window.parent.postMessage !== "function") return;
     try {
-      window.parent.postMessage({ type: "jpm-tmmf-fullscreen-close" }, "*");
+      window.parent.postMessage({ type: "jpm-table-fullscreen-close" }, "*");
     } catch (e) {}
   }
 
