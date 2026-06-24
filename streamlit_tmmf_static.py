@@ -26,134 +26,110 @@ _TMMF_JS_DEPS = (
 )
 _TMMF_JS_BOOT = ("rwa-asset-deep-page.js",)
 
-_STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH = """
+_STREAMLIT_TABLE_FULLSCREEN_IFRAME_VIEWPORT_PATCH = """
 (function () {
   var fs = window.__TABLE_FULLSCREEN;
-  if (!fs || window.parent === window) return;
+  if (!fs || !window.frameElement) return;
 
-  var HOST_DIALOG_ID = "js-table-fullscreen-streamlit-dialog";
-  var HOST_BODY_ID = "js-table-fullscreen-modal-body";
-  var HOST_TITLE_ID = "js-table-fullscreen-modal-title";
-  var CLOSE_ATTR = "data-table-fullscreen-close";
+  var MODAL_ID = "js-table-fullscreen-modal";
+  var origOpen = fs.openTableModal;
+  var origClose = fs.closeTableModal;
 
-  function hostDoc() {
-    try {
-      return window.parent.document;
-    } catch (e) {
-      return null;
+  function getVisibleIframeSlice() {
+    var frame = window.frameElement;
+    var parentWin = window.parent;
+    if (!frame || !parentWin) return null;
+    var rect = frame.getBoundingClientRect();
+    var vv = parentWin.visualViewport;
+    var vTop = vv ? vv.offsetTop : 0;
+    var vLeft = vv ? vv.offsetLeft : 0;
+    var vBottom = vTop + (vv ? vv.height : parentWin.innerHeight);
+    var vRight = vLeft + (vv ? vv.width : parentWin.innerWidth);
+    var visibleTop = Math.max(rect.top, vTop);
+    var visibleLeft = Math.max(rect.left, vLeft);
+    var visibleBottom = Math.min(rect.bottom, vBottom);
+    var visibleRight = Math.min(rect.right, vRight);
+    return {
+      top: visibleTop - rect.top,
+      left: visibleLeft - rect.left,
+      width: Math.max(0, visibleRight - visibleLeft),
+      height: Math.max(0, visibleBottom - visibleTop),
+    };
+  }
+
+  function pinModalToVisibleViewport(root) {
+    if (!root) return;
+    var slice = getVisibleIframeSlice();
+    if (!slice || slice.height < 40 || slice.width < 40) return;
+    root.style.position = "fixed";
+    root.style.top = slice.top + "px";
+    root.style.left = slice.left + "px";
+    root.style.width = slice.width + "px";
+    root.style.height = slice.height + "px";
+    root.style.right = "auto";
+    root.style.bottom = "auto";
+    root.style.inset = "auto";
+    root.style.margin = "0";
+    root.style.padding = "1.25rem";
+    root.style.boxSizing = "border-box";
+    root.style.display = "flex";
+    root.style.alignItems = "center";
+    root.style.justifyContent = "center";
+    root.style.zIndex = "999999";
+  }
+
+  function unbindViewportSync(root) {
+    if (root && root._viewportUnbind) {
+      root._viewportUnbind();
+      root._viewportUnbind = null;
     }
   }
 
-  function stripElementIds(node) {
-    if (!node || node.nodeType !== 1) return;
-    node.removeAttribute("id");
-    Array.prototype.forEach.call(node.children || [], stripElementIds);
-  }
-
-  function closeHostModal() {
-    var doc = hostDoc();
-    if (!doc) return;
-    var dialog = doc.getElementById(HOST_DIALOG_ID);
-    if (dialog && dialog.open) {
-      try {
-        dialog.close();
-      } catch (e) {}
+  function bindViewportSync(root) {
+    unbindViewportSync(root);
+    var parentWin = window.parent;
+    if (!parentWin) return;
+    var apply = function () {
+      pinModalToVisibleViewport(root);
+    };
+    apply();
+    parentWin.addEventListener("scroll", apply, true);
+    parentWin.addEventListener("resize", apply);
+    if (parentWin.visualViewport) {
+      parentWin.visualViewport.addEventListener("resize", apply);
+      parentWin.visualViewport.addEventListener("scroll", apply);
     }
-    var body = doc.getElementById(HOST_BODY_ID);
-    if (body) body.innerHTML = "";
-    window.__TMMF_MODAL_OPEN = false;
-  }
-
-  function ensureHostDialog() {
-    var doc = hostDoc();
-    if (!doc) return null;
-    var dialog = doc.getElementById(HOST_DIALOG_ID);
-    if (dialog) return dialog;
-
-    dialog = doc.createElement("dialog");
-    dialog.id = HOST_DIALOG_ID;
-    dialog.className = "rwa-table-streamlit-dialog";
-    dialog.innerHTML =
-      '<div class="rwa-table-modal__dialog" role="document">' +
-      '<div class="rwa-table-modal__header">' +
-      "<div>" +
-      '<p class="rwa-table-modal__eyebrow">Full-screen table</p>' +
-      '<h2 class="rwa-table-modal__title" id="' +
-      HOST_TITLE_ID +
-      '">Table</h2>' +
-      "</div>" +
-      '<button type="button" class="btn btn-secondary rwa-table-modal__close" ' +
-      CLOSE_ATTR +
-      '="1">Close</button>' +
-      "</div>" +
-      '<div class="rwa-table-modal__body" id="' +
-      HOST_BODY_ID +
-      '"></div>' +
-      "</div>";
-    doc.body.appendChild(dialog);
-
-    dialog.addEventListener("click", function (ev) {
-      var closeEl = ev.target.closest ? ev.target.closest("[" + CLOSE_ATTR + "]") : null;
-      if (closeEl || ev.target === dialog) closeHostModal();
-    });
-    dialog.addEventListener("cancel", function (ev) {
-      ev.preventDefault();
-      closeHostModal();
-    });
-    dialog.addEventListener("close", function () {
-      window.__TMMF_MODAL_OPEN = false;
-    });
-
-    if (!doc.body._tableFullscreenHostKeyBound) {
-      doc.body._tableFullscreenHostKeyBound = true;
-      doc.addEventListener("keydown", function (ev) {
-        if (ev.key === "Escape") closeHostModal();
-      });
-    }
-
-    return dialog;
-  }
-
-  function openHostModal(tableEl, opts) {
-    var doc = hostDoc();
-    if (!doc || !tableEl) return;
-
-    var dialog = ensureHostDialog();
-    var titleEl = doc.getElementById(HOST_TITLE_ID);
-    var body = doc.getElementById(HOST_BODY_ID);
-    if (!dialog || !titleEl || !body) return;
-
-    titleEl.textContent =
-      (opts && opts.title ? String(opts.title) : "") || "Full-screen table";
-    body.innerHTML = "";
-
-    var wrap = doc.createElement("div");
-    wrap.className = "rwa-table-modal__table-wrap";
-    var clone = tableEl.cloneNode(true);
-    stripElementIds(clone);
-    wrap.appendChild(clone);
-    body.appendChild(wrap);
-
-    window.__TMMF_MODAL_OPEN = true;
-    if (typeof dialog.showModal === "function") {
-      try {
-        dialog.showModal();
-      } catch (e) {
-        dialog.setAttribute("open", "open");
+    window.addEventListener("resize", apply);
+    root._viewportUnbind = function () {
+      parentWin.removeEventListener("scroll", apply, true);
+      parentWin.removeEventListener("resize", apply);
+      if (parentWin.visualViewport) {
+        parentWin.visualViewport.removeEventListener("resize", apply);
+        parentWin.visualViewport.removeEventListener("scroll", apply);
       }
-    } else {
-      dialog.setAttribute("open", "open");
-    }
-
-    var closeBtn = dialog.querySelector(".rwa-table-modal__close");
-    if (closeBtn) closeBtn.focus();
+      window.removeEventListener("resize", apply);
+    };
   }
 
-  fs.openTableModal = openHostModal;
-  fs.closeTableModal = closeHostModal;
+  function openViewportModal(tableEl, opts) {
+    origOpen.call(fs, tableEl, opts);
+    var root = document.getElementById(MODAL_ID);
+    window.__TMMF_MODAL_OPEN = true;
+    bindViewportSync(root);
+  }
+
+  function closeViewportModal() {
+    var root = document.getElementById(MODAL_ID);
+    unbindViewportSync(root);
+    window.__TMMF_MODAL_OPEN = false;
+    origClose.call(fs);
+  }
+
+  fs.openTableModal = openViewportModal;
+  fs.closeTableModal = closeViewportModal;
   if (window.__RWA_STATIC_HELPERS) {
-    window.__RWA_STATIC_HELPERS.openRwaTableModal = openHostModal;
-    window.__RWA_STATIC_HELPERS.closeRwaTableModal = closeHostModal;
+    window.__RWA_STATIC_HELPERS.openRwaTableModal = openViewportModal;
+    window.__RWA_STATIC_HELPERS.closeRwaTableModal = closeViewportModal;
   }
 })();
 """
@@ -335,6 +311,16 @@ body.page-rwa-deep-mmf .home-reveal {
   opacity: 1 !important;
   transform: none !important;
 }
+body.page-rwa-deep-mmf .rwa-table-modal:not([hidden]) {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  inset: auto !important;
+}
+body.page-rwa-deep-mmf .rwa-table-modal__dialog {
+  max-height: min(92vh, 980px);
+  width: min(96%, 1400px);
+}
 """
     )
     return "\n".join(chunks)
@@ -461,7 +447,7 @@ window.loadJson = function () {{
 }})();
 </script>
 <script>
-{_STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH}
+{_STREAMLIT_TABLE_FULLSCREEN_IFRAME_VIEWPORT_PATCH}
 </script>
 {iframe_internal_link_script()}
 </body>
