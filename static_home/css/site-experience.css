@@ -1686,6 +1686,9 @@
 
 @media (min-width: 960px) {
   .site-experience.page-home .home-main-split {
+    grid-template-areas:
+      "news kpi"
+      "news markets";
     grid-template-columns: minmax(16.5rem, 20rem) minmax(0, 1fr);
     grid-template-rows: auto 1fr;
     gap: 1.35rem;
@@ -1693,20 +1696,17 @@
   }
 
   .site-experience.page-home .home-kpi-legend-once {
-    grid-column: 2;
-    grid-row: 1;
+    grid-area: kpi;
     margin-bottom: 0;
   }
 
   .site-experience.page-home .home-markets-stack {
-    grid-column: 2;
-    grid-row: 2;
+    grid-area: markets;
     gap: 0.85rem;
   }
 
   .site-experience.page-home .home-news-rail {
-    grid-column: 1;
-    grid-row: 1 / -1;
+    grid-area: news;
     align-self: start;
     margin-top: 0;
   }

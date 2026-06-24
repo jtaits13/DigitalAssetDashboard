@@ -11,7 +11,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css?v=89" />
-    <link rel="stylesheet" href="css/site-experience.css?v=22" />
+    <link rel="stylesheet" href="css/site-experience.css?v=23" />
   </head>
   <body class="page-home site-experience">
     <header class="site-header" role="banner">
@@ -112,6 +112,44 @@
             <strong>How to read KPIs:</strong> On-chain figures use 30-day (30D) % from RWA.xyz. U.S. ETP and crypto
             rows use ~30 calendar days unless noted on the full page.
           </p>
+
+          <aside
+            class="home-news-rail home-news-rail--terminal hub-section hub-section--panel hub-section--news-rail home-reveal"
+            id="section-news"
+            aria-labelledby="news-heading"
+          >
+            <h2 class="band-label zone-label" id="news-heading">News Hub</h2>
+            <p class="section-dek section-dek--rail">
+              Headlines from CoinDesk, CoinTelegraph, Decrypt, The Block, and The Defiant.
+            </p>
+
+            <div class="home-news-block">
+              <h3 class="home-news-block__heading">Latest Headlines</h3>
+              <ul class="headline-list headline-list--rail" id="js-home-news-list">
+                <li class="headline-list__loading">Loading…</li>
+              </ul>
+              <div class="home-news-rail__more">
+                <a class="btn btn-secondary home-news-rail__cta" href="all-articles.html"
+                  >All digital asset headlines →</a
+                >
+              </div>
+            </div>
+
+            <div class="home-news-block home-news-block--feeds">
+              <h3 class="home-news-block__heading">Focused News Feeds</h3>
+              <nav class="home-feed-links" aria-label="Focused news feeds">
+                <a class="btn btn-secondary home-feed-link home-feed-link--regulatory" href="all-regulatory.html"
+                  >Regulatory News</a
+                >
+                <a class="btn btn-secondary home-feed-link home-feed-link--etp" href="etf-news.html"
+                  >ETF / ETP News</a
+                >
+                <a class="btn btn-secondary home-feed-link home-feed-link--custody" href="all-custodian-news.html"
+                  >Custody News</a
+                >
+              </nav>
+            </div>
+          </aside>
 
           <div class="home-markets-stack">
             <section
@@ -378,44 +416,6 @@
               </div>
             </section>
           </div>
-
-          <aside
-            class="home-news-rail home-news-rail--terminal hub-section hub-section--panel hub-section--news-rail home-reveal"
-            id="section-news"
-            aria-labelledby="news-heading"
-          >
-            <h2 class="band-label zone-label" id="news-heading">News Hub</h2>
-            <p class="section-dek section-dek--rail">
-              Headlines from CoinDesk, CoinTelegraph, Decrypt, The Block, and The Defiant.
-            </p>
-
-            <div class="home-news-block">
-              <h3 class="home-news-block__heading">Latest Headlines</h3>
-              <ul class="headline-list headline-list--rail" id="js-home-news-list">
-                <li class="headline-list__loading">Loading…</li>
-              </ul>
-              <div class="home-news-rail__more">
-                <a class="btn btn-secondary home-news-rail__cta" href="all-articles.html"
-                  >All digital asset headlines →</a
-                >
-              </div>
-            </div>
-
-            <div class="home-news-block home-news-block--feeds">
-              <h3 class="home-news-block__heading">Focused News Feeds</h3>
-              <nav class="home-feed-links" aria-label="Focused news feeds">
-                <a class="btn btn-secondary home-feed-link home-feed-link--regulatory" href="all-regulatory.html"
-                  >Regulatory News</a
-                >
-                <a class="btn btn-secondary home-feed-link home-feed-link--etp" href="etf-news.html"
-                  >ETF / ETP News</a
-                >
-                <a class="btn btn-secondary home-feed-link home-feed-link--custody" href="all-custodian-news.html"
-                  >Custody News</a
-                >
-              </nav>
-            </div>
-          </aside>
         </div>
       </div>
     </main>
