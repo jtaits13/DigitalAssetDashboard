@@ -234,16 +234,35 @@ _CRYPTO_ZONE_BODY = """
 
 
 def _static_crypto_payload_fallback(*, error: str = "") -> dict[str, Any]:
-    """Last-resort payloads from committed static JSON exports."""
-    out: dict[str, Any] = {}
-    for name in ("crypto_kpis.json", "crypto_prices.json", "crypto_market_cap_series.json"):
-        path = _DATA / name
-        if path.is_file():
-            out[name] = json.loads(path.read_text(encoding="utf-8"))
+    """Last-resort payloads from runtime cache or committed static JSON exports."""
+    from crypto_live_cache import bundle_from_static_exports, load_crypto_live_cache
+
+    cached = load_crypto_live_cache(_DATA / "crypto_live_cache.json", static_dir=_DATA)
+    if cached:
+        out = {
+            "crypto_kpis.json": dict(cached.get("kpis") or {}),
+            "crypto_prices.json": dict(cached.get("prices") or {}),
+            "crypto_market_cap_series.json": dict(cached.get("chart") or {}),
+        }
+    else:
+        out = {}
+        for name in ("crypto_kpis.json", "crypto_prices.json", "crypto_market_cap_series.json"):
+            path = _DATA / name
+            if path.is_file():
+                out[name] = json.loads(path.read_text(encoding="utf-8"))
+    if not out:
+        seeded = bundle_from_static_exports(_DATA)
+        if seeded:
+            out = {
+                "crypto_kpis.json": seeded.get("kpis") or {},
+                "crypto_prices.json": seeded.get("prices") or {},
+                "crypto_market_cap_series.json": seeded.get("chart") or {},
+            }
     if error:
         for key in list(out):
             merged = dict(out[key])
             merged["error"] = error
+            merged["stale"] = True
             out[key] = merged
     return out
 
@@ -257,6 +276,7 @@ def load_crypto_prices_iframe_payloads() -> dict[str, Any]:
         news_articles=load_takeaway_articles(),
         blurb_cache_path=_DATA / "crypto_about_blurbs_cache.json",
         skip_about_blurbs=True,
+        live_cache_path=_DATA / "crypto_live_cache.json",
     )
     return {
         "crypto_kpis.json": pack["kpis"],

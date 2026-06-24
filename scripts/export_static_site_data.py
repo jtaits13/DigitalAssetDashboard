@@ -1827,12 +1827,105 @@ def _fetch_coinpaprika_total_snapshot(headers: dict[str, str]) -> tuple[dict[str
     return out, "; ".join(errs) if errs else None
 
 
+def _build_crypto_kpis_from_rows(
+    t_rows: list[dict[str, object]],
+    *,
+    coinpaprika_total: dict[str, float],
+    coinpaprika_err: str | None,
+    t_src: str,
+    t_err: str,
+    crypto_generated_at: str,
+    news_articles: list[dict[str, Any]] | None,
+) -> dict[str, object]:
+    from crypto_categories import (
+        btc_dominance_change_pct_1m,
+        compute_market_structure,
+        stablecoin_share_change_pct_1m,
+        story_callout_payload,
+        structure_kpi_dicts,
+    )
+    from crypto_top_movers import crypto_key_takeaways_html, top_movers_callout_payload
+
+    total_market_cap_usd = coinpaprika_total.get("total_market_cap_usd")
+    total_market_cap_usd_30d_ago = coinpaprika_total.get("total_market_cap_usd_30d_ago")
+    total_market_cap_pct_1m = coinpaprika_total.get("market_cap_change_pct_1m")
+    primary_label = "Total market cap"
+    primary_value = format_usd_compact(total_market_cap_usd) if total_market_cap_usd else "—"
+
+    btc_row = _find_crypto_row(t_rows, "BTC")
+    eth_row = _find_crypto_row(t_rows, "ETH")
+    structure = compute_market_structure(t_rows, total_market_cap_usd=total_market_cap_usd)
+    dom_delta = btc_dominance_change_pct_1m(
+        t_rows,
+        total_market_cap_now=total_market_cap_usd,
+        total_market_cap_then=total_market_cap_usd_30d_ago,
+    )
+    st_delta = stablecoin_share_change_pct_1m(t_rows)
+    btc_dom_kpi, stable_kpi = structure_kpi_dicts(
+        structure,
+        btc_dom_delta_pct_1m=dom_delta,
+        stable_share_delta_pct_1m=st_delta,
+    )
+    crypto_kpis_payload: dict[str, object] = {
+        "generated_at": crypto_generated_at,
+        "source": "CoinPaprika + CoinGecko" if (total_market_cap_usd or total_market_cap_pct_1m is not None) else (t_src or ""),
+        "error": t_err or "",
+        "primary": {
+            "label": primary_label,
+            "value_display": primary_value,
+            "delta": _crypto_delta_dict(total_market_cap_pct_1m, "1M"),
+        },
+        "btc": {
+            "label": "BTC price",
+            "value_display": _fmt_crypto_price(btc_row.get("price_usd")) if btc_row else "—",
+            "delta": _crypto_delta_dict(btc_row.get("pct_30d") if btc_row else None, "1M"),
+        },
+        "eth": {
+            "label": "ETH price",
+            "value_display": _fmt_crypto_price(eth_row.get("price_usd")) if eth_row else "—",
+            "delta": _crypto_delta_dict(eth_row.get("pct_30d") if eth_row else None, "1M"),
+        },
+        "btc_dominance": btc_dom_kpi,
+        "stablecoin_share": stable_kpi,
+        "market_structure": structure,
+        "kpi_window_note": CRYPTO_KPI_WINDOW_NOTE,
+        "story_callout": story_callout_payload(),
+        "top_movers": top_movers_callout_payload(t_rows, news_articles),
+        "source_note": (
+            "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. "
+            "BTC dominance uses Bitcoin’s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC’s 30d change from this list. "
+            "Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). "
+            "Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change."
+            if total_market_cap_usd is not None and total_market_cap_pct_1m is not None
+            else (
+                "Total market cap comes from CoinPaprika global market data. The 1M total-market-cap change is unavailable right now. "
+                "BTC dominance and stablecoin share are computed from the top-50 table when cap data is available. "
+                "Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change."
+                if total_market_cap_usd is not None
+                else "Total crypto market-cap data is unavailable right now. Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change."
+            )
+        ),
+    }
+    if coinpaprika_err and total_market_cap_usd is None and total_market_cap_pct_1m is None:
+        crypto_kpis_payload["error"] = coinpaprika_err
+    try:
+        crypto_kpis_payload["key_observations_html"] = crypto_key_takeaways_html(
+            t_rows,
+            crypto_kpis_payload,
+            news_articles,
+        )
+    except Exception:
+        crypto_kpis_payload["key_observations_html"] = ""
+    return crypto_kpis_payload
+
+
 def build_crypto_prices_page_payloads(
     *,
     news_articles: list[dict[str, Any]] | None = None,
     blurb_cache_path: Path | None = None,
     manifest_errors: list[str] | None = None,
     skip_about_blurbs: bool = False,
+    live_cache_path: Path | None = None,
 ) -> dict[str, Any]:
     """Build crypto page JSON payloads (kpis, prices, chart, ticker)."""
     errors = manifest_errors if manifest_errors is not None else []
@@ -1864,6 +1957,18 @@ def build_crypto_prices_page_payloads(
         "supported_timeframes": ["1M", "6M", "1Y", "5Y"],
     }
     crypto_banner_title = "Top 50 Cryptocurrencies"
+    coinpaprika_total: dict[str, float] = {}
+    coinpaprika_err: str | None = None
+    t_src = ""
+    t_err = ""
+    t_rows: list[dict[str, object]] = []
+    crypto_payload: dict[str, object] = {
+        "banner_title": crypto_banner_title,
+        "chips_inner_html": "",
+        "source": "",
+        "error": "",
+        "generated_at": crypto_generated_at,
+    }
     try:
         from price_ticker import PRICE_TICKER_BANNER_TITLE, TICKER_COUNT, fetch_top_crypto_tickers, hub_ticker_static_json_payload
 
@@ -1909,87 +2014,15 @@ def build_crypto_prices_page_payloads(
             "rows": crypto_rows_payload,
         }
 
-        total_market_cap_usd = coinpaprika_total.get("total_market_cap_usd")
-        total_market_cap_usd_30d_ago = coinpaprika_total.get("total_market_cap_usd_30d_ago")
-        total_market_cap_pct_1m = coinpaprika_total.get("market_cap_change_pct_1m")
-        primary_label = "Total market cap"
-        primary_value = format_usd_compact(total_market_cap_usd) if total_market_cap_usd else "—"
-
-        from crypto_categories import (
-            btc_dominance_change_pct_1m,
-            compute_market_structure,
-            stablecoin_share_change_pct_1m,
-            story_callout_payload,
-            structure_kpi_dicts,
-        )
-        from crypto_top_movers import crypto_key_takeaways_html, top_movers_callout_payload
-
-        btc_row = _find_crypto_row(t_rows, "BTC")
-        eth_row = _find_crypto_row(t_rows, "ETH")
-        structure = compute_market_structure(t_rows, total_market_cap_usd=total_market_cap_usd)
-        dom_delta = btc_dominance_change_pct_1m(
+        crypto_kpis_payload = _build_crypto_kpis_from_rows(
             t_rows,
-            total_market_cap_now=total_market_cap_usd,
-            total_market_cap_then=total_market_cap_usd_30d_ago,
+            coinpaprika_total=coinpaprika_total,
+            coinpaprika_err=coinpaprika_err,
+            t_src=t_src or "",
+            t_err=t_err or "",
+            crypto_generated_at=crypto_generated_at,
+            news_articles=news_articles,
         )
-        st_delta = stablecoin_share_change_pct_1m(t_rows)
-        btc_dom_kpi, stable_kpi = structure_kpi_dicts(
-            structure,
-            btc_dom_delta_pct_1m=dom_delta,
-            stable_share_delta_pct_1m=st_delta,
-        )
-        crypto_kpis_payload = {
-            "generated_at": crypto_generated_at,
-            "source": "CoinPaprika + CoinGecko" if (total_market_cap_usd or total_market_cap_pct_1m is not None) else (t_src or ""),
-            "error": t_err or "",
-            "primary": {
-                "label": primary_label,
-                "value_display": primary_value,
-                "delta": _crypto_delta_dict(total_market_cap_pct_1m, "1M"),
-            },
-            "btc": {
-                "label": "BTC price",
-                "value_display": _fmt_crypto_price(btc_row.get("price_usd")) if btc_row else "—",
-                "delta": _crypto_delta_dict(btc_row.get("pct_30d") if btc_row else None, "1M"),
-            },
-            "eth": {
-                "label": "ETH price",
-                "value_display": _fmt_crypto_price(eth_row.get("price_usd")) if eth_row else "—",
-                "delta": _crypto_delta_dict(eth_row.get("pct_30d") if eth_row else None, "1M"),
-            },
-            "btc_dominance": btc_dom_kpi,
-            "stablecoin_share": stable_kpi,
-            "market_structure": structure,
-            "kpi_window_note": CRYPTO_KPI_WINDOW_NOTE,
-            "story_callout": story_callout_payload(),
-            "top_movers": top_movers_callout_payload(t_rows, news_articles),
-            "source_note": (
-                "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. "
-                "BTC dominance uses Bitcoin’s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC’s 30d change from this list. "
-                "Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). "
-                "Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change."
-                if total_market_cap_usd is not None and total_market_cap_pct_1m is not None
-                else (
-                    "Total market cap comes from CoinPaprika global market data. The 1M total-market-cap change is unavailable right now. "
-                    "BTC dominance and stablecoin share are computed from the top-50 table when cap data is available. "
-                    "Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change."
-                    if total_market_cap_usd is not None
-                    else "Total crypto market-cap data is unavailable right now. Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change."
-                )
-            ),
-        }
-        if coinpaprika_err and total_market_cap_usd is None and total_market_cap_pct_1m is None:
-            crypto_kpis_payload["error"] = coinpaprika_err
-
-        try:
-            crypto_kpis_payload["key_observations_html"] = crypto_key_takeaways_html(
-                t_rows,
-                crypto_kpis_payload,
-                news_articles,
-            )
-        except Exception as exc:
-            crypto_kpis_payload["key_observations_html"] = ""
-            errors.append(f"Crypto key takeaways HTML: {exc}")
 
         crypto_chart_payload["generated_at"] = crypto_generated_at
     except Exception as exc:
@@ -2005,12 +2038,61 @@ def build_crypto_prices_page_payloads(
         crypto_kpis_payload["error"] = str(exc)
         crypto_chart_payload["error"] = str(exc)
 
-    return {
+    from crypto_live_cache import (
+        apply_crypto_live_cache_fallback,
+        load_crypto_live_cache,
+        save_crypto_live_cache,
+    )
+
+    cache_path = live_cache_path or (OUT / "crypto_live_cache.json")
+    cached = load_crypto_live_cache(cache_path, static_dir=OUT)
+
+    def _rebuild_kpis(
+        rows: list[dict[str, object]],
+        paprika: dict[str, float],
+        prices_error: str,
+    ) -> dict[str, object]:
+        return _build_crypto_kpis_from_rows(
+            rows,
+            coinpaprika_total=paprika,
+            coinpaprika_err=coinpaprika_err,
+            t_src=t_src or "",
+            t_err=prices_error,
+            crypto_generated_at=crypto_generated_at,
+            news_articles=news_articles,
+        )
+
+    pack = {
         "generated_at": crypto_generated_at,
         "kpis": crypto_kpis_payload,
         "prices": crypto_prices_payload,
         "chart": crypto_chart_payload,
         "ticker": crypto_payload,
+    }
+    merged = apply_crypto_live_cache_fallback(
+        pack,
+        cache=cached,
+        coinpaprika_total=coinpaprika_total,
+        rebuild_kpis=_rebuild_kpis,
+    )
+    if merged["prices"].get("rows") and not merged.get("_used_cached_rows"):
+        save_crypto_live_cache(
+            cache_path,
+            {
+                "generated_at": merged["generated_at"],
+                "kpis": merged["kpis"],
+                "prices": merged["prices"],
+                "chart": merged["chart"],
+                "coinpaprika_total": merged.get("coinpaprika_total") or coinpaprika_total,
+            },
+        )
+
+    return {
+        "generated_at": merged["generated_at"],
+        "kpis": merged["kpis"],
+        "prices": merged["prices"],
+        "chart": merged["chart"],
+        "ticker": merged.get("ticker") or crypto_payload,
     }
 
 
@@ -2025,6 +2107,7 @@ def export_crypto_json_bundle(
         news_articles=news_articles,
         blurb_cache_path=OUT / "crypto_about_blurbs_cache.json",
         manifest_errors=manifest["errors"],
+        live_cache_path=OUT / "crypto_live_cache.json",
     )
     (OUT / "crypto_ticker.json").write_text(json.dumps(pack["ticker"], indent=2), encoding="utf-8")
     (OUT / "crypto_prices.json").write_text(json.dumps(pack["prices"], indent=2), encoding="utf-8")
