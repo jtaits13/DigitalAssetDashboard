@@ -10,6 +10,8 @@ from scripts.export_static_site_data import (
     STATIC_THE_DEFIANT_FEED,
     STATIC_THE_DEFIANT_REG_EXTRA,
     _article_json,
+    articles_published_within_utc_days,
+    dedupe_repetitive_headlines,
     enrich_custodian_access,
 )
 
@@ -17,9 +19,7 @@ from scripts.export_static_site_data import (
 def build_all_articles_page_payload() -> dict[str, Any]:
     from news_feeds import (
         ALL_ARTICLES_FEEDS,
-        articles_published_within_utc_days,
         dedupe_articles,
-        dedupe_repetitive_headlines,
         load_all_feeds,
     )
 
@@ -66,7 +66,6 @@ def build_regulatory_page_payload() -> dict[str, Any]:
 
 def build_custodian_page_payload() -> dict[str, Any]:
     from custodian_news.client import CUSTODIAN_LOOKBACK_DAYS, load_custodian_articles
-    from news_feeds import articles_published_within_utc_days
 
     feed_errors: list[str] = []
     raw, errs = load_custodian_articles(per_day_cap=0)
