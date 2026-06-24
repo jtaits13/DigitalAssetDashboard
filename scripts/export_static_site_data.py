@@ -1827,13 +1827,14 @@ def _fetch_coinpaprika_total_snapshot(headers: dict[str, str]) -> tuple[dict[str
     return out, "; ".join(errs) if errs else None
 
 
-def export_crypto_json_bundle(
-    manifest: dict[str, Any],
+def build_crypto_prices_page_payloads(
     *,
     news_articles: list[dict[str, Any]] | None = None,
-) -> None:
-    """Write ``crypto_ticker.json``, ``crypto_prices.json``, ``crypto_kpis.json``, ``crypto_market_cap_series.json``."""
-    # --- Crypto prices + market-cap series (CoinGecko with CoinCap fallback for spot rows) ---
+    blurb_cache_path: Path | None = None,
+    manifest_errors: list[str] | None = None,
+) -> dict[str, Any]:
+    """Build crypto page JSON payloads (kpis, prices, chart, ticker)."""
+    errors = manifest_errors if manifest_errors is not None else []
     crypto_generated_at = datetime.now(timezone.utc).isoformat()
     crypto_prices_payload: dict[str, object] = {
         "generated_at": crypto_generated_at,
@@ -1879,7 +1880,7 @@ def export_crypto_json_bundle(
         crypto_headers = default_coingecko_headers()
         crypto_headers["User-Agent"] = DEFAULT_UA
 
-        blurb_cache_path = OUT / "crypto_about_blurbs_cache.json"
+        blurb_cache_path = blurb_cache_path or (OUT / "crypto_about_blurbs_cache.json")
         _blurbs_ids = collect_coingecko_ids_for_rows(t_rows)
         _blurbs_map = (
             fetch_blurbs_with_cache(_blurbs_ids, blurb_cache_path, headers=crypto_headers)
@@ -1986,11 +1987,11 @@ def export_crypto_json_bundle(
             )
         except Exception as exc:
             crypto_kpis_payload["key_observations_html"] = ""
-            manifest["errors"].append(f"Crypto key takeaways HTML: {exc}")
+            errors.append(f"Crypto key takeaways HTML: {exc}")
 
         crypto_chart_payload["generated_at"] = crypto_generated_at
     except Exception as exc:
-        manifest["errors"].append(f"Crypto export: {exc}")
+        errors.append(f"Crypto export: {exc}")
         crypto_payload = {
             "banner_title": crypto_banner_title,
             "chips_inner_html": f'<span class="ticker-chip ticker-chip--error">{html_escape(str(exc))}</span>',
@@ -2002,14 +2003,35 @@ def export_crypto_json_bundle(
         crypto_kpis_payload["error"] = str(exc)
         crypto_chart_payload["error"] = str(exc)
 
-    (OUT / "crypto_ticker.json").write_text(json.dumps(crypto_payload, indent=2), encoding="utf-8")
-    (OUT / "crypto_prices.json").write_text(json.dumps(crypto_prices_payload, indent=2), encoding="utf-8")
-    (OUT / "crypto_kpis.json").write_text(json.dumps(crypto_kpis_payload, indent=2), encoding="utf-8")
+    return {
+        "generated_at": crypto_generated_at,
+        "kpis": crypto_kpis_payload,
+        "prices": crypto_prices_payload,
+        "chart": crypto_chart_payload,
+        "ticker": crypto_payload,
+    }
+
+
+def export_crypto_json_bundle(
+    manifest: dict[str, Any],
+    *,
+    news_articles: list[dict[str, Any]] | None = None,
+) -> None:
+    """Write ``crypto_ticker.json``, ``crypto_prices.json``, ``crypto_kpis.json``, ``crypto_market_cap_series.json``."""
+    manifest.setdefault("errors", [])
+    pack = build_crypto_prices_page_payloads(
+        news_articles=news_articles,
+        blurb_cache_path=OUT / "crypto_about_blurbs_cache.json",
+        manifest_errors=manifest["errors"],
+    )
+    (OUT / "crypto_ticker.json").write_text(json.dumps(pack["ticker"], indent=2), encoding="utf-8")
+    (OUT / "crypto_prices.json").write_text(json.dumps(pack["prices"], indent=2), encoding="utf-8")
+    (OUT / "crypto_kpis.json").write_text(json.dumps(pack["kpis"], indent=2), encoding="utf-8")
     (OUT / "crypto_market_cap_series.json").write_text(
-        json.dumps(crypto_chart_payload, indent=2),
+        json.dumps(pack["chart"], indent=2),
         encoding="utf-8",
     )
-    manifest["crypto_refreshed_at"] = crypto_generated_at
+    manifest["crypto_refreshed_at"] = pack["generated_at"]
 
 
 _ETP_MANIFEST_ERROR_PREFIXES = ("ETP scrape:", "ETP flows:", "AUM chart:")

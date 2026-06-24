@@ -114,6 +114,9 @@ def _clear_all_caches() -> None:
     clear_crypto_etp_cache()
     clear_rwa_league_cache()
     clear_crypto_snapshot_cache()
+    from streamlit_crypto_prices_static import _cached_crypto_prices_iframe_payloads
+
+    _cached_crypto_prices_iframe_payloads.clear()
 
 
 def main() -> None:
