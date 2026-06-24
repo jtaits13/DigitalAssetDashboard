@@ -28,6 +28,7 @@ def main() -> int:
         ("st-tmmf-fullscreen-postmessage" in html, "fullscreen patch"),
         ("measureCryptoContentHeight" in html, "height measure"),
         ("__CRYPTO_PAGE_PAYLOADS" in html, "embedded payloads"),
+        ("loadJsonWithTimeout = loadJsonWithTimeout" in html or "__DATA_FRESHNESS.loadJsonWithTimeout" in html, "loadJson patch"),
     ]
     for ok, label in checks:
         if not ok:

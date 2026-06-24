@@ -1759,6 +1759,29 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
     return measureDeepRwaBodyHeight(inner);
   }}
 
+  function isCryptoBodyIframe(inner) {{
+    return !!(
+      inner &&
+      inner.body &&
+      inner.body.classList &&
+      inner.body.classList.contains("page-crypto-iframe")
+    );
+  }}
+
+  function measureCryptoBodyHeight(inner) {{
+    var win = inner.defaultView;
+    try {{
+      if (win && win.__TMMF_MODAL_OPEN) return null;
+    }} catch (e) {{}}
+    if (win && typeof win.measureCryptoContentHeight === "function") {{
+      return win.measureCryptoContentHeight();
+    }}
+    var scrollY = win ? (win.scrollY || inner.documentElement.scrollTop || 0) : 0;
+    var main = inner.querySelector("main.page-shell.etp-mock-shell");
+    if (!main) return null;
+    return Math.ceil(main.getBoundingClientRect().bottom + scrollY + 6);
+  }}
+
   function applyFrameHeight(frame, h, minH) {{
     if (!frame || h <= minH) return;
     frame.style.height = h + "px";
@@ -1782,6 +1805,11 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
         if (isDeepRwaBodyIframe(inner)) {{
           var deepH = measureDeepRwaBodyHeight(inner);
           if (deepH !== null) applyFrameHeight(frame, deepH, 200);
+          return;
+        }}
+        if (isCryptoBodyIframe(inner)) {{
+          var cryptoH = measureCryptoBodyHeight(inner);
+          if (cryptoH !== null) applyFrameHeight(frame, cryptoH, 200);
           return;
         }}
         var isMarkets = inner.querySelector(".home-markets-stack");
@@ -1832,12 +1860,20 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
       return;
     }}
     if (ev.data.type === "jpm-tmmf-height" || ev.data.type === "streamlit:setFrameHeight") {{
+      var msgH = Number(ev.data.height);
       doc.querySelectorAll("iframe").forEach(function (frame) {{
         try {{
           var inner = frame.contentDocument;
+          if (!inner || !inner.body) return;
           if (isDeepRwaBodyIframe(inner)) {{
             var deepH = measureDeepRwaBodyHeight(inner);
             if (deepH !== null) applyFrameHeight(frame, deepH, 200);
+            return;
+          }}
+          if (isCryptoBodyIframe(inner)) {{
+            var cryptoH =
+              isFinite(msgH) && msgH > 200 ? msgH : measureCryptoBodyHeight(inner);
+            if (cryptoH !== null) applyFrameHeight(frame, cryptoH, 200);
           }}
         }} catch (e) {{}}
       }});
@@ -1995,6 +2031,14 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 .stApp:has(.streamlit-crypto-iframe-page) [data-testid="stElementContainer"]:has(iframe) {
   overflow: visible !important;
   max-height: none !important;
+}
+.stApp:has(.streamlit-crypto-iframe-page) [data-testid="stElementContainer"]:has([data-testid="stSpinner"]) {
+  display: block !important;
+  min-height: 2.5rem !important;
+  height: auto !important;
+  margin: 0.75rem auto !important;
+  padding: 0.5rem 1.25rem !important;
+  max-width: var(--content-max, 72rem) !important;
 }
 .stApp:has(.streamlit-tmmf-iframe-page) .block-container,
 .stApp:has(.streamlit-stablecoins-iframe-page) .block-container,

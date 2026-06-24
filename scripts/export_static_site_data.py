@@ -1832,6 +1832,7 @@ def build_crypto_prices_page_payloads(
     news_articles: list[dict[str, Any]] | None = None,
     blurb_cache_path: Path | None = None,
     manifest_errors: list[str] | None = None,
+    skip_about_blurbs: bool = False,
 ) -> dict[str, Any]:
     """Build crypto page JSON payloads (kpis, prices, chart, ticker)."""
     errors = manifest_errors if manifest_errors is not None else []
@@ -1881,18 +1882,19 @@ def build_crypto_prices_page_payloads(
         crypto_headers["User-Agent"] = DEFAULT_UA
 
         blurb_cache_path = blurb_cache_path or (OUT / "crypto_about_blurbs_cache.json")
-        _blurbs_ids = collect_coingecko_ids_for_rows(t_rows)
-        _blurbs_map = (
-            fetch_blurbs_with_cache(_blurbs_ids, blurb_cache_path, headers=crypto_headers)
-            if _blurbs_ids
-            else {}
-        )
-        attach_about_blurbs_to_rows(
-            t_rows,
-            headers=crypto_headers,
-            prefetched=_blurbs_map,
-            refetch_missing=False,
-        )
+        if not skip_about_blurbs:
+            _blurbs_ids = collect_coingecko_ids_for_rows(t_rows)
+            _blurbs_map = (
+                fetch_blurbs_with_cache(_blurbs_ids, blurb_cache_path, headers=crypto_headers)
+                if _blurbs_ids
+                else {}
+            )
+            attach_about_blurbs_to_rows(
+                t_rows,
+                headers=crypto_headers,
+                prefetched=_blurbs_map,
+                refetch_missing=False,
+            )
 
         crypto_payload = hub_ticker_static_json_payload(t_rows, t_err, t_src)
         crypto_payload["generated_at"] = crypto_generated_at

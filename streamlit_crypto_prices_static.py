@@ -33,6 +33,41 @@ _CRYPTO_JS_DEPS = (
 )
 _CRYPTO_JS_BOOT = ("crypto-page.js",)
 
+_CRYPTO_PATCH_LOAD_JSON_JS = """
+(function () {
+  var load = window.loadJson;
+  if (typeof load !== "function") return;
+  function loadJsonWithTimeout(name, ms) {
+    var timeoutMs = ms == null ? 14000 : ms;
+    return new Promise(function (resolve, reject) {
+      var done = false;
+      var timer = setTimeout(function () {
+        if (done) return;
+        done = true;
+        reject(new Error("Timed out loading " + name));
+      }, timeoutMs);
+      load(name)
+        .then(function (data) {
+          if (done) return;
+          done = true;
+          clearTimeout(timer);
+          resolve(data);
+        })
+        .catch(function (err) {
+          if (done) return;
+          done = true;
+          clearTimeout(timer);
+          reject(err);
+        });
+    });
+  }
+  if (window.__DATA_FRESHNESS) {
+    window.__DATA_FRESHNESS.loadJsonWithTimeout = loadJsonWithTimeout;
+  }
+  window.loadJsonWithTimeout = loadJsonWithTimeout;
+})();
+"""
+
 _CRYPTO_MEASURE_HEIGHT_JS = """
 function measureCryptoContentHeight() {
   if (window.__TMMF_MODAL_OPEN) return null;
@@ -198,6 +233,21 @@ _CRYPTO_ZONE_BODY = """
 """
 
 
+def _static_crypto_payload_fallback(*, error: str = "") -> dict[str, Any]:
+    """Last-resort payloads from committed static JSON exports."""
+    out: dict[str, Any] = {}
+    for name in ("crypto_kpis.json", "crypto_prices.json", "crypto_market_cap_series.json"):
+        path = _DATA / name
+        if path.is_file():
+            out[name] = json.loads(path.read_text(encoding="utf-8"))
+    if error:
+        for key in list(out):
+            merged = dict(out[key])
+            merged["error"] = error
+            out[key] = merged
+    return out
+
+
 def load_crypto_prices_iframe_payloads() -> dict[str, Any]:
     """Live crypto page JSON (kpis, prices, chart) matching static export shape."""
     from key_observations.feeds import load_takeaway_articles
@@ -206,12 +256,24 @@ def load_crypto_prices_iframe_payloads() -> dict[str, Any]:
     pack = build_crypto_prices_page_payloads(
         news_articles=load_takeaway_articles(),
         blurb_cache_path=_DATA / "crypto_about_blurbs_cache.json",
+        skip_about_blurbs=True,
     )
     return {
         "crypto_kpis.json": pack["kpis"],
         "crypto_prices.json": pack["prices"],
         "crypto_market_cap_series.json": pack["chart"],
     }
+
+
+def get_crypto_iframe_payloads() -> dict[str, Any]:
+    """Live payloads with static JSON fallback so the iframe always renders."""
+    try:
+        return load_crypto_prices_iframe_payloads()
+    except Exception as exc:
+        fallback = _static_crypto_payload_fallback(error=str(exc))
+        if fallback:
+            return fallback
+        raise
 
 
 @st.cache_resource(show_spinner=False)
@@ -354,6 +416,7 @@ window.loadJson = function (name) {{
   }}
   return Promise.reject(new Error("Unknown crypto payload: " + name));
 }};
+{_CRYPTO_PATCH_LOAD_JSON_JS}
 </script>
 <script>
 {_STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH}
@@ -419,9 +482,9 @@ window.loadJson = function (name) {{
 </html>"""
 
 
-@st.cache_data(show_spinner="Loading crypto prices…", ttl=300)
+@st.cache_data(show_spinner=False, ttl=300)
 def _cached_crypto_prices_iframe_payloads() -> dict[str, Any]:
-    return load_crypto_prices_iframe_payloads()
+    return get_crypto_iframe_payloads()
 
 
 def render_crypto_prices_body_iframe(
