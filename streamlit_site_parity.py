@@ -313,7 +313,8 @@ section[data-testid="stSidebar"] { display: none !important; }
 .stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stElementContainer"]:has(iframe),
 .stApp:has(.streamlit-crypto-iframe-page) [data-testid="stElementContainer"]:has(iframe),
 .stApp:has(.streamlit-etps-iframe-page) [data-testid="stElementContainer"]:has(iframe),
-.stApp:has(.streamlit-news-feed-iframe-page) [data-testid="stElementContainer"]:has(iframe) {
+.stApp:has(.streamlit-news-feed-iframe-page) [data-testid="stElementContainer"]:has(iframe),
+.stApp:has(.streamlit-rwa-global-iframe-page) [data-testid="stElementContainer"]:has(iframe) {
   position: relative !important;
   z-index: 1 !important;
   margin-top: 0 !important;
@@ -338,7 +339,8 @@ section[data-testid="stSidebar"] { display: none !important; }
 .stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stElementContainer"]:has(iframe) iframe,
 .stApp:has(.streamlit-crypto-iframe-page) [data-testid="stElementContainer"]:has(iframe) iframe,
 .stApp:has(.streamlit-etps-iframe-page) [data-testid="stElementContainer"]:has(iframe) iframe,
-.stApp:has(.streamlit-news-feed-iframe-page) [data-testid="stElementContainer"]:has(iframe) iframe {
+.stApp:has(.streamlit-news-feed-iframe-page) [data-testid="stElementContainer"]:has(iframe) iframe,
+.stApp:has(.streamlit-rwa-global-iframe-page) [data-testid="stElementContainer"]:has(iframe) iframe {
   display: block !important;
   width: 100% !important;
   border: 0;
@@ -350,7 +352,8 @@ section[data-testid="stSidebar"] { display: none !important; }
 .stApp:has(.streamlit-stablecoins-iframe-page) .block-container,
 .stApp:has(.streamlit-crypto-iframe-page) .block-container,
 .stApp:has(.streamlit-etps-iframe-page) .block-container,
-.stApp:has(.streamlit-news-feed-iframe-page) .block-container {
+.stApp:has(.streamlit-news-feed-iframe-page) .block-container,
+.stApp:has(.streamlit-rwa-global-iframe-page) .block-container {
   padding-bottom: 0.5rem !important;
 }
 .stApp:has(.home-body-iframe-marker) [data-testid="stVerticalBlock"],
@@ -358,7 +361,8 @@ section[data-testid="stSidebar"] { display: none !important; }
 .stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stVerticalBlock"],
 .stApp:has(.streamlit-crypto-iframe-page) [data-testid="stVerticalBlock"],
 .stApp:has(.streamlit-etps-iframe-page) [data-testid="stVerticalBlock"],
-.stApp:has(.streamlit-news-feed-iframe-page) [data-testid="stVerticalBlock"] {
+.stApp:has(.streamlit-news-feed-iframe-page) [data-testid="stVerticalBlock"],
+.stApp:has(.streamlit-rwa-global-iframe-page) [data-testid="stVerticalBlock"] {
   gap: 0 !important;
 }
 .stApp:has(.home-body-iframe-marker) [data-testid="stMainBlockContainer"],
@@ -366,7 +370,8 @@ section[data-testid="stSidebar"] { display: none !important; }
 .stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stMainBlockContainer"],
 .stApp:has(.streamlit-crypto-iframe-page) [data-testid="stMainBlockContainer"],
 .stApp:has(.streamlit-etps-iframe-page) [data-testid="stMainBlockContainer"],
-.stApp:has(.streamlit-news-feed-iframe-page) [data-testid="stMainBlockContainer"] {
+.stApp:has(.streamlit-news-feed-iframe-page) [data-testid="stMainBlockContainer"],
+.stApp:has(.streamlit-rwa-global-iframe-page) [data-testid="stMainBlockContainer"] {
   min-height: 0 !important;
   overflow-y: visible !important;
   max-height: none !important;
@@ -595,6 +600,12 @@ def _iframe_etp_mock_css(css: str) -> str:
     return css.replace(".mock-etp-inner", "body.page-etp-iframe")
 
 
+def _iframe_rwa_global_mock_css(css: str) -> str:
+    """RWA Global iframe: no mock banners; scope global mock rules onto the iframe ``body``."""
+    css = _strip_mock_design_banner_css(css)
+    return css.replace(".mock-rwa-global-inner", "body.page-rwa-global-iframe")
+
+
 def _patch_inner_page_css_for_streamlit(css: str) -> str:
     """Mirror inner-page ``body`` / ``.site-experience.page-inner--rich`` rules onto the subpage wrapper."""
     if ":root, .stApp {" not in css:
@@ -639,6 +650,7 @@ SUBPAGE_ROOT_CLASS: dict[str, str] = {
     "article": "page-full-feed page-article-feed page-inner--rich",
     "article_etp": "page-full-feed page-article-feed page-etp page-inner--rich",
     "etp": "page-etp page-inner--rich mock-etp-inner",
+    "rwa_global": "page-rwa-global page-inner--rich mock-rwa-global-inner",
     "crypto": "page-crypto page-inner--rich mock-crypto-inner",
     "tmmf": "page-rwa-deep page-rwa-deep-mmf page-inner--rich mock-tmmf-inner",
 }
@@ -829,7 +841,7 @@ def _cached_subpage_stylesheet(kind: str) -> str:
         if path.is_file():
             chunks.append(_patch_inner_page_css_for_streamlit(path.read_text(encoding="utf-8")))
     # Deep RWA iframe subpages ship mock CSS inside the iframe document.
-    if kind not in ("tmmf", "stablecoins", "crypto", "etp"):
+    if kind not in ("tmmf", "stablecoins", "crypto", "etp", "rwa_global"):
         for rel in _SUBPAGE_MOCK_CSS.get(kind, ()):
             path = _STATIC / rel
             if path.is_file():
@@ -1816,6 +1828,15 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
     );
   }}
 
+  function isRwaGlobalBodyIframe(inner) {{
+    return !!(
+      inner &&
+      inner.body &&
+      inner.body.classList &&
+      inner.body.classList.contains("page-rwa-global-iframe")
+    );
+  }}
+
   function measureEtpBodyHeight(inner) {{
     var win = inner.defaultView;
     try {{
@@ -1840,6 +1861,20 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
     }}
     var scrollY = win ? (win.scrollY || inner.documentElement.scrollTop || 0) : 0;
     var main = inner.querySelector("main.page-shell");
+    if (!main) return null;
+    return Math.ceil(main.getBoundingClientRect().bottom + scrollY + 6);
+  }}
+
+  function measureRwaGlobalBodyHeight(inner) {{
+    var win = inner.defaultView;
+    try {{
+      if (win && win.__TMMF_MODAL_OPEN) return null;
+    }} catch (e) {{}}
+    if (win && typeof win.measureRwaGlobalContentHeight === "function") {{
+      return win.measureRwaGlobalContentHeight();
+    }}
+    var scrollY = win ? (win.scrollY || inner.documentElement.scrollTop || 0) : 0;
+    var main = inner.querySelector("main.page-shell.etp-mock-shell");
     if (!main) return null;
     return Math.ceil(main.getBoundingClientRect().bottom + scrollY + 6);
   }}
@@ -1882,6 +1917,11 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
         if (isNewsFeedBodyIframe(inner)) {{
           var newsH = measureNewsFeedBodyHeight(inner);
           if (newsH !== null) applyFrameHeight(frame, newsH, 200);
+          return;
+        }}
+        if (isRwaGlobalBodyIframe(inner)) {{
+          var rwaH = measureRwaGlobalBodyHeight(inner);
+          if (rwaH !== null) applyFrameHeight(frame, rwaH, 200);
           return;
         }}
         var isMarkets = inner.querySelector(".home-markets-stack");
@@ -1958,6 +1998,12 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
             var newsH =
               isFinite(msgH) && msgH > 200 ? msgH : measureNewsFeedBodyHeight(inner);
             if (newsH !== null) applyFrameHeight(frame, newsH, 200);
+            return;
+          }}
+          if (isRwaGlobalBodyIframe(inner)) {{
+            var rwaH =
+              isFinite(msgH) && msgH > 200 ? msgH : measureRwaGlobalBodyHeight(inner);
+            if (rwaH !== null) applyFrameHeight(frame, rwaH, 200);
           }}
         }} catch (e) {{}}
       }});
@@ -2114,9 +2160,18 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 .stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stElementContainer"]:has(iframe),
 .stApp:has(.streamlit-crypto-iframe-page) [data-testid="stElementContainer"]:has(iframe),
 .stApp:has(.streamlit-etps-iframe-page) [data-testid="stElementContainer"]:has(iframe),
-.stApp:has(.streamlit-news-feed-iframe-page) [data-testid="stElementContainer"]:has(iframe) {
+.stApp:has(.streamlit-news-feed-iframe-page) [data-testid="stElementContainer"]:has(iframe),
+.stApp:has(.streamlit-rwa-global-iframe-page) [data-testid="stElementContainer"]:has(iframe) {
   overflow: visible !important;
   max-height: none !important;
+}
+.stApp:has(.streamlit-rwa-global-iframe-page) [data-testid="stElementContainer"]:has([data-testid="stSpinner"]) {
+  display: block !important;
+  min-height: 2.5rem !important;
+  height: auto !important;
+  margin: 0.75rem auto !important;
+  padding: 0.5rem 1.25rem !important;
+  max-width: var(--content-max, 72rem) !important;
 }
 .stApp:has(.streamlit-news-feed-iframe-page) [data-testid="stElementContainer"]:has([data-testid="stSpinner"]) {
   display: block !important;
@@ -2260,13 +2315,14 @@ def _deep_iframe_subpage_css_blob() -> str:
     )
     return raw.replace(
         ".stApp:has(.streamlit-tmmf-iframe-page)",
-        ".stApp:has(.streamlit-tmmf-iframe-page), .stApp:has(.streamlit-stablecoins-iframe-page), .stApp:has(.streamlit-crypto-iframe-page), .stApp:has(.streamlit-etps-iframe-page), .stApp:has(.streamlit-news-feed-iframe-page)",
+        ".stApp:has(.streamlit-tmmf-iframe-page), .stApp:has(.streamlit-stablecoins-iframe-page), .stApp:has(.streamlit-crypto-iframe-page), .stApp:has(.streamlit-etps-iframe-page), .stApp:has(.streamlit-news-feed-iframe-page), .stApp:has(.streamlit-rwa-global-iframe-page)",
     ).replace(
         ".stApp:has(.streamlit-tmmf-iframe-page) .mock-tmmf-inner::before,",
         ".stApp:has(.streamlit-tmmf-iframe-page) .mock-tmmf-inner::before,\n"
         ".stApp:has(.streamlit-stablecoins-iframe-page) .mock-stable-inner::before,\n"
         ".stApp:has(.streamlit-crypto-iframe-page) .mock-crypto-inner::before,\n"
-        ".stApp:has(.streamlit-etps-iframe-page) .mock-etp-inner::before,",
+        ".stApp:has(.streamlit-etps-iframe-page) .mock-etp-inner::before,\n"
+        ".stApp:has(.streamlit-rwa-global-iframe-page) .mock-rwa-global-inner::before,",
     )
 
 
@@ -2274,7 +2330,7 @@ def inject_subpage_styles(*, kind: str = "article") -> None:
     """GitHub Pages base + inner-page CSS for Streamlit subpages."""
     inject_site_styles(include_static=True)
     inner_css = _cached_subpage_stylesheet(kind)
-    deep_iframe_css = _deep_iframe_subpage_css_blob() if kind in ("tmmf", "stablecoins", "crypto", "etp", "news_feed") else ""
+    deep_iframe_css = _deep_iframe_subpage_css_blob() if kind in ("tmmf", "stablecoins", "crypto", "etp", "news_feed", "rwa_global") else ""
     st.markdown(
         f"<style>{inner_css}\n{SUBPAGE_STREAMLIT_CSS}\n{deep_iframe_css}</style>",
         unsafe_allow_html=True,
@@ -2450,7 +2506,7 @@ def configure_subpage(*, page_title: str, active: str, style_kind: str = "articl
     inject_subpage_styles(kind=style_kind)
     inject_streamlit_nav_router()
     components.html(HOME_IFRAME_HEIGHT_SYNC_JS, height=0, width=0)
-    if style_kind in ("tmmf", "stablecoins", "crypto", "etp"):
+    if style_kind in ("tmmf", "stablecoins", "crypto", "etp", "rwa_global"):
         inject_streamlit_table_fullscreen_host()
     iframe_page_class = ""
     if style_kind == "tmmf":
@@ -2463,6 +2519,8 @@ def configure_subpage(*, page_title: str, active: str, style_kind: str = "articl
         iframe_page_class = " streamlit-etps-iframe-page"
     elif style_kind == "news_feed":
         iframe_page_class = " streamlit-news-feed-iframe-page"
+    elif style_kind == "rwa_global":
+        iframe_page_class = " streamlit-rwa-global-iframe-page"
     st.markdown(
         f'<span class="streamlit-subpage-active{iframe_page_class}" hidden aria-hidden="true"></span>',
         unsafe_allow_html=True,

@@ -9,23 +9,16 @@ _REPO = Path(__file__).resolve().parent.parent
 if str(_REPO) not in sys.path:
     sys.path.insert(0, str(_REPO))
 
-import streamlit as st
-
-from home_layout import (
-    ETP_FULLPAGE_AUM_LINE_CSS,
-    STREAMLIT_TABLE_UNIFY_CSS,
-    monthly_review_note_html,
-    rwa_xyz_mirror_footer_text,
-    section_label_teal,
+from streamlit_site_parity import (
+    _streamlit_page_href,
+    configure_subpage,
+    related_chips_html,
+    render_subpage_footer,
 )
-from news_feeds import (
-    app_shared_layout_css,
-    article_styles_markdown,
-    render_subpage_sidebar,
-    render_subpage_top_bar,
+from streamlit_rwa_global_static import (
+    _cached_rwa_global_iframe_payloads,
+    render_rwa_global_body_iframe,
 )
-from price_ticker import show_price_ticker
-from rwa_league.widgets import show_rwa_participants_networks_widget
 
 # Macro context for readers (third-party research; not investment advice). Links verified via public pages.
 _MCKINSEY_TOKENIZATION_URL = (
@@ -108,39 +101,22 @@ RWA_GLOBAL_MARKET_MACRO_CONTEXT_HTML = f"""
 
 
 def main() -> None:
-    st.set_page_config(
+    configure_subpage(
         page_title="RWA Global Market Overview — Digital Assets Dashboard",
-        page_icon="◆",
-        layout="wide",
-        initial_sidebar_state="expanded",
+        active="rwa_global",
+        style_kind="rwa_global",
+    )
+    related = related_chips_html(
+        ("/?jd_scroll=onchain", "Home on-chain preview"),
+        (_streamlit_page_href("stablecoins"), "Stablecoins"),
+        (_streamlit_page_href("tmmf"), "Tokenized MMFs"),
+        (_streamlit_page_href("crypto"), "Crypto prices"),
     )
 
-    render_subpage_top_bar()
-    if st.button("← Home", key="top_home_rwa_global_market_overview"):
-        st.switch_page("streamlit_app.py")
-    st.markdown(article_styles_markdown(), unsafe_allow_html=True)
-    st.markdown(app_shared_layout_css(), unsafe_allow_html=True)
-    st.markdown(STREAMLIT_TABLE_UNIFY_CSS + ETP_FULLPAGE_AUM_LINE_CSS, unsafe_allow_html=True)
-    show_price_ticker()
-    render_subpage_sidebar(key_prefix="rwa_global_market_overview", current="rwa_participants_networks")
+    payloads = _cached_rwa_global_iframe_payloads()
+    render_rwa_global_body_iframe(payloads=payloads, related_chips=related)
 
-    st.markdown(section_label_teal("RWA Global Market Overview", placement="first"), unsafe_allow_html=True)
-    st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">RWA <strong>Global Market Overview</strong>: the same '
-        "<strong>headline metrics</strong> and <strong>Networks</strong> table as the "
-        '<a href="https://app.rwa.xyz/">RWA.xyz</a> <strong>Market Overview</strong> tab on the live site. '
-        "Top-line <strong>30D</strong> % changes and table values are read from that page so they stay in sync with what visitors see.</p>",
-        unsafe_allow_html=True,
-    )
-    st.divider()
-
-    show_rwa_participants_networks_widget(
-        home_preview=False,
-        full_page_header=True,
-        global_market_observations_html=RWA_GLOBAL_MARKET_MACRO_CONTEXT_HTML + monthly_review_note_html(),
-    )
-
-    st.caption(rwa_xyz_mirror_footer_text())
+    render_subpage_footer(label="RWA Global Market")
 
 
 main()
