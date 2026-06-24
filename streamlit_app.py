@@ -120,6 +120,9 @@ def _clear_all_caches() -> None:
     from streamlit_etps_static import _cached_etp_iframe_payloads
 
     _cached_etp_iframe_payloads.clear()
+    from streamlit_news_feeds_static import _cached_news_feed_iframe_payloads
+
+    _cached_news_feed_iframe_payloads.clear()
 
 
 def main() -> None:

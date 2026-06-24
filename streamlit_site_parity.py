@@ -312,7 +312,8 @@ section[data-testid="stSidebar"] { display: none !important; }
 .stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has(iframe),
 .stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stElementContainer"]:has(iframe),
 .stApp:has(.streamlit-crypto-iframe-page) [data-testid="stElementContainer"]:has(iframe),
-.stApp:has(.streamlit-etps-iframe-page) [data-testid="stElementContainer"]:has(iframe) {
+.stApp:has(.streamlit-etps-iframe-page) [data-testid="stElementContainer"]:has(iframe),
+.stApp:has(.streamlit-news-feed-iframe-page) [data-testid="stElementContainer"]:has(iframe) {
   position: relative !important;
   z-index: 1 !important;
   margin-top: 0 !important;
@@ -336,7 +337,8 @@ section[data-testid="stSidebar"] { display: none !important; }
 .stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has(iframe) iframe,
 .stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stElementContainer"]:has(iframe) iframe,
 .stApp:has(.streamlit-crypto-iframe-page) [data-testid="stElementContainer"]:has(iframe) iframe,
-.stApp:has(.streamlit-etps-iframe-page) [data-testid="stElementContainer"]:has(iframe) iframe {
+.stApp:has(.streamlit-etps-iframe-page) [data-testid="stElementContainer"]:has(iframe) iframe,
+.stApp:has(.streamlit-news-feed-iframe-page) [data-testid="stElementContainer"]:has(iframe) iframe {
   display: block !important;
   width: 100% !important;
   border: 0;
@@ -347,21 +349,24 @@ section[data-testid="stSidebar"] { display: none !important; }
 .stApp:has(.streamlit-tmmf-iframe-page) .block-container,
 .stApp:has(.streamlit-stablecoins-iframe-page) .block-container,
 .stApp:has(.streamlit-crypto-iframe-page) .block-container,
-.stApp:has(.streamlit-etps-iframe-page) .block-container {
+.stApp:has(.streamlit-etps-iframe-page) .block-container,
+.stApp:has(.streamlit-news-feed-iframe-page) .block-container {
   padding-bottom: 0.5rem !important;
 }
 .stApp:has(.home-body-iframe-marker) [data-testid="stVerticalBlock"],
 .stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stVerticalBlock"],
 .stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stVerticalBlock"],
 .stApp:has(.streamlit-crypto-iframe-page) [data-testid="stVerticalBlock"],
-.stApp:has(.streamlit-etps-iframe-page) [data-testid="stVerticalBlock"] {
+.stApp:has(.streamlit-etps-iframe-page) [data-testid="stVerticalBlock"],
+.stApp:has(.streamlit-news-feed-iframe-page) [data-testid="stVerticalBlock"] {
   gap: 0 !important;
 }
 .stApp:has(.home-body-iframe-marker) [data-testid="stMainBlockContainer"],
 .stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stMainBlockContainer"],
 .stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stMainBlockContainer"],
 .stApp:has(.streamlit-crypto-iframe-page) [data-testid="stMainBlockContainer"],
-.stApp:has(.streamlit-etps-iframe-page) [data-testid="stMainBlockContainer"] {
+.stApp:has(.streamlit-etps-iframe-page) [data-testid="stMainBlockContainer"],
+.stApp:has(.streamlit-news-feed-iframe-page) [data-testid="stMainBlockContainer"] {
   min-height: 0 !important;
   overflow-y: visible !important;
   max-height: none !important;
@@ -1802,6 +1807,15 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
     );
   }}
 
+  function isNewsFeedBodyIframe(inner) {{
+    return !!(
+      inner &&
+      inner.body &&
+      inner.body.classList &&
+      inner.body.classList.contains("page-article-feed-iframe")
+    );
+  }}
+
   function measureEtpBodyHeight(inner) {{
     var win = inner.defaultView;
     try {{
@@ -1812,6 +1826,20 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
     }}
     var scrollY = win ? (win.scrollY || inner.documentElement.scrollTop || 0) : 0;
     var main = inner.querySelector("main.page-shell.etp-mock-shell");
+    if (!main) return null;
+    return Math.ceil(main.getBoundingClientRect().bottom + scrollY + 6);
+  }}
+
+  function measureNewsFeedBodyHeight(inner) {{
+    var win = inner.defaultView;
+    try {{
+      if (win && win.__TMMF_MODAL_OPEN) return null;
+    }} catch (e) {{}}
+    if (win && typeof win.measureNewsFeedContentHeight === "function") {{
+      return win.measureNewsFeedContentHeight();
+    }}
+    var scrollY = win ? (win.scrollY || inner.documentElement.scrollTop || 0) : 0;
+    var main = inner.querySelector("main.page-shell");
     if (!main) return null;
     return Math.ceil(main.getBoundingClientRect().bottom + scrollY + 6);
   }}
@@ -1849,6 +1877,11 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
         if (isEtpBodyIframe(inner)) {{
           var etpH = measureEtpBodyHeight(inner);
           if (etpH !== null) applyFrameHeight(frame, etpH, 200);
+          return;
+        }}
+        if (isNewsFeedBodyIframe(inner)) {{
+          var newsH = measureNewsFeedBodyHeight(inner);
+          if (newsH !== null) applyFrameHeight(frame, newsH, 200);
           return;
         }}
         var isMarkets = inner.querySelector(".home-markets-stack");
@@ -1919,6 +1952,12 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
             var etpH =
               isFinite(msgH) && msgH > 200 ? msgH : measureEtpBodyHeight(inner);
             if (etpH !== null) applyFrameHeight(frame, etpH, 200);
+            return;
+          }}
+          if (isNewsFeedBodyIframe(inner)) {{
+            var newsH =
+              isFinite(msgH) && msgH > 200 ? msgH : measureNewsFeedBodyHeight(inner);
+            if (newsH !== null) applyFrameHeight(frame, newsH, 200);
           }}
         }} catch (e) {{}}
       }});
@@ -2074,9 +2113,18 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 .stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has(iframe),
 .stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stElementContainer"]:has(iframe),
 .stApp:has(.streamlit-crypto-iframe-page) [data-testid="stElementContainer"]:has(iframe),
-.stApp:has(.streamlit-etps-iframe-page) [data-testid="stElementContainer"]:has(iframe) {
+.stApp:has(.streamlit-etps-iframe-page) [data-testid="stElementContainer"]:has(iframe),
+.stApp:has(.streamlit-news-feed-iframe-page) [data-testid="stElementContainer"]:has(iframe) {
   overflow: visible !important;
   max-height: none !important;
+}
+.stApp:has(.streamlit-news-feed-iframe-page) [data-testid="stElementContainer"]:has([data-testid="stSpinner"]) {
+  display: block !important;
+  min-height: 2.5rem !important;
+  height: auto !important;
+  margin: 0.75rem auto !important;
+  padding: 0.5rem 1.25rem !important;
+  max-width: var(--content-max, 72rem) !important;
 }
 .stApp:has(.streamlit-etps-iframe-page) [data-testid="stElementContainer"]:has([data-testid="stSpinner"]) {
   display: block !important;
@@ -2097,7 +2145,8 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 .stApp:has(.streamlit-tmmf-iframe-page) .block-container,
 .stApp:has(.streamlit-stablecoins-iframe-page) .block-container,
 .stApp:has(.streamlit-crypto-iframe-page) .block-container,
-.stApp:has(.streamlit-etps-iframe-page) .block-container {
+.stApp:has(.streamlit-etps-iframe-page) .block-container,
+.stApp:has(.streamlit-news-feed-iframe-page) .block-container {
   padding-bottom: 0 !important;
 }
 .stApp:has(.streamlit-tmmf-iframe-page) .st-tmmf-host-table-modal {
@@ -2211,7 +2260,7 @@ def _deep_iframe_subpage_css_blob() -> str:
     )
     return raw.replace(
         ".stApp:has(.streamlit-tmmf-iframe-page)",
-        ".stApp:has(.streamlit-tmmf-iframe-page), .stApp:has(.streamlit-stablecoins-iframe-page), .stApp:has(.streamlit-crypto-iframe-page), .stApp:has(.streamlit-etps-iframe-page)",
+        ".stApp:has(.streamlit-tmmf-iframe-page), .stApp:has(.streamlit-stablecoins-iframe-page), .stApp:has(.streamlit-crypto-iframe-page), .stApp:has(.streamlit-etps-iframe-page), .stApp:has(.streamlit-news-feed-iframe-page)",
     ).replace(
         ".stApp:has(.streamlit-tmmf-iframe-page) .mock-tmmf-inner::before,",
         ".stApp:has(.streamlit-tmmf-iframe-page) .mock-tmmf-inner::before,\n"
@@ -2225,7 +2274,7 @@ def inject_subpage_styles(*, kind: str = "article") -> None:
     """GitHub Pages base + inner-page CSS for Streamlit subpages."""
     inject_site_styles(include_static=True)
     inner_css = _cached_subpage_stylesheet(kind)
-    deep_iframe_css = _deep_iframe_subpage_css_blob() if kind in ("tmmf", "stablecoins", "crypto", "etp") else ""
+    deep_iframe_css = _deep_iframe_subpage_css_blob() if kind in ("tmmf", "stablecoins", "crypto", "etp", "news_feed") else ""
     st.markdown(
         f"<style>{inner_css}\n{SUBPAGE_STREAMLIT_CSS}\n{deep_iframe_css}</style>",
         unsafe_allow_html=True,
@@ -2412,6 +2461,8 @@ def configure_subpage(*, page_title: str, active: str, style_kind: str = "articl
         iframe_page_class = " streamlit-crypto-iframe-page"
     elif style_kind == "etp":
         iframe_page_class = " streamlit-etps-iframe-page"
+    elif style_kind == "news_feed":
+        iframe_page_class = " streamlit-news-feed-iframe-page"
     st.markdown(
         f'<span class="streamlit-subpage-active{iframe_page_class}" hidden aria-hidden="true"></span>',
         unsafe_allow_html=True,
