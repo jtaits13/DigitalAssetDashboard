@@ -309,7 +309,8 @@ section[data-testid="stSidebar"] { display: none !important; }
   margin-bottom: 0 !important;
   padding-top: 0 !important;
 }
-.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has(iframe) {
+.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has(iframe),
+.stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stElementContainer"]:has(iframe) {
   position: relative !important;
   z-index: 1 !important;
   margin-top: 0 !important;
@@ -330,7 +331,8 @@ section[data-testid="stSidebar"] { display: none !important; }
   height: auto !important;
 }
 .stApp [data-testid="stElementContainer"]:has(.home-body-iframe-marker) iframe,
-.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has(iframe) iframe {
+.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has(iframe) iframe,
+.stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stElementContainer"]:has(iframe) iframe {
   display: block !important;
   width: 100% !important;
   border: 0;
@@ -338,15 +340,18 @@ section[data-testid="stSidebar"] { display: none !important; }
   max-height: none !important;
 }
 .stApp:has(.home-body-iframe-marker) .block-container,
-.stApp:has(.streamlit-tmmf-iframe-page) .block-container {
+.stApp:has(.streamlit-tmmf-iframe-page) .block-container,
+.stApp:has(.streamlit-stablecoins-iframe-page) .block-container {
   padding-bottom: 0.5rem !important;
 }
 .stApp:has(.home-body-iframe-marker) [data-testid="stVerticalBlock"],
-.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stVerticalBlock"] {
+.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stVerticalBlock"],
+.stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stVerticalBlock"] {
   gap: 0 !important;
 }
 .stApp:has(.home-body-iframe-marker) [data-testid="stMainBlockContainer"],
-.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stMainBlockContainer"] {
+.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stMainBlockContainer"],
+.stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stMainBlockContainer"] {
   min-height: 0 !important;
   overflow-y: visible !important;
   max-height: none !important;
@@ -557,6 +562,12 @@ def _iframe_tmmf_mock_css(css: str) -> str:
     return css.replace(".mock-tmmf-inner", "body.page-rwa-deep-mmf")
 
 
+def _iframe_stable_mock_css(css: str) -> str:
+    """Stablecoins iframe: no mock banners; scope stable mock rules onto the iframe ``body``."""
+    css = _strip_mock_design_banner_css(css)
+    return css.replace(".mock-stable-inner", "body.page-rwa-deep-stablecoins")
+
+
 def _patch_inner_page_css_for_streamlit(css: str) -> str:
     """Mirror inner-page ``body`` / ``.site-experience.page-inner--rich`` rules onto the subpage wrapper."""
     if ":root, .stApp {" not in css:
@@ -595,6 +606,7 @@ _SUBPAGE_MOCK_CSS: dict[str, tuple[str, ...]] = {
     "etp": ("mockups/etp-inner-page-mock.css",),
     "crypto": ("mockups/etp-inner-page-mock.css", "mockups/crypto-inner-page-mock.css"),
     "tmmf": ("mockups/etp-inner-page-mock.css", "mockups/tmmf-inner-page-mock.css"),
+    "stablecoins": ("mockups/etp-inner-page-mock.css", "mockups/stable-inner-page-mock.css"),
 }
 SUBPAGE_ROOT_CLASS: dict[str, str] = {
     "article": "page-full-feed page-article-feed page-inner--rich",
@@ -789,8 +801,8 @@ def _cached_subpage_stylesheet(kind: str) -> str:
         path = _STATIC / rel
         if path.is_file():
             chunks.append(_patch_inner_page_css_for_streamlit(path.read_text(encoding="utf-8")))
-    # TMMF uses a self-contained iframe; mock CSS on the host only risks stray chrome.
-    if kind != "tmmf":
+    # Deep RWA iframe subpages ship mock CSS inside the iframe document.
+    if kind not in ("tmmf", "stablecoins"):
         for rel in _SUBPAGE_MOCK_CSS.get(kind, ()):
             path = _STATIC / rel
             if path.is_file():
@@ -1689,7 +1701,16 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
     return Math.ceil(bottom - docTop + navSlack);
   }}
 
-  function measureTmmfBodyHeight(inner) {{
+  function isDeepRwaBodyIframe(inner) {{
+    return !!(
+      inner &&
+      inner.body &&
+      inner.body.classList &&
+      inner.body.classList.contains("page-rwa-deep")
+    );
+  }}
+
+  function measureDeepRwaBodyHeight(inner) {{
     var win = inner.defaultView;
     try {{
       if (win && win.__TMMF_MODAL_OPEN) return null;
@@ -1720,12 +1741,11 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
   }}
 
   function isTmmfBodyIframe(inner) {{
-    return !!(
-      inner &&
-      inner.body &&
-      inner.body.classList &&
-      inner.body.classList.contains("page-rwa-deep-mmf")
-    );
+    return isDeepRwaBodyIframe(inner);
+  }}
+
+  function measureTmmfBodyHeight(inner) {{
+    return measureDeepRwaBodyHeight(inner);
   }}
 
   function applyFrameHeight(frame, h, minH) {{
@@ -1748,9 +1768,9 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
           applyFrameHeight(frame, measureSubpageNavHeight(inner), 40);
           return;
         }}
-        if (isTmmfBodyIframe(inner)) {{
-          var tmmfH = measureTmmfBodyHeight(inner);
-          if (tmmfH !== null) applyFrameHeight(frame, tmmfH, 200);
+        if (isDeepRwaBodyIframe(inner)) {{
+          var deepH = measureDeepRwaBodyHeight(inner);
+          if (deepH !== null) applyFrameHeight(frame, deepH, 200);
           return;
         }}
         var isMarkets = inner.querySelector(".home-markets-stack");
@@ -1804,9 +1824,9 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
       doc.querySelectorAll("iframe").forEach(function (frame) {{
         try {{
           var inner = frame.contentDocument;
-          if (isTmmfBodyIframe(inner)) {{
-            var tmmfH = measureTmmfBodyHeight(inner);
-            if (tmmfH !== null) applyFrameHeight(frame, tmmfH, 200);
+          if (isDeepRwaBodyIframe(inner)) {{
+            var deepH = measureDeepRwaBodyHeight(inner);
+            if (deepH !== null) applyFrameHeight(frame, deepH, 200);
           }}
         }} catch (e) {{}}
       }});
@@ -1959,11 +1979,13 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   padding: 0 !important;
   border: none !important;
 }
-.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has(iframe) {
+.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has(iframe),
+.stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stElementContainer"]:has(iframe) {
   overflow: visible !important;
   max-height: none !important;
 }
-.stApp:has(.streamlit-tmmf-iframe-page) .block-container {
+.stApp:has(.streamlit-tmmf-iframe-page) .block-container,
+.stApp:has(.streamlit-stablecoins-iframe-page) .block-container {
   padding-bottom: 0 !important;
 }
 .stApp:has(.streamlit-tmmf-iframe-page) .st-tmmf-host-table-modal {
@@ -2068,19 +2090,30 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 """
 
 
+def _deep_iframe_subpage_css_blob() -> str:
+    """Host CSS for TMMF + Stablecoins self-contained iframe subpages."""
+    raw = (
+        STREAMLIT_TMMF_SUBPAGE_CSS.replace("<style>", "")
+        .replace("</style>", "")
+        .strip()
+    )
+    return raw.replace(
+        ".stApp:has(.streamlit-tmmf-iframe-page)",
+        ".stApp:has(.streamlit-tmmf-iframe-page), .stApp:has(.streamlit-stablecoins-iframe-page)",
+    ).replace(
+        ".stApp:has(.streamlit-tmmf-iframe-page) .mock-tmmf-inner::before,",
+        ".stApp:has(.streamlit-tmmf-iframe-page) .mock-tmmf-inner::before,\n"
+        ".stApp:has(.streamlit-stablecoins-iframe-page) .mock-stable-inner::before,",
+    )
+
+
 def inject_subpage_styles(*, kind: str = "article") -> None:
     """GitHub Pages base + inner-page CSS for Streamlit subpages."""
     inject_site_styles(include_static=True)
     inner_css = _cached_subpage_stylesheet(kind)
-    tmmf_css = ""
-    if kind == "tmmf":
-        tmmf_css = (
-            STREAMLIT_TMMF_SUBPAGE_CSS.replace("<style>", "")
-            .replace("</style>", "")
-            .strip()
-        )
+    deep_iframe_css = _deep_iframe_subpage_css_blob() if kind in ("tmmf", "stablecoins") else ""
     st.markdown(
-        f"<style>{inner_css}\n{SUBPAGE_STREAMLIT_CSS}\n{tmmf_css}</style>",
+        f"<style>{inner_css}\n{SUBPAGE_STREAMLIT_CSS}\n{deep_iframe_css}</style>",
         unsafe_allow_html=True,
     )
 
@@ -2254,11 +2287,15 @@ def configure_subpage(*, page_title: str, active: str, style_kind: str = "articl
     inject_subpage_styles(kind=style_kind)
     inject_streamlit_nav_router()
     components.html(HOME_IFRAME_HEIGHT_SYNC_JS, height=0, width=0)
-    if style_kind == "tmmf":
+    if style_kind in ("tmmf", "stablecoins"):
         inject_streamlit_table_fullscreen_host()
-    tmmf_page_class = " streamlit-tmmf-iframe-page" if style_kind == "tmmf" else ""
+    iframe_page_class = ""
+    if style_kind == "tmmf":
+        iframe_page_class = " streamlit-tmmf-iframe-page"
+    elif style_kind == "stablecoins":
+        iframe_page_class = " streamlit-stablecoins-iframe-page"
     st.markdown(
-        f'<span class="streamlit-subpage-active{tmmf_page_class}" hidden aria-hidden="true"></span>',
+        f'<span class="streamlit-subpage-active{iframe_page_class}" hidden aria-hidden="true"></span>',
         unsafe_allow_html=True,
     )
     render_subpage_nav(active=active)
