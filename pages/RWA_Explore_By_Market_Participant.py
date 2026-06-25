@@ -1,4 +1,4 @@
-"""RWA.xyz hub index: Networks, Platforms, and Asset Managers (same previews as the home hub)."""
+"""RWA.xyz hub index: Networks, Platforms, and Asset Managers previews."""
 
 from __future__ import annotations
 
@@ -9,57 +9,43 @@ _REPO = Path(__file__).resolve().parent.parent
 if str(_REPO) not in sys.path:
     sys.path.insert(0, str(_REPO))
 
-import streamlit as st
-
-from home_layout import (
-    ETP_FULLPAGE_AUM_LINE_CSS,
-    STREAMLIT_TABLE_UNIFY_CSS,
-    rwa_xyz_mirror_footer_text,
-    section_label_teal,
+from streamlit_site_parity import (
+    _streamlit_page_href,
+    configure_subpage,
+    related_chips_html,
+    render_subpage_footer,
 )
-from news_feeds import (
-    app_shared_layout_css,
-    article_styles_markdown,
-    render_subpage_sidebar,
-    render_subpage_top_bar,
+from streamlit_rwa_explore_static import (
+    _cached_rwa_explore_iframe_payloads,
+    render_rwa_explore_body_iframe,
 )
-from price_ticker import show_price_ticker
-from rwa_league.explore_nav import render_rwa_explore_top_nav_button
-from rwa_league.widgets import show_rwa_explore_by_market_participant_widget
 
 
 def main() -> None:
-    st.set_page_config(
+    configure_subpage(
         page_title="Explore by Market Participant — Digital Assets Dashboard",
-        page_icon="◆",
-        layout="wide",
-        initial_sidebar_state="expanded",
+        active="explore_participant",
+        style_kind="rwa_explore_mp",
+    )
+    related = related_chips_html(
+        (_streamlit_page_href("rwa_global"), "RWA market overview"),
+        (_streamlit_page_href("explore_asset"), "Explore by asset type"),
+        (_streamlit_page_href("networks"), "Networks"),
+        (_streamlit_page_href("platforms"), "Platforms"),
+        (_streamlit_page_href("asset_managers"), "Asset Managers"),
+        ("/?jd_scroll=onchain", "Home on-chain preview"),
     )
 
-    render_subpage_top_bar()
-    render_rwa_explore_top_nav_button(key="top_home_rwa_explore_market_participant")
-    st.markdown(article_styles_markdown(), unsafe_allow_html=True)
-    st.markdown(app_shared_layout_css(), unsafe_allow_html=True)
-    st.markdown(STREAMLIT_TABLE_UNIFY_CSS + ETP_FULLPAGE_AUM_LINE_CSS, unsafe_allow_html=True)
-    show_price_ticker()
-    render_subpage_sidebar(key_prefix="rwa_explore_market_participant", current="rwa_explore_market_participant")
-
-    st.markdown(
-        section_label_teal("Explore by Market Participant", placement="first"),
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">'
-        "<strong>On-chain RWA</strong> by participant: short <strong>RWA.xyz</strong> previews for "
-        "<strong>Networks</strong>, <strong>Platforms</strong>, and <strong>Asset Managers</strong>. "
-        "Use <strong>Open full page</strong> in each section for search, charts, and full tables.</p>",
-        unsafe_allow_html=True,
+    payloads = _cached_rwa_explore_iframe_payloads("explore_participant")
+    render_rwa_explore_body_iframe(
+        kind="explore_participant",
+        payloads=payloads,
+        related_chips=related,
+        back_href=_streamlit_page_href("rwa_global"),
+        back_label="← RWA Global Market Overview",
     )
 
-    show_rwa_explore_by_market_participant_widget(preview_rows=8)
-
-    st.divider()
-    st.caption(rwa_xyz_mirror_footer_text())
+    render_subpage_footer(label="Explore by Market Participant")
 
 
 main()

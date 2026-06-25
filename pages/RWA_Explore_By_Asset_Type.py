@@ -1,4 +1,4 @@
-"""RWA.xyz hub index: Stablecoins, US Treasuries, and Tokenized Stocks (same previews as the home hub)."""
+"""RWA.xyz hub index: Stablecoins, US Treasuries, and Tokenized Stocks previews."""
 
 from __future__ import annotations
 
@@ -9,54 +9,42 @@ _REPO = Path(__file__).resolve().parent.parent
 if str(_REPO) not in sys.path:
     sys.path.insert(0, str(_REPO))
 
-import streamlit as st
-
-from home_layout import (
-    ETP_FULLPAGE_AUM_LINE_CSS,
-    STREAMLIT_TABLE_UNIFY_CSS,
-    rwa_xyz_mirror_footer_text,
-    section_label_teal,
+from streamlit_site_parity import (
+    _streamlit_page_href,
+    configure_subpage,
+    related_chips_html,
+    render_subpage_footer,
 )
-from news_feeds import (
-    app_shared_layout_css,
-    article_styles_markdown,
-    render_subpage_sidebar,
-    render_subpage_top_bar,
+from streamlit_rwa_explore_static import (
+    _cached_rwa_explore_iframe_payloads,
+    render_rwa_explore_body_iframe,
 )
-from price_ticker import show_price_ticker
-from rwa_league.explore_nav import render_rwa_explore_top_nav_button
-from rwa_league.widgets import show_rwa_explore_by_asset_type_widget
 
 
 def main() -> None:
-    st.set_page_config(
+    configure_subpage(
         page_title="Explore by Asset Type — Digital Assets Dashboard",
-        page_icon="◆",
-        layout="wide",
-        initial_sidebar_state="expanded",
+        active="explore_asset",
+        style_kind="rwa_explore_at",
+    )
+    related = related_chips_html(
+        (_streamlit_page_href("rwa_global"), "RWA market overview"),
+        (_streamlit_page_href("explore_participant"), "Explore by participant"),
+        (_streamlit_page_href("stablecoins"), "Stablecoins"),
+        (_streamlit_page_href("treasuries"), "U.S. Treasuries"),
+        ("/?jd_scroll=onchain", "Home on-chain preview"),
     )
 
-    render_subpage_top_bar()
-    render_rwa_explore_top_nav_button(key="top_home_rwa_explore_asset_type")
-    st.markdown(article_styles_markdown(), unsafe_allow_html=True)
-    st.markdown(app_shared_layout_css(), unsafe_allow_html=True)
-    st.markdown(STREAMLIT_TABLE_UNIFY_CSS + ETP_FULLPAGE_AUM_LINE_CSS, unsafe_allow_html=True)
-    show_price_ticker()
-    render_subpage_sidebar(key_prefix="rwa_explore_asset_type", current="rwa_explore_asset_type")
-
-    st.markdown(section_label_teal("Explore by Asset Type", placement="first"), unsafe_allow_html=True)
-    st.markdown(
-        '<p class="jd-hub-dek jd-hub-dek-fullbleed jd-hub-dek--large">'
-        "<strong>On-chain RWA</strong> by asset: short <strong>RWA.xyz</strong> previews for "
-        "<strong>Stablecoins</strong>, <strong>US Treasuries</strong>, and <strong>Tokenized Stocks</strong>. "
-        "Use <strong>Open full table</strong> in each section for search, charts, and the full league views.</p>",
-        unsafe_allow_html=True,
+    payloads = _cached_rwa_explore_iframe_payloads("explore_asset")
+    render_rwa_explore_body_iframe(
+        kind="explore_asset",
+        payloads=payloads,
+        related_chips=related,
+        back_href=_streamlit_page_href("rwa_global"),
+        back_label="← RWA Global Market Overview",
     )
 
-    show_rwa_explore_by_asset_type_widget(preview_rows=8)
-
-    st.divider()
-    st.caption(rwa_xyz_mirror_footer_text())
+    render_subpage_footer(label="Explore by Asset Type")
 
 
 main()
