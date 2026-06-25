@@ -1237,29 +1237,24 @@ a.hub-panel-surface:hover,
 
 @media (min-width: 960px) {
   .home-main-split {
-    /* Narrow headline rail (~22% at max width); main column holds RWA / ETP / crypto */
+    /* Narrow headline rail; main column holds KPI legend + market zones */
     grid-template-columns: minmax(13.5rem, 16rem) minmax(0, 1fr);
+    grid-template-rows: auto;
     gap: 1.75rem;
-  }
-
-  .home-main-split {
-    grid-template-rows: auto 1fr;
-  }
-
-  .home-kpi-legend-once {
-    grid-column: 2;
-    grid-row: 1;
-    margin-bottom: 0;
   }
 
   .home-markets-stack {
     grid-column: 2;
-    grid-row: 2;
+    grid-row: 1;
+  }
+
+  .home-markets-stack > .home-kpi-legend-once {
+    margin-bottom: 0.85rem;
   }
 
   .home-news-rail {
     grid-column: 1;
-    grid-row: 1 / -1;
+    grid-row: 1;
     align-self: start;
     position: sticky;
     top: var(--home-news-rail-top, 4.25rem);
