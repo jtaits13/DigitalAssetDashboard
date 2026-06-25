@@ -202,6 +202,7 @@ def load_etp_iframe_payloads(*, user_agent: str) -> dict[str, Any]:
     pack = build_etp_page_payloads(
         user_agent=user_agent,
         live_cache_path=_DATA / "etp_live_cache.json",
+        for_streamlit=True,
     )
     return pack["payloads"]
 
@@ -225,13 +226,16 @@ def _static_etp_payload_fallback(*, error: str = "") -> dict[str, Any]:
 
 
 def get_etp_iframe_payloads(*, user_agent: str) -> dict[str, Any]:
-    try:
-        return load_etp_iframe_payloads(user_agent=user_agent)
-    except Exception as exc:
-        fallback = _static_etp_payload_fallback(error=str(exc))
-        if fallback:
-            return fallback
-        raise
+    from streamlit_payload_stale_first import mark_payload_map_stale, resolve_payload_stale_first
+
+    stale = _static_etp_payload_fallback()
+
+    return resolve_payload_stale_first(
+        page_key="etps",
+        load_stale=lambda: stale or None,
+        load_live_cached=lambda: _cached_etp_iframe_payloads(user_agent),
+        mark_stale=lambda payloads, err: mark_payload_map_stale(payloads, err),
+    )
 
 
 @st.cache_resource(show_spinner=False)

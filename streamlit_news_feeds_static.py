@@ -255,14 +255,20 @@ def load_news_feed_iframe_payloads(kind: str) -> dict[str, Any]:
 
 
 def get_news_feed_iframe_payloads(kind: str) -> dict[str, Any]:
-    feed_key = NEWS_FEED_SPECS[kind].feed_key
-    try:
-        return load_news_feed_iframe_payloads(kind)
-    except Exception as exc:
-        fallback = _static_news_feed_fallback(feed_key=feed_key, error=str(exc))
-        if fallback:
-            return fallback
-        raise
+    from streamlit_payload_stale_first import mark_payload_map_stale, resolve_payload_stale_first
+
+    spec = NEWS_FEED_SPECS[kind]
+
+    def _stale() -> dict[str, Any] | None:
+        pack = _static_news_feed_fallback(feed_key=spec.feed_key)
+        return pack or None
+
+    return resolve_payload_stale_first(
+        page_key=f"news_{kind}",
+        load_stale=_stale,
+        load_live_cached=lambda: _cached_news_feed_iframe_payloads(kind),
+        mark_stale=lambda payloads, err: mark_payload_map_stale(payloads, err),
+    )
 
 
 @st.cache_resource(show_spinner=False)

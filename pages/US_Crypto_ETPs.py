@@ -17,7 +17,7 @@ from streamlit_site_parity import (
     render_subpage_footer,
 )
 from streamlit_etps_static import (
-    _cached_etp_iframe_payloads,
+    get_etp_iframe_payloads,
     render_etps_body_iframe,
 )
 
@@ -36,7 +36,7 @@ def main() -> None:
         (_streamlit_page_href("tmmf"), "Tokenized MMFs"),
     )
 
-    payloads = _cached_etp_iframe_payloads(ua)
+    payloads = get_etp_iframe_payloads(ua)
     render_etps_body_iframe(payloads=payloads, related_chips=related)
 
     render_subpage_footer(label="U.S. ETPs")

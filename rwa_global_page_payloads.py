@@ -93,11 +93,17 @@ def build_rwa_global_page_payload(
 ) -> dict[str, Any]:
     """Build RWA Global Market Overview JSON (``rwa_global_market.json`` shape)."""
     import pandas as pd
-    from rwa_league.client import fetch_rwa_home_data
     from rwa_league.dataframe_table import build_rwa_dataframe
 
     if rwa_rows is None or rwa_kpis is None:
-        fetched_rows, fetched_kpis, fetched_err = fetch_rwa_home_data()
+        if for_streamlit:
+            from rwa_streamlit_fetch_cache import cached_rwa_home_data
+
+            fetched_rows, fetched_kpis, fetched_err = cached_rwa_home_data()
+        else:
+            from rwa_league.client import fetch_rwa_home_data
+
+            fetched_rows, fetched_kpis, fetched_err = fetch_rwa_home_data()
         rwa_rows = fetched_rows if rwa_rows is None else rwa_rows
         rwa_kpis = fetched_kpis if rwa_kpis is None else rwa_kpis
         rwa_err = fetched_err if rwa_err is None else rwa_err

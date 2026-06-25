@@ -12,6 +12,7 @@ import streamlit.components.v1 as components
 
 _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
+_DATA = _STATIC / "data"
 
 _TMMF_JS_DEPS = (
     "static-base.js",
@@ -367,21 +368,49 @@ _TMMF_ZONE_BODY = """
 """
 
 
+def _static_tmmf_deep_fallback(*, error: str = "") -> dict[str, Any]:
+    path = _DATA / "rwa_tokenized_mmf.json"
+    if not path.is_file():
+        return {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    if not isinstance(data, dict):
+        return {}
+    if error:
+        data = dict(data)
+        data["error"] = error
+        data["stale"] = True
+    return data
+
+
 def load_tmmf_deep_payload() -> dict[str, Any]:
     """Live TMMF deep-page JSON (same shape as ``static_home/data/rwa_tokenized_mmf.json``)."""
-    from key_observations.feeds import load_takeaway_articles
-    from rwa_league.client import fetch_rwa_tokenized_mmf_data
+    from rwa_streamlit_fetch_cache import cached_rwa_tokenized_mmf_data
     from scripts.export_static_site_data import _build_rwa_tokenized_mmf_deep_payload
 
-    mmf_pack = fetch_rwa_tokenized_mmf_data()
+    mmf_pack = cached_rwa_tokenized_mmf_data()
     manifest: dict[str, Any] = {"errors": []}
     payload = _build_rwa_tokenized_mmf_deep_payload(
         mmf_pack,
         manifest,
-        load_takeaway_articles(),
+        [],
     )
     payload["back_href"] = "/?jd_scroll=tmmf"
     return payload
+
+
+def get_tmmf_deep_payload() -> dict[str, Any]:
+    from streamlit_payload_stale_first import mark_dict_stale, resolve_payload_stale_first
+
+    stale = _static_tmmf_deep_fallback()
+    return resolve_payload_stale_first(
+        page_key="tmmf",
+        load_stale=lambda: stale or None,
+        load_live_cached=_cached_tmmf_deep_payload,
+        mark_stale=mark_dict_stale,
+    )
 
 
 def _json_for_script(payload: dict[str, Any]) -> str:
@@ -605,7 +634,7 @@ window.loadJson = function () {{
 </html>"""
 
 
-@st.cache_data(show_spinner="Loading tokenized MMF data…", ttl=300)
+@st.cache_data(show_spinner=False, ttl=3600)
 def _cached_tmmf_deep_payload() -> dict[str, Any]:
     return load_tmmf_deep_payload()
 

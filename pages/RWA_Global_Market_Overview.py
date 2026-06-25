@@ -16,7 +16,7 @@ from streamlit_site_parity import (
     render_subpage_footer,
 )
 from streamlit_rwa_global_static import (
-    _cached_rwa_global_iframe_payloads,
+    get_rwa_global_iframe_payloads,
     render_rwa_global_body_iframe,
 )
 
@@ -34,7 +34,7 @@ def main() -> None:
         (_streamlit_page_href("crypto"), "Crypto prices"),
     )
 
-    payloads = _cached_rwa_global_iframe_payloads()
+    payloads = get_rwa_global_iframe_payloads()
     render_rwa_global_body_iframe(payloads=payloads, related_chips=related)
 
     render_subpage_footer(label="RWA Global Market")

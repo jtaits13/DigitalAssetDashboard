@@ -141,7 +141,11 @@ def build_rwa_explore_asset_type_page_payload(
         TOKENIZED_STOCKS_RWA_LINK_LABEL,
     )
 
-    if sc_pack is None:
+    if sc_pack is None and tr_pack is None and st_pack is None and mmf_pack is None and for_streamlit:
+        from rwa_streamlit_fetch_cache import fetch_explore_asset_type_packs_parallel
+
+        sc_pack, tr_pack, st_pack, mmf_pack = fetch_explore_asset_type_packs_parallel()
+    elif sc_pack is None:
         try:
             sc_pack = fetch_rwa_stablecoins_data()
         except Exception as exc:
@@ -400,7 +404,11 @@ def build_rwa_explore_market_participant_page_payload(
         PLATFORMS_RWA_URL,
     )
 
-    if net_pack is None:
+    if net_pack is None and plat_pack is None and am_pack is None and for_streamlit:
+        from rwa_streamlit_fetch_cache import fetch_explore_participant_packs_parallel
+
+        net_pack, plat_pack, am_pack = fetch_explore_participant_packs_parallel()
+    elif net_pack is None:
         try:
             net_pack = fetch_rwa_networks_page_data()
         except Exception as exc:

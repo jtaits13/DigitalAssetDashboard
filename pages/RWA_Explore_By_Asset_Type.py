@@ -16,7 +16,7 @@ from streamlit_site_parity import (
     render_subpage_footer,
 )
 from streamlit_rwa_explore_static import (
-    _cached_rwa_explore_iframe_payloads,
+    get_rwa_explore_iframe_payloads,
     render_rwa_explore_body_iframe,
 )
 
@@ -35,7 +35,7 @@ def main() -> None:
         ("/?jd_scroll=onchain", "Home on-chain preview"),
     )
 
-    payloads = _cached_rwa_explore_iframe_payloads("explore_asset")
+    payloads = get_rwa_explore_iframe_payloads("explore_asset")
     render_rwa_explore_body_iframe(
         kind="explore_asset",
         payloads=payloads,

@@ -126,6 +126,21 @@ def _clear_all_caches() -> None:
     from streamlit_rwa_global_static import _cached_rwa_global_iframe_payloads
 
     _cached_rwa_global_iframe_payloads.clear()
+    from streamlit_rwa_explore_static import _cached_rwa_explore_iframe_payloads
+
+    _cached_rwa_explore_iframe_payloads.clear()
+    from streamlit_stablecoins_static import _cached_stablecoins_deep_payload
+
+    _cached_stablecoins_deep_payload.clear()
+    from streamlit_tmmf_static import _cached_tmmf_deep_payload
+
+    _cached_tmmf_deep_payload.clear()
+    from rwa_streamlit_fetch_cache import clear_rwa_streamlit_fetch_cache
+
+    clear_rwa_streamlit_fetch_cache()
+    from streamlit_payload_stale_first import clear_stale_first_state
+
+    clear_stale_first_state()
 
 
 def main() -> None:

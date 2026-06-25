@@ -2658,6 +2658,8 @@ def inner_page_zone_close() -> None:
 def render_subpage_footer(*, label: str) -> None:
     from datetime import datetime, timezone
 
+    from streamlit_payload_stale_first import maybe_rerun_after_stale_first
+
     now = datetime.now(timezone.utc)
     month = now.strftime("%b %Y")
     iso = now.strftime("%Y-%m")
@@ -2666,6 +2668,7 @@ def render_subpage_footer(*, label: str) -> None:
         f'<time datetime="{escape(iso)}">{escape(month)}</time></footer>',
         unsafe_allow_html=True,
     )
+    maybe_rerun_after_stale_first()
 
 
 def inject_site_styles(*, include_static: bool = True) -> None:

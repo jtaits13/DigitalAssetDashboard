@@ -16,7 +16,7 @@ from streamlit_site_parity import (
     render_subpage_footer,
 )
 from streamlit_crypto_prices_static import (
-    _cached_crypto_prices_iframe_payloads,
+    get_crypto_iframe_payloads,
     render_crypto_prices_body_iframe,
 )
 
@@ -34,7 +34,7 @@ def main() -> None:
         ("/?jd_scroll=news", "News Hub"),
     )
 
-    payloads = _cached_crypto_prices_iframe_payloads()
+    payloads = get_crypto_iframe_payloads()
     render_crypto_prices_body_iframe(payloads=payloads, related_chips=related)
 
     render_subpage_footer(label="Crypto Prices")

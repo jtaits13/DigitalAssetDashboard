@@ -178,13 +178,15 @@ def load_rwa_global_iframe_payloads() -> dict[str, Any]:
 
 
 def get_rwa_global_iframe_payloads() -> dict[str, Any]:
-    try:
-        return load_rwa_global_iframe_payloads()
-    except Exception as exc:
-        fallback = _static_rwa_global_payload_fallback(error=str(exc))
-        if fallback:
-            return fallback
-        raise
+    from streamlit_payload_stale_first import mark_payload_map_stale, resolve_payload_stale_first
+
+    stale = _static_rwa_global_payload_fallback()
+    return resolve_payload_stale_first(
+        page_key="rwa_global",
+        load_stale=lambda: stale or None,
+        load_live_cached=_cached_rwa_global_iframe_payloads,
+        mark_stale=lambda payloads, err: mark_payload_map_stale(payloads, err),
+    )
 
 
 @st.cache_resource(show_spinner=False)

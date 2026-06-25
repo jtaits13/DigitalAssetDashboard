@@ -11,7 +11,7 @@ if str(_REPO) not in sys.path:
 
 from streamlit_site_parity import configure_subpage, render_subpage_footer
 from streamlit_news_feeds_static import (
-    _cached_news_feed_iframe_payloads,
+    get_news_feed_iframe_payloads,
     render_news_feed_body_iframe,
 )
 
@@ -22,7 +22,7 @@ def main() -> None:
         active="news",
         style_kind="news_feed",
     )
-    payloads = _cached_news_feed_iframe_payloads("regulatory")
+    payloads = get_news_feed_iframe_payloads("regulatory")
     render_news_feed_body_iframe(kind="regulatory", payloads=payloads)
     render_subpage_footer(label="Regulatory headlines")
 

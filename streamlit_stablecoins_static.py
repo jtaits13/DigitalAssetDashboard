@@ -18,6 +18,7 @@ from streamlit_tmmf_static import (
 
 _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
+_DATA = _STATIC / "data"
 
 _STABLE_JS_DEPS = (
     "static-base.js",
@@ -133,21 +134,49 @@ _STABLE_ZONE_BODY = """
 """
 
 
+def _static_stablecoins_deep_fallback(*, error: str = "") -> dict[str, Any]:
+    path = _DATA / "rwa_stablecoins.json"
+    if not path.is_file():
+        return {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    if not isinstance(data, dict):
+        return {}
+    if error:
+        data = dict(data)
+        data["error"] = error
+        data["stale"] = True
+    return data
+
+
 def load_stablecoins_deep_payload() -> dict[str, Any]:
     """Live Stablecoins deep-page JSON (same shape as ``static_home/data/rwa_stablecoins.json``)."""
-    from key_observations.feeds import load_takeaway_articles
-    from rwa_league.client import fetch_rwa_stablecoins_data
+    from rwa_streamlit_fetch_cache import cached_rwa_stablecoins_data
     from scripts.export_static_site_data import _build_rwa_stablecoins_deep_payload
 
-    sc_pack = fetch_rwa_stablecoins_data()
+    sc_pack = cached_rwa_stablecoins_data()
     manifest: dict[str, Any] = {"errors": []}
     payload = _build_rwa_stablecoins_deep_payload(
         sc_pack,
         manifest,
-        load_takeaway_articles(),
+        [],
     )
     payload["back_href"] = "/?jd_scroll=stablecoins"
     return payload
+
+
+def get_stablecoins_deep_payload() -> dict[str, Any]:
+    from streamlit_payload_stale_first import mark_dict_stale, resolve_payload_stale_first
+
+    stale = _static_stablecoins_deep_fallback()
+    return resolve_payload_stale_first(
+        page_key="stablecoins",
+        load_stale=lambda: stale or None,
+        load_live_cached=_cached_stablecoins_deep_payload,
+        mark_stale=mark_dict_stale,
+    )
 
 
 @st.cache_resource(show_spinner=False)
@@ -356,7 +385,7 @@ window.loadJson = function () {{
 </html>"""
 
 
-@st.cache_data(show_spinner="Loading stablecoins data…", ttl=300)
+@st.cache_data(show_spinner=False, ttl=3600)
 def _cached_stablecoins_deep_payload() -> dict[str, Any]:
     return load_stablecoins_deep_payload()
 

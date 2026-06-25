@@ -1738,12 +1738,18 @@ def build_etp_page_payloads(
     user_agent: str | None = None,
     errors_out: list[str] | None = None,
     live_cache_path: Path | None = None,
+    for_streamlit: bool = False,
 ) -> dict[str, Any]:
     """Build U.S. ETP page JSON payloads (etps, kpis, aum series, pulse, manifest)."""
     ua = user_agent or DEFAULT_UA
     etp_errors: list[str] = errors_out if errors_out is not None else []
 
-    etp_result = fetch_crypto_etps_enriched(ua)
+    if for_streamlit:
+        from crypto_etps.client import fetch_crypto_etps_list
+
+        etp_result = fetch_crypto_etps_list(ua)
+    else:
+        etp_result = fetch_crypto_etps_enriched(ua)
     if etp_result.error:
         etp_errors.append(f"ETP scrape: {etp_result.error}")
     rows = sorted_by_assets(etp_result.rows)
@@ -1820,21 +1826,24 @@ def build_etp_page_payloads(
     }
 
     etf_articles: list[dict[str, Any]] = []
-    try:
-        from crypto_etps.etp_takeaways import build_etp_key_observations_html
-
-        etf_articles, etf_feed_errs = load_all_etf_etp_news_cached(extra_feeds=[STATIC_THE_DEFIANT_FEED])
-        for e in etf_feed_errs:
-            etp_errors.append(f"ETF news RSS: {e}")
-        kpis["key_observations_html"] = build_etp_key_observations_html(
-            rows,
-            net_flow_1m_display=kpis["net_flow_1m_display"],
-            net_flow_1m_pct=net_flow_1m_pct,
-            articles=etf_articles,
-        )
-    except Exception as exc:
+    if for_streamlit:
         kpis["key_observations_html"] = ""
-        etp_errors.append(f"ETP key observations HTML: {exc}")
+    else:
+        try:
+            from crypto_etps.etp_takeaways import build_etp_key_observations_html
+
+            etf_articles, etf_feed_errs = load_all_etf_etp_news_cached(extra_feeds=[STATIC_THE_DEFIANT_FEED])
+            for e in etf_feed_errs:
+                etp_errors.append(f"ETF news RSS: {e}")
+            kpis["key_observations_html"] = build_etp_key_observations_html(
+                rows,
+                net_flow_1m_display=kpis["net_flow_1m_display"],
+                net_flow_1m_pct=net_flow_1m_pct,
+                articles=etf_articles,
+            )
+        except Exception as exc:
+            kpis["key_observations_html"] = ""
+            etp_errors.append(f"ETP key observations HTML: {exc}")
 
     pulse_items = [_article_json(a) for a in etf_articles[:ETP_PULSE_PREVIEW_COUNT]]
     payloads: dict[str, Any] = {

@@ -269,11 +269,10 @@ def _static_crypto_payload_fallback(*, error: str = "") -> dict[str, Any]:
 
 def load_crypto_prices_iframe_payloads() -> dict[str, Any]:
     """Live crypto page JSON (kpis, prices, chart) matching static export shape."""
-    from key_observations.feeds import load_takeaway_articles
     from scripts.export_static_site_data import build_crypto_prices_page_payloads
 
     pack = build_crypto_prices_page_payloads(
-        news_articles=load_takeaway_articles(),
+        news_articles=None,
         blurb_cache_path=_DATA / "crypto_about_blurbs_cache.json",
         skip_about_blurbs=True,
         live_cache_path=_DATA / "crypto_live_cache.json",
@@ -287,13 +286,16 @@ def load_crypto_prices_iframe_payloads() -> dict[str, Any]:
 
 def get_crypto_iframe_payloads() -> dict[str, Any]:
     """Live payloads with static JSON fallback so the iframe always renders."""
-    try:
-        return load_crypto_prices_iframe_payloads()
-    except Exception as exc:
-        fallback = _static_crypto_payload_fallback(error=str(exc))
-        if fallback:
-            return fallback
-        raise
+    from streamlit_payload_stale_first import mark_payload_map_stale, resolve_payload_stale_first
+
+    stale = _static_crypto_payload_fallback()
+
+    return resolve_payload_stale_first(
+        page_key="crypto_prices",
+        load_stale=lambda: stale or None,
+        load_live_cached=_cached_crypto_prices_iframe_payloads,
+        mark_stale=lambda payloads, err: mark_payload_map_stale(payloads, err),
+    )
 
 
 @st.cache_resource(show_spinner=False)

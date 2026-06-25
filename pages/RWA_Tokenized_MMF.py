@@ -18,7 +18,7 @@ from streamlit_site_parity import (
     render_subpage_footer,
 )
 from streamlit_tmmf_static import (
-    _cached_tmmf_deep_payload,
+    get_tmmf_deep_payload,
     render_tmmf_body_iframe,
 )
 
@@ -36,7 +36,7 @@ def main() -> None:
         (_streamlit_page_href("rwa_global"), "RWA market overview"),
     )
 
-    payload = _cached_tmmf_deep_payload()
+    payload = get_tmmf_deep_payload()
     render_tmmf_body_iframe(payload=payload, related_chips=related)
 
     render_subpage_footer(label="Tokenized Money Market Funds")
