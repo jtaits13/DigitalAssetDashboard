@@ -51,6 +51,12 @@ def main() -> int:
         print("FAIL: rwa global host CSS marker")
         return 1
 
+    import rwa_global_page_payloads as payload_mod
+
+    if "scripts.export_static_site_data" in open(payload_mod.__file__, encoding="utf-8").read():
+        print("FAIL: payload module must not import scripts.export_static_site_data")
+        return 1
+
     print("verify_rwa_global_static: ok")
     return 0
 

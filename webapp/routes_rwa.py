@@ -141,7 +141,7 @@ def _rwa_std_head(*, title: str, subtitle: str) -> str:
 
 @router.get("/rwa/global", response_class=HTMLResponse)
 async def rwa_global_market(request: Request, q: str = "") -> HTMLResponse:
-    from pages.RWA_Global_Market_Overview import RWA_GLOBAL_MARKET_MACRO_CONTEXT_HTML  # noqa: PLC0415
+    from rwa_global_macro_context import RWA_GLOBAL_MARKET_MACRO_CONTEXT_HTML  # noqa: PLC0415
 
     rows, kpis, err = load_rwa_global_market_cached()
     search_q = (q or "").strip()

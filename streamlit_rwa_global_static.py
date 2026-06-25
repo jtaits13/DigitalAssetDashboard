@@ -171,7 +171,7 @@ def _static_rwa_global_payload_fallback(*, error: str = "") -> dict[str, Any]:
 
 
 def load_rwa_global_iframe_payloads() -> dict[str, Any]:
-    from scripts.export_static_site_data import build_rwa_global_page_payload
+    from rwa_global_page_payloads import build_rwa_global_page_payload
 
     payload = build_rwa_global_page_payload(for_streamlit=True)
     return {"rwa_global_market.json": payload}
