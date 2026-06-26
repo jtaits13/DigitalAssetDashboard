@@ -925,9 +925,13 @@ body.page-home.site-experience .home-internal-note a:hover {
 """
 
 
+_IFRAME_BODY_CSS_VERSION = 2
+
+
 @st.cache_resource(show_spinner=False)
-def _cached_iframe_body_stylesheet() -> str:
+def _cached_iframe_body_stylesheet(_css_version: int = _IFRAME_BODY_CSS_VERSION) -> str:
     """CSS for combined news + markets iframe (news sets height; markets scroll)."""
+    _ = _css_version
     chunks: list[str] = [
         "@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap');",
     ]
@@ -978,6 +982,7 @@ body.page-home.site-experience .home-news-rail--terminal {{
 }}
 body.page-home.site-experience .home-markets-stack {{
   display: block !important;
+  box-sizing: border-box;
   overflow-x: hidden !important;
   overflow-y: auto !important;
   min-height: 0;

@@ -31,6 +31,10 @@ def main() -> int:
         ('data-home-fullscreen-key="js-home-etp"' in html, "etp button key"),
         ("__HOME_FULLSCREEN_TABLES" in html, "embedded full table payload"),
         ("jpm-table-fullscreen-open" in html, "postMessage open type"),
+        ('<div class="home-markets-stack">\n' in html or '<div class="home-markets-stack">' in html, "markets stack wrapper"),
+        ("home-kpi-legend-once" in html and html.index("home-markets-stack") < html.index("home-kpi-legend-once"), "kpi legend inside markets stack"),
+        ("notifyParentHeight" in html, "dynamic height parent notify"),
+        ("jpm-home-body-height" in html, "iframe height postMessage"),
     ]
     for ok, label in checks:
         if not ok:

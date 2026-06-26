@@ -807,9 +807,10 @@ def build_home_body_iframe_html(*, news_rail: str, **zone_data: Any) -> str:
 <div class="page-shell">
 {home_internal_note_html().strip()}
 <div class="home-main-split">
-{kpi_legend}
-<div class="home-markets-stack">{markets}</div>
 {news_rail.strip()}
+<div class="home-markets-stack">
+{kpi_legend}
+{markets}</div>
 </div>
 </div>
 <script>
@@ -849,21 +850,23 @@ window.__HOME_FULLSCREEN_TABLES = {fullscreen_json};
   function syncHomeSplitHeights() {{
     var rail = document.querySelector(".home-news-rail");
     var markets = document.querySelector(".home-markets-stack");
-    var legend = document.querySelector(".home-kpi-legend-once");
     var split = document.querySelector(".home-main-split");
     if (!rail || !markets || !split) return;
-    var h = rail.offsetHeight;
+    var railRect = rail.getBoundingClientRect();
+    var h = Math.ceil(Math.max(rail.offsetHeight, rail.scrollHeight, railRect.height));
     if (h < 200) return;
-    var marketsH = h;
-    if (window.matchMedia("(min-width: 960px)").matches) {{
-      var legendH = legend ? legend.offsetHeight : 0;
-      var rowGap = parseFloat(window.getComputedStyle(split).rowGap) || 0;
-      marketsH = Math.max(120, h - legendH - rowGap);
+    var desktop = window.matchMedia("(min-width: 960px)").matches;
+    if (desktop) {{
+      markets.style.height = h + "px";
+      markets.style.maxHeight = h + "px";
+      markets.style.overflowY = "auto";
+      split.style.minHeight = h + "px";
+    }} else {{
+      markets.style.height = "";
+      markets.style.maxHeight = "";
+      markets.style.overflowY = "";
+      split.style.minHeight = "";
     }}
-    markets.style.height = marketsH + "px";
-    markets.style.maxHeight = marketsH + "px";
-    markets.style.overflowY = "auto";
-    split.style.minHeight = h + "px";
     split.style.height = "";
     split.style.maxHeight = "";
     split.style.overflow = "";
@@ -873,6 +876,31 @@ window.__HOME_FULLSCREEN_TABLES = {fullscreen_json};
       shell.style.maxHeight = "";
       shell.style.overflow = "";
     }}
+    notifyParentHeight();
+  }}
+  function notifyParentHeight() {{
+    if (!window.parent || window.parent === window) return;
+    var shell = document.querySelector(".page-shell");
+    var rail = document.querySelector(".home-news-rail");
+    if (!shell || !rail) return;
+    var shellTop = shell.getBoundingClientRect().top;
+    var railRect = rail.getBoundingClientRect();
+    var pb = parseFloat(window.getComputedStyle(shell).paddingBottom) || 0;
+    var iframeH = Math.ceil(railRect.bottom - shellTop + pb + 2);
+    if (iframeH > 80) {{
+      try {{
+        window.parent.postMessage({{ type: "jpm-home-body-height", height: iframeH }}, "*");
+      }} catch (e) {{}}
+    }}
+  }}
+  var syncScheduled = false;
+  function scheduleSync() {{
+    if (syncScheduled) return;
+    syncScheduled = true;
+    requestAnimationFrame(function () {{
+      syncScheduled = false;
+      syncHomeSplitHeights();
+    }});
   }}
   window.syncHomeSplitHeights = syncHomeSplitHeights;
   bindFilters();
@@ -881,13 +909,27 @@ window.__HOME_FULLSCREEN_TABLES = {fullscreen_json};
     bindFilters();
     syncHomeSplitHeights();
   }});
+  window.addEventListener("resize", scheduleSync);
   if (typeof ResizeObserver !== "undefined") {{
     var rail = document.querySelector(".home-news-rail");
-    if (rail) new ResizeObserver(syncHomeSplitHeights).observe(rail);
-    var legend = document.querySelector(".home-kpi-legend-once");
-    if (legend) new ResizeObserver(syncHomeSplitHeights).observe(legend);
+    if (rail) new ResizeObserver(scheduleSync).observe(rail);
+    var headlines = document.querySelector(".headline-list--rail");
+    if (headlines) new ResizeObserver(scheduleSync).observe(headlines);
   }}
-  [100, 400, 1000].forEach(function (ms) {{ setTimeout(syncHomeSplitHeights, ms); }});
+  if (typeof MutationObserver !== "undefined") {{
+    var list = document.querySelector(".headline-list--rail");
+    if (list) {{
+      new MutationObserver(scheduleSync).observe(list, {{
+        childList: true,
+        subtree: true,
+        characterData: true,
+      }});
+    }}
+  }}
+  if (document.fonts && document.fonts.ready) {{
+    document.fonts.ready.then(scheduleSync);
+  }}
+  [100, 400, 1000, 2500, 5000].forEach(function (ms) {{ setTimeout(syncHomeSplitHeights, ms); }});
 }})();
 </script>
 {iframe_internal_link_script()}
