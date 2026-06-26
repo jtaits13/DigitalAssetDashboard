@@ -475,6 +475,7 @@ def _select_section_ko_chunks(
     *html_sources: str,
     section_id: str,
     max_items: int,
+    executive_news_only: bool = False,
 ) -> list[str]:
     profile = _SECTION_KO[section_id]
     seen: set[str] = set()
@@ -489,6 +490,11 @@ def _select_section_ko_chunks(
                 continue
             if profile["reject"].search(plain):
                 continue
+            if executive_news_only and _is_news_ko_chunk(chunk):
+                from key_observations.week_headlines import executive_news_text_allowed
+
+                if not executive_news_text_allowed(plain):
+                    continue
             if section_id == "rwa":
                 lead = _ko_lead_text(chunk)
                 if re.search(r"in the news · (regulation|macro)", lead):
@@ -882,10 +888,16 @@ def _ko_bullets_html(
     fund_launch: Any | None = None,
     outlook: bool = False,
     section: bool = False,
+    executive_news_only: bool = False,
 ) -> str:
     profile = _SECTION_KO[section_id]
     topic_keys: tuple[str, ...] = profile["topic_keys"]
-    chunks = _select_section_ko_chunks(*html_sources, section_id=section_id, max_items=max_items)
+    chunks = _select_section_ko_chunks(
+        *html_sources,
+        section_id=section_id,
+        max_items=max_items,
+        executive_news_only=executive_news_only,
+    )
     if fund_launch:
         max_items = max(0, max_items - 1)
         chunks = chunks[:max_items]
@@ -1203,6 +1215,8 @@ def _section_block(
     section_divider: bool = False,
     fund_launch: Any | None = None,
     outlook: bool = False,
+    executive_news_only: bool = False,
+    scope_note: str = "",
 ) -> str:
     section_links = used_links if used_links is not None else set(reserved_headline_links or set())
     if ko_body_html is None:
@@ -1217,6 +1231,7 @@ def _section_block(
             fund_launch=fund_launch,
             outlook=outlook,
             section=outlook,
+            executive_news_only=executive_news_only,
         )
     else:
         bullets = ko_body_html
@@ -1229,6 +1244,7 @@ def _section_block(
     )
     takeaways_margin = f"{_OL_GAP_SM} 0 {_OL_GAP_XS}" if outlook else "0 0 0.55rem"
     takeaways = f'{_section_eyebrow(takeaways_label, margin=takeaways_margin, outlook=outlook)}{body}'
+    scope_html = _scope_note_html(scope_note, outlook=outlook)
     if outlook:
         top_pad = _OL_SECTION_AFTER_LINK_GAP if section_divider else _OL_GAP_XS
         title_pad = f"{_OL_GAP_SM} 0 {_OL_GAP_XS}" if section_divider else f"0 0 {_OL_GAP_XS}"
@@ -1241,6 +1257,7 @@ def _section_block(
             f'{_ol_font()}">{escape(title)}</h2></td></tr>'
             f'<tr><td style="padding:{_OL_GAP_SM} 0 0;">'
             f"{_kpi_strip_html(kpi_cells, outlook=True, section=True)}"
+            f"{scope_html}"
             f"{takeaways}"
             f'{_ol_centered_action_link_html(page_href, "Open full page →", sandwich=True)}'
             f"</td></tr></table>"
@@ -1259,6 +1276,7 @@ def _section_block(
   <tr>
     <td>
       {_kpi_strip_html(kpi_cells)}
+      {scope_html}
       {takeaways}
       {_centered_action_link_html(page_href, "Open full page →", sandwich=True)}
     </td>
@@ -1289,6 +1307,48 @@ def _explore_kpi_cells(explore: dict[str, dict[str, Any]], section_id: str, *, o
             str(k.get("value_display") or "—"),
             _fmt_pct(k.get("delta_30d_pct")),
             is_last=(i == len(kpis) - 1),
+            outlook=outlook,
+        )
+    return cells
+
+
+def _scope_note_html(text: str, *, outlook: bool = False) -> str:
+    body = str(text or "").strip()
+    if not body:
+        return ""
+    if body.lower().startswith("scope:"):
+        rest = body[6:].strip()
+        inner = (
+            f'<strong style="color:#4a5f6b;font-weight:700;">Scope:</strong> {escape(rest)}'
+        )
+    else:
+        inner = escape(body)
+    if outlook:
+        return (
+            f'<p style="margin:0 0 12px;font-size:12px;line-height:1.55;mso-line-height-rule:exactly;'
+            f'color:#5c6b7a;{_ol_font()}">{inner}</p>'
+        )
+    return (
+        f'<p style="margin:0 0 0.75rem;padding:0.35rem 0.55rem 0.35rem 0.65rem;font-size:12px;'
+        f"line-height:1.5;color:#5c6b7a;background:#f1f5f9;border-left:3px solid #b8ccd9;"
+        f'border-radius:0 5px 5px 0;font-family:inherit;">{inner}</p>'
+    )
+
+
+def _load_rwa_global_kpi_cells(*, outlook: bool = False) -> str:
+    from rwa_global_page_payloads import RWA_GLOBAL_NEWSLETTER_KPI_LABELS
+
+    payload = _read_json(DATA / "rwa_global_market.json") or {}
+    by_label = {str(k.get("label") or ""): k for k in (payload.get("kpis") or [])}
+    cells = ""
+    labels = list(RWA_GLOBAL_NEWSLETTER_KPI_LABELS)
+    for i, label in enumerate(labels):
+        k = by_label.get(label) or {}
+        cells += _kpi_row(
+            label if k else "—",
+            str(k.get("value_display") or "—"),
+            _fmt_pct(k.get("delta_30d_pct")),
+            is_last=(i == len(labels) - 1),
             outlook=outlook,
         )
     return cells
@@ -1999,10 +2059,19 @@ def build_newsletter_html(
     try:
         from key_observations.feeds import load_takeaway_articles
         from key_observations.page_ko import build_legacy_page_ko
-        from key_observations.week_headlines import pick_week_headlines_with_launches
+        from key_observations.week_headlines import (
+            pick_executive_week_headlines_with_launches,
+            pick_week_headlines_with_launches,
+        )
 
         articles = load_takeaway_articles(max_items=200)
-        week_headlines, fund_launches = pick_week_headlines_with_launches(articles, n=3)
+        is_executive = variant == "executive"
+        if is_executive:
+            week_headlines, fund_launches = pick_executive_week_headlines_with_launches(
+                articles, n=3
+            )
+        else:
+            week_headlines, fund_launches = pick_week_headlines_with_launches(articles, n=3)
         sc_ko = build_legacy_page_ko("stablecoins", articles)
         tre_ko = build_legacy_page_ko("us_treasuries", articles)
         stocks_ko = build_legacy_page_ko("tokenized_stocks", articles)
@@ -2012,9 +2081,9 @@ def build_newsletter_html(
         week_headlines = []
         fund_launches = {}
         sc_ko = tre_ko = stocks_ko = rwa_global_ko = ""
+        is_executive = variant == "executive"
 
     tmmf_ko = _load_tmmf_ko(articles)
-    is_executive = variant == "executive"
     ol = bool(outlook_body and is_executive)
     max_bullets = 2 if is_executive else 3
     newsletter_used_links: set[str] = set()
@@ -2026,6 +2095,7 @@ def build_newsletter_html(
         "max_bullets": max_bullets,
         "articles": articles,
         "used_links": newsletter_used_links,
+        "executive_news_only": is_executive,
     }
     headlines_block = _week_headlines_html(week_headlines, outlook=ol)
 
@@ -2058,16 +2128,19 @@ def build_newsletter_html(
     )
 
     # --- 3. RWA on-chain (tokenization-focused takeaways) ---
+    from rwa_global_page_payloads import RWA_GLOBAL_SCOPE_NOTE
+
     rwa_section = _section_block(
         "RWA — On-chain data",
         f"{site}/rwa-global.html",
-        _explore_kpi_cells(explore, "treasuries", outlook=ol),
+        _load_rwa_global_kpi_cells(outlook=ol),
         "",
         accent=_COLOR_BRAND,
         section_id="rwa",
         ko_html_sources=(rwa_global_ko, tre_ko, stocks_ko),
         section_divider=True,
         outlook=ol,
+        scope_note=RWA_GLOBAL_SCOPE_NOTE,
         **section_base_kw,
     )
 

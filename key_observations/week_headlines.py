@@ -336,6 +336,127 @@ def _score_cluster(
     return score, best_title, best_link, best_source, outlet_count
 
 
+def executive_news_text_allowed(text: str) -> bool:
+    """Whether plain text fits executive newsletter news/headline topics."""
+    text = re.sub(r"\s+", " ", (text or "").strip())
+    if not text or _EXECUTIVE_HEADLINE_EXCLUDE_RE.search(text):
+        return False
+    stub: dict[str, Any] = {"title": text, "summary": "", "source": "", "category": ""}
+    if _is_price_headline(stub):
+        return False
+    if _fund_launch_category(stub) is not None:
+        return True
+    if _EXECUTIVE_STABLECOIN_NEWS_RE.search(text):
+        return True
+    return bool(
+        _EXECUTIVE_REGULATORY_RE.search(text) and _EXECUTIVE_DIGITAL_ASSET_RE.search(text)
+    )
+
+
+def _executive_headline_bucket(
+    article: dict[str, Any],
+) -> tuple[str, str | None, str] | None:
+    """Return (bucket, theme_id, theme_family) for executive headline eligibility."""
+    text = _article_text(article)
+    if _EXECUTIVE_HEADLINE_EXCLUDE_RE.search(text) or _is_price_headline(article):
+        return None
+
+    launch_cat = _fund_launch_category(article)
+    if launch_cat:
+        theme_id, theme_family = {
+            "tmmf": ("institutional_settlement", "tmmf"),
+            "stablecoin_reserve": ("stablecoin_policy", "stablecoins"),
+            "crypto_etf": ("launch_pipeline", "etp"),
+        }[launch_cat]
+        return (f"launch:{launch_cat}", theme_id, theme_family)
+
+    if _EXECUTIVE_STABLECOIN_NEWS_RE.search(text):
+        return ("stablecoin_news", "stablecoin_policy", "stablecoins")
+
+    if _EXECUTIVE_REGULATORY_RE.search(text) and _EXECUTIVE_DIGITAL_ASSET_RE.search(text):
+        return ("regulatory", "regulation", "regulation")
+
+    return None
+
+
+def pick_executive_week_headlines(
+    articles: list[dict[str, Any]] | None,
+    *,
+    n: int = 3,
+    max_age_days: float = 7.0,
+) -> list[WeekHeadlinePick]:
+    """Top ``n`` headlines scoped to executive brief topics (launches, stablecoins, regulation)."""
+    pool = list(articles or [])
+    recent: list[dict[str, Any]] = []
+    bucket_by_art: dict[int, tuple[str, str | None, str]] = {}
+
+    for art in pool:
+        bucket_info = _executive_headline_bucket(art)
+        if bucket_info is None:
+            continue
+        age = _article_age_days(art)
+        if age is not None and age > max_age_days:
+            continue
+        if not str(art.get("title") or "").strip():
+            continue
+        bucket_by_art[id(art)] = bucket_info
+        recent.append(art)
+
+    clusters = _cluster_articles(recent)
+    ranked: list[WeekHeadlinePick] = []
+    for items in clusters:
+        theme_id: str | None = None
+        theme_family = "general"
+        bucket = ""
+        for art in sorted(items, key=_article_sort_key, reverse=True):
+            info = bucket_by_art.get(id(art))
+            if info:
+                bucket, theme_id, theme_family = info
+                break
+        if theme_family not in _EXECUTIVE_HEADLINE_FAMILIES:
+            continue
+        score, title, link, source, outlet_count = _score_cluster(items, theme_id=theme_id)
+        if bucket.startswith("launch:"):
+            score += 8.0
+        elif bucket == "regulatory":
+            score += 4.0
+        if not title:
+            continue
+        ranked.append(
+            WeekHeadlinePick(
+                title=title,
+                link=link,
+                source=source,
+                score=score,
+                theme_id=theme_id,
+                theme_family=theme_family,
+                outlet_count=outlet_count,
+            )
+        )
+
+    ranked.sort(key=lambda c: c.score, reverse=True)
+
+    picked: list[WeekHeadlinePick] = []
+    used_families: set[str] = set()
+    for cluster in ranked:
+        if cluster.theme_family in used_families:
+            continue
+        picked.append(cluster)
+        used_families.add(cluster.theme_family)
+        if len(picked) >= n:
+            break
+
+    if len(picked) < n:
+        for cluster in ranked:
+            if cluster in picked:
+                continue
+            picked.append(cluster)
+            if len(picked) >= n:
+                break
+
+    return picked[:n]
+
+
 def pick_week_headlines(
     articles: list[dict[str, Any]] | None,
     *,
@@ -439,6 +560,29 @@ _CRYPTO_ETF_LAUNCH_RE = re.compile(
     r"premium income etf|income etf.{0,20}bitcoin|ishares bitcoin)\b",
     re.IGNORECASE,
 )
+
+# Executive weekly brief: headlines / news bullets must match one of these scopes.
+_EXECUTIVE_DIGITAL_ASSET_RE = re.compile(
+    r"\b(crypto|cryptocurrency|digital asset|blockchain|tokeniz|tokenization|stablecoin|"
+    r"bitcoin|ethereum|defi|web3|on-?chain|\brwa\b)\b",
+    re.IGNORECASE,
+)
+_EXECUTIVE_REGULATORY_RE = re.compile(
+    r"\b(sec|cftc|regulat|legislation|enforcement|compliance|genius act|mica|"
+    r"bitlicense|licensing|rulemaking|oversight|approved|approval|proposed rule|final rule)\b",
+    re.IGNORECASE,
+)
+_EXECUTIVE_STABLECOIN_NEWS_RE = re.compile(
+    r"\b(stablecoin|usdc|usdt|usdp|dai|payment stablecoin|genius act|"
+    r"stablecoin reserves?|issuer reserves?|circle\b|tether|bitlicense)\b",
+    re.IGNORECASE,
+)
+_EXECUTIVE_HEADLINE_EXCLUDE_RE = re.compile(
+    r"\b(prediction market|kalshi|polymarket|meme coin|nft\b|golden cross|"
+    r"price prediction|why is (?:the )?crypto market down)\b",
+    re.IGNORECASE,
+)
+_EXECUTIVE_HEADLINE_FAMILIES = frozenset({"tmmf", "stablecoins", "etp", "regulation"})
 
 
 @dataclass(frozen=True)
@@ -548,6 +692,36 @@ def pick_week_headlines_with_launches(
     max_age_days: float = 7.0,
 ) -> tuple[list[WeekHeadlinePick], dict[FundLaunchCategory, FundLaunch | None]]:
     """Headlines of the week, prioritizing major fund launches when present."""
+    return _merge_headline_picks_with_launches(
+        articles,
+        n=n,
+        max_age_days=max_age_days,
+        base_picker=pick_week_headlines,
+    )
+
+
+def pick_executive_week_headlines_with_launches(
+    articles: list[dict[str, Any]] | None,
+    *,
+    n: int = 3,
+    max_age_days: float = 7.0,
+) -> tuple[list[WeekHeadlinePick], dict[FundLaunchCategory, FundLaunch | None]]:
+    """Executive brief headlines: fund launches, stablecoin news, and digital-asset regulation only."""
+    return _merge_headline_picks_with_launches(
+        articles,
+        n=n,
+        max_age_days=max_age_days,
+        base_picker=pick_executive_week_headlines,
+    )
+
+
+def _merge_headline_picks_with_launches(
+    articles: list[dict[str, Any]] | None,
+    *,
+    n: int,
+    max_age_days: float,
+    base_picker: Any,
+) -> tuple[list[WeekHeadlinePick], dict[FundLaunchCategory, FundLaunch | None]]:
     launches = detect_fund_launches(articles, max_age_days=max(14.0, max_age_days))
     launch_picks: list[WeekHeadlinePick] = []
     seen_links: set[str] = set()
@@ -560,7 +734,7 @@ def pick_week_headlines_with_launches(
                 seen_links.add(pick.link)
             launch_picks.append(pick)
 
-    base = pick_week_headlines(articles, n=n, max_age_days=max_age_days)
+    base = base_picker(articles, n=n, max_age_days=max_age_days)
     merged: list[WeekHeadlinePick] = []
     for pick in launch_picks + base:
         link = str(pick.link or "").strip()

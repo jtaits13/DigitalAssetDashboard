@@ -535,6 +535,23 @@
     el.hidden = !!hidden;
   }
 
+  function renderScopeNote(text) {
+    var host = $("js-rwa-global-scope-note");
+    if (!host) return;
+    var t = String(text || "").trim();
+    if (!t) {
+      host.hidden = true;
+      host.textContent = "";
+      return;
+    }
+    host.hidden = false;
+    if (t.toLowerCase().indexOf("scope:") === 0) {
+      host.innerHTML = "<strong>Scope:</strong> " + esc(t.slice(6).trim());
+    } else {
+      host.textContent = t;
+    }
+  }
+
   function renderFull(data) {
     var H = global.__RWA_STATIC_HELPERS || {};
     var renderKpis = H.renderKpis;
@@ -580,6 +597,7 @@
       hide(snapshot, false);
       hide(detailStack, true);
       renderKpis($("js-rwa-global-kpis"), data.kpis || [], "");
+      renderScopeNote(data.scope_note || "");
       hide(errCta, false);
       renderPrimaryCta(errCta, data, mockLayout);
       return;
@@ -597,6 +615,7 @@
     hide(detailStack, false);
 
     renderKpis($("js-rwa-global-kpis"), data.kpis || [], "");
+    renderScopeNote(data.scope_note || "");
 
     var koSection = $("js-rwa-global-ko-section");
     var macroHost = $("js-rwa-global-macro");

@@ -76,7 +76,9 @@
         "<strong>Source</strong> — " +
           RWA +
           " homepage <strong>Global Market Overview</strong> headline figures and the <strong>Networks</strong> league (distributed / parent networks), scraped from the live site (not the public API product).",
-        "<strong>KPI strip</strong> — all colored <strong>%</strong> figures are <strong>30-day (30D)</strong> changes on overview totals.",
+        "<strong>KPI strip</strong> — all colored <strong>%</strong> figures are <strong>30-day (30D)</strong> changes on overview totals. "
+          + "<strong>Distributed Asset Value</strong> and <strong>Represented Asset Value</strong> cover tokenized RWAs "
+          + "(Treasuries, stocks, credit, non-U.S. debt, etc.) and <strong>exclude stablecoins</strong>, which appear as separate tiles on RWA.xyz.",
         "<strong>Networks table</strong> — searchable preview of distributed RWA value, share, and holder fields; <strong>↗</strong> opens the network on RWA.xyz.",
         "<strong>Explore links</strong> — asset-type and participant index pages show short previews; deep-dive pages hold full tables and charts.",
       ],

@@ -35,9 +35,9 @@
 
     // —— RWA global / home / participants ——
     "distributed asset value":
-      "Sum of distributed (on-chain, wallet-transferable) value across " +
-      RWA_CLASS_LIST +
-      ".",
+      "Sum of distributed (on-chain, wallet-transferable) value across tokenized RWAs on the RWA.xyz Global Market Overview—"
+      + "Treasuries, stocks, credit, commodities, real estate, private equity, and other classes. "
+      + "Excludes stablecoins (shown separately as Total Stablecoin Value).",
     "represented asset value":
       "Sum of represented value for the same asset classes—" +
       RWA_CLASS_LIST +

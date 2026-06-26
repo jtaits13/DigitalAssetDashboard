@@ -1332,6 +1332,22 @@
   margin-bottom: 0.65rem;
 }
 
+.site-experience.page-inner--rich .rwa-scope-note {
+  margin: 0.15rem 0 0.75rem;
+  padding: 0.45rem 0.65rem;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: #5c6b7a;
+  background: #f1f5f9;
+  border-left: 3px solid #b8ccd9;
+  border-radius: 0 6px 6px 0;
+}
+
+.site-experience.page-inner--rich .rwa-scope-note strong {
+  color: #4a5f6b;
+  font-weight: 700;
+}
+
 /* KPI tiles first (like home); definitions in collapsible panel below */
 .site-experience.page-inner--rich .jd-kpi-window-note {
   display: none;

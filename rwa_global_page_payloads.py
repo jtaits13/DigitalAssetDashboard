@@ -20,6 +20,14 @@ RWA_GLOBAL_MARKET_DATA_SOURCE_CAPTION_HTML = (
 )
 STATIC_RWA_EXPLORE_ASSET_TYPE_PAGE = "rwa-explore-asset-type.html"
 STATIC_RWA_EXPLORE_MARKET_PARTICIPANT_PAGE = "rwa-explore-market-participant.html"
+RWA_GLOBAL_SCOPE_NOTE = (
+    "Scope: all RWA assets (tokenized stocks, credit, non-US debt etc.) excluding stablecoins."
+)
+RWA_GLOBAL_NEWSLETTER_KPI_LABELS: tuple[str, ...] = (
+    "Distributed Asset Value",
+    "Represented Asset Value",
+    "Total Asset Holders",
+)
 
 
 def _rwa_kpi_to_dict(k: object) -> dict[str, object]:
@@ -144,6 +152,7 @@ def build_rwa_global_page_payload(
         "error": rwa_err,
         "kpis": [_rwa_kpi_to_dict(k) for k in rwa_kpis],
         "kpi_window_note": kpi_window_note,
+        "scope_note": RWA_GLOBAL_SCOPE_NOTE,
         "columns": rwa_full_cols,
         "rows": rwa_full_rows,
         "total_networks": len(rwa_rows or []),
