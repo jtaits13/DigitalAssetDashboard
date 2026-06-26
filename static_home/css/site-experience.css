@@ -816,6 +816,7 @@
 /* —— News rail (high-contrast dark panel) —— */
 .site-experience.page-home .home-news-rail--terminal {
   position: relative;
+  top: auto;
   overflow: hidden;
   background: linear-gradient(175deg, var(--hx-news-bg) 0%, var(--hx-news-surface) 100%);
   border: 1px solid rgba(143, 190, 210, 0.22);
@@ -1706,6 +1707,12 @@
     grid-area: news;
     align-self: start;
     margin-top: 0;
+  }
+
+  /* Restore sticky rail; base rule uses position:relative for ::before (must not inherit top). */
+  .site-experience.page-home .home-news-rail--terminal {
+    position: sticky;
+    top: var(--home-news-rail-top, 4.25rem);
   }
 }
 
