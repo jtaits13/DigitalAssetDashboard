@@ -286,15 +286,12 @@ def load_crypto_prices_iframe_payloads() -> dict[str, Any]:
 
 def get_crypto_iframe_payloads() -> dict[str, Any]:
     """Live payloads with static JSON fallback so the iframe always renders."""
-    from streamlit_payload_stale_first import mark_payload_map_stale, resolve_payload_stale_first
+    from streamlit_payload_stale_first import load_live_with_static_fallback, mark_payload_map_stale
 
-    stale = _static_crypto_payload_fallback()
-
-    return resolve_payload_stale_first(
-        page_key="crypto_prices",
-        load_stale=lambda: stale or None,
+    return load_live_with_static_fallback(
         load_live_cached=_cached_crypto_prices_iframe_payloads,
-        mark_stale=lambda payloads, err: mark_payload_map_stale(payloads, err),
+        load_stale=lambda: _static_crypto_payload_fallback() or None,
+        mark_stale=mark_payload_map_stale,
     )
 
 

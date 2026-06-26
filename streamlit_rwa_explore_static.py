@@ -170,19 +170,14 @@ def load_rwa_explore_iframe_payloads(kind: str) -> dict[str, Any]:
 
 
 def get_rwa_explore_iframe_payloads(kind: str) -> dict[str, Any]:
-    from streamlit_payload_stale_first import mark_payload_map_stale, resolve_payload_stale_first
+    from streamlit_payload_stale_first import load_live_with_static_fallback, mark_payload_map_stale
 
     spec = RWA_EXPLORE_SPECS[kind]
 
-    def _stale() -> dict[str, Any] | None:
-        pack = _static_rwa_explore_payload_fallback(payload_key=spec.payload_key)
-        return pack or None
-
-    return resolve_payload_stale_first(
-        page_key=f"rwa_explore_{kind}",
-        load_stale=_stale,
+    return load_live_with_static_fallback(
         load_live_cached=lambda: _cached_rwa_explore_iframe_payloads(kind),
-        mark_stale=lambda payloads, err: mark_payload_map_stale(payloads, err),
+        load_stale=lambda: _static_rwa_explore_payload_fallback(payload_key=spec.payload_key) or None,
+        mark_stale=mark_payload_map_stale,
     )
 
 

@@ -168,13 +168,11 @@ def load_stablecoins_deep_payload() -> dict[str, Any]:
 
 
 def get_stablecoins_deep_payload() -> dict[str, Any]:
-    from streamlit_payload_stale_first import mark_dict_stale, resolve_payload_stale_first
+    from streamlit_payload_stale_first import load_live_with_static_fallback, mark_dict_stale
 
-    stale = _static_stablecoins_deep_fallback()
-    return resolve_payload_stale_first(
-        page_key="stablecoins",
-        load_stale=lambda: stale or None,
+    return load_live_with_static_fallback(
         load_live_cached=_cached_stablecoins_deep_payload,
+        load_stale=lambda: _static_stablecoins_deep_fallback() or None,
         mark_stale=mark_dict_stale,
     )
 
