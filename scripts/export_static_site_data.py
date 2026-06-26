@@ -775,6 +775,8 @@ def _build_rwa_tokenized_mmf_deep_payload(
     mmf_pack: tuple[Any, Any, Any, Any],
     manifest: dict[str, Any],
     articles: list[dict[str, Any]] | None = None,
+    *,
+    fund_assets: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     from rwa_league.client import APP_GOVERNMENT_BONDS, APP_TREASURIES
     from rwa_league.mmf import (
@@ -793,12 +795,18 @@ def _build_rwa_tokenized_mmf_deep_payload(
         RWA_MMF_CHART_MAX_BARS,
     )
 
-    fund_assets, rows_net, rows_plat, kpis, collect_err = build_curated_mmf_dashboard_data()
+    if fund_assets is None:
+        fund_assets, rows_net, rows_plat, kpis, collect_err = build_curated_mmf_dashboard_data()
+        if not fund_assets and mmf_pack[0]:
+            rows_net = list(mmf_pack[0])
+            rows_plat = list(mmf_pack[1])
+            kpis = list(mmf_pack[2])
+    else:
+        rows_net = list(mmf_pack[0] or [])
+        rows_plat = list(mmf_pack[1] or [])
+        kpis = list(mmf_pack[2] or [])
+        collect_err = mmf_pack[3]
     err_any = collect_err or mmf_pack[3]
-    if not fund_assets and mmf_pack[0]:
-        rows_net = list(mmf_pack[0])
-        rows_plat = list(mmf_pack[1])
-        kpis = list(mmf_pack[2])
     err_s = "" if err_any is None else str(err_any)
     export_ts = datetime.now(timezone.utc).isoformat()
 

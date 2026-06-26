@@ -387,30 +387,34 @@ def _static_tmmf_deep_fallback(*, error: str = "") -> dict[str, Any]:
 
 def load_tmmf_deep_payload() -> dict[str, Any]:
     """Live TMMF deep-page JSON (same shape as ``static_home/data/rwa_tokenized_mmf.json``)."""
-    from rwa_streamlit_fetch_cache import cached_rwa_tokenized_mmf_data
+    from rwa_league.mmf import build_curated_mmf_dashboard_data
     from scripts.export_static_site_data import _build_rwa_tokenized_mmf_deep_payload
 
-    mmf_pack = cached_rwa_tokenized_mmf_data()
+    fund_assets, rows_net, rows_plat, kpis, err = build_curated_mmf_dashboard_data()
+    mmf_pack = (rows_net, rows_plat, kpis, err)
     manifest: dict[str, Any] = {"errors": []}
     payload = _build_rwa_tokenized_mmf_deep_payload(
         mmf_pack,
         manifest,
         [],
+        fund_assets=fund_assets,
     )
     payload["back_href"] = "/?jd_scroll=tmmf"
     return payload
 
 
 def get_tmmf_deep_payload() -> dict[str, Any]:
-    from streamlit_payload_stale_first import mark_dict_stale, resolve_payload_stale_first
-
+    """Prefer committed static JSON for instant render; live RWA.xyz only when static is missing."""
     stale = _static_tmmf_deep_fallback()
-    return resolve_payload_stale_first(
-        page_key="tmmf",
-        load_stale=lambda: stale or None,
-        load_live_cached=_cached_tmmf_deep_payload,
-        mark_stale=mark_dict_stale,
-    )
+    if stale:
+        return stale
+    try:
+        return _cached_tmmf_deep_payload()
+    except Exception as exc:
+        fallback = _static_tmmf_deep_fallback(error=str(exc))
+        if fallback:
+            return fallback
+        raise
 
 
 def _json_for_script(payload: dict[str, Any]) -> str:
@@ -639,6 +643,22 @@ def _cached_tmmf_deep_payload() -> dict[str, Any]:
     return load_tmmf_deep_payload()
 
 
+@st.cache_data(show_spinner=False, ttl=3600)
+def _cached_tmmf_body_iframe_html(
+    payload_json: str,
+    related_chips: str,
+    back_href: str,
+    back_label: str,
+) -> str:
+    payload = json.loads(payload_json)
+    return build_tmmf_body_iframe_html(
+        payload=payload,
+        related_chips=related_chips,
+        back_href=back_href,
+        back_label=back_label,
+    )
+
+
 def render_tmmf_body_iframe(
     *,
     payload: dict[str, Any],
@@ -647,13 +667,15 @@ def render_tmmf_body_iframe(
     back_label: str = "← Back to home · TMMF preview",
 ) -> None:
     """Render the GitHub Pages TMMF zone inside a Streamlit iframe."""
+    payload_json = _json_for_script(payload)
+    html = _cached_tmmf_body_iframe_html(
+        payload_json,
+        related_chips,
+        back_href,
+        back_label,
+    )
     components.html(
-        build_tmmf_body_iframe_html(
-            payload=payload,
-            related_chips=related_chips,
-            back_href=back_href,
-            back_label=back_label,
-        ),
+        html,
         height=1200,
         scrolling=False,
     )

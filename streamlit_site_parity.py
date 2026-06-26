@@ -2172,12 +2172,12 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   display: none !important;
 }
 .stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has([data-testid="stSpinner"]) {
-  display: none !important;
-  min-height: 0 !important;
-  height: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  border: none !important;
+  display: block !important;
+  min-height: 2.5rem !important;
+  height: auto !important;
+  margin: 0.75rem auto !important;
+  padding: 0.5rem 1.25rem !important;
+  max-width: var(--content-max, 72rem) !important;
 }
 .stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has(iframe),
 .stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stElementContainer"]:has(iframe),
