@@ -364,7 +364,7 @@ def build_etps_body_iframe_html(
 <script>
 window.__ETP_PAGE_PAYLOADS = {payloads_json};
 </script>
-<script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
+<script defer src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
 <script>
 {js_deps}
 </script>

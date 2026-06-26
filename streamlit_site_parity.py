@@ -1802,6 +1802,15 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
     return Math.ceil(maxBottom + 6);
   }}
 
+  function resolveDeepBodyHeight(inner, msgH) {{
+    var measured = measureDeepRwaBodyHeight(inner);
+    var reported = Number(msgH);
+    if (isFinite(reported) && reported > 200) {{
+      return measured !== null ? Math.max(measured, reported) : reported;
+    }}
+    return measured;
+  }}
+
   function isTmmfBodyIframe(inner) {{
     return isDeepRwaBodyIframe(inner);
   }}
@@ -1923,7 +1932,7 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
           return;
         }}
         if (isDeepRwaBodyIframe(inner)) {{
-          var deepH = measureDeepRwaBodyHeight(inner);
+          var deepH = resolveDeepBodyHeight(inner, null);
           if (deepH !== null) applyFrameHeight(frame, deepH, 200);
           return;
         }}
@@ -2001,7 +2010,7 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
           var inner = frame.contentDocument;
           if (!inner || !inner.body) return;
           if (isDeepRwaBodyIframe(inner)) {{
-            var deepH = measureDeepRwaBodyHeight(inner);
+            var deepH = resolveDeepBodyHeight(inner, msgH);
             if (deepH !== null) applyFrameHeight(frame, deepH, 200);
             return;
           }}
@@ -2165,6 +2174,11 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   padding: 0 !important;
   margin: 0 !important;
   border: none !important;
+}
+.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has(iframe) iframe,
+.stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stElementContainer"]:has(iframe) iframe,
+.stApp:has(.streamlit-rwa-global-iframe-page) [data-testid="stElementContainer"]:has(iframe) iframe {
+  min-height: 720px !important;
 }
 .stApp:has(.streamlit-tmmf-iframe-page) .streamlit-subpage-root > main.page-shell.etp-mock-shell,
 .stApp:has(.streamlit-tmmf-iframe-page) article.etp-mock-zone:empty,
