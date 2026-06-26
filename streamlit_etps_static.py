@@ -226,11 +226,11 @@ def _static_etp_payload_fallback(*, error: str = "") -> dict[str, Any]:
 
 
 def get_etp_iframe_payloads(*, user_agent: str) -> dict[str, Any]:
-    from streamlit_payload_stale_first import load_live_with_static_fallback, mark_payload_map_stale
+    from streamlit_payload_stale_first import load_static_first_with_live_fallback, mark_payload_map_stale
 
-    return load_live_with_static_fallback(
-        load_live_cached=lambda: _cached_etp_iframe_payloads(user_agent),
+    return load_static_first_with_live_fallback(
         load_stale=lambda: _static_etp_payload_fallback() or None,
+        load_live_cached=lambda: _cached_etp_iframe_payloads(user_agent),
         mark_stale=mark_payload_map_stale,
     )
 

@@ -179,11 +179,11 @@ def load_rwa_global_iframe_payloads() -> dict[str, Any]:
 
 
 def get_rwa_global_iframe_payloads() -> dict[str, Any]:
-    from streamlit_payload_stale_first import load_live_with_static_fallback, mark_payload_map_stale
+    from streamlit_payload_stale_first import load_static_first_with_live_fallback, mark_payload_map_stale
 
-    return load_live_with_static_fallback(
-        load_live_cached=_cached_rwa_global_iframe_payloads,
+    return load_static_first_with_live_fallback(
         load_stale=lambda: _static_rwa_global_payload_fallback() or None,
+        load_live_cached=_cached_rwa_global_iframe_payloads,
         mark_stale=mark_payload_map_stale,
     )
 

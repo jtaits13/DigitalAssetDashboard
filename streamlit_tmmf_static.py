@@ -404,17 +404,13 @@ def load_tmmf_deep_payload() -> dict[str, Any]:
 
 
 def get_tmmf_deep_payload() -> dict[str, Any]:
-    """Prefer committed static JSON for instant render; live RWA.xyz only when static is missing."""
-    stale = _static_tmmf_deep_fallback()
-    if stale:
-        return stale
-    try:
-        return _cached_tmmf_deep_payload()
-    except Exception as exc:
-        fallback = _static_tmmf_deep_fallback(error=str(exc))
-        if fallback:
-            return fallback
-        raise
+    from streamlit_payload_stale_first import load_static_first_with_live_fallback, mark_dict_stale
+
+    return load_static_first_with_live_fallback(
+        load_stale=lambda: _static_tmmf_deep_fallback() or None,
+        load_live_cached=_cached_tmmf_deep_payload,
+        mark_stale=mark_dict_stale,
+    )
 
 
 def _json_for_script(payload: dict[str, Any]) -> str:

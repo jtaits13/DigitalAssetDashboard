@@ -2190,6 +2190,14 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   overflow: visible !important;
   max-height: none !important;
 }
+.stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stElementContainer"]:has([data-testid="stSpinner"]) {
+  display: block !important;
+  min-height: 2.5rem !important;
+  height: auto !important;
+  margin: 0.75rem auto !important;
+  padding: 0.5rem 1.25rem !important;
+  max-width: var(--content-max, 72rem) !important;
+}
 .stApp:has(.streamlit-rwa-global-iframe-page) [data-testid="stElementContainer"]:has([data-testid="stSpinner"]),
 .stApp:has(.streamlit-rwa-explore-at-iframe-page) [data-testid="stElementContainer"]:has([data-testid="stSpinner"]),
 .stApp:has(.streamlit-rwa-explore-mp-iframe-page) [data-testid="stElementContainer"]:has([data-testid="stSpinner"]) {

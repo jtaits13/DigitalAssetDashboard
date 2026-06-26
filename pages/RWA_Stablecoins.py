@@ -9,6 +9,8 @@ _REPO = Path(__file__).resolve().parent.parent
 if str(_REPO) not in sys.path:
     sys.path.insert(0, str(_REPO))
 
+import streamlit as st
+
 from streamlit_site_parity import (
     _streamlit_page_href,
     configure_subpage,
@@ -34,8 +36,9 @@ def main() -> None:
         (_streamlit_page_href("rwa_global"), "RWA market overview"),
     )
 
-    payload = get_stablecoins_deep_payload()
-    render_stablecoins_body_iframe(payload=payload, related_chips=related)
+    with st.spinner("Loading stablecoins page…"):
+        payload = get_stablecoins_deep_payload()
+        render_stablecoins_body_iframe(payload=payload, related_chips=related)
 
     render_subpage_footer(label="Stablecoins")
 

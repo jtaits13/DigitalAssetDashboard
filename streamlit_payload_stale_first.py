@@ -1,4 +1,4 @@
-"""Static JSON fallback helpers for Streamlit iframe subpages (no rerun)."""
+"""Static-first payload loading for Streamlit iframe subpages (no rerun)."""
 
 from __future__ import annotations
 
@@ -12,24 +12,27 @@ def clear_stale_first_state() -> None:
 
 
 def maybe_rerun_after_stale_first() -> None:
-    """No-op — stale-first reruns removed; subpages load live data once per run."""
+    """No-op — stale-first reruns removed."""
 
 
-def load_live_with_static_fallback(
+def load_static_first_with_live_fallback(
     *,
-    load_live_cached: Callable[[], T],
     load_stale: Callable[[], T | None],
+    load_live_cached: Callable[[], T],
     mark_stale: Callable[[T, str], T] | None = None,
 ) -> T:
-    """Load live ``@st.cache_data`` payloads; fall back to committed static JSON on failure."""
+    """Serve committed static JSON immediately; live fetch only when static is missing."""
+    stale = load_stale()
+    if stale is not None:
+        return stale
     try:
         return load_live_cached()
     except Exception as exc:
-        stale = load_stale()
-        if stale is not None:
+        fallback = load_stale()
+        if fallback is not None:
             if mark_stale is not None:
-                return mark_stale(stale, str(exc))
-            return stale
+                return mark_stale(fallback, str(exc))
+            return fallback
         raise
 
 

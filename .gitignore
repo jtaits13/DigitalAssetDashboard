@@ -16,7 +16,17 @@ static_home/data/*.json
 !static_home/data/etps.json
 !static_home/data/etp_kpis.json
 !static_home/data/crypto_kpis.json
+!static_home/data/crypto_prices.json
+!static_home/data/crypto_market_cap_series.json
 !static_home/data/aum_series.json
 !static_home/data/etf_pulse.json
 !static_home/data/manifest.json
 !static_home/data/farside_flow_cache.json
+# RWA + news bundles — committed so Streamlit subpages render instantly without live scrapes.
+!static_home/data/rwa_tokenized_mmf.json
+!static_home/data/rwa_stablecoins.json
+!static_home/data/rwa_global_market.json
+!static_home/data/all_articles.json
+!static_home/data/all_regulatory.json
+!static_home/data/all_custodian_news.json
+!static_home/data/etf_news.json
