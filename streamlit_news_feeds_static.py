@@ -478,7 +478,7 @@ window.loadJson = function (name) {{
 
 @st.cache_data(show_spinner=False, ttl=300)
 def _cached_news_feed_iframe_payloads(kind: str) -> dict[str, Any]:
-    return get_news_feed_iframe_payloads(kind)
+    return load_news_feed_iframe_payloads(kind)
 
 
 def render_news_feed_body_iframe(

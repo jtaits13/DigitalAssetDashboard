@@ -409,7 +409,7 @@ window.loadJson = function (name) {{
 
 @st.cache_data(show_spinner=False, ttl=3600)
 def _cached_rwa_explore_iframe_payloads(kind: str) -> dict[str, Any]:
-    return get_rwa_explore_iframe_payloads(kind)
+    return load_rwa_explore_iframe_payloads(kind)
 
 
 def render_rwa_explore_body_iframe(

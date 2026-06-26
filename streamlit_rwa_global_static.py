@@ -93,6 +93,7 @@ _RWA_GLOBAL_ZONE_BODY = """
       <section class="etp-mock-snapshot" id="js-rwa-global-snapshot" aria-labelledby="rwa-gmo-snapshot-heading">
         <h2 class="subsection-head u-vh" id="rwa-gmo-snapshot-heading">Top-line snapshot</h2>
         <div id="js-rwa-global-kpis" aria-label="RWA Global Market KPI strip"></div>
+        <p id="js-rwa-global-scope-note" class="rwa-scope-note" hidden></p>
         <div id="js-rwa-global-error-cta" class="cta-row" hidden></div>
       </section>
       <div id="js-rwa-global-detail-stack" hidden>
@@ -400,7 +401,7 @@ window.loadJson = function (name) {{
 
 @st.cache_data(show_spinner=False, ttl=3600)
 def _cached_rwa_global_iframe_payloads() -> dict[str, Any]:
-    return get_rwa_global_iframe_payloads()
+    return load_rwa_global_iframe_payloads()
 
 
 def render_rwa_global_body_iframe(

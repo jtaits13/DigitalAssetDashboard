@@ -506,7 +506,7 @@ window.loadJson = function (name) {{
 
 @st.cache_data(show_spinner=False, ttl=300)
 def _cached_crypto_prices_iframe_payloads() -> dict[str, Any]:
-    return get_crypto_iframe_payloads()
+    return load_crypto_prices_iframe_payloads()
 
 
 def render_crypto_prices_body_iframe(

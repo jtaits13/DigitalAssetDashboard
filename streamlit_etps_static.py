@@ -450,7 +450,7 @@ window.loadJson = function (name) {{
 
 @st.cache_data(show_spinner=False, ttl=3600)
 def _cached_etp_iframe_payloads(_user_agent: str) -> dict[str, Any]:
-    return get_etp_iframe_payloads(user_agent=_user_agent)
+    return load_etp_iframe_payloads(user_agent=_user_agent)
 
 
 def render_etps_body_iframe(
