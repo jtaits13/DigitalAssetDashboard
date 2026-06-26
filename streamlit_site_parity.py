@@ -2180,6 +2180,18 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 .stApp:has(.streamlit-rwa-global-iframe-page) [data-testid="stElementContainer"]:has(iframe) iframe {
   min-height: 720px !important;
 }
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-subpage-root > main.page-shell.etp-mock-shell {
+  display: block !important;
+  max-width: var(--content-max, 72rem);
+  margin: 0 auto;
+  padding: 0 1.25rem 1.5rem;
+  box-sizing: border-box;
+}
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has([data-testid="stHtml"]) {
+  max-width: var(--content-max, 72rem) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
 .stApp:has(.streamlit-tmmf-iframe-page) .streamlit-subpage-root > main.page-shell.etp-mock-shell,
 .stApp:has(.streamlit-tmmf-iframe-page) article.etp-mock-zone:empty,
 .stApp:has(.streamlit-tmmf-iframe-page) .inner-rich-zone.etp-mock-zone:not(:has(.home-zone__head)) {
@@ -2547,7 +2559,13 @@ def inject_streamlit_nav_router() -> None:
     components.html(STREAMLIT_SITE_NAV_ROUTER_JS, height=0, width=0)
 
 
-def configure_subpage(*, page_title: str, active: str, style_kind: str = "article") -> None:
+def configure_subpage(
+    *,
+    page_title: str,
+    active: str,
+    style_kind: str = "article",
+    delivery: str = "iframe",
+) -> None:
     """Shared subpage setup: collapsed sidebar, nav, and static/inner CSS."""
     st.set_page_config(
         page_title=page_title,
@@ -2558,12 +2576,19 @@ def configure_subpage(*, page_title: str, active: str, style_kind: str = "articl
     consume_jd_page_query()
     inject_subpage_styles(kind=style_kind)
     inject_streamlit_nav_router()
-    components.html(HOME_IFRAME_HEIGHT_SYNC_JS, height=0, width=0)
-    if style_kind in ("tmmf", "stablecoins", "crypto", "etp", "rwa_global", "rwa_explore_at", "rwa_explore_mp"):
+    if delivery == "iframe":
+        components.html(HOME_IFRAME_HEIGHT_SYNC_JS, height=0, width=0)
+    if delivery == "iframe" and style_kind in (
+        "tmmf", "stablecoins", "crypto", "etp", "rwa_global", "rwa_explore_at", "rwa_explore_mp"
+    ):
         inject_streamlit_table_fullscreen_host()
     iframe_page_class = ""
     if style_kind == "tmmf":
-        iframe_page_class = " streamlit-tmmf-iframe-page"
+        iframe_page_class = (
+            " streamlit-tmmf-server-page"
+            if delivery == "server"
+            else " streamlit-tmmf-iframe-page"
+        )
     elif style_kind == "stablecoins":
         iframe_page_class = " streamlit-stablecoins-iframe-page"
     elif style_kind == "crypto":

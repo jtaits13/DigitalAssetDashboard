@@ -675,3 +675,86 @@ def render_tmmf_body_iframe(
         height=1200,
         scrolling=False,
     )
+
+
+def build_tmmf_server_html(
+    *,
+    payload: dict[str, Any],
+    related_chips: str,
+) -> str:
+    """Server-rendered TMMF body (same data as iframe path, no client hydration)."""
+    from streamlit_server_deep_page import (
+        funds_table_html,
+        key_observations_html,
+        kpis_html_from_payload,
+        league_table_html,
+    )
+
+    title = str(payload.get("page_title") or "Tokenized Money Market Funds")
+    title = title.replace(" — Digital Assets Dashboard", "").strip()
+    band = str(payload.get("band_label") or "Tokenized Money Market Funds")
+    subtitle = str(payload.get("page_subtitle_html") or "")
+    footer = str(payload.get("footer_note") or "")
+    err = str(payload.get("error") or payload.get("error_detail") or "").strip()
+    banner = (
+        f'<div class="data-banner" role="status">{escape(err)}</div>' if err else ""
+    )
+    cta = payload.get("bottom_cta") or {}
+    cta_href = str(cta.get("href") or "").strip()
+    cta_label = str(cta.get("label") or "See US Treasuries on RWA.xyz")
+    cta_html = (
+        f'<div class="cta-row rwa-deep-page-cta">'
+        f'<a class="btn btn-primary" href="{escape(cta_href)}" target="_blank" rel="noopener noreferrer">'
+        f"{escape(cta_label)}</a></div>"
+        if cta_href
+        else ""
+    )
+    parts = [
+        '<main class="page-shell etp-mock-shell streamlit-tmmf-server-root">',
+        '<article class="hub-section hub-section--panel inner-rich-zone zone--tmmf home-zone home-zone--tmmf etp-mock-zone">',
+        '<div class="home-zone__stripe" aria-hidden="true"></div>',
+        '<header class="home-zone__head">',
+        '<span class="home-zone__badge" aria-hidden="true">MMF</span>',
+        '<div class="home-zone__titles">',
+        f'<p class="band-label teal">{escape(band)}</p>',
+        f'<h1 class="page-intro__title">{escape(title)}</h1>',
+        f'<div class="section-dek section-dek--wide page-intro__dek">{subtitle}</div>',
+        "</div></header>",
+        '<div class="home-zone__body inner-rich-zone__body etp-mock-zone__body">',
+        related_chips.strip(),
+        banner,
+        kpis_html_from_payload(
+            list(payload.get("kpis") or []),
+            note=str(payload.get("kpi_window_note") or ""),
+        ),
+        key_observations_html(str(payload.get("key_observations_html") or "")),
+        funds_table_html(payload.get("funds_table")),
+        league_table_html(
+            payload.get("networks"),
+            table_id="deep-net-wrap",
+            default_heading="By network (Tokenized MMFs)",
+        ),
+        league_table_html(
+            payload.get("platforms"),
+            table_id="deep-plat-wrap",
+            default_heading="By platform (Tokenized MMFs · Asset managers)",
+        ),
+        cta_html,
+        f'<p class="timestamp-foot">{escape(footer)}</p>' if footer else "",
+        "</div></article></main>",
+    ]
+    return "".join(parts)
+
+
+def render_tmmf_body_server(
+    *,
+    payload: dict[str, Any],
+    related_chips: str,
+    back_href: str = "/?jd_scroll=tmmf",
+    back_label: str = "← Back to home · TMMF preview",
+) -> None:
+    """Render TMMF directly in Streamlit (same pattern as the home page preview)."""
+    from streamlit_site_parity import render_subpage_back_link
+
+    render_subpage_back_link(href=back_href, label=back_label)
+    st.html(build_tmmf_server_html(payload=payload, related_chips=related_chips))
