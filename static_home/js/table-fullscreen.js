@@ -102,7 +102,7 @@
 
   function isMockInnerPage() {
     if (
-      document.querySelector(".streamlit-tmmf-server-host.mock-tmmf-inner")
+      document.querySelector(".streamlit-tmmf-server-host")
     ) {
       return true;
     }

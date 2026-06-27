@@ -741,41 +741,41 @@ SUBPAGE_STREAMLIT_CSS = """
   width: 100%;
   max-width: 100%;
 }
-.stApp:has(.streamlit-subpage-active) .page-back-below-header,
-.stApp:has(.streamlit-subpage-root) .page-back-below-header {
+.stApp:has(.streamlit-subpage-active):not(:has(.streamlit-tmmf-server-page)) .page-back-below-header,
+.stApp:has(.streamlit-subpage-root):not(:has(.streamlit-tmmf-server-page)) .page-back-below-header {
   max-width: calc(var(--content-max, var(--max, 72rem)) + 17.5rem);
   width: 100%;
   margin: 0 auto;
   padding: 0.5rem 1.25rem 0;
   box-sizing: border-box;
 }
-.stApp:has(.streamlit-subpage-active) p.back-link.back-link--below-header,
-.stApp:has(.streamlit-subpage-root) p.back-link.back-link--below-header {
+.stApp:has(.streamlit-subpage-active):not(:has(.streamlit-tmmf-server-page)) p.back-link.back-link--below-header,
+.stApp:has(.streamlit-subpage-root):not(:has(.streamlit-tmmf-server-page)) p.back-link.back-link--below-header {
   margin: 0.2rem 0 0.85rem;
   width: auto !important;
   max-width: none !important;
 }
-.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.page-back-below-header),
-.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.page-back-below-header) {
+.stApp:has(.streamlit-subpage-active):not(:has(.streamlit-tmmf-server-page)) [data-testid="stElementContainer"]:has(.page-back-below-header),
+.stApp:has(.streamlit-subpage-root):not(:has(.streamlit-tmmf-server-page)) [data-testid="stElementContainer"]:has(.page-back-below-header) {
   max-width: calc(var(--content-max, var(--max, 72rem)) + 17.5rem) !important;
   margin-left: auto !important;
   margin-right: auto !important;
   padding-left: 0 !important;
   padding-right: 0 !important;
 }
-.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.page-back-below-header) [data-testid="stVerticalBlock"],
-.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.page-back-below-header) [data-testid="stVerticalBlock"] {
+.stApp:has(.streamlit-subpage-active):not(:has(.streamlit-tmmf-server-page)) [data-testid="stElementContainer"]:has(.page-back-below-header) [data-testid="stVerticalBlock"],
+.stApp:has(.streamlit-subpage-root):not(:has(.streamlit-tmmf-server-page)) [data-testid="stElementContainer"]:has(.page-back-below-header) [data-testid="stVerticalBlock"] {
   align-items: flex-start !important;
 }
-.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.page-back-below-header):not(:has(.streamlit-tmmf-server-host)) [data-testid="stMarkdownContainer"],
-.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.page-back-below-header):not(:has(.streamlit-tmmf-server-host)) [data-testid="stMarkdownContainer"],
-.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.page-back-below-header):not(:has(.streamlit-tmmf-server-host)) [data-testid="stHtml"] > div,
-.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.page-back-below-header):not(:has(.streamlit-tmmf-server-host)) [data-testid="stHtml"] > div {
+.stApp:has(.streamlit-subpage-active):not(:has(.streamlit-tmmf-server-page)) [data-testid="stElementContainer"]:has(.page-back-below-header):not(:has(.streamlit-tmmf-server-host)) [data-testid="stMarkdownContainer"],
+.stApp:has(.streamlit-subpage-root):not(:has(.streamlit-tmmf-server-page)) [data-testid="stElementContainer"]:has(.page-back-below-header):not(:has(.streamlit-tmmf-server-host)) [data-testid="stMarkdownContainer"],
+.stApp:has(.streamlit-subpage-active):not(:has(.streamlit-tmmf-server-page)) [data-testid="stElementContainer"]:has(.page-back-below-header):not(:has(.streamlit-tmmf-server-host)) [data-testid="stHtml"] > div,
+.stApp:has(.streamlit-subpage-root):not(:has(.streamlit-tmmf-server-page)) [data-testid="stElementContainer"]:has(.page-back-below-header):not(:has(.streamlit-tmmf-server-host)) [data-testid="stHtml"] > div {
   width: auto !important;
   max-width: 100% !important;
 }
-.stApp:has(.streamlit-subpage-active) .back-link--below-header a,
-.stApp:has(.streamlit-subpage-root) .back-link--below-header a {
+.stApp:has(.streamlit-subpage-active):not(:has(.streamlit-tmmf-server-page)) .back-link--below-header a,
+.stApp:has(.streamlit-subpage-root):not(:has(.streamlit-tmmf-server-page)) .back-link--below-header a {
   display: inline-block !important;
   width: auto !important;
   max-width: none !important;
@@ -791,7 +791,7 @@ SUBPAGE_STREAMLIT_CSS = """
   background: rgba(255, 255, 255, 0.85);
   white-space: nowrap;
 }
-.stApp:has(.page-rwa-deep-mmf) .back-link--below-header a:hover {
+.stApp:has(.page-rwa-deep-mmf):not(:has(.streamlit-tmmf-server-page)) .back-link--below-header a:hover {
   color: var(--teal, #2a5f82) !important;
   border-color: rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.35) !important;
   background: #f8fcfe !important;
@@ -2285,7 +2285,9 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   border: none !important;
 }
 .stApp:has(.streamlit-tmmf-server-page) .back-link--below-header a:not(.tmmf-st-back-pill),
-.stApp:has(.streamlit-tmmf-server-page) a.tmmf-server-back-anchor:not(.tmmf-st-back-pill) {
+.stApp:has(.streamlit-tmmf-server-page) a.tmmf-server-back-anchor:not(.tmmf-st-back-pill),
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] > div > a:not(.tmmf-st-back-pill),
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host > a:not(.tmmf-st-back-pill) {
   display: none !important;
   width: 0 !important;
   height: 0 !important;
@@ -2296,6 +2298,15 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   visibility: hidden !important;
   border: none !important;
   pointer-events: none !important;
+}
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host::before,
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host::after {
+  display: none !important;
+  content: none !important;
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
 }
 .stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has([data-testid="stHtml"]):not(:has(.streamlit-tmmf-server-host)):not(:has(.tmmf-st-back-wrap)) {
   display: none !important;

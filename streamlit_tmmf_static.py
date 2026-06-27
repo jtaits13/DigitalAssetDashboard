@@ -856,6 +856,30 @@ def _cached_tmmf_server_host_stylesheet() -> str:
   max-height: min(92vh, 980px) !important;
   width: min(96vw, 1400px) !important;
 }}
+/* Terminal override: host mock CSS must not restyle legacy back-link shells on Cloud. */
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .page-back-below-header,
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host p.back-link.back-link--below-header,
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .back-link--below-header a:not(.tmmf-st-back-pill),
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host a.tmmf-server-back-anchor:not(.tmmf-st-back-pill) {{
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  visibility: hidden !important;
+  border: none !important;
+  pointer-events: none !important;
+}}
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host::before,
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host::after {{
+  display: none !important;
+  content: none !important;
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+}}
 """
     return css
 
@@ -1200,6 +1224,35 @@ def build_tmmf_server_iframe_html(
 </html>"""
 
 
+_TMMF_SERVER_PHANTOM_PURGE_JS = """
+function purgeTmmfPhantomBackPills(doc, win) {
+  if (!doc.querySelector(".streamlit-tmmf-server-page")) return;
+  doc.querySelectorAll(".page-back-below-header").forEach(function (row) {
+    if (row.querySelector(".tmmf-st-back-pill")) return;
+    row.remove();
+  });
+  doc.querySelectorAll("p.back-link.back-link--below-header").forEach(function (p) {
+    if (p.querySelector(".tmmf-st-back-pill")) return;
+    p.remove();
+  });
+  doc.querySelectorAll('[data-testid="stHtml"] > div > a:not(.tmmf-st-back-pill)').forEach(function (a) {
+    var text = (a.textContent || "").replace(/\\s+/g, " ").trim();
+    if (!text) a.remove();
+  });
+  doc.querySelectorAll("a").forEach(function (a) {
+    if (a.classList.contains("tmmf-st-back-pill")) return;
+    var cs = win.getComputedStyle(a);
+    var br = parseFloat(cs.borderTopLeftRadius) || 0;
+    var text = (a.textContent || "").replace(/\\s+/g, " ").trim();
+    var r = a.getBoundingClientRect();
+    if (br >= 100 && r.width > 300 && r.height > 0 && r.height < 28 && !text && r.top < 220) {
+      a.remove();
+    }
+  });
+}
+"""
+
+
 def inject_tmmf_server_table_actions(payload: dict[str, Any]) -> None:
     """Wire download/fullscreen on server-rendered tables via parent-document script injection.
 
@@ -1214,6 +1267,7 @@ def inject_tmmf_server_table_actions(payload: dict[str, Any]) -> None:
     patch_json = json.dumps(_STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH.strip())
     wire_json = json.dumps(_TMMF_SERVER_TABLE_WIRE_JS.strip())
     host_modal_json = json.dumps(_TMMF_SERVER_INLINE_HOST_MODAL_JS.strip())
+    purge_json = json.dumps(_TMMF_SERVER_PHANTOM_PURGE_JS.strip())
     bootstrap = f"""
 <script>
 (function () {{
@@ -1235,8 +1289,14 @@ def inject_tmmf_server_table_actions(payload: dict[str, Any]) -> None:
     inject({patch_json});
     inject({wire_json});
   }}
+  function purgePhantoms() {{
+    try {{
+      ({purge_json})(doc, win);
+    }} catch (e) {{}}
+  }}
   function boot() {{
     if (!doc.querySelector(".streamlit-tmmf-server-host")) return false;
+    purgePhantoms();
     ensureHostModal();
     ensureTableLibs();
     if (typeof win.__tmmfWireServerTables === "function") {{
@@ -1271,6 +1331,15 @@ def render_tmmf_body_server(
     st.markdown(back_link, unsafe_allow_html=True)
     st.html(
         f'<div class="streamlit-tmmf-server-host page-rwa-deep page-rwa-deep-mmf '
-        f'site-experience page-inner--rich mock-tmmf-inner">{zone}</div>'
+        f'site-experience page-inner--rich">{zone}</div>'
     )
     inject_tmmf_server_table_actions(payload)
+    st.markdown(
+        "<style>"
+        ".stApp:has(.streamlit-tmmf-server-page) [data-testid='stHtml'] > div > a:not(.tmmf-st-back-pill),"
+        ".stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host > a:not(.tmmf-st-back-pill) "
+        "{display:none!important;height:0!important;margin:0!important;padding:0!important;"
+        "border:none!important;visibility:hidden!important;pointer-events:none!important;}"
+        "</style>",
+        unsafe_allow_html=True,
+    )
