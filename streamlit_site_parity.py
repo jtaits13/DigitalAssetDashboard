@@ -309,14 +309,14 @@ section[data-testid="stSidebar"] { display: none !important; }
   margin-bottom: 0 !important;
   padding-top: 0 !important;
 }
-.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has(iframe),
-.stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stElementContainer"]:has(iframe),
-.stApp:has(.streamlit-crypto-iframe-page) [data-testid="stElementContainer"]:has(iframe),
-.stApp:has(.streamlit-etps-iframe-page) [data-testid="stElementContainer"]:has(iframe),
-.stApp:has(.streamlit-news-feed-iframe-page) [data-testid="stElementContainer"]:has(iframe),
-.stApp:has(.streamlit-rwa-global-iframe-page) [data-testid="stElementContainer"]:has(iframe),
-.stApp:has(.streamlit-rwa-explore-at-iframe-page) [data-testid="stElementContainer"]:has(iframe),
-.stApp:has(.streamlit-rwa-explore-mp-iframe-page) [data-testid="stElementContainer"]:has(iframe) {
+.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has(iframe):not(:has(.subpage-chrome-iframe-marker)),
+.stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stElementContainer"]:has(iframe):not(:has(.subpage-chrome-iframe-marker)),
+.stApp:has(.streamlit-crypto-iframe-page) [data-testid="stElementContainer"]:has(iframe):not(:has(.subpage-chrome-iframe-marker)),
+.stApp:has(.streamlit-etps-iframe-page) [data-testid="stElementContainer"]:has(iframe):not(:has(.subpage-chrome-iframe-marker)),
+.stApp:has(.streamlit-news-feed-iframe-page) [data-testid="stElementContainer"]:has(iframe):not(:has(.subpage-chrome-iframe-marker)),
+.stApp:has(.streamlit-rwa-global-iframe-page) [data-testid="stElementContainer"]:has(iframe):not(:has(.subpage-chrome-iframe-marker)),
+.stApp:has(.streamlit-rwa-explore-at-iframe-page) [data-testid="stElementContainer"]:has(iframe):not(:has(.subpage-chrome-iframe-marker)),
+.stApp:has(.streamlit-rwa-explore-mp-iframe-page) [data-testid="stElementContainer"]:has(iframe):not(:has(.subpage-chrome-iframe-marker)) {
   position: relative !important;
   z-index: 1 !important;
   margin-top: 0 !important;
@@ -740,9 +740,10 @@ SUBPAGE_STREAMLIT_CSS = """
   height: auto !important;
   min-height: 0 !important;
   max-height: none !important;
-  max-width: none !important;
-  width: auto !important;
-  margin: 0 !important;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  margin-left: calc(50% - 50vw) !important;
+  margin-right: calc(50% - 50vw) !important;
   padding: 0 !important;
 }
 .stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:not(:has(iframe)):not(:has(.subpage-chrome-iframe-marker)):not(:has(.streamlit-subpage-active)):not(:has(.streamlit-tmmf-server-host)),
