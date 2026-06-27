@@ -316,8 +316,16 @@ function measureTmmfContentHeight() {
 """
 
 _TMMF_IFRAME_BACK_LINK = """
-<div class="page-back-below-header tmmf-server-back-row">
-  <a class="tmmf-server-back-anchor back-link back-link--below-header" data-deep-back="explore" href="{back_href}">{back_label_html}</a>
+<div class="page-back-below-header">
+  <p class="back-link back-link--below-header">
+    <a class="tmmf-server-back-anchor" data-deep-back="explore" href="{back_href}">{back_label_html}</a>
+  </p>
+</div>
+"""
+
+_TMMF_STREAMLIT_BACK_LINK = """
+<div class="tmmf-st-back-wrap">
+  <a class="tmmf-st-back-pill" data-deep-back="explore" href="{back_href}">{back_label_html}</a>
 </div>
 """
 
@@ -579,6 +587,19 @@ def _tmmf_back_link_html(*, href: str, label: str) -> str:
         .replace("\u00b7", "&middot;")
     )
     return _TMMF_IFRAME_BACK_LINK.format(back_href=escape(href), back_label_html=label_html)
+
+
+def _tmmf_streamlit_back_link_html(*, href: str, label: str) -> str:
+    """Back pill for server-rendered TMMF — markdown block, not st.html (avoids phantom shells)."""
+    label_html = (
+        escape(label)
+        .replace("\u2190", "&larr;")
+        .replace("\u00b7", "&middot;")
+    )
+    return _TMMF_STREAMLIT_BACK_LINK.format(
+        back_href=escape(href),
+        back_label_html=label_html,
+    )
 
 
 def build_tmmf_body_iframe_html(
@@ -888,10 +909,11 @@ def render_tmmf_body_server(
     back_label: str = "← Back to home · TMMF preview",
 ) -> None:
     """Render TMMF on the Streamlit host: CSS in page head, body via st.html."""
-    back_link = _tmmf_back_link_html(href=back_href, label=back_label)
+    back_link = _tmmf_streamlit_back_link_html(href=back_href, label=back_label)
     zone = build_tmmf_server_zone_html(payload=payload, related_chips=related_chips)
+    # Back link in markdown — st.html duplicates/hides page-back-below-header and leaves empty pill shells.
+    st.markdown(back_link, unsafe_allow_html=True)
     st.html(
         f'<div class="streamlit-tmmf-server-host page-rwa-deep page-rwa-deep-mmf '
-        f'site-experience page-inner--rich mock-tmmf-inner">'
-        f"{back_link}{zone}</div>"
+        f'site-experience page-inner--rich mock-tmmf-inner">{zone}</div>'
     )

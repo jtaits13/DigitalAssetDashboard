@@ -791,27 +791,6 @@ SUBPAGE_STREAMLIT_CSS = """
   background: rgba(255, 255, 255, 0.85);
   white-space: nowrap;
 }
-.stApp:has(.streamlit-tmmf-server-page) .back-link--below-header a:not(.tmmf-server-back-anchor) {
-  display: none !important;
-  height: 0 !important;
-  min-height: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  border: none !important;
-  overflow: hidden !important;
-  pointer-events: none !important;
-}
-.stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] > div > a.back-link--below-header,
-.stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] > div > a.tmmf-server-back-anchor:not(:only-of-type) {
-  display: none !important;
-  height: 0 !important;
-  min-height: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  border: none !important;
-  overflow: hidden !important;
-  pointer-events: none !important;
-}
 .stApp:has(.page-rwa-deep-mmf) .back-link--below-header a:hover {
   color: var(--teal, #2a5f82) !important;
   border-color: rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.35) !important;
@@ -1387,7 +1366,7 @@ STREAMLIT_SITE_NAV_ROUTER_JS = """
     "click",
     function (ev) {
       var a = ev.target.closest(
-        ".site-experience a, .page-back-below-header a, .back-link a, .home-chip, .btn-primary, .btn-secondary"
+        ".site-experience a, .page-back-below-header a, .back-link a, .tmmf-st-back-pill, .home-chip, .btn-primary, .btn-secondary"
       );
       if (!shouldHandleLink(a)) return;
       ev.preventDefault();
@@ -2235,63 +2214,35 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   flex-direction: column !important;
   align-items: flex-start !important;
 }
-.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.page-back-below-header):not(:has(.streamlit-tmmf-server-host)) {
-  display: none !important;
-  height: 0 !important;
-  min-height: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  overflow: hidden !important;
-  visibility: hidden !important;
+/* Server back pill: markdown block with dedicated classes (not page-back-below-header / st.html). */
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.tmmf-st-back-wrap) {
+  max-width: calc(var(--content-max, var(--max, 72rem)) + 17.5rem) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }
-/* Stray shells: duplicated back rows / empty anchors outside the host wrapper. */
-.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.streamlit-tmmf-server-host) [data-testid="stHtml"] > div > .page-back-below-header,
-.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.streamlit-tmmf-server-host) [data-testid="stHtml"] > div > a,
-.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host > a,
-.stApp:has(.streamlit-tmmf-server-page) .page-back-below-header > a:not(.tmmf-server-back-anchor) {
-  display: none !important;
-  height: 0 !important;
-  min-height: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  border: none !important;
-  overflow: hidden !important;
-  pointer-events: none !important;
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.tmmf-st-back-wrap) [data-testid="stVerticalBlock"] {
+  align-items: flex-start !important;
 }
-.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .back-link--below-header a:not(.tmmf-server-back-anchor),
-.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .page-back-below-header:not(.tmmf-server-back-row) {
-  display: none !important;
-  height: 0 !important;
-  min-height: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  border: none !important;
-  overflow: hidden !important;
-  pointer-events: none !important;
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.tmmf-st-back-wrap) [data-testid="stMarkdownContainer"],
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.tmmf-st-back-wrap) [data-testid="stMarkdownContainer"] > div {
+  width: auto !important;
+  max-width: 100% !important;
 }
-.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .page-back-below-header.tmmf-server-back-row {
-  display: block !important;
+.stApp:has(.streamlit-tmmf-server-page) .tmmf-st-back-wrap {
+  display: block;
   max-width: var(--content-max, 72rem);
   margin: 0 auto;
   padding: 0.35rem 1.25rem 0;
   box-sizing: border-box;
 }
-.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host p.back-link.back-link--below-header {
-  margin: 0.2rem 0 0.85rem;
-  width: auto !important;
-  max-width: none !important;
-}
-.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .tmmf-server-back-row > a.tmmf-server-back-anchor {
-  margin: 0.2rem 0 0.85rem;
-}
-.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .tmmf-server-back-row > a.tmmf-server-back-anchor,
-.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .page-back-below-header p.back-link a.tmmf-server-back-anchor,
-.stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] .streamlit-tmmf-server-host .tmmf-server-back-row > a.tmmf-server-back-anchor,
-.stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] .streamlit-tmmf-server-host .page-back-below-header p.back-link a.tmmf-server-back-anchor {
+.stApp:has(.streamlit-tmmf-server-page) .tmmf-st-back-pill {
   display: inline-block !important;
   width: auto !important;
   max-width: none !important;
   flex: none !important;
+  margin: 0.2rem 0 0.85rem;
   font-weight: 650 !important;
   font-size: 0.84rem !important;
   line-height: 1.35 !important;
@@ -2305,14 +2256,20 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   box-shadow: none !important;
   white-space: nowrap;
 }
-.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .tmmf-server-back-row > a.tmmf-server-back-anchor:hover,
-.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .page-back-below-header p.back-link a.tmmf-server-back-anchor:hover,
-.stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] .streamlit-tmmf-server-host .tmmf-server-back-row > a.tmmf-server-back-anchor:hover,
-.stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] .streamlit-tmmf-server-host .page-back-below-header p.back-link a.tmmf-server-back-anchor:hover {
+.stApp:has(.streamlit-tmmf-server-page) .tmmf-st-back-pill:hover {
   color: var(--hx-tmmf-bright, #507188) !important;
   -webkit-text-fill-color: var(--hx-tmmf-bright, #507188) !important;
   border-color: rgb(80 113 136 / 0.45) !important;
   background: #f8fcfe !important;
+}
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.page-back-below-header):not(:has(.streamlit-tmmf-server-host)):not(:has(.tmmf-st-back-wrap)) {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  visibility: hidden !important;
 }
 .stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .home-related-chips .home-chip,
 .stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] .streamlit-tmmf-server-host .home-related-chips .home-chip {
@@ -2709,47 +2666,6 @@ def inject_streamlit_nav_router() -> None:
     components.html(STREAMLIT_SITE_NAV_ROUTER_JS, height=0, width=0)
 
 
-STREAMLIT_TMMF_SERVER_BACK_CLEANUP_JS = """
-<script>
-(function () {
-  var win = window.parent && window.parent.document ? window.parent : window;
-  var doc = win.document;
-  function anchorText(a) {
-    return String(a && a.textContent || "").replace(/\\s+/g, " ").trim();
-  }
-  function clean() {
-    if (!doc.querySelector(".streamlit-tmmf-server-page")) return;
-    doc.querySelectorAll('[data-testid="stHtml"] > div > a, [data-testid="stHtml"] > div > .page-back-below-header').forEach(function (node) {
-      if (node.closest(".streamlit-tmmf-server-host")) return;
-      node.remove();
-    });
-    doc.querySelectorAll(".streamlit-tmmf-server-host > a, .page-back-below-header > a:not(.tmmf-server-back-anchor)").forEach(function (a) {
-      a.remove();
-    });
-    doc.querySelectorAll(".tmmf-server-back-row").forEach(function (row) {
-      var links = row.querySelectorAll("a.tmmf-server-back-anchor");
-      var kept = false;
-      links.forEach(function (a) {
-        var text = anchorText(a);
-        if (!text) {
-          a.remove();
-          return;
-        }
-        if (kept) {
-          a.remove();
-          return;
-        }
-        kept = true;
-      });
-    });
-  }
-  clean();
-  [50, 200, 800, 2000].forEach(function (ms) { setTimeout(clean, ms); });
-})();
-</script>
-"""
-
-
 def configure_subpage(
     *,
     page_title: str,
@@ -2777,7 +2693,6 @@ def configure_subpage(
         from streamlit_tmmf_static import inject_tmmf_server_host_styles
 
         inject_tmmf_server_host_styles()
-        components.html(STREAMLIT_TMMF_SERVER_BACK_CLEANUP_JS, height=0, width=0)
     iframe_page_class = ""
     if style_kind == "tmmf":
         iframe_page_class = (
