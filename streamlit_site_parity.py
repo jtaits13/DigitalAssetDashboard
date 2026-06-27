@@ -725,8 +725,8 @@ SUBPAGE_STREAMLIT_CSS = """
   margin: 0 !important;
   padding: 0 !important;
 }
-.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:not(:has(iframe)):not(:has(.subpage-chrome-iframe-marker)):not(:has(.streamlit-subpage-active)),
-.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:not(:has(iframe)):not(:has(.subpage-chrome-iframe-marker)):not(:has(.streamlit-subpage-active)) {
+.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:not(:has(iframe)):not(:has(.subpage-chrome-iframe-marker)):not(:has(.streamlit-subpage-active)):not(:has(.streamlit-tmmf-server-host)),
+.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:not(:has(iframe)):not(:has(.subpage-chrome-iframe-marker)):not(:has(.streamlit-subpage-active)):not(:has(.streamlit-tmmf-server-host)) {
   max-width: var(--content-max, var(--max, 72rem)) !important;
   width: 100% !important;
   margin-left: auto !important;
@@ -2202,6 +2202,11 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   background: var(--wash, #f3f7fb);
 }
 .stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.streamlit-tmmf-server-host) {
+  max-width: var(--content-max, 72rem) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
   align-items: stretch !important;
 }
 .stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.streamlit-tmmf-server-host) [data-testid="stVerticalBlock"] {
@@ -2210,30 +2215,28 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 .stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.streamlit-tmmf-server-host) [data-testid="stHtml"] > div {
   width: 100% !important;
   max-width: 100% !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: flex-start !important;
+  display: block !important;
 }
-/* Server back pill: markdown block with dedicated classes (not page-back-below-header / st.html). */
-.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.tmmf-st-back-wrap) {
-  max-width: calc(var(--content-max, var(--max, 72rem)) + 17.5rem) !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host > a,
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host > .page-back-below-header,
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host > p.back-link,
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host > :not(.tmmf-st-back-wrap):not(.page-shell):not(main) {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  visibility: hidden !important;
+  border: none !important;
+  pointer-events: none !important;
 }
-.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.tmmf-st-back-wrap) [data-testid="stVerticalBlock"] {
-  align-items: flex-start !important;
-}
-.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.tmmf-st-back-wrap) [data-testid="stMarkdownContainer"],
-.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.tmmf-st-back-wrap) [data-testid="stMarkdownContainer"] > div {
-  width: auto !important;
-  max-width: 100% !important;
-}
-.stApp:has(.streamlit-tmmf-server-page) .tmmf-st-back-wrap {
+/* Server back pill lives inside the host block (same column as page-shell). */
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .tmmf-st-back-wrap {
   display: block;
-  max-width: var(--content-max, 72rem);
-  margin: 0 auto;
+  width: 100%;
+  max-width: none;
+  margin: 0;
   padding: 0.35rem 1.25rem 0;
   box-sizing: border-box;
 }
