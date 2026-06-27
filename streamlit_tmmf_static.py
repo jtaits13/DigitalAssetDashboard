@@ -1239,29 +1239,24 @@ def build_tmmf_server_iframe_html(
 _TMMF_SERVER_PHANTOM_PURGE_JS = """
 function purgeTmmfPhantomBackPills(doc, win) {
   if (!doc.querySelector(".streamlit-tmmf-server-page")) return;
-  doc.querySelectorAll(".page-back-below-header").forEach(function (row) {
-    if (row.querySelector(".tmmf-st-back-pill")) return;
+  doc.querySelectorAll(".tmmf-st-back-wrap, .page-back-below-header").forEach(function (row) {
     row.remove();
   });
   doc.querySelectorAll("p.back-link.back-link--below-header").forEach(function (p) {
-    if (p.querySelector(".tmmf-st-back-pill")) return;
     p.remove();
   });
   doc.querySelectorAll('[data-testid="stHtml"] > div > a').forEach(function (a) {
-    if (a.closest(".tmmf-st-back-wrap")) return;
     var text = (a.textContent || "").replace(/\\s+/g, " ").trim();
     if (!text) a.remove();
   });
   var host = doc.querySelector(".streamlit-tmmf-server-host");
   if (host) {
     Array.prototype.slice.call(host.children).forEach(function (child) {
-      if (child.classList.contains("tmmf-st-back-wrap")) return;
       if (child.classList.contains("page-shell") || child.tagName === "MAIN") return;
       child.remove();
     });
   }
   doc.querySelectorAll("a").forEach(function (a) {
-    if (a.classList.contains("tmmf-st-back-pill")) return;
     var cs = win.getComputedStyle(a);
     var br = parseFloat(cs.borderTopLeftRadius) || 0;
     var text = (a.textContent || "").replace(/\\s+/g, " ").trim();
@@ -1349,15 +1344,11 @@ def render_tmmf_body_server(
     *,
     payload: dict[str, Any],
     related_chips: str,
-    back_href: str = "/?jd_scroll=tmmf",
-    back_label: str = "← Back to home · TMMF preview",
 ) -> None:
     """Render TMMF on the Streamlit host: CSS in page head, body via st.html."""
-    back_link = _tmmf_streamlit_back_link_html(href=back_href, label=back_label)
     zone = build_tmmf_server_zone_html(payload=payload, related_chips=related_chips)
-    # Single st.html block: back pill + zone share page-shell padding (avoids phantom shells between blocks).
     st.html(
         f'<div class="streamlit-tmmf-server-host page-rwa-deep page-rwa-deep-mmf '
-        f'site-experience page-inner--rich">{back_link}{zone}</div>'
+        f'site-experience page-inner--rich">{zone}</div>'
     )
     inject_tmmf_server_table_actions(payload)
