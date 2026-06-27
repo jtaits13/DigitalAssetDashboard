@@ -2576,7 +2576,7 @@ def configure_subpage(
     consume_jd_page_query()
     inject_subpage_styles(kind=style_kind)
     inject_streamlit_nav_router()
-    if delivery == "iframe":
+    if delivery in ("iframe", "server"):
         components.html(HOME_IFRAME_HEIGHT_SYNC_JS, height=0, width=0)
     if delivery == "iframe" and style_kind in (
         "tmmf", "stablecoins", "crypto", "etp", "rwa_global", "rwa_explore_at", "rwa_explore_mp"
@@ -2584,11 +2584,7 @@ def configure_subpage(
         inject_streamlit_table_fullscreen_host()
     iframe_page_class = ""
     if style_kind == "tmmf":
-        iframe_page_class = (
-            " streamlit-tmmf-server-page"
-            if delivery == "server"
-            else " streamlit-tmmf-iframe-page"
-        )
+        iframe_page_class = " streamlit-tmmf-iframe-page"
     elif style_kind == "stablecoins":
         iframe_page_class = " streamlit-stablecoins-iframe-page"
     elif style_kind == "crypto":

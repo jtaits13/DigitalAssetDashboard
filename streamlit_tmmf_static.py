@@ -677,17 +677,18 @@ def render_tmmf_body_iframe(
     )
 
 
-def build_tmmf_server_html(
+def build_tmmf_server_zone_html(
     *,
     payload: dict[str, Any],
     related_chips: str,
 ) -> str:
-    """Server-rendered TMMF body (same data as iframe path, no client hydration)."""
+    """Server-rendered TMMF zone body (mock-parity markup, filled at build time)."""
     from streamlit_server_deep_page import (
         funds_table_html,
         key_observations_html,
         kpis_html_from_payload,
         league_table_html,
+        tmmf_mock_insights_html,
     )
 
     title = str(payload.get("page_title") or "Tokenized Money Market Funds")
@@ -697,53 +698,131 @@ def build_tmmf_server_html(
     footer = str(payload.get("footer_note") or "")
     err = str(payload.get("error") or payload.get("error_detail") or "").strip()
     banner = (
-        f'<div class="data-banner" role="status">{escape(err)}</div>' if err else ""
+        f'<div class="data-banner" id="js-deep-banner" role="status">{escape(err)}</div>'
+        if err
+        else '<div class="data-banner" id="js-deep-banner" role="status" hidden></div>'
     )
     cta = payload.get("bottom_cta") or {}
     cta_href = str(cta.get("href") or "").strip()
     cta_label = str(cta.get("label") or "See US Treasuries on RWA.xyz")
     cta_html = (
-        f'<div class="cta-row rwa-deep-page-cta">'
+        f'<div class="cta-row rwa-deep-page-cta" id="js-deep-bottom-cta">'
         f'<a class="btn btn-primary" href="{escape(cta_href)}" target="_blank" rel="noopener noreferrer">'
         f"{escape(cta_label)}</a></div>"
         if cta_href
-        else ""
+        else '<div class="cta-row rwa-deep-page-cta" id="js-deep-bottom-cta"></div>'
     )
-    parts = [
-        '<main class="page-shell etp-mock-shell streamlit-tmmf-server-root">',
-        '<article class="hub-section hub-section--panel inner-rich-zone zone--tmmf home-zone home-zone--tmmf etp-mock-zone">',
-        '<div class="home-zone__stripe" aria-hidden="true"></div>',
-        '<header class="home-zone__head">',
-        '<span class="home-zone__badge" aria-hidden="true">MMF</span>',
-        '<div class="home-zone__titles">',
-        f'<p class="band-label teal">{escape(band)}</p>',
-        f'<h1 class="page-intro__title">{escape(title)}</h1>',
-        f'<div class="section-dek section-dek--wide page-intro__dek">{subtitle}</div>',
-        "</div></header>",
-        '<div class="home-zone__body inner-rich-zone__body etp-mock-zone__body">',
-        related_chips.strip(),
-        banner,
-        kpis_html_from_payload(
-            list(payload.get("kpis") or []),
-            note=str(payload.get("kpi_window_note") or ""),
-        ),
-        key_observations_html(str(payload.get("key_observations_html") or "")),
-        funds_table_html(payload.get("funds_table")),
-        league_table_html(
-            payload.get("networks"),
-            table_id="deep-net-wrap",
-            default_heading="By network (Tokenized MMFs)",
-        ),
-        league_table_html(
-            payload.get("platforms"),
-            table_id="deep-plat-wrap",
-            default_heading="By platform (Tokenized MMFs · Asset managers)",
-        ),
-        cta_html,
-        f'<p class="timestamp-foot">{escape(footer)}</p>' if footer else "",
-        "</div></article></main>",
-    ]
-    return "".join(parts)
+    has_net = bool((payload.get("networks") or {}).get("rows_full"))
+    has_plat = bool((payload.get("platforms") or {}).get("rows_full"))
+    mid_rule = (
+        '<hr class="jd-divider" id="js-deep-rule-mid" aria-hidden="true" />'
+        if has_net and has_plat
+        else '<hr class="jd-divider" id="js-deep-rule-mid" hidden aria-hidden="true" />'
+    )
+    return (
+        '<main class="page-shell etp-mock-shell">'
+        '<article class="hub-section hub-section--panel inner-rich-zone zone--tmmf home-zone home-zone--tmmf etp-mock-zone">'
+        '<div class="home-zone__stripe" aria-hidden="true"></div>'
+        '<header class="home-zone__head">'
+        '<span class="home-zone__badge" aria-hidden="true">MMF</span>'
+        '<div class="home-zone__titles">'
+        f'<p class="band-label teal" id="js-deep-band">{escape(band)}</p>'
+        f'<h1 class="page-intro__title" id="js-deep-title">{escape(title)}</h1>'
+        f'<div class="section-dek section-dek--wide page-intro__dek" id="js-deep-subtitle">{subtitle}</div>'
+        "</div></header>"
+        '<div class="home-zone__body inner-rich-zone__body etp-mock-zone__body">'
+        f"{related_chips.strip()}"
+        f"{banner}"
+        f"{kpis_html_from_payload(list(payload.get('kpis') or []), note=str(payload.get('kpi_window_note') or ''))}"
+        f"{key_observations_html(str(payload.get('key_observations_html') or ''))}"
+        f"{tmmf_mock_insights_html(payload)}"
+        f"{funds_table_html(payload.get('funds_table'))}"
+        f"{league_table_html(payload.get('networks'), wrap_id='deep-net-wrap', is_network=True)}"
+        f"{mid_rule}"
+        f"{league_table_html(payload.get('platforms'), wrap_id='deep-plat-wrap', is_network=False)}"
+        f"{cta_html}"
+        f'<p class="timestamp-foot" id="js-deep-footer-note">{escape(footer)}</p>'
+        "</div></article></main>"
+    )
+
+
+def build_tmmf_server_iframe_html(
+    *,
+    payload: dict[str, Any],
+    related_chips: str,
+    back_href: str = "/?jd_scroll=tmmf",
+    back_label: str = "← Back to home · TMMF preview",
+) -> str:
+    """Self-contained iframe with full TMMF CSS and server-rendered body (no JS hydration)."""
+    from streamlit_site_parity import iframe_internal_link_script
+
+    css = _cached_iframe_tmmf_stylesheet_v5()
+    back_link = _tmmf_back_link_html(href=back_href, label=back_label)
+    zone = build_tmmf_server_zone_html(payload=payload, related_chips=related_chips)
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>{css}</style>
+</head>
+<body
+  class="page-rwa-deep page-rwa-deep-mmf site-experience page-inner--rich mock-tmmf-inner"
+  data-methodology="rwa-mmf"
+>
+{back_link}
+{zone}
+<script>
+{_TMMF_MEASURE_HEIGHT_JS}
+(function () {{
+  function sendHeight() {{
+    if (typeof window.parent.postMessage !== "function") return;
+    var h = measureTmmfContentHeight();
+    if (h === null || h < 200) return;
+    window.parent.postMessage({{ type: "streamlit:setFrameHeight", height: h }}, "*");
+    try {{
+      window.parent.postMessage({{ type: "jpm-tmmf-height", height: h }}, "*");
+    }} catch (e) {{}}
+  }}
+  function bindObservers() {{
+    if (typeof ResizeObserver === "undefined") return;
+    var ro = new ResizeObserver(sendHeight);
+    [
+      "main.page-shell.etp-mock-shell",
+      "article.etp-mock-zone",
+      "#js-deep-insights",
+      "#js-deep-extra-before-leagues",
+      "#deep-net-wrap",
+      "#deep-plat-wrap",
+      "#js-deep-footer-note",
+    ].forEach(function (sel) {{
+      var el = document.querySelector(sel);
+      if (el) ro.observe(el);
+    }});
+  }}
+  sendHeight();
+  window.addEventListener("load", function () {{
+    sendHeight();
+    bindObservers();
+  }});
+  if (typeof MutationObserver !== "undefined") {{
+    var mo = new MutationObserver(function () {{
+      sendHeight();
+      bindObservers();
+    }});
+    ["article.etp-mock-zone", "#deep-net-wrap", "#deep-plat-wrap"].forEach(function (sel) {{
+      var el = document.querySelector(sel);
+      if (el) mo.observe(el, {{ childList: true, subtree: true, attributes: true }});
+    }});
+  }}
+  [100, 400, 1000, 2500, 5000, 8000].forEach(function (ms) {{
+    setTimeout(sendHeight, ms);
+  }});
+}})();
+</script>
+{iframe_internal_link_script()}
+</body>
+</html>"""
 
 
 def render_tmmf_body_server(
@@ -753,8 +832,15 @@ def render_tmmf_body_server(
     back_href: str = "/?jd_scroll=tmmf",
     back_label: str = "← Back to home · TMMF preview",
 ) -> None:
-    """Render TMMF directly in Streamlit (same pattern as the home page preview)."""
-    from streamlit_site_parity import render_subpage_back_link
-
-    render_subpage_back_link(href=back_href, label=back_label)
-    st.html(build_tmmf_server_html(payload=payload, related_chips=related_chips))
+    """Render TMMF in a CSS-only iframe (GitHub Pages styling, server-built HTML)."""
+    html = build_tmmf_server_iframe_html(
+        payload=payload,
+        related_chips=related_chips,
+        back_href=back_href,
+        back_label=back_label,
+    )
+    components.html(
+        html,
+        height=1200,
+        scrolling=False,
+    )
