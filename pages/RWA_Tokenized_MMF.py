@@ -1,4 +1,4 @@
-"""Tokenized money market funds: KPIs + network/platform aggregates from RWA.xyz fund lists."""
+"""Tokenized money market funds: KPIs + network/platform aggregates from RWA.xyz."""
 
 from __future__ import annotations
 
@@ -9,6 +9,8 @@ _REPO = Path(__file__).resolve().parent.parent
 if str(_REPO) not in sys.path:
     sys.path.insert(0, str(_REPO))
 
+import streamlit as st
+
 from streamlit_site_parity import (
     _streamlit_page_href,
     configure_subpage,
@@ -17,7 +19,7 @@ from streamlit_site_parity import (
 )
 from streamlit_tmmf_static import (
     get_tmmf_deep_payload,
-    render_tmmf_body_server,
+    render_tmmf_body_iframe,
 )
 
 
@@ -26,7 +28,6 @@ def main() -> None:
         page_title="Tokenized Money Market Funds — Digital Assets Dashboard",
         active="tmmf",
         style_kind="tmmf",
-        delivery="server",
     )
     related = related_chips_html(
         ("/?jd_scroll=tmmf", "Home TMMF preview"),
@@ -35,8 +36,9 @@ def main() -> None:
         (_streamlit_page_href("rwa_global"), "RWA market overview"),
     )
 
-    payload = get_tmmf_deep_payload()
-    render_tmmf_body_server(payload=payload, related_chips=related)
+    with st.spinner("Loading tokenized MMF page…"):
+        payload = get_tmmf_deep_payload()
+        render_tmmf_body_iframe(payload=payload, related_chips=related)
 
     render_subpage_footer(label="Tokenized Money Market Funds")
 
