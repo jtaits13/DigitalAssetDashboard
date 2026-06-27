@@ -531,6 +531,25 @@ def _cached_tmmf_server_host_stylesheet() -> str:
         css,
     )
     css = css.replace("overflow: hidden;", "overflow: visible;")
+    # Mock CSS scoped with :has() beats site-experience transparent KPI panel rules — restore GH Pages parity.
+    css += f"""
+{scope}.site-experience.page-inner--rich .inner-rich-zone__body .rwa-kpi-panel-static,
+{scope}.site-experience[class*="page-rwa"] .etp-mock-snapshot .rwa-kpi-panel-static {{
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0.5rem !important;
+}}
+{scope}.site-experience.page-inner--rich .inner-rich-zone .jd-kpi-window-note {{
+  display: block !important;
+  margin: 0 0 0.5rem !important;
+  font-size: 0.72rem !important;
+  line-height: 1.45 !important;
+  color: var(--muted, #5c6b7a) !important;
+}}
+"""
     return css
 
 
