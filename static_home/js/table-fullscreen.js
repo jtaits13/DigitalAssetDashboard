@@ -101,6 +101,11 @@
     "</svg>";
 
   function isMockInnerPage() {
+    if (
+      document.querySelector(".streamlit-tmmf-server-host.mock-tmmf-inner")
+    ) {
+      return true;
+    }
     var body = document.body;
     if (!body || !body.classList) return false;
     return (

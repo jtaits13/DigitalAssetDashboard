@@ -2675,6 +2675,9 @@ STREAMLIT_TMMF_FULLSCREEN_HOST_JS = """
     if (body) body.innerHTML = "";
   }
 
+  win.__jpmOpenTableFullscreenHost = openHostModal;
+  win.__jpmCloseTableFullscreenHost = closeHostModal;
+
   win.addEventListener("message", function (ev) {
     if (!ev.data) return;
     var t = ev.data.type;

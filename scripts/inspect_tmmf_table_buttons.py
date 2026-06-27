@@ -23,6 +23,8 @@ CHECK_JS = """
       actionAnchors: doc.querySelectorAll(
         "#tmmf-funds-table-actions, #deep-net-table-actions, #deep-plat-table-actions"
       ).length,
+      expandClassCount: doc.querySelectorAll(".etp-mock-table-meta__expand").length,
+      hostModalApi: typeof doc.defaultView.__jpmOpenTableFullscreenHost !== "undefined",
     };
   }
   var main = checkDoc(document);
@@ -61,6 +63,11 @@ def main() -> int:
     dl = max(main.get("download", 0), iframe.get("download", 0))
     fs = max(main.get("fullscreen", 0), iframe.get("fullscreen", 0))
     ok = dl >= 3 and fs >= 3
+    expand_class = max(
+        main.get("expandClassCount", 0),
+        iframe.get("expandClassCount", 0) if iframe else 0,
+    )
+    ok = ok and expand_class >= 3
     return 0 if ok else 1
 
 

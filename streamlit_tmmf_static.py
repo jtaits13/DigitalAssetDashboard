@@ -53,21 +53,32 @@ _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH = """
   }
 
   function postOpenToHost(tableEl, opts) {
-    if (typeof window.parent.postMessage !== "function") return false;
     var html = tableHtmlForHost(tableEl);
     if (!html) return false;
+    var msg = {
+      type: "jpm-table-fullscreen-open",
+      title:
+        (opts && opts.title) ||
+        tableEl.getAttribute("aria-label") ||
+        "Full-screen table",
+      tableHtml: html,
+    };
     try {
-      window.parent.postMessage(
-        {
-          type: "jpm-table-fullscreen-open",
-          title:
-            (opts && opts.title) ||
-            tableEl.getAttribute("aria-label") ||
-            "Full-screen table",
-          tableHtml: html,
-        },
-        "*"
-      );
+      if (typeof window.__jpmOpenTableFullscreenHost === "function") {
+        window.__jpmOpenTableFullscreenHost(msg);
+        window.__TMMF_MODAL_OPEN = true;
+        return true;
+      }
+      if (typeof window.postMessage === "function") {
+        window.postMessage(msg, "*");
+      }
+      if (
+        window.parent &&
+        window.parent !== window &&
+        typeof window.parent.postMessage === "function"
+      ) {
+        window.parent.postMessage(msg, "*");
+      }
       window.__TMMF_MODAL_OPEN = true;
       return true;
     } catch (e) {
@@ -76,9 +87,20 @@ _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH = """
   }
 
   function postCloseToHost() {
-    if (typeof window.parent.postMessage !== "function") return;
     try {
-      window.parent.postMessage({ type: "jpm-table-fullscreen-close" }, "*");
+      if (typeof window.__jpmCloseTableFullscreenHost === "function") {
+        window.__jpmCloseTableFullscreenHost();
+      }
+      if (typeof window.postMessage === "function") {
+        window.postMessage({ type: "jpm-table-fullscreen-close" }, "*");
+      }
+      if (
+        window.parent &&
+        window.parent !== window &&
+        typeof window.parent.postMessage === "function"
+      ) {
+        window.parent.postMessage({ type: "jpm-table-fullscreen-close" }, "*");
+      }
     } catch (e) {}
   }
 
@@ -1044,6 +1066,7 @@ def inject_tmmf_server_table_actions(payload: dict[str, Any]) -> None:
   }}
   function boot() {{
     if (!doc.querySelector(".streamlit-tmmf-server-host")) return false;
+    if (!win.__jpmOpenTableFullscreenHost) return false;
     if (win.__TMMF_SERVER_TABLE_BOOTED) return true;
     win.__TMMF_SERVER_TABLE_BOOTED = true;
     inject({libs_json});
