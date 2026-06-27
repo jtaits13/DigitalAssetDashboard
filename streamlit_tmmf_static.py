@@ -470,16 +470,22 @@ body.page-rwa-deep-mmf .page-back-below-header {
 body.page-rwa-deep-mmf p.back-link.back-link--below-header {
   margin: 0.2rem 0 0.85rem;
 }
-body.page-rwa-deep-mmf .back-link--below-header a {
+body.page-rwa-deep-mmf.site-experience.page-inner--rich .back-link--below-header a {
   display: inline-block;
   font-weight: 650;
   font-size: 0.84rem;
   line-height: 1.35;
   color: var(--ink-soft, #1f4c67);
   text-decoration: none;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid rgb(var(--hx-accent-bright-rgb, 80 113 136) / 0.18);
+  background: rgba(251, 254, 255, 0.85);
 }
-body.page-rwa-deep-mmf .back-link--below-header a:hover {
+body.page-rwa-deep-mmf.site-experience.page-inner--rich .back-link--below-header a:hover {
   color: var(--hx-tmmf-bright, #507188);
+  border-color: rgb(80 113 136 / 0.45);
+  background: #f8fcfe;
 }
 body.page-rwa-deep-mmf .page-shell.etp-mock-shell {
   max-width: var(--content-max, 72rem);
@@ -864,12 +870,11 @@ def render_tmmf_body_server(
     back_href: str = "/?jd_scroll=tmmf",
     back_label: str = "← Back to home · TMMF preview",
 ) -> None:
-    """Render TMMF on the Streamlit host: CSS in page head, ~50KB HTML body via st.html."""
-    from streamlit_site_parity import render_subpage_back_link
-
-    render_subpage_back_link(href=back_href, label=back_label)
+    """Render TMMF on the Streamlit host: CSS in page head, body via st.html."""
+    back_link = _tmmf_back_link_html(href=back_href, label=back_label)
     zone = build_tmmf_server_zone_html(payload=payload, related_chips=related_chips)
     st.html(
         f'<div class="streamlit-tmmf-server-host page-rwa-deep page-rwa-deep-mmf '
-        f'site-experience page-inner--rich mock-tmmf-inner">{zone}</div>'
+        f'site-experience page-inner--rich mock-tmmf-inner">'
+        f"{back_link}{zone}</div>"
     )

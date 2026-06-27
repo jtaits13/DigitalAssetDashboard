@@ -2200,6 +2200,78 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   margin: 0 auto;
   background: var(--wash, #f3f7fb);
 }
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.streamlit-tmmf-server-host) {
+  align-items: stretch !important;
+}
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.streamlit-tmmf-server-host) [data-testid="stHtml"] > div {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .page-back-below-header {
+  max-width: var(--content-max, 72rem);
+  margin: 0 auto;
+  padding: 0.35rem 1.25rem 0;
+  box-sizing: border-box;
+}
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host p.back-link.back-link--below-header {
+  margin: 0.2rem 0 0.85rem;
+  width: auto !important;
+  max-width: none !important;
+}
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .back-link--below-header a,
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] .streamlit-tmmf-server-host .back-link--below-header a {
+  display: inline-block !important;
+  width: auto !important;
+  max-width: none !important;
+  flex: none !important;
+  font-weight: 650 !important;
+  font-size: 0.84rem !important;
+  line-height: 1.35 !important;
+  color: var(--ink-soft, #1f4c67) !important;
+  -webkit-text-fill-color: var(--ink-soft, #1f4c67) !important;
+  text-decoration: none !important;
+  padding: 0.35rem 0.65rem !important;
+  border-radius: 999px !important;
+  border: 1px solid rgb(var(--hx-accent-bright-rgb, 80 113 136) / 0.18) !important;
+  background: rgba(251, 254, 255, 0.85) !important;
+  box-shadow: none !important;
+  white-space: nowrap;
+}
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .back-link--below-header a:hover,
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] .streamlit-tmmf-server-host .back-link--below-header a:hover {
+  color: var(--hx-tmmf-bright, #507188) !important;
+  -webkit-text-fill-color: var(--hx-tmmf-bright, #507188) !important;
+  border-color: rgb(80 113 136 / 0.45) !important;
+  background: #f8fcfe !important;
+}
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .home-related-chips .home-chip,
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] .streamlit-tmmf-server-host .home-related-chips .home-chip {
+  display: inline-block !important;
+  padding: 0.22rem 0.58rem !important;
+  border-radius: 999px !important;
+  font-size: 0.76rem !important;
+  font-weight: 600 !important;
+  line-height: 1.25 !important;
+  color: var(--hx-etp-dark, #31485c) !important;
+  -webkit-text-fill-color: var(--hx-etp-dark, #31485c) !important;
+  background: #fff !important;
+  border: 1px solid rgb(80 113 136 / 0.22) !important;
+  text-decoration: none !important;
+  box-shadow: none !important;
+}
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] .streamlit-tmmf-server-host .data-table a.sym--link {
+  color: var(--teal, #2a5f82) !important;
+  -webkit-text-fill-color: var(--teal, #2a5f82) !important;
+  font-weight: 650 !important;
+  text-decoration: none !important;
+}
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] .streamlit-tmmf-server-host .data-table a.rwa-table-link {
+  color: var(--teal, #2a5f82) !important;
+  -webkit-text-fill-color: var(--teal, #2a5f82) !important;
+  text-decoration: none !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em;
+}
 .stApp:has(.streamlit-tmmf-iframe-page) .streamlit-subpage-root > main.page-shell.etp-mock-shell,
 .stApp:has(.streamlit-tmmf-iframe-page) article.etp-mock-zone:empty,
 .stApp:has(.streamlit-tmmf-iframe-page) .inner-rich-zone.etp-mock-zone:not(:has(.home-zone__head)) {

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+import re
 from html import escape
 from typing import Any
 
@@ -29,7 +30,7 @@ _NUM_COLS = frozenset(
     }
 )
 _HTML_COLS = frozenset({"Networks", "Terms"})
-_LINK_NAME_COLS = frozenset({"Fund Name", "Network", "Platform"})
+_NAME_LINK_COLS = frozenset({"Fund Name", "Network", "Platform", "Asset manager"})
 _TMMF_MOCK_FUND_COLUMNS = (
     "#",
     "Fund Name",
@@ -70,7 +71,7 @@ def kpis_html_from_payload(kpis: list[dict[str, Any]], *, note: str = "") -> str
     return (
         '<section class="etp-mock-snapshot" id="js-deep-snapshot" aria-labelledby="js-deep-snap-h">'
         '<h2 class="subsection-head u-vh" id="js-deep-snap-h">Top-line snapshot</h2>'
-        f'<div id="js-deep-kpis" aria-label="Headline KPI strip">'
+        '<div id="js-deep-kpis" aria-label="Headline KPI strip">'
         '<div class="rwa-kpi-panel-static">'
         f"{legend}"
         f"<div class=\"rwa-kpi-row rwa-kpi-row--home-grid\">{''.join(cells)}</div>"
@@ -78,18 +79,53 @@ def kpis_html_from_payload(kpis: list[dict[str, Any]], *, note: str = "") -> str
     )
 
 
+def _fmt_pct_pts(val: Any) -> tuple[str, str]:
+    try:
+        n = float(val)
+        cls = " num up" if n > 0 else " num down" if n < 0 else " num"
+        sign = "+" if n > 0 else ""
+        return f"{sign}{n:.2f}%", cls
+    except (TypeError, ValueError):
+        return "—", " num"
+
+
+def _fmt_pct_level(val: Any) -> tuple[str, str]:
+    try:
+        return f"{float(val):.2f}%", " num"
+    except (TypeError, ValueError):
+        return "—", " num"
+
+
+def _link_href_for_row(col: str, row: dict[str, Any]) -> str:
+    if col == "Fund Name":
+        return str(row.get("Fund Link") or row.get("Link") or "").strip()
+    if col == "Platform":
+        return str(row.get("Platform Link") or row.get("Link") or "").strip()
+    return str(row.get("Link") or "").strip()
+
+
 def _deep_cell_html(col: str, val: Any, row: dict[str, Any]) -> tuple[str, str]:
+    if col == "Link":
+        href = str(val or row.get("Link") or "").strip()
+        if not href.startswith("http"):
+            return "—", " num"
+        return (
+            f'<a class="rwa-table-link" href="{escape(href)}" target="_blank" '
+            f'rel="noopener noreferrer" aria-label="Open RWA.xyz">↗</a>',
+            " num",
+        )
     if col in _HTML_COLS and val is not None and "<" in str(val):
-        return str(val), ""
-    if col in _LINK_NAME_COLS:
+        return str(val), "data-table__text"
+    if col in _NAME_LINK_COLS:
         label = str(val or "—")
-        link = str(row.get("Link") or row.get("Fund Link") or row.get("Platform Link") or "").strip()
-        if link.startswith("http"):
+        href = _link_href_for_row(col, row)
+        if href.startswith("http"):
             return (
-                f'<a href="{escape(link)}" target="_blank" rel="noopener noreferrer">{escape(label)}</a>',
+                f'<a class="sym sym--link" href="{escape(href)}" target="_blank" '
+                f'rel="noopener noreferrer">{escape(label)}</a>',
                 "",
             )
-        return escape(label), ""
+        return f'<span class="sym">{escape(label)}</span>', ""
     if val is None or (isinstance(val, float) and math.isnan(val)):
         return "—", ""
     if col in ("Total Value", "Distributed Value", "Market Cap", "Assets (B)"):
@@ -97,14 +133,17 @@ def _deep_cell_html(col: str, val: Any, row: dict[str, Any]) -> tuple[str, str]:
             return escape(format_usd_compact(float(val))), " num"
         except (TypeError, ValueError):
             return escape(str(val)), " num"
-    if "Δ" in col or col.endswith(" %") or col in ("Market Share", "1M %", "1Y %", "30D Δ share"):
+    if col in ("7D Δ value", "30D Δ share"):
+        txt, cls = _fmt_pct_pts(val)
+        return txt, cls
+    if col == "Market Share":
+        txt, cls = _fmt_pct_level(val)
+        return txt, cls
+    if col == "Holders":
         try:
-            n = float(val)
-            cls = " num up" if n > 0 else " num down" if n < 0 else " num"
-            sign = "+" if n > 0 else ""
-            return f"{sign}{n:.2f}%", cls
+            return escape(f"{int(val):,}"), " num"
         except (TypeError, ValueError):
-            return "—", " num"
+            return escape(str(val)), " num"
     if col in _NUM_COLS:
         try:
             if col == "#":
@@ -118,7 +157,8 @@ def _deep_cell_html(col: str, val: Any, row: dict[str, Any]) -> tuple[str, str]:
 
 def _table_body_html(columns: list[str], rows: list[dict[str, Any]], *, empty_msg: str) -> str:
     thead = "".join(
-        f'<th scope="col"{" class=\"num\"" if c in _NUM_COLS else ""}>{escape(c)}</th>'
+        f'<th scope="col"{" class=\"num\"" if c in _NUM_COLS or c == "Link" else ""}>'
+        f'{"↗" if c == "Link" else escape(c)}</th>'
         for c in columns
     )
     if not rows:
@@ -172,10 +212,7 @@ def tmmf_mock_insights_html(payload: dict[str, Any]) -> str:
     top_fund = max(fund_rows, key=lambda r: float(r.get("Total Value") or 0), default=None)
     if top_fund:
         tv = float(top_fund.get("Total Value") or 0)
-        if tv >= 1e9:
-            fund_label = f"{top_fund.get('Ticker') or '—'} ({format_usd_compact(tv)})"
-        else:
-            fund_label = f"{top_fund.get('Ticker') or '—'} ({format_usd_compact(tv)})"
+        fund_label = f"{top_fund.get('Ticker') or '—'} ({format_usd_compact(tv)})"
     else:
         fund_label = "—"
     return (
@@ -243,9 +280,7 @@ def funds_table_html(funds: dict[str, Any] | None) -> str:
     if not columns:
         columns = all_columns
     rows = funds.get("rows_full") or []
-    heading = str(
-        funds.get("table_heading") or "Tokenized money market fund population"
-    )
+    heading = str(funds.get("table_heading") or "Tokenized money market fund population")
     intro = (
         "Curated fund population (fixed list aligned to RWA.xyz). "
         "Population may not include all TMMFs in the market."
@@ -273,12 +308,46 @@ def funds_table_html(funds: dict[str, Any] | None) -> str:
 
 
 def key_observations_html(raw: str) -> str:
+    """Match ``renderKeyObservationsCallout`` from ``rwa-onchain-home.js``."""
     raw = (raw or "").strip()
     if not raw:
         return ""
+    cleaned = re.sub(r"<style[^>]*>.*?</style>", "", raw, flags=re.IGNORECASE | re.DOTALL)
+    ul_match = re.search(r"<ul[^>]*>(.*?)</ul>", cleaned, flags=re.IGNORECASE | re.DOTALL)
+    if not ul_match:
+        return (
+            '<div class="inner-rich-block etp-mock-key-obs-block" id="js-deep-ko-section" '
+            'aria-labelledby="js-deep-ko-h">'
+            f'<div id="js-deep-ko">{cleaned}</div></div>'
+        )
+    list_html = re.sub(r'\s*style="[^"]*"', "", ul_match.group(1), flags=re.IGNORECASE)
+    note_match = re.search(
+        r'<p class="takeaways__note"[^>]*>(.*?)</p>',
+        cleaned,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+    review_match = re.search(
+        r'<p class="review-note[^"]*"[^>]*>.*?</p>',
+        cleaned,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+    note_html = (
+        f'<p class="crypto-story-callout__note">{note_match.group(1)}</p>'
+        if note_match
+        else ""
+    )
+    review_html = review_match.group(0) if review_match else ""
+    callout = (
+        '<aside class="crypto-story-callout" aria-labelledby="key-obs-callout-title">'
+        '<p class="crypto-story-callout__title" role="heading" aria-level="3" '
+        'id="key-obs-callout-title">Key observations</p>'
+        f'<ul class="crypto-story-callout__list">{list_html}</ul>'
+        f"{note_html}"
+        "</aside>"
+    )
     return (
         '<div class="inner-rich-block etp-mock-key-obs-block" id="js-deep-ko-section" '
         'aria-labelledby="js-deep-ko-h">'
         '<h2 class="subsection-head u-vh" id="js-deep-ko-h">Key Observations</h2>'
-        f'<div id="js-deep-ko">{raw}</div></div>'
+        f'<div id="js-deep-ko">{callout}{review_html}</div></div>'
     )
