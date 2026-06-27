@@ -286,6 +286,124 @@ _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH = """
 })();
 """
 
+_TMMF_SERVER_TABLE_WIRE_JS = """
+(function () {
+  function $(id) {
+    return document.getElementById(id);
+  }
+
+  function wireTableSearch(cfg) {
+    var inp = $(cfg.inputId);
+    var note = $(cfg.noteId);
+    var tbody = cfg.tbody;
+    if (!inp || !tbody) return;
+    var entity = cfg.entityPlural || "rows";
+    inp.addEventListener("input", function () {
+      var q = String(inp.value || "").trim().toLowerCase();
+      var rows = tbody.querySelectorAll("tr");
+      var shown = 0;
+      rows.forEach(function (tr) {
+        if (tr.querySelector("td[colspan]")) return;
+        var match = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+        tr.hidden = !match;
+        if (match) shown++;
+      });
+      if (!note) return;
+      var total = rows.length;
+      if (!q) note.textContent = "Showing all " + total + " " + entity + ".";
+      else note.textContent = "Showing " + shown + " of " + total + ' matching "' + q + '".';
+    });
+  }
+
+  function wireBlock(cfg) {
+    var host = $(cfg.hostId);
+    if (!host) return;
+    var wrap = host.querySelector(cfg.wrapSelector || ".table-wrap--scroll, .rwa-split-table-scroll");
+    var table = wrap && wrap.querySelector("table");
+    if (!wrap || !table) return;
+    var fs = window.__TABLE_FULLSCREEN;
+    if (!fs || !fs.attachTableFullscreenButton) return;
+    var exportData =
+      window.__TMMF_SERVER_EXPORTS && window.__TMMF_SERVER_EXPORTS[cfg.exportKey];
+    fs.attachTableFullscreenButton(wrap, table, {
+      title: cfg.title,
+      filename: cfg.filename,
+      sheetName: cfg.sheetName,
+      downloadPlacement: "title-row",
+      downloadAnchor: $(cfg.actionsId),
+      actionRow: $(cfg.metaActionsId),
+      getExportData: exportData
+        ? function () {
+            return exportData;
+          }
+        : undefined,
+    });
+    if (cfg.inputId && cfg.noteId) {
+      var tbody = table.querySelector("tbody");
+      wireTableSearch({
+        inputId: cfg.inputId,
+        noteId: cfg.noteId,
+        tbody: tbody,
+        entityPlural: cfg.entityPlural,
+      });
+    }
+  }
+
+  function boot() {
+    wireBlock({
+      hostId: "js-deep-extra-before-leagues",
+      wrapSelector: ".tmmf-funds-table-wrap",
+      actionsId: "tmmf-funds-table-actions",
+      metaActionsId: "tmmf-funds-meta-actions",
+      inputId: "tmmf-funds-q",
+      noteId: "tmmf-funds-note",
+      entityPlural: "funds",
+      exportKey: "funds",
+      title: "Tokenized Money Market Fund Population",
+      filename: "tmmf-fund-population",
+      sheetName: "TMMF Funds",
+    });
+    wireBlock({
+      hostId: "deep-net-wrap",
+      actionsId: "deep-net-table-actions",
+      metaActionsId: "deep-net-meta-actions",
+      inputId: "deep-net-q",
+      noteId: "deep-net-note",
+      entityPlural: "networks",
+      exportKey: "deep-net",
+      title:
+        (document.querySelector("#deep-net-wrap .rwa-split-table-head__title") || {})
+          .textContent || "Networks",
+      filename: "tmmf-networks",
+      sheetName: "Networks",
+    });
+    wireBlock({
+      hostId: "deep-plat-wrap",
+      actionsId: "deep-plat-table-actions",
+      metaActionsId: "deep-plat-meta-actions",
+      inputId: "deep-plat-q",
+      noteId: "deep-plat-note",
+      entityPlural: "platforms",
+      exportKey: "deep-plat",
+      title:
+        (document.querySelector("#deep-plat-wrap .rwa-split-table-head__title") || {})
+          .textContent || "Platforms",
+      filename: "tmmf-platforms",
+      sheetName: "Platforms",
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot);
+  } else {
+    boot();
+  }
+  setTimeout(boot, 0);
+  setTimeout(boot, 400);
+  setTimeout(boot, 1200);
+})();
+"""
+
 _TMMF_MEASURE_HEIGHT_JS = """
 function measureTmmfContentHeight() {
   if (window.__TMMF_MODAL_OPEN) return null;
@@ -901,6 +1019,24 @@ def build_tmmf_server_iframe_html(
 </html>"""
 
 
+def _tmmf_server_table_scripts(payload: dict[str, Any]) -> str:
+    """table-fullscreen + table-download + host-portal patch for server-rendered tables."""
+    from streamlit_server_deep_page import build_tmmf_server_export_config
+
+    js = _read_js_files(("table-fullscreen.js", "table-download.js"))
+    export_json = json.dumps(build_tmmf_server_export_config(payload))
+    return f"""<script>
+{js}
+</script>
+<script>
+window.__TMMF_SERVER_EXPORTS = {export_json};
+{_STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH}
+</script>
+<script>
+{_TMMF_SERVER_TABLE_WIRE_JS}
+</script>"""
+
+
 def render_tmmf_body_server(
     *,
     payload: dict[str, Any],
@@ -911,9 +1047,10 @@ def render_tmmf_body_server(
     """Render TMMF on the Streamlit host: CSS in page head, body via st.html."""
     back_link = _tmmf_streamlit_back_link_html(href=back_href, label=back_label)
     zone = build_tmmf_server_zone_html(payload=payload, related_chips=related_chips)
+    scripts = _tmmf_server_table_scripts(payload)
     # Back link in markdown — st.html duplicates/hides page-back-below-header and leaves empty pill shells.
     st.markdown(back_link, unsafe_allow_html=True)
     st.html(
         f'<div class="streamlit-tmmf-server-host page-rwa-deep page-rwa-deep-mmf '
-        f'site-experience page-inner--rich mock-tmmf-inner">{zone}</div>'
+        f'site-experience page-inner--rich mock-tmmf-inner">{zone}</div>{scripts}'
     )

@@ -236,6 +236,75 @@ def tmmf_mock_insights_html(payload: dict[str, Any]) -> str:
     )
 
 
+def _league_table_prefix(wrap_id: str) -> str:
+    return wrap_id.replace("-wrap", "")
+
+
+def _export_cell_value(col: str, val: Any, row: dict[str, Any]) -> Any:
+    if val is None or (isinstance(val, float) and math.isnan(val)):
+        return ""
+    if col in _HTML_COLS:
+        return re.sub(r"<[^>]+>", " ", str(val)).replace("\n", " ").strip()
+    if col in ("Total Value", "7D Δ value", "Holders", "Distributed Value", "Market Cap"):
+        try:
+            return float(val)
+        except (TypeError, ValueError):
+            return str(val)
+    if col in ("Networks", "Terms"):
+        return re.sub(r"<[^>]+>", " ", str(val)).replace("\n", " ").strip()
+    return str(val)
+
+
+def _funds_export_columns(funds: dict[str, Any]) -> list[str]:
+    cols = [str(c) for c in funds.get("columns") or []]
+    if "#" not in cols:
+        cols.insert(0, "#")
+    return cols
+
+
+def _ranked_fund_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    ranked = sorted(rows, key=lambda r: -(float(r.get("Total Value") or 0)))
+    out: list[dict[str, Any]] = []
+    for idx, row in enumerate(ranked, start=1):
+        item = dict(row)
+        item["#"] = idx
+        out.append(item)
+    return out
+
+
+def funds_export_data(funds: dict[str, Any] | None) -> dict[str, Any]:
+    if not funds:
+        return {"sheetName": "TMMF Funds", "headers": [], "rows": []}
+    cols = _funds_export_columns(funds)
+    rows = _ranked_fund_rows(list(funds.get("rows_full") or []))
+    return {
+        "sheetName": "TMMF Funds",
+        "headers": cols,
+        "rows": [[_export_cell_value(c, row.get(c), row) for c in cols] for row in rows],
+    }
+
+
+def league_export_data(league: dict[str, Any] | None) -> dict[str, Any]:
+    if not league or not league.get("columns"):
+        return {"sheetName": "RWA table", "headers": [], "rows": []}
+    cols = [str(c) for c in league["columns"]]
+    title = str(league.get("table_heading") or league.get("block_heading") or "RWA table")
+    rows = league.get("rows_full") or []
+    return {
+        "sheetName": title[:31],
+        "headers": cols,
+        "rows": [[_export_cell_value(c, row.get(c), row) for c in cols] for row in rows],
+    }
+
+
+def build_tmmf_server_export_config(payload: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "funds": funds_export_data(payload.get("funds_table")),
+        "deep-net": league_export_data(payload.get("networks")),
+        "deep-plat": league_export_data(payload.get("platforms")),
+    }
+
+
 def league_table_html(
     league: dict[str, Any] | None,
     *,
@@ -244,11 +313,15 @@ def league_table_html(
 ) -> str:
     if not league or not league.get("columns"):
         return ""
+    prefix = _league_table_prefix(wrap_id)
     columns = [str(c) for c in league["columns"]]
     rows = league.get("rows_full") or []
     heading = str(league.get("table_heading") or league.get("block_heading") or "RWA table")
     intro = str(league.get("section_intro_html") or "").strip()
     caption = str(league.get("caption_html") or "").strip()
+    search_label = str(league.get("search_label") or "Search table")
+    search_placeholder = str(league.get("search_placeholder") or "Filter table…")
+    entity_plural = str(league.get("filter_note_entity_plural") or ("networks" if is_network else "platforms"))
     host_class = "rwa-deep-league-panel etp-mock-table-block"
     if is_network:
         host_class += " tmmf-mock-league-block stable-mock-league-block"
@@ -259,13 +332,25 @@ def league_table_html(
         else ""
     )
     table_html = _table_body_html(columns, rows, empty_msg="No rows available.")
+    count_note = f"Showing all {len(rows)} {entity_plural}."
     return (
         f'<div id="{escape(wrap_id)}" class="{host_class}">'
         '<div class="rwa-split-table-head inner-table-head">'
         f'<h2 class="subsection-head rwa-split-table-head__title">{escape(heading)}</h2>'
+        f'<div class="rwa-split-table-head__actions" id="{escape(prefix)}-table-actions"></div>'
         "</div>"
         f"{intro_html}"
-        '<div class="table-wrap table-wrap--scroll rwa-split-table-scroll">'
+        '<label class="search-field etp-mock-table-search">'
+        f'<span class="search-field__label">{escape(search_label)}</span>'
+        f'<input id="{escape(prefix)}-q" type="search" class="search-field__input" autocomplete="off" '
+        f'placeholder="{escape(search_placeholder)}" /></label>'
+        '<div class="etp-mock-table-meta" aria-live="polite">'
+        f'<p class="etp-mock-table-meta__count toolbar-note" id="{escape(prefix)}-note">'
+        f"{escape(count_note)}</p>"
+        f'<div class="rwa-table-actions" id="{escape(prefix)}-meta-actions"></div>'
+        "</div>"
+        '<div class="table-wrap table-wrap--scroll rwa-split-table-scroll" '
+        f'data-fullscreen-title="{escape(heading)}">'
         f'<table class="data-table data-table--dense data-table--sortable" aria-label="{escape(heading)}">'
         f"{table_html}</table></div>"
         f"{cap_html}</div>"
@@ -290,14 +375,24 @@ def funds_table_html(funds: dict[str, Any] | None) -> str:
         "Ranked by total value. Full production table includes eligibility, domicile, "
         "regulatory framework, and custodian columns (available in full-screen view and Excel export)."
     )
+    count_note = f"Showing all {len(rows)} funds."
     return (
         '<section id="js-deep-extra-before-leagues" '
         'class="rwa-deep-league-panel etp-mock-table-block etp-mock-table-block--funds" '
         'aria-labelledby="funds-heading">'
         '<div class="rwa-split-table-head inner-table-head">'
         f'<h2 class="subsection-head rwa-split-table-head__title" id="funds-heading">{escape(heading)}</h2>'
+        '<div class="rwa-split-table-head__actions" id="tmmf-funds-table-actions"></div>'
         "</div>"
         f'<p class="tmmf-mock-funds-intro">{escape(intro)}</p>'
+        '<label class="search-field etp-mock-table-search">'
+        '<span class="search-field__label">Search funds</span>'
+        '<input id="tmmf-funds-q" type="search" class="search-field__input" autocomplete="off" '
+        'placeholder="Filter funds…" /></label>'
+        '<div class="etp-mock-table-meta" aria-live="polite">'
+        f'<p class="etp-mock-table-meta__count toolbar-note" id="tmmf-funds-note">{escape(count_note)}</p>'
+        '<div class="rwa-table-actions" id="tmmf-funds-meta-actions"></div>'
+        "</div>"
         '<div class="table-wrap table-wrap--scroll rwa-split-table-scroll tmmf-funds-table-wrap" '
         'data-fullscreen-title="Tokenized Money Market Fund Population">'
         f'<table class="data-table data-table--dense data-table--sortable" '

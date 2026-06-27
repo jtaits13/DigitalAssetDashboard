@@ -2271,6 +2271,41 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   overflow: hidden !important;
   visibility: hidden !important;
 }
+/* Legacy st.html back row + global subpage pill rules can leave empty shells on Cloud. */
+.stApp:has(.streamlit-tmmf-server-page) .page-back-below-header:not(:has(.tmmf-st-back-pill)),
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] .page-back-below-header,
+.stApp:has(.streamlit-tmmf-server-page) p.back-link.back-link--below-header {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  visibility: hidden !important;
+  border: none !important;
+}
+.stApp:has(.streamlit-tmmf-server-page) .back-link--below-header a:not(.tmmf-st-back-pill),
+.stApp:has(.streamlit-tmmf-server-page) a.tmmf-server-back-anchor:not(.tmmf-st-back-pill) {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  visibility: hidden !important;
+  border: none !important;
+  pointer-events: none !important;
+}
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has([data-testid="stHtml"]):not(:has(.streamlit-tmmf-server-host)):not(:has(.tmmf-st-back-wrap)) {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  visibility: hidden !important;
+}
 .stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .home-related-chips .home-chip,
 .stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] .streamlit-tmmf-server-host .home-related-chips .home-chip {
   display: inline-block !important;
@@ -2693,6 +2728,7 @@ def configure_subpage(
         from streamlit_tmmf_static import inject_tmmf_server_host_styles
 
         inject_tmmf_server_host_styles()
+        inject_streamlit_table_fullscreen_host()
     iframe_page_class = ""
     if style_kind == "tmmf":
         iframe_page_class = (
