@@ -506,6 +506,38 @@ body.page-rwa-deep-mmf .rwa-table-modal--streamlit-fallback .rwa-table-modal__di
     return "\n".join(chunks)
 
 
+@st.cache_resource(show_spinner=False)
+def _cached_tmmf_server_host_stylesheet() -> str:
+    """TMMF mock CSS scoped onto the Streamlit host (not a giant components.html blob)."""
+    import re
+
+    raw = _cached_iframe_tmmf_stylesheet_v5()
+    css_lines = [
+        line
+        for line in raw.splitlines()
+        if not ("@import url(" in line and "fonts.googleapis.com" in line)
+    ]
+    css = "\n".join(css_lines)
+    scope = ".stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host"
+    css = css.replace("body.page-rwa-deep-mmf", scope)
+    css = css.replace("html, body.page-rwa-deep-mmf.site-experience", scope)
+    css = re.sub(
+        r"html::before,\s*html::after,\s*" + re.escape(scope) + r"::before,\s*" + re.escape(scope) + r"::after",
+        f"{scope}::before, {scope}::after",
+        css,
+    )
+    css = css.replace("overflow: hidden;", "overflow: visible;")
+    return css
+
+
+def inject_tmmf_server_host_styles() -> None:
+    """Inject GitHub Pages TMMF styling on the Streamlit host for server-rendered pages."""
+    st.markdown(
+        f"<style>{_cached_tmmf_server_host_stylesheet()}</style>",
+        unsafe_allow_html=True,
+    )
+
+
 def _read_js_files(names: tuple[str, ...]) -> str:
     parts: list[str] = []
     for name in names:
@@ -832,15 +864,12 @@ def render_tmmf_body_server(
     back_href: str = "/?jd_scroll=tmmf",
     back_label: str = "← Back to home · TMMF preview",
 ) -> None:
-    """Render TMMF in a CSS-only iframe (GitHub Pages styling, server-built HTML)."""
-    html = build_tmmf_server_iframe_html(
-        payload=payload,
-        related_chips=related_chips,
-        back_href=back_href,
-        back_label=back_label,
-    )
-    components.html(
-        html,
-        height=1200,
-        scrolling=False,
+    """Render TMMF on the Streamlit host: CSS in page head, ~50KB HTML body via st.html."""
+    from streamlit_site_parity import render_subpage_back_link
+
+    render_subpage_back_link(href=back_href, label=back_label)
+    zone = build_tmmf_server_zone_html(payload=payload, related_chips=related_chips)
+    st.html(
+        f'<div class="streamlit-tmmf-server-host page-rwa-deep page-rwa-deep-mmf '
+        f'site-experience page-inner--rich mock-tmmf-inner">{zone}</div>'
     )

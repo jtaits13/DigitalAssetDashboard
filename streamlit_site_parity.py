@@ -2180,7 +2180,7 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 .stApp:has(.streamlit-rwa-global-iframe-page) [data-testid="stElementContainer"]:has(iframe) iframe {
   min-height: 720px !important;
 }
-.stApp:has(.streamlit-tmmf-server-page) .streamlit-subpage-root > main.page-shell.etp-mock-shell {
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .page-shell.etp-mock-shell {
   display: block !important;
   max-width: var(--content-max, 72rem);
   margin: 0 auto;
@@ -2191,6 +2191,14 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   max-width: var(--content-max, 72rem) !important;
   margin-left: auto !important;
   margin-right: auto !important;
+  overflow: visible !important;
+}
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host {
+  display: block;
+  width: 100%;
+  max-width: var(--content-max, 72rem);
+  margin: 0 auto;
+  background: var(--wash, #f3f7fb);
 }
 .stApp:has(.streamlit-tmmf-iframe-page) .streamlit-subpage-root > main.page-shell.etp-mock-shell,
 .stApp:has(.streamlit-tmmf-iframe-page) article.etp-mock-zone:empty,
@@ -2582,9 +2590,17 @@ def configure_subpage(
         "tmmf", "stablecoins", "crypto", "etp", "rwa_global", "rwa_explore_at", "rwa_explore_mp"
     ):
         inject_streamlit_table_fullscreen_host()
+    if style_kind == "tmmf" and delivery == "server":
+        from streamlit_tmmf_static import inject_tmmf_server_host_styles
+
+        inject_tmmf_server_host_styles()
     iframe_page_class = ""
     if style_kind == "tmmf":
-        iframe_page_class = " streamlit-tmmf-iframe-page"
+        iframe_page_class = (
+            " streamlit-tmmf-server-page"
+            if delivery == "server"
+            else " streamlit-tmmf-iframe-page"
+        )
     elif style_kind == "stablecoins":
         iframe_page_class = " streamlit-stablecoins-iframe-page"
     elif style_kind == "crypto":
