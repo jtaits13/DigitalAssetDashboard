@@ -674,6 +674,26 @@ SUBPAGE_ROOT_CLASS: dict[str, str] = {
 }
 
 SUBPAGE_STREAMLIT_CSS = """
+/* Streamlit Cloud embed keeps .stApp display:none on multipage routes until sized; subpages never reveal. */
+.stApp:has(.streamlit-subpage-active) {
+  display: block !important;
+  visibility: visible !important;
+  width: 100% !important;
+  min-height: 100vh !important;
+}
+.withScreencast:has(.streamlit-subpage-active),
+[data-testid="stScreencast"]:has(.streamlit-subpage-active) {
+  display: block !important;
+  height: auto !important;
+  min-height: 100vh !important;
+  overflow: visible !important;
+}
+.stApp:has(.streamlit-subpage-active) [data-testid="stAppViewContainer"] {
+  display: flex !important;
+  width: 100% !important;
+  min-height: 100vh !important;
+  overflow: visible !important;
+}
 /* Subpages: undo home-only hide rule if patched CSS still targets bare .stApp .crypto-story-callout. */
 .stApp:has(.streamlit-subpage-root) .etp-mock-key-obs-block .crypto-story-callout,
 .stApp:has(.streamlit-subpage-root) .inner-key-obs-block .crypto-story-callout {
@@ -2798,6 +2818,57 @@ def inject_streamlit_nav_router() -> None:
     components.html(STREAMLIT_SITE_NAV_ROUTER_JS, height=0, width=0)
 
 
+STREAMLIT_SUBPAGE_EMBED_REVEAL_JS = """
+<script>
+(function () {
+  var doc = window.parent && window.parent.document ? window.parent.document : document;
+  function revealEmbeddedSubpage() {
+    var marker = doc.querySelector(".streamlit-subpage-active");
+    if (!marker) return;
+    var app = marker.closest('[data-testid="stApp"]') || doc.querySelector('[data-testid="stApp"]');
+    if (!app) return;
+    app.style.setProperty("display", "block", "important");
+    app.style.setProperty("visibility", "visible", "important");
+    app.style.setProperty("width", "100%", "important");
+    app.style.setProperty("min-height", "100vh", "important");
+    var screencast = app.closest(".withScreencast") || doc.querySelector('[data-testid="stScreencast"]');
+    if (screencast) {
+      screencast.style.setProperty("display", "block", "important");
+      screencast.style.setProperty("height", "auto", "important");
+      screencast.style.setProperty("min-height", "100vh", "important");
+      screencast.style.setProperty("overflow", "visible", "important");
+    }
+    var view = app.querySelector('[data-testid="stAppViewContainer"]');
+    if (view) {
+      view.style.setProperty("display", "flex", "important");
+      view.style.setProperty("width", "100%", "important");
+      view.style.setProperty("overflow", "visible", "important");
+    }
+  }
+  revealEmbeddedSubpage();
+  window.addEventListener("load", revealEmbeddedSubpage);
+  [50, 250, 1000, 3000, 8000, 15000, 30000].forEach(function (ms) {
+    setTimeout(revealEmbeddedSubpage, ms);
+  });
+  if (typeof MutationObserver !== "undefined") {
+    var mo = new MutationObserver(revealEmbeddedSubpage);
+    mo.observe(doc.documentElement, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["style", "class"],
+    });
+  }
+})();
+</script>
+"""
+
+
+def inject_subpage_embed_reveal() -> None:
+    """Force Streamlit Cloud embed shell visible on multipage subroutes."""
+    components.html(STREAMLIT_SUBPAGE_EMBED_REVEAL_JS, height=0, width=0)
+
+
 def configure_subpage(
     *,
     page_title: str,
@@ -2852,6 +2923,7 @@ def configure_subpage(
         unsafe_allow_html=True,
     )
     render_subpage_nav(active=active)
+    inject_subpage_embed_reveal()
 
 
 def render_subpage_back_link(*, href: str, label: str) -> None:
@@ -2962,6 +3034,7 @@ def render_subpage_footer(*, label: str) -> None:
         f'<time datetime="{escape(iso)}">{escape(month)}</time></footer>',
         unsafe_allow_html=True,
     )
+    inject_subpage_embed_reveal()
 
 
 def inject_site_styles(*, include_static: bool = True, html_style_backup: bool = True) -> None:
