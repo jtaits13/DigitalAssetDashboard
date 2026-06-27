@@ -318,7 +318,7 @@ function measureTmmfContentHeight() {
 _TMMF_IFRAME_BACK_LINK = """
 <div class="page-back-below-header">
   <p class="back-link back-link--below-header">
-    <a data-deep-back="explore" href="{back_href}">{back_label_html}</a>
+    <a class="tmmf-server-back-anchor" data-deep-back="explore" href="{back_href}">{back_label_html}</a>
   </p>
 </div>
 """
@@ -873,14 +873,8 @@ def render_tmmf_body_server(
     """Render TMMF on the Streamlit host: CSS in page head, body via st.html."""
     back_link = _tmmf_back_link_html(href=back_href, label=back_label)
     zone = build_tmmf_server_zone_html(payload=payload, related_chips=related_chips)
-    # Back link stays in markdown (not st.html) so Streamlit does not emit a stretched
-    # empty anchor shell above the real pill on server-rendered subpages.
-    st.markdown(
-        f'<div class="streamlit-tmmf-server-back site-experience page-rwa-deep-mmf">'
-        f"{back_link}</div>",
-        unsafe_allow_html=True,
-    )
     st.html(
         f'<div class="streamlit-tmmf-server-host page-rwa-deep page-rwa-deep-mmf '
-        f'site-experience page-inner--rich mock-tmmf-inner">{zone}</div>'
+        f'site-experience page-inner--rich mock-tmmf-inner">'
+        f"{back_link}{zone}</div>"
     )

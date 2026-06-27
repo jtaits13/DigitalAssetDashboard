@@ -791,6 +791,16 @@ SUBPAGE_STREAMLIT_CSS = """
   background: rgba(255, 255, 255, 0.85);
   white-space: nowrap;
 }
+.stApp:has(.streamlit-tmmf-server-page) .back-link--below-header a:not(.tmmf-server-back-anchor) {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
 .stApp:has(.page-rwa-deep-mmf) .back-link--below-header a:hover {
   color: var(--teal, #2a5f82) !important;
   border-color: rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.35) !important;
@@ -2203,11 +2213,14 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 .stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.streamlit-tmmf-server-host) {
   align-items: stretch !important;
 }
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.streamlit-tmmf-server-host) [data-testid="stVerticalBlock"] {
+  align-items: flex-start !important;
+}
 .stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.streamlit-tmmf-server-host) [data-testid="stHtml"] > div {
   width: 100% !important;
   max-width: 100% !important;
 }
-.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has([data-testid="stHtml"]):not(:has(.streamlit-tmmf-server-host)) {
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.page-back-below-header):not(:has(.streamlit-tmmf-server-host)) {
   display: none !important;
   height: 0 !important;
   min-height: 0 !important;
@@ -2216,43 +2229,41 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   overflow: hidden !important;
   visibility: hidden !important;
 }
-.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.streamlit-tmmf-server-back) {
-  max-width: calc(var(--content-max, var(--max, 72rem)) + 17.5rem) !important;
-  width: 100% !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-}
-.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.streamlit-tmmf-server-back) [data-testid="stVerticalBlock"] {
-  align-items: flex-start !important;
-}
-.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.streamlit-tmmf-server-back) [data-testid="stMarkdownContainer"],
-.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.streamlit-tmmf-server-back) [data-testid="stMarkdownContainer"] > div {
-  width: auto !important;
-  max-width: 100% !important;
-}
-.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-back .back-link--below-header a:empty,
-.stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] > div > a:empty,
-.stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] a.rwa-table-link:empty {
+/* Streamlit sometimes injects empty top-level anchors into stHtml — hide them, keep real back pill. */
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.streamlit-tmmf-server-host) [data-testid="stHtml"] > div > a:not(.tmmf-server-back-anchor) {
   display: none !important;
   height: 0 !important;
+  min-height: 0 !important;
   margin: 0 !important;
   padding: 0 !important;
   border: none !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
 }
-.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-back .page-back-below-header {
+/* Global subpage back-link pill styles also hit phantom shells — reset, then style only our anchor. */
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .back-link--below-header a:not(.tmmf-server-back-anchor) {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .page-back-below-header {
   max-width: var(--content-max, 72rem);
   margin: 0 auto;
   padding: 0.35rem 1.25rem 0;
   box-sizing: border-box;
 }
-.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-back p.back-link.back-link--below-header {
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host p.back-link.back-link--below-header {
   margin: 0.2rem 0 0.85rem;
   width: auto !important;
   max-width: none !important;
 }
-.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-back .back-link--below-header a {
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host a.tmmf-server-back-anchor,
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] .streamlit-tmmf-server-host a.tmmf-server-back-anchor {
   display: inline-block !important;
   width: auto !important;
   max-width: none !important;
@@ -2270,7 +2281,8 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   box-shadow: none !important;
   white-space: nowrap;
 }
-.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-back .back-link--below-header a:hover {
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host a.tmmf-server-back-anchor:hover,
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] .streamlit-tmmf-server-host a.tmmf-server-back-anchor:hover {
   color: var(--hx-tmmf-bright, #507188) !important;
   -webkit-text-fill-color: var(--hx-tmmf-bright, #507188) !important;
   border-color: rgb(80 113 136 / 0.45) !important;
