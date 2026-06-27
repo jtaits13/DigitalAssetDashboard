@@ -1065,14 +1065,14 @@ def _cached_tmmf_deep_payload() -> dict[str, Any]:
 
 
 @st.cache_data(show_spinner=False, ttl=3600)
-def _cached_tmmf_body_iframe_html(
+def _cached_tmmf_server_iframe_html(
     payload_json: str,
     related_chips: str,
     back_href: str,
     back_label: str,
 ) -> str:
     payload = json.loads(payload_json)
-    return build_tmmf_body_iframe_html(
+    return build_tmmf_server_iframe_html(
         payload=payload,
         related_chips=related_chips,
         back_href=back_href,
@@ -1087,9 +1087,9 @@ def render_tmmf_body_iframe(
     back_href: str = "/?jd_scroll=tmmf",
     back_label: str = "← Back to home · TMMF preview",
 ) -> None:
-    """Render the GitHub Pages TMMF zone inside a Streamlit iframe."""
+    """Render GitHub Pages TMMF markup inside an isolated iframe (no Streamlit host CSS)."""
     payload_json = _json_for_script(payload)
-    html = _cached_tmmf_body_iframe_html(
+    html = _cached_tmmf_server_iframe_html(
         payload_json,
         related_chips,
         back_href,
@@ -1178,12 +1178,15 @@ def build_tmmf_server_iframe_html(
     back_href: str = "/?jd_scroll=tmmf",
     back_label: str = "← Back to home · TMMF preview",
 ) -> str:
-    """Self-contained iframe with full TMMF CSS and server-rendered body (no JS hydration)."""
+    """Self-contained iframe with GitHub Pages CSS and pre-rendered body (no JS hydration)."""
+    from streamlit_server_deep_page import build_tmmf_server_export_config
     from streamlit_site_parity import iframe_internal_link_script
 
     css = _cached_iframe_tmmf_stylesheet_v5()
     back_link = _tmmf_back_link_html(href=back_href, label=back_label)
     zone = build_tmmf_server_zone_html(payload=payload, related_chips=related_chips)
+    js_libs = _read_js_files(("table-fullscreen.js", "table-download.js"))
+    export_json = json.dumps(build_tmmf_server_export_config(payload))
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1197,6 +1200,16 @@ def build_tmmf_server_iframe_html(
 >
 {back_link}
 {zone}
+<script>
+{js_libs}
+window.__TMMF_SERVER_EXPORTS = {export_json};
+</script>
+<script>
+{_STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH}
+</script>
+<script>
+{_TMMF_SERVER_TABLE_WIRE_JS}
+</script>
 <script>
 {_TMMF_MEASURE_HEIGHT_JS}
 (function () {{

@@ -2606,6 +2606,10 @@ def _deep_iframe_subpage_css_blob() -> str:
         .replace("</style>", "")
         .strip()
     )
+    # Server-rendered st.html overrides must not ship on iframe subpages (they hide content).
+    raw = "\n".join(
+        line for line in raw.splitlines() if "streamlit-tmmf-server-page" not in line
+    )
     return raw.replace(
         ".stApp:has(.streamlit-tmmf-iframe-page)",
         ".stApp:has(.streamlit-tmmf-iframe-page), .stApp:has(.streamlit-stablecoins-iframe-page), .stApp:has(.streamlit-crypto-iframe-page), .stApp:has(.streamlit-etps-iframe-page), .stApp:has(.streamlit-news-feed-iframe-page), .stApp:has(.streamlit-rwa-global-iframe-page), .stApp:has(.streamlit-rwa-explore-at-iframe-page), .stApp:has(.streamlit-rwa-explore-mp-iframe-page)",
