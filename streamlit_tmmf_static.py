@@ -610,8 +610,10 @@ _TMMF_IFRAME_BACK_LINK = """
 """
 
 _TMMF_STREAMLIT_BACK_LINK = """
-<div class="tmmf-st-back-wrap">
-  <a class="tmmf-st-back-pill" data-deep-back="explore" href="{back_href}">{back_label_html}</a>
+<div class="page-back-below-header">
+  <p class="back-link back-link--below-header">
+    <a class="tmmf-st-back-pill" data-deep-back="explore" href="{back_href}">{back_label_html}</a>
+  </p>
 </div>
 """
 
@@ -857,10 +859,11 @@ def _cached_tmmf_server_host_stylesheet() -> str:
   width: min(96vw, 1400px) !important;
 }}
 /* Terminal override: host mock CSS must not restyle legacy back-link shells on Cloud. */
-.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .page-back-below-header,
-.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host p.back-link.back-link--below-header,
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .page-back-below-header:not(:has(.tmmf-st-back-pill)),
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host p.back-link.back-link--below-header:not(:has(.tmmf-st-back-pill)),
 .stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .back-link--below-header a:not(.tmmf-st-back-pill),
-.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host a.tmmf-server-back-anchor:not(.tmmf-st-back-pill) {{
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host a.tmmf-server-back-anchor:not(.tmmf-st-back-pill),
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .tmmf-st-back-wrap {{
   display: none !important;
   height: 0 !important;
   min-height: 0 !important;
@@ -870,6 +873,17 @@ def _cached_tmmf_server_host_stylesheet() -> str:
   visibility: hidden !important;
   border: none !important;
   pointer-events: none !important;
+}}
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host > .page-back-below-header:has(.tmmf-st-back-pill) {{
+  display: block !important;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0.35rem 1.25rem 0;
+  box-sizing: border-box;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }}
 .stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host::before,
 .stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host::after {{
@@ -1239,29 +1253,41 @@ def build_tmmf_server_iframe_html(
 _TMMF_SERVER_PHANTOM_PURGE_JS = """
 function purgeTmmfPhantomBackPills(doc, win) {
   if (!doc.querySelector(".streamlit-tmmf-server-page")) return;
-  doc.querySelectorAll(".tmmf-st-back-wrap, .page-back-below-header").forEach(function (row) {
+  doc.querySelectorAll(".page-back-below-header").forEach(function (row) {
+    if (row.querySelector(".tmmf-st-back-pill")) return;
     row.remove();
   });
   doc.querySelectorAll("p.back-link.back-link--below-header").forEach(function (p) {
+    if (p.querySelector(".tmmf-st-back-pill")) return;
     p.remove();
   });
+  doc.querySelectorAll(".tmmf-st-back-wrap").forEach(function (wrap) {
+    wrap.remove();
+  });
+  doc.querySelectorAll(".tmmf-st-back-wrap a, .page-back-below-header a").forEach(function (a) {
+    if (a.classList.contains("tmmf-st-back-pill")) return;
+    a.remove();
+  });
   doc.querySelectorAll('[data-testid="stHtml"] > div > a').forEach(function (a) {
+    if (a.classList.contains("tmmf-st-back-pill")) return;
     var text = (a.textContent || "").replace(/\\s+/g, " ").trim();
     if (!text) a.remove();
   });
   var host = doc.querySelector(".streamlit-tmmf-server-host");
   if (host) {
     Array.prototype.slice.call(host.children).forEach(function (child) {
+      if (child.classList.contains("page-back-below-header") && child.querySelector(".tmmf-st-back-pill")) return;
       if (child.classList.contains("page-shell") || child.tagName === "MAIN") return;
       child.remove();
     });
   }
   doc.querySelectorAll("a").forEach(function (a) {
+    if (a.classList.contains("tmmf-st-back-pill")) return;
     var cs = win.getComputedStyle(a);
     var br = parseFloat(cs.borderTopLeftRadius) || 0;
     var text = (a.textContent || "").replace(/\\s+/g, " ").trim();
     var r = a.getBoundingClientRect();
-    if (br >= 100 && r.width > 300 && r.height > 0 && r.height < 28 && !text && r.top < 220) {
+    if (br >= 100 && r.width > 300 && !text && r.top < 220 && r.height > 0 && r.height < 48) {
       a.remove();
     }
   });
@@ -1344,11 +1370,15 @@ def render_tmmf_body_server(
     *,
     payload: dict[str, Any],
     related_chips: str,
+    back_href: str = "/?jd_scroll=tmmf",
+    back_label: str = "← Back to home · TMMF preview",
 ) -> None:
     """Render TMMF on the Streamlit host: CSS in page head, body via st.html."""
+    back_link = _tmmf_streamlit_back_link_html(href=back_href, label=back_label)
     zone = build_tmmf_server_zone_html(payload=payload, related_chips=related_chips)
+    # Single st.html block: back row + zone share page-shell padding (avoids phantom shells between blocks).
     st.html(
         f'<div class="streamlit-tmmf-server-host page-rwa-deep page-rwa-deep-mmf '
-        f'site-experience page-inner--rich">{zone}</div>'
+        f'site-experience page-inner--rich">{back_link}{zone}</div>'
     )
     inject_tmmf_server_table_actions(payload)
