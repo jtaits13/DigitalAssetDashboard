@@ -801,6 +801,17 @@ SUBPAGE_STREAMLIT_CSS = """
   overflow: hidden !important;
   pointer-events: none !important;
 }
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] > div > a.back-link--below-header,
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] > div > a.tmmf-server-back-anchor:not(:only-of-type) {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
 .stApp:has(.page-rwa-deep-mmf) .back-link--below-header a:hover {
   color: var(--teal, #2a5f82) !important;
   border-color: rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.35) !important;
@@ -2177,6 +2188,7 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 .stApp:has(.streamlit-tmmf-iframe-page)::before,
 .stApp:has(.streamlit-tmmf-iframe-page)::after,
 .stApp:has(.streamlit-tmmf-iframe-page) .mock-tmmf-inner::before,
+.stApp:has(.streamlit-tmmf-server-page) .mock-tmmf-inner::before,
 .stApp:has(.streamlit-tmmf-iframe-page) .page-intro:empty {
   display: none !important;
   content: none !important;
@@ -2219,6 +2231,9 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 .stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.streamlit-tmmf-server-host) [data-testid="stHtml"] > div {
   width: 100% !important;
   max-width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
 }
 .stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.page-back-below-header):not(:has(.streamlit-tmmf-server-host)) {
   display: none !important;
@@ -2229,8 +2244,11 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   overflow: hidden !important;
   visibility: hidden !important;
 }
-/* Streamlit sometimes injects empty top-level anchors into stHtml — hide them, keep real back pill. */
-.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.streamlit-tmmf-server-host) [data-testid="stHtml"] > div > a:not(.tmmf-server-back-anchor) {
+/* Stray shells: duplicated back rows / empty anchors outside the host wrapper. */
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.streamlit-tmmf-server-host) [data-testid="stHtml"] > div > .page-back-below-header,
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.streamlit-tmmf-server-host) [data-testid="stHtml"] > div > a,
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host > a,
+.stApp:has(.streamlit-tmmf-server-page) .page-back-below-header > a:not(.tmmf-server-back-anchor) {
   display: none !important;
   height: 0 !important;
   min-height: 0 !important;
@@ -2240,8 +2258,8 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   overflow: hidden !important;
   pointer-events: none !important;
 }
-/* Global subpage back-link pill styles also hit phantom shells — reset, then style only our anchor. */
-.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .back-link--below-header a:not(.tmmf-server-back-anchor) {
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .back-link--below-header a:not(.tmmf-server-back-anchor),
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .page-back-below-header:not(.tmmf-server-back-row) {
   display: none !important;
   height: 0 !important;
   min-height: 0 !important;
@@ -2251,7 +2269,8 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   overflow: hidden !important;
   pointer-events: none !important;
 }
-.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .page-back-below-header {
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .page-back-below-header.tmmf-server-back-row {
+  display: block !important;
   max-width: var(--content-max, 72rem);
   margin: 0 auto;
   padding: 0.35rem 1.25rem 0;
@@ -2262,8 +2281,13 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   width: auto !important;
   max-width: none !important;
 }
-.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host a.tmmf-server-back-anchor,
-.stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] .streamlit-tmmf-server-host a.tmmf-server-back-anchor {
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .tmmf-server-back-row > a.tmmf-server-back-anchor {
+  margin: 0.2rem 0 0.85rem;
+}
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .tmmf-server-back-row > a.tmmf-server-back-anchor,
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .page-back-below-header p.back-link a.tmmf-server-back-anchor,
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] .streamlit-tmmf-server-host .tmmf-server-back-row > a.tmmf-server-back-anchor,
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] .streamlit-tmmf-server-host .page-back-below-header p.back-link a.tmmf-server-back-anchor {
   display: inline-block !important;
   width: auto !important;
   max-width: none !important;
@@ -2281,8 +2305,10 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   box-shadow: none !important;
   white-space: nowrap;
 }
-.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host a.tmmf-server-back-anchor:hover,
-.stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] .streamlit-tmmf-server-host a.tmmf-server-back-anchor:hover {
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .tmmf-server-back-row > a.tmmf-server-back-anchor:hover,
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .page-back-below-header p.back-link a.tmmf-server-back-anchor:hover,
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] .streamlit-tmmf-server-host .tmmf-server-back-row > a.tmmf-server-back-anchor:hover,
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] .streamlit-tmmf-server-host .page-back-below-header p.back-link a.tmmf-server-back-anchor:hover {
   color: var(--hx-tmmf-bright, #507188) !important;
   -webkit-text-fill-color: var(--hx-tmmf-bright, #507188) !important;
   border-color: rgb(80 113 136 / 0.45) !important;
@@ -2683,6 +2709,47 @@ def inject_streamlit_nav_router() -> None:
     components.html(STREAMLIT_SITE_NAV_ROUTER_JS, height=0, width=0)
 
 
+STREAMLIT_TMMF_SERVER_BACK_CLEANUP_JS = """
+<script>
+(function () {
+  var win = window.parent && window.parent.document ? window.parent : window;
+  var doc = win.document;
+  function anchorText(a) {
+    return String(a && a.textContent || "").replace(/\\s+/g, " ").trim();
+  }
+  function clean() {
+    if (!doc.querySelector(".streamlit-tmmf-server-page")) return;
+    doc.querySelectorAll('[data-testid="stHtml"] > div > a, [data-testid="stHtml"] > div > .page-back-below-header').forEach(function (node) {
+      if (node.closest(".streamlit-tmmf-server-host")) return;
+      node.remove();
+    });
+    doc.querySelectorAll(".streamlit-tmmf-server-host > a, .page-back-below-header > a:not(.tmmf-server-back-anchor)").forEach(function (a) {
+      a.remove();
+    });
+    doc.querySelectorAll(".tmmf-server-back-row").forEach(function (row) {
+      var links = row.querySelectorAll("a.tmmf-server-back-anchor");
+      var kept = false;
+      links.forEach(function (a) {
+        var text = anchorText(a);
+        if (!text) {
+          a.remove();
+          return;
+        }
+        if (kept) {
+          a.remove();
+          return;
+        }
+        kept = true;
+      });
+    });
+  }
+  clean();
+  [50, 200, 800, 2000].forEach(function (ms) { setTimeout(clean, ms); });
+})();
+</script>
+"""
+
+
 def configure_subpage(
     *,
     page_title: str,
@@ -2710,6 +2777,7 @@ def configure_subpage(
         from streamlit_tmmf_static import inject_tmmf_server_host_styles
 
         inject_tmmf_server_host_styles()
+        components.html(STREAMLIT_TMMF_SERVER_BACK_CLEANUP_JS, height=0, width=0)
     iframe_page_class = ""
     if style_kind == "tmmf":
         iframe_page_class = (

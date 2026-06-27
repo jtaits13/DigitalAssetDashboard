@@ -316,10 +316,8 @@ function measureTmmfContentHeight() {
 """
 
 _TMMF_IFRAME_BACK_LINK = """
-<div class="page-back-below-header">
-  <p class="back-link back-link--below-header">
-    <a class="tmmf-server-back-anchor" data-deep-back="explore" href="{back_href}">{back_label_html}</a>
-  </p>
+<div class="page-back-below-header tmmf-server-back-row">
+  <a class="tmmf-server-back-anchor back-link back-link--below-header" data-deep-back="explore" href="{back_href}">{back_label_html}</a>
 </div>
 """
 
