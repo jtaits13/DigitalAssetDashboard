@@ -1019,22 +1019,50 @@ def build_tmmf_server_iframe_html(
 </html>"""
 
 
-def _tmmf_server_table_scripts(payload: dict[str, Any]) -> str:
-    """table-fullscreen + table-download + host-portal patch for server-rendered tables."""
+def inject_tmmf_server_table_actions(payload: dict[str, Any]) -> None:
+    """Wire download/fullscreen on server-rendered tables via parent-document script injection.
+
+    ``st.html`` keeps table markup but does not reliably execute large inline ``<script>`` blocks
+    on Streamlit Cloud; ``components.html`` bootstraps the shared table JS into ``window.parent``.
+    """
     from streamlit_server_deep_page import build_tmmf_server_export_config
 
-    js = _read_js_files(("table-fullscreen.js", "table-download.js"))
+    js_libs = _read_js_files(("table-fullscreen.js", "table-download.js"))
     export_json = json.dumps(build_tmmf_server_export_config(payload))
-    return f"""<script>
-{js}
-</script>
+    libs_json = json.dumps(js_libs)
+    patch_json = json.dumps(_STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH.strip())
+    wire_json = json.dumps(_TMMF_SERVER_TABLE_WIRE_JS.strip())
+    bootstrap = f"""
 <script>
-window.__TMMF_SERVER_EXPORTS = {export_json};
-{_STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH}
+(function () {{
+  var win = window.parent;
+  var doc = win.document;
+  function inject(text) {{
+    var s = doc.createElement("script");
+    s.textContent = text;
+    doc.body.appendChild(s);
+  }}
+  function boot() {{
+    if (!doc.querySelector(".streamlit-tmmf-server-host")) return false;
+    if (win.__TMMF_SERVER_TABLE_BOOTED) return true;
+    win.__TMMF_SERVER_TABLE_BOOTED = true;
+    inject({libs_json});
+    win.__TMMF_SERVER_EXPORTS = {export_json};
+    inject({patch_json});
+    inject({wire_json});
+    return true;
+  }}
+  if (!boot()) {{
+    var tries = 0;
+    var timer = win.setInterval(function () {{
+      tries += 1;
+      if (boot() || tries > 40) win.clearInterval(timer);
+    }}, 250);
+  }}
+}})();
 </script>
-<script>
-{_TMMF_SERVER_TABLE_WIRE_JS}
-</script>"""
+"""
+    components.html(bootstrap, height=0, width=0)
 
 
 def render_tmmf_body_server(
@@ -1047,10 +1075,10 @@ def render_tmmf_body_server(
     """Render TMMF on the Streamlit host: CSS in page head, body via st.html."""
     back_link = _tmmf_streamlit_back_link_html(href=back_href, label=back_label)
     zone = build_tmmf_server_zone_html(payload=payload, related_chips=related_chips)
-    scripts = _tmmf_server_table_scripts(payload)
     # Back link in markdown — st.html duplicates/hides page-back-below-header and leaves empty pill shells.
     st.markdown(back_link, unsafe_allow_html=True)
     st.html(
         f'<div class="streamlit-tmmf-server-host page-rwa-deep page-rwa-deep-mmf '
-        f'site-experience page-inner--rich mock-tmmf-inner">{zone}</div>{scripts}'
+        f'site-experience page-inner--rich mock-tmmf-inner">{zone}</div>'
     )
+    inject_tmmf_server_table_actions(payload)
