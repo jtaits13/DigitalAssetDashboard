@@ -52,7 +52,34 @@ _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH = """
     return clone.outerHTML || "";
   }
 
+  function isServerHostPage() {
+    return !!document.querySelector(".streamlit-tmmf-server-host");
+  }
+
+  function openServerHostModal(tableEl, opts) {
+    var html = tableHtmlForHost(tableEl);
+    if (!html) return false;
+    var payload = {
+      title:
+        (opts && opts.title) ||
+        tableEl.getAttribute("aria-label") ||
+        "Full-screen table",
+      tableHtml: html,
+    };
+    if (typeof window.__jpmOpenTableFullscreenHost === "function") {
+      window.__jpmOpenTableFullscreenHost(payload);
+      window.__TMMF_MODAL_OPEN = true;
+      return true;
+    }
+    origOpen.call(fs, tableEl, opts || {});
+    window.__TMMF_MODAL_OPEN = true;
+    return true;
+  }
+
   function postOpenToHost(tableEl, opts) {
+    if (isServerHostPage()) {
+      return openServerHostModal(tableEl, opts || {});
+    }
     var html = tableHtmlForHost(tableEl);
     if (!html) return false;
     var msg = {
@@ -69,8 +96,10 @@ _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH = """
         window.__TMMF_MODAL_OPEN = true;
         return true;
       }
+      var posted = false;
       if (typeof window.postMessage === "function") {
         window.postMessage(msg, "*");
+        posted = true;
       }
       if (
         window.parent &&
@@ -78,9 +107,13 @@ _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH = """
         typeof window.parent.postMessage === "function"
       ) {
         window.parent.postMessage(msg, "*");
+        posted = true;
       }
-      window.__TMMF_MODAL_OPEN = true;
-      return true;
+      if (posted) {
+        window.__TMMF_MODAL_OPEN = true;
+        return true;
+      }
+      return false;
     } catch (e) {
       return false;
     }
@@ -187,6 +220,7 @@ _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH = """
 
   function openCenteredModal(tableEl, opts) {
     if (!tableEl) return;
+    if (isServerHostPage() && openServerHostModal(tableEl, opts || {})) return;
     if (postOpenToHost(tableEl, opts || {})) return;
     openIframeFallbackModal(tableEl, opts);
   }
@@ -345,9 +379,11 @@ _TMMF_SERVER_TABLE_WIRE_JS = """
     if (!wrap || !table) return;
     var fs = window.__TABLE_FULLSCREEN;
     if (!fs || !fs.attachTableFullscreenButton) return;
+    delete wrap._rwaFullscreenBound;
+    delete wrap._rwaDownloadBound;
     var exportData =
       window.__TMMF_SERVER_EXPORTS && window.__TMMF_SERVER_EXPORTS[cfg.exportKey];
-    fs.attachTableFullscreenButton(wrap, table, {
+    var tableOpts = {
       title: cfg.title,
       filename: cfg.filename,
       sheetName: cfg.sheetName,
@@ -359,7 +395,19 @@ _TMMF_SERVER_TABLE_WIRE_JS = """
             return exportData;
           }
         : undefined,
-    });
+    };
+    fs.attachTableFullscreenButton(wrap, table, tableOpts);
+    var btn =
+      ($(cfg.metaActionsId) &&
+        $(cfg.metaActionsId).querySelector('[data-rwa-fullscreen-btn="1"]')) ||
+      null;
+    if (btn && fs.openTableModal) {
+      btn.onclick = function (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        fs.openTableModal(table, { title: cfg.title });
+      };
+    }
     if (cfg.inputId && cfg.noteId) {
       var tbody = table.querySelector("tbody");
       wireTableSearch({
@@ -415,6 +463,7 @@ _TMMF_SERVER_TABLE_WIRE_JS = """
     });
   }
 
+  window.__tmmfWireServerTables = boot;
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", boot);
   } else {
@@ -423,6 +472,103 @@ _TMMF_SERVER_TABLE_WIRE_JS = """
   setTimeout(boot, 0);
   setTimeout(boot, 400);
   setTimeout(boot, 1200);
+})();
+"""
+
+_TMMF_SERVER_INLINE_HOST_MODAL_JS = """
+(function () {
+  var win = window;
+  var doc = document;
+  if (win.__jpmTmmfFullscreenHostBound) return;
+  win.__jpmTmmfFullscreenHostBound = true;
+
+  var HOST_ID = "js-table-fullscreen-streamlit-host";
+  var HOST_BODY = "js-table-fullscreen-streamlit-body";
+  var HOST_TITLE = "js-table-fullscreen-streamlit-title";
+  var CLOSE_ATTR = "data-table-fullscreen-close";
+
+  function injectStyles() {
+    if (doc.getElementById("st-tmmf-host-modal-styles")) return;
+    var style = doc.createElement("style");
+    style.id = "st-tmmf-host-modal-styles";
+    style.textContent =
+      "#" + HOST_ID +
+      "{position:fixed;inset:0;z-index:999999;display:grid;place-items:center;padding:1.25rem;box-sizing:border-box;}" +
+      "#" + HOST_ID + '[hidden]{display:none!important;}' +
+      "body.st-tmmf-host-table-modal-open{overflow:hidden!important;}" +
+      "#" + HOST_ID + " .st-tmmf-host-table-modal__backdrop{position:absolute;inset:0;background:rgba(15,23,42,.62);}" +
+      "#" + HOST_ID + " .st-tmmf-host-table-modal__dialog{position:relative;z-index:1;display:flex;flex-direction:column;width:min(96vw,1400px);max-height:min(92vh,980px);background:#fff;border:1px solid #d4e4ef;border-radius:14px;box-shadow:0 24px 60px rgba(15,23,42,.24);overflow:hidden;}" +
+      "#" + HOST_ID + " .st-tmmf-host-table-modal__header{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 1.1rem .9rem;border-bottom:1px solid #dbe8f2;background:#f8fbfd;}" +
+      "#" + HOST_ID + " .st-tmmf-host-table-modal__eyebrow{margin:0 0 .2rem;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#5a7184;}" +
+      "#" + HOST_ID + " .st-tmmf-host-table-modal__title{margin:0;font-size:1.05rem;color:#0f2942;}" +
+      "#" + HOST_ID + " .st-tmmf-host-table-modal__close{border:1px solid #c7d8e8;border-radius:8px;background:#fff;color:#0f2942;font-size:.88rem;font-weight:600;padding:.45rem .85rem;cursor:pointer;}" +
+      "#" + HOST_ID + " .st-tmmf-host-table-modal__body{padding:1rem 1.1rem 1.15rem;overflow:auto;background:#fff;}" +
+      "#" + HOST_ID + " .st-tmmf-host-table-modal__table-wrap{overflow:auto;max-height:min(70vh,calc(100vh - 12rem));border:1px solid #dbe8f2;border-radius:10px;background:#fff;}" +
+      "#" + HOST_ID + " .st-tmmf-host-table-modal__table-wrap table{min-width:max-content;margin:0;border-collapse:collapse;width:100%;}" +
+      "#" + HOST_ID + " .st-tmmf-host-table-modal__table-wrap th,#" + HOST_ID + " .st-tmmf-host-table-modal__table-wrap td{white-space:nowrap;padding:.45rem .65rem;border-bottom:1px solid #e8f0f6;text-align:left;font-size:.88rem;}" +
+      "#" + HOST_ID + " .st-tmmf-host-table-modal__table-wrap thead th{position:sticky;top:0;z-index:2;background:#f0f6fa;font-weight:650;}";
+    (doc.head || doc.documentElement).appendChild(style);
+  }
+
+  function ensureModal() {
+    injectStyles();
+    var root = doc.getElementById(HOST_ID);
+    if (root) return root;
+    root = doc.createElement("div");
+    root.id = HOST_ID;
+    root.hidden = true;
+    root.innerHTML =
+      '<div class="st-tmmf-host-table-modal__backdrop" ' + CLOSE_ATTR + '="1"></div>' +
+      '<div class="st-tmmf-host-table-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="' + HOST_TITLE + '">' +
+      '<div class="st-tmmf-host-table-modal__header"><div>' +
+      '<p class="st-tmmf-host-table-modal__eyebrow">Full-screen table</p>' +
+      '<h2 class="st-tmmf-host-table-modal__title" id="' + HOST_TITLE + '">Table</h2></div>' +
+      '<button type="button" class="st-tmmf-host-table-modal__close" ' + CLOSE_ATTR + '="1">Close</button></div>' +
+      '<div class="st-tmmf-host-table-modal__body" id="' + HOST_BODY + '"></div></div>';
+    (doc.body || doc.documentElement).appendChild(root);
+    root.addEventListener("click", function (ev) {
+      var closeEl = ev.target.closest ? ev.target.closest("[" + CLOSE_ATTR + "]") : null;
+      if (closeEl) closeHostModal();
+    });
+    doc.addEventListener("keydown", function (ev) {
+      if (ev.key === "Escape") closeHostModal();
+    });
+    return root;
+  }
+
+  function openHostModal(payload) {
+    payload = payload || {};
+    var root = ensureModal();
+    var titleEl = doc.getElementById(HOST_TITLE);
+    var body = doc.getElementById(HOST_BODY);
+    if (titleEl) titleEl.textContent = payload.title || "Full-screen table";
+    if (body) {
+      body.innerHTML =
+        '<div class="st-tmmf-host-table-modal__table-wrap">' + (payload.tableHtml || "") + "</div>";
+    }
+    root.hidden = false;
+    doc.body.classList.add("st-tmmf-host-table-modal-open");
+    var closeBtn = root.querySelector(".st-tmmf-host-table-modal__close");
+    if (closeBtn && closeBtn.focus) closeBtn.focus();
+  }
+
+  function closeHostModal() {
+    var root = doc.getElementById(HOST_ID);
+    if (root) root.hidden = true;
+    if (doc.body) doc.body.classList.remove("st-tmmf-host-table-modal-open");
+    var body = doc.getElementById(HOST_BODY);
+    if (body) body.innerHTML = "";
+  }
+
+  win.__jpmOpenTableFullscreenHost = openHostModal;
+  win.__jpmCloseTableFullscreenHost = closeHostModal;
+
+  win.addEventListener("message", function (ev) {
+    if (!ev.data) return;
+    var t = ev.data.type;
+    if (t === "jpm-table-fullscreen-open" || t === "jpm-tmmf-fullscreen-open") openHostModal(ev.data);
+    if (t === "jpm-table-fullscreen-close" || t === "jpm-tmmf-fullscreen-close") closeHostModal();
+  });
 })();
 """
 
@@ -696,6 +842,19 @@ def _cached_tmmf_server_host_stylesheet() -> str:
   font-size: 0.72rem !important;
   line-height: 1.45 !important;
   color: var(--muted, #5c6b7a) !important;
+}}
+.stApp:has(.streamlit-tmmf-server-page) .rwa-table-modal:not([hidden]) {{
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 999999 !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 1.25rem !important;
+  box-sizing: border-box !important;
+}}
+.stApp:has(.streamlit-tmmf-server-page) .rwa-table-modal__dialog {{
+  max-height: min(92vh, 980px) !important;
+  width: min(96vw, 1400px) !important;
 }}
 """
     return css
@@ -1054,6 +1213,7 @@ def inject_tmmf_server_table_actions(payload: dict[str, Any]) -> None:
     libs_json = json.dumps(js_libs)
     patch_json = json.dumps(_STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH.strip())
     wire_json = json.dumps(_TMMF_SERVER_TABLE_WIRE_JS.strip())
+    host_modal_json = json.dumps(_TMMF_SERVER_INLINE_HOST_MODAL_JS.strip())
     bootstrap = f"""
 <script>
 (function () {{
@@ -1064,22 +1224,31 @@ def inject_tmmf_server_table_actions(payload: dict[str, Any]) -> None:
     s.textContent = text;
     doc.body.appendChild(s);
   }}
-  function boot() {{
-    if (!doc.querySelector(".streamlit-tmmf-server-host")) return false;
-    if (!win.__jpmOpenTableFullscreenHost) return false;
-    if (win.__TMMF_SERVER_TABLE_BOOTED) return true;
-    win.__TMMF_SERVER_TABLE_BOOTED = true;
+  function ensureHostModal() {{
+    if (typeof win.__jpmOpenTableFullscreenHost === "function") return;
+    inject({host_modal_json});
+  }}
+  function ensureTableLibs() {{
+    if (win.__TABLE_FULLSCREEN) return;
     inject({libs_json});
     win.__TMMF_SERVER_EXPORTS = {export_json};
     inject({patch_json});
     inject({wire_json});
+  }}
+  function boot() {{
+    if (!doc.querySelector(".streamlit-tmmf-server-host")) return false;
+    ensureHostModal();
+    ensureTableLibs();
+    if (typeof win.__tmmfWireServerTables === "function") {{
+      win.__tmmfWireServerTables();
+    }}
     return true;
   }}
   if (!boot()) {{
     var tries = 0;
     var timer = win.setInterval(function () {{
       tries += 1;
-      if (boot() || tries > 40) win.clearInterval(timer);
+      if (boot() || tries > 60) win.clearInterval(timer);
     }}, 250);
   }}
 }})();
