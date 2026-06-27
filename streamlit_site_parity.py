@@ -767,10 +767,10 @@ SUBPAGE_STREAMLIT_CSS = """
 .stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.page-back-below-header) [data-testid="stVerticalBlock"] {
   align-items: flex-start !important;
 }
-.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.page-back-below-header) [data-testid="stMarkdownContainer"],
-.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.page-back-below-header) [data-testid="stMarkdownContainer"],
-.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.page-back-below-header) [data-testid="stHtml"] > div,
-.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.page-back-below-header) [data-testid="stHtml"] > div {
+.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.page-back-below-header):not(:has(.streamlit-tmmf-server-host)) [data-testid="stMarkdownContainer"],
+.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.page-back-below-header):not(:has(.streamlit-tmmf-server-host)) [data-testid="stMarkdownContainer"],
+.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.page-back-below-header):not(:has(.streamlit-tmmf-server-host)) [data-testid="stHtml"] > div,
+.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.page-back-below-header):not(:has(.streamlit-tmmf-server-host)) [data-testid="stHtml"] > div {
   width: auto !important;
   max-width: 100% !important;
 }
@@ -2207,19 +2207,52 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   width: 100% !important;
   max-width: 100% !important;
 }
-.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .page-back-below-header {
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has([data-testid="stHtml"]):not(:has(.streamlit-tmmf-server-host)) {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  visibility: hidden !important;
+}
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.streamlit-tmmf-server-back) {
+  max-width: calc(var(--content-max, var(--max, 72rem)) + 17.5rem) !important;
+  width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.streamlit-tmmf-server-back) [data-testid="stVerticalBlock"] {
+  align-items: flex-start !important;
+}
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.streamlit-tmmf-server-back) [data-testid="stMarkdownContainer"],
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stElementContainer"]:has(.streamlit-tmmf-server-back) [data-testid="stMarkdownContainer"] > div {
+  width: auto !important;
+  max-width: 100% !important;
+}
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-back .back-link--below-header a:empty,
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] > div > a:empty,
+.stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] a.rwa-table-link:empty {
+  display: none !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+}
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-back .page-back-below-header {
   max-width: var(--content-max, 72rem);
   margin: 0 auto;
   padding: 0.35rem 1.25rem 0;
   box-sizing: border-box;
 }
-.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host p.back-link.back-link--below-header {
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-back p.back-link.back-link--below-header {
   margin: 0.2rem 0 0.85rem;
   width: auto !important;
   max-width: none !important;
 }
-.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .back-link--below-header a,
-.stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] .streamlit-tmmf-server-host .back-link--below-header a {
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-back .back-link--below-header a {
   display: inline-block !important;
   width: auto !important;
   max-width: none !important;
@@ -2237,8 +2270,7 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   box-shadow: none !important;
   white-space: nowrap;
 }
-.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .back-link--below-header a:hover,
-.stApp:has(.streamlit-tmmf-server-page) [data-testid="stHtml"] .streamlit-tmmf-server-host .back-link--below-header a:hover {
+.stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-back .back-link--below-header a:hover {
   color: var(--hx-tmmf-bright, #507188) !important;
   -webkit-text-fill-color: var(--hx-tmmf-bright, #507188) !important;
   border-color: rgb(80 113 136 / 0.45) !important;
@@ -2471,7 +2503,7 @@ def _deep_iframe_subpage_css_blob() -> str:
 
 def inject_subpage_styles(*, kind: str = "article") -> None:
     """GitHub Pages base + inner-page CSS for Streamlit subpages."""
-    inject_site_styles(include_static=True)
+    inject_site_styles(include_static=True, html_style_backup=False)
     inner_css = _cached_subpage_stylesheet(kind)
     deep_iframe_css = _deep_iframe_subpage_css_blob() if kind in (
         "tmmf", "stablecoins", "crypto", "etp", "news_feed", "rwa_global", "rwa_explore_at", "rwa_explore_mp"
@@ -2656,7 +2688,7 @@ def configure_subpage(
     consume_jd_page_query()
     inject_subpage_styles(kind=style_kind)
     inject_streamlit_nav_router()
-    if delivery in ("iframe", "server"):
+    if delivery == "iframe":
         components.html(HOME_IFRAME_HEIGHT_SYNC_JS, height=0, width=0)
     if delivery == "iframe" and style_kind in (
         "tmmf", "stablecoins", "crypto", "etp", "rwa_global", "rwa_explore_at", "rwa_explore_mp"
@@ -2804,7 +2836,7 @@ def render_subpage_footer(*, label: str) -> None:
     )
 
 
-def inject_site_styles(*, include_static: bool = True) -> None:
+def inject_site_styles(*, include_static: bool = True, html_style_backup: bool = True) -> None:
     """Inject GitHub Pages CSS + Streamlit chrome overrides."""
     gap_css = HOME_HERO_TO_CONTENT_GAP.replace("'", "\\'")
     chrome_css = STREAMLIT_CHROME_CSS.replace(
@@ -2815,8 +2847,9 @@ def inject_site_styles(*, include_static: bool = True) -> None:
         css = _cached_static_stylesheet()
         # Main document: markdown style block for news/footer chrome.
         st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
-        # Event container: backup injection for Cloud when markdown style blocks are dropped.
-        st.html(f"<style>{css}</style>")
+        # Backup via st.html on home only — on subpages it can render as an empty shell.
+        if html_style_backup:
+            st.html(f"<style>{css}</style>")
 
 
 def render_home_markdown(html: str, *, target: Any = None) -> None:
