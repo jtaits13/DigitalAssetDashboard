@@ -939,7 +939,7 @@ def _tmmf_back_link_html(*, href: str, label: str) -> str:
 
 
 def _tmmf_streamlit_back_link_html(*, href: str, label: str) -> str:
-    """Back pill for server-rendered TMMF — markdown block, not st.html (avoids phantom shells)."""
+    """Back row for server-rendered TMMF — render via ``st.markdown``, not ``st.html`` (avoids phantom shells)."""
     label_html = (
         escape(label)
         .replace("\u2190", "&larr;")
@@ -1253,11 +1253,19 @@ def build_tmmf_server_iframe_html(
 _TMMF_SERVER_PHANTOM_PURGE_JS = """
 function purgeTmmfPhantomBackPills(doc, win) {
   if (!doc.querySelector(".streamlit-tmmf-server-page")) return;
+  function cleanText(el) {
+    return (el && el.textContent || "").replace(/\\s+/g, " ").trim();
+  }
+  function isRealBackPill(el) {
+    return !!(el && el.classList && el.classList.contains("tmmf-st-back-pill") && cleanText(el));
+  }
   doc.querySelectorAll(".page-back-below-header").forEach(function (row) {
+    if (row.closest(".tmmf-st-back-row") && row.querySelector(".tmmf-st-back-pill")) return;
     if (row.querySelector(".tmmf-st-back-pill")) return;
     row.remove();
   });
   doc.querySelectorAll("p.back-link.back-link--below-header").forEach(function (p) {
+    if (p.closest(".tmmf-st-back-row") && p.querySelector(".tmmf-st-back-pill")) return;
     if (p.querySelector(".tmmf-st-back-pill")) return;
     p.remove();
   });
@@ -1265,30 +1273,42 @@ function purgeTmmfPhantomBackPills(doc, win) {
     wrap.remove();
   });
   doc.querySelectorAll(".tmmf-st-back-wrap a, .page-back-below-header a").forEach(function (a) {
-    if (a.classList.contains("tmmf-st-back-pill")) return;
+    if (isRealBackPill(a)) return;
     a.remove();
   });
-  doc.querySelectorAll('[data-testid="stHtml"] > div > a').forEach(function (a) {
-    if (a.classList.contains("tmmf-st-back-pill")) return;
-    var text = (a.textContent || "").replace(/\\s+/g, " ").trim();
-    if (!text) a.remove();
+  doc.querySelectorAll('[data-testid="stHtml"] > div').forEach(function (wrap) {
+    if (wrap.querySelector(".streamlit-tmmf-server-host")) return;
+    if (wrap.querySelector(".tmmf-st-back-pill")) return;
+    var text = cleanText(wrap);
+    if (!text) wrap.remove();
+  });
+  doc.querySelectorAll('[data-testid="stHtml"] > div > a, [data-testid="stHtml"] a').forEach(function (a) {
+    if (isRealBackPill(a)) return;
+    if (!cleanText(a)) a.remove();
   });
   var host = doc.querySelector(".streamlit-tmmf-server-host");
   if (host) {
     Array.prototype.slice.call(host.children).forEach(function (child) {
-      if (child.classList.contains("page-back-below-header") && child.querySelector(".tmmf-st-back-pill")) return;
+      if (child.classList.contains("page-back-below-header")) return;
       if (child.classList.contains("page-shell") || child.tagName === "MAIN") return;
       child.remove();
     });
   }
-  doc.querySelectorAll("a").forEach(function (a) {
-    if (a.classList.contains("tmmf-st-back-pill")) return;
-    var cs = win.getComputedStyle(a);
+  doc.querySelectorAll("a, div, p").forEach(function (el) {
+    if (isRealBackPill(el)) return;
+    if (el.closest && el.closest(".tmmf-st-back-row") && el.querySelector && el.querySelector(".tmmf-st-back-pill")) return;
+    var cs = win.getComputedStyle(el);
     var br = parseFloat(cs.borderTopLeftRadius) || 0;
-    var text = (a.textContent || "").replace(/\\s+/g, " ").trim();
-    var r = a.getBoundingClientRect();
-    if (br >= 100 && r.width > 300 && !text && r.top < 220 && r.height > 0 && r.height < 48) {
-      a.remove();
+    var text = cleanText(el);
+    var r = el.getBoundingClientRect();
+    if (r.top > 260 || r.top < 35 || r.width < 280 || r.height < 2 || r.height > 52) return;
+    if (cs.display === "none" || cs.visibility === "hidden") return;
+    if (br >= 100 && r.width > 280 && !text) {
+      el.remove();
+      return;
+    }
+    if (el.tagName === "A" && br >= 100 && r.width > 280 && !el.classList.contains("tmmf-st-back-pill")) {
+      el.remove();
     }
   });
 }
@@ -1373,12 +1393,17 @@ def render_tmmf_body_server(
     back_href: str = "/?jd_scroll=tmmf",
     back_label: str = "← Back to home · TMMF preview",
 ) -> None:
-    """Render TMMF on the Streamlit host: CSS in page head, body via st.html."""
+    """Render TMMF on the Streamlit host: back row in markdown, zone body via st.html."""
     back_link = _tmmf_streamlit_back_link_html(href=back_href, label=back_label)
     zone = build_tmmf_server_zone_html(payload=payload, related_chips=related_chips)
-    # Single st.html block: back row + zone share page-shell padding (avoids phantom shells between blocks).
+    # Back row must not live in st.html — Streamlit Cloud leaves a full-width empty pill shell there.
+    st.markdown(
+        f'<div class="tmmf-st-back-row site-experience page-inner--rich page-rwa-deep-mmf">'
+        f"{back_link}</div>",
+        unsafe_allow_html=True,
+    )
     st.html(
         f'<div class="streamlit-tmmf-server-host page-rwa-deep page-rwa-deep-mmf '
-        f'site-experience page-inner--rich">{back_link}{zone}</div>'
+        f'site-experience page-inner--rich">{zone}</div>'
     )
     inject_tmmf_server_table_actions(payload)
