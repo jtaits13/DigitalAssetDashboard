@@ -50,11 +50,19 @@ def main() -> int:
         print("FAIL: etf news iframe markup")
         return 1
 
+    if "body.page-article-feed-iframe.page-etp" not in etf_html:
+        print("FAIL: etf news iframe page-etp layout css")
+        return 1
+
     if len(NEWS_FEED_SPECS) != 4:
         print("FAIL: expected four news feed specs")
         return 1
 
-    from streamlit_site_parity import _deep_iframe_subpage_css_blob
+    from streamlit_site_parity import DEEP_IFRAME_HOST_RESET_JS, _deep_iframe_subpage_css_blob
+
+    if "resetDeepIframeHostChrome" not in DEEP_IFRAME_HOST_RESET_JS:
+        print("FAIL: deep iframe host reset script")
+        return 1
 
     if "streamlit-news-feed-iframe-page" not in _deep_iframe_subpage_css_blob():
         print("FAIL: news feed host CSS marker")

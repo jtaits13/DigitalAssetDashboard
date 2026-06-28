@@ -3402,6 +3402,120 @@ STREAMLIT_SUBPAGE_EMBED_REVEAL_JS = """
 """
 
 
+DEEP_IFRAME_HOST_RESET_VERSION = "1"
+
+DEEP_IFRAME_HOST_RESET_JS = f"""
+<script id="deep-iframe-host-reset-v{DEEP_IFRAME_HOST_RESET_VERSION}">
+(function () {{
+  var doc = window.parent && window.parent.document ? window.parent.document : document;
+  function resetDeepIframeHostChrome() {{
+    var app = doc.querySelector(".stApp");
+    if (!app) return;
+    [
+      app,
+      app.querySelector('[data-testid="stAppViewContainer"]'),
+      app.querySelector("section.main"),
+      app.querySelector('[data-testid="stMainBlockContainer"]'),
+      app.querySelector(".block-container"),
+    ].forEach(function (el) {{
+      if (!el) return;
+      [
+        "background",
+        "background-color",
+        "background-image",
+        "height",
+        "min-height",
+        "max-height",
+        "width",
+        "max-width",
+        "overflow",
+        "overflow-x",
+        "overflow-y",
+        "margin",
+        "margin-left",
+        "margin-right",
+        "margin-bottom",
+        "padding-bottom",
+        "padding-left",
+        "padding-right",
+        "flex",
+        "position",
+        "top",
+        "z-index",
+      ].forEach(function (prop) {{
+        el.style.removeProperty(prop);
+      }});
+    }});
+    doc.querySelectorAll(".withScreencast, [data-testid='stScreencast']").forEach(function (el) {{
+      ["background", "background-color", "background-image"].forEach(function (prop) {{
+        el.style.removeProperty(prop);
+      }});
+    }});
+    app.querySelectorAll('[data-testid="stElementContainer"]').forEach(function (el) {{
+      [
+        "height",
+        "min-height",
+        "max-height",
+        "width",
+        "max-width",
+        "overflow",
+        "overflow-x",
+        "overflow-y",
+        "margin",
+        "margin-left",
+        "margin-right",
+        "margin-bottom",
+        "margin-top",
+        "padding-bottom",
+        "padding-left",
+        "padding-right",
+        "background",
+        "background-color",
+        "background-image",
+        "flex",
+        "position",
+        "top",
+        "z-index",
+      ].forEach(function (prop) {{
+        el.style.removeProperty(prop);
+      }});
+      el.querySelectorAll(
+        '[data-testid="stVerticalBlock"], [data-testid="stHtml"], [data-testid="stHtml"] > div'
+      ).forEach(function (child) {{
+        [
+          "height",
+          "min-height",
+          "max-height",
+          "width",
+          "max-width",
+          "overflow",
+          "overflow-x",
+          "overflow-y",
+          "background",
+          "background-color",
+          "background-image",
+          "flex",
+        ].forEach(function (prop) {{
+          child.style.removeProperty(prop);
+        }});
+      }});
+    }});
+  }}
+  resetDeepIframeHostChrome();
+  window.addEventListener("load", resetDeepIframeHostChrome);
+  [50, 200, 800, 2000, 5000].forEach(function (ms) {{
+    setTimeout(resetDeepIframeHostChrome, ms);
+  }});
+}})();
+</script>
+"""
+
+
+def inject_deep_iframe_host_reset() -> None:
+    """Clear stale inline host chrome from prior deep iframe routes (ETP canvas override, etc.)."""
+    components.html(DEEP_IFRAME_HOST_RESET_JS, height=0, width=0)
+
+
 def inject_subpage_embed_reveal() -> None:
     """Force Streamlit Cloud embed shell visible on multipage subroutes."""
     components.html(STREAMLIT_SUBPAGE_EMBED_REVEAL_JS, height=0, width=0)
@@ -3424,6 +3538,8 @@ def configure_subpage(
         initial_sidebar_state="collapsed",
     )
     consume_jd_page_query()
+    if delivery == "iframe":
+        inject_deep_iframe_host_reset()
     inject_subpage_styles(kind=style_kind)
     inject_streamlit_nav_router()
     if delivery == "iframe":

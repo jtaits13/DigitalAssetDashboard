@@ -267,7 +267,7 @@ def get_news_feed_iframe_payloads(kind: str) -> dict[str, Any]:
 
 
 @st.cache_resource(show_spinner=False)
-def _cached_iframe_news_stylesheet_v1() -> str:
+def _cached_iframe_news_stylesheet_v2() -> str:
     chunks: list[str] = [
         "@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap');",
     ]
@@ -313,6 +313,17 @@ body.page-article-feed-iframe .home-reveal {
   opacity: 1 !important;
   transform: none !important;
 }
+body.page-article-feed-iframe.page-etp.site-experience.page-inner--rich {
+  background: var(--wash, #f3f7fb) !important;
+  background-image: none !important;
+}
+body.page-article-feed-iframe.page-etp main.page-shell,
+body.page-article-feed-iframe.page-etp .inner-rich-zone.hub-section,
+body.page-article-feed-iframe.page-etp .home-zone__body {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
 """
     )
     return "\n".join(chunks)
@@ -337,7 +348,7 @@ def build_news_feed_body_iframe_html(
     from streamlit_site_parity import iframe_internal_link_script
 
     spec = NEWS_FEED_SPECS[kind]
-    css = _cached_iframe_news_stylesheet_v1()
+    css = _cached_iframe_news_stylesheet_v2()
     href = back_href or spec.default_back_href
     label = back_label or spec.default_back_label
     label_html = _news_back_label_html(label)
