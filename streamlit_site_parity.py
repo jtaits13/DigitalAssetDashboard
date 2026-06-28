@@ -712,7 +712,53 @@ SUBPAGE_STREAMLIT_CSS = """
   min-height: 100vh !important;
   overflow: visible !important;
 }
-/* Subpages: undo home-only hide rule if patched CSS still targets bare .stApp .crypto-story-callout. */
+/* Host-rendered subpage nav: edge-to-edge band, dropdowns above body iframes. */
+.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.subpage-host-nav-marker),
+.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.subpage-host-nav-marker) {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  margin-left: calc(50% - 50vw) !important;
+  margin-right: calc(50% - 50vw) !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 200 !important;
+  flex: none !important;
+}
+.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.subpage-host-nav-marker) [data-testid="stMarkdownContainer"],
+.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.subpage-host-nav-marker) [data-testid="stMarkdownContainer"],
+.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.subpage-host-nav-marker) [data-testid="stMarkdownContainer"] > div,
+.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.subpage-host-nav-marker) [data-testid="stMarkdownContainer"] > div {
+  width: 100% !important;
+  max-width: none !important;
+  overflow: visible !important;
+}
+.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.subpage-host-nav-marker) .site-header,
+.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.subpage-host-nav-marker) .site-header {
+  position: relative;
+  top: auto;
+  width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(199, 216, 232, 0.85);
+}
+.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.subpage-host-nav-marker) .site-header__inner,
+.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.subpage-host-nav-marker) .site-header__inner {
+  max-width: calc(var(--max, 72rem) + 17.5rem);
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe),
+.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) {
+  z-index: 1 !important;
+}
+.stApp:has(.streamlit-subpage-active) .etp-mock-key-obs-block .crypto-story-callout,
+.stApp:has(.streamlit-subpage-active) .inner-key-obs-block .crypto-story-callout,
 .stApp:has(.streamlit-subpage-root) .etp-mock-key-obs-block .crypto-story-callout,
 .stApp:has(.streamlit-subpage-root) .inner-key-obs-block .crypto-story-callout {
   display: block !important;
@@ -1226,15 +1272,11 @@ def build_subpage_nav_iframe_html(*, active: str) -> str:
 
 
 def render_subpage_nav(*, active: str) -> None:
-    """Render subpage nav in an auto-height iframe (parity with home chrome nav)."""
+    """Render subpage nav on the Streamlit host (full-bleed band, working dropdowns)."""
+    nav_html = render_site_nav_html(active=active, is_landing=False, for_streamlit=True).strip()
     st.markdown(
-        '<span class="subpage-chrome-iframe-marker" hidden aria-hidden="true"></span>',
+        f'<span class="subpage-host-nav-marker" hidden aria-hidden="true"></span>{nav_html}',
         unsafe_allow_html=True,
-    )
-    components.html(
-        build_subpage_nav_iframe_html(active=active),
-        height=SUBPAGE_NAV_IFRAME_INITIAL_HEIGHT,
-        scrolling=False,
     )
 
 
