@@ -21,8 +21,8 @@ _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
 
-_CRYPTO_IFRAME_CSS_VERSION = "2"
-CRYPTO_CANVAS_OVERRIDE_VERSION = "1"
+_CRYPTO_IFRAME_CSS_VERSION = "3"
+CRYPTO_CANVAS_OVERRIDE_VERSION = "2"
 
 CRYPTO_GH_PAGE_WASH = "#f3f7fb"
 CRYPTO_GH_ZONE_SOFT = "#f1f4f7"
@@ -196,17 +196,25 @@ html, {scope}.site-experience,
 }}
 {scope} .inner-rich-block,
 {scope} .etp-mock-key-obs-block,
+{scope}.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block,
+{scope}.page-inner--rich .inner-rich-zone.zone--crypto .inner-rich-block,
 {scope} .etp-mock-key-obs-block .crypto-story-callout,
+{scope}.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout,
 {scope} #js-crypto-key-obs .crypto-story-callout,
+{scope} .etp-mock-key-obs-block .review-note.ko-disclaimer,
+{scope} #js-crypto-key-obs .review-note.ko-disclaimer,
 {scope} .etp-mock-insights__panel,
+{scope} .etp-mock-snapshot,
 {scope} .etp-mock-dash__panel,
 {scope} .rwa-kpi-row--home-grid .rwa-kpi-cell,
 {scope} .etp-mock-table-block {{
   background: #fff !important;
   background-color: #fff !important;
   background-image: none !important;
+  box-shadow: none !important;
 }}
-{scope} .crypto-story-callout__note {{
+{scope} .etp-mock-key-obs-block .crypto-story-callout__note,
+{scope} #js-crypto-key-obs .crypto-story-callout__note {{
   background: rgb(72 90 110 / 0.06) !important;
   background-image: none !important;
 }}
@@ -237,11 +245,14 @@ def crypto_iframe_canvas_override_js(*, version: str = CRYPTO_CANVAS_OVERRIDE_VE
       main.style.setProperty("background-image", "none", "important");
     }}
     document.querySelectorAll(
-      ".inner-rich-zone.zone--crypto, .inner-rich-zone.zone--crypto .inner-rich-zone__body"
+      ".inner-rich-zone.zone--crypto, .inner-rich-zone.zone--crypto .inner-rich-zone__body, .etp-mock-zone.inner-rich-zone.zone--crypto, .etp-mock-zone .inner-rich-zone__body"
     ).forEach(function (el) {{ setBg(el, SOFT); }});
     document.querySelectorAll(
-      ".inner-rich-block, .etp-mock-key-obs-block, .crypto-story-callout, .etp-mock-insights__panel, .etp-mock-dash__panel, .rwa-kpi-row--home-grid .rwa-kpi-cell, .etp-mock-table-block"
-    ).forEach(function (el) {{ setBg(el, WHITE); }});
+      ".inner-rich-block, .etp-mock-key-obs-block, .crypto-story-callout, .review-note.ko-disclaimer, .etp-mock-insights__panel, .etp-mock-snapshot, .etp-mock-dash__panel, .rwa-kpi-row--home-grid .rwa-kpi-cell, .etp-mock-table-block"
+    ).forEach(function (el) {{
+      setBg(el, WHITE);
+      el.style.setProperty("box-shadow", "none", "important");
+    }});
     document.querySelectorAll(".crypto-story-callout__note").forEach(function (el) {{
       setBg(el, "rgb(72 90 110 / 0.06)");
     }});
@@ -285,27 +296,31 @@ def crypto_host_canvas_override_js(*, version: str = CRYPTO_CANVAS_OVERRIDE_VERS
 <script id="crypto-gh-host-canvas-override-js-v{version}">
 (function () {{
   var WASH = "{wash}";
-  function paintHost() {{
-    var doc = document;
+  var doc = window.parent && window.parent.document ? window.parent.document : document;
+  function paint() {{
+    var app = doc.querySelector(".stApp");
+    if (!app || !app.querySelector(".streamlit-crypto-iframe-page")) return;
     [
-      doc.documentElement,
-      doc.body,
-      doc.querySelector(".stApp"),
-      doc.querySelector('[data-testid="stAppViewContainer"]'),
-      doc.querySelector("section.main"),
-      doc.querySelector('[data-testid="stMain"]'),
-      doc.querySelector('[data-testid="stMainBlockContainer"]'),
-      doc.querySelector(".block-container"),
+      app,
+      app.querySelector('[data-testid="stAppViewContainer"]'),
+      app.querySelector("section.main"),
+      app.querySelector('[data-testid="stMainBlockContainer"]'),
+      app.querySelector(".block-container"),
     ].forEach(function (el) {{
       if (!el) return;
       el.style.setProperty("background", WASH, "important");
       el.style.setProperty("background-color", WASH, "important");
       el.style.setProperty("background-image", "none", "important");
     }});
+    doc.querySelectorAll(".withScreencast, [data-testid='stScreencast']").forEach(function (el) {{
+      if (!el.querySelector(".streamlit-crypto-iframe-page")) return;
+      el.style.setProperty("background", WASH, "important");
+      el.style.setProperty("background-image", "none", "important");
+    }});
   }}
-  paintHost();
-  window.addEventListener("load", paintHost);
-  [50, 200, 800, 2000, 5000].forEach(function (ms) {{ setTimeout(paintHost, ms); }});
+  paint();
+  if (window.parent) window.parent.addEventListener("load", paint);
+  [100, 400, 1200, 3000, 6000].forEach(function (ms) {{ setTimeout(paint, ms); }});
 }})();
 </script>
 """
@@ -575,9 +590,39 @@ body.page-crypto-iframe.mock-crypto-inner .etp-mock-zone.inner-rich-zone.zone--c
   background: var(--hx-etp-soft, #f1f4f7) !important;
   background-image: none !important;
 }
+body.page-crypto-iframe .inner-rich-zone.zone--crypto .home-zone__head,
+body.page-crypto-iframe.mock-crypto-inner .etp-mock-zone .home-zone__head {
+  background: var(--hx-etp-head, linear-gradient(180deg, #f4f6f9 0%, #ffffff 100%)) !important;
+}
 body.page-crypto-iframe .inner-rich-zone.zone--crypto .inner-rich-zone__body,
-body.page-crypto-iframe.mock-crypto-inner .etp-mock-zone .inner-rich-zone__body {
+body.page-crypto-iframe.mock-crypto-inner.page-inner--rich .etp-mock-zone .inner-rich-zone__body,
+body.page-crypto-iframe.mock-crypto-inner .etp-mock-zone__body.inner-rich-zone__body {
   background: var(--hx-etp-soft, #f1f4f7) !important;
+  background-image: none !important;
+}
+/* Key observations — mock CSS keeps gradient + rgba block; reads as a horizontal seam mid-card. */
+body.page-crypto-iframe.page-inner--rich .inner-rich-zone.zone--crypto .inner-rich-block,
+body.page-crypto-iframe.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block,
+body.page-crypto-iframe .etp-mock-key-obs-block.inner-rich-block,
+body.page-crypto-iframe.site-experience.page-inner--rich .inner-rich-zone.zone--crypto .inner-rich-block,
+body.page-crypto-iframe.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout,
+body.page-crypto-iframe.page-inner--rich .inner-rich-zone #js-crypto-key-obs .crypto-story-callout,
+body.page-crypto-iframe .etp-mock-key-obs-block .crypto-story-callout,
+body.page-crypto-iframe #js-crypto-key-obs .crypto-story-callout {
+  background: #fff !important;
+  background-color: #fff !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+body.page-crypto-iframe .etp-mock-key-obs-block .crypto-story-callout__note,
+body.page-crypto-iframe #js-crypto-key-obs .crypto-story-callout__note {
+  background: rgb(72 90 110 / 0.06) !important;
+  background-image: none !important;
+}
+body.page-crypto-iframe .etp-mock-key-obs-block .review-note.ko-disclaimer,
+body.page-crypto-iframe #js-crypto-key-obs .review-note.ko-disclaimer {
+  background: #fff !important;
+  background-color: #fff !important;
   background-image: none !important;
 }
 body.page-crypto-iframe .rwa-table-modal--streamlit-fallback:not([hidden]) {
