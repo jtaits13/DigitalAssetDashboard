@@ -9,6 +9,8 @@ _REPO = Path(__file__).resolve().parent.parent
 if str(_REPO) not in sys.path:
     sys.path.insert(0, str(_REPO))
 
+import streamlit as st
+
 from streamlit_site_parity import (
     _streamlit_page_href,
     configure_subpage,
@@ -26,6 +28,8 @@ def main() -> None:
         page_title="Crypto Prices — Digital Assets Dashboard",
         active="crypto",
         style_kind="crypto",
+        show_nav=True,
+        nav_style="home",
     )
     related = related_chips_html(
         ("/?jd_scroll=crypto", "Home crypto preview"),
@@ -34,8 +38,9 @@ def main() -> None:
         ("/?jd_scroll=news", "News Hub"),
     )
 
-    payloads = get_crypto_iframe_payloads()
-    render_crypto_prices_body_iframe(payloads=payloads, related_chips=related)
+    with st.spinner("Loading crypto prices page…"):
+        payloads = get_crypto_iframe_payloads()
+        render_crypto_prices_body_iframe(payloads=payloads, related_chips=related)
 
     render_subpage_footer(label="Crypto Prices")
 

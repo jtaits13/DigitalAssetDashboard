@@ -680,3 +680,429 @@ def key_observations_html(raw: str) -> str:
         '<h2 class="subsection-head u-vh" id="js-deep-ko-h">Key Observations</h2>'
         f'<div id="js-deep-ko">{callout}{review_html}</div></div>'
     )
+
+
+def _crypto_delta_html(delta: dict[str, Any] | None) -> str:
+    if not delta:
+        return ""
+    pct = delta.get("pct")
+    try:
+        n = float(pct) if pct is not None else None
+    except (TypeError, ValueError):
+        n = None
+    if n is None:
+        return '<span class="rwa-kpi-delta neutral">—</span>'
+    cls = "up" if n > 0 else "down" if n < 0 else "neutral"
+    sign = "+" if n > 0 else ""
+    return f'<span class="rwa-kpi-delta {cls}">{sign}{n:.2f}%</span>'
+
+
+def _fmt_crypto_price_cell(usd: Any) -> str:
+    try:
+        n = float(usd)
+    except (TypeError, ValueError):
+        return "—"
+    if not (n == n):  # NaN
+        return "—"
+    if n >= 1000:
+        return f"${n:,.0f}"
+    if n >= 1:
+        return f"${n:,.2f}"
+    if n >= 0.01:
+        return f"${n:,.4f}"
+    return f"${n:.4g}"
+
+
+def _fmt_crypto_cap_cell(usd: Any) -> str:
+    try:
+        n = float(usd)
+    except (TypeError, ValueError):
+        return "—"
+    if not (n == n):
+        return "—"
+    if n >= 1e12:
+        return f"${n / 1e12:.2f}T"
+    if n >= 1e9:
+        return f"${n / 1e9:.2f}B"
+    if n >= 1e6:
+        return f"${n / 1e6:.1f}M"
+    return f"${n:,.0f}"
+
+
+def _fmt_crypto_pct_cell(pct: Any) -> str:
+    try:
+        n = float(pct)
+    except (TypeError, ValueError):
+        return '<td class="num">—</td>'
+    if not (n == n):
+        return '<td class="num">—</td>'
+    cls = "up" if n >= 0 else "down"
+    sign = "+" if n >= 0 else ""
+    return f'<td class="num {cls}">{sign}{n:.2f}%</td>'
+
+
+def crypto_kpi_cell_html(item: dict[str, Any]) -> str:
+    label = escape(str(item.get("label") or ""))
+    value = escape(str(item.get("value_display") or "—"))
+    sub = item.get("subnote")
+    sub_html = f'<span class="kpi-subnote">{escape(str(sub))}</span>' if sub else ""
+    return (
+        "<div class='rwa-kpi-cell'>"
+        f"<span class='rwa-kpi-label'>{label}</span>"
+        f"<span class='rwa-kpi-val'>{value}</span>"
+        f"{sub_html}"
+        f"{_crypto_delta_html(item.get('delta') if isinstance(item.get('delta'), dict) else None)}"
+        "</div>"
+    )
+
+
+def crypto_kpis_html(kpis: dict[str, Any]) -> str:
+    """KPI strip from ``crypto_kpis.json`` (matches ``crypto-kpi-shared.js``)."""
+    if not kpis:
+        return ""
+    parts = [kpis.get("primary"), kpis.get("btc_dominance"), kpis.get("stablecoin_share")]
+    cells = [
+        crypto_kpi_cell_html(p)
+        for p in parts
+        if isinstance(p, dict) and (p.get("label") or p.get("value_display"))
+    ]
+    if not cells:
+        return ""
+    note = str(kpis.get("kpi_window_note") or "").strip()
+    note_html = (
+        f'<p class="jd-kpi-window-note rwa-onchain-kpi-legend">{escape(note)}</p>' if note else ""
+    )
+    err = str(kpis.get("error") or "").strip()
+    banner = (
+        f'<div class="data-banner" id="js-data-banner" role="status">{escape(err)}</div>'
+        if err
+        else '<div class="data-banner" id="js-data-banner" role="status" hidden></div>'
+    )
+    generated = str(kpis.get("generated_at") or "").strip()
+    freshness = ""
+    if generated:
+        freshness = (
+            '<p class="data-freshness etp-mock-freshness" id="js-crypto-snapshot-as-of">'
+            f"Snapshot as of {escape(generated)}"
+            "</p>"
+        )
+    return (
+        f"{banner}"
+        '<section class="etp-mock-snapshot" aria-labelledby="crypto-snapshot-heading">'
+        '<h2 class="subsection-head u-vh" id="crypto-snapshot-heading">Top-line snapshot</h2>'
+        f"{freshness}"
+        '<div id="js-crypto-kpi" aria-label="Crypto KPI strip">'
+        '<div class="rwa-kpi-panel-static">'
+        f"{note_html}"
+        f"<div class=\"rwa-kpi-row rwa-kpi-row--home-grid\">{''.join(cells)}</div>"
+        "</div></div></section>"
+    )
+
+
+def crypto_key_observations_html(raw: str) -> str:
+    """Key observations block for the crypto prices page shell."""
+    raw = (raw or "").strip()
+    if not raw:
+        return (
+            '<div class="inner-rich-block etp-mock-key-obs-block" aria-labelledby="crypto-ko-heading">'
+            '<h2 class="subsection-head u-vh" id="crypto-ko-heading">Key observations</h2>'
+            '<div id="js-crypto-key-obs" hidden></div></div>'
+        )
+    cleaned = re.sub(r"<style[^>]*>.*?</style>", "", raw, flags=re.IGNORECASE | re.DOTALL)
+    ul_match = re.search(r"<ul[^>]*>(.*?)</ul>", cleaned, flags=re.IGNORECASE | re.DOTALL)
+    if not ul_match:
+        inner = cleaned
+    else:
+        list_html = re.sub(r'\s*style="[^"]*"', "", ul_match.group(1), flags=re.IGNORECASE)
+        note_match = re.search(
+            r'<p class="takeaways__note"[^>]*>(.*?)</p>',
+            cleaned,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+        review_match = re.search(
+            r'<p class="review-note[^"]*"[^>]*>.*?</p>',
+            cleaned,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+        note_html = (
+            f'<p class="crypto-story-callout__note">{note_match.group(1)}</p>'
+            if note_match
+            else ""
+        )
+        review_html = review_match.group(0) if review_match else ""
+        inner = (
+            '<aside class="crypto-story-callout" aria-labelledby="crypto-ko-callout-title">'
+            '<p class="crypto-story-callout__title" role="heading" aria-level="3" '
+            'id="crypto-ko-callout-title">Key observations</p>'
+            f'<ul class="crypto-story-callout__list">{list_html}</ul>'
+            f"{note_html}{review_html}"
+            "</aside>"
+        )
+    return (
+        '<div class="inner-rich-block etp-mock-key-obs-block" aria-labelledby="crypto-ko-heading">'
+        '<h2 class="subsection-head u-vh" id="crypto-ko-heading">Key observations</h2>'
+        f'<div id="js-crypto-key-obs">{inner}</div></div>'
+    )
+
+
+def crypto_cap_mix_html(kpis: dict[str, Any], rows: list[dict[str, Any]]) -> str:
+    """Top-50 market cap mix bars (matches ``crypto-page.js`` ``renderCapMix``)."""
+    ms = kpis.get("market_structure") if isinstance(kpis.get("market_structure"), dict) else {}
+    top_cap = float(ms.get("top50_market_cap_usd") or 0)
+    if not top_cap:
+        top_cap = sum(float(r.get("market_cap_usd") or 0) for r in rows)
+    btc_pct = ms.get("btc_dominance_pct")
+    stable_pct = ms.get("stablecoin_share_top50_pct")
+    try:
+        btc_pct = float(btc_pct) if btc_pct is not None else None
+    except (TypeError, ValueError):
+        btc_pct = None
+    try:
+        stable_pct = float(stable_pct) if stable_pct is not None else None
+    except (TypeError, ValueError):
+        stable_pct = None
+    if btc_pct is None and stable_pct is None:
+        inner = '<p class="chart-fallback">Market cap mix is unavailable right now.</p>'
+    else:
+        eth_cap = 0.0
+        for row in rows:
+            if str(row.get("symbol") or "").upper() == "ETH":
+                eth_cap = float(row.get("market_cap_usd") or 0)
+                break
+        eth_pct = (100.0 * eth_cap / top_cap) if top_cap > 0 and eth_cap else 0.0
+        btc_pct = btc_pct if btc_pct is not None else 0.0
+        stable_pct = stable_pct if stable_pct is not None else 0.0
+        other_pct = max(0.0, 100.0 - btc_pct - eth_pct - stable_pct)
+        segments = [
+            ("BTC", btc_pct),
+            ("ETH", eth_pct),
+            ("Stables", stable_pct),
+            ("Other alts", other_pct),
+        ]
+        max_pct = max(p for _, p in segments) if segments else 0.0
+        rows_html: list[str] = []
+        for sym, pct in segments:
+            bar_width = (pct / max_pct * 100.0) if max_pct > 0 else 0.0
+            rows_html.append(
+                '<div class="etp-mock-conc__row">'
+                f'<span class="etp-mock-conc__sym">{escape(sym)}</span>'
+                '<span class="etp-mock-conc__track">'
+                f'<span class="etp-mock-conc__fill" style="width:{bar_width:.1f}%"></span>'
+                "</span>"
+                f'<span class="etp-mock-conc__pct">{pct:.1f}%</span>'
+                "</div>"
+            )
+        inner = "".join(rows_html)
+    return (
+        '<section class="etp-mock-insights etp-mock-insights--crypto-full" aria-labelledby="insights-heading">'
+        '<h2 class="u-vh" id="insights-heading">Market structure</h2>'
+        '<div class="etp-mock-insights__panel etp-mock-insights__panel--conc">'
+        '<h3 class="etp-mock-insights__head">Top-50 market cap mix</h3>'
+        '<p class="etp-mock-conc__dek">Share of top-50 market cap by category (CoinGecko snapshot).</p>'
+        f'<div id="js-crypto-cap-mix" class="etp-mock-conc__rows etp-mock-conc__rows--grid" '
+        f'role="img" aria-label="Top-50 market cap mix by category">{inner}</div>'
+        "</div></section>"
+    )
+
+
+def crypto_prices_table_rows_html(rows: list[dict[str, Any]]) -> str:
+    from crypto_categories import category_label, crypto_category
+
+    if not rows:
+        return '<tr><td colspan="8">No coins available.</td></tr>'
+    out: list[str] = []
+    for i, row in enumerate(rows, start=1):
+        sym = str(row.get("symbol") or "")
+        name = str(row.get("name") or sym)
+        cat_slug = str(row.get("category") or crypto_category(sym, name))
+        cat_cls = f"crypto-cat crypto-cat--{escape(cat_slug)}"
+        rank = row.get("market_cap_rank")
+        try:
+            rank_disp = int(rank) if rank is not None else i
+        except (TypeError, ValueError):
+            rank_disp = i
+        detail = str(row.get("detail_url") or "").strip()
+        detail_cell = (
+            f'<td><a href="{escape(detail)}" target="_blank" rel="noopener noreferrer">Open</a></td>'
+            if detail
+            else "<td>—</td>"
+        )
+        out.append(
+            "<tr>"
+            f"<td>{escape(str(rank_disp))}</td>"
+            f'<td><span class="sym">{escape(sym)}</span></td>'
+            f'<td class="data-table__name">{escape(name)}</td>'
+            f'<td><span class="{cat_cls}">{escape(category_label(cat_slug))}</span></td>'
+            f'<td class="num">{escape(_fmt_crypto_price_cell(row.get("price_usd")))}</td>'
+            f"{_fmt_crypto_pct_cell(row.get('pct_30d'))}"
+            f'<td class="num">{escape(_fmt_crypto_cap_cell(row.get("market_cap_usd")))}</td>'
+            f"{detail_cell}"
+            "</tr>"
+        )
+    return "".join(out)
+
+
+def crypto_prices_table_html(prices: dict[str, Any]) -> str:
+    rows = list(prices.get("rows") or [])
+    count = len(rows)
+    count_note = f"Showing all {count} coins." if count else "Loading market table…"
+    tbody = crypto_prices_table_rows_html(rows)
+    return (
+        '<section class="etp-mock-table-block" aria-labelledby="crypto-table-heading">'
+        '<div class="rwa-split-table-head inner-table-head">'
+        '<h2 class="subsection-head rwa-split-table-head__title" id="crypto-table-heading">Prices table</h2>'
+        '<div class="rwa-split-table-head__actions" id="js-crypto-table-actions"></div>'
+        "</div>"
+        '<div class="crypto-cat-tabs crypto-mock-cat-tabs" id="js-crypto-category-tabs"></div>'
+        '<label class="search-field etp-mock-table-search">'
+        '<span class="search-field__label">Search by coin name or ticker</span>'
+        '<input type="search" class="search-field__input" id="js-crypto-search" '
+        'placeholder="Filter by name or ticker&hellip;" />'
+        "</label>"
+        '<div class="etp-mock-table-meta crypto-mock-table-actions" aria-live="polite">'
+        f'<p class="etp-mock-table-meta__count toolbar-note" id="js-crypto-toolbar">{escape(count_note)}</p>'
+        '<p class="kpi-footnote kpi-footnote--block">'
+        "Hover a <strong>Ticker</strong> or <strong>Coin</strong> name for a short summary from "
+        "CoinGecko&rsquo;s About copy (mainstream adoption and uses, plus a brief lead)."
+        "</p>"
+        '<div class="rwa-table-actions" id="js-crypto-table-fullscreen"></div>'
+        "</div>"
+        '<div class="table-wrap table-wrap--scroll">'
+        '<table class="data-table data-table--dense data-table--sortable" aria-label="Top 50 cryptocurrencies">'
+        '<thead id="js-crypto-thead"><tr>'
+        '<th class="th-sortable" data-sort="rank">Rank</th>'
+        '<th class="th-sortable" data-sort="symbol">Ticker</th>'
+        '<th class="th-sortable" data-sort="name">Coin</th>'
+        '<th class="th-sortable" data-sort="category">Category</th>'
+        '<th class="num th-sortable" data-sort="price_usd">Price</th>'
+        '<th class="num th-sortable" data-sort="pct_30d">1M %</th>'
+        '<th class="num th-sortable" data-sort="market_cap_usd">Market Cap</th>'
+        "<th>Market Page</th>"
+        "</tr></thead>"
+        f'<tbody id="js-crypto-tbody">{tbody}</tbody>'
+        "</table></div>"
+        '<div class="rwa-table-footnote-row">'
+        '<p class="source-cap rwa-table-footnote-row__cap">'
+        "Top-line market-cap source: CoinPaprika. Spot market source: CoinGecko with CoinCap fallback. "
+        "Market-cap chart source: TradingView TOTAL."
+        "</p></div></section>"
+    )
+
+
+def crypto_dashboard_shell_html(chart_meta: dict[str, Any] | None = None) -> str:
+    meta = chart_meta or {}
+    title = escape(str(meta.get("title") or "Crypto total market cap"))
+    caption = escape(
+        str(
+            meta.get("caption")
+            or "TradingView TOTAL represents crypto market capitalization using the top 125 coins."
+        )
+    )
+    method = escape(
+        str(
+            meta.get("method_note")
+            or "The chart is powered by TradingView's TOTAL index so it does not rely on "
+            "rate-limited local historical exports."
+        )
+    )
+    link = escape(str(meta.get("provider_url") or "https://www.tradingview.com/symbols/TOTAL/"))
+    return (
+        '<section class="etp-mock-dashboard etp-mock-dashboard--full-width" aria-labelledby="dashboard-heading">'
+        '<h2 class="u-vh" id="dashboard-heading">Chart and context</h2>'
+        '<div class="etp-mock-dash__panel etp-mock-dash__panel--chart">'
+        f'<h3 class="etp-mock-dash__head" id="js-crypto-chart-heading">{title}</h3>'
+        '<div id="crypto-market-cap-chart" class="aum-chart-host" role="img" '
+        'aria-label="Crypto market cap chart"></div>'
+        f'<p class="etp-mock-chart__cap" id="js-crypto-chart-caption">{caption}</p>'
+        f'<p class="method-note etp-mock-chart__method" id="js-crypto-chart-method">{method}</p>'
+        '<p class="cta-note etp-mock-chart__method">'
+        f'<a id="js-crypto-chart-link" href="{link}" target="_blank" rel="noopener noreferrer">'
+        "Open the full TradingView TOTAL chart &rarr;</a></p>"
+        "</div></section>"
+    )
+
+
+def build_crypto_server_export_config(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    from crypto_categories import category_label, crypto_category
+
+    export_rows: list[list[str]] = []
+    for i, row in enumerate(rows, start=1):
+        sym = str(row.get("symbol") or "")
+        name = str(row.get("name") or sym)
+        cat_slug = str(row.get("category") or crypto_category(sym, name))
+        rank = row.get("market_cap_rank")
+        try:
+            rank_disp = str(int(rank) if rank is not None else i)
+        except (TypeError, ValueError):
+            rank_disp = str(i)
+        pct = row.get("pct_30d")
+        try:
+            pct_disp = f"{float(pct):+.2f}%" if pct is not None else "—"
+        except (TypeError, ValueError):
+            pct_disp = "—"
+        export_rows.append(
+            [
+                rank_disp,
+                sym,
+                name,
+                category_label(cat_slug),
+                _fmt_crypto_price_cell(row.get("price_usd")),
+                pct_disp,
+                _fmt_crypto_cap_cell(row.get("market_cap_usd")),
+            ]
+        )
+    return {
+        "crypto-table": {
+            "columns": ["Rank", "Ticker", "Coin", "Category", "Price", "1M %", "Market Cap"],
+            "rows": export_rows,
+        }
+    }
+
+
+def build_crypto_server_zone_html(
+    *,
+    payloads: dict[str, Any],
+    related_chips: str,
+) -> str:
+    """Server-rendered crypto prices zone body (mock-parity markup, filled at build time)."""
+    kpis = payloads.get("crypto_kpis.json") if isinstance(payloads.get("crypto_kpis.json"), dict) else {}
+    prices = payloads.get("crypto_prices.json") if isinstance(payloads.get("crypto_prices.json"), dict) else {}
+    chart = (
+        payloads.get("crypto_market_cap_series.json")
+        if isinstance(payloads.get("crypto_market_cap_series.json"), dict)
+        else {}
+    )
+    rows = list(prices.get("rows") or [])
+    footer = ""
+    generated = str(kpis.get("generated_at") or prices.get("generated_at") or "").strip()
+    if generated:
+        footer = f"Last updated: {generated}"
+    return (
+        '<main class="page-shell etp-mock-shell">'
+        '<article class="hub-section hub-section--panel inner-rich-zone zone--crypto home-zone home-zone--crypto etp-mock-zone">'
+        '<div class="home-zone__stripe" aria-hidden="true"></div>'
+        '<header class="home-zone__head">'
+        '<span class="home-zone__badge" aria-hidden="true">CRY</span>'
+        '<div class="home-zone__titles">'
+        '<p class="band-label teal">Crypto Prices</p>'
+        '<h1 class="page-intro__title">Crypto Prices &mdash; Top 50 Snapshot</h1>'
+        '<div class="section-dek section-dek--wide page-intro__dek">'
+        "Top-line crypto market snapshot with a KPI strip, a 12-month total market-cap trend chart, "
+        "category filters, and a searchable <strong>top 50</strong> spot-price table. Sources: "
+        '<a href="https://coinpaprika.com/" target="_blank" rel="noopener noreferrer">CoinPaprika</a> '
+        "(total cap), "
+        '<a href="https://www.coingecko.com/" target="_blank" rel="noopener noreferrer">CoinGecko</a> '
+        "(top 50; CoinCap fallback), and "
+        '<a href="https://www.tradingview.com/symbols/TOTAL/" target="_blank" rel="noopener noreferrer">'
+        "TradingView TOTAL</a> (chart)."
+        "</div></div></header>"
+        '<div class="home-zone__body inner-rich-zone__body etp-mock-zone__body">'
+        f"{related_chips.strip()}"
+        f"{crypto_kpis_html(kpis)}"
+        f"{crypto_key_observations_html(str(kpis.get('key_observations_html') or ''))}"
+        f"{crypto_cap_mix_html(kpis, rows)}"
+        f"{crypto_dashboard_shell_html(chart)}"
+        f"{crypto_prices_table_html(prices)}"
+        f'<p class="timestamp-foot" id="js-crypto-generated">{escape(footer) if footer else "&mdash;"}</p>'
+        "</div></article></main>"
+    )

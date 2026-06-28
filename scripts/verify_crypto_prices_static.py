@@ -14,8 +14,11 @@ def main() -> int:
 
     html = build_crypto_prices_body_iframe_html(
         payloads={
-            "crypto_kpis.json": {"generated_at": "2026-01-01T00:00:00Z"},
-            "crypto_prices.json": {"rows": []},
+            "crypto_kpis.json": {
+                "generated_at": "2026-01-01T00:00:00Z",
+                "primary": {"label": "Total market cap", "value_display": "$1T"},
+            },
+            "crypto_prices.json": {"rows": [{"symbol": "BTC", "name": "Bitcoin", "price_usd": 1}]},
             "crypto_market_cap_series.json": {"symbol": "CRYPTOCAP:TOTAL"},
         },
         related_chips='<div class="home-related-chips"></div>',
@@ -23,12 +26,15 @@ def main() -> int:
     checks = [
         ("page-crypto-iframe" in html, "crypto iframe body class"),
         ('data-methodology="crypto"' in html, "methodology attr"),
-        ("js-crypto-kpi" in html, "kpi strip"),
+        ("mock-crypto-inner" in html, "crypto inner mock class"),
+        ("rwa-kpi-panel-static" in html, "server-rendered KPI strip"),
+        ("js-crypto-cap-mix" in html, "cap mix section"),
         ("crypto-market-cap-chart" in html, "chart host"),
+        ("js-crypto-tbody" in html, "server-rendered table body"),
         ("st-tmmf-fullscreen-postmessage" in html, "fullscreen patch"),
         ("measureCryptoContentHeight" in html, "height measure"),
-        ("__CRYPTO_PAGE_PAYLOADS" in html, "embedded payloads"),
-        ("loadJsonWithTimeout = loadJsonWithTimeout" in html or "__DATA_FRESHNESS.loadJsonWithTimeout" in html, "loadJson patch"),
+        ("__CRYPTO_PAGE_PAYLOADS" in html, "embedded payloads for chart boot"),
+        ("crypto-page.js" in html or "crypto-page" in html, "crypto page boot"),
     ]
     for ok, label in checks:
         if not ok:

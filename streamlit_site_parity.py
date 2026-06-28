@@ -2134,9 +2134,27 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
       return win.measureCryptoContentHeight();
     }}
     var scrollY = win ? (win.scrollY || inner.documentElement.scrollTop || 0) : 0;
-    var main = inner.querySelector("main.page-shell.etp-mock-shell");
-    if (!main) return null;
-    return Math.ceil(main.getBoundingClientRect().bottom + scrollY + 6);
+    var nodes = [
+      inner.querySelector(".page-back-below-header"),
+      inner.querySelector("main.page-shell.etp-mock-shell"),
+      inner.getElementById("js-crypto-cap-mix"),
+      inner.getElementById("crypto-market-cap-chart"),
+      inner.querySelector(".etp-mock-table-block"),
+      inner.getElementById("js-crypto-generated"),
+    ];
+    var maxBottom = 0;
+    nodes.forEach(function (el) {{
+      if (!el) return;
+      maxBottom = Math.max(maxBottom, el.getBoundingClientRect().bottom + scrollY);
+    }});
+    if (!maxBottom) {{
+      var main = inner.querySelector("main.page-shell.etp-mock-shell");
+      if (main) {{
+        maxBottom = main.getBoundingClientRect().bottom + scrollY;
+      }}
+    }}
+    if (!maxBottom) return null;
+    return Math.ceil(maxBottom + 6);
   }}
 
   function isEtpBodyIframe(inner) {{

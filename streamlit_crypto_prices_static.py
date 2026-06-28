@@ -1,4 +1,4 @@
-"""Streamlit Crypto Prices full page — static HTML iframe (parity with ``crypto-prices.html``)."""
+"""Streamlit Crypto Prices full page — server-rendered iframe (parity with ``crypto-prices.html``)."""
 
 from __future__ import annotations
 
@@ -12,6 +12,7 @@ import streamlit.components.v1 as components
 
 from streamlit_tmmf_static import (
     _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH,
+    _TMMF_SERVER_INLINE_HOST_MODAL_JS,
     _json_for_script,
     _read_js_files,
 )
@@ -19,6 +20,12 @@ from streamlit_tmmf_static import (
 _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
+
+_CRYPTO_IFRAME_CSS_VERSION = "2"
+CRYPTO_CANVAS_OVERRIDE_VERSION = "1"
+
+CRYPTO_GH_PAGE_WASH = "#f3f7fb"
+CRYPTO_GH_ZONE_SOFT = "#f1f4f7"
 
 _CRYPTO_JS_DEPS = (
     "static-base.js",
@@ -68,6 +75,59 @@ _CRYPTO_PATCH_LOAD_JSON_JS = """
 })();
 """
 
+_CRYPTO_SERVER_TABLE_WIRE_JS = """
+(function () {
+  function wireCryptoTable() {
+    var fs = window.__TABLE_FULLSCREEN;
+    if (!fs || !fs.attachTableFullscreenButton) return;
+    var tbody = document.getElementById("js-crypto-tbody");
+    if (!tbody) return;
+    var wrap = tbody.closest(".table-wrap");
+    var table = wrap && wrap.querySelector("table");
+    if (!wrap || !table) return;
+    delete wrap._rwaFullscreenBound;
+    delete wrap._rwaDownloadBound;
+    var exportData =
+      window.__CRYPTO_SERVER_EXPORTS && window.__CRYPTO_SERVER_EXPORTS["crypto-table"];
+    fs.attachTableFullscreenButton(wrap, table, {
+      title: "Crypto prices table",
+      filename: "crypto-prices",
+      sheetName: "Crypto Prices",
+      downloadPlacement: "title-row",
+      downloadAnchor: document.getElementById("js-crypto-table-actions"),
+      actionRow: document.getElementById("js-crypto-table-fullscreen"),
+      getExportData: exportData
+        ? function () {
+            return exportData;
+          }
+        : undefined,
+    });
+    var btn =
+      (document.getElementById("js-crypto-table-fullscreen") &&
+        document.getElementById("js-crypto-table-fullscreen").querySelector(
+          '[data-rwa-fullscreen-btn="1"]'
+        )) ||
+      null;
+    if (btn && fs.openTableModal) {
+      btn.onclick = function (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        fs.openTableModal(table, { title: "Crypto prices table" });
+      };
+    }
+  }
+  window.__cryptoWireServerTable = wireCryptoTable;
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", wireCryptoTable);
+  } else {
+    wireCryptoTable();
+  }
+  setTimeout(wireCryptoTable, 0);
+  setTimeout(wireCryptoTable, 400);
+  setTimeout(wireCryptoTable, 1200);
+})();
+"""
+
 _CRYPTO_MEASURE_HEIGHT_JS = """
 function measureCryptoContentHeight() {
   if (window.__TMMF_MODAL_OPEN) return null;
@@ -75,6 +135,9 @@ function measureCryptoContentHeight() {
   var nodes = [
     document.querySelector(".page-back-below-header"),
     document.querySelector("main.page-shell.etp-mock-shell"),
+    document.getElementById("js-crypto-cap-mix"),
+    document.getElementById("crypto-market-cap-chart"),
+    document.querySelector(".etp-mock-table-block"),
     document.getElementById("js-crypto-generated"),
   ];
   var maxBottom = 0;
@@ -100,137 +163,264 @@ function measureCryptoContentHeight() {
 _CRYPTO_IFRAME_BACK_LINK = """
 <div class="page-back-below-header">
   <p class="back-link back-link--below-header">
-    <a href="{back_href}">{back_label_html}</a>
+    <a class="crypto-server-back-anchor" data-deep-back="explore" href="{back_href}">{back_label_html}</a>
   </p>
 </div>
 """
 
-_CRYPTO_ZONE_BODY = """
-<main class="page-shell etp-mock-shell">
-  <article class="hub-section hub-section--panel inner-rich-zone zone--crypto home-zone home-zone--crypto etp-mock-zone">
-    <div class="home-zone__stripe" aria-hidden="true"></div>
-    <header class="home-zone__head">
-      <span class="home-zone__badge" aria-hidden="true">CRY</span>
-      <div class="home-zone__titles">
-        <h1 class="page-intro__title">Crypto Prices &mdash; Top 50 Snapshot</h1>
-        <p class="section-dek section-dek--wide">
-          Top-line crypto market snapshot with a KPI strip, a 12-month total market-cap trend chart, category
-          filters, and a searchable <strong>top 50</strong> spot-price table. Sources:
-          <a href="https://coinpaprika.com/" target="_blank" rel="noopener noreferrer">CoinPaprika</a>
-          (total cap),
-          <a href="https://www.coingecko.com/" target="_blank" rel="noopener noreferrer">CoinGecko</a>
-          (top 50; CoinCap fallback), and
-          <a href="https://www.tradingview.com/symbols/TOTAL/" target="_blank" rel="noopener noreferrer"
-            >TradingView TOTAL</a
-          >
-          (chart).
-        </p>
-      </div>
-    </header>
-    <div class="home-zone__body inner-rich-zone__body etp-mock-zone__body">
-      {related_chips}
-      <div class="data-banner" id="js-data-banner" role="status" hidden></div>
-      <section class="etp-mock-snapshot" aria-labelledby="crypto-snapshot-heading">
-        <h2 class="subsection-head u-vh" id="crypto-snapshot-heading">Top-line snapshot</h2>
-        <p class="data-freshness etp-mock-freshness" id="js-crypto-snapshot-as-of" hidden></p>
-        <div id="js-crypto-kpi" aria-label="Crypto KPI strip"></div>
-      </section>
-      <div class="inner-rich-block etp-mock-key-obs-block" aria-labelledby="crypto-ko-heading">
-        <h2 class="subsection-head u-vh" id="crypto-ko-heading">Key observations</h2>
-        <div id="js-crypto-key-obs" hidden></div>
-      </div>
-      <section class="etp-mock-insights etp-mock-insights--crypto-full" aria-labelledby="insights-heading">
-        <h2 class="u-vh" id="insights-heading">Market structure</h2>
-        <div class="etp-mock-insights__panel etp-mock-insights__panel--conc">
-          <h3 class="etp-mock-insights__head">Top-50 market cap mix</h3>
-          <p class="etp-mock-conc__dek">Share of top-50 market cap by category (CoinGecko snapshot).</p>
-          <div
-            id="js-crypto-cap-mix"
-            class="etp-mock-conc__rows etp-mock-conc__rows--grid"
-            role="img"
-            aria-label="Top-50 market cap mix by category"
-          ></div>
-        </div>
-      </section>
-      <section class="etp-mock-dashboard etp-mock-dashboard--full-width" aria-labelledby="dashboard-heading">
-        <h2 class="u-vh" id="dashboard-heading">Chart and context</h2>
-        <div class="etp-mock-dash__panel etp-mock-dash__panel--chart">
-          <h3 class="etp-mock-dash__head" id="js-crypto-chart-heading">Crypto total market cap</h3>
-          <div id="crypto-market-cap-chart" class="aum-chart-host" role="img" aria-label="Crypto market cap chart"></div>
-          <p class="etp-mock-chart__cap" id="js-crypto-chart-caption">
-            TradingView TOTAL represents crypto market capitalization using the top 125 coins.
-          </p>
-          <p class="method-note etp-mock-chart__method" id="js-crypto-chart-method">
-            The chart is powered by TradingView's TOTAL index so it does not rely on rate-limited local historical
-            exports.
-          </p>
-          <p class="cta-note etp-mock-chart__method">
-            <a
-              id="js-crypto-chart-link"
-              href="https://www.tradingview.com/symbols/TOTAL/"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Open the full TradingView TOTAL chart &rarr;</a
-            >
-          </p>
-        </div>
-      </section>
-      <section class="etp-mock-table-block" aria-labelledby="crypto-table-heading">
-        <div class="rwa-split-table-head inner-table-head">
-          <h2 class="subsection-head rwa-split-table-head__title" id="crypto-table-heading">Prices table</h2>
-          <div class="rwa-split-table-head__actions" id="js-crypto-table-actions"></div>
-        </div>
-        <div class="crypto-cat-tabs crypto-mock-cat-tabs" id="js-crypto-category-tabs"></div>
-        <label class="search-field etp-mock-table-search">
-          <span class="search-field__label">Search by coin name or ticker</span>
-          <input
-            type="search"
-            class="search-field__input"
-            id="js-crypto-search"
-            placeholder="Filter by name or ticker&hellip;"
-          />
-        </label>
-        <div class="etp-mock-table-meta crypto-mock-table-actions" aria-live="polite">
-          <p class="etp-mock-table-meta__count toolbar-note" id="js-crypto-toolbar">Loading market table&hellip;</p>
-          <p class="kpi-footnote kpi-footnote--block">
-            Hover a <strong>Ticker</strong> or <strong>Coin</strong> name for a short summary from CoinGecko&rsquo;s
-            About copy (mainstream adoption and uses, plus a brief lead).
-          </p>
-          <div class="rwa-table-actions" id="js-crypto-table-fullscreen"></div>
-        </div>
-        <div class="table-wrap table-wrap--scroll">
-          <table class="data-table data-table--dense data-table--sortable" aria-label="Top 50 cryptocurrencies">
-            <thead id="js-crypto-thead">
-              <tr>
-                <th class="th-sortable" data-sort="rank">Rank</th>
-                <th class="th-sortable" data-sort="symbol">Ticker</th>
-                <th class="th-sortable" data-sort="name">Coin</th>
-                <th class="th-sortable" data-sort="category">Category</th>
-                <th class="num th-sortable" data-sort="price_usd">Price</th>
-                <th class="num th-sortable" data-sort="pct_30d">1M %</th>
-                <th class="num th-sortable" data-sort="market_cap_usd">Market Cap</th>
-                <th>Market Page</th>
-              </tr>
-            </thead>
-            <tbody id="js-crypto-tbody">
-              <tr>
-                <td colspan="8">Loading&hellip;</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="rwa-table-footnote-row">
-          <p class="source-cap rwa-table-footnote-row__cap">
-            Top-line market-cap source: CoinPaprika. Spot market source: CoinGecko with CoinCap fallback. Market-cap
-            chart source: TradingView TOTAL.
-          </p>
-        </div>
-      </section>
-      <p class="timestamp-foot" id="js-crypto-generated">&mdash;</p>
-    </div>
-  </article>
-</main>
+
+def crypto_github_canvas_override_css(*, version: str = CRYPTO_CANVAS_OVERRIDE_VERSION) -> str:
+    wash = CRYPTO_GH_PAGE_WASH
+    soft = CRYPTO_GH_ZONE_SOFT
+    scope = "body.page-crypto-iframe"
+    return f"""
+/* Crypto GitHub Pages canvas override v{version} */
+html, {scope}.site-experience,
+{scope}.site-experience.page-inner--rich,
+{scope}.mock-crypto-inner.site-experience {{
+  background: {wash} !important;
+  background-color: {wash} !important;
+  background-image: none !important;
+}}
+{scope} .page-shell.etp-mock-shell {{
+  background: transparent !important;
+  background-image: none !important;
+}}
+{scope} .inner-rich-zone.zone--crypto,
+{scope} .inner-rich-zone.zone--crypto .inner-rich-zone__body,
+{scope} .etp-mock-zone.inner-rich-zone.zone--crypto,
+{scope} .etp-mock-zone .inner-rich-zone__body {{
+  background: {soft} !important;
+  background-color: {soft} !important;
+  background-image: none !important;
+}}
+{scope} .inner-rich-block,
+{scope} .etp-mock-key-obs-block,
+{scope} .etp-mock-key-obs-block .crypto-story-callout,
+{scope} #js-crypto-key-obs .crypto-story-callout,
+{scope} .etp-mock-insights__panel,
+{scope} .etp-mock-dash__panel,
+{scope} .rwa-kpi-row--home-grid .rwa-kpi-cell,
+{scope} .etp-mock-table-block {{
+  background: #fff !important;
+  background-color: #fff !important;
+  background-image: none !important;
+}}
+{scope} .crypto-story-callout__note {{
+  background: rgb(72 90 110 / 0.06) !important;
+  background-image: none !important;
+}}
 """
+
+
+def crypto_iframe_canvas_override_js(*, version: str = CRYPTO_CANVAS_OVERRIDE_VERSION) -> str:
+    wash = CRYPTO_GH_PAGE_WASH
+    soft = CRYPTO_GH_ZONE_SOFT
+    return f"""
+<script id="crypto-gh-canvas-override-js-v{version}">
+(function () {{
+  var WASH = "{wash}";
+  var SOFT = "{soft}";
+  var WHITE = "#ffffff";
+  function setBg(el, color) {{
+    if (!el) return;
+    el.style.setProperty("background", color, "important");
+    el.style.setProperty("background-color", color, "important");
+    el.style.setProperty("background-image", "none", "important");
+  }}
+  function paint() {{
+    setBg(document.documentElement, WASH);
+    setBg(document.body, WASH);
+    var main = document.querySelector("main.page-shell.etp-mock-shell");
+    if (main) {{
+      main.style.setProperty("background", "transparent", "important");
+      main.style.setProperty("background-image", "none", "important");
+    }}
+    document.querySelectorAll(
+      ".inner-rich-zone.zone--crypto, .inner-rich-zone.zone--crypto .inner-rich-zone__body"
+    ).forEach(function (el) {{ setBg(el, SOFT); }});
+    document.querySelectorAll(
+      ".inner-rich-block, .etp-mock-key-obs-block, .crypto-story-callout, .etp-mock-insights__panel, .etp-mock-dash__panel, .rwa-kpi-row--home-grid .rwa-kpi-cell, .etp-mock-table-block"
+    ).forEach(function (el) {{ setBg(el, WHITE); }});
+    document.querySelectorAll(".crypto-story-callout__note").forEach(function (el) {{
+      setBg(el, "rgb(72 90 110 / 0.06)");
+    }});
+  }}
+  paint();
+  window.addEventListener("load", paint);
+  [50, 200, 800, 2000, 5000].forEach(function (ms) {{ setTimeout(paint, ms); }});
+}})();
+</script>
+"""
+
+
+def crypto_host_canvas_override_css(*, version: str = CRYPTO_CANVAS_OVERRIDE_VERSION) -> str:
+    wash = CRYPTO_GH_PAGE_WASH
+    return f"""
+<style id="crypto-gh-host-canvas-override-v{version}">
+.stApp:has(.streamlit-crypto-iframe-page),
+.withScreencast:has(.streamlit-crypto-iframe-page),
+[data-testid="stScreencast"]:has(.streamlit-crypto-iframe-page),
+.stApp:has(.streamlit-crypto-iframe-page) [data-testid="stAppViewContainer"],
+.stApp:has(.streamlit-crypto-iframe-page) section.main,
+.stApp:has(.streamlit-crypto-iframe-page) [data-testid="stMain"],
+.stApp:has(.streamlit-crypto-iframe-page) [data-testid="stMainBlockContainer"],
+.stApp:has(.streamlit-crypto-iframe-page) .block-container,
+.stApp:has(.streamlit-crypto-iframe-page) [data-testid="stVerticalBlock"],
+.stApp:has(.streamlit-crypto-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe),
+.stApp:has(.streamlit-crypto-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) [data-testid="stVerticalBlock"],
+.stApp:has(.streamlit-crypto-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) [data-testid="stHtml"],
+.stApp:has(.streamlit-crypto-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) [data-testid="stHtml"] > div {{
+  background: {wash} !important;
+  background-color: {wash} !important;
+  background-image: none !important;
+}}
+</style>
+"""
+
+
+def crypto_host_canvas_override_js(*, version: str = CRYPTO_CANVAS_OVERRIDE_VERSION) -> str:
+    wash = CRYPTO_GH_PAGE_WASH
+    return f"""
+<script id="crypto-gh-host-canvas-override-js-v{version}">
+(function () {{
+  var WASH = "{wash}";
+  function paintHost() {{
+    var doc = document;
+    [
+      doc.documentElement,
+      doc.body,
+      doc.querySelector(".stApp"),
+      doc.querySelector('[data-testid="stAppViewContainer"]'),
+      doc.querySelector("section.main"),
+      doc.querySelector('[data-testid="stMain"]'),
+      doc.querySelector('[data-testid="stMainBlockContainer"]'),
+      doc.querySelector(".block-container"),
+    ].forEach(function (el) {{
+      if (!el) return;
+      el.style.setProperty("background", WASH, "important");
+      el.style.setProperty("background-color", WASH, "important");
+      el.style.setProperty("background-image", "none", "important");
+    }});
+  }}
+  paintHost();
+  window.addEventListener("load", paintHost);
+  [50, 200, 800, 2000, 5000].forEach(function (ms) {{ setTimeout(paintHost, ms); }});
+}})();
+</script>
+"""
+
+
+def inject_crypto_iframe_table_actions(payloads: dict[str, Any]) -> None:
+    """Wire download/fullscreen on the Crypto body iframe via host script injection."""
+    from streamlit_server_deep_page import build_crypto_server_export_config
+
+    prices = payloads.get("crypto_prices.json") if isinstance(payloads.get("crypto_prices.json"), dict) else {}
+    rows = list(prices.get("rows") or [])
+    js_libs = _read_js_files(("table-fullscreen.js", "table-download.js"))
+    export_json = json.dumps(build_crypto_server_export_config(rows))
+    libs_json = json.dumps(js_libs)
+    patch_json = json.dumps(_STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH.strip())
+    wire_json = json.dumps(_CRYPTO_SERVER_TABLE_WIRE_JS.strip())
+    host_modal_json = json.dumps(_TMMF_SERVER_INLINE_HOST_MODAL_JS.strip())
+    bootstrap = f"""
+<script>
+(function () {{
+  var win = window.parent;
+  var doc = win.document;
+  if (win.__jpmCryptoIframeTableHostBound) return;
+  win.__jpmCryptoIframeTableHostBound = true;
+
+  function injectIntoInner(innerDoc, text) {{
+    var s = innerDoc.createElement("script");
+    s.textContent = text;
+    innerDoc.body.appendChild(s);
+  }}
+
+  function injectHost(text) {{
+    var s = doc.createElement("script");
+    s.textContent = text;
+    doc.body.appendChild(s);
+  }}
+
+  function findCryptoInner() {{
+    var frames = doc.querySelectorAll("iframe");
+    for (var i = 0; i < frames.length; i++) {{
+      try {{
+        var inner = frames[i].contentDocument;
+        if (
+          inner &&
+          inner.body &&
+          inner.body.classList &&
+          inner.body.classList.contains("mock-crypto-inner")
+        ) {{
+          return {{ frame: frames[i], doc: inner, win: inner.defaultView || inner.parentWindow }};
+        }}
+      }} catch (e) {{}}
+    }}
+    return null;
+  }}
+
+  function ensureHostModal() {{
+    if (typeof win.__jpmOpenTableFullscreenHost === "function") return;
+    injectHost({host_modal_json});
+  }}
+
+  function ensureInnerTableLibs(hit) {{
+    if (!hit || !hit.win || !hit.doc) return false;
+    if (!hit.win.__TABLE_FULLSCREEN) {{
+      injectIntoInner(hit.doc, {libs_json});
+      hit.win.__CRYPTO_SERVER_EXPORTS = {export_json};
+      injectIntoInner(hit.doc, {patch_json});
+      injectIntoInner(hit.doc, {wire_json});
+      return true;
+    }}
+    if (!hit.win.__ST_TMMF_FULLSCREEN_PATCHED) {{
+      hit.win.__CRYPTO_SERVER_EXPORTS = {export_json};
+      injectIntoInner(hit.doc, {patch_json});
+      injectIntoInner(hit.doc, {wire_json});
+      return true;
+    }}
+    if (typeof hit.win.__cryptoWireServerTable === "function") {{
+      hit.win.__cryptoWireServerTable();
+    }}
+    return true;
+  }}
+
+  function boot() {{
+    if (!doc.querySelector(".streamlit-crypto-iframe-page")) return false;
+    ensureHostModal();
+    var hit = findCryptoInner();
+    if (!hit) return false;
+    return ensureInnerTableLibs(hit);
+  }}
+
+  if (!boot()) {{
+    var tries = 0;
+    var timer = win.setInterval(function () {{
+      tries += 1;
+      if (boot() || tries > 80) win.clearInterval(timer);
+    }}, 250);
+  }}
+  win.addEventListener("load", boot);
+  [100, 400, 1200, 3000, 6000, 10000].forEach(function (ms) {{
+    win.setTimeout(boot, ms);
+  }});
+  if (typeof MutationObserver !== "undefined") {{
+    var mo = new MutationObserver(boot);
+    mo.observe(doc.body, {{ childList: true, subtree: true }});
+    win.setTimeout(function () {{ mo.disconnect(); }}, 25000);
+  }}
+}})();
+</script>
+"""
+    components.html(bootstrap, height=0, width=0)
+
+
+def inject_crypto_host_canvas_override() -> None:
+    """Apply GitHub Pages wash to the Streamlit host shell on the Crypto route."""
+    st.markdown(crypto_host_canvas_override_css(), unsafe_allow_html=True)
+    components.html(crypto_host_canvas_override_js(), height=0, width=0)
 
 
 def _static_crypto_payload_fallback(*, error: str = "") -> dict[str, Any]:
@@ -296,7 +486,7 @@ def get_crypto_iframe_payloads() -> dict[str, Any]:
 
 
 @st.cache_resource(show_spinner=False)
-def _cached_iframe_crypto_stylesheet_v1() -> str:
+def _cached_iframe_crypto_stylesheet() -> str:
     """Same CSS stack as ``static_home/crypto-prices.html`` (iframe-safe, no mock banners)."""
     from streamlit_site_parity import _iframe_crypto_mock_css
 
@@ -324,11 +514,16 @@ def _cached_iframe_crypto_stylesheet_v1() -> str:
 html, body.page-crypto-iframe.site-experience {
   margin: 0;
   padding: 0;
-  background: var(--wash, #f3f7fb);
+  background: var(--wash, #f3f7fb) !important;
+  background-image: none !important;
   overflow: hidden;
 }
-html::before,
-html::after,
+body.page-crypto-iframe.site-experience.page-inner--rich,
+body.page-crypto-iframe.mock-crypto-inner.site-experience {
+  background: var(--wash, #f3f7fb) !important;
+  background-image: none !important;
+}
+html::before, html::after,
 body.page-crypto-iframe::before,
 body.page-crypto-iframe::after {
   display: none !important;
@@ -347,26 +542,43 @@ body.page-crypto-iframe .page-back-below-header {
 body.page-crypto-iframe p.back-link.back-link--below-header {
   margin: 0.2rem 0 0.85rem;
 }
-body.page-crypto-iframe .back-link--below-header a {
+body.page-crypto-iframe.site-experience.page-inner--rich .back-link--below-header a {
   display: inline-block;
   font-weight: 650;
   font-size: 0.84rem;
   line-height: 1.35;
   color: var(--ink-soft, #1f4c67);
   text-decoration: none;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid rgb(var(--hx-accent-bright-rgb, 80 113 136) / 0.18);
+  background: rgba(251, 254, 255, 0.85);
 }
-body.page-crypto-iframe .back-link--below-header a:hover {
-  color: var(--hx-crypto-bright, #507188);
+body.page-crypto-iframe.site-experience.page-inner--rich .back-link--below-header a:hover {
+  color: var(--hx-crypto-bright, #6e869e);
+  border-color: rgb(110 134 158 / 0.45);
+  background: #f8fcfe;
 }
 body.page-crypto-iframe .page-shell.etp-mock-shell {
   max-width: var(--content-max, 72rem);
   margin: 0 auto;
   padding: 0 1.25rem 1.5rem;
   box-sizing: border-box;
+  background: transparent !important;
 }
 body.page-crypto-iframe .home-reveal {
   opacity: 1 !important;
   transform: none !important;
+}
+body.page-crypto-iframe .inner-rich-zone.zone--crypto,
+body.page-crypto-iframe.mock-crypto-inner .etp-mock-zone.inner-rich-zone.zone--crypto {
+  background: var(--hx-etp-soft, #f1f4f7) !important;
+  background-image: none !important;
+}
+body.page-crypto-iframe .inner-rich-zone.zone--crypto .inner-rich-zone__body,
+body.page-crypto-iframe.mock-crypto-inner .etp-mock-zone .inner-rich-zone__body {
+  background: var(--hx-etp-soft, #f1f4f7) !important;
+  background-image: none !important;
 }
 body.page-crypto-iframe .rwa-table-modal--streamlit-fallback:not([hidden]) {
   display: grid !important;
@@ -392,20 +604,27 @@ def _crypto_back_link_html(*, href: str, label: str) -> str:
     return _CRYPTO_IFRAME_BACK_LINK.format(back_href=escape(href), back_label_html=label_html)
 
 
-def build_crypto_prices_body_iframe_html(
+def build_crypto_server_iframe_html(
     *,
     payloads: dict[str, Any],
     related_chips: str,
     back_href: str = "/?jd_scroll=crypto",
     back_label: str = "← Back to home · Crypto preview",
 ) -> str:
-    """Self-contained iframe document — hydrates via ``crypto-page.js``."""
+    """Self-contained iframe with GitHub Pages CSS and pre-rendered body."""
+    from streamlit_server_deep_page import (
+        build_crypto_server_export_config,
+        build_crypto_server_zone_html,
+    )
     from streamlit_site_parity import iframe_internal_link_script
 
-    css = _cached_iframe_crypto_stylesheet_v1()
+    css = _cached_iframe_crypto_stylesheet()
+    override_css = crypto_github_canvas_override_css()
     back_link = _crypto_back_link_html(href=back_href, label=back_label)
-    zone = _CRYPTO_ZONE_BODY.format(related_chips=related_chips.strip())
+    zone = build_crypto_server_zone_html(payloads=payloads, related_chips=related_chips)
     payloads_json = _json_for_script(payloads)
+    prices = payloads.get("crypto_prices.json") if isinstance(payloads.get("crypto_prices.json"), dict) else {}
+    export_json = json.dumps(build_crypto_server_export_config(list(prices.get("rows") or [])))
     js_deps = _read_js_files(_CRYPTO_JS_DEPS)
     js_boot = _read_js_files(_CRYPTO_JS_BOOT)
     return f"""<!DOCTYPE html>
@@ -414,6 +633,7 @@ def build_crypto_prices_body_iframe_html(
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>{css}</style>
+<style id="crypto-gh-canvas-override-v{CRYPTO_CANVAS_OVERRIDE_VERSION}">{override_css}</style>
 </head>
 <body
   class="page-crypto page-crypto-iframe site-experience page-inner--rich mock-crypto-inner"
@@ -423,6 +643,7 @@ def build_crypto_prices_body_iframe_html(
 {zone}
 <script>
 window.__CRYPTO_PAGE_PAYLOADS = {payloads_json};
+window.__CRYPTO_SERVER_EXPORTS = {export_json};
 </script>
 <script>
 {js_deps}
@@ -439,6 +660,9 @@ window.loadJson = function (name) {{
 </script>
 <script>
 {_STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH}
+</script>
+<script>
+{_CRYPTO_SERVER_TABLE_WIRE_JS}
 </script>
 <script>
 {js_boot}
@@ -464,6 +688,7 @@ window.loadJson = function (name) {{
       "#js-crypto-cap-mix",
       "#crypto-market-cap-chart",
       "#js-crypto-tbody",
+      ".etp-mock-table-block",
       "#js-crypto-generated",
     ].forEach(function (sel) {{
       var el = document.querySelector(sel);
@@ -496,14 +721,37 @@ window.loadJson = function (name) {{
   }});
 }})();
 </script>
+{crypto_iframe_canvas_override_js()}
 {iframe_internal_link_script()}
 </body>
 </html>"""
 
 
+# Back-compat alias for verify script and legacy callers.
+build_crypto_prices_body_iframe_html = build_crypto_server_iframe_html
+
+
 @st.cache_data(show_spinner=False, ttl=300)
 def _cached_crypto_prices_iframe_payloads() -> dict[str, Any]:
     return load_crypto_prices_iframe_payloads()
+
+
+@st.cache_data(show_spinner=False, ttl=3600)
+def _cached_crypto_server_iframe_html(
+    payloads_json: str,
+    related_chips: str,
+    back_href: str,
+    back_label: str,
+    *,
+    _css_version: str = _CRYPTO_IFRAME_CSS_VERSION,
+) -> str:
+    payloads = json.loads(payloads_json)
+    return build_crypto_server_iframe_html(
+        payloads=payloads,
+        related_chips=related_chips,
+        back_href=back_href,
+        back_label=back_label,
+    )
 
 
 def render_crypto_prices_body_iframe(
@@ -516,12 +764,15 @@ def render_crypto_prices_body_iframe(
     """Render the GitHub Pages Crypto Prices zone inside a Streamlit iframe."""
     from streamlit_site_parity import render_subpage_body_iframe
 
+    payloads_json = _json_for_script(payloads)
     render_subpage_body_iframe(
-        build_crypto_prices_body_iframe_html(
-            payloads=payloads,
-            related_chips=related_chips,
-            back_href=back_href,
-            back_label=back_label,
+        _cached_crypto_server_iframe_html(
+            payloads_json,
+            related_chips,
+            back_href,
+            back_label,
         ),
-        height=1400,
+        height=1200,
     )
+    inject_crypto_host_canvas_override()
+    inject_crypto_iframe_table_actions(payloads)
