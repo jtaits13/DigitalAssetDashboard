@@ -29,12 +29,9 @@ HOME_CHROME_IFRAME_INITIAL_HEIGHT = 360
 HOME_CHROME_HEIGHT_SLACK_PX = 10
 SUBPAGE_NAV_HEIGHT_SLACK_PX = 6
 SUBPAGE_NAV_HEADER_EST_PX = 64
-# Reserve below the header for primary nav dropdowns (RWA Market ≈ 3 rows) plus nested
-# RWA · Participants flyout (Networks / Platforms / Asset Managers).
+# Reserve below the header when a static dropdown well is used (legacy; home nav now sizes dynamically).
 SUBPAGE_NAV_DROPDOWN_WELL_PX = 188
-SUBPAGE_NAV_IFRAME_INITIAL_HEIGHT = (
-    SUBPAGE_NAV_HEADER_EST_PX + SUBPAGE_NAV_DROPDOWN_WELL_PX + SUBPAGE_NAV_HEIGHT_SLACK_PX
-)
+SUBPAGE_NAV_IFRAME_INITIAL_HEIGHT = SUBPAGE_NAV_HEADER_EST_PX + SUBPAGE_NAV_HEIGHT_SLACK_PX
 
 # Shared JS: measure primary nav band (+ optional static dropdown well on subpages).
 _NAV_BAND_HEIGHT_MEASURE_JS = """
@@ -53,13 +50,6 @@ _NAV_BAND_HEIGHT_MEASURE_JS = """
   }
   function measureNavBandHeight(inner, slack) {
     slack = slack || 0;
-    if (
-      inner.body &&
-      inner.body.classList.contains("home-nav-chrome-only") &&
-      inner.querySelector(".home-nav-dropdown-well")
-    ) {
-      return measureNavBandWithWell(inner, slack);
-    }
     var docTop = inner.documentElement.getBoundingClientRect().top;
     var bottom = docTop;
     inner.querySelectorAll(".site-header").forEach(function (el) {
@@ -1098,19 +1088,13 @@ def deep_iframe_related_chips_css(*, scope: str, zone: str = "news") -> str:
 
 
 def deep_iframe_back_link_clickable_css(*, scope: str, well_px: int | None = None) -> str:
-    """Push back pills below the sticky home-nav iframe overlap so they stay clickable."""
-    clearance = (well_px if well_px is not None else SUBPAGE_NAV_DROPDOWN_WELL_PX) + SUBPAGE_NAV_HEIGHT_SLACK_PX
+    """Keep back pills interactive (pointer events + cursor); layout clearance lives in the nav iframe."""
+    _ = well_px
     return f"""
-/* Home chrome nav uses a negative body-iframe margin; reserve clearance so back pills are not under the nav iframe. */
-{scope} {{
-  padding-top: {clearance}px !important;
-  box-sizing: border-box;
-}}
 {scope} .page-back-below-header {{
   position: relative !important;
   z-index: 12 !important;
   pointer-events: auto !important;
-  margin-top: 0 !important;
 }}
 {scope} .page-back-below-header a,
 {scope} p.back-link.back-link--below-header a,
@@ -1320,13 +1304,7 @@ SUBPAGE_STREAMLIT_CSS = """
 .stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe),
 .stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) {
   z-index: 1 !important;
-}
-/* Home nav dropdown well: overlap body so reserved menu space does not add a visible gap. */
-.stApp:has(.streamlit-subpage-active):has(.home-chrome-iframe-marker) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe),
-.stApp:has(.streamlit-subpage-root):has(.home-chrome-iframe-marker) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) {
-  margin-top: -SUBPAGE_NAV_DROPDOWN_WELL_PLACEHOLDERpx !important;
-  margin-bottom: 0 !important;
-  padding-bottom: 0 !important;
+  margin-top: 0 !important;
   position: relative !important;
 }
 .stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) iframe {
@@ -2473,7 +2451,7 @@ def iframe_chrome_height_script() -> str:
 
 
 def iframe_home_nav_height_script() -> str:
-    """Resize home-style nav iframe to header + static transparent dropdown well."""
+    """Resize home chrome nav iframe to header band (+ open dropdown panels)."""
     slack = max(SUBPAGE_NAV_HEIGHT_SLACK_PX, HOME_CHROME_HEIGHT_SLACK_PX)
     return f"""
 <script>
@@ -2481,7 +2459,7 @@ def iframe_home_nav_height_script() -> str:
   var slack = {slack};
 {_NAV_BAND_HEIGHT_MEASURE_JS}
   function sendHeight() {{
-    var h = measureNavBandWithWell(document, slack);
+    var h = measureNavBandHeight(document, slack);
     if (h <= 40) return;
     window.parent.postMessage({{ type: "streamlit:setFrameHeight", height: h }}, "*");
     try {{
@@ -2489,14 +2467,32 @@ def iframe_home_nav_height_script() -> str:
       window.parent.postMessage({{ type: "jpm-subpage-nav-height", height: h }}, "*");
     }} catch (e) {{}}
   }}
+  function bindDropdownResize() {{
+    document.querySelectorAll(".site-nav__dropdown, .site-nav__item--flyout").forEach(function (el) {{
+      if (el.dataset.jpmNavHeightBound) return;
+      el.dataset.jpmNavHeightBound = "1";
+      el.addEventListener("mouseenter", sendHeight);
+      el.addEventListener("mouseleave", function () {{
+        setTimeout(sendHeight, 80);
+      }});
+      el.addEventListener("focusin", sendHeight);
+      el.addEventListener("focusout", function () {{
+        setTimeout(sendHeight, 80);
+      }});
+    }});
+  }}
   sendHeight();
-  window.addEventListener("load", sendHeight);
+  bindDropdownResize();
+  window.addEventListener("load", function () {{
+    sendHeight();
+    bindDropdownResize();
+  }});
   if (document.fonts && document.fonts.ready) {{
     document.fonts.ready.then(sendHeight);
   }}
   if (typeof ResizeObserver !== "undefined") {{
     var ro = new ResizeObserver(sendHeight);
-    document.querySelectorAll(".site-header, .home-nav-dropdown-well").forEach(function (el) {{
+    document.querySelectorAll(".site-header, .site-nav__sub").forEach(function (el) {{
       ro.observe(el);
     }});
   }}
@@ -2577,10 +2573,6 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
   }}
 
   function applyNavChromeFrameHeight(frame, inner, msgH) {{
-    if (inner.querySelector(".home-nav-dropdown-well")) {{
-      applyFrameHeight(frame, measureNavBandWithWell(inner, navSlack), 40);
-      return;
-    }}
     var measured = measureNavBandHeight(inner, navSlack);
     var reported = Number(msgH);
     var h = measured;
@@ -4184,16 +4176,14 @@ def build_home_chrome_iframe_html(*, include_refresh: bool = False) -> str:
 def build_home_nav_iframe_html(*, active: str) -> str:
     """Home chrome nav band only (same stylesheet + nav markup as the home page)."""
     css = _cached_iframe_home_stylesheet()
-    well_px = SUBPAGE_NAV_DROPDOWN_WELL_PX
-    nav_extra = f"""
-html, body.page-home.home-nav-chrome-only.site-experience {{
+    nav_extra = """
+html, body.page-home.home-nav-chrome-only.site-experience {
   overflow: visible;
   height: auto;
   background: transparent !important;
-  /* Let clicks pass through the dropdown well to the body iframe back link below. */
   pointer-events: none;
-}}
-body.page-home.home-nav-chrome-only.site-experience .site-header {{
+}
+body.page-home.home-nav-chrome-only.site-experience .site-header {
   position: relative;
   top: auto;
   width: 100%;
@@ -4201,29 +4191,19 @@ body.page-home.home-nav-chrome-only.site-experience .site-header {{
   overflow: visible;
   z-index: 2;
   pointer-events: auto;
-}}
-body.page-home.home-nav-chrome-only.site-experience .home-nav-dropdown-well {{
-  display: block;
-  height: {well_px}px;
-  min-height: {well_px}px;
-  max-height: {well_px}px;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  pointer-events: none;
-}}
+}
 body.page-home.home-nav-chrome-only.site-experience .site-nav__dropdown,
-body.page-home.home-nav-chrome-only.site-experience .site-nav__sub {{
+body.page-home.home-nav-chrome-only.site-experience .site-nav__item--flyout,
+body.page-home.home-nav-chrome-only.site-experience .site-nav__sub {
   overflow: visible;
   pointer-events: auto;
-}}
-body.page-home.home-nav-chrome-only.site-experience .site-nav__sub {{
+}
+body.page-home.home-nav-chrome-only.site-experience .site-nav__sub {
   z-index: 80;
-}}
+}
 """
     nav = render_site_nav_html(active=active, is_landing=False, for_streamlit=True).strip()
-    body = f'{nav}\n<div class="home-nav-dropdown-well" aria-hidden="true"></div>'
+    body = nav
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
