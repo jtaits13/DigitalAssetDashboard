@@ -728,6 +728,12 @@ SUBPAGE_STREAMLIT_CSS = """
   overflow: visible !important;
   overflow-x: visible !important;
 }
+/* TMMF + home nav: keep host gutters the same flat light wash as the nav band (no mid-page gray seam). */
+.stApp:has(.streamlit-tmmf-iframe-page):has(.home-chrome-iframe-marker),
+.withScreencast:has(.streamlit-tmmf-iframe-page):has(.home-chrome-iframe-marker),
+[data-testid="stScreencast"]:has(.streamlit-tmmf-iframe-page):has(.home-chrome-iframe-marker) {
+  background: #fff !important;
+}
 .withScreencast:has(.streamlit-subpage-active),
 [data-testid="stScreencast"]:has(.streamlit-subpage-active) {
   display: block !important;

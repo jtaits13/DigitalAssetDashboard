@@ -713,7 +713,7 @@ def _json_for_script(payload: dict[str, Any]) -> str:
 
 
 @st.cache_resource(show_spinner=False)
-def _cached_iframe_tmmf_stylesheet_v5() -> str:
+def _cached_iframe_tmmf_stylesheet_v6() -> str:
     """Same CSS stack as ``static_home/rwa-tokenized-mmf.html`` (iframe-safe, no mock banners)."""
     from streamlit_site_parity import _iframe_tmmf_mock_css
 
@@ -741,8 +741,13 @@ def _cached_iframe_tmmf_stylesheet_v5() -> str:
 html, body.page-rwa-deep-mmf.site-experience {
   margin: 0;
   padding: 0;
-  background: var(--wash, #f3f7fb);
+  background: #fff;
   overflow: hidden;
+}
+html,
+body.page-rwa-deep-mmf.mock-tmmf-inner.site-experience,
+body.page-rwa-deep-mmf.site-experience.page-inner--rich[class*="page-rwa"] {
+  background: #fff !important;
 }
 html::before,
 html::after,
@@ -811,7 +816,7 @@ def _cached_tmmf_server_host_stylesheet() -> str:
     """TMMF mock CSS scoped onto the Streamlit host (not a giant components.html blob)."""
     import re
 
-    raw = _cached_iframe_tmmf_stylesheet_v5()
+    raw = _cached_iframe_tmmf_stylesheet_v6()
     css_lines = [
         line
         for line in raw.splitlines()
@@ -961,7 +966,7 @@ def build_tmmf_body_iframe_html(
     """Self-contained iframe document — hydrates via ``rwa-asset-deep-page.js``."""
     from streamlit_site_parity import iframe_internal_link_script
 
-    css = _cached_iframe_tmmf_stylesheet_v5()
+    css = _cached_iframe_tmmf_stylesheet_v6()
     back_link = _tmmf_back_link_html(href=back_href, label=back_label)
     zone = _TMMF_ZONE_BODY.format(related_chips=related_chips.strip())
     payload_json = _json_for_script(payload)
@@ -1182,7 +1187,7 @@ def build_tmmf_server_iframe_html(
     from streamlit_server_deep_page import build_tmmf_server_export_config
     from streamlit_site_parity import iframe_internal_link_script
 
-    css = _cached_iframe_tmmf_stylesheet_v5()
+    css = _cached_iframe_tmmf_stylesheet_v6()
     back_link = _tmmf_back_link_html(href=back_href, label=back_label)
     zone = build_tmmf_server_zone_html(payload=payload, related_chips=related_chips)
     js_libs = _read_js_files(("table-fullscreen.js", "table-download.js"))
