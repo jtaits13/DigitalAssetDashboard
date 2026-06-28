@@ -1106,3 +1106,477 @@ def build_crypto_server_zone_html(
         f'<p class="timestamp-foot" id="js-crypto-generated">{escape(footer) if footer else "&mdash;"}</p>'
         "</div></article></main>"
     )
+
+
+def _etp_snapshot_delta_html(pct: Any) -> str:
+    try:
+        n = float(pct)
+        if not math.isfinite(n):
+            raise ValueError
+    except (TypeError, ValueError):
+        return '<span class="rwa-kpi-delta neutral">—</span>'
+    cls = "up" if n > 0 else "down" if n < 0 else "neutral"
+    sign = "+" if n > 0 else ""
+    return f'<span class="rwa-kpi-delta {cls}">{sign}{n:.2f}%</span>'
+
+
+def _etp_snapshot_cell(label: str, value: Any, delta_html: str) -> str:
+    val = escape(str(value)) if value not in (None, "") else "—"
+    return (
+        "<div class='rwa-kpi-cell'>"
+        f"<span class='rwa-kpi-label'>{escape(label)}</span>"
+        f"<span class='rwa-kpi-val'>{val}</span>"
+        f"{delta_html}"
+        "</div>"
+    )
+
+
+def etp_kpis_html(kpis: dict[str, Any], *, manifest: dict[str, Any] | None = None) -> str:
+    """KPI strip from ``etp_kpis.json`` (matches ``snapshot-kpi-shared.js`` ``renderEtpSnapshot``)."""
+    if not kpis:
+        return ""
+    ibit = kpis.get("ibit") if isinstance(kpis.get("ibit"), dict) else {}
+    etha = kpis.get("etha") if isinstance(kpis.get("etha"), dict) else {}
+    ibit_delta = ibit.get("delta") if isinstance(ibit.get("delta"), dict) else {}
+    etha_delta = etha.get("delta") if isinstance(etha.get("delta"), dict) else {}
+    cells = [
+        _etp_snapshot_cell(
+            "Total AUM (listed)",
+            kpis.get("total_aum_display"),
+            _etp_snapshot_delta_html(kpis.get("aggregate_pct")),
+        ),
+        _etp_snapshot_cell(
+            "BTC & ETH Fund flows (listed)",
+            kpis.get("net_flow_1m_display"),
+            _etp_snapshot_delta_html(kpis.get("net_flow_1m_pct")),
+        ),
+        _etp_snapshot_cell(
+            "IBIT · AUM",
+            ibit.get("aum_display"),
+            _etp_snapshot_delta_html(ibit_delta.get("pct")),
+        ),
+        _etp_snapshot_cell(
+            "ETHA · AUM",
+            etha.get("aum_display"),
+            _etp_snapshot_delta_html(etha_delta.get("pct")),
+        ),
+    ]
+    note = str(kpis.get("kpi_window_note") or "").strip()
+    note_html = (
+        f'<p class="jd-kpi-window-note rwa-onchain-kpi-legend">{escape(note)}</p>' if note else ""
+    )
+    manifest = manifest or {}
+    errors = manifest.get("errors") if isinstance(manifest.get("errors"), list) else []
+    err_text = "; ".join(str(e) for e in errors[:4] if e)
+    banner_hidden = " hidden" if not err_text else ""
+    banner_body = escape(err_text) if err_text else ""
+    generated = str(kpis.get("generated_at") or "").strip()
+    freshness = ""
+    if generated:
+        freshness = (
+            '<p class="data-freshness etp-mock-freshness" id="js-etp-snapshot-as-of">'
+            f"Snapshot as of {escape(generated)}"
+            "</p>"
+        )
+    return (
+        f'<div class="data-banner" id="js-data-banner" role="status"{banner_hidden}>{banner_body}</div>'
+        '<section class="etp-mock-snapshot" aria-labelledby="snapshot-heading">'
+        '<h2 class="subsection-head u-vh" id="snapshot-heading">Top-line snapshot</h2>'
+        f"{freshness}"
+        '<div id="js-etp-kpi" aria-label="U.S. ETP KPI strip">'
+        '<div class="rwa-kpi-panel-static">'
+        f"{note_html}"
+        f"<div class=\"rwa-kpi-row rwa-kpi-row--home-grid\">{''.join(cells)}</div>"
+        "</div></div></section>"
+    )
+
+
+def etp_key_observations_html(raw: str) -> str:
+    """Key observations block for the U.S. ETP page shell."""
+    raw = (raw or "").strip()
+    if not raw:
+        return (
+            '<div class="inner-rich-block etp-mock-key-obs-block" aria-labelledby="obs-heading">'
+            '<h2 class="subsection-head u-vh" id="obs-heading">Key Observations</h2>'
+            '<div id="js-etp-key-obs" hidden></div></div>'
+        )
+    cleaned = re.sub(r"<style[^>]*>.*?</style>", "", raw, flags=re.IGNORECASE | re.DOTALL)
+    ul_match = re.search(r"<ul[^>]*>(.*?)</ul>", cleaned, flags=re.IGNORECASE | re.DOTALL)
+    if not ul_match:
+        inner = cleaned
+    else:
+        list_html = re.sub(r'\s*style="[^"]*"', "", ul_match.group(1), flags=re.IGNORECASE)
+        note_match = re.search(
+            r'<p class="takeaways__note"[^>]*>(.*?)</p>',
+            cleaned,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+        review_match = re.search(
+            r'<p class="review-note[^"]*"[^>]*>.*?</p>',
+            cleaned,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+        note_html = (
+            f'<p class="crypto-story-callout__note">{note_match.group(1)}</p>'
+            if note_match
+            else ""
+        )
+        review_html = review_match.group(0) if review_match else ""
+        inner = (
+            '<aside class="crypto-story-callout" aria-labelledby="etp-ko-callout-title">'
+            '<p class="crypto-story-callout__title" role="heading" aria-level="3" '
+            'id="etp-ko-callout-title">Key observations</p>'
+            f'<ul class="crypto-story-callout__list">{list_html}</ul>'
+            f"{note_html}{review_html}"
+            "</aside>"
+        )
+    return (
+        '<div class="inner-rich-block etp-mock-key-obs-block" aria-labelledby="obs-heading">'
+        '<h2 class="subsection-head u-vh" id="obs-heading">Key Observations</h2>'
+        f'<div id="js-etp-key-obs">{inner}</div></div>'
+    )
+
+
+def _etp_concentration_fund_label(row: dict[str, Any]) -> str:
+    ticker = str(row.get("symbol") or "").strip()
+    company = str(row.get("issuer") or row.get("name") or "").strip()
+    if ticker and company:
+        return f"{ticker} ({company})"
+    return ticker or company or "—"
+
+
+def etp_concentration_html(rows: list[dict[str, Any]], *, kpis: dict[str, Any] | None = None) -> str:
+    """Top-five AUM concentration bars (matches ``etp-page.js`` ``renderConcentration``)."""
+    with_aum = [
+        r
+        for r in rows
+        if isinstance(r.get("assets_usd"), (int, float)) and float(r["assets_usd"]) > 0
+    ]
+    if not with_aum:
+        inner = '<p class="chart-fallback">Concentration data is unavailable right now.</p>'
+    else:
+        total = sum(float(r["assets_usd"]) for r in with_aum)
+        if total <= 0:
+            inner = '<p class="chart-fallback">Concentration data is unavailable right now.</p>'
+        else:
+            top = sorted(with_aum, key=lambda r: float(r.get("assets_usd") or 0), reverse=True)[:5]
+            series = [
+                {
+                    "label": _etp_concentration_fund_label(r),
+                    "pct": 100.0 * float(r["assets_usd"]) / total,
+                }
+                for r in top
+            ]
+            max_pct = max(d["pct"] for d in series)
+            parts: list[str] = []
+            for d in series:
+                sym = str(d["label"] or "").split(" ")[0]
+                bar_width = (d["pct"] / max_pct) * 100.0 if max_pct > 0 else 0.0
+                parts.append(
+                    '<div class="etp-mock-conc__row">'
+                    f'<span class="etp-mock-conc__sym">{escape(sym)}</span>'
+                    '<span class="etp-mock-conc__track"><span class="etp-mock-conc__fill" '
+                    f'style="width:{bar_width:.1f}%"></span></span>'
+                    f'<span class="etp-mock-conc__pct">{d["pct"]:.1f}%</span>'
+                    "</div>"
+                )
+            inner = "".join(parts)
+    return (
+        '<section class="etp-mock-insights" aria-labelledby="insights-heading">'
+        '<h2 class="u-vh" id="insights-heading">Market structure</h2>'
+        '<div class="etp-mock-insights__panel etp-mock-insights__panel--conc">'
+        '<h3 class="etp-mock-insights__head">AUM concentration (top 5 funds)</h3>'
+        '<p class="etp-mock-conc__dek">Share of total listed AUM (StockAnalysis snapshot).</p>'
+        '<div id="js-etp-insights-conc" class="etp-mock-conc__rows" role="img" '
+        'aria-label="Top five funds by share of total AUM">'
+        f"{inner}</div></div>"
+        '<div class="etp-mock-insights__panel etp-mock-insights__panel--glance">'
+        '<h3 class="etp-mock-insights__head">At a glance</h3>'
+        '<div class="etp-mock-stats" id="js-etp-at-a-glance">'
+        f"{etp_at_a_glance_inner_html(rows, kpis)}</div></div></section>"
+    )
+
+
+def etp_at_a_glance_inner_html(rows: list[dict[str, Any]], kpis: dict[str, Any] | None = None) -> str:
+    kpis = kpis or {}
+    total = sum(float(r.get("assets_usd") or 0) for r in rows)
+    top3 = sorted(rows, key=lambda r: float(r.get("assets_usd") or 0), reverse=True)[:3]
+    top3_share = (
+        round(100.0 * sum(float(r.get("assets_usd") or 0) for r in top3) / total)
+        if total > 0
+        else None
+    )
+    flow_display = escape(str(kpis.get("net_flow_1m_display") or "—"))
+    top3_val = f"{top3_share}%" if top3_share is not None else "—"
+    return (
+        '<div class="etp-mock-stat">'
+        '<span class="etp-mock-stat__lbl">Listed funds</span>'
+        f'<span class="etp-mock-stat__val">{len(rows)}</span></div>'
+        '<div class="etp-mock-stat">'
+        '<span class="etp-mock-stat__lbl">Top 3 AUM share</span>'
+        f'<span class="etp-mock-stat__val">{top3_val}</span></div>'
+        '<div class="etp-mock-stat">'
+        '<span class="etp-mock-stat__lbl">30D spot BTC &amp; ETH flows</span>'
+        f'<span class="etp-mock-stat__val">{flow_display}</span></div>'
+    )
+
+
+def etp_pulse_html(items: list[dict[str, Any]]) -> str:
+    if not items:
+        return '<li class="pulse-list__empty">No ETF/ETP headlines matched the current filters.</li>'
+    parts: list[str] = []
+    for a in items:
+        href = escape(str(a.get("link") or "#"))
+        title = escape(str(a.get("title") or ""))
+        src = escape(str(a.get("source") or ""))
+        parts.append(
+            "<li>"
+            f'<a href="{href}" target="_blank" rel="noopener noreferrer">{title}</a>'
+            f'<span class="etp-mock-pulse__src">{src}</span>'
+            "</li>"
+        )
+    return "".join(parts)
+
+
+def etp_dashboard_shell_html(*, pulse_items: list[dict[str, Any]]) -> str:
+    pulse_inner = etp_pulse_html(pulse_items)
+    return (
+        '<section class="etp-mock-dashboard" aria-labelledby="dashboard-heading">'
+        '<h2 class="u-vh" id="dashboard-heading">Chart and headlines</h2>'
+        '<div class="etp-mock-dash__panel etp-mock-dash__panel--chart">'
+        '<h3 class="etp-mock-dash__head" id="aum-heading">Aggregate AUM trend (12 months)</h3>'
+        '<div id="aum-chart" class="aum-chart-host" role="img" aria-label="Aggregate estimated AUM chart"></div>'
+        '<p class="etp-mock-chart__cap">'
+        "Vertical axis: estimated aggregate AUM (<strong>billions USD</strong>; weekly points)."
+        "</p>"
+        '<p class="method-note etp-mock-chart__method">'
+        "<strong>Yahoo Finance</strong> weekly closes &mdash; each fund&#39;s latest StockAnalysis AUM "
+        "(constant-share approximation), summed across the table. Use the Plotly toolbar to zoom, pan, and reset."
+        "</p></div>"
+        '<div class="etp-mock-dash__panel etp-mock-dash__panel--news">'
+        '<h3 class="etp-mock-dash__head" id="pulse-heading">ETF/ETP news feed</h3>'
+        f'<ul class="etp-mock-pulse pulse-list" id="js-etf-pulse">{pulse_inner}</ul>'
+        '<div class="etp-mock-dash__cta">'
+        '<a class="btn btn-primary" href="/All_ETF_News">All ETF/ETP headlines &rarr;</a>'
+        "</div></div></section>"
+    )
+
+
+def _etp_fmt_52w_td(pct: Any) -> str:
+    try:
+        v = float(pct)
+        if not math.isfinite(v):
+            raise ValueError
+    except (TypeError, ValueError):
+        return '<td class="num">—</td>'
+    cls = "up" if v >= 0 else "down"
+    sign = "+" if v >= 0 else ""
+    return f'<td class="num {cls}">{sign}{v:.1f}%</td>'
+
+
+def _etp_fmt_assets_td(usd: Any) -> str:
+    try:
+        n = float(usd)
+        if not math.isfinite(n):
+            raise ValueError
+    except (TypeError, ValueError):
+        return '<td class="num">—</td>'
+    return f"<td class=\"num\">{n / 1e9:.2f}</td>"
+
+
+def _etp_fmt_flow_td(usd: Any) -> str:
+    from crypto_etps.flows import format_flow_usd_compact
+
+    if usd is None:
+        return '<td class="num">—</td>'
+    try:
+        n = float(usd)
+        if not math.isfinite(n):
+            raise ValueError
+    except (TypeError, ValueError):
+        return '<td class="num">—</td>'
+    cls = "up" if n >= 0 else "down"
+    return f'<td class="num {cls}">{escape(format_flow_usd_compact(n))}</td>'
+
+
+def _etp_symbol_td(symbol: str) -> str:
+    sym = escape(symbol or "—")
+    ticker = str(symbol or "").strip().lower()
+    if not ticker:
+        return f'<td><span class="sym">{sym}</span></td>'
+    url = f"https://stockanalysis.com/etf/{escape(ticker)}/"
+    return (
+        f'<td><a class="sym sym--link" href="{url}" target="_blank" '
+        f'rel="noopener noreferrer">{sym}</a></td>'
+    )
+
+
+def _etp_filing_td(url: Any) -> str:
+    href = str(url or "").strip()
+    if not href:
+        return "<td>—</td>"
+    return (
+        f'<td><a href="{escape(href)}" target="_blank" rel="noopener noreferrer">Filing</a></td>'
+    )
+
+
+def etp_funds_table_html(etps: dict[str, Any]) -> str:
+    rows = list(etps.get("rows") or [])
+    sorted_rows = sorted(rows, key=lambda r: float(r.get("assets_usd") or 0), reverse=True)
+    tbody_parts: list[str] = []
+    for r in sorted_rows:
+        tbody_parts.append(
+            "<tr>"
+            f"{_etp_symbol_td(str(r.get('symbol') or ''))}"
+            f"<td class=\"data-table__name\">{escape(str(r.get('name') or ''))}</td>"
+            f"<td class=\"num\">{escape(str(r.get('price') if r.get('price') is not None else '—'))}</td>"
+            f"{_etp_fmt_52w_td(r.get('pct_52w'))}"
+            f"{_etp_fmt_flow_td(r.get('flow_1y_usd'))}"
+            f"{_etp_fmt_assets_td(r.get('assets_usd'))}"
+            f"<td>{escape(str(r.get('issuer') or ''))}</td>"
+            f"<td>{escape(str(r.get('custodian') or ''))}</td>"
+            f"<td>{escape(str(r.get('inception') or ''))}</td>"
+            f"{_etp_filing_td(r.get('fund_filing_url'))}"
+            "</tr>"
+        )
+    if not tbody_parts:
+        tbody_parts.append('<tr><td colspan="10">No fund data available.</td></tr>')
+    count_note = (
+        f"Showing <strong>{len(rows)}</strong> of <strong>{len(rows)}</strong> funds."
+        if rows
+        else "Fund list unavailable."
+    )
+    return (
+        '<section class="etp-mock-table-block" aria-labelledby="table-heading">'
+        '<div class="rwa-split-table-head inner-table-head">'
+        '<h2 class="subsection-head rwa-split-table-head__title" id="table-heading">Fund table</h2>'
+        '<div class="rwa-split-table-head__actions" id="js-etp-table-download"></div>'
+        "</div>"
+        '<label class="search-field etp-mock-table-search">'
+        '<span class="search-field__label">Search by fund name or ticker</span>'
+        '<input type="search" class="search-field__input" id="js-etp-search" '
+        'placeholder="Filter by name or ticker&hellip;" />'
+        "</label>"
+        '<div class="etp-mock-table-meta" aria-live="polite">'
+        f'<p class="etp-mock-table-meta__count toolbar-note" id="js-etp-toolbar">{count_note}</p>'
+        '<div class="rwa-table-actions" id="js-etp-table-actions"></div>'
+        "</div>"
+        '<div class="table-wrap table-wrap--scroll">'
+        '<table class="data-table data-table--dense data-table--sortable">'
+        '<thead id="js-etp-thead"><tr>'
+        '<th data-sort="symbol" class="th-sortable">Symbol</th>'
+        '<th data-sort="name" class="th-sortable">Fund Name</th>'
+        '<th class="num th-sortable" data-sort="price">Price</th>'
+        '<th class="num th-sortable" data-sort="pct_52w">1Y %</th>'
+        '<th class="num th-sortable" data-sort="flow_1y_usd">1Y Flow</th>'
+        '<th class="num th-sortable" data-sort="assets_usd">Assets (B)</th>'
+        '<th data-sort="issuer" class="th-sortable">Issuer</th>'
+        '<th data-sort="custodian" class="th-sortable">Custodian</th>'
+        '<th data-sort="inception" class="th-sortable">Inception</th>'
+        "<th>Fund Filing</th>"
+        "</tr></thead>"
+        f'<tbody id="js-etp-tbody">{"".join(tbody_parts)}</tbody>'
+        "</table></div>"
+        '<div class="rwa-table-footnote-row">'
+        '<p class="source-cap rwa-table-footnote-row__cap">'
+        "Fund data: StockAnalysis (list and AUM). Spot BTC/ETH flows: Farside Investors (daily net "
+        "creations/redemptions, USD)."
+        "</p></div></section>"
+    )
+
+
+def build_etp_server_export_config(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    from crypto_etps.flows import format_flow_usd_compact
+
+    export_rows: list[list[str]] = []
+    for r in rows:
+        assets = r.get("assets_usd")
+        try:
+            assets_b = f"{float(assets) / 1e9:.2f}" if assets is not None else "—"
+        except (TypeError, ValueError):
+            assets_b = "—"
+        pct = r.get("pct_52w")
+        try:
+            pct_s = f"{float(pct):.1f}%" if pct is not None else "—"
+        except (TypeError, ValueError):
+            pct_s = "—"
+        flow = format_flow_usd_compact(
+            float(r["flow_1y_usd"]) if r.get("flow_1y_usd") is not None else None
+        )
+        export_rows.append(
+            [
+                str(r.get("symbol") or ""),
+                str(r.get("name") or ""),
+                str(r.get("price") or "—"),
+                pct_s,
+                flow,
+                assets_b,
+                str(r.get("issuer") or ""),
+                str(r.get("custodian") or ""),
+                str(r.get("inception") or ""),
+                str(r.get("fund_filing_url") or ""),
+            ]
+        )
+    return {
+        "etp-table": {
+            "columns": [
+                "Symbol",
+                "Fund Name",
+                "Price",
+                "1Y %",
+                "1Y Flow",
+                "Assets (B)",
+                "Issuer",
+                "Custodian",
+                "Inception",
+                "Fund Filing",
+            ],
+            "rows": export_rows,
+        }
+    }
+
+
+def build_etp_server_zone_html(
+    *,
+    payloads: dict[str, Any],
+    related_chips: str,
+) -> str:
+    """Server-rendered U.S. ETP zone body (mock-parity markup, filled at build time)."""
+    kpis = payloads.get("etp_kpis.json") if isinstance(payloads.get("etp_kpis.json"), dict) else {}
+    etps = payloads.get("etps.json") if isinstance(payloads.get("etps.json"), dict) else {}
+    pulse = payloads.get("etf_pulse.json") if isinstance(payloads.get("etf_pulse.json"), dict) else {}
+    manifest = payloads.get("manifest.json") if isinstance(payloads.get("manifest.json"), dict) else {}
+    rows = list(etps.get("rows") or [])
+    pulse_items = list(pulse.get("items") or [])
+    generated = str(
+        kpis.get("generated_at") or etps.get("generated_at") or manifest.get("etp_refreshed_at") or ""
+    ).strip()
+    footer = ""
+    if generated:
+        footer = generated.replace("T", " ").replace("Z", " UTC")
+        if "." in footer and footer.endswith(" UTC"):
+            footer = footer[: footer.rfind(".")] + " UTC"
+    return (
+        '<main class="page-shell etp-mock-shell">'
+        '<article class="hub-section hub-section--panel inner-rich-zone zone--etp home-zone home-zone--etp etp-mock-zone">'
+        '<div class="home-zone__stripe" aria-hidden="true"></div>'
+        '<header class="home-zone__head">'
+        '<span class="home-zone__badge" aria-hidden="true">ETP</span>'
+        '<div class="home-zone__titles">'
+        '<h1 class="page-intro__title" id="page-title">U.S. Digital Asset ETPs</h1>'
+        '<p class="section-dek section-dek--wide">'
+        "<strong>U.S. crypto-related exchange-traded products</strong>, with a KPI strip, an estimated aggregate AUM "
+        "trend chart, a searchable fund table, and a related ETF/ETP headlines panel. Reference: "
+        '<a href="https://stockanalysis.com/list/crypto-etfs/" target="_blank" rel="noopener noreferrer">'
+        "StockAnalysis.com</a> (issuer, inception, <strong>1Y %</strong> past-year total return)."
+        "</p></div></header>"
+        '<div class="home-zone__body inner-rich-zone__body etp-mock-zone__body">'
+        f"{related_chips.strip()}"
+        f"{etp_kpis_html(kpis, manifest=manifest)}"
+        f"{etp_key_observations_html(str(kpis.get('key_observations_html') or ''))}"
+        f"{etp_concentration_html(rows, kpis=kpis)}"
+        f"{etp_dashboard_shell_html(pulse_items=pulse_items)}"
+        f"{etp_funds_table_html(etps)}"
+        f'<p class="timestamp-foot" id="js-etp-generated">{escape(footer) if footer else "&mdash;"}</p>'
+        "</div></article></main>"
+    )

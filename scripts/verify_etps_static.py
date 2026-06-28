@@ -11,26 +11,30 @@ sys.path.insert(0, str(REPO))
 
 def main() -> int:
     from etp_live_cache import bundle_from_static_exports
-    from streamlit_etps_static import build_etps_body_iframe_html
+    from streamlit_etps_static import build_etp_server_iframe_html
 
     seeded = bundle_from_static_exports(REPO / "static_home" / "data")
     if not seeded:
         print("FAIL: no static ETP seed bundle")
         return 1
     payloads = seeded["payloads"]
-    html = build_etps_body_iframe_html(
+    html = build_etp_server_iframe_html(
         payloads=payloads,
         related_chips='<div class="home-related-chips"></div>',
     )
     checks = [
         ("page-etp-iframe" in html, "etp iframe body class"),
         ('data-methodology="etp"' in html, "methodology attr"),
-        ("js-etp-kpi" in html, "kpi strip"),
+        ("rwa-kpi-panel-static" in html, "server-rendered kpi strip"),
+        ("js-etp-kpi" in html, "kpi strip host"),
         ("aum-chart" in html, "aum chart host"),
         ("js-etp-tbody" in html, "fund table"),
+        ("etp-gh-canvas-override" in html, "canvas override"),
         ("st-tmmf-fullscreen-postmessage" in html, "fullscreen patch"),
         ("measureEtpContentHeight" in html, "height measure"),
         ("__ETP_PAGE_PAYLOADS" in html, "embedded payloads"),
+        ("__ETP_SERVER_EXPORTS" in html, "server export config"),
+        ("__etpWireServerTable" in html, "table wire script"),
     ]
     for ok, label in checks:
         if not ok:

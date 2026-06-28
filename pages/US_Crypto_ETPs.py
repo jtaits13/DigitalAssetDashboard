@@ -9,6 +9,8 @@ _REPO = Path(__file__).resolve().parent.parent
 if str(_REPO) not in sys.path:
     sys.path.insert(0, str(_REPO))
 
+import streamlit as st
+
 from crypto_etps.widgets import get_etp_user_agent_from_secrets, resolve_etp_user_agent
 from streamlit_site_parity import (
     _streamlit_page_href,
@@ -27,6 +29,8 @@ def main() -> None:
         page_title="U.S. Digital Asset ETPs — Digital Assets Dashboard",
         active="etps",
         style_kind="etp",
+        show_nav=True,
+        nav_style="home",
     )
     ua = resolve_etp_user_agent(get_etp_user_agent_from_secrets())
     related = related_chips_html(
@@ -36,8 +40,9 @@ def main() -> None:
         (_streamlit_page_href("tmmf"), "Tokenized MMFs"),
     )
 
-    payloads = get_etp_iframe_payloads(ua)
-    render_etps_body_iframe(payloads=payloads, related_chips=related)
+    with st.spinner("Loading U.S. ETPs page…"):
+        payloads = get_etp_iframe_payloads(ua)
+        render_etps_body_iframe(payloads=payloads, related_chips=related)
 
     render_subpage_footer(label="U.S. ETPs")
 

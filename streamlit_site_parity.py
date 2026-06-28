@@ -709,6 +709,10 @@ def deep_iframe_kpi_flatten_css(*, scope: str, zone: str) -> str:
             "border: 1px solid rgb(110 134 158 / 0.18) !important; "
             "border-left: 3px solid var(--hx-crypto-bright, #6e869e) !important;"
         ),
+        "etp": (
+            "border: 1px solid rgb(80 113 136 / 0.18) !important; "
+            "border-left: 3px solid var(--hx-etp-bright, #507188) !important;"
+        ),
     }.get(zone, (
         "border: 1px solid rgb(110 134 158 / 0.18) !important; "
         "border-left: 3px solid var(--hx-etp-bright, #6e869e) !important;"
@@ -836,12 +840,15 @@ SUBPAGE_STREAMLIT_CSS = """
 .stApp:has(.streamlit-tmmf-iframe-page):has(.home-chrome-iframe-marker),
 .stApp:has(.streamlit-stablecoins-iframe-page):has(.home-chrome-iframe-marker),
 .stApp:has(.streamlit-crypto-iframe-page):has(.home-chrome-iframe-marker),
+.stApp:has(.streamlit-etps-iframe-page):has(.home-chrome-iframe-marker),
 .withScreencast:has(.streamlit-tmmf-iframe-page):has(.home-chrome-iframe-marker),
 .withScreencast:has(.streamlit-stablecoins-iframe-page):has(.home-chrome-iframe-marker),
 .withScreencast:has(.streamlit-crypto-iframe-page):has(.home-chrome-iframe-marker),
+.withScreencast:has(.streamlit-etps-iframe-page):has(.home-chrome-iframe-marker),
 [data-testid="stScreencast"]:has(.streamlit-tmmf-iframe-page):has(.home-chrome-iframe-marker),
 [data-testid="stScreencast"]:has(.streamlit-stablecoins-iframe-page):has(.home-chrome-iframe-marker),
-[data-testid="stScreencast"]:has(.streamlit-crypto-iframe-page):has(.home-chrome-iframe-marker) {
+[data-testid="stScreencast"]:has(.streamlit-crypto-iframe-page):has(.home-chrome-iframe-marker),
+[data-testid="stScreencast"]:has(.streamlit-etps-iframe-page):has(.home-chrome-iframe-marker) {
   background: var(--wash, #f3f7fb) !important;
   background-image: none !important;
 }
