@@ -888,6 +888,17 @@ def _explore_section_kpis_html(
     )
 
 
+def _explore_preview_table_rows(sec: dict[str, Any]) -> tuple[list[dict[str, Any]], int]:
+    """Preview rows for explore tables (``rows``), with total count from ``rows_full``."""
+    from rwa_explore_page_payloads import EXPLORE_ASSET_PREVIEW_ROWS
+
+    preview = list(sec.get("rows") or [])
+    full = list(sec.get("rows_full") or preview)
+    if not preview and full:
+        preview = full[:EXPLORE_ASSET_PREVIEW_ROWS]
+    return preview, len(full)
+
+
 def explore_section_html(
     sec: dict[str, Any],
     *,
@@ -922,7 +933,7 @@ def explore_section_html(
     warn = str(sec.get("warn_html") or "")
     info = str(sec.get("info_html") or "")
     columns = list(sec.get("columns") or [])
-    rows = list(sec.get("rows_full") or sec.get("rows") or [])
+    rows, total_rows = _explore_preview_table_rows(sec)
     table_html = ""
     if columns:
         entity, search_label, search_placeholder, intro_strong = _explore_preview_entity(columns)
@@ -934,7 +945,10 @@ def explore_section_html(
             is_participant=is_participant,
         )
         prefix = f"explore-{sec_id}"
-        count_note = f"Showing all {len(rows)} {entity}."
+        if total_rows > len(rows):
+            count_note = f"Showing {len(rows)} of {total_rows} {entity} (preview)."
+        else:
+            count_note = f"Showing all {len(rows)} {entity}."
         body = _table_body_html(columns, rows, empty_msg="No preview rows for this section.")
         mp_cls = " participants-mock-league-block" if is_participant else ""
         intro_cls = " participants-mock-league-intro" if is_participant else ""

@@ -22,7 +22,7 @@ _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
 
-_RWA_EXPLORE_IFRAME_CSS_VERSION = "2"
+_RWA_EXPLORE_IFRAME_CSS_VERSION = "3"
 RWA_EXPLORE_CANVAS_OVERRIDE_VERSION = "1"
 
 RWA_EXPLORE_GH_PAGE_WASH = "#f3f7fb"
@@ -43,6 +43,9 @@ function measureRwaExploreContentHeight() {
   var maxBottom = 0;
   nodes.forEach(function (el) {
     if (!el) return;
+    maxBottom = Math.max(maxBottom, el.getBoundingClientRect().bottom + scrollY);
+  });
+  document.querySelectorAll(".rwa-explore-preview").forEach(function (el) {
     maxBottom = Math.max(maxBottom, el.getBoundingClientRect().bottom + scrollY);
   });
   if (!maxBottom) {

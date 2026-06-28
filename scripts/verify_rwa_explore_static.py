@@ -23,9 +23,9 @@ def _check_kind(kind: str, *, page_class: str, iframe_class: str, host_class: st
                 "kpi_window_note": "30D",
                 "kpis": [{"label": "Total", "value_display": "$1B", "delta_30d_pct": 1.2}],
                 "columns": ["Network", "Total Value"],
-                "rows": [{"Network": "Ethereum", "Total Value": 1000000000}],
-                "rows_full": [{"Network": "Ethereum", "Total Value": 1000000000}],
-                "preview_note": "Preview: first 1 of 1 networks.",
+                "rows": [{"Network": f"Net{i}", "Total Value": i} for i in range(8)],
+                "rows_full": [{"Network": f"Net{i}", "Total Value": i} for i in range(23)],
+                "preview_note": "Preview: first 8 of 23 networks.",
                 "cta": [
                     {
                         "href": "/RWA_US_Treasuries",
@@ -34,7 +34,19 @@ def _check_kind(kind: str, *, page_class: str, iframe_class: str, host_class: st
                         "internal": True,
                     }
                 ],
-            }
+            },
+            {
+                "id": "tokenized_stocks",
+                "title": "Tokenized Stocks",
+                "anchor_id": "jd-rwa-tokenized-stocks",
+                "kpi_window_note": "30D",
+                "kpis": [{"label": "Total", "value_display": "$1B", "delta_30d_pct": 1.2}],
+                "columns": ["Network", "Total Value"],
+                "rows": [{"Network": "Ethereum", "Total Value": 1000000000}],
+                "rows_full": [{"Network": "Ethereum", "Total Value": 1000000000}],
+                "preview_note": "Preview: first 1 of 1 networks.",
+                "cta": [],
+            },
         ],
         "footer_note": "test",
         "links": {"rwa_global": "/RWA_Global_Market_Overview"},
@@ -44,11 +56,16 @@ def _check_kind(kind: str, *, page_class: str, iframe_class: str, host_class: st
         payload=sample,
         related_chips='<div class="home-related-chips"></div>',
     )
+    treasuries_body = html.split('id="explore-treasuries-wrap"', 1)[1].split("</table>", 1)[0]
+    treasuries_tr_count = treasuries_body.count("<tr>") - 1
     checks = [
         (iframe_class in html, "iframe body class"),
         (page_class in html, "page parity class"),
         ("rwa-explore-preview" in html, "server-rendered section"),
         ("explore-treasuries-wrap" in html, "server-rendered preview table"),
+        ("jd-rwa-tokenized-stocks" in html, "tokenized stocks section"),
+        (treasuries_tr_count == 8, f"treasuries preview rows (got {treasuries_tr_count})"),
+        ("Showing 8 of 23 networks (preview)." in html, "treasuries preview count note"),
         ("js-exat-jump" in html, "jump nav"),
         ("rwa-explore-gh-canvas-override" in html, "canvas override"),
         ("measureRwaExploreContentHeight" in html, "height measure"),

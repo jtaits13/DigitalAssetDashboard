@@ -2596,6 +2596,30 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
     );
   }}
 
+  function isRwaExploreBodyIframe(inner) {{
+    return !!(
+      inner &&
+      inner.body &&
+      inner.body.classList &&
+      (inner.body.classList.contains("page-rwa-explore-at-iframe") ||
+        inner.body.classList.contains("page-rwa-explore-mp-iframe"))
+    );
+  }}
+
+  function measureRwaExploreBodyHeight(inner) {{
+    var win = inner.defaultView;
+    try {{
+      if (win && win.__TMMF_MODAL_OPEN) return null;
+    }} catch (e) {{}}
+    if (win && typeof win.measureRwaExploreContentHeight === "function") {{
+      return win.measureRwaExploreContentHeight();
+    }}
+    var scrollY = win ? (win.scrollY || inner.documentElement.scrollTop || 0) : 0;
+    var main = inner.querySelector("main.page-shell.etp-mock-shell");
+    if (!main) return null;
+    return Math.ceil(main.getBoundingClientRect().bottom + scrollY + 6);
+  }}
+
   function measureEtpBodyHeight(inner) {{
     var win = inner.defaultView;
     try {{
@@ -2703,6 +2727,11 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
           if (rwaH !== null) applyFrameHeight(frame, rwaH, 200);
           return;
         }}
+        if (isRwaExploreBodyIframe(inner)) {{
+          var exploreH = measureRwaExploreBodyHeight(inner);
+          if (exploreH !== null) applyFrameHeight(frame, exploreH, 200);
+          return;
+        }}
         var isMarkets = inner.querySelector(".home-markets-stack");
         var isChrome = inner.querySelector(".hero--command");
         if (!isMarkets && !isChrome) return;
@@ -2793,6 +2822,13 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
             var rwaH =
               isFinite(msgH) && msgH > 200 ? msgH : measureRwaGlobalBodyHeight(inner);
             if (rwaH !== null) applyFrameHeight(frame, rwaH, 200);
+            return;
+          }}
+          if (isRwaExploreBodyIframe(inner)) {{
+            if (sourceFrame && sourceFrame !== frame) return;
+            var exploreH =
+              isFinite(msgH) && msgH > 200 ? msgH : measureRwaExploreBodyHeight(inner);
+            if (exploreH !== null) applyFrameHeight(frame, exploreH, 200);
           }}
         }} catch (e) {{}}
       }});
