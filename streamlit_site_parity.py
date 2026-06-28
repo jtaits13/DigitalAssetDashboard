@@ -769,16 +769,11 @@ def deep_iframe_rwa_zone_seam_css(*, scope: str, soft: str = "#e8eff5") -> str:
 {scope} .etp-mock-key-obs-block.inner-rich-block,
 {scope} .etp-mock-key-obs-block .crypto-story-callout,
 {scope} #js-rwa-global-macro .crypto-story-callout,
-{scope} #js-rwa-global-ko-section .crypto-story-callout,
-{scope} #js-rwa-global-macro .rwa-gmo-takeaways,
-{scope} .rwa-gmo-takeaways {{
+{scope} #js-rwa-global-ko-section .crypto-story-callout {{
   background: #fff !important;
   background-color: #fff !important;
   background-image: none !important;
   box-shadow: none !important;
-}}
-{scope} .rwa-explore-row {{
-  display: none !important;
 }}
 {scope} .etp-mock-key-obs-block .crypto-story-callout__note,
 {scope} #js-rwa-global-macro .crypto-story-callout__note {{

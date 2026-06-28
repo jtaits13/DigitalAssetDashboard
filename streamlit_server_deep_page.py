@@ -655,12 +655,11 @@ def build_rwa_global_server_zone_html(
     err_no_rows = bool(err and not rows)
     empty_no_err = not err and not rows
     empty_msg = str(payload.get("empty_message") or "No network rows returned.")
-    ko_html = rwa_global_macro_context_block_html(str(payload.get("macro_observations_html") or ""))
-    from rwa_global_page_payloads import streamlit_rwa_explore_gateways_html
-
-    explore_html = ""
-    if ko_html or rows:
-        explore_html = streamlit_rwa_explore_gateways_html(links)
+    ko_html = key_observations_html(str(payload.get("macro_observations_html") or ""))
+    if ko_html:
+        ko_html = ko_html.replace('id="js-deep-ko-section"', 'id="js-rwa-global-ko-section"', 1)
+        ko_html = ko_html.replace('id="js-deep-ko"', 'id="js-rwa-global-macro"', 1)
+    explore_html = str(payload.get("explore_gateways_html") or "").strip()
     explore_block = (
         f'<div id="js-rwa-global-explore">{explore_html}</div>' if explore_html else ""
     )
@@ -1204,19 +1203,6 @@ def funds_table_html(funds: dict[str, Any] | None) -> str:
         f'aria-label="{escape(heading)}">{table_html}</table></div>'
         f'<div class="rwa-table-footnote-row"><p class="source-cap rwa-table-footnote-row__cap">'
         f"{escape(footnote)}</p></div></section>"
-    )
-
-
-def rwa_global_macro_context_block_html(raw: str) -> str:
-    """Render RWA Global macro takeaways without crypto-story-callout reshaping."""
-    raw = (raw or "").strip()
-    if not raw:
-        return ""
-    cleaned = re.sub(r"<style[^>]*>.*?</style>", "", raw, flags=re.IGNORECASE | re.DOTALL)
-    return (
-        '<div class="inner-rich-block etp-mock-key-obs-block" id="js-rwa-global-ko-section" '
-        'aria-labelledby="rwa-gmo-ko-heading">'
-        f'<div id="js-rwa-global-macro">{cleaned}</div></div>'
     )
 
 
