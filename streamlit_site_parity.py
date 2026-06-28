@@ -817,66 +817,6 @@ SUBPAGE_STREAMLIT_CSS = """
 .stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe),
 .stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) {
   z-index: 1 !important;
-  position: relative !important;
-}
-/* Host-rendered home nav (subpages): sticky band; menus overlay body without layout shift. */
-.stApp:has(.home-chrome-host-nav-marker) [data-testid="stElementContainer"]:has(.home-chrome-host-nav) {
-  width: 100vw !important;
-  max-width: 100vw !important;
-  margin-left: calc(50% - 50vw) !important;
-  margin-right: calc(50% - 50vw) !important;
-  padding: 0 !important;
-  overflow: visible !important;
-  max-height: none !important;
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 300 !important;
-  background: transparent !important;
-}
-.stApp:has(.home-chrome-host-nav-marker) [data-testid="stElementContainer"]:has(.home-chrome-host-nav) [data-testid="stMarkdownContainer"],
-.stApp:has(.home-chrome-host-nav-marker) [data-testid="stElementContainer"]:has(.home-chrome-host-nav) [data-testid="stVerticalBlock"],
-.stApp:has(.home-chrome-host-nav-marker) [data-testid="stElementContainer"]:has(.home-chrome-host-nav) [data-testid="stMarkdownContainer"] > div {
-  overflow: visible !important;
-  max-height: none !important;
-}
-.home-chrome-host-nav {
-  display: block;
-  width: 100%;
-  overflow: visible;
-  position: relative;
-  z-index: 300;
-}
-.home-chrome-host-nav .site-header {
-  position: relative;
-  top: auto;
-  width: 100%;
-  margin: 0;
-  overflow: visible;
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(199, 216, 232, 0.85);
-}
-.home-chrome-host-nav .site-header__inner {
-  max-width: calc(var(--max, 72rem) + 17.5rem);
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-  box-sizing: border-box;
-}
-.home-chrome-host-nav .site-nav__dropdown {
-  position: relative;
-  z-index: 301;
-}
-.home-chrome-host-nav .site-nav__sub {
-  z-index: 310;
-}
-.home-chrome-host-nav .site-nav__sub--nested {
-  z-index: 320;
-}
-.stApp:has(.home-chrome-host-nav-marker) [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker):not(:has(.home-chrome-host-nav)) {
-  position: static !important;
-  z-index: auto !important;
 }
 /* TMMF (and other no-nav subpages): hide empty host back-link shells / phantom pills. */
 .stApp:has(.streamlit-subpage-no-nav) .site-header,
@@ -3501,12 +3441,15 @@ body.page-home.home-nav-chrome-only.site-experience .site-nav__sub {
 
 
 def render_home_chrome_nav(*, active: str) -> None:
-    """Render the home nav band on a subpage (host HTML, not iframe — dropdowns overlay content)."""
-    nav = render_site_nav_html(active=active, is_landing=False, for_streamlit=True).strip()
+    """Render the home page nav band on a subpage (same iframe chrome as ``render_home_chrome``)."""
     st.markdown(
-        f'<span class="home-chrome-iframe-marker home-chrome-host-nav-marker" hidden aria-hidden="true"></span>'
-        f'<div class="home-chrome-host-nav page-home site-experience">{nav}</div>',
+        '<span class="home-chrome-iframe-marker" hidden aria-hidden="true"></span>',
         unsafe_allow_html=True,
+    )
+    components.html(
+        build_home_nav_iframe_html(active=active),
+        height=SUBPAGE_NAV_IFRAME_INITIAL_HEIGHT,
+        scrolling=False,
     )
 
 
