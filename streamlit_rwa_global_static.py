@@ -22,9 +22,9 @@ _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
 
-_RWA_GLOBAL_IFRAME_CSS_VERSION = "6"
-RWA_GLOBAL_IFRAME_BUILD = "6"
-RWA_GLOBAL_CANVAS_OVERRIDE_VERSION = "6"
+_RWA_GLOBAL_IFRAME_CSS_VERSION = "7"
+RWA_GLOBAL_IFRAME_BUILD = "7"
+RWA_GLOBAL_CANVAS_OVERRIDE_VERSION = "7"
 RWA_GLOBAL_TABLE_PANEL_VERSION = "1"
 
 RWA_GLOBAL_GH_PAGE_WASH = "#f3f7fb"
@@ -317,7 +317,6 @@ def _cached_iframe_rwa_global_stylesheet(*, _css_version: str = _RWA_GLOBAL_IFRA
         deep_iframe_back_link_clickable_css,
         deep_iframe_kpi_flatten_css,
         deep_iframe_related_chips_css,
-        deep_iframe_rwa_zone_body_flatten_css,
         deep_iframe_table_height_lock_css,
         deep_iframe_table_panel_css,
     )
@@ -342,34 +341,40 @@ def _cached_iframe_rwa_global_stylesheet(*, _css_version: str = _RWA_GLOBAL_IFRA
         if path.is_file():
             chunks.append(_iframe_rwa_global_mock_css(path.read_text(encoding="utf-8")))
     chunks.append(
-        """
-html, body.page-rwa-global-iframe.site-experience {
+        f"""
+html, body.page-rwa-global-iframe.site-experience {{
   margin: 0;
   padding: 0;
-  background: var(--wash, #f3f7fb);
+  background: var(--wash, {RWA_GLOBAL_GH_PAGE_WASH}) !important;
+  background-image: none !important;
   overflow: hidden;
-}
+}}
+body.page-rwa-global-iframe.site-experience.page-inner--rich,
+body.page-rwa-global-iframe.mock-rwa-global-inner.site-experience {{
+  background: var(--wash, {RWA_GLOBAL_GH_PAGE_WASH}) !important;
+  background-image: none !important;
+}}
 html::before,
 html::after,
 body.page-rwa-global-iframe::before,
-body.page-rwa-global-iframe::after {
+body.page-rwa-global-iframe::after {{
   display: none !important;
   content: none !important;
   height: 0 !important;
   padding: 0 !important;
   margin: 0 !important;
   border: none !important;
-}
-body.page-rwa-global-iframe .page-back-below-header {
+}}
+body.page-rwa-global-iframe .page-back-below-header {{
   max-width: var(--content-max, 72rem);
   margin: 0 auto;
   padding: 0.35rem 1.25rem 0;
   box-sizing: border-box;
-}
-body.page-rwa-global-iframe p.back-link.back-link--below-header {
+}}
+body.page-rwa-global-iframe p.back-link.back-link--below-header {{
   margin: 0.2rem 0 0.85rem;
-}
-body.page-rwa-global-iframe.site-experience.page-inner--rich .back-link--below-header a {
+}}
+body.page-rwa-global-iframe.site-experience.page-inner--rich .back-link--below-header a {{
   display: inline-block;
   font-weight: 650;
   font-size: 0.84rem;
@@ -380,22 +385,82 @@ body.page-rwa-global-iframe.site-experience.page-inner--rich .back-link--below-h
   border-radius: 999px;
   border: 1px solid rgb(var(--hx-accent-bright-rgb, 80 113 136) / 0.18);
   background: rgba(251, 254, 255, 0.85);
-}
-body.page-rwa-global-iframe .page-shell.etp-mock-shell {
+}}
+body.page-rwa-global-iframe .page-shell.etp-mock-shell {{
   max-width: var(--content-max, 72rem);
   margin: 0 auto;
   padding: 0 1.25rem 1.5rem;
   box-sizing: border-box;
-}
-body.page-rwa-global-iframe .home-reveal {
+  background: transparent !important;
+}}
+body.page-rwa-global-iframe .home-reveal {{
   opacity: 1 !important;
   transform: none !important;
-}
+}}
+/* Flat zone interior — same block as TMMF/Stablecoins/Crypto (gradient reads as a mid-page seam). */
+body.page-rwa-global-iframe .inner-rich-zone.zone--rwa,
+body.page-rwa-global-iframe.mock-rwa-global-inner .etp-mock-zone.inner-rich-zone.zone--rwa {{
+  background: var(--hx-rwa-soft, {RWA_GLOBAL_GH_ZONE_SOFT}) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}}
+body.page-rwa-global-iframe .inner-rich-zone.zone--rwa .home-zone__head,
+body.page-rwa-global-iframe.mock-rwa-global-inner .etp-mock-zone .home-zone__head {{
+  background: var(--hx-rwa-head, linear-gradient(180deg, #eef3f8 0%, #ffffff 100%)) !important;
+}}
+body.page-rwa-global-iframe .inner-rich-zone.zone--rwa .inner-rich-zone__body,
+body.page-rwa-global-iframe.mock-rwa-global-inner.page-inner--rich .etp-mock-zone .inner-rich-zone__body,
+body.page-rwa-global-iframe.mock-rwa-global-inner .etp-mock-zone__body.inner-rich-zone__body {{
+  background: var(--hx-rwa-soft, {RWA_GLOBAL_GH_ZONE_SOFT}) !important;
+  background-image: none !important;
+}}
+/* Key observations — mock gradient + inner-page zone--rwa accent reads as a horizontal seam. */
+body.page-rwa-global-iframe.page-inner--rich .inner-rich-zone.zone--rwa .inner-rich-block,
+body.page-rwa-global-iframe.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block,
+body.page-rwa-global-iframe .etp-mock-key-obs-block.inner-rich-block,
+body.page-rwa-global-iframe.site-experience.page-inner--rich .inner-rich-zone.zone--rwa .inner-rich-block,
+body.page-rwa-global-iframe.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout,
+body.page-rwa-global-iframe.page-inner--rich .inner-rich-zone #js-rwa-global-macro .crypto-story-callout,
+body.page-rwa-global-iframe .etp-mock-key-obs-block .crypto-story-callout,
+body.page-rwa-global-iframe #js-rwa-global-macro .crypto-story-callout {{
+  background: #fff !important;
+  background-color: #fff !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}}
+body.page-rwa-global-iframe .etp-mock-key-obs-block .crypto-story-callout__note,
+body.page-rwa-global-iframe #js-rwa-global-macro .crypto-story-callout__note {{
+  background: rgb(62 92 116 / 0.06) !important;
+  background-image: none !important;
+}}
+body.page-rwa-global-iframe .etp-mock-key-obs-block .review-note.ko-disclaimer,
+body.page-rwa-global-iframe #js-rwa-global-macro .review-note.ko-disclaimer {{
+  background: #fff !important;
+  background-color: #fff !important;
+  background-image: none !important;
+}}
+body.page-rwa-global-iframe .home-explore-compact,
+body.page-rwa-global-iframe #js-rwa-global-explore {{
+  background: var(--hx-rwa-soft, {RWA_GLOBAL_GH_ZONE_SOFT}) !important;
+  background-image: none !important;
+}}
+body.page-rwa-global-iframe .home-explore-compact {{
+  margin-top: 0 !important;
+  margin-bottom: 0.75rem !important;
+}}
+body.page-rwa-global-iframe #js-rwa-global-insights.etp-mock-insights {{
+  margin-top: 0 !important;
+}}
+body.page-rwa-global-iframe .etp-mock-insights__panel,
+body.page-rwa-global-iframe .etp-mock-dash__panel {{
+  background: #fff !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}}
 """
     )
     scope = "body.page-rwa-global-iframe"
     chunks.append(deep_iframe_kpi_flatten_css(scope=scope, zone="rwa"))
-    chunks.append(deep_iframe_rwa_zone_body_flatten_css(scope=scope, soft=RWA_GLOBAL_GH_ZONE_SOFT))
     chunks.append(deep_iframe_table_panel_css(scope=scope))
     chunks.append(deep_iframe_table_height_lock_css(scope=scope))
     chunks.append(deep_iframe_related_chips_css(scope=scope, zone="rwa"))
@@ -437,6 +502,8 @@ html, {scope}.site-experience,
 {scope} .etp-mock-key-obs-block,
 {scope} .etp-mock-key-obs-block .crypto-story-callout,
 {scope} #js-rwa-global-macro .crypto-story-callout,
+{scope} .etp-mock-key-obs-block .review-note.ko-disclaimer,
+{scope} #js-rwa-global-macro .review-note.ko-disclaimer,
 {scope} .etp-mock-insights__panel,
 {scope} .etp-mock-dash__panel,
 {scope} .rwa-kpi-row--home-grid .rwa-kpi-cell,
@@ -445,6 +512,14 @@ html, {scope}.site-experience,
   background: #fff !important;
   background-color: #fff !important;
   background-image: none !important;
+  box-shadow: none !important;
+}}
+{scope} .home-explore-compact,
+{scope} #js-rwa-global-explore {{
+  background: {soft} !important;
+  background-color: {soft} !important;
+  background-image: none !important;
+  box-shadow: none !important;
 }}
 {scope} .etp-mock-key-obs-block .crypto-story-callout__note {{
   background: rgb(62 92 116 / 0.06) !important;
@@ -485,10 +560,13 @@ def rwa_global_iframe_canvas_override_js(
       el.style.setProperty("box-shadow", "none", "important");
     }});
     document.querySelectorAll(
-      ".inner-rich-block, .etp-mock-key-obs-block, .crypto-story-callout, .etp-mock-insights__panel, .etp-mock-dash__panel, .rwa-kpi-row--home-grid .rwa-kpi-cell, .etp-mock-table-block, .home-explore-compact"
+      ".inner-rich-block, .etp-mock-key-obs-block, .crypto-story-callout, .review-note.ko-disclaimer, .etp-mock-insights__panel, .etp-mock-dash__panel, .rwa-kpi-row--home-grid .rwa-kpi-cell, .etp-mock-table-block, .home-explore-compact"
     ).forEach(function (el) {{
       setBg(el, el.classList.contains("home-explore-compact") ? SOFT : WHITE);
       el.style.setProperty("box-shadow", "none", "important");
+    }});
+    document.querySelectorAll(".crypto-story-callout__note").forEach(function (el) {{
+      setBg(el, "rgb(62 92 116 / 0.06)");
     }});
     document.querySelectorAll(".rwa-kpi-panel-static").forEach(function (el) {{
       el.style.setProperty("background", "transparent", "important");
