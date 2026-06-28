@@ -89,6 +89,21 @@ section[data-testid="stSidebar"] { display: none !important; }
   margin-right: calc(50% - 50vw) !important;
   padding: 0 !important;
 }
+/* Subpage nav iframe follows its marker in the next Streamlit block (sibling, not same container). */
+.stApp [data-testid="stElementContainer"]:has(.subpage-chrome-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  margin-left: calc(50% - 50vw) !important;
+  margin-right: calc(50% - 50vw) !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+.stApp [data-testid="stElementContainer"]:has(.subpage-chrome-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) iframe {
+  display: block !important;
+  width: 100% !important;
+  border: 0;
+  overflow: hidden !important;
+}
 .stApp .home-hero-content-gap {
   display: block;
   width: 100%;
@@ -292,11 +307,14 @@ section[data-testid="stSidebar"] { display: none !important; }
 }
 .stApp [data-testid="stElementContainer"]:has(.subpage-chrome-iframe-marker) {
   margin-bottom: 0 !important;
+}
+.stApp [data-testid="stElementContainer"]:has(.subpage-chrome-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) {
+  margin-bottom: 0 !important;
   position: sticky !important;
   top: 0 !important;
   z-index: 40 !important;
 }
-.stApp [data-testid="stElementContainer"]:has(.subpage-chrome-iframe-marker) iframe {
+.stApp [data-testid="stElementContainer"]:has(.subpage-chrome-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) iframe {
   display: block !important;
   width: 100% !important;
   border: 0;
@@ -309,14 +327,14 @@ section[data-testid="stSidebar"] { display: none !important; }
   margin-bottom: 0 !important;
   padding-top: 0 !important;
 }
-.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has(iframe):not(:has(.subpage-chrome-iframe-marker)),
-.stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stElementContainer"]:has(iframe):not(:has(.subpage-chrome-iframe-marker)),
-.stApp:has(.streamlit-crypto-iframe-page) [data-testid="stElementContainer"]:has(iframe):not(:has(.subpage-chrome-iframe-marker)),
-.stApp:has(.streamlit-etps-iframe-page) [data-testid="stElementContainer"]:has(iframe):not(:has(.subpage-chrome-iframe-marker)),
-.stApp:has(.streamlit-news-feed-iframe-page) [data-testid="stElementContainer"]:has(iframe):not(:has(.subpage-chrome-iframe-marker)),
-.stApp:has(.streamlit-rwa-global-iframe-page) [data-testid="stElementContainer"]:has(iframe):not(:has(.subpage-chrome-iframe-marker)),
-.stApp:has(.streamlit-rwa-explore-at-iframe-page) [data-testid="stElementContainer"]:has(iframe):not(:has(.subpage-chrome-iframe-marker)),
-.stApp:has(.streamlit-rwa-explore-mp-iframe-page) [data-testid="stElementContainer"]:has(iframe):not(:has(.subpage-chrome-iframe-marker)) {
+.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe),
+.stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe),
+.stApp:has(.streamlit-crypto-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe),
+.stApp:has(.streamlit-etps-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe),
+.stApp:has(.streamlit-news-feed-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe),
+.stApp:has(.streamlit-rwa-global-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe),
+.stApp:has(.streamlit-rwa-explore-at-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe),
+.stApp:has(.streamlit-rwa-explore-mp-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) {
   position: relative !important;
   z-index: 1 !important;
   margin-top: 0 !important;
@@ -713,7 +731,7 @@ SUBPAGE_STREAMLIT_CSS = """
 .stApp:has(.streamlit-subpage-active) [data-testid="stMainBlockContainer"],
 .stApp:has(.streamlit-subpage-root) [data-testid="stMainBlockContainer"] {
   padding-top: 0 !important;
-  overflow-x: clip;
+  overflow-x: visible !important;
   overflow-y: visible !important;
 }
 .stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(iframe),
@@ -726,8 +744,15 @@ SUBPAGE_STREAMLIT_CSS = """
   padding-right: 0 !important;
   box-sizing: border-box !important;
 }
-.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(iframe[height]:not([height="0"])),
-.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(iframe[height]:not([height="0"])) {
+.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe[height]:not([height="0"])),
+.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe[height]:not([height="0"])) {
+  width: 100% !important;
+  max-width: var(--content-max, var(--max, 72rem)) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.subpage-chrome-iframe-marker) + [data-testid="stElementContainer"]:has(iframe[height]:not([height="0"])),
+.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.subpage-chrome-iframe-marker) + [data-testid="stElementContainer"]:has(iframe[height]:not([height="0"])) {
   width: 100vw !important;
   max-width: 100vw !important;
   margin-left: calc(50% - 50vw) !important;
@@ -735,16 +760,27 @@ SUBPAGE_STREAMLIT_CSS = """
 }
 .stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.subpage-chrome-iframe-marker),
 .stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.subpage-chrome-iframe-marker) {
-  overflow: visible !important;
   flex: none !important;
-  height: auto !important;
+  width: 0 !important;
+  height: 0 !important;
   min-height: 0 !important;
-  max-height: none !important;
-  width: 100vw !important;
-  max-width: 100vw !important;
-  margin-left: calc(50% - 50vw) !important;
-  margin-right: calc(50% - 50vw) !important;
+  max-width: 0 !important;
+  margin: 0 !important;
   padding: 0 !important;
+  border: 0 !important;
+  overflow: hidden !important;
+}
+.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker),
+.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) {
+  flex: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  max-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  overflow: hidden !important;
 }
 .stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:not(:has(iframe)):not(:has(.subpage-chrome-iframe-marker)):not(:has(.streamlit-subpage-active)):not(:has(.streamlit-tmmf-server-host)),
 .stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:not(:has(iframe)):not(:has(.subpage-chrome-iframe-marker)):not(:has(.streamlit-subpage-active)):not(:has(.streamlit-tmmf-server-host)) {
@@ -1200,6 +1236,15 @@ def render_subpage_nav(*, active: str) -> None:
         height=SUBPAGE_NAV_IFRAME_INITIAL_HEIGHT,
         scrolling=False,
     )
+
+
+def render_subpage_body_iframe(html: str, *, height: int = 1200) -> None:
+    """Render a subpage body iframe (marker must precede iframe for host CSS selectors)."""
+    st.markdown(
+        '<span class="subpage-body-iframe-marker" hidden aria-hidden="true"></span>',
+        unsafe_allow_html=True,
+    )
+    components.html(html, height=height, scrolling=False)
 
 
 def iframe_internal_link_script() -> str:

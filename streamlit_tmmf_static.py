@@ -1088,17 +1088,17 @@ def render_tmmf_body_iframe(
     back_label: str = "← Back to home · TMMF preview",
 ) -> None:
     """Render GitHub Pages TMMF markup inside an isolated iframe (no Streamlit host CSS)."""
+    from streamlit_site_parity import render_subpage_body_iframe
+
     payload_json = _json_for_script(payload)
-    html = _cached_tmmf_server_iframe_html(
-        payload_json,
-        related_chips,
-        back_href,
-        back_label,
-    )
-    components.html(
-        html,
+    render_subpage_body_iframe(
+        _cached_tmmf_server_iframe_html(
+            payload_json,
+            related_chips,
+            back_href,
+            back_label,
+        ),
         height=1200,
-        scrolling=False,
     )
 
 

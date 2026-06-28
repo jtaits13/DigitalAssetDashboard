@@ -396,7 +396,9 @@ def render_stablecoins_body_iframe(
     back_label: str = "← Back to home · Stablecoins preview",
 ) -> None:
     """Render the GitHub Pages Stablecoins zone inside a Streamlit iframe."""
-    components.html(
+    from streamlit_site_parity import render_subpage_body_iframe
+
+    render_subpage_body_iframe(
         build_stablecoins_body_iframe_html(
             payload=payload,
             related_chips=related_chips,
@@ -404,5 +406,4 @@ def render_stablecoins_body_iframe(
             back_label=back_label,
         ),
         height=1200,
-        scrolling=False,
     )

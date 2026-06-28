@@ -457,7 +457,9 @@ def render_etps_body_iframe(
     back_href: str = "/?jd_scroll=markets",
     back_label: str = "← Back to home · ETP preview",
 ) -> None:
-    components.html(
+    from streamlit_site_parity import render_subpage_body_iframe
+
+    render_subpage_body_iframe(
         build_etps_body_iframe_html(
             payloads=payloads,
             related_chips=related_chips,
@@ -465,5 +467,4 @@ def render_etps_body_iframe(
             back_label=back_label,
         ),
         height=1500,
-        scrolling=False,
     )

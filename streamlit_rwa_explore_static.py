@@ -415,7 +415,9 @@ def render_rwa_explore_body_iframe(
     back_href: str | None = None,
     back_label: str | None = None,
 ) -> None:
-    components.html(
+    from streamlit_site_parity import render_subpage_body_iframe
+
+    render_subpage_body_iframe(
         build_rwa_explore_body_iframe_html(
             kind=kind,
             payloads=payloads,
@@ -424,5 +426,4 @@ def render_rwa_explore_body_iframe(
             back_label=back_label,
         ),
         height=1800,
-        scrolling=False,
     )

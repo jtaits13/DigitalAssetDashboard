@@ -409,7 +409,9 @@ def render_rwa_global_body_iframe(
     back_href: str = "/?jd_scroll=onchain",
     back_label: str = "← Back to home · On-chain preview",
 ) -> None:
-    components.html(
+    from streamlit_site_parity import render_subpage_body_iframe
+
+    render_subpage_body_iframe(
         build_rwa_global_body_iframe_html(
             payloads=payloads,
             related_chips=related_chips,
@@ -417,5 +419,4 @@ def render_rwa_global_body_iframe(
             back_label=back_label,
         ),
         height=1600,
-        scrolling=False,
     )

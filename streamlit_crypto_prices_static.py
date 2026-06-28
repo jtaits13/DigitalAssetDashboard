@@ -514,7 +514,9 @@ def render_crypto_prices_body_iframe(
     back_label: str = "← Back to home · Crypto preview",
 ) -> None:
     """Render the GitHub Pages Crypto Prices zone inside a Streamlit iframe."""
-    components.html(
+    from streamlit_site_parity import render_subpage_body_iframe
+
+    render_subpage_body_iframe(
         build_crypto_prices_body_iframe_html(
             payloads=payloads,
             related_chips=related_chips,
@@ -522,5 +524,4 @@ def render_crypto_prices_body_iframe(
             back_label=back_label,
         ),
         height=1400,
-        scrolling=False,
     )
