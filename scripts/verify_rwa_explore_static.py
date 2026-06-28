@@ -110,6 +110,56 @@ def main() -> int:
         if code:
             return code
 
+    from streamlit_rwa_explore_static import build_rwa_explore_server_iframe_html
+
+    participant_sample = {
+        "page_subtitle_html": "Test dek",
+        "intro_html": "<p>Intro</p>",
+        "sections": [
+            {
+                "id": "participant_networks",
+                "title": "Networks",
+                "anchor_id": "jd-rwa-participants-networks",
+                "columns": [
+                    "#",
+                    "Network",
+                    "Link",
+                    "RWA value (distributed)",
+                    "% distributed",
+                    "7D Δ value",
+                ],
+                "rows": [
+                    {
+                        "#": 1,
+                        "Network": "Ethereum",
+                        "Link": "https://app.rwa.xyz/networks/ethereum",
+                        "RWA value (distributed)": 16646791023.632927,
+                        "% distributed": 98.95856819165655,
+                        "7D Δ value": -3.5607424003587207,
+                    }
+                ],
+                "rows_full": [],
+                "cta": [],
+            }
+        ],
+        "footer_note": "test",
+    }
+    mp_html = build_rwa_explore_server_iframe_html(
+        kind="explore_participant",
+        payload=participant_sample,
+        related_chips="",
+    )
+    mp_checks = [
+        ("$16.65B" in mp_html, "participant USD compact"),
+        ("98.96%" in mp_html, "participant pct level"),
+        ("-3.56%" in mp_html, "participant signed delta"),
+        ("16646791023" not in mp_html, "no raw distributed value"),
+    ]
+    for ok, label in mp_checks:
+        if not ok:
+            print(f"FAIL [explore_participant formatting]: {label}")
+            return 1
+
     print("verify_rwa_explore_static: ok")
     return 0
 

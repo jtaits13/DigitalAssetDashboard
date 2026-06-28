@@ -23,8 +23,12 @@ _NUM_COLS = frozenset(
         "Market Share",
         "30D Δ share",
         "7D Δ value",
+        "% distributed",
         "Rank",
         "RWA Count",
+        "RWA value (distributed)",
+        "RWA value (represented)",
+        "RWA total (excl. stablecoins)",
         "Stablecoins",
         "Holders",
         "#",
@@ -32,6 +36,18 @@ _NUM_COLS = frozenset(
 )
 _HTML_COLS = frozenset({"Networks", "Terms"})
 _NAME_LINK_COLS = frozenset({"Fund Name", "Network", "Platform", "Asset manager"})
+_USD_COMPACT_COLS = frozenset(
+    {
+        "Total Value",
+        "Distributed Value",
+        "Market Cap",
+        "Assets (B)",
+        "RWA value (distributed)",
+        "RWA value (represented)",
+        "RWA total (excl. stablecoins)",
+    }
+)
+_PCT_LEVEL_COLS = frozenset({"Market Share", "% distributed"})
 _TMMF_MOCK_FUND_COLUMNS = (
     "#",
     "Fund Name",
@@ -129,15 +145,18 @@ def _deep_cell_html(col: str, val: Any, row: dict[str, Any]) -> tuple[str, str]:
         return f'<span class="sym">{escape(label)}</span>', ""
     if val is None or (isinstance(val, float) and math.isnan(val)):
         return "—", ""
-    if col in ("Total Value", "Distributed Value", "Market Cap", "Assets (B)"):
+    if col in _USD_COMPACT_COLS:
         try:
-            return escape(format_usd_compact(float(val))), " num"
+            n = float(val)
+            if n == 0:
+                return "$0", " num"
+            return escape(format_usd_compact(n)), " num"
         except (TypeError, ValueError):
             return escape(str(val)), " num"
     if col in ("7D Δ value", "30D Δ share"):
         txt, cls = _fmt_pct_pts(val)
         return txt, cls
-    if col == "Market Share":
+    if col in _PCT_LEVEL_COLS:
         txt, cls = _fmt_pct_level(val)
         return txt, cls
     if col == "Holders":
