@@ -968,7 +968,7 @@ def crypto_prices_table_html(prices: dict[str, Any]) -> str:
         "</p>"
         '<div class="rwa-table-actions" id="js-crypto-table-fullscreen"></div>'
         "</div>"
-        '<div class="table-wrap table-wrap--scroll rwa-split-table-scroll deep-market-table-wrap" '
+        '<div class="table-wrap table-wrap--scroll deep-market-table-wrap" '
         'data-fullscreen-title="Crypto prices table">'
         '<table class="data-table data-table--dense data-table--sortable" aria-label="Top 50 cryptocurrencies">'
         '<thead id="js-crypto-thead"><tr>'
@@ -1464,7 +1464,7 @@ def etp_funds_table_html(etps: dict[str, Any]) -> str:
         f'<p class="etp-mock-table-meta__count toolbar-note" id="js-etp-toolbar">{count_note}</p>'
         '<div class="rwa-table-actions" id="js-etp-table-actions"></div>'
         "</div>"
-        '<div class="table-wrap table-wrap--scroll rwa-split-table-scroll deep-market-table-wrap" '
+        '<div class="table-wrap table-wrap--scroll deep-market-table-wrap" '
         'data-fullscreen-title="U.S. ETP fund table">'
         '<table class="data-table data-table--dense data-table--sortable">'
         '<thead id="js-etp-thead"><tr>'

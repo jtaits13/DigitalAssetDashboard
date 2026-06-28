@@ -745,12 +745,14 @@ def deep_iframe_kpi_flatten_css(*, scope: str, zone: str) -> str:
 """
 
 
-DEEP_IFRAME_TABLE_PANEL_VERSION = "4"
+DEEP_IFRAME_TABLE_PANEL_VERSION = "5"
 
-# Header + N dense body rows (matches .data-table--dense padding/font in styles.css).
+# TMMF viewport is 420px (~11 dense body rows). Scale linearly for 18 rows.
+_TMMF_TABLE_SCROLL_PX = 420
+_TMMF_TABLE_VISIBLE_ROWS = 11
 DEEP_MARKET_TABLE_VISIBLE_ROWS = 18
 DEEP_MARKET_TABLE_SCROLL_HEIGHT = (
-    f"calc(2.35rem + {DEEP_MARKET_TABLE_VISIBLE_ROWS} * 2.05rem)"
+    f"{round(_TMMF_TABLE_SCROLL_PX * DEEP_MARKET_TABLE_VISIBLE_ROWS / _TMMF_TABLE_VISIBLE_ROWS)}px"
 )
 
 
@@ -780,10 +782,12 @@ def deep_iframe_table_panel_css(*, scope: str) -> str:
 {scope} .etp-mock-table-block--funds .etp-mock-table-meta {{
   margin-bottom: 0.35rem;
 }}
-{scope} .etp-mock-table-block--funds .table-wrap--scroll.rwa-split-table-scroll,
+{scope} .etp-mock-table-block--funds .table-wrap--scroll.deep-market-table-wrap,
 {scope} .etp-mock-table-block--funds .deep-market-table-wrap {{
+  --rwa-split-body-height: {DEEP_MARKET_TABLE_SCROLL_HEIGHT};
   height: {DEEP_MARKET_TABLE_SCROLL_HEIGHT} !important;
   max-height: {DEEP_MARKET_TABLE_SCROLL_HEIGHT} !important;
+  min-height: {DEEP_MARKET_TABLE_SCROLL_HEIGHT} !important;
   overflow: auto !important;
   margin-top: 0.35rem;
   margin-bottom: 0;
@@ -792,8 +796,8 @@ def deep_iframe_table_panel_css(*, scope: str) -> str:
   border: 1px solid var(--line, #dbe8f2) !important;
   border-radius: 8px !important;
   background: var(--surface, #fff) !important;
+  flex: none !important;
 }}
-{scope} .etp-mock-table-block--funds .rwa-split-table-scroll thead th,
 {scope} .etp-mock-table-block--funds .deep-market-table-wrap thead th {{
   position: sticky;
   top: 0;
@@ -825,13 +829,16 @@ def deep_iframe_table_panel_paint_js() -> str:
       el.style.setProperty("background", "#fff", "important");
     }});
     document.querySelectorAll(
-      ".etp-mock-table-block--funds .deep-market-table-wrap, .etp-mock-table-block--funds .rwa-split-table-scroll"
+      ".etp-mock-table-block--funds .deep-market-table-wrap"
     ).forEach(function (el) {{
+      el.style.setProperty("--rwa-split-body-height", "{scroll_h}", "important");
       el.style.setProperty("border", "1px solid #dbe8f2", "important");
       el.style.setProperty("border-radius", "8px", "important");
       el.style.setProperty("overflow", "auto", "important");
       el.style.setProperty("height", "{scroll_h}", "important");
       el.style.setProperty("max-height", "{scroll_h}", "important");
+      el.style.setProperty("min-height", "{scroll_h}", "important");
+      el.style.setProperty("flex", "none", "important");
       el.style.setProperty("margin-top", "0.35rem", "important");
       el.style.setProperty("background", "#fff", "important");
     }});
