@@ -23,7 +23,7 @@ _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
 
-_ETP_IFRAME_CSS_VERSION = "8"
+_ETP_IFRAME_CSS_VERSION = "9"
 ETP_CANVAS_OVERRIDE_VERSION = "6"
 ETP_TABLE_PANEL_VERSION = "6"
 
@@ -300,9 +300,19 @@ body.page-etp-iframe .rwa-table-modal--streamlit-fallback .rwa-table-modal__dial
 }
 """
     )
+    from streamlit_site_parity import (
+        deep_iframe_back_link_clickable_css,
+        deep_iframe_kpi_flatten_css,
+        deep_iframe_related_chips_css,
+        deep_iframe_table_height_lock_css,
+        deep_iframe_table_panel_css,
+    )
+
     chunks.append(deep_iframe_kpi_flatten_css(scope="body.page-etp-iframe", zone="etp"))
     chunks.append(deep_iframe_table_panel_css(scope="body.page-etp-iframe"))
     chunks.append(deep_iframe_table_height_lock_css(scope="body.page-etp-iframe"))
+    chunks.append(deep_iframe_related_chips_css(scope="body.page-etp-iframe", zone="etp"))
+    chunks.append(deep_iframe_back_link_clickable_css(scope="body.page-etp-iframe"))
     return "\n".join(chunks)
 
 

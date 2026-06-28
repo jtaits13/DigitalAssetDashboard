@@ -17,7 +17,7 @@ _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
 
-_NEWS_IFRAME_CSS_VERSION = "3"
+_NEWS_IFRAME_CSS_VERSION = "4"
 NEWS_CANVAS_OVERRIDE_VERSION = "1"
 NEWS_FEED_PANEL_VERSION = "1"
 
@@ -299,8 +299,17 @@ body.page-article-feed-iframe.page-etp.site-experience.page-inner--rich {
 }
 """
     )
+    from streamlit_site_parity import (
+        deep_iframe_back_link_clickable_css,
+        deep_iframe_news_feed_panel_css,
+        deep_iframe_related_chips_css,
+    )
+
     chunks.append(deep_iframe_news_feed_panel_css(scope="body.page-article-feed-iframe", zone="news"))
     chunks.append(deep_iframe_news_feed_panel_css(scope="body.page-article-feed-iframe.page-etp", zone="etp"))
+    chunks.append(deep_iframe_related_chips_css(scope="body.page-article-feed-iframe", zone="news"))
+    chunks.append(deep_iframe_related_chips_css(scope="body.page-article-feed-iframe.page-etp", zone="etp"))
+    chunks.append(deep_iframe_back_link_clickable_css(scope="body.page-article-feed-iframe"))
     return "\n".join(chunks)
 
 

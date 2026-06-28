@@ -269,6 +269,10 @@ body.page-rwa-global-iframe .rwa-table-modal--streamlit-fallback .rwa-table-moda
 }
 """
     )
+    from streamlit_site_parity import deep_iframe_back_link_clickable_css, deep_iframe_related_chips_css
+
+    chunks.append(deep_iframe_related_chips_css(scope="body.page-rwa-global-iframe", zone="rwa"))
+    chunks.append(deep_iframe_back_link_clickable_css(scope="body.page-rwa-global-iframe"))
     return "\n".join(chunks)
 
 

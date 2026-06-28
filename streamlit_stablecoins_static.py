@@ -22,7 +22,7 @@ _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
 
-_STABLE_IFRAME_CSS_VERSION = "6"
+_STABLE_IFRAME_CSS_VERSION = "7"
 STABLE_CANVAS_OVERRIDE_VERSION = "3"
 
 # GitHub Pages canvas tokens (static_home/styles.css --wash; zone --hx-stable-soft).
@@ -634,9 +634,15 @@ body.page-rwa-deep-stablecoins .rwa-table-modal--streamlit-fallback .rwa-table-m
 }
 """
     )
-    from streamlit_site_parity import deep_iframe_kpi_flatten_css
+    from streamlit_site_parity import (
+        deep_iframe_back_link_clickable_css,
+        deep_iframe_kpi_flatten_css,
+        deep_iframe_related_chips_css,
+    )
 
     chunks.append(deep_iframe_kpi_flatten_css(scope="body.page-rwa-deep-stablecoins", zone="stable"))
+    chunks.append(deep_iframe_related_chips_css(scope="body.page-rwa-deep-stablecoins", zone="stable"))
+    chunks.append(deep_iframe_back_link_clickable_css(scope="body.page-rwa-deep-stablecoins"))
     return "\n".join(chunks)
 
 

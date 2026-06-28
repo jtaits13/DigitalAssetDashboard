@@ -922,6 +922,133 @@ def deep_iframe_news_feed_panel_paint_js() -> str:
 """
 
 
+def _deep_zone_related_chip_tokens(zone: str) -> tuple[str, str, str]:
+    """Zone accent tokens for related-chip cards (bright-rgb, ink, dark)."""
+    z = (zone or "news").lower()
+    if z == "etp":
+        return (
+            "var(--hx-etp-bright-rgb, 80 113 136)",
+            "var(--hx-etp, #3e5c74)",
+            "var(--hx-etp-dark, #1f4c67)",
+        )
+    if z == "crypto":
+        return (
+            "var(--hx-crypto-bright-rgb, 46 125 138)",
+            "var(--hx-crypto, #2e7d8a)",
+            "var(--hx-crypto-dark, #1a4d56)",
+        )
+    if z == "stable":
+        return (
+            "var(--hx-stable-bright-rgb, 72 128 118)",
+            "var(--hx-stable, #487876)",
+            "var(--hx-stable-dark, #2a4f4a)",
+        )
+    if z == "tmmf":
+        return (
+            "var(--hx-tmmf-bright-rgb, 88 108 138)",
+            "var(--hx-tmmf, #586c8a)",
+            "var(--hx-tmmf-dark, #354358)",
+        )
+    if z == "rwa":
+        return (
+            "var(--hx-rwa-bright-rgb, 80 113 136)",
+            "var(--hx-rwa, #3e5c74)",
+            "var(--hx-rwa-dark, #1f4c67)",
+        )
+    return (
+        "var(--hx-rwa-bright-rgb, 80 113 136)",
+        "var(--hx-rwa, #3e5c74)",
+        "var(--hx-rwa-dark, #1f4c67)",
+    )
+
+
+def deep_iframe_related_chips_css(*, scope: str, zone: str = "news") -> str:
+    """Light card styling for Related chips (overrides dark inner-page zone bars)."""
+    bright_rgb, ink, dark = _deep_zone_related_chip_tokens(zone)
+    chip_sel = (
+        f"{scope} .home-related-chips,\n"
+        f"{scope} .etp-mock-zone__body > .home-related-chips,\n"
+        f"{scope} .inner-rich-zone .home-related-chips,\n"
+        f"{scope} .inner-rich-zone.zone--news .home-related-chips,\n"
+        f"{scope} .inner-rich-zone.zone--rwa .home-related-chips,\n"
+        f"{scope} .inner-rich-zone.zone--etp .home-related-chips,\n"
+        f"{scope} .inner-rich-zone.zone--crypto .home-related-chips,\n"
+        f"{scope} .inner-rich-zone.zone--stable .home-related-chips,\n"
+        f"{scope} .inner-rich-zone.zone--tmmf .home-related-chips"
+    )
+    label_sel = (
+        f"{scope} .home-related-chips__label,\n"
+        f"{scope} .etp-mock-zone__body > .home-related-chips__label,\n"
+        f"{scope} .inner-rich-zone .home-related-chips__label"
+    )
+    return f"""
+/* Related chips — white inset card (deep iframe parity) */
+{chip_sel} {{
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 0.35rem 0.45rem !important;
+  margin: 0 0 1rem !important;
+  padding: 0.65rem 0.85rem !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  background-color: #fff !important;
+  background-image: none !important;
+  border: 1px solid rgb({bright_rgb} / 0.16) !important;
+  border-left: 3px solid rgb({bright_rgb} / 0.42) !important;
+  box-shadow:
+    0 1px 2px rgb({bright_rgb} / 0.05),
+    0 4px 14px rgb({bright_rgb} / 0.06) !important;
+}}
+{label_sel} {{
+  font-size: 0.68rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  margin-right: 0.15rem !important;
+  color: {ink} !important;
+}}
+{scope} .home-related-chips .home-chip {{
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 0.22rem 0.58rem !important;
+  border-radius: 999px !important;
+  font-size: 0.76rem !important;
+  font-weight: 600 !important;
+  line-height: 1.25 !important;
+  color: {dark} !important;
+  background: rgba(243, 247, 251, 0.92) !important;
+  border: 1px solid rgb({bright_rgb} / 0.2) !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+}}
+{scope} .home-related-chips .home-chip:hover {{
+  color: {ink} !important;
+  border-color: rgb({bright_rgb} / 0.42) !important;
+  background: #f8fcfe !important;
+}}
+"""
+
+
+def deep_iframe_back_link_clickable_css(*, scope: str) -> str:
+    """Keep back pills interactive when the nav iframe overlaps the body iframe."""
+    return f"""
+/* Back pill — above nav dropdown well overlap */
+{scope} .page-back-below-header {{
+  position: relative !important;
+  z-index: 12 !important;
+  pointer-events: auto !important;
+}}
+{scope} .page-back-below-header a,
+{scope} p.back-link.back-link--below-header a {{
+  position: relative !important;
+  z-index: 13 !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}}
+"""
+
+
 def _iframe_etp_mock_css(css: str) -> str:
     """ETP iframe: no mock banners; scope ETP mock rules onto the iframe ``body``."""
     css = _strip_mock_design_banner_css(css)
@@ -3825,6 +3952,8 @@ html, body.page-home.home-nav-chrome-only.site-experience {{
   overflow: visible;
   height: auto;
   background: transparent !important;
+  /* Let clicks pass through the dropdown well to the body iframe back link below. */
+  pointer-events: none;
 }}
 body.page-home.home-nav-chrome-only.site-experience .site-header {{
   position: relative;
@@ -3833,6 +3962,7 @@ body.page-home.home-nav-chrome-only.site-experience .site-header {{
   margin: 0;
   overflow: visible;
   z-index: 2;
+  pointer-events: auto;
 }}
 body.page-home.home-nav-chrome-only.site-experience .home-nav-dropdown-well {{
   display: block;
@@ -3848,6 +3978,7 @@ body.page-home.home-nav-chrome-only.site-experience .home-nav-dropdown-well {{
 body.page-home.home-nav-chrome-only.site-experience .site-nav__dropdown,
 body.page-home.home-nav-chrome-only.site-experience .site-nav__sub {{
   overflow: visible;
+  pointer-events: auto;
 }}
 body.page-home.home-nav-chrome-only.site-experience .site-nav__sub {{
   z-index: 80;

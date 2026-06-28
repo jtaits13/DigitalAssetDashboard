@@ -1066,9 +1066,11 @@ body.page-rwa-deep-mmf #js-deep-ko .review-note.ko-disclaimer {
 }
 """
     )
-    from streamlit_site_parity import deep_iframe_kpi_flatten_css
+    from streamlit_site_parity import deep_iframe_kpi_flatten_css, deep_iframe_back_link_clickable_css, deep_iframe_related_chips_css
 
     chunks.append(deep_iframe_kpi_flatten_css(scope="body.page-rwa-deep-mmf", zone="tmmf"))
+    chunks.append(deep_iframe_related_chips_css(scope="body.page-rwa-deep-mmf", zone="tmmf"))
+    chunks.append(deep_iframe_back_link_clickable_css(scope="body.page-rwa-deep-mmf"))
     return "\n".join(chunks)
 
 
@@ -1324,7 +1326,7 @@ def _cached_tmmf_deep_payload() -> dict[str, Any]:
     return load_tmmf_deep_payload()
 
 
-_TMMF_IFRAME_CSS_VERSION = "14"
+_TMMF_IFRAME_CSS_VERSION = "15"
 
 
 @st.cache_data(show_spinner=False, ttl=3600)

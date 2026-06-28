@@ -266,6 +266,10 @@ body.{spec.iframe_class} .rwa-table-modal--streamlit-fallback .rwa-table-modal__
 }}
 """
     )
+    from streamlit_site_parity import deep_iframe_back_link_clickable_css, deep_iframe_related_chips_css
+
+    chunks.append(deep_iframe_related_chips_css(scope=f"body.{spec.iframe_class}", zone="rwa"))
+    chunks.append(deep_iframe_back_link_clickable_css(scope=f"body.{spec.iframe_class}"))
     return "\n".join(chunks)
 
 
