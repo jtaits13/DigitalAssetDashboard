@@ -24,15 +24,40 @@ HOME_PREVIEW_ROWS = 5
 # Small seam between chrome iframe and body (avoids overlap with jump nav).
 HOME_HERO_TO_CONTENT_GAP = "2px"
 HOME_CHROME_IFRAME_INITIAL_HEIGHT = 360
-SUBPAGE_NAV_IFRAME_INITIAL_HEIGHT = 64
 # Extra pixels so jump-nav pills are not clipped by the chrome iframe edge.
 HOME_CHROME_HEIGHT_SLACK_PX = 10
 SUBPAGE_NAV_HEIGHT_SLACK_PX = 6
+SUBPAGE_NAV_HEADER_EST_PX = 64
+# Reserve below the header for primary nav dropdowns (RWA Market ≈ 3 rows; nested flyouts are horizontal).
+SUBPAGE_NAV_DROPDOWN_WELL_PX = 132
+SUBPAGE_NAV_IFRAME_INITIAL_HEIGHT = (
+    SUBPAGE_NAV_HEADER_EST_PX + SUBPAGE_NAV_DROPDOWN_WELL_PX + SUBPAGE_NAV_HEIGHT_SLACK_PX
+)
 
-# Shared JS: measure primary nav band + any open dropdown panels (used in iframe + host sync).
+# Shared JS: measure primary nav band (+ optional static dropdown well on subpages).
 _NAV_BAND_HEIGHT_MEASURE_JS = """
+  function measureNavBandWithWell(inner, slack) {
+    slack = slack || 0;
+    var docTop = inner.documentElement.getBoundingClientRect().top;
+    var bottom = docTop;
+    inner.querySelectorAll(".site-header").forEach(function (el) {
+      bottom = Math.max(bottom, el.getBoundingClientRect().bottom);
+    });
+    var well = inner.querySelector(".home-nav-dropdown-well");
+    if (well) {
+      bottom = Math.max(bottom, well.getBoundingClientRect().bottom);
+    }
+    return Math.ceil(bottom - docTop + slack);
+  }
   function measureNavBandHeight(inner, slack) {
     slack = slack || 0;
+    if (
+      inner.body &&
+      inner.body.classList.contains("home-nav-chrome-only") &&
+      inner.querySelector(".home-nav-dropdown-well")
+    ) {
+      return measureNavBandWithWell(inner, slack);
+    }
     var docTop = inner.documentElement.getBoundingClientRect().top;
     var bottom = docTop;
     inner.querySelectorAll(".site-header").forEach(function (el) {
@@ -817,6 +842,12 @@ SUBPAGE_STREAMLIT_CSS = """
 .stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe),
 .stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) {
   z-index: 1 !important;
+}
+/* Home nav dropdown well: overlap body so reserved menu space does not add a visible gap. */
+.stApp:has(.streamlit-subpage-active):has(.home-chrome-iframe-marker) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe),
+.stApp:has(.streamlit-subpage-root):has(.home-chrome-iframe-marker) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) {
+  margin-top: -SUBPAGE_NAV_DROPDOWN_WELL_PLACEHOLDERpx !important;
+  position: relative !important;
 }
 /* TMMF (and other no-nav subpages): hide empty host back-link shells / phantom pills. */
 .stApp:has(.streamlit-subpage-no-nav) .site-header,
@@ -1892,7 +1923,7 @@ def iframe_chrome_height_script() -> str:
 
 
 def iframe_home_nav_height_script() -> str:
-    """Resize home-style nav iframe for header band + open dropdown menus."""
+    """Resize home-style nav iframe to header + static transparent dropdown well."""
     slack = max(SUBPAGE_NAV_HEIGHT_SLACK_PX, HOME_CHROME_HEIGHT_SLACK_PX)
     return f"""
 <script>
@@ -1900,7 +1931,7 @@ def iframe_home_nav_height_script() -> str:
   var slack = {slack};
 {_NAV_BAND_HEIGHT_MEASURE_JS}
   function sendHeight() {{
-    var h = measureNavBandHeight(document, slack);
+    var h = measureNavBandWithWell(document, slack);
     if (h <= 40) return;
     window.parent.postMessage({{ type: "streamlit:setFrameHeight", height: h }}, "*");
     try {{
@@ -1908,32 +1939,14 @@ def iframe_home_nav_height_script() -> str:
       window.parent.postMessage({{ type: "jpm-subpage-nav-height", height: h }}, "*");
     }} catch (e) {{}}
   }}
-  function bindDropdownResize() {{
-    document.querySelectorAll(".site-nav__dropdown").forEach(function (dd) {{
-      if (dd.dataset.jpmNavHeightBound) return;
-      dd.dataset.jpmNavHeightBound = "1";
-      dd.addEventListener("mouseenter", sendHeight);
-      dd.addEventListener("mouseleave", function () {{
-        setTimeout(sendHeight, 80);
-      }});
-      dd.addEventListener("focusin", sendHeight);
-      dd.addEventListener("focusout", function () {{
-        setTimeout(sendHeight, 80);
-      }});
-    }});
-  }}
   sendHeight();
-  bindDropdownResize();
-  window.addEventListener("load", function () {{
-    sendHeight();
-    bindDropdownResize();
-  }});
+  window.addEventListener("load", sendHeight);
   if (document.fonts && document.fonts.ready) {{
     document.fonts.ready.then(sendHeight);
   }}
   if (typeof ResizeObserver !== "undefined") {{
     var ro = new ResizeObserver(sendHeight);
-    document.querySelectorAll(".site-header, .site-nav__sub").forEach(function (el) {{
+    document.querySelectorAll(".site-header, .home-nav-dropdown-well").forEach(function (el) {{
       ro.observe(el);
     }});
   }}
@@ -2014,6 +2027,10 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
   }}
 
   function applyNavChromeFrameHeight(frame, inner, msgH) {{
+    if (inner.querySelector(".home-nav-dropdown-well")) {{
+      applyFrameHeight(frame, measureNavBandWithWell(inner, navSlack), 40);
+      return;
+    }}
     var measured = measureNavBandHeight(inner, navSlack);
     var reported = Number(msgH);
     var h = measured;
@@ -2930,7 +2947,7 @@ def inject_subpage_styles(*, kind: str = "article") -> None:
         "tmmf", "stablecoins", "crypto", "etp", "news_feed", "rwa_global", "rwa_explore_at", "rwa_explore_mp"
     ) else ""
     st.markdown(
-        f"<style>{inner_css}\n{SUBPAGE_STREAMLIT_CSS}\n{deep_iframe_css}</style>",
+        f"<style>{inner_css}\n{SUBPAGE_STREAMLIT_CSS.replace('SUBPAGE_NAV_DROPDOWN_WELL_PLACEHOLDER', str(SUBPAGE_NAV_DROPDOWN_WELL_PX))}\n{deep_iframe_css}</style>",
         unsafe_allow_html=True,
     )
 
@@ -3406,25 +3423,42 @@ def build_home_chrome_iframe_html(*, include_refresh: bool = False) -> str:
 def build_home_nav_iframe_html(*, active: str) -> str:
     """Home chrome nav band only (same stylesheet + nav markup as the home page)."""
     css = _cached_iframe_home_stylesheet()
-    nav_extra = """
-html, body.page-home.home-nav-chrome-only.site-experience {
+    well_px = SUBPAGE_NAV_DROPDOWN_WELL_PX
+    nav_extra = f"""
+html, body.page-home.home-nav-chrome-only.site-experience {{
   overflow: visible;
   height: auto;
   background: transparent !important;
-}
-body.page-home.home-nav-chrome-only.site-experience .site-header {
+}}
+body.page-home.home-nav-chrome-only.site-experience .site-header {{
   position: relative;
   top: auto;
   width: 100%;
   margin: 0;
   overflow: visible;
-}
+  z-index: 2;
+}}
+body.page-home.home-nav-chrome-only.site-experience .home-nav-dropdown-well {{
+  display: block;
+  height: {well_px}px;
+  min-height: {well_px}px;
+  max-height: {well_px}px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  pointer-events: none;
+}}
 body.page-home.home-nav-chrome-only.site-experience .site-nav__dropdown,
-body.page-home.home-nav-chrome-only.site-experience .site-nav__sub {
+body.page-home.home-nav-chrome-only.site-experience .site-nav__sub {{
   overflow: visible;
-}
+}}
+body.page-home.home-nav-chrome-only.site-experience .site-nav__sub {{
+  z-index: 80;
+}}
 """
-    body = render_site_nav_html(active=active, is_landing=False, for_streamlit=True).strip()
+    nav = render_site_nav_html(active=active, is_landing=False, for_streamlit=True).strip()
+    body = f'{nav}\n<div class="home-nav-dropdown-well" aria-hidden="true"></div>'
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -3441,7 +3475,7 @@ body.page-home.home-nav-chrome-only.site-experience .site-nav__sub {
 
 
 def render_home_chrome_nav(*, active: str) -> None:
-    """Render the home page nav band on a subpage (same iframe chrome as ``render_home_chrome``)."""
+    """Render the home page nav band on a subpage (nav iframe + static dropdown well)."""
     st.markdown(
         '<span class="home-chrome-iframe-marker" hidden aria-hidden="true"></span>',
         unsafe_allow_html=True,
