@@ -1097,17 +1097,28 @@ def deep_iframe_related_chips_css(*, scope: str, zone: str = "news") -> str:
 """
 
 
-def deep_iframe_back_link_clickable_css(*, scope: str) -> str:
-    """Keep back pills interactive when the nav iframe overlaps the body iframe."""
+def deep_iframe_back_link_clickable_css(*, scope: str, well_px: int | None = None) -> str:
+    """Push back pills below the sticky home-nav iframe overlap so they stay clickable."""
+    clearance = (well_px if well_px is not None else SUBPAGE_NAV_DROPDOWN_WELL_PX) + SUBPAGE_NAV_HEIGHT_SLACK_PX
     return f"""
-/* Back pill — above nav dropdown well overlap */
+/* Home chrome nav uses a negative body-iframe margin; reserve clearance so back pills are not under the nav iframe. */
+{scope} {{
+  padding-top: {clearance}px !important;
+  box-sizing: border-box;
+}}
 {scope} .page-back-below-header {{
   position: relative !important;
   z-index: 12 !important;
   pointer-events: auto !important;
+  margin-top: 0 !important;
 }}
 {scope} .page-back-below-header a,
-{scope} p.back-link.back-link--below-header a {{
+{scope} p.back-link.back-link--below-header a,
+{scope} a.tmmf-st-back-pill,
+{scope} a.tmmf-server-back-anchor,
+{scope} a.stable-server-back-anchor,
+{scope} a.etp-server-back-anchor,
+{scope} a.rwa-asset-server-back-anchor {{
   position: relative !important;
   z-index: 13 !important;
   pointer-events: auto !important;
@@ -1950,8 +1961,19 @@ def iframe_internal_link_script() -> str:
       }});
     }});
   }}
-  bindInternalLinks();
-  window.addEventListener("load", bindInternalLinks);
+  function watchInternalLinks() {{
+    bindInternalLinks();
+    if (typeof MutationObserver === "undefined") return;
+    if (window.__jpmIframeNavMo) return;
+    var mo = new MutationObserver(bindInternalLinks);
+    mo.observe(document.documentElement, {{ childList: true, subtree: true }});
+    window.__jpmIframeNavMo = mo;
+  }}
+  watchInternalLinks();
+  window.addEventListener("load", watchInternalLinks);
+  [50, 200, 800, 2000].forEach(function (ms) {{
+    setTimeout(watchInternalLinks, ms);
+  }});
 }})();
 </script>"""
 
@@ -2085,6 +2107,28 @@ STREAMLIT_SITE_NAV_ROUTER_JS = """
     return href.charAt(0) === "/" || href.charAt(0) === "?";
   }
 
+  function bindIframeBackLinks() {
+    doc.querySelectorAll("iframe").forEach(function (frame) {
+      try {
+        var inner = frame.contentDocument;
+        if (!inner || !inner.body) return;
+        if (inner.body.classList.contains("home-nav-chrome-only")) return;
+        if (inner.body.classList.contains("subpage-nav-chrome")) return;
+        inner.querySelectorAll(
+          ".page-back-below-header a, p.back-link a, a.tmmf-st-back-pill, a.tmmf-server-back-anchor, a.stable-server-back-anchor, a.etp-server-back-anchor, a.rwa-asset-server-back-anchor"
+        ).forEach(function (a) {
+          if (a.dataset.jpmHostNavBound) return;
+          if (!shouldHandleLink(a)) return;
+          a.dataset.jpmHostNavBound = "1";
+          a.addEventListener("click", function (ev) {
+            ev.preventDefault();
+            navigate(a.getAttribute("href"));
+          });
+        });
+      } catch (e) {}
+    });
+  }
+
   win.addEventListener("message", function (ev) {
     if (!ev.data || ev.data.type !== "jpm-navigate") return;
     navigate(ev.data.href);
@@ -2102,6 +2146,16 @@ STREAMLIT_SITE_NAV_ROUTER_JS = """
     },
     true
   );
+
+  bindIframeBackLinks();
+  window.addEventListener("load", bindIframeBackLinks);
+  [100, 400, 1200, 3000, 6000].forEach(function (ms) {
+    setTimeout(bindIframeBackLinks, ms);
+  });
+  if (typeof MutationObserver !== "undefined") {
+    var iframeMo = new MutationObserver(bindIframeBackLinks);
+    iframeMo.observe(doc.body, { childList: true, subtree: true });
+  }
 })();
 </script>
 """
