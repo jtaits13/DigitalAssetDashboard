@@ -21,9 +21,9 @@ _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
 
-_CRYPTO_IFRAME_CSS_VERSION = "7"
-CRYPTO_CANVAS_OVERRIDE_VERSION = "5"
-CRYPTO_TABLE_PANEL_VERSION = "3"
+_CRYPTO_IFRAME_CSS_VERSION = "8"
+CRYPTO_CANVAS_OVERRIDE_VERSION = "6"
+CRYPTO_TABLE_PANEL_VERSION = "4"
 
 CRYPTO_GH_PAGE_WASH = "#f3f7fb"
 CRYPTO_GH_ZONE_SOFT = "#f1f4f7"
@@ -514,7 +514,7 @@ def get_crypto_iframe_payloads() -> dict[str, Any]:
 
 
 @st.cache_resource(show_spinner=False)
-def _cached_iframe_crypto_stylesheet_v7() -> str:
+def _cached_iframe_crypto_stylesheet_v8() -> str:
     """Same CSS stack as ``static_home/crypto-prices.html`` (iframe-safe, no mock banners)."""
     from streamlit_site_parity import _iframe_crypto_mock_css, deep_iframe_kpi_flatten_css, deep_iframe_table_panel_css
 
@@ -683,7 +683,7 @@ def build_crypto_server_iframe_html(
         iframe_internal_link_script,
     )
 
-    css = _cached_iframe_crypto_stylesheet_v7()
+    css = _cached_iframe_crypto_stylesheet_v8()
     override_css = crypto_github_canvas_override_css()
     table_panel_css = deep_iframe_table_panel_css(scope="body.page-crypto-iframe")
     back_link = _crypto_back_link_html(href=back_href, label=back_label)

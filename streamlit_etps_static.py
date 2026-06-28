@@ -22,9 +22,9 @@ _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
 
-_ETP_IFRAME_CSS_VERSION = "5"
-ETP_CANVAS_OVERRIDE_VERSION = "3"
-ETP_TABLE_PANEL_VERSION = "3"
+_ETP_IFRAME_CSS_VERSION = "6"
+ETP_CANVAS_OVERRIDE_VERSION = "4"
+ETP_TABLE_PANEL_VERSION = "4"
 
 ETP_GH_PAGE_WASH = "#f3f7fb"
 ETP_GH_ZONE_SOFT = "#eef2f7"
@@ -173,7 +173,7 @@ def get_etp_iframe_payloads(*, user_agent: str) -> dict[str, Any]:
 
 
 @st.cache_resource(show_spinner=False)
-def _cached_iframe_etp_stylesheet_v5() -> str:
+def _cached_iframe_etp_stylesheet_v6() -> str:
     """Same CSS stack as ``static_home/etps.html`` (iframe-safe, no mock banners)."""
     from streamlit_site_parity import (
         _iframe_etp_mock_css,
@@ -605,7 +605,7 @@ def build_etp_server_iframe_html(
         iframe_internal_link_script,
     )
 
-    css = _cached_iframe_etp_stylesheet_v5()
+    css = _cached_iframe_etp_stylesheet_v6()
     override_css = etp_github_canvas_override_css()
     table_panel_css = deep_iframe_table_panel_css(scope="body.page-etp-iframe")
     back_link = _etp_back_link_html(href=back_href, label=back_label)

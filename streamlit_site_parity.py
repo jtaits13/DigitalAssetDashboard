@@ -745,7 +745,13 @@ def deep_iframe_kpi_flatten_css(*, scope: str, zone: str) -> str:
 """
 
 
-DEEP_IFRAME_TABLE_PANEL_VERSION = "3"
+DEEP_IFRAME_TABLE_PANEL_VERSION = "4"
+
+# Header + N dense body rows (matches .data-table--dense padding/font in styles.css).
+DEEP_MARKET_TABLE_VISIBLE_ROWS = 18
+DEEP_MARKET_TABLE_SCROLL_HEIGHT = (
+    f"calc(2.35rem + {DEEP_MARKET_TABLE_VISIBLE_ROWS} * 2.05rem)"
+)
 
 
 def deep_iframe_table_panel_css(*, scope: str) -> str:
@@ -776,9 +782,9 @@ def deep_iframe_table_panel_css(*, scope: str) -> str:
 }}
 {scope} .etp-mock-table-block--funds .table-wrap--scroll.rwa-split-table-scroll,
 {scope} .etp-mock-table-block--funds .deep-market-table-wrap {{
-  height: auto !important;
-  max-height: min(70vh, 900px) !important;
-  overflow: auto;
+  height: {DEEP_MARKET_TABLE_SCROLL_HEIGHT} !important;
+  max-height: {DEEP_MARKET_TABLE_SCROLL_HEIGHT} !important;
+  overflow: auto !important;
   margin-top: 0.35rem;
   margin-bottom: 0;
   max-width: 100%;
@@ -807,28 +813,29 @@ def deep_iframe_table_panel_css(*, scope: str) -> str:
 
 def deep_iframe_table_panel_paint_js() -> str:
     """Re-apply market table panel chrome after canvas flatten JS runs."""
-    return """
-  function paintMarketTablePanels() {
-    document.querySelectorAll(".etp-mock-table-block--funds").forEach(function (el) {
+    scroll_h = DEEP_MARKET_TABLE_SCROLL_HEIGHT
+    return f"""
+  function paintMarketTablePanels() {{
+    document.querySelectorAll(".etp-mock-table-block--funds").forEach(function (el) {{
       el.style.setProperty("padding", "0.95rem 1rem 1rem", "important");
       el.style.setProperty("margin-top", "0", "important");
       el.style.setProperty("border-radius", "10px", "important");
       el.style.setProperty("border", "1px solid rgb(80 113 136 / 0.16)", "important");
       el.style.setProperty("box-shadow", "0 1px 4px rgb(62 92 116 / 0.06)", "important");
       el.style.setProperty("background", "#fff", "important");
-    });
+    }});
     document.querySelectorAll(
       ".etp-mock-table-block--funds .deep-market-table-wrap, .etp-mock-table-block--funds .rwa-split-table-scroll"
-    ).forEach(function (el) {
+    ).forEach(function (el) {{
       el.style.setProperty("border", "1px solid #dbe8f2", "important");
       el.style.setProperty("border-radius", "8px", "important");
       el.style.setProperty("overflow", "auto", "important");
-      el.style.setProperty("height", "auto", "important");
-      el.style.setProperty("max-height", "min(70vh, 900px)", "important");
+      el.style.setProperty("height", "{scroll_h}", "important");
+      el.style.setProperty("max-height", "{scroll_h}", "important");
       el.style.setProperty("margin-top", "0.35rem", "important");
       el.style.setProperty("background", "#fff", "important");
-    });
-  }
+    }});
+  }}
 """
 
 
