@@ -745,7 +745,7 @@ def deep_iframe_kpi_flatten_css(*, scope: str, zone: str) -> str:
 """
 
 
-DEEP_IFRAME_TABLE_PANEL_VERSION = "2"
+DEEP_IFRAME_TABLE_PANEL_VERSION = "3"
 
 
 def deep_iframe_table_panel_css(*, scope: str) -> str:
@@ -776,8 +776,8 @@ def deep_iframe_table_panel_css(*, scope: str) -> str:
 }}
 {scope} .etp-mock-table-block--funds .table-wrap--scroll.rwa-split-table-scroll,
 {scope} .etp-mock-table-block--funds .deep-market-table-wrap {{
-  height: var(--tmmf-table-scroll-height, var(--rwa-split-body-height, 420px));
-  max-height: var(--tmmf-table-scroll-height, var(--rwa-split-body-height, 420px));
+  height: auto !important;
+  max-height: min(70vh, 900px) !important;
   overflow: auto;
   margin-top: 0.35rem;
   margin-bottom: 0;
@@ -823,8 +823,8 @@ def deep_iframe_table_panel_paint_js() -> str:
       el.style.setProperty("border", "1px solid #dbe8f2", "important");
       el.style.setProperty("border-radius", "8px", "important");
       el.style.setProperty("overflow", "auto", "important");
-      el.style.setProperty("max-height", "420px", "important");
-      el.style.setProperty("height", "420px", "important");
+      el.style.setProperty("height", "auto", "important");
+      el.style.setProperty("max-height", "min(70vh, 900px)", "important");
       el.style.setProperty("margin-top", "0.35rem", "important");
       el.style.setProperty("background", "#fff", "important");
     });
