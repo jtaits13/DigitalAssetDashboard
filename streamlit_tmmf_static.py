@@ -91,6 +91,12 @@ _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH = """
       tableHtml: html,
     };
     try {
+      var parentWin = window.parent && window.parent !== window ? window.parent : null;
+      if (parentWin && typeof parentWin.__jpmOpenTableFullscreenHost === "function") {
+        parentWin.__jpmOpenTableFullscreenHost(msg);
+        window.__TMMF_MODAL_OPEN = true;
+        return true;
+      }
       if (typeof window.__jpmOpenTableFullscreenHost === "function") {
         window.__jpmOpenTableFullscreenHost(msg);
         window.__TMMF_MODAL_OPEN = true;
@@ -121,7 +127,10 @@ _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH = """
 
   function postCloseToHost() {
     try {
-      if (typeof window.__jpmCloseTableFullscreenHost === "function") {
+      var parentWin = window.parent && window.parent !== window ? window.parent : null;
+      if (parentWin && typeof parentWin.__jpmCloseTableFullscreenHost === "function") {
+        parentWin.__jpmCloseTableFullscreenHost();
+      } else if (typeof window.__jpmCloseTableFullscreenHost === "function") {
         window.__jpmCloseTableFullscreenHost();
       }
       if (typeof window.postMessage === "function") {

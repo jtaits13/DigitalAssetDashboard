@@ -850,7 +850,12 @@ SUBPAGE_STREAMLIT_CSS = """
 .stApp:has(.streamlit-subpage-active):has(.home-chrome-iframe-marker) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe),
 .stApp:has(.streamlit-subpage-root):has(.home-chrome-iframe-marker) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) {
   margin-top: -SUBPAGE_NAV_DROPDOWN_WELL_PLACEHOLDERpx !important;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
   position: relative !important;
+}
+.stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) iframe {
+  min-height: 0 !important;
 }
 /* TMMF (and other no-nav subpages): hide empty host back-link shells / phantom pills. */
 .stApp:has(.streamlit-subpage-no-nav) .site-header,
@@ -2084,11 +2089,10 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
 
   function resolveDeepBodyHeight(inner, msgH) {{
     var measured = measureDeepRwaBodyHeight(inner);
+    if (measured !== null) return measured;
     var reported = Number(msgH);
-    if (isFinite(reported) && reported > 200) {{
-      return measured !== null ? Math.max(measured, reported) : reported;
-    }}
-    return measured;
+    if (isFinite(reported) && reported > 200) return reported;
+    return null;
   }}
 
   function isTmmfBodyIframe(inner) {{

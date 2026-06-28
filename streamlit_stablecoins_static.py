@@ -21,8 +21,8 @@ _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
 
-_STABLE_IFRAME_CSS_VERSION = "2"
-STABLE_CANVAS_OVERRIDE_VERSION = "1"
+_STABLE_IFRAME_CSS_VERSION = "3"
+STABLE_CANVAS_OVERRIDE_VERSION = "2"
 
 # GitHub Pages canvas tokens (static_home/styles.css --wash; zone --hx-stable-soft).
 STABLE_GH_PAGE_WASH = "#f3f7fb"
@@ -175,6 +175,60 @@ _STABLE_SERVER_CHART_BOOT_JS = """
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", bootChart);
   else bootChart();
 })();
+"""
+
+_STABLE_IFRAME_TABLE_HOST_BOOTSTRAP_JS = """
+<script>
+(function () {
+  var win = window.parent && window.parent !== window ? window.parent : window;
+  var doc = win.document;
+  if (win.__jpmStableIframeTableHostBound) return;
+  win.__jpmStableIframeTableHostBound = true;
+
+  function stableBodyFrame() {
+    var frames = doc.querySelectorAll("iframe");
+    for (var i = 0; i < frames.length; i++) {
+      try {
+        var inner = frames[i].contentDocument;
+        if (
+          inner &&
+          inner.body &&
+          inner.body.classList &&
+          inner.body.classList.contains("mock-stable-inner")
+        ) {
+          return { frame: frames[i], inner: inner, win: inner.defaultView || inner.parentWindow };
+        }
+      } catch (e) {}
+    }
+    return null;
+  }
+
+  function bootTables() {
+    var hit = stableBodyFrame();
+    if (!hit || !hit.win) return false;
+    if (typeof hit.win.__tmmfWireServerTables === "function") {
+      hit.win.__tmmfWireServerTables();
+      return true;
+    }
+    return false;
+  }
+
+  function boot() {
+    bootTables();
+  }
+
+  boot();
+  win.addEventListener("load", boot);
+  [100, 400, 1200, 3000, 6000, 10000].forEach(function (ms) {
+    win.setTimeout(boot, ms);
+  });
+  if (typeof MutationObserver !== "undefined") {
+    var mo = new MutationObserver(boot);
+    mo.observe(doc.body, { childList: true, subtree: true });
+    win.setTimeout(function () { mo.disconnect(); }, 20000);
+  }
+})();
+</script>
 """
 
 _STABLE_IFRAME_BACK_LINK = """
@@ -333,6 +387,11 @@ def stablecoins_host_canvas_override_js(*, version: str = STABLE_CANVAS_OVERRIDE
 }})();
 </script>
 """
+
+
+def inject_stablecoins_iframe_table_bootstrap() -> None:
+    """Re-wire table fullscreen/download on the Stablecoins body iframe from the Streamlit host."""
+    components.html(_STABLE_IFRAME_TABLE_HOST_BOOTSTRAP_JS, height=0, width=0)
 
 
 def inject_stablecoins_host_canvas_override() -> None:
@@ -531,7 +590,8 @@ def build_stablecoins_server_iframe_html(
     override_css = stablecoins_github_canvas_override_css()
     back_link = _stable_back_link_html(href=back_href, label=back_label)
     zone = build_stablecoins_server_zone_html(payload=payload, related_chips=related_chips)
-    js_libs = _read_js_files(("static-base.js", "table-fullscreen.js", "table-download.js"))
+    table_js_libs = _read_js_files(("table-fullscreen.js", "table-download.js"))
+    chart_js_libs = _read_js_files(("static-base.js",))
     export_json = json.dumps(build_stablecoins_server_export_config(payload))
     net = payload.get("networks") or {}
     chart_cfg = json.dumps(
@@ -560,8 +620,7 @@ def build_stablecoins_server_iframe_html(
 {zone}
 <script defer src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
 <script>
-{js_libs}
-window.__STABLE_SERVER_CHART = {chart_cfg};
+{table_js_libs}
 window.__TMMF_SERVER_EXPORTS = {export_json};
 </script>
 <script>
@@ -569,6 +628,10 @@ window.__TMMF_SERVER_EXPORTS = {export_json};
 </script>
 <script>
 {_TMMF_SERVER_TABLE_WIRE_JS}
+</script>
+<script>
+{chart_js_libs}
+window.__STABLE_SERVER_CHART = {chart_cfg};
 </script>
 <script>
 {_STABLE_SERVER_CHART_BOOT_JS}
@@ -592,8 +655,6 @@ window.__TMMF_SERVER_EXPORTS = {export_json};
       "main.page-shell.etp-mock-shell",
       "article.etp-mock-zone",
       "#js-deep-insights",
-      "#js-deep-dashboard",
-      "#js-stable-share-movers",
       "#deep-net-wrap",
       "#deep-plat-wrap",
       "#js-deep-footer-note",
@@ -601,7 +662,6 @@ window.__TMMF_SERVER_EXPORTS = {export_json};
       var el = document.querySelector(sel);
       if (el) ro.observe(el);
     }});
-    document.querySelectorAll(".plotly-graph-div").forEach(function (el) {{ ro.observe(el); }});
   }}
   sendHeight();
   window.addEventListener("load", function () {{
@@ -613,7 +673,7 @@ window.__TMMF_SERVER_EXPORTS = {export_json};
       sendHeight();
       bindObservers();
     }});
-    ["article.etp-mock-zone", "#js-deep-dashboard", "#deep-net-wrap", "#deep-plat-wrap"].forEach(function (sel) {{
+    ["article.etp-mock-zone", "#deep-net-wrap", "#deep-plat-wrap"].forEach(function (sel) {{
       var el = document.querySelector(sel);
       if (el) mo.observe(el, {{ childList: true, subtree: true, attributes: true }});
     }});
@@ -677,3 +737,4 @@ def render_stablecoins_body_iframe(
         height=1200,
     )
     inject_stablecoins_host_canvas_override()
+    inject_stablecoins_iframe_table_bootstrap()
