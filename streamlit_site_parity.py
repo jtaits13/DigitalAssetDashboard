@@ -29,6 +29,34 @@ SUBPAGE_NAV_IFRAME_INITIAL_HEIGHT = 64
 HOME_CHROME_HEIGHT_SLACK_PX = 10
 SUBPAGE_NAV_HEIGHT_SLACK_PX = 6
 
+# Shared JS: measure primary nav band + any open dropdown panels (used in iframe + host sync).
+_NAV_BAND_HEIGHT_MEASURE_JS = """
+  function measureNavBandHeight(inner, slack) {
+    slack = slack || 0;
+    var docTop = inner.documentElement.getBoundingClientRect().top;
+    var bottom = docTop;
+    inner.querySelectorAll(".site-header").forEach(function (el) {
+      bottom = Math.max(bottom, el.getBoundingClientRect().bottom);
+    });
+    inner.querySelectorAll(".site-nav__sub").forEach(function (sub) {
+      var r = sub.getBoundingClientRect();
+      if (r.height > 1 && r.width > 1) {
+        bottom = Math.max(bottom, r.bottom);
+      }
+    });
+    return Math.ceil(bottom - docTop + slack);
+  }
+  function isNavChromeBody(inner) {
+    return !!(
+      inner &&
+      inner.body &&
+      inner.body.classList &&
+      (inner.body.classList.contains("subpage-nav-chrome") ||
+        inner.body.classList.contains("home-nav-chrome-only"))
+    );
+  }
+"""
+
 # Streamlit multipage routes (filename stem → path)
 PAGES = {
     "home": "streamlit_app.py",
@@ -112,13 +140,15 @@ section[data-testid="stSidebar"] { display: none !important; }
   margin-right: calc(50% - 50vw) !important;
   padding: 0 !important;
   overflow: visible !important;
+  max-height: none !important;
   background: transparent !important;
+  z-index: 200 !important;
 }
 .stApp [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) iframe {
   display: block !important;
   width: 100% !important;
   border: 0;
-  overflow: hidden !important;
+  overflow: visible !important;
   background: transparent !important;
 }
 .stApp .home-hero-content-gap {
@@ -754,13 +784,14 @@ SUBPAGE_STREAMLIT_CSS = """
 .stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) {
   width: 100vw !important;
   max-width: 100vw !important;
+  max-height: none !important;
   margin-left: calc(50% - 50vw) !important;
   margin-right: calc(50% - 50vw) !important;
   padding: 0 !important;
   overflow: visible !important;
   position: sticky !important;
   top: 0 !important;
-  z-index: 100 !important;
+  z-index: 200 !important;
   background: transparent !important;
 }
 .stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) iframe,
@@ -768,7 +799,7 @@ SUBPAGE_STREAMLIT_CSS = """
   display: block !important;
   width: 100% !important;
   border: 0;
-  overflow: hidden !important;
+  overflow: visible !important;
   background: transparent !important;
 }
 .stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker),
@@ -1265,30 +1296,41 @@ def iframe_subpage_nav_height_script() -> str:
 <script>
 (function () {{
   var slack = {slack};
-  function measureNavHeight() {{
-    var docTop = document.documentElement.getBoundingClientRect().top;
-    var bottom = docTop;
-    document.querySelectorAll(".site-header").forEach(function (el) {{
-      bottom = Math.max(bottom, el.getBoundingClientRect().bottom);
-    }});
-    return Math.ceil(bottom - docTop + slack);
-  }}
+{_NAV_BAND_HEIGHT_MEASURE_JS}
   function sendHeight() {{
-    var h = measureNavHeight();
+    var h = measureNavBandHeight(document, slack);
     if (h <= 40) return;
     window.parent.postMessage({{ type: "streamlit:setFrameHeight", height: h }}, "*");
     try {{
       window.parent.postMessage({{ type: "jpm-subpage-nav-height", height: h }}, "*");
     }} catch (e) {{}}
   }}
+  function bindDropdownResize() {{
+    document.querySelectorAll(".site-nav__dropdown").forEach(function (dd) {{
+      if (dd.dataset.jpmNavHeightBound) return;
+      dd.dataset.jpmNavHeightBound = "1";
+      dd.addEventListener("mouseenter", sendHeight);
+      dd.addEventListener("mouseleave", function () {{
+        setTimeout(sendHeight, 80);
+      }});
+      dd.addEventListener("focusin", sendHeight);
+      dd.addEventListener("focusout", function () {{
+        setTimeout(sendHeight, 80);
+      }});
+    }});
+  }}
   sendHeight();
-  window.addEventListener("load", sendHeight);
+  bindDropdownResize();
+  window.addEventListener("load", function () {{
+    sendHeight();
+    bindDropdownResize();
+  }});
   if (document.fonts && document.fonts.ready) {{
     document.fonts.ready.then(sendHeight);
   }}
   if (typeof ResizeObserver !== "undefined") {{
     var ro = new ResizeObserver(sendHeight);
-    document.querySelectorAll(".site-header").forEach(function (el) {{
+    document.querySelectorAll(".site-header, .site-nav__sub").forEach(function (el) {{
       ro.observe(el);
     }});
   }}
@@ -1856,22 +1898,9 @@ def iframe_home_nav_height_script() -> str:
 <script>
 (function () {{
   var slack = {slack};
-  function measureNavHeight() {{
-    var docTop = document.documentElement.getBoundingClientRect().top;
-    var bottom = docTop;
-    document.querySelectorAll(".site-header").forEach(function (el) {{
-      bottom = Math.max(bottom, el.getBoundingClientRect().bottom);
-    }});
-    document.querySelectorAll(".site-nav__sub").forEach(function (sub) {{
-      var r = sub.getBoundingClientRect();
-      if (r.height > 1 && r.width > 1) {{
-        bottom = Math.max(bottom, r.bottom);
-      }}
-    }});
-    return Math.ceil(bottom - docTop + slack);
-  }}
+{_NAV_BAND_HEIGHT_MEASURE_JS}
   function sendHeight() {{
-    var h = measureNavHeight();
+    var h = measureNavBandHeight(document, slack);
     if (h <= 40) return;
     window.parent.postMessage({{ type: "streamlit:setFrameHeight", height: h }}, "*");
     try {{
@@ -1965,6 +1994,7 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
   var doc = window.parent && window.parent.document ? window.parent.document : document;
   var chromeSlack = {HOME_CHROME_HEIGHT_SLACK_PX};
   var navSlack = {SUBPAGE_NAV_HEIGHT_SLACK_PX};
+{_NAV_BAND_HEIGHT_MEASURE_JS}
 
   function measureChromeHeight(inner) {{
     var docTop = inner.documentElement.getBoundingClientRect().top;
@@ -1980,12 +2010,17 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
   }}
 
   function measureSubpageNavHeight(inner) {{
-    var docTop = inner.documentElement.getBoundingClientRect().top;
-    var bottom = docTop;
-    inner.querySelectorAll(".site-header").forEach(function (el) {{
-      bottom = Math.max(bottom, el.getBoundingClientRect().bottom);
-    }});
-    return Math.ceil(bottom - docTop + navSlack);
+    return measureNavBandHeight(inner, navSlack);
+  }}
+
+  function applyNavChromeFrameHeight(frame, inner, msgH) {{
+    var measured = measureNavBandHeight(inner, navSlack);
+    var reported = Number(msgH);
+    var h = measured;
+    if (isFinite(reported) && reported > 40) {{
+      h = Math.max(measured, reported);
+    }}
+    applyFrameHeight(frame, h, 40);
   }}
 
   function isDeepRwaBodyIframe(inner) {{
@@ -2169,8 +2204,8 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
         var inner = frame.contentDocument;
         if (!inner || !inner.body) return;
         if (inner.querySelector(".home-main-split")) return;
-        if (inner.body.classList.contains("subpage-nav-chrome") || inner.body.classList.contains("home-nav-chrome-only")) {{
-          applyFrameHeight(frame, measureSubpageNavHeight(inner), 40);
+        if (isNavChromeBody(inner)) {{
+          applyNavChromeFrameHeight(frame, inner, null);
           return;
         }}
         if (isDeepRwaBodyIframe(inner)) {{
@@ -2238,8 +2273,8 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
       doc.querySelectorAll("iframe").forEach(function (frame) {{
         try {{
           var inner = frame.contentDocument;
-          if (inner && (inner.body.classList.contains("subpage-nav-chrome") || inner.body.classList.contains("home-nav-chrome-only"))) {{
-            applyFrameHeight(frame, navH, 40);
+          if (inner && isNavChromeBody(inner)) {{
+            applyNavChromeFrameHeight(frame, inner, navH);
           }}
         }} catch (e) {{}}
       }});
@@ -2247,10 +2282,19 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
     }}
     if (ev.data.type === "jpm-tmmf-height" || ev.data.type === "streamlit:setFrameHeight") {{
       var msgH = Number(ev.data.height);
+      var sourceFrame = null;
+      try {{
+        sourceFrame = ev.source && ev.source.frameElement ? ev.source.frameElement : null;
+      }} catch (e) {{}}
       doc.querySelectorAll("iframe").forEach(function (frame) {{
         try {{
           var inner = frame.contentDocument;
           if (!inner || !inner.body) return;
+          if (isNavChromeBody(inner)) {{
+            if (sourceFrame && sourceFrame !== frame) return;
+            applyNavChromeFrameHeight(frame, inner, msgH);
+            return;
+          }}
           if (isDeepRwaBodyIframe(inner)) {{
             var deepH = resolveDeepBodyHeight(inner, msgH);
             if (deepH !== null) applyFrameHeight(frame, deepH, 200);
@@ -3373,6 +3417,11 @@ body.page-home.home-nav-chrome-only.site-experience .site-header {
   top: auto;
   width: 100%;
   margin: 0;
+  overflow: visible;
+}
+body.page-home.home-nav-chrome-only.site-experience .site-nav__dropdown,
+body.page-home.home-nav-chrome-only.site-experience .site-nav__sub {
+  overflow: visible;
 }
 """
     body = render_site_nav_html(active=active, is_landing=False, for_streamlit=True).strip()
