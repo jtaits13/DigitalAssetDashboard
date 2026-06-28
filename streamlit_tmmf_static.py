@@ -601,6 +601,178 @@ function measureTmmfContentHeight() {
 }
 """
 
+# GitHub Pages canvas tokens (static_home/styles.css --wash; zone --hx-tmmf-soft).
+TMMF_GH_PAGE_WASH = "#f3f7fb"
+TMMF_GH_ZONE_SOFT = "#eef2f6"
+TMMF_CANVAS_OVERRIDE_VERSION = "12"
+
+
+def tmmf_github_canvas_override_css(*, version: str = TMMF_CANVAS_OVERRIDE_VERSION) -> str:
+    """Uncached manual override — flat GitHub Pages wash on canvas, soft gray in zone card."""
+    wash = TMMF_GH_PAGE_WASH
+    soft = TMMF_GH_ZONE_SOFT
+    scope = "body.page-rwa-deep-mmf"
+    return f"""
+/* TMMF GitHub Pages canvas override v{version} */
+html, {scope}.site-experience,
+{scope}.site-experience.page-inner--rich,
+{scope}.mock-tmmf-inner.site-experience {{
+  background: {wash} !important;
+  background-color: {wash} !important;
+  background-image: none !important;
+}}
+{scope} .page-shell.etp-mock-shell {{
+  background: transparent !important;
+  background-image: none !important;
+}}
+{scope} .inner-rich-zone.zone--tmmf,
+{scope} .inner-rich-zone.zone--tmmf .inner-rich-zone__body,
+{scope} .etp-mock-zone.inner-rich-zone.zone--tmmf,
+{scope} .etp-mock-zone .inner-rich-zone__body,
+{scope} .methodology-panel {{
+  background: {soft} !important;
+  background-color: {soft} !important;
+  background-image: none !important;
+}}
+{scope} .inner-rich-block,
+{scope} .etp-mock-key-obs-block,
+{scope} .etp-mock-key-obs-block .crypto-story-callout,
+{scope} #js-deep-ko .crypto-story-callout,
+{scope} .etp-mock-key-obs-block .review-note.ko-disclaimer,
+{scope} .etp-mock-insights__panel,
+{scope} .rwa-kpi-row--home-grid .rwa-kpi-cell,
+{scope} .etp-mock-table-block,
+{scope} .rwa-deep-league-panel {{
+  background: #fff !important;
+  background-color: #fff !important;
+  background-image: none !important;
+}}
+{scope} .etp-mock-key-obs-block .crypto-story-callout__note {{
+  background: rgb(62 92 116 / 0.06) !important;
+  background-image: none !important;
+}}
+"""
+
+
+def tmmf_iframe_canvas_override_js(*, version: str = TMMF_CANVAS_OVERRIDE_VERSION) -> str:
+    """Force GitHub Pages canvas colors inline (beats cached stylesheet / mock gradients)."""
+    wash = TMMF_GH_PAGE_WASH
+    soft = TMMF_GH_ZONE_SOFT
+    return f"""
+<script id="tmmf-gh-canvas-override-js-v{version}">
+(function () {{
+  var WASH = "{wash}";
+  var SOFT = "{soft}";
+  var WHITE = "#ffffff";
+  function setBg(el, color) {{
+    if (!el) return;
+    el.style.setProperty("background", color, "important");
+    el.style.setProperty("background-color", color, "important");
+    el.style.setProperty("background-image", "none", "important");
+  }}
+  function paint() {{
+    setBg(document.documentElement, WASH);
+    setBg(document.body, WASH);
+    var main = document.querySelector("main.page-shell.etp-mock-shell");
+    if (main) {{
+      main.style.setProperty("background", "transparent", "important");
+      main.style.setProperty("background-image", "none", "important");
+    }}
+    document.querySelectorAll(
+      ".inner-rich-zone.zone--tmmf, .inner-rich-zone.zone--tmmf .inner-rich-zone__body, .methodology-panel"
+    ).forEach(function (el) {{ setBg(el, SOFT); }});
+    document.querySelectorAll(
+      ".inner-rich-block, .etp-mock-key-obs-block, .crypto-story-callout, .review-note.ko-disclaimer, .etp-mock-insights__panel, .rwa-kpi-row--home-grid .rwa-kpi-cell"
+    ).forEach(function (el) {{
+      setBg(el, WHITE);
+    }});
+    document.querySelectorAll(".crypto-story-callout__note").forEach(function (el) {{
+      setBg(el, "rgb(62 92 116 / 0.06)");
+    }});
+  }}
+  paint();
+  window.addEventListener("load", paint);
+  [50, 200, 800, 2000, 5000].forEach(function (ms) {{ setTimeout(paint, ms); }});
+  if (typeof MutationObserver !== "undefined") {{
+    var mo = new MutationObserver(function () {{ paint(); }});
+    mo.observe(document.body, {{ childList: true, subtree: true, attributes: true, attributeFilter: ["style", "class"] }});
+  }}
+}})();
+</script>
+"""
+
+
+def tmmf_host_canvas_override_css(*, version: str = TMMF_CANVAS_OVERRIDE_VERSION) -> str:
+    """Host-side wash override for Streamlit shell (margins outside the body iframe)."""
+    wash = TMMF_GH_PAGE_WASH
+    return f"""
+<style id="tmmf-gh-host-canvas-override-v{version}">
+.stApp:has(.streamlit-tmmf-iframe-page),
+.withScreencast:has(.streamlit-tmmf-iframe-page),
+[data-testid="stScreencast"]:has(.streamlit-tmmf-iframe-page),
+.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stAppViewContainer"],
+.stApp:has(.streamlit-tmmf-iframe-page) section.main,
+.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stMain"],
+.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stMainBlockContainer"],
+.stApp:has(.streamlit-tmmf-iframe-page) .block-container,
+.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stVerticalBlock"],
+.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe),
+.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) [data-testid="stVerticalBlock"],
+.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) [data-testid="stHtml"],
+.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) [data-testid="stHtml"] > div {{
+  background: {wash} !important;
+  background-color: {wash} !important;
+  background-image: none !important;
+}}
+</style>
+"""
+
+
+def tmmf_host_canvas_override_js(*, version: str = TMMF_CANVAS_OVERRIDE_VERSION) -> str:
+    wash = TMMF_GH_PAGE_WASH
+    return f"""
+<script id="tmmf-gh-host-canvas-override-js-v{version}">
+(function () {{
+  var WASH = "{wash}";
+  var doc = window.parent && window.parent.document ? window.parent.document : document;
+  function paint() {{
+    var app = doc.querySelector(".stApp");
+    if (!app || !app.querySelector(".streamlit-tmmf-iframe-page")) return;
+    [
+      app,
+      app.querySelector('[data-testid="stAppViewContainer"]'),
+      app.querySelector("section.main"),
+      app.querySelector('[data-testid="stMainBlockContainer"]'),
+      app.querySelector(".block-container"),
+    ].forEach(function (el) {{
+      if (!el) return;
+      el.style.setProperty("background", WASH, "important");
+      el.style.setProperty("background-color", WASH, "important");
+      el.style.setProperty("background-image", "none", "important");
+    }});
+    doc.querySelectorAll(".withScreencast, [data-testid='stScreencast']").forEach(function (el) {{
+      if (!el.querySelector(".streamlit-tmmf-iframe-page")) return;
+      el.style.setProperty("background", WASH, "important");
+      el.style.setProperty("background-image", "none", "important");
+    }});
+  }}
+  paint();
+  if (window.parent) window.parent.addEventListener("load", paint);
+  [100, 400, 1200, 3000, 6000].forEach(function (ms) {{ setTimeout(paint, ms); }});
+}})();
+</script>
+"""
+
+
+def inject_tmmf_host_canvas_override() -> None:
+    """Apply GitHub Pages #f3f7fb wash to the Streamlit host shell on the TMMF route."""
+    import streamlit as st
+    import streamlit.components.v1 as components
+
+    st.markdown(tmmf_host_canvas_override_css(), unsafe_allow_html=True)
+    components.html(tmmf_host_canvas_override_js(), height=0, width=0)
+
+
 _TMMF_IFRAME_BACK_LINK = """
 <div class="page-back-below-header">
   <p class="back-link back-link--below-header">
@@ -1118,7 +1290,7 @@ def _cached_tmmf_deep_payload() -> dict[str, Any]:
     return load_tmmf_deep_payload()
 
 
-_TMMF_IFRAME_CSS_VERSION = "11"
+_TMMF_IFRAME_CSS_VERSION = "12"
 
 
 @st.cache_data(show_spinner=False, ttl=3600)
@@ -1159,6 +1331,7 @@ def render_tmmf_body_iframe(
         ),
         height=1200,
     )
+    inject_tmmf_host_canvas_override()
 
 
 def _tmmf_kpis_with_methodology_html(
@@ -1259,6 +1432,7 @@ def build_tmmf_server_iframe_html(
     from streamlit_site_parity import iframe_internal_link_script
 
     css = _cached_iframe_tmmf_stylesheet_v11()
+    override_css = tmmf_github_canvas_override_css()
     back_link = _tmmf_back_link_html(href=back_href, label=back_label)
     zone = build_tmmf_server_zone_html(payload=payload, related_chips=related_chips)
     js_libs = _read_js_files(("table-fullscreen.js", "table-download.js"))
@@ -1269,6 +1443,7 @@ def build_tmmf_server_iframe_html(
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>{css}</style>
+<style id="tmmf-gh-canvas-override-v{TMMF_CANVAS_OVERRIDE_VERSION}">{override_css}</style>
 </head>
 <body
   class="page-rwa-deep page-rwa-deep-mmf site-experience page-inner--rich mock-tmmf-inner"
@@ -1334,6 +1509,7 @@ window.__TMMF_SERVER_EXPORTS = {export_json};
   }});
 }})();
 </script>
+{tmmf_iframe_canvas_override_js()}
 {iframe_internal_link_script()}
 </body>
 </html>"""
