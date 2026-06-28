@@ -1141,6 +1141,14 @@ def _iframe_rwa_asset_mock_css(css: str, *, mock_inner: str, body_class: str) ->
     return css
 
 
+def _iframe_participants_mock_css(css: str, *, body_class: str) -> str:
+    """Participants deep iframe: scope shared participants mock rules onto the iframe ``body``."""
+    css = _strip_mock_design_banner_css(css)
+    css = css.replace(".mock-participants-inner", f"body.{body_class}")
+    css = css.replace(".mock-rwa-global-inner", f"body.{body_class}")
+    return css
+
+
 def _patch_inner_page_css_for_streamlit(css: str) -> str:
     """Mirror inner-page ``body`` / ``.site-experience.page-inner--rich`` rules onto the subpage wrapper."""
     if ":root, .stApp {" not in css:
@@ -1219,6 +1227,9 @@ SUBPAGE_STREAMLIT_CSS = """
 .stApp:has(.streamlit-stablecoins-iframe-page):has(.home-chrome-iframe-marker),
 .stApp:has(.streamlit-treasuries-iframe-page):has(.home-chrome-iframe-marker),
 .stApp:has(.streamlit-stocks-iframe-page):has(.home-chrome-iframe-marker),
+.stApp:has(.streamlit-networks-iframe-page):has(.home-chrome-iframe-marker),
+.stApp:has(.streamlit-platforms-iframe-page):has(.home-chrome-iframe-marker),
+.stApp:has(.streamlit-asset-managers-iframe-page):has(.home-chrome-iframe-marker),
 .stApp:has(.streamlit-crypto-iframe-page):has(.home-chrome-iframe-marker),
 .stApp:has(.streamlit-etps-iframe-page):has(.home-chrome-iframe-marker),
 .stApp:has(.streamlit-news-feed-iframe-page):has(.home-chrome-iframe-marker),
@@ -1533,7 +1544,7 @@ def _cached_subpage_stylesheet(kind: str) -> str:
         if path.is_file():
             chunks.append(_patch_inner_page_css_for_streamlit(path.read_text(encoding="utf-8")))
     # Deep RWA iframe subpages ship mock CSS inside the iframe document.
-    if kind not in ("tmmf", "stablecoins", "treasuries", "stocks", "crypto", "etp", "rwa_global", "rwa_explore_at", "rwa_explore_mp"):
+    if kind not in ("tmmf", "stablecoins", "treasuries", "stocks", "networks", "platforms", "asset_managers", "crypto", "etp", "rwa_global", "rwa_explore_at", "rwa_explore_mp"):
         for rel in _SUBPAGE_MOCK_CSS.get(kind, ()):
             path = _STATIC / rel
             if path.is_file():
@@ -3488,13 +3499,16 @@ def _deep_iframe_subpage_css_blob() -> str:
     )
     return raw.replace(
         ".stApp:has(.streamlit-tmmf-iframe-page)",
-        ".stApp:has(.streamlit-tmmf-iframe-page), .stApp:has(.streamlit-stablecoins-iframe-page), .stApp:has(.streamlit-treasuries-iframe-page), .stApp:has(.streamlit-stocks-iframe-page), .stApp:has(.streamlit-crypto-iframe-page), .stApp:has(.streamlit-etps-iframe-page), .stApp:has(.streamlit-news-feed-iframe-page), .stApp:has(.streamlit-rwa-global-iframe-page), .stApp:has(.streamlit-rwa-explore-at-iframe-page), .stApp:has(.streamlit-rwa-explore-mp-iframe-page)",
+        ".stApp:has(.streamlit-tmmf-iframe-page), .stApp:has(.streamlit-stablecoins-iframe-page), .stApp:has(.streamlit-treasuries-iframe-page), .stApp:has(.streamlit-stocks-iframe-page), .stApp:has(.streamlit-networks-iframe-page), .stApp:has(.streamlit-platforms-iframe-page), .stApp:has(.streamlit-asset-managers-iframe-page), .stApp:has(.streamlit-crypto-iframe-page), .stApp:has(.streamlit-etps-iframe-page), .stApp:has(.streamlit-news-feed-iframe-page), .stApp:has(.streamlit-rwa-global-iframe-page), .stApp:has(.streamlit-rwa-explore-at-iframe-page), .stApp:has(.streamlit-rwa-explore-mp-iframe-page)",
     ).replace(
         ".stApp:has(.streamlit-tmmf-iframe-page) .mock-tmmf-inner::before,",
         ".stApp:has(.streamlit-tmmf-iframe-page) .mock-tmmf-inner::before,\n"
         ".stApp:has(.streamlit-stablecoins-iframe-page) .mock-stable-inner::before,\n"
         ".stApp:has(.streamlit-treasuries-iframe-page) .mock-treasuries-inner::before,\n"
         ".stApp:has(.streamlit-stocks-iframe-page) .mock-stocks-inner::before,\n"
+        ".stApp:has(.streamlit-networks-iframe-page) .mock-participants-inner::before,\n"
+        ".stApp:has(.streamlit-platforms-iframe-page) .mock-participants-inner::before,\n"
+        ".stApp:has(.streamlit-asset-managers-iframe-page) .mock-participants-inner::before,\n"
         ".stApp:has(.streamlit-crypto-iframe-page) .mock-crypto-inner::before,\n"
         ".stApp:has(.streamlit-etps-iframe-page) .mock-etp-inner::before,\n"
         ".stApp:has(.streamlit-rwa-global-iframe-page) .mock-rwa-global-inner::before,\n"
@@ -3508,7 +3522,8 @@ def inject_subpage_styles(*, kind: str = "article") -> None:
     inject_site_styles(include_static=True, html_style_backup=False)
     inner_css = _cached_subpage_stylesheet(kind)
     deep_iframe_css = _deep_iframe_subpage_css_blob() if kind in (
-        "tmmf", "stablecoins", "treasuries", "stocks", "crypto", "etp", "news_feed", "rwa_global", "rwa_explore_at", "rwa_explore_mp"
+        "tmmf", "stablecoins", "treasuries", "stocks", "networks", "platforms", "asset_managers",
+        "crypto", "etp", "news_feed", "rwa_global", "rwa_explore_at", "rwa_explore_mp"
     ) else ""
     st.markdown(
         f"<style>{inner_css}\n{SUBPAGE_STREAMLIT_CSS.replace('SUBPAGE_NAV_DROPDOWN_WELL_PLACEHOLDER', str(SUBPAGE_NAV_DROPDOWN_WELL_PX))}\n{deep_iframe_css}</style>",
@@ -3877,7 +3892,8 @@ def configure_subpage(
     if delivery == "iframe":
         components.html(HOME_IFRAME_HEIGHT_SYNC_JS, height=0, width=0)
     if delivery == "iframe" and style_kind in (
-        "tmmf", "stablecoins", "treasuries", "stocks", "crypto", "etp", "rwa_global", "rwa_explore_at", "rwa_explore_mp"
+        "tmmf", "stablecoins", "treasuries", "stocks", "networks", "platforms", "asset_managers",
+        "crypto", "etp", "rwa_global", "rwa_explore_at", "rwa_explore_mp"
     ):
         inject_streamlit_table_fullscreen_host()
     if style_kind == "tmmf" and delivery == "server":
@@ -3898,6 +3914,12 @@ def configure_subpage(
         iframe_page_class = " streamlit-treasuries-iframe-page"
     elif style_kind == "stocks":
         iframe_page_class = " streamlit-stocks-iframe-page"
+    elif style_kind == "networks":
+        iframe_page_class = " streamlit-networks-iframe-page"
+    elif style_kind == "platforms":
+        iframe_page_class = " streamlit-platforms-iframe-page"
+    elif style_kind == "asset_managers":
+        iframe_page_class = " streamlit-asset-managers-iframe-page"
     elif style_kind == "crypto":
         iframe_page_class = " streamlit-crypto-iframe-page"
     elif style_kind == "etp":

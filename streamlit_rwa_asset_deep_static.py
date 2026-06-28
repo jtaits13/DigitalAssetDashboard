@@ -54,6 +54,8 @@ class RwaAssetDeepSpec:
     chart_aria: str
     movers_footer: str
     default_back_label: str
+    back_page_key: str = "explore_asset"
+    participants_mock: bool = False
 
 
 RWA_ASSET_DEEP_SPECS: dict[str, RwaAssetDeepSpec] = {
@@ -97,11 +99,75 @@ RWA_ASSET_DEEP_SPECS: dict[str, RwaAssetDeepSpec] = {
         ),
         default_back_label="← Explore by Asset Type",
     ),
+    "networks": RwaAssetDeepSpec(
+        kind="networks",
+        payload_file="rwa_participants_networks.json",
+        page_body_class="page-rwa-deep-participants-networks",
+        mock_inner_class="mock-participants-inner",
+        host_marker_class="streamlit-networks-iframe-page",
+        style_kind="networks",
+        methodology="rwa-participants-networks",
+        mock_css_files=(
+            "mockups/etp-inner-page-mock.css",
+            "mockups/rwa-global-inner-page-mock.css",
+            "mockups/participants-inner-page-mock.css",
+        ),
+        chart_aria="Top networks by distributed RWA value",
+        movers_footer="Top 15 networks by distributed value.",
+        default_back_label="← Explore by Market Participant",
+        back_page_key="explore_participant",
+        participants_mock=True,
+    ),
+    "platforms": RwaAssetDeepSpec(
+        kind="platforms",
+        payload_file="rwa_participants_platforms.json",
+        page_body_class="page-rwa-deep-participants-platforms",
+        mock_inner_class="mock-participants-inner",
+        host_marker_class="streamlit-platforms-iframe-page",
+        style_kind="platforms",
+        methodology="rwa-participants-platforms",
+        mock_css_files=(
+            "mockups/etp-inner-page-mock.css",
+            "mockups/rwa-global-inner-page-mock.css",
+            "mockups/participants-inner-page-mock.css",
+        ),
+        chart_aria="Top platforms by distributed RWA value",
+        movers_footer="Top 15 platforms by distributed value.",
+        default_back_label="← Explore by Market Participant",
+        back_page_key="explore_participant",
+        participants_mock=True,
+    ),
+    "asset_managers": RwaAssetDeepSpec(
+        kind="asset_managers",
+        payload_file="rwa_participants_asset_managers.json",
+        page_body_class="page-rwa-deep-participants-am",
+        mock_inner_class="mock-participants-inner",
+        host_marker_class="streamlit-asset-managers-iframe-page",
+        style_kind="asset_managers",
+        methodology="rwa-participants-asset-managers",
+        mock_css_files=(
+            "mockups/etp-inner-page-mock.css",
+            "mockups/rwa-global-inner-page-mock.css",
+            "mockups/participants-inner-page-mock.css",
+        ),
+        chart_aria="Top asset managers by distributed RWA value",
+        movers_footer="Top 15 asset managers by distributed value.",
+        default_back_label="← Explore by Market Participant",
+        back_page_key="explore_participant",
+        participants_mock=True,
+    ),
 }
 
 
 def _spec(kind: str) -> RwaAssetDeepSpec:
     return RWA_ASSET_DEEP_SPECS[kind]
+
+
+def _kind_for_payload_file(payload_file: str) -> str:
+    for kind, spec in RWA_ASSET_DEEP_SPECS.items():
+        if spec.payload_file == payload_file:
+            return kind
+    return "treasuries"
 
 
 def _static_payload_fallback(*, payload_file: str, error: str = "") -> dict[str, Any] | None:
@@ -121,7 +187,7 @@ def _static_payload_fallback(*, payload_file: str, error: str = "") -> dict[str,
         data = merged
     from streamlit_site_parity import _streamlit_page_href
 
-    data["back_href"] = _streamlit_page_href("explore_asset")
+    data["back_href"] = _streamlit_page_href(_spec(_kind_for_payload_file(payload_file)).back_page_key)
     return data
 
 
@@ -133,17 +199,35 @@ def load_rwa_asset_deep_payload(kind: str) -> dict[str, Any]:
 
         pack = cached_rwa_treasuries_data()
         build = _build_rwa_us_treasuries_deep_payload
-    else:
+    elif kind == "stocks":
         from scripts.export_static_site_data import _build_rwa_tokenized_stocks_deep_payload
         from rwa_streamlit_fetch_cache import cached_rwa_tokenized_stocks_data
 
         pack = cached_rwa_tokenized_stocks_data()
         build = _build_rwa_tokenized_stocks_deep_payload
+    elif kind == "networks":
+        from scripts.export_static_site_data import _build_rwa_participants_networks_deep_payload
+        from rwa_streamlit_fetch_cache import cached_rwa_networks_page_data
+
+        pack = cached_rwa_networks_page_data()
+        build = _build_rwa_participants_networks_deep_payload
+    elif kind == "platforms":
+        from scripts.export_static_site_data import _build_rwa_participants_platforms_deep_payload
+        from rwa_streamlit_fetch_cache import cached_rwa_platforms_page_data
+
+        pack = cached_rwa_platforms_page_data()
+        build = _build_rwa_participants_platforms_deep_payload
+    else:
+        from scripts.export_static_site_data import _build_rwa_participants_asset_managers_deep_payload
+        from rwa_streamlit_fetch_cache import cached_rwa_asset_managers_page_data
+
+        pack = cached_rwa_asset_managers_page_data()
+        build = _build_rwa_participants_asset_managers_deep_payload
 
     payload = build(pack, {"errors": []}, [])
     from streamlit_site_parity import _streamlit_page_href
 
-    payload["back_href"] = _streamlit_page_href("explore_asset")
+    payload["back_href"] = _streamlit_page_href(spec.back_page_key)
     return payload
 
 
@@ -193,13 +277,18 @@ def _cached_iframe_rwa_asset_stylesheet(kind: str, *, _css_version: str = _RWA_A
     for rel in spec.mock_css_files:
         path = _STATIC / rel
         if path.is_file():
-            chunks.append(
-                _iframe_rwa_asset_mock_css(
-                    path.read_text(encoding="utf-8"),
+            css_text = path.read_text(encoding="utf-8")
+            if spec.participants_mock:
+                from streamlit_site_parity import _iframe_participants_mock_css
+
+                css_text = _iframe_participants_mock_css(css_text, body_class=spec.page_body_class)
+            else:
+                css_text = _iframe_rwa_asset_mock_css(
+                    css_text,
                     mock_inner=spec.mock_inner_class,
                     body_class=spec.page_body_class,
                 )
-            )
+            chunks.append(css_text)
     chunks.append(
         f"""
 html, {scope}.site-experience {{

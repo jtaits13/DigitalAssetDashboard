@@ -1,4 +1,4 @@
-"""Smoke checks for Streamlit US Treasuries / Tokenized Stocks iframe pages."""
+"""Smoke checks for Streamlit RWA asset and participant deep iframe pages."""
 
 from __future__ import annotations
 
@@ -48,6 +48,9 @@ def main() -> int:
     for kind, body, mock, host, methodology in (
         ("treasuries", "page-rwa-deep-treasuries", "mock-treasuries-inner", "streamlit-treasuries-iframe-page", "rwa-treasuries"),
         ("stocks", "page-rwa-deep-stocks", "mock-stocks-inner", "streamlit-stocks-iframe-page", "rwa-tokenized-stocks"),
+        ("networks", "page-rwa-deep-participants-networks", "mock-participants-inner", "streamlit-networks-iframe-page", "rwa-participants-networks"),
+        ("platforms", "page-rwa-deep-participants-platforms", "mock-participants-inner", "streamlit-platforms-iframe-page", "rwa-participants-platforms"),
+        ("asset_managers", "page-rwa-deep-participants-am", "mock-participants-inner", "streamlit-asset-managers-iframe-page", "rwa-participants-asset-managers"),
     ):
         code = _check_kind(kind, body_class=body, mock_class=mock, host_class=host, methodology=methodology)
         if code:
