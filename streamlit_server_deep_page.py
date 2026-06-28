@@ -659,7 +659,11 @@ def build_rwa_global_server_zone_html(
     if ko_html:
         ko_html = ko_html.replace('id="js-deep-ko-section"', 'id="js-rwa-global-ko-section"', 1)
         ko_html = ko_html.replace('id="js-deep-ko"', 'id="js-rwa-global-macro"', 1)
-    explore_html = str(payload.get("explore_gateways_html") or "").strip()
+    from rwa_global_page_payloads import streamlit_rwa_explore_gateways_html
+
+    explore_html = ""
+    if ko_html or rows:
+        explore_html = streamlit_rwa_explore_gateways_html(links)
     explore_block = (
         f'<div id="js-rwa-global-explore">{explore_html}</div>' if explore_html else ""
     )

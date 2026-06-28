@@ -745,6 +745,21 @@ def deep_iframe_kpi_flatten_css(*, scope: str, zone: str) -> str:
 """
 
 
+def deep_iframe_rwa_zone_body_flatten_css(*, scope: str, soft: str = "#e8eff5") -> str:
+    """Minimal RWA zone flatten — body gradient band between white panels only."""
+    return f"""
+{scope}.site-experience.page-inner--rich .inner-rich-zone.zone--rwa .inner-rich-zone__body {{
+  background: {soft} !important;
+  background-color: {soft} !important;
+  background-image: none !important;
+}}
+{scope} .etp-mock-key-obs-block.inner-rich-block {{
+  background: #fff !important;
+  background-image: none !important;
+}}
+"""
+
+
 DEEP_IFRAME_TABLE_PANEL_VERSION = "5"
 
 # TMMF viewport is 420px (~11 dense body rows). Scale linearly for 18 rows.

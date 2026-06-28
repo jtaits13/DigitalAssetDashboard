@@ -22,7 +22,7 @@ _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
 
-_RWA_GLOBAL_IFRAME_CSS_VERSION = "2"
+_RWA_GLOBAL_IFRAME_CSS_VERSION = "3"
 RWA_GLOBAL_CANVAS_OVERRIDE_VERSION = "1"
 RWA_GLOBAL_TABLE_PANEL_VERSION = "1"
 
@@ -316,6 +316,7 @@ def _cached_iframe_rwa_global_stylesheet() -> str:
         deep_iframe_back_link_clickable_css,
         deep_iframe_kpi_flatten_css,
         deep_iframe_related_chips_css,
+        deep_iframe_rwa_zone_body_flatten_css,
         deep_iframe_table_height_lock_css,
         deep_iframe_table_panel_css,
     )
@@ -393,6 +394,7 @@ body.page-rwa-global-iframe .home-reveal {
     )
     scope = "body.page-rwa-global-iframe"
     chunks.append(deep_iframe_kpi_flatten_css(scope=scope, zone="rwa"))
+    chunks.append(deep_iframe_rwa_zone_body_flatten_css(scope=scope, soft=RWA_GLOBAL_GH_ZONE_SOFT))
     chunks.append(deep_iframe_table_panel_css(scope=scope))
     chunks.append(deep_iframe_table_height_lock_css(scope=scope))
     chunks.append(deep_iframe_related_chips_css(scope=scope, zone="rwa"))

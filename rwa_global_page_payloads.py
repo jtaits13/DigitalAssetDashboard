@@ -86,6 +86,20 @@ def _rwa_explore_gateways_static_html(at_href: str, mp_href: str) -> str:
     )
 
 
+def streamlit_rwa_explore_gateways_html(links: dict[str, Any] | None = None) -> str:
+    """Compact explore nav for Streamlit — ignore stale ``explore_gateways_html`` in static JSON."""
+    from streamlit_site_parity import _streamlit_page_href
+
+    links = links or {}
+    at = str(links.get("explore_asset_type") or "").strip()
+    mp = str(links.get("explore_market_participant") or "").strip()
+    if not at or at.endswith(".html"):
+        at = _streamlit_page_href("explore_asset")
+    if not mp or mp.endswith(".html"):
+        mp = _streamlit_page_href("explore_participant")
+    return _rwa_explore_gateways_static_html(at, mp)
+
+
 def _rwa_table_height(num_rows: int, *, max_h: int = 520) -> int:
     header = 38
     row_h = 35
