@@ -28,9 +28,16 @@ def main() -> int:
         ],
         "total_networks": 1,
         "macro_observations_html": "<ul><li>Test observation</li></ul>",
-        "explore_gateways_html": '<nav class="home-explore-compact"></nav>',
+        "explore_gateways_html": (
+            '<section class="rwa-explore-row"><div class="rwa-explore-card">'
+            '<a class="btn btn-primary">Explore</a></div></section>'
+        ),
+        "links": {
+            "global_market_on_rwa_xyz": "https://app.rwa.xyz/networks",
+            "explore_asset_type": "rwa-explore-asset-type.html",
+            "explore_market_participant": "rwa-explore-market-participant.html",
+        },
         "caption_html": "Source: RWA.xyz",
-        "links": {"global_market_on_rwa_xyz": "https://app.rwa.xyz/networks"},
         "footer_note": "test",
     }
     html = build_rwa_global_server_iframe_html(
@@ -46,7 +53,10 @@ def main() -> int:
         ("js-rwa-global-dashboard-chart" in html, "dashboard chart host"),
         ("__RWA_GLOBAL_SERVER_CHART" in html, "chart boot config"),
         ("rwa-global-gh-canvas-override" in html, "canvas override"),
-        ("deep_iframe_rwa_zone_seam" in html or "home-explore-compact__btn" in html, "zone seam flatten"),
+        ("home-explore-compact__btn" in html, "compact explore pills"),
+        ("By asset type" in html and "By participant" in html, "explore labels"),
+        ('class="rwa-explore-card"' not in html, "no legacy explore cards"),
+        ("rwa-gmo-ko-heading" in html or "js-rwa-global-macro" in html, "macro block host"),
         ("measureRwaGlobalContentHeight" in html, "height measure"),
         ("plotly" in html.lower(), "plotly script"),
         ("rwa-global-page.js" not in html, "no legacy hydration boot"),

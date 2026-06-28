@@ -22,8 +22,8 @@ _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
 
-_RWA_GLOBAL_IFRAME_CSS_VERSION = "3"
-RWA_GLOBAL_CANVAS_OVERRIDE_VERSION = "2"
+_RWA_GLOBAL_IFRAME_CSS_VERSION = "4"
+RWA_GLOBAL_CANVAS_OVERRIDE_VERSION = "3"
 RWA_GLOBAL_TABLE_PANEL_VERSION = "1"
 
 RWA_GLOBAL_GH_PAGE_WASH = "#f3f7fb"
@@ -390,6 +390,36 @@ body.page-rwa-global-iframe .home-reveal {
   opacity: 1 !important;
   transform: none !important;
 }
+/* Flat zone interior — gradient on .inner-rich-zone__body caused a visible seam above explore. */
+body.page-rwa-global-iframe .inner-rich-zone.zone--rwa,
+body.page-rwa-global-iframe.mock-rwa-global-inner .etp-mock-zone.inner-rich-zone.zone--rwa {
+  background: var(--hx-rwa-soft, #e8eff5) !important;
+  background-image: none !important;
+}
+body.page-rwa-global-iframe .inner-rich-zone.zone--rwa .home-zone__head,
+body.page-rwa-global-iframe.mock-rwa-global-inner .etp-mock-zone .home-zone__head {
+  background: var(--hx-rwa-head, linear-gradient(180deg, #eef3f8 0%, #ffffff 100%)) !important;
+}
+body.page-rwa-global-iframe .inner-rich-zone.zone--rwa .inner-rich-zone__body,
+body.page-rwa-global-iframe.mock-rwa-global-inner.page-inner--rich .etp-mock-zone .inner-rich-zone__body,
+body.page-rwa-global-iframe.mock-rwa-global-inner .etp-mock-zone__body.inner-rich-zone__body {
+  background: var(--hx-rwa-soft, #e8eff5) !important;
+  background-image: none !important;
+}
+body.page-rwa-global-iframe.page-inner--rich .inner-rich-zone.zone--rwa .inner-rich-block,
+body.page-rwa-global-iframe.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block,
+body.page-rwa-global-iframe .etp-mock-key-obs-block.inner-rich-block,
+body.page-rwa-global-iframe #js-rwa-global-macro .rwa-gmo-takeaways {
+  background: #fff !important;
+  background-color: #fff !important;
+  background-image: none !important;
+}
+body.page-rwa-global-iframe .etp-mock-key-obs-block .review-note.ko-disclaimer,
+body.page-rwa-global-iframe #js-rwa-global-macro .review-note.ko-disclaimer {
+  background: #fff !important;
+  background-color: #fff !important;
+  background-image: none !important;
+}
 """
     )
     scope = "body.page-rwa-global-iframe"
@@ -469,7 +499,7 @@ def rwa_global_iframe_canvas_override_js(
       ".inner-rich-zone.zone--rwa, .inner-rich-zone.zone--rwa .inner-rich-zone__body, .etp-mock-zone__body.inner-rich-zone__body"
     ).forEach(function (el) {{ setBg(el, SOFT); }});
     document.querySelectorAll(
-      ".inner-rich-block, .etp-mock-key-obs-block, .crypto-story-callout, .review-note.ko-disclaimer, .etp-mock-insights__panel, .etp-mock-dash__panel, .rwa-kpi-row--home-grid .rwa-kpi-cell, .etp-mock-table-block, .home-explore-compact"
+      ".inner-rich-block, .etp-mock-key-obs-block, .crypto-story-callout, .rwa-gmo-takeaways, .review-note.ko-disclaimer, .etp-mock-insights__panel, .etp-mock-dash__panel, .rwa-kpi-row--home-grid .rwa-kpi-cell, .etp-mock-table-block, .home-explore-compact"
     ).forEach(function (el) {{
       setBg(el, el.classList.contains("home-explore-compact") ? SOFT : WHITE);
       el.style.setProperty("box-shadow", "none", "important");
@@ -801,7 +831,11 @@ def render_rwa_global_body_iframe(
 ) -> None:
     from streamlit_site_parity import render_subpage_body_iframe
 
-    payload = dict((payloads or {}).get("rwa_global_market.json") or {})
+    from rwa_global_page_payloads import normalize_rwa_global_payload_for_streamlit
+
+    payload = normalize_rwa_global_payload_for_streamlit(
+        dict((payloads or {}).get("rwa_global_market.json") or {})
+    )
     payload_json = _json_for_script(payload)
     render_subpage_body_iframe(
         _cached_rwa_global_server_iframe_html(
