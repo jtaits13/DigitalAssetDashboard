@@ -465,6 +465,241 @@ def stablecoins_dashboard_html(payload: dict[str, Any]) -> str:
     )
 
 
+def rwa_asset_methodology_panel_html(kind: str) -> str:
+    """Collapsible Data sources panel (parity with ``page-methodology.js`` RWA asset pages)."""
+    from rwa_league.client import APP_STOCKS, APP_TREASURIES
+
+    rwa = '<a href="https://app.rwa.xyz/" target="_blank" rel="noopener noreferrer">RWA.xyz</a>'
+    if kind == "treasuries":
+        treasuries = (
+            f'<a href="{APP_TREASURIES}" target="_blank" rel="noopener noreferrer">US Treasuries</a>'
+        )
+        bullets = (
+            f"<li><strong>Source</strong> — {rwa} {treasuries} distributed views.</li>"
+            "<li><strong>KPI strip</strong> — overview totals; top-line <strong>%</strong> figures are "
+            "<strong>30-day (30D)</strong>.</li>"
+            "<li><strong>Networks / Platforms</strong> — <strong>Distributed Value</strong> is a current "
+            "level; 7D and 30D columns follow fields on the live RWA.xyz tables.</li>"
+        )
+    else:
+        stocks = f'<a href="{APP_STOCKS}" target="_blank" rel="noopener noreferrer">Tokenized Stocks</a>'
+        bullets = (
+            f"<li><strong>Source</strong> — {rwa} {stocks} distributed Networks and Platforms views.</li>"
+            "<li><strong>KPI strip</strong> — overview totals; colored <strong>%</strong> are "
+            "<strong>30-day (30D)</strong>.</li>"
+            "<li><strong>League tables</strong> — distributed value and share metrics (levels plus 7D / 30D "
+            "changes from the page embed).</li>"
+        )
+    return (
+        '<details class="methodology-panel">'
+        "<summary>Data sources &amp; definitions</summary>"
+        f'<div class="methodology-panel__body"><ul>{bullets}</ul></div>'
+        "</details>"
+    )
+
+
+def rwa_asset_deep_kpis_html(kpis: list[dict[str, Any]], *, note: str, kind: str) -> str:
+    block = kpis_html_from_payload(kpis, note=note)
+    panel = rwa_asset_methodology_panel_html(kind)
+    if not block:
+        return panel
+    if block.endswith("</section>"):
+        return f"{block[:-len('</section>')]}{panel}</section>"
+    return f"{block}{panel}"
+
+
+def rwa_asset_deep_mock_insights_html(payload: dict[str, Any]) -> str:
+    """Network share (top 5) panel for US Treasuries / Tokenized Stocks."""
+    net = payload.get("networks") or {}
+    rows = sorted(
+        list(net.get("rows_full") or []),
+        key=lambda r: -(float(r.get("Market Share") or 0)),
+    )
+    if not rows:
+        return ""
+    top5 = rows[:5]
+    top5_sum = sum(float(r.get("Market Share") or 0) for r in top5)
+    items: list[tuple[str, float]] = [
+        (str(r.get("Network") or "—"), float(r.get("Market Share") or 0)) for r in top5
+    ]
+    other_pct = max(0.0, 100.0 - top5_sum)
+    if other_pct > 0.15:
+        items.append(("Other", other_pct))
+    return (
+        '<section class="etp-mock-insights etp-mock-insights--crypto-full" id="js-deep-insights" '
+        'aria-labelledby="js-deep-insights-h">'
+        '<h2 class="u-vh" id="js-deep-insights-h">Market structure</h2>'
+        '<div class="etp-mock-insights__panel etp-mock-insights__panel--conc">'
+        '<h3 class="etp-mock-insights__head">Network share (top 5)</h3>'
+        '<p class="etp-mock-conc__dek">Share of distributed value by chain (RWA.xyz snapshot).</p>'
+        '<div class="etp-mock-conc__rows etp-mock-conc__rows--grid" role="img" '
+        'aria-label="Top five networks by distributed value share">'
+        f"{_conc_bar_rows(items)}"
+        "</div></div></section>"
+    )
+
+
+def rwa_asset_deep_share_movers_html(payload: dict[str, Any], *, footer_note: str) -> str:
+    """Largest 30D share shifts list for RWA asset deep pages."""
+    net = payload.get("networks") or {}
+    rows = list(net.get("rows_full") or [])
+    if not rows:
+        return ""
+    name_col = str(net.get("name_column") or "Network")
+    val_col = str(net.get("value_column") or "Distributed Value")
+    top_networks = sorted(rows, key=lambda r: -(float(r.get(val_col) or 0)))[:15]
+    movers = [
+        r
+        for r in top_networks
+        if r.get("30D Δ share") is not None and math.isfinite(float(r.get("30D Δ share")))
+    ]
+    movers.sort(key=lambda r: abs(float(r.get("30D Δ share") or 0)), reverse=True)
+    movers = movers[:4]
+    if not movers:
+        return (
+            '<ul class="crypto-top-movers__list"></ul>'
+            f'<p class="crypto-story-callout__note">{footer_note}</p>'
+        )
+    items: list[str] = []
+    for row in movers:
+        n = float(row["30D Δ share"])
+        cls = "up" if n >= 0 else "down"
+        sign = "+" if n > 0 else ""
+        d7 = row.get("7D Δ value")
+        if d7 is not None and math.isfinite(float(d7)):
+            d7f = float(d7)
+            ctx = (
+                f"7D value {'+' if d7f >= 0 else ''}{d7f:.2f}% · "
+                f"{float(row.get('Market Share') or 0):.1f}% market share"
+            )
+        else:
+            ctx = f"{float(row.get('Market Share') or 0):.1f}% market share"
+        label = escape(str(row.get(name_col) or "—"))
+        items.append(
+            '<li class="crypto-top-mover"><div class="crypto-top-mover__row">'
+            f'<span class="crypto-top-mover__label"><strong>{label}</strong></span>'
+            f'<span class="crypto-top-mover__pct pct {cls}">{sign}{n:.2f}%</span></div>'
+            f'<p class="crypto-top-mover__ctx">{escape(ctx)}</p></li>'
+        )
+    return (
+        '<ul class="crypto-top-movers__list">'
+        f"{''.join(items)}"
+        "</ul>"
+        f'<p class="crypto-story-callout__note">{footer_note}</p>'
+    )
+
+
+def rwa_asset_deep_dashboard_html(payload: dict[str, Any], *, chart_aria: str, movers_footer: str) -> str:
+    """Chart host + pre-rendered share movers (Plotly boot script draws the chart)."""
+    net = payload.get("networks") or {}
+    if not net.get("rows_full"):
+        return ""
+    chart_head = str(net.get("chart_heading") or "Top networks by value")
+    movers = rwa_asset_deep_share_movers_html(payload, footer_note=movers_footer)
+    return (
+        '<section class="etp-mock-dashboard" id="js-deep-dashboard" aria-labelledby="js-deep-dashboard-h">'
+        '<h2 class="u-vh" id="js-deep-dashboard-h">Chart and share movers</h2>'
+        '<div class="etp-mock-dash__panel etp-mock-dash__panel--chart">'
+        f'<h3 class="etp-mock-dash__head">{escape(chart_head)}</h3>'
+        '<div class="stable-dash-chart-body">'
+        f'<div id="js-deep-dashboard-chart" class="aum-chart-host" role="img" aria-label="{escape(chart_aria)}"></div>'
+        "</div>"
+        '<p class="etp-mock-chart__cap">'
+        "Top <strong>5</strong> networks plus <strong>Other</strong> (remaining networks); "
+        "market shares sum to <strong>100%</strong>. Bar length uses total value; labels show share."
+        "</p>"
+        '<p class="etp-mock-chart__method">'
+        "Plotly horizontal bars synced to the searchable networks table below."
+        "</p></div>"
+        '<div class="etp-mock-dash__panel etp-mock-dash__panel--movers">'
+        '<h3 class="etp-mock-dash__head">Largest 30D share shifts (networks)</h3>'
+        f'<div id="js-deep-share-movers">{movers}</div>'
+        "</div></section>"
+    )
+
+
+def build_rwa_asset_deep_server_export_config(payload: dict[str, Any]) -> dict[str, Any]:
+    return build_stablecoins_server_export_config(payload)
+
+
+def build_rwa_asset_deep_server_zone_html(
+    *,
+    payload: dict[str, Any],
+    related_chips: str,
+    asset_kind: str,
+    chart_aria: str,
+    movers_footer: str,
+) -> str:
+    """Server-rendered US Treasuries / Tokenized Stocks zone (GitHub Pages deep-page parity)."""
+    title = str(payload.get("page_title") or "RWA asset")
+    title = title.replace(" — Digital Assets Dashboard", "").strip()
+    band = str(payload.get("band_label") or title)
+    subtitle = str(payload.get("page_subtitle_html") or "")
+    footer = str(payload.get("footer_note") or "")
+    err = str(payload.get("error") or payload.get("error_detail") or "").strip()
+    banner = (
+        f'<div class="data-banner" id="js-deep-banner" role="status">{escape(err)}</div>'
+        if err
+        else '<div class="data-banner" id="js-deep-banner" role="status" hidden></div>'
+    )
+    cta = payload.get("bottom_cta") or {}
+    cta_href = str(cta.get("href") or "").strip()
+    cta_label = str(cta.get("label") or "See RWA.xyz")
+    cta_html = (
+        f'<div class="cta-row rwa-deep-page-cta" id="js-deep-bottom-cta">'
+        f'<a class="btn btn-primary" href="{escape(cta_href)}" target="_blank" rel="noopener noreferrer">'
+        f"{escape(cta_label)}</a></div>"
+        if cta_href
+        else '<div class="cta-row rwa-deep-page-cta" id="js-deep-bottom-cta"></div>'
+    )
+    has_net = bool((payload.get("networks") or {}).get("rows_full"))
+    has_plat = bool((payload.get("platforms") or {}).get("rows_full"))
+    mid_rule = (
+        '<hr class="jd-divider" id="js-deep-rule-mid" aria-hidden="true" />'
+        if has_net and has_plat
+        else '<hr class="jd-divider" id="js-deep-rule-mid" hidden aria-hidden="true" />'
+    )
+    between_ko = str(payload.get("between_ko_and_leagues_html") or "").strip()
+    between_html = (
+        f'<div id="js-deep-extra-before-leagues" class="rwa-deep-optional-msg">{between_ko}</div>'
+        if between_ko
+        else '<div id="js-deep-extra-before-leagues" class="rwa-deep-optional-msg" hidden></div>'
+    )
+    after_net = str(payload.get("after_network_block_html") or "").strip()
+    after_net_html = (
+        f'<div id="js-deep-extra-after-network" class="rwa-deep-optional-msg">{after_net}</div>'
+        if after_net
+        else '<div id="js-deep-extra-after-network" class="rwa-deep-optional-msg" hidden></div>'
+    )
+    return (
+        '<main class="page-shell etp-mock-shell">'
+        '<article class="hub-section hub-section--panel inner-rich-zone zone--rwa home-zone home-zone--rwa etp-mock-zone">'
+        '<div class="home-zone__stripe" aria-hidden="true"></div>'
+        '<header class="home-zone__head">'
+        '<span class="home-zone__badge" aria-hidden="true">RWA</span>'
+        '<div class="home-zone__titles">'
+        f'<p class="band-label teal" id="js-deep-band">{escape(band)}</p>'
+        f'<h1 class="page-intro__title" id="js-deep-title">{escape(title)}</h1>'
+        f'<div class="section-dek section-dek--wide page-intro__dek" id="js-deep-subtitle">{subtitle}</div>'
+        "</div></header>"
+        '<div class="home-zone__body inner-rich-zone__body etp-mock-zone__body">'
+        f"{related_chips.strip()}"
+        f"{banner}"
+        f"{rwa_asset_deep_kpis_html(list(payload.get('kpis') or []), note=str(payload.get('kpi_window_note') or ''), kind=asset_kind)}"
+        f"{key_observations_html(str(payload.get('key_observations_html') or ''))}"
+        f"{rwa_asset_deep_mock_insights_html(payload)}"
+        f"{rwa_asset_deep_dashboard_html(payload, chart_aria=chart_aria, movers_footer=movers_footer)}"
+        f"{between_html}"
+        f"{league_table_html(payload.get('networks'), wrap_id='deep-net-wrap', is_network=True)}"
+        f"{after_net_html}"
+        f"{mid_rule}"
+        f"{league_table_html(payload.get('platforms'), wrap_id='deep-plat-wrap', is_network=False)}"
+        f"{cta_html}"
+        f'<p class="timestamp-foot" id="js-deep-footer-note">{escape(footer)}</p>'
+        "</div></article></main>"
+    )
+
+
 _EXPLORE_ASSET_SECTION_SKIP = frozenset({"stablecoins", "tokenized_mmf"})
 
 
