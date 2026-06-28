@@ -46,6 +46,7 @@ def main() -> int:
         ("js-rwa-global-dashboard-chart" in html, "dashboard chart host"),
         ("__RWA_GLOBAL_SERVER_CHART" in html, "chart boot config"),
         ("rwa-global-gh-canvas-override" in html, "canvas override"),
+        ("deep_iframe_rwa_zone_seam" in html or "home-explore-compact__btn" in html, "zone seam flatten"),
         ("measureRwaGlobalContentHeight" in html, "height measure"),
         ("plotly" in html.lower(), "plotly script"),
         ("rwa-global-page.js" not in html, "no legacy hydration boot"),

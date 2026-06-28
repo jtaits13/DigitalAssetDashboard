@@ -745,6 +745,86 @@ def deep_iframe_kpi_flatten_css(*, scope: str, zone: str) -> str:
 """
 
 
+def deep_iframe_rwa_zone_seam_css(*, scope: str, soft: str = "#e8eff5") -> str:
+    """Beat inner-page zone gradients that read as a horizontal seam between white panels."""
+    return f"""
+/* RWA zone interior — flat soft wash (no accent gradient band) */
+{scope}.site-experience.page-inner--rich .inner-rich-zone.zone--rwa,
+{scope} .inner-rich-zone.zone--rwa,
+{scope}.mock-rwa-global-inner .etp-mock-zone.inner-rich-zone.zone--rwa {{
+  background: {soft} !important;
+  background-color: {soft} !important;
+  background-image: none !important;
+}}
+{scope}.site-experience.page-inner--rich .inner-rich-zone.zone--rwa .inner-rich-zone__body,
+{scope}.mock-rwa-global-inner.page-inner--rich .etp-mock-zone .inner-rich-zone__body,
+{scope}.mock-rwa-global-inner .etp-mock-zone__body.inner-rich-zone__body {{
+  background: {soft} !important;
+  background-color: {soft} !important;
+  background-image: none !important;
+}}
+/* Key observations — mock gradient reads as a mid-page horizontal seam */
+{scope}.site-experience.page-inner--rich .inner-rich-zone.zone--rwa .inner-rich-block,
+{scope}.site-experience.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block,
+{scope} .etp-mock-key-obs-block.inner-rich-block,
+{scope} .etp-mock-key-obs-block .crypto-story-callout,
+{scope} #js-rwa-global-macro .crypto-story-callout,
+{scope} #js-rwa-global-ko-section .crypto-story-callout {{
+  background: #fff !important;
+  background-color: #fff !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}}
+{scope} .etp-mock-key-obs-block .crypto-story-callout__note,
+{scope} #js-rwa-global-macro .crypto-story-callout__note {{
+  background: rgb(62 92 116 / 0.06) !important;
+  background-image: none !important;
+}}
+{scope} .etp-mock-key-obs-block .review-note.ko-disclaimer,
+{scope} #js-rwa-global-macro .review-note.ko-disclaimer {{
+  background: #fff !important;
+  background-color: #fff !important;
+  background-image: none !important;
+}}
+/* Explore gateways — iframe body lacks page-rwa-global explore compact styles */
+{scope} .home-explore-compact {{
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 0.5rem 0.55rem !important;
+  margin: 0 0 1.25rem !important;
+  padding: 0.65rem 0.75rem !important;
+  border-radius: 8px !important;
+  background: {soft} !important;
+  background-image: none !important;
+  border: 1px solid rgba(42, 95, 130, 0.14) !important;
+}}
+{scope} .home-explore-compact__label {{
+  font-size: 0.68rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  color: var(--hx-rwa, #1a3d5c) !important;
+  margin-right: 0.15rem !important;
+}}
+{scope} .home-explore-compact__btn {{
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 2rem !important;
+  padding: 0.4rem 0.85rem !important;
+  border-radius: 8px !important;
+  font-size: 0.8rem !important;
+  font-weight: 650 !important;
+  color: var(--hx-rwa, #1a3d5c) !important;
+  background: #fff !important;
+  background-image: none !important;
+  border: 1px solid rgba(42, 95, 130, 0.35) !important;
+  text-decoration: none !important;
+}}
+"""
+
+
 DEEP_IFRAME_TABLE_PANEL_VERSION = "5"
 
 # TMMF viewport is 420px (~11 dense body rows). Scale linearly for 18 rows.
