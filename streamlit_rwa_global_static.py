@@ -22,8 +22,9 @@ _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
 
-_RWA_GLOBAL_IFRAME_CSS_VERSION = "3"
-RWA_GLOBAL_CANVAS_OVERRIDE_VERSION = "1"
+_RWA_GLOBAL_IFRAME_CSS_VERSION = "5"
+RWA_GLOBAL_IFRAME_BUILD = "5"
+RWA_GLOBAL_CANVAS_OVERRIDE_VERSION = "5"
 RWA_GLOBAL_TABLE_PANEL_VERSION = "1"
 
 RWA_GLOBAL_GH_PAGE_WASH = "#f3f7fb"
@@ -310,7 +311,7 @@ def get_rwa_global_iframe_payloads() -> dict[str, Any]:
 
 
 @st.cache_resource(show_spinner=False)
-def _cached_iframe_rwa_global_stylesheet() -> str:
+def _cached_iframe_rwa_global_stylesheet(*, _css_version: str = _RWA_GLOBAL_IFRAME_CSS_VERSION) -> str:
     from streamlit_site_parity import (
         _iframe_rwa_global_mock_css,
         deep_iframe_back_link_clickable_css,
@@ -678,7 +679,7 @@ def build_rwa_global_server_iframe_html(
     from streamlit_server_deep_page import build_rwa_global_server_zone_html
     from streamlit_site_parity import deep_iframe_table_panel_css, iframe_internal_link_script
 
-    css = _cached_iframe_rwa_global_stylesheet()
+    css = _cached_iframe_rwa_global_stylesheet(_css_version=_RWA_GLOBAL_IFRAME_CSS_VERSION)
     override_css = rwa_global_github_canvas_override_css()
     table_panel_css = deep_iframe_table_panel_css(scope="body.page-rwa-global-iframe")
     back_link = _rwa_global_back_link_html(href=back_href, label=back_label)
@@ -699,7 +700,8 @@ def build_rwa_global_server_iframe_html(
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<style>{css}</style>
+<!-- rwa-global-iframe-build-v{RWA_GLOBAL_IFRAME_BUILD} -->
+<style id="rwa-global-iframe-css-v{_RWA_GLOBAL_IFRAME_CSS_VERSION}">{css}</style>
 <style id="rwa-global-gh-canvas-override-v{RWA_GLOBAL_CANVAS_OVERRIDE_VERSION}">{override_css}</style>
 <style id="rwa-global-table-panel-v{RWA_GLOBAL_TABLE_PANEL_VERSION}">{table_panel_css}</style>
 </head>
@@ -779,24 +781,6 @@ def _cached_rwa_global_iframe_payloads() -> dict[str, Any]:
     return load_rwa_global_iframe_payloads()
 
 
-@st.cache_data(show_spinner=False, ttl=3600)
-def _cached_rwa_global_server_iframe_html(
-    payload_json: str,
-    related_chips: str,
-    back_href: str,
-    back_label: str,
-    *,
-    _css_version: str = _RWA_GLOBAL_IFRAME_CSS_VERSION,
-) -> str:
-    payload = json.loads(payload_json)
-    return build_rwa_global_server_iframe_html(
-        payload=payload,
-        related_chips=related_chips,
-        back_href=back_href,
-        back_label=back_label,
-    )
-
-
 def render_rwa_global_body_iframe(
     *,
     payloads: dict[str, Any],
@@ -807,14 +791,14 @@ def render_rwa_global_body_iframe(
     from streamlit_site_parity import render_subpage_body_iframe
 
     payload = dict((payloads or {}).get("rwa_global_market.json") or {})
-    payload_json = _json_for_script(payload)
+    html = build_rwa_global_server_iframe_html(
+        payload=payload,
+        related_chips=related_chips,
+        back_href=back_href,
+        back_label=back_label,
+    )
     render_subpage_body_iframe(
-        _cached_rwa_global_server_iframe_html(
-            payload_json,
-            related_chips,
-            back_href,
-            back_label,
-        ),
+        html,
         height=1400,
     )
     inject_rwa_global_host_canvas_override()

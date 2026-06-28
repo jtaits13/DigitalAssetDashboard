@@ -123,8 +123,12 @@ def _clear_all_caches() -> None:
     from streamlit_news_feeds_static import _cached_news_feed_iframe_payloads
 
     _cached_news_feed_iframe_payloads.clear()
-    from streamlit_rwa_global_static import _cached_rwa_global_iframe_payloads
+    from streamlit_rwa_global_static import (
+        _cached_iframe_rwa_global_stylesheet,
+        _cached_rwa_global_iframe_payloads,
+    )
 
+    _cached_iframe_rwa_global_stylesheet.clear()
     _cached_rwa_global_iframe_payloads.clear()
     from streamlit_rwa_explore_static import _cached_rwa_explore_iframe_payloads
 
