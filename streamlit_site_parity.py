@@ -112,12 +112,14 @@ section[data-testid="stSidebar"] { display: none !important; }
   margin-right: calc(50% - 50vw) !important;
   padding: 0 !important;
   overflow: visible !important;
+  background: transparent !important;
 }
 .stApp [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) iframe {
   display: block !important;
   width: 100% !important;
   border: 0;
   overflow: hidden !important;
+  background: transparent !important;
 }
 .stApp .home-hero-content-gap {
   display: block;
@@ -728,11 +730,11 @@ SUBPAGE_STREAMLIT_CSS = """
   overflow: visible !important;
   overflow-x: visible !important;
 }
-/* TMMF + home nav: keep host gutters the same flat light wash as the nav band (no mid-page gray seam). */
+/* TMMF + home nav: gray page canvas like GitHub Pages (white lives only in the nav header iframe). */
 .stApp:has(.streamlit-tmmf-iframe-page):has(.home-chrome-iframe-marker),
 .withScreencast:has(.streamlit-tmmf-iframe-page):has(.home-chrome-iframe-marker),
 [data-testid="stScreencast"]:has(.streamlit-tmmf-iframe-page):has(.home-chrome-iframe-marker) {
-  background: #fff !important;
+  background: var(--wash, #f3f7fb) !important;
 }
 .withScreencast:has(.streamlit-subpage-active),
 [data-testid="stScreencast"]:has(.streamlit-subpage-active) {
@@ -759,6 +761,7 @@ SUBPAGE_STREAMLIT_CSS = """
   position: sticky !important;
   top: 0 !important;
   z-index: 100 !important;
+  background: transparent !important;
 }
 .stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) iframe,
 .stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) iframe {
@@ -766,6 +769,7 @@ SUBPAGE_STREAMLIT_CSS = """
   width: 100% !important;
   border: 0;
   overflow: hidden !important;
+  background: transparent !important;
 }
 .stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker),
 .stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker) {
@@ -2148,7 +2152,7 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
         var inner = frame.contentDocument;
         if (!inner || !inner.body) return;
         if (inner.querySelector(".home-main-split")) return;
-        if (inner.body.classList.contains("subpage-nav-chrome")) {{
+        if (inner.body.classList.contains("subpage-nav-chrome") || inner.body.classList.contains("home-nav-chrome-only")) {{
           applyFrameHeight(frame, measureSubpageNavHeight(inner), 40);
           return;
         }}
@@ -2217,7 +2221,7 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
       doc.querySelectorAll("iframe").forEach(function (frame) {{
         try {{
           var inner = frame.contentDocument;
-          if (inner && inner.body.classList.contains("subpage-nav-chrome")) {{
+          if (inner && (inner.body.classList.contains("subpage-nav-chrome") || inner.body.classList.contains("home-nav-chrome-only"))) {{
             applyFrameHeight(frame, navH, 40);
           }}
         }} catch (e) {{}}
@@ -3334,6 +3338,7 @@ def build_home_nav_iframe_html(*, active: str) -> str:
 html, body.page-home.home-nav-chrome-only.site-experience {
   overflow: visible;
   height: auto;
+  background: transparent !important;
 }
 body.page-home.home-nav-chrome-only.site-experience .site-header {
   position: relative;
