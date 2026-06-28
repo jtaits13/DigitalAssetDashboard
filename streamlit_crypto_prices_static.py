@@ -10,6 +10,7 @@ from typing import Any
 import streamlit as st
 import streamlit.components.v1 as components
 
+from streamlit_site_parity import DEEP_MARKET_TABLE_HEIGHT_VERSION
 from streamlit_tmmf_static import (
     _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH,
     _TMMF_SERVER_INLINE_HOST_MODAL_JS,
@@ -21,9 +22,9 @@ _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
 
-_CRYPTO_IFRAME_CSS_VERSION = "9"
-CRYPTO_CANVAS_OVERRIDE_VERSION = "7"
-CRYPTO_TABLE_PANEL_VERSION = "5"
+_CRYPTO_IFRAME_CSS_VERSION = "10"
+CRYPTO_CANVAS_OVERRIDE_VERSION = "8"
+CRYPTO_TABLE_PANEL_VERSION = "6"
 
 CRYPTO_GH_PAGE_WASH = "#f3f7fb"
 CRYPTO_GH_ZONE_SOFT = "#f1f4f7"
@@ -171,11 +172,16 @@ _CRYPTO_IFRAME_BACK_LINK = """
 
 
 def crypto_github_canvas_override_css(*, version: str = CRYPTO_CANVAS_OVERRIDE_VERSION) -> str:
-    from streamlit_site_parity import deep_iframe_kpi_flatten_css, deep_iframe_table_panel_css
+    from streamlit_site_parity import (
+        deep_iframe_kpi_flatten_css,
+        deep_iframe_table_height_lock_css,
+        deep_iframe_table_panel_css,
+    )
 
     wash = CRYPTO_GH_PAGE_WASH
     soft = CRYPTO_GH_ZONE_SOFT
     scope = "body.page-crypto-iframe"
+    height_lock = deep_iframe_table_height_lock_css(scope=scope)
     return f"""
 /* Crypto GitHub Pages canvas override v{version} */
 html, {scope}.site-experience,
@@ -220,7 +226,7 @@ html, {scope}.site-experience,
   background: rgb(72 90 110 / 0.06) !important;
   background-image: none !important;
 }}
-""" + deep_iframe_kpi_flatten_css(scope=scope, zone="crypto") + deep_iframe_table_panel_css(scope=scope)
+""" + deep_iframe_kpi_flatten_css(scope=scope, zone="crypto") + deep_iframe_table_panel_css(scope=scope) + height_lock
 
 
 def crypto_iframe_canvas_override_js(*, version: str = CRYPTO_CANVAS_OVERRIDE_VERSION) -> str:
@@ -514,9 +520,14 @@ def get_crypto_iframe_payloads() -> dict[str, Any]:
 
 
 @st.cache_resource(show_spinner=False)
-def _cached_iframe_crypto_stylesheet_v9() -> str:
+def _cached_iframe_crypto_stylesheet_v10() -> str:
     """Same CSS stack as ``static_home/crypto-prices.html`` (iframe-safe, no mock banners)."""
-    from streamlit_site_parity import _iframe_crypto_mock_css, deep_iframe_kpi_flatten_css, deep_iframe_table_panel_css
+    from streamlit_site_parity import (
+        _iframe_crypto_mock_css,
+        deep_iframe_kpi_flatten_css,
+        deep_iframe_table_height_lock_css,
+        deep_iframe_table_panel_css,
+    )
 
     chunks: list[str] = [
         "@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap');",
@@ -650,10 +661,11 @@ body.page-crypto-iframe .rwa-table-modal--streamlit-fallback .rwa-table-modal__d
 }
 """
     )
-    from streamlit_site_parity import deep_iframe_kpi_flatten_css, deep_iframe_table_panel_css
+    from streamlit_site_parity import deep_iframe_kpi_flatten_css, deep_iframe_table_height_lock_css, deep_iframe_table_panel_css
 
     chunks.append(deep_iframe_kpi_flatten_css(scope="body.page-crypto-iframe", zone="crypto"))
     chunks.append(deep_iframe_table_panel_css(scope="body.page-crypto-iframe"))
+    chunks.append(deep_iframe_table_height_lock_css(scope="body.page-crypto-iframe"))
     return "\n".join(chunks)
 
 
@@ -679,13 +691,16 @@ def build_crypto_server_iframe_html(
         build_crypto_server_zone_html,
     )
     from streamlit_site_parity import (
+        DEEP_MARKET_TABLE_HEIGHT_VERSION,
+        deep_iframe_table_height_lock_css,
         deep_iframe_table_panel_css,
         iframe_internal_link_script,
     )
 
-    css = _cached_iframe_crypto_stylesheet_v9()
+    css = _cached_iframe_crypto_stylesheet_v10()
     override_css = crypto_github_canvas_override_css()
     table_panel_css = deep_iframe_table_panel_css(scope="body.page-crypto-iframe")
+    height_lock_css = deep_iframe_table_height_lock_css(scope="body.page-crypto-iframe")
     back_link = _crypto_back_link_html(href=back_href, label=back_label)
     zone = build_crypto_server_zone_html(payloads=payloads, related_chips=related_chips)
     payloads_json = _json_for_script(payloads)
@@ -701,6 +716,7 @@ def build_crypto_server_iframe_html(
 <style>{css}</style>
 <style id="crypto-gh-canvas-override-v{CRYPTO_CANVAS_OVERRIDE_VERSION}">{override_css}</style>
 <style id="crypto-table-panel-v{CRYPTO_TABLE_PANEL_VERSION}">{table_panel_css}</style>
+<style id="deep-market-table-height-lock-v{DEEP_MARKET_TABLE_HEIGHT_VERSION}">{height_lock_css}</style>
 </head>
 <body
   class="page-crypto page-crypto-iframe site-experience page-inner--rich mock-crypto-inner"
@@ -811,6 +827,7 @@ def _cached_crypto_server_iframe_html(
     back_label: str,
     *,
     _css_version: str = _CRYPTO_IFRAME_CSS_VERSION,
+    _table_height_version: str = DEEP_MARKET_TABLE_HEIGHT_VERSION,
 ) -> str:
     payloads = json.loads(payloads_json)
     return build_crypto_server_iframe_html(

@@ -11,6 +11,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 from streamlit_crypto_prices_static import _CRYPTO_PATCH_LOAD_JSON_JS
+from streamlit_site_parity import DEEP_MARKET_TABLE_HEIGHT_VERSION
 from streamlit_tmmf_static import (
     _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH,
     _TMMF_SERVER_INLINE_HOST_MODAL_JS,
@@ -22,9 +23,9 @@ _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
 
-_ETP_IFRAME_CSS_VERSION = "7"
-ETP_CANVAS_OVERRIDE_VERSION = "5"
-ETP_TABLE_PANEL_VERSION = "5"
+_ETP_IFRAME_CSS_VERSION = "8"
+ETP_CANVAS_OVERRIDE_VERSION = "6"
+ETP_TABLE_PANEL_VERSION = "6"
 
 ETP_GH_PAGE_WASH = "#f3f7fb"
 ETP_GH_ZONE_SOFT = "#eef2f7"
@@ -173,11 +174,12 @@ def get_etp_iframe_payloads(*, user_agent: str) -> dict[str, Any]:
 
 
 @st.cache_resource(show_spinner=False)
-def _cached_iframe_etp_stylesheet_v7() -> str:
+def _cached_iframe_etp_stylesheet_v8() -> str:
     """Same CSS stack as ``static_home/etps.html`` (iframe-safe, no mock banners)."""
     from streamlit_site_parity import (
         _iframe_etp_mock_css,
         deep_iframe_kpi_flatten_css,
+        deep_iframe_table_height_lock_css,
         deep_iframe_table_panel_css,
     )
 
@@ -300,15 +302,21 @@ body.page-etp-iframe .rwa-table-modal--streamlit-fallback .rwa-table-modal__dial
     )
     chunks.append(deep_iframe_kpi_flatten_css(scope="body.page-etp-iframe", zone="etp"))
     chunks.append(deep_iframe_table_panel_css(scope="body.page-etp-iframe"))
+    chunks.append(deep_iframe_table_height_lock_css(scope="body.page-etp-iframe"))
     return "\n".join(chunks)
 
 
 def etp_github_canvas_override_css(*, version: str = ETP_CANVAS_OVERRIDE_VERSION) -> str:
-    from streamlit_site_parity import deep_iframe_kpi_flatten_css, deep_iframe_table_panel_css
+    from streamlit_site_parity import (
+        deep_iframe_kpi_flatten_css,
+        deep_iframe_table_height_lock_css,
+        deep_iframe_table_panel_css,
+    )
 
     wash = ETP_GH_PAGE_WASH
     soft = ETP_GH_ZONE_SOFT
     scope = "body.page-etp-iframe"
+    height_lock = deep_iframe_table_height_lock_css(scope=scope)
     return f"""
 /* ETP GitHub Pages canvas override v{version} */
 html, {scope}.site-experience,
@@ -349,7 +357,7 @@ html, {scope}.site-experience,
   background: rgb(62 92 116 / 0.06) !important;
   background-image: none !important;
 }}
-""" + deep_iframe_kpi_flatten_css(scope=scope, zone="etp") + deep_iframe_table_panel_css(scope=scope)
+""" + deep_iframe_kpi_flatten_css(scope=scope, zone="etp") + deep_iframe_table_panel_css(scope=scope) + height_lock
 
 
 def etp_iframe_canvas_override_js(*, version: str = ETP_CANVAS_OVERRIDE_VERSION) -> str:
@@ -601,13 +609,16 @@ def build_etp_server_iframe_html(
         build_etp_server_zone_html,
     )
     from streamlit_site_parity import (
+        DEEP_MARKET_TABLE_HEIGHT_VERSION,
+        deep_iframe_table_height_lock_css,
         deep_iframe_table_panel_css,
         iframe_internal_link_script,
     )
 
-    css = _cached_iframe_etp_stylesheet_v7()
+    css = _cached_iframe_etp_stylesheet_v8()
     override_css = etp_github_canvas_override_css()
     table_panel_css = deep_iframe_table_panel_css(scope="body.page-etp-iframe")
+    height_lock_css = deep_iframe_table_height_lock_css(scope="body.page-etp-iframe")
     back_link = _etp_back_link_html(href=back_href, label=back_label)
     zone = build_etp_server_zone_html(payloads=payloads, related_chips=related_chips)
     payloads_json = _json_for_script(payloads)
@@ -623,6 +634,7 @@ def build_etp_server_iframe_html(
 <style>{css}</style>
 <style id="etp-gh-canvas-override-v{ETP_CANVAS_OVERRIDE_VERSION}">{override_css}</style>
 <style id="etp-table-panel-v{ETP_TABLE_PANEL_VERSION}">{table_panel_css}</style>
+<style id="deep-market-table-height-lock-v{DEEP_MARKET_TABLE_HEIGHT_VERSION}">{height_lock_css}</style>
 </head>
 <body
   class="page-etp page-etp-iframe site-experience page-inner--rich mock-etp-inner"
@@ -737,6 +749,7 @@ def _cached_etp_server_iframe_html(
     back_label: str,
     *,
     _css_version: str = _ETP_IFRAME_CSS_VERSION,
+    _table_height_version: str = DEEP_MARKET_TABLE_HEIGHT_VERSION,
 ) -> str:
     payloads = json.loads(payloads_json)
     return build_etp_server_iframe_html(

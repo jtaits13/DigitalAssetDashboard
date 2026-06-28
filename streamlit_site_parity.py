@@ -754,6 +754,39 @@ DEEP_MARKET_TABLE_VISIBLE_ROWS = 18
 DEEP_MARKET_TABLE_SCROLL_HEIGHT = (
     f"{round(_TMMF_TABLE_SCROLL_PX * DEEP_MARKET_TABLE_VISIBLE_ROWS / _TMMF_TABLE_VISIBLE_ROWS)}px"
 )
+DEEP_MARKET_TABLE_HEIGHT_VERSION = "6"
+
+
+def deep_market_table_wrap_open(*, fullscreen_title: str) -> str:
+    """Open tag for ETP/Crypto deep-page fund tables (18-row scroll viewport)."""
+    from html import escape
+
+    h = DEEP_MARKET_TABLE_SCROLL_HEIGHT
+    return (
+        f'<div class="table-wrap table-wrap--scroll deep-market-table-wrap" '
+        f'data-deep-market-rows="{DEEP_MARKET_TABLE_VISIBLE_ROWS}" '
+        f'data-fullscreen-title="{escape(fullscreen_title)}" '
+        f'style="--rwa-split-body-height:{h};height:{h};max-height:{h};'
+        f'min-height:{h};overflow:auto;flex:none">'
+    )
+
+
+def deep_iframe_table_height_lock_css(*, scope: str) -> str:
+    """Last-resort height lock for market tables (beats global ``.table-wrap--scroll`` caps)."""
+    h = DEEP_MARKET_TABLE_SCROLL_HEIGHT
+    return f"""
+/* Deep market table — {DEEP_MARKET_TABLE_VISIBLE_ROWS} visible rows ({h}) */
+{scope} .deep-market-table-wrap,
+{scope} .deep-market-table-wrap.table-wrap--scroll,
+{scope}.site-experience .deep-market-table-wrap.table-wrap--scroll {{
+  --rwa-split-body-height: {h} !important;
+  height: {h} !important;
+  max-height: {h} !important;
+  min-height: {h} !important;
+  overflow: auto !important;
+  flex: none !important;
+}}
+"""
 
 
 def deep_iframe_table_panel_css(*, scope: str) -> str:
@@ -828,9 +861,7 @@ def deep_iframe_table_panel_paint_js() -> str:
       el.style.setProperty("box-shadow", "0 1px 4px rgb(62 92 116 / 0.06)", "important");
       el.style.setProperty("background", "#fff", "important");
     }});
-    document.querySelectorAll(
-      ".etp-mock-table-block--funds .deep-market-table-wrap"
-    ).forEach(function (el) {{
+    document.querySelectorAll(".deep-market-table-wrap").forEach(function (el) {{
       el.style.setProperty("--rwa-split-body-height", "{scroll_h}", "important");
       el.style.setProperty("border", "1px solid #dbe8f2", "important");
       el.style.setProperty("border-radius", "8px", "important");
