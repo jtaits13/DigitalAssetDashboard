@@ -712,6 +712,30 @@ SUBPAGE_STREAMLIT_CSS = """
   min-height: 100vh !important;
   overflow: visible !important;
 }
+/* Subpages using home chrome nav: full-bleed band + dropdown room above body iframe. */
+.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker) + [data-testid="stElementContainer"]:has(iframe),
+.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  margin-left: calc(50% - 50vw) !important;
+  margin-right: calc(50% - 50vw) !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 100 !important;
+}
+.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) iframe,
+.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) iframe {
+  display: block !important;
+  width: 100% !important;
+  border: 0;
+  overflow: hidden !important;
+}
+.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe),
+.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) {
+  z-index: 1 !important;
+}
 /* TMMF (and other no-nav subpages): hide empty host back-link shells / phantom pills. */
 .stApp:has(.streamlit-subpage-no-nav) .site-header,
 .stApp:has(.streamlit-subpage-no-nav) .page-back-below-header,
@@ -1768,6 +1792,72 @@ def iframe_chrome_height_script() -> str:
     }});
   }}
   [50, 150, 400, 800, 1500, 3000, 5000].forEach(function (ms) {{
+    setTimeout(sendHeight, ms);
+  }});
+}})();
+</script>"""
+
+
+def iframe_home_nav_height_script() -> str:
+    """Resize home-style nav iframe for header band + open dropdown menus."""
+    slack = max(SUBPAGE_NAV_HEIGHT_SLACK_PX, HOME_CHROME_HEIGHT_SLACK_PX)
+    return f"""
+<script>
+(function () {{
+  var slack = {slack};
+  function measureNavHeight() {{
+    var docTop = document.documentElement.getBoundingClientRect().top;
+    var bottom = docTop;
+    document.querySelectorAll(".site-header").forEach(function (el) {{
+      bottom = Math.max(bottom, el.getBoundingClientRect().bottom);
+    }});
+    document.querySelectorAll(".site-nav__sub").forEach(function (sub) {{
+      var r = sub.getBoundingClientRect();
+      if (r.height > 1 && r.width > 1) {{
+        bottom = Math.max(bottom, r.bottom);
+      }}
+    }});
+    return Math.ceil(bottom - docTop + slack);
+  }}
+  function sendHeight() {{
+    var h = measureNavHeight();
+    if (h <= 40) return;
+    window.parent.postMessage({{ type: "streamlit:setFrameHeight", height: h }}, "*");
+    try {{
+      window.parent.postMessage({{ type: "jpm-chrome-height", height: h }}, "*");
+      window.parent.postMessage({{ type: "jpm-subpage-nav-height", height: h }}, "*");
+    }} catch (e) {{}}
+  }}
+  function bindDropdownResize() {{
+    document.querySelectorAll(".site-nav__dropdown").forEach(function (dd) {{
+      if (dd.dataset.jpmNavHeightBound) return;
+      dd.dataset.jpmNavHeightBound = "1";
+      dd.addEventListener("mouseenter", sendHeight);
+      dd.addEventListener("mouseleave", function () {{
+        setTimeout(sendHeight, 80);
+      }});
+      dd.addEventListener("focusin", sendHeight);
+      dd.addEventListener("focusout", function () {{
+        setTimeout(sendHeight, 80);
+      }});
+    }});
+  }}
+  sendHeight();
+  bindDropdownResize();
+  window.addEventListener("load", function () {{
+    sendHeight();
+    bindDropdownResize();
+  }});
+  if (document.fonts && document.fonts.ready) {{
+    document.fonts.ready.then(sendHeight);
+  }}
+  if (typeof ResizeObserver !== "undefined") {{
+    var ro = new ResizeObserver(sendHeight);
+    document.querySelectorAll(".site-header, .site-nav__sub").forEach(function (el) {{
+      ro.observe(el);
+    }});
+  }}
+  [50, 150, 400, 800, 1500, 3000].forEach(function (ms) {{
     setTimeout(sendHeight, ms);
   }});
 }})();
@@ -2940,6 +3030,7 @@ def configure_subpage(
     style_kind: str = "article",
     delivery: str = "iframe",
     show_nav: bool = True,
+    nav_style: str = "subpage",
 ) -> None:
     """Shared subpage setup: collapsed sidebar, nav, and static/inner CSS."""
     st.set_page_config(
@@ -2989,7 +3080,10 @@ def configure_subpage(
         unsafe_allow_html=True,
     )
     if show_nav:
-        render_subpage_nav(active=active)
+        if nav_style == "home":
+            render_home_chrome_nav(active=active)
+        else:
+            render_subpage_nav(active=active)
     inject_subpage_embed_reveal()
 
 
@@ -3172,6 +3266,50 @@ def build_home_chrome_iframe_html(*, include_refresh: bool = False) -> str:
 {iframe_internal_link_script()}
 </body>
 </html>"""
+
+
+def build_home_nav_iframe_html(*, active: str) -> str:
+    """Home chrome nav band only (same stylesheet + nav markup as the home page)."""
+    css = _cached_iframe_home_stylesheet()
+    nav_extra = """
+html, body.page-home.home-nav-chrome-only.site-experience {
+  overflow: visible;
+  height: auto;
+}
+body.page-home.home-nav-chrome-only.site-experience .site-header {
+  position: relative;
+  top: auto;
+  width: 100%;
+  margin: 0;
+}
+"""
+    body = render_site_nav_html(active=active, is_landing=False, for_streamlit=True).strip()
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>{css}{nav_extra}</style>
+</head>
+<body class="page-home site-experience home-nav-chrome-only">
+{body}
+{iframe_home_nav_height_script()}
+{iframe_internal_link_script()}
+</body>
+</html>"""
+
+
+def render_home_chrome_nav(*, active: str) -> None:
+    """Render the home page nav band on a subpage (same iframe chrome as ``render_home_chrome``)."""
+    st.markdown(
+        '<span class="home-chrome-iframe-marker" hidden aria-hidden="true"></span>',
+        unsafe_allow_html=True,
+    )
+    components.html(
+        build_home_nav_iframe_html(active=active),
+        height=SUBPAGE_NAV_IFRAME_INITIAL_HEIGHT,
+        scrolling=False,
+    )
 
 
 def render_home_chrome(*, include_refresh: bool = False) -> None:
