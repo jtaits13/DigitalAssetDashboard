@@ -21,8 +21,8 @@ _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
 
-_CRYPTO_IFRAME_CSS_VERSION = "3"
-CRYPTO_CANVAS_OVERRIDE_VERSION = "2"
+_CRYPTO_IFRAME_CSS_VERSION = "4"
+CRYPTO_CANVAS_OVERRIDE_VERSION = "3"
 
 CRYPTO_GH_PAGE_WASH = "#f3f7fb"
 CRYPTO_GH_ZONE_SOFT = "#f1f4f7"
@@ -170,6 +170,8 @@ _CRYPTO_IFRAME_BACK_LINK = """
 
 
 def crypto_github_canvas_override_css(*, version: str = CRYPTO_CANVAS_OVERRIDE_VERSION) -> str:
+    from streamlit_site_parity import deep_iframe_kpi_flatten_css
+
     wash = CRYPTO_GH_PAGE_WASH
     soft = CRYPTO_GH_ZONE_SOFT
     scope = "body.page-crypto-iframe"
@@ -204,7 +206,6 @@ html, {scope}.site-experience,
 {scope} .etp-mock-key-obs-block .review-note.ko-disclaimer,
 {scope} #js-crypto-key-obs .review-note.ko-disclaimer,
 {scope} .etp-mock-insights__panel,
-{scope} .etp-mock-snapshot,
 {scope} .etp-mock-dash__panel,
 {scope} .rwa-kpi-row--home-grid .rwa-kpi-cell,
 {scope} .etp-mock-table-block {{
@@ -218,7 +219,7 @@ html, {scope}.site-experience,
   background: rgb(72 90 110 / 0.06) !important;
   background-image: none !important;
 }}
-"""
+""" + deep_iframe_kpi_flatten_css(scope=scope, zone="crypto")
 
 
 def crypto_iframe_canvas_override_js(*, version: str = CRYPTO_CANVAS_OVERRIDE_VERSION) -> str:
@@ -248,9 +249,15 @@ def crypto_iframe_canvas_override_js(*, version: str = CRYPTO_CANVAS_OVERRIDE_VE
       ".inner-rich-zone.zone--crypto, .inner-rich-zone.zone--crypto .inner-rich-zone__body, .etp-mock-zone.inner-rich-zone.zone--crypto, .etp-mock-zone .inner-rich-zone__body"
     ).forEach(function (el) {{ setBg(el, SOFT); }});
     document.querySelectorAll(
-      ".inner-rich-block, .etp-mock-key-obs-block, .crypto-story-callout, .review-note.ko-disclaimer, .etp-mock-insights__panel, .etp-mock-snapshot, .etp-mock-dash__panel, .rwa-kpi-row--home-grid .rwa-kpi-cell, .etp-mock-table-block"
+      ".inner-rich-block, .etp-mock-key-obs-block, .crypto-story-callout, .review-note.ko-disclaimer, .etp-mock-insights__panel, .etp-mock-dash__panel, .rwa-kpi-row--home-grid .rwa-kpi-cell, .etp-mock-table-block"
     ).forEach(function (el) {{
       setBg(el, WHITE);
+      el.style.setProperty("box-shadow", "none", "important");
+    }});
+    document.querySelectorAll(".rwa-kpi-panel-static").forEach(function (el) {{
+      el.style.setProperty("background", "transparent", "important");
+      el.style.setProperty("background-image", "none", "important");
+      el.style.setProperty("border", "none", "important");
       el.style.setProperty("box-shadow", "none", "important");
     }});
     document.querySelectorAll(".crypto-story-callout__note").forEach(function (el) {{
@@ -637,6 +644,9 @@ body.page-crypto-iframe .rwa-table-modal--streamlit-fallback .rwa-table-modal__d
 }
 """
     )
+    from streamlit_site_parity import deep_iframe_kpi_flatten_css
+
+    chunks.append(deep_iframe_kpi_flatten_css(scope="body.page-crypto-iframe", zone="crypto"))
     return "\n".join(chunks)
 
 

@@ -22,8 +22,8 @@ _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
 
-_STABLE_IFRAME_CSS_VERSION = "5"
-STABLE_CANVAS_OVERRIDE_VERSION = "2"
+_STABLE_IFRAME_CSS_VERSION = "6"
+STABLE_CANVAS_OVERRIDE_VERSION = "3"
 
 # GitHub Pages canvas tokens (static_home/styles.css --wash; zone --hx-stable-soft).
 STABLE_GH_PAGE_WASH = "#f3f7fb"
@@ -309,6 +309,8 @@ _STABLE_IFRAME_BACK_LINK = """
 
 
 def stablecoins_github_canvas_override_css(*, version: str = STABLE_CANVAS_OVERRIDE_VERSION) -> str:
+    from streamlit_site_parity import deep_iframe_kpi_flatten_css
+
     wash = STABLE_GH_PAGE_WASH
     soft = STABLE_GH_ZONE_SOFT
     scope = "body.page-rwa-deep-stablecoins"
@@ -352,7 +354,7 @@ html, {scope}.site-experience,
   background: rgb(62 92 116 / 0.06) !important;
   background-image: none !important;
 }}
-"""
+""" + deep_iframe_kpi_flatten_css(scope=scope, zone="stable")
 
 
 def stablecoins_iframe_canvas_override_js(*, version: str = STABLE_CANVAS_OVERRIDE_VERSION) -> str:
@@ -383,7 +385,16 @@ def stablecoins_iframe_canvas_override_js(*, version: str = STABLE_CANVAS_OVERRI
     ).forEach(function (el) {{ setBg(el, SOFT); }});
     document.querySelectorAll(
       ".inner-rich-block, .etp-mock-key-obs-block, .crypto-story-callout, .review-note.ko-disclaimer, .etp-mock-insights__panel, .etp-mock-dash__panel, .rwa-kpi-row--home-grid .rwa-kpi-cell"
-    ).forEach(function (el) {{ setBg(el, WHITE); }});
+    ).forEach(function (el) {{
+      setBg(el, WHITE);
+      el.style.setProperty("box-shadow", "none", "important");
+    }});
+    document.querySelectorAll(".rwa-kpi-panel-static").forEach(function (el) {{
+      el.style.setProperty("background", "transparent", "important");
+      el.style.setProperty("background-image", "none", "important");
+      el.style.setProperty("border", "none", "important");
+      el.style.setProperty("box-shadow", "none", "important");
+    }});
     document.querySelectorAll(".crypto-story-callout__note").forEach(function (el) {{
       setBg(el, "rgb(62 92 116 / 0.06)");
     }});
@@ -623,6 +634,9 @@ body.page-rwa-deep-stablecoins .rwa-table-modal--streamlit-fallback .rwa-table-m
 }
 """
     )
+    from streamlit_site_parity import deep_iframe_kpi_flatten_css
+
+    chunks.append(deep_iframe_kpi_flatten_css(scope="body.page-rwa-deep-stablecoins", zone="stable"))
     return "\n".join(chunks)
 
 

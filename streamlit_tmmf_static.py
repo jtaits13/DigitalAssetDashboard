@@ -636,11 +636,13 @@ function measureTmmfContentHeight() {
 # GitHub Pages canvas tokens (static_home/styles.css --wash; zone --hx-tmmf-soft).
 TMMF_GH_PAGE_WASH = "#f3f7fb"
 TMMF_GH_ZONE_SOFT = "#eef2f6"
-TMMF_CANVAS_OVERRIDE_VERSION = "13"
+TMMF_CANVAS_OVERRIDE_VERSION = "14"
 
 
 def tmmf_github_canvas_override_css(*, version: str = TMMF_CANVAS_OVERRIDE_VERSION) -> str:
     """Uncached manual override — flat GitHub Pages wash on canvas, soft gray in zone card."""
+    from streamlit_site_parity import deep_iframe_kpi_flatten_css
+
     wash = TMMF_GH_PAGE_WASH
     soft = TMMF_GH_ZONE_SOFT
     scope = "body.page-rwa-deep-mmf"
@@ -683,7 +685,7 @@ html, {scope}.site-experience,
   background: rgb(62 92 116 / 0.06) !important;
   background-image: none !important;
 }}
-"""
+""" + deep_iframe_kpi_flatten_css(scope=scope, zone="tmmf")
 
 
 def tmmf_iframe_canvas_override_js(*, version: str = TMMF_CANVAS_OVERRIDE_VERSION) -> str:
@@ -717,6 +719,13 @@ def tmmf_iframe_canvas_override_js(*, version: str = TMMF_CANVAS_OVERRIDE_VERSIO
       ".inner-rich-block, .etp-mock-key-obs-block, .crypto-story-callout, .review-note.ko-disclaimer, .etp-mock-insights__panel, .rwa-kpi-row--home-grid .rwa-kpi-cell"
     ).forEach(function (el) {{
       setBg(el, WHITE);
+      el.style.setProperty("box-shadow", "none", "important");
+    }});
+    document.querySelectorAll(".rwa-kpi-panel-static").forEach(function (el) {{
+      el.style.setProperty("background", "transparent", "important");
+      el.style.setProperty("background-image", "none", "important");
+      el.style.setProperty("border", "none", "important");
+      el.style.setProperty("box-shadow", "none", "important");
     }});
     document.querySelectorAll(".crypto-story-callout__note").forEach(function (el) {{
       setBg(el, "rgb(62 92 116 / 0.06)");
@@ -1057,6 +1066,9 @@ body.page-rwa-deep-mmf #js-deep-ko .review-note.ko-disclaimer {
 }
 """
     )
+    from streamlit_site_parity import deep_iframe_kpi_flatten_css
+
+    chunks.append(deep_iframe_kpi_flatten_css(scope="body.page-rwa-deep-mmf", zone="tmmf"))
     return "\n".join(chunks)
 
 
@@ -1082,16 +1094,10 @@ def _cached_tmmf_server_host_stylesheet() -> str:
     )
     css = css.replace("overflow: hidden;", "overflow: visible;")
     # Mock CSS scoped with :has() beats site-experience transparent KPI panel rules — restore GH Pages parity.
+    from streamlit_site_parity import deep_iframe_kpi_flatten_css
+
+    css += deep_iframe_kpi_flatten_css(scope=scope, zone="tmmf")
     css += f"""
-{scope}.site-experience.page-inner--rich .inner-rich-zone__body .rwa-kpi-panel-static,
-{scope}.site-experience[class*="page-rwa"] .etp-mock-snapshot .rwa-kpi-panel-static {{
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-  margin-top: 0 !important;
-  margin-bottom: 0.5rem !important;
-}}
 {scope}.site-experience.page-inner--rich .inner-rich-zone .jd-kpi-window-note {{
   display: block !important;
   margin: 0 0 0.5rem !important;
@@ -1318,7 +1324,7 @@ def _cached_tmmf_deep_payload() -> dict[str, Any]:
     return load_tmmf_deep_payload()
 
 
-_TMMF_IFRAME_CSS_VERSION = "13"
+_TMMF_IFRAME_CSS_VERSION = "14"
 
 
 @st.cache_data(show_spinner=False, ttl=3600)

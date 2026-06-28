@@ -694,6 +694,53 @@ def _iframe_crypto_mock_css(css: str) -> str:
     return css.replace(".mock-crypto-inner", "body.page-crypto-iframe")
 
 
+def deep_iframe_kpi_flatten_css(*, scope: str, zone: str) -> str:
+    """Flat white KPI tiles for Streamlit deep iframe pages (beats mock gradient panels)."""
+    border = {
+        "tmmf": (
+            "border: 1px solid rgb(80 113 136 / 0.18) !important; "
+            "border-left: 3px solid var(--hx-tmmf-bright, #507188) !important;"
+        ),
+        "stable": (
+            "border: 1px solid rgb(61 120 160 / 0.18) !important; "
+            "border-left: 3px solid var(--hx-stable-bright, #3d78a0) !important;"
+        ),
+        "crypto": (
+            "border: 1px solid rgb(110 134 158 / 0.18) !important; "
+            "border-left: 3px solid var(--hx-crypto-bright, #6e869e) !important;"
+        ),
+    }.get(zone, (
+        "border: 1px solid rgb(110 134 158 / 0.18) !important; "
+        "border-left: 3px solid var(--hx-etp-bright, #6e869e) !important;"
+    ))
+    return f"""
+/* KPI strip — flat white tiles on soft zone (Streamlit deep iframe parity) */
+{scope}.site-experience.page-inner--rich .inner-rich-zone__body .rwa-kpi-panel-static,
+{scope}.site-experience.page-inner--rich .inner-rich-zone.zone--{zone} .rwa-kpi-panel-static,
+{scope} .etp-mock-snapshot .rwa-kpi-panel-static {{
+  background: transparent !important;
+  background-image: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin-bottom: 0.5rem !important;
+}}
+{scope}.site-experience.page-inner--rich .inner-rich-zone.zone--{zone} .rwa-kpi-row--home-grid .rwa-kpi-cell,
+{scope} .rwa-kpi-row--home-grid .rwa-kpi-cell {{
+  background: #fff !important;
+  background-color: #fff !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  {border}
+}}
+{scope}.site-experience.page-inner--rich .inner-rich-zone.zone--{zone} .rwa-kpi-row--home-grid .rwa-kpi-cell:hover,
+{scope} .rwa-kpi-row--home-grid .rwa-kpi-cell:hover {{
+  background: #fff !important;
+  background-image: none !important;
+}}
+"""
+
+
 def _iframe_etp_mock_css(css: str) -> str:
     """ETP iframe: no mock banners; scope ETP mock rules onto the iframe ``body``."""
     css = _strip_mock_design_banner_css(css)
