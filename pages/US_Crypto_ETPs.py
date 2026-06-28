@@ -41,7 +41,7 @@ def main() -> None:
     )
 
     with st.spinner("Loading U.S. ETPs page…"):
-        payloads = get_etp_iframe_payloads(ua)
+        payloads = get_etp_iframe_payloads(user_agent=ua)
         render_etps_body_iframe(payloads=payloads, related_chips=related)
 
     render_subpage_footer(label="U.S. ETPs")
