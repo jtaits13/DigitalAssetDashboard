@@ -22,9 +22,9 @@ _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
 
-_RWA_GLOBAL_IFRAME_CSS_VERSION = "7"
-RWA_GLOBAL_IFRAME_BUILD = "7"
-RWA_GLOBAL_CANVAS_OVERRIDE_VERSION = "7"
+_RWA_GLOBAL_IFRAME_CSS_VERSION = "8"
+RWA_GLOBAL_IFRAME_BUILD = "8"
+RWA_GLOBAL_CANVAS_OVERRIDE_VERSION = "8"
 RWA_GLOBAL_TABLE_PANEL_VERSION = "1"
 
 RWA_GLOBAL_GH_PAGE_WASH = "#f3f7fb"
@@ -403,6 +403,7 @@ body.page-rwa-global-iframe.mock-rwa-global-inner .etp-mock-zone.inner-rich-zone
   background: var(--hx-rwa-soft, {RWA_GLOBAL_GH_ZONE_SOFT}) !important;
   background-image: none !important;
   box-shadow: none !important;
+  border: none !important;
 }}
 body.page-rwa-global-iframe .inner-rich-zone.zone--rwa .home-zone__head,
 body.page-rwa-global-iframe.mock-rwa-global-inner .etp-mock-zone .home-zone__head {{
@@ -419,6 +420,8 @@ body.page-rwa-global-iframe.page-inner--rich .inner-rich-zone.zone--rwa .inner-r
 body.page-rwa-global-iframe.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block,
 body.page-rwa-global-iframe .etp-mock-key-obs-block.inner-rich-block,
 body.page-rwa-global-iframe.site-experience.page-inner--rich .inner-rich-zone.zone--rwa .inner-rich-block,
+body.page-rwa-global-iframe.page-inner--rich .inner-rich-zone__body > .hub-section,
+body.page-rwa-global-iframe.page-inner--rich .inner-rich-zone.zone--rwa .inner-rich-zone__body > .hub-section,
 body.page-rwa-global-iframe.page-inner--rich .inner-rich-zone .etp-mock-key-obs-block .crypto-story-callout,
 body.page-rwa-global-iframe.page-inner--rich .inner-rich-zone #js-rwa-global-macro .crypto-story-callout,
 body.page-rwa-global-iframe .etp-mock-key-obs-block .crypto-story-callout,
@@ -438,6 +441,38 @@ body.page-rwa-global-iframe #js-rwa-global-macro .review-note.ko-disclaimer {{
   background: #fff !important;
   background-color: #fff !important;
   background-image: none !important;
+}}
+/* Explore + network share — one white panel (no soft band seam between them). */
+body.page-rwa-global-iframe .rwa-global-explore-insights-stack {{
+  background: #fff !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  border: 1px solid rgb(var(--hx-rwa-bright-rgb, 42 95 130) / 0.16) !important;
+  border-radius: 10px !important;
+  margin: 0 0 var(--etp-mock-gap-lg, 1.25rem) !important;
+  overflow: hidden !important;
+}}
+body.page-rwa-global-iframe .rwa-global-explore-insights-stack #js-rwa-global-explore,
+body.page-rwa-global-iframe .rwa-global-explore-insights-stack .home-explore-compact {{
+  background: #fff !important;
+  background-image: none !important;
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}}
+body.page-rwa-global-iframe .rwa-global-explore-insights-stack .home-explore-compact {{
+  padding: 0.65rem 0.85rem !important;
+  border-bottom: 1px solid rgb(var(--hx-rwa-bright-rgb, 42 95 130) / 0.12) !important;
+}}
+body.page-rwa-global-iframe .rwa-global-explore-insights-stack #js-rwa-global-insights.etp-mock-insights {{
+  margin: 0 !important;
+  gap: 0 !important;
+}}
+body.page-rwa-global-iframe .rwa-global-explore-insights-stack .etp-mock-insights__panel {{
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }}
 body.page-rwa-global-iframe .home-explore-compact,
 body.page-rwa-global-iframe #js-rwa-global-explore {{
@@ -495,6 +530,15 @@ html, {scope}.site-experience,
 {scope} .etp-mock-zone .inner-rich-zone__body {{
   background: {soft} !important;
   background-color: {soft} !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}}
+{scope} .rwa-global-explore-insights-stack,
+{scope} .rwa-global-explore-insights-stack .etp-mock-insights__panel,
+{scope} .rwa-global-explore-insights-stack .home-explore-compact {{
+  background: #fff !important;
+  background-color: #fff !important;
   background-image: none !important;
   box-shadow: none !important;
 }}
@@ -560,9 +604,9 @@ def rwa_global_iframe_canvas_override_js(
       el.style.setProperty("box-shadow", "none", "important");
     }});
     document.querySelectorAll(
-      ".inner-rich-block, .etp-mock-key-obs-block, .crypto-story-callout, .review-note.ko-disclaimer, .etp-mock-insights__panel, .etp-mock-dash__panel, .rwa-kpi-row--home-grid .rwa-kpi-cell, .etp-mock-table-block, .home-explore-compact"
+      ".inner-rich-block, .etp-mock-key-obs-block, .crypto-story-callout, .review-note.ko-disclaimer, .rwa-global-explore-insights-stack, .etp-mock-insights__panel, .etp-mock-dash__panel, .rwa-kpi-row--home-grid .rwa-kpi-cell, .etp-mock-table-block"
     ).forEach(function (el) {{
-      setBg(el, el.classList.contains("home-explore-compact") ? SOFT : WHITE);
+      setBg(el, WHITE);
       el.style.setProperty("box-shadow", "none", "important");
     }});
     document.querySelectorAll(".crypto-story-callout__note").forEach(function (el) {{
@@ -598,6 +642,10 @@ def rwa_global_host_canvas_override_css(
   background: {wash} !important;
   background-color: {wash} !important;
   background-image: none !important;
+}}
+.stApp:has(.streamlit-rwa-global-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) iframe {{
+  background: {wash} !important;
+  background-color: {wash} !important;
 }}
 </style>
 """

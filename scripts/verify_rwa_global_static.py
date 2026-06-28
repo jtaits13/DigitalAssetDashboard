@@ -54,6 +54,7 @@ def main() -> int:
         ("__RWA_GLOBAL_SERVER_CHART" in html, "chart boot config"),
         ("rwa-global-iframe-build-v" in html, "iframe build stamp"),
         ("rwa-global-iframe-css-v" in html, "versioned iframe css"),
+        ("rwa-global-explore-insights-stack" in html, "explore+insights unified stack"),
         ("home-explore-compact__btn" in html, "compact explore pills"),
         ("By asset type" in html and "By participant" in html, "explore labels"),
         ('class="rwa-explore-card"' not in html, "no legacy explore cards"),

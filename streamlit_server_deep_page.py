@@ -667,6 +667,17 @@ def build_rwa_global_server_zone_html(
     explore_block = (
         f'<div id="js-rwa-global-explore">{explore_html}</div>' if explore_html else ""
     )
+    insights_html = rwa_global_mock_insights_html(rows)
+    if explore_block and insights_html:
+        explore_insights_block = (
+            '<div class="rwa-global-explore-insights-stack" id="js-rwa-global-explore-insights">'
+            f"{explore_block}{insights_html}"
+            "</div>"
+        )
+    elif explore_block:
+        explore_insights_block = explore_block
+    else:
+        explore_insights_block = insights_html
     bottom_cta = (
         f'<div class="cta-row etp-mock-bottom-cta rwa-deep-page-cta" id="js-rwa-global-bottom-cta">'
         f'<a class="btn btn-primary" href="{escape(cta_href)}" target="_blank" rel="noopener noreferrer">'
@@ -705,8 +716,7 @@ def build_rwa_global_server_zone_html(
             f"{kpis_block}"
             f'<div id="js-rwa-global-detail-stack">'
             f"{ko_html}"
-            f"{explore_block}"
-            f"{rwa_global_mock_insights_html(rows)}"
+            f"{explore_insights_block}"
             f"{rwa_global_dashboard_html(payload)}"
             f"{rwa_global_networks_league_html(payload)}"
             f"{bottom_cta}"
