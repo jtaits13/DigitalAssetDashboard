@@ -9,6 +9,8 @@ _REPO = Path(__file__).resolve().parent.parent
 if str(_REPO) not in sys.path:
     sys.path.insert(0, str(_REPO))
 
+import streamlit as st
+
 from streamlit_site_parity import (
     _streamlit_page_href,
     configure_subpage,
@@ -26,6 +28,8 @@ def main() -> None:
         page_title="Explore by Asset Type — Digital Assets Dashboard",
         active="explore_asset",
         style_kind="rwa_explore_at",
+        show_nav=True,
+        nav_style="home",
     )
     related = related_chips_html(
         (_streamlit_page_href("rwa_global"), "RWA market overview"),
@@ -35,14 +39,15 @@ def main() -> None:
         ("/?jd_scroll=onchain", "Home on-chain preview"),
     )
 
-    payloads = get_rwa_explore_iframe_payloads("explore_asset")
-    render_rwa_explore_body_iframe(
-        kind="explore_asset",
-        payloads=payloads,
-        related_chips=related,
-        back_href=_streamlit_page_href("rwa_global"),
-        back_label="← RWA Global Market Overview",
-    )
+    with st.spinner("Loading explore by asset type…"):
+        payloads = get_rwa_explore_iframe_payloads("explore_asset")
+        render_rwa_explore_body_iframe(
+            kind="explore_asset",
+            payloads=payloads,
+            related_chips=related,
+            back_href=_streamlit_page_href("rwa_global"),
+            back_label="← RWA Global Market Overview",
+        )
 
     render_subpage_footer(label="Explore by Asset Type")
 

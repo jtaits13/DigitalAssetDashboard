@@ -1,4 +1,4 @@
-"""Streamlit RWA Global Market Overview — static HTML iframe (parity with ``rwa-global.html``)."""
+"""Streamlit RWA Global Market Overview — server-rendered deep iframe (parity with ``rwa-global.html``)."""
 
 from __future__ import annotations
 
@@ -10,9 +10,10 @@ from typing import Any
 import streamlit as st
 import streamlit.components.v1 as components
 
-from streamlit_crypto_prices_static import _CRYPTO_PATCH_LOAD_JSON_JS
 from streamlit_tmmf_static import (
     _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH,
+    _TMMF_SERVER_INLINE_HOST_MODAL_JS,
+    _TMMF_SERVER_TABLE_WIRE_JS,
     _json_for_script,
     _read_js_files,
 )
@@ -21,17 +22,12 @@ _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
 
-_RWA_GLOBAL_JS_DEPS = (
-    "static-base.js",
-    "table-fullscreen.js",
-    "table-download.js",
-    "kpi-hints.js",
-    "data-freshness.js",
-    "page-methodology.js",
-    "snapshot-kpi-shared.js",
-    "rwa-onchain-home.js",
-)
-_RWA_GLOBAL_JS_BOOT = ("rwa-global-page.js",)
+_RWA_GLOBAL_IFRAME_CSS_VERSION = "2"
+RWA_GLOBAL_CANVAS_OVERRIDE_VERSION = "1"
+RWA_GLOBAL_TABLE_PANEL_VERSION = "1"
+
+RWA_GLOBAL_GH_PAGE_WASH = "#f3f7fb"
+RWA_GLOBAL_GH_ZONE_SOFT = "#e8eff5"
 
 _RWA_GLOBAL_MEASURE_HEIGHT_JS = """
 function measureRwaGlobalContentHeight() {
@@ -41,7 +37,8 @@ function measureRwaGlobalContentHeight() {
     document.querySelector(".page-back-below-header"),
     document.querySelector("main.page-shell.etp-mock-shell"),
     document.getElementById("js-rwa-global-footer-note"),
-    document.getElementById("js-rwa-global-split"),
+    document.getElementById("rwa-global-net-wrap"),
+    document.getElementById("js-rwa-global-dashboard"),
   ];
   var maxBottom = 0;
   nodes.forEach(function (el) {
@@ -67,89 +64,213 @@ function measureRwaGlobalContentHeight() {
 }
 """
 
+_RWA_GLOBAL_SERVER_CHART_BOOT_JS = """
+(function () {
+  var CHART_FONT = 'Outfit, "Segoe UI", system-ui, sans-serif';
+  function estimateChartMargins(yLabels, textLabels, shellWidth) {
+    var i, maxLab = 4, maxPct = 6;
+    for (i = 0; i < yLabels.length; i++) {
+      maxLab = Math.max(maxLab, String(yLabels[i] || "").length);
+    }
+    for (i = 0; i < textLabels.length; i++) {
+      maxPct = Math.max(maxPct, String(textLabels[i] || "").length);
+    }
+    var sw = typeof shellWidth === "number" && shellWidth > 0 ? shellWidth : 560;
+    var fromText = Math.round(maxLab * 6.25 + 48);
+    var minByWidth = Math.round(sw * 0.24);
+    var marginLeft = Math.min(312, Math.max(140, Math.max(fromText, minByWidth) + 12));
+    var marginRight = Math.min(188, Math.max(96, Math.round(maxPct * 5.5 + 64)));
+    return { l: marginLeft, r: marginRight };
+  }
+  function formatUsdAxisTick(v) {
+    var n = Number(v) || 0, abs = Math.abs(n);
+    if (abs >= 1e9) return "$" + (n / 1e9).toFixed(abs >= 10e9 ? 0 : 1).replace(/\\.0$/, "") + "B";
+    if (abs >= 1e6) return "$" + (n / 1e6).toFixed(abs >= 10e6 ? 0 : 1).replace(/\\.0$/, "") + "M";
+    if (abs >= 1e3) return "$" + (n / 1e3).toFixed(abs >= 10e3 ? 0 : 1).replace(/\\.0$/, "") + "K";
+    return "$" + Math.round(n).toLocaleString();
+  }
+  function niceTickStep(rawStep) {
+    if (!(rawStep > 0)) return 1;
+    var pow = Math.pow(10, Math.floor(Math.log(rawStep) / Math.LN10));
+    var base = rawStep / pow;
+    var mult = base <= 1 ? 1 : base <= 2 ? 2 : base <= 5 ? 5 : 10;
+    return mult * pow;
+  }
+  function buildCurrencyAxisProps(values, plotWidth, theme) {
+    var maxVal = 0, i;
+    for (i = 0; i < values.length; i++) maxVal = Math.max(maxVal, Number(values[i]) || 0);
+    var width = typeof plotWidth === "number" && plotWidth > 0 ? plotWidth : 260;
+    var tickCount = width < 150 ? 2 : width < 240 ? 3 : width < 360 ? 4 : 5;
+    var step = niceTickStep(maxVal / Math.max(1, tickCount - 1));
+    var maxTick = step * Math.max(1, Math.ceil(maxVal / step));
+    var vals = [];
+    for (i = 0; i <= maxTick + step * 0.2; i += step) {
+      vals.push(i);
+      if (vals.length > 8) break;
+    }
+    var ink = theme && theme.ink ? theme.ink : "#1a3d5c";
+    return {
+      tickangle: -30,
+      tickvals: vals,
+      ticktext: vals.map(formatUsdAxisTick),
+      tickfont: { family: CHART_FONT, size: width < 220 ? 10 : 11, color: ink },
+    };
+  }
+  function drawRwaGlobalDashboardChart() {
+    var cfg = window.__RWA_GLOBAL_SERVER_CHART;
+    var chartEl = document.getElementById("js-rwa-global-dashboard-chart");
+    if (!cfg || !chartEl || typeof Plotly === "undefined") return;
+    var league = cfg.league || {};
+    var rowsFiltered = league.rows_full || [];
+    var nameCol = league.name_column || "Network";
+    var valCol = league.value_column || "Total Value";
+    try { Plotly.purge(chartEl); } catch (e) {}
+    if (!rowsFiltered.length) { chartEl.innerHTML = ""; return; }
+    var built = typeof window.buildTopNPlusOtherChartRows === "function"
+      ? window.buildTopNPlusOtherChartRows(rowsFiltered, {
+          nameCol: nameCol, valCol: valCol, topN: 5, includeOther: true,
+        })
+      : null;
+    if (!built) return;
+    var y = built.y, x = built.x, text = built.text, barCount = built.barCount;
+    var theme = typeof window.getZoneChartTheme === "function"
+      ? window.getZoneChartTheme(chartEl) : null;
+    var barColor = theme ? theme.bar : "#2a5f82";
+    var barLine = theme ? theme.barLine : "#1a3d5c";
+    var ink = theme ? theme.ink : "#1a3d5c";
+    var inkMuted = theme ? theme.inkMuted : "#2a5f82";
+    var shell = chartEl.closest(".stable-dash-chart-body") || chartEl.parentElement;
+    var shellW = shell && shell.clientWidth ? shell.clientWidth : chartEl.offsetWidth || 560;
+    var m = estimateChartMargins(y, text, shellW);
+    var axisProps = buildCurrencyAxisProps(x, Math.max(120, shellW - m.l - m.r), theme);
+    var trace = {
+      type: "bar", x: x, y: y, orientation: "h",
+      width: Math.min(0.9, Math.max(0.52, 0.86 - barCount * 0.028)),
+      marker: { color: barColor, line: { color: barLine, width: 0.5 } },
+      showlegend: false, text: text, textposition: "outside",
+      textfont: { family: CHART_FONT, size: 11, color: inkMuted },
+      cliponaxis: false,
+      hovertemplate: "<b>%{y}</b><br>Total value: %{x:$,.0f}<br>%{text}<extra></extra>",
+    };
+    var layout = {
+      height: 286, autosize: true,
+      margin: { l: m.l, r: m.r, t: 12, b: 56, pad: 2 },
+      bargap: barCount >= 6 ? 0.11 : 0.14,
+      paper_bgcolor: "rgba(0,0,0,0)", plot_bgcolor: "#f8fafc",
+      font: { family: CHART_FONT, size: 12, color: ink }, showlegend: false,
+      xaxis: Object.assign({ gridcolor: "rgba(199,216,232,0.45)", zeroline: false }, axisProps),
+      yaxis: { automargin: true, tickfont: { family: CHART_FONT, size: 11, color: ink } },
+    };
+    Plotly.react(chartEl, [trace], layout, { displayModeBar: false, responsive: true, scrollZoom: false });
+    setTimeout(function () {
+      try { Plotly.Plots.resize(chartEl); } catch (e2) {}
+      if (typeof window.parent.postMessage === "function") {
+        var h = typeof measureRwaGlobalContentHeight === "function" ? measureRwaGlobalContentHeight() : null;
+        if (h !== null && h > 200) {
+          window.parent.postMessage({ type: "streamlit:setFrameHeight", height: h }, "*");
+          window.parent.postMessage({ type: "jpm-tmmf-height", height: h }, "*");
+        }
+      }
+    }, 0);
+  }
+  function bootChart() {
+    drawRwaGlobalDashboardChart();
+    window.addEventListener("resize", function () {
+      setTimeout(drawRwaGlobalDashboardChart, 120);
+    });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", bootChart);
+  else bootChart();
+  [100, 500, 1500].forEach(function (ms) { setTimeout(bootChart, ms); });
+})();
+"""
+
+_RWA_GLOBAL_SERVER_TABLE_WIRE_JS = """
+(function () {
+  function $(id) {
+    return document.getElementById(id);
+  }
+  function wireTableSearch(cfg) {
+    var inp = $(cfg.inputId);
+    var note = $(cfg.noteId);
+    var tbody = cfg.tbody;
+    if (!inp || !tbody) return;
+    var entity = cfg.entityPlural || "rows";
+    inp.addEventListener("input", function () {
+      var q = String(inp.value || "").trim().toLowerCase();
+      var rows = tbody.querySelectorAll("tr");
+      var shown = 0;
+      rows.forEach(function (tr) {
+        if (tr.querySelector("td[colspan]")) return;
+        var match = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+        tr.hidden = !match;
+        if (match) shown++;
+      });
+      if (!note) return;
+      var total = rows.length;
+      if (!q) note.textContent = "Showing all " + total + " " + entity + ".";
+      else note.textContent = "Showing " + shown + " of " + total + ' matching "' + q + '".';
+    });
+  }
+  function wireBlock(cfg) {
+    var host = $(cfg.hostId);
+    if (!host) return;
+    var wrap = host.querySelector(".table-wrap--scroll, .rwa-split-table-scroll");
+    var table = wrap && wrap.querySelector("table");
+    if (!wrap || !table) return;
+    var fs = window.__TABLE_FULLSCREEN;
+    if (!fs || !fs.attachTableFullscreenButton) return;
+    delete wrap._rwaFullscreenBound;
+    delete wrap._rwaDownloadBound;
+    var exportData =
+      window.__TMMF_SERVER_EXPORTS && window.__TMMF_SERVER_EXPORTS[cfg.exportKey];
+    fs.attachTableFullscreenButton(wrap, table, {
+      title: cfg.title,
+      filename: cfg.filename,
+      sheetName: cfg.sheetName,
+      downloadPlacement: "title-row",
+      downloadAnchor: $(cfg.actionsId),
+      actionRow: $(cfg.metaActionsId),
+      getExportData: exportData ? function () { return exportData; } : undefined,
+    });
+    if (cfg.inputId && cfg.noteId) {
+      wireTableSearch({
+        inputId: cfg.inputId,
+        noteId: cfg.noteId,
+        tbody: table.querySelector("tbody"),
+        entityPlural: cfg.entityPlural,
+      });
+    }
+  }
+  function boot() {
+    wireBlock({
+      hostId: "rwa-global-net-wrap",
+      actionsId: "rwa-global-net-table-actions",
+      metaActionsId: "rwa-global-net-meta-actions",
+      inputId: "rwa-global-net-q",
+      noteId: "rwa-global-net-note",
+      entityPlural: "networks",
+      exportKey: "rwa-global-net",
+      title: "Networks table",
+      filename: "rwa-global-networks",
+      sheetName: "Networks",
+    });
+  }
+  window.__rwaGlobalWireServerTables = boot;
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+  setTimeout(boot, 0);
+  setTimeout(boot, 400);
+  setTimeout(boot, 1200);
+})();
+"""
+
 _RWA_GLOBAL_IFRAME_BACK_LINK = """
 <div class="page-back-below-header">
   <p class="back-link back-link--below-header">
     <a href="{back_href}">{back_label_html}</a>
   </p>
 </div>
-"""
-
-_RWA_GLOBAL_ZONE_BODY = """
-<main class="page-shell etp-mock-shell">
-  <article class="hub-section hub-section--panel inner-rich-zone zone--rwa home-zone home-zone--rwa etp-mock-zone">
-    <div class="home-zone__stripe" aria-hidden="true"></div>
-    <header class="home-zone__head">
-      <span class="home-zone__badge" aria-hidden="true">RWA</span>
-      <div class="home-zone__titles">
-        <h1 class="page-intro__title">RWA Global Market Overview</h1>
-        <div class="section-dek section-dek--wide page-intro__dek" id="js-rwa-global-dek"></div>
-      </div>
-    </header>
-    <div class="home-zone__body inner-rich-zone__body etp-mock-zone__body">
-      {related_chips}
-      <div class="data-banner" id="js-rwa-global-banner" role="status" hidden></div>
-      <p id="js-rwa-global-empty" class="alert info" hidden></p>
-      <section class="etp-mock-snapshot" id="js-rwa-global-snapshot" aria-labelledby="rwa-gmo-snapshot-heading">
-        <h2 class="subsection-head u-vh" id="rwa-gmo-snapshot-heading">Top-line snapshot</h2>
-        <div id="js-rwa-global-kpis" aria-label="RWA Global Market KPI strip"></div>
-        <p id="js-rwa-global-scope-note" class="rwa-scope-note" hidden></p>
-        <div id="js-rwa-global-error-cta" class="cta-row" hidden></div>
-      </section>
-      <div id="js-rwa-global-detail-stack" hidden>
-        <div
-          class="inner-rich-block etp-mock-key-obs-block"
-          id="js-rwa-global-ko-section"
-          hidden
-          aria-labelledby="rwa-gmo-ko-heading"
-        >
-          <h2 class="subsection-head u-vh" id="rwa-gmo-ko-heading">Key Observations</h2>
-          <div id="js-rwa-global-macro"></div>
-        </div>
-        <div id="js-rwa-global-explore"></div>
-        <section
-          class="etp-mock-insights etp-mock-insights--crypto-full"
-          id="js-rwa-global-insights"
-          hidden
-          aria-labelledby="js-rwa-global-insights-h"
-        >
-          <h2 class="u-vh" id="js-rwa-global-insights-h">Market structure</h2>
-        </section>
-        <section class="etp-mock-dashboard" id="js-rwa-global-dashboard" hidden aria-labelledby="js-rwa-global-dashboard-h">
-          <h2 class="u-vh" id="js-rwa-global-dashboard-h">Chart and share movers</h2>
-          <div class="etp-mock-dash__panel etp-mock-dash__panel--chart">
-            <h3 class="etp-mock-dash__head">Top networks by value</h3>
-            <div class="stable-dash-chart-body">
-              <div
-                id="js-rwa-global-dashboard-chart"
-                class="aum-chart-host"
-                role="img"
-                aria-label="Top networks by total value"
-              ></div>
-            </div>
-            <p class="etp-mock-chart__cap">
-              Top <strong>5</strong> networks plus <strong>Other</strong> (remaining networks); market shares sum to
-              <strong>100%</strong>. Bar length uses total value; labels show share.
-            </p>
-            <p class="etp-mock-chart__method">
-              Plotly horizontal bars synced to the searchable networks table below.
-            </p>
-          </div>
-          <div class="etp-mock-dash__panel etp-mock-dash__panel--movers">
-            <h3 class="etp-mock-dash__head">Largest 30D share shifts (networks)</h3>
-            <div id="js-rwa-global-share-movers"></div>
-          </div>
-        </section>
-        <div id="js-rwa-global-split"></div>
-        <div id="js-rwa-global-bottom-cta" class="cta-row rwa-deep-page-cta" hidden></div>
-        <p class="timestamp-foot" id="js-rwa-global-footer-note"></p>
-      </div>
-    </div>
-  </article>
-  <p class="back-link">
-    <a href="{back_href}">{back_label_html}</a>
-  </p>
-</main>
 """
 
 
@@ -189,8 +310,15 @@ def get_rwa_global_iframe_payloads() -> dict[str, Any]:
 
 
 @st.cache_resource(show_spinner=False)
-def _cached_iframe_rwa_global_stylesheet_v1() -> str:
-    from streamlit_site_parity import _iframe_rwa_global_mock_css
+def _cached_iframe_rwa_global_stylesheet() -> str:
+    from streamlit_site_parity import (
+        _iframe_rwa_global_mock_css,
+        deep_iframe_back_link_clickable_css,
+        deep_iframe_kpi_flatten_css,
+        deep_iframe_related_chips_css,
+        deep_iframe_table_height_lock_css,
+        deep_iframe_table_panel_css,
+    )
 
     chunks: list[str] = [
         "@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap');",
@@ -239,13 +367,17 @@ body.page-rwa-global-iframe .page-back-below-header {
 body.page-rwa-global-iframe p.back-link.back-link--below-header {
   margin: 0.2rem 0 0.85rem;
 }
-body.page-rwa-global-iframe .back-link--below-header a {
+body.page-rwa-global-iframe.site-experience.page-inner--rich .back-link--below-header a {
   display: inline-block;
   font-weight: 650;
   font-size: 0.84rem;
   line-height: 1.35;
   color: var(--ink-soft, #1f4c67);
   text-decoration: none;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid rgb(var(--hx-accent-bright-rgb, 80 113 136) / 0.18);
+  background: rgba(251, 254, 255, 0.85);
 }
 body.page-rwa-global-iframe .page-shell.etp-mock-shell {
   max-width: var(--content-max, 72rem);
@@ -257,58 +389,317 @@ body.page-rwa-global-iframe .home-reveal {
   opacity: 1 !important;
   transform: none !important;
 }
-body.page-rwa-global-iframe .rwa-table-modal--streamlit-fallback:not([hidden]) {
-  display: grid !important;
-  place-items: center !important;
-  padding: 1.25rem !important;
-  box-sizing: border-box !important;
-}
-body.page-rwa-global-iframe .rwa-table-modal--streamlit-fallback .rwa-table-modal__dialog {
-  max-height: min(92vh, 980px);
-  width: min(96%, 1400px);
-}
 """
     )
-    from streamlit_site_parity import deep_iframe_back_link_clickable_css, deep_iframe_related_chips_css
-
-    chunks.append(deep_iframe_related_chips_css(scope="body.page-rwa-global-iframe", zone="rwa"))
-    chunks.append(deep_iframe_back_link_clickable_css(scope="body.page-rwa-global-iframe"))
+    scope = "body.page-rwa-global-iframe"
+    chunks.append(deep_iframe_kpi_flatten_css(scope=scope, zone="rwa"))
+    chunks.append(deep_iframe_table_panel_css(scope=scope))
+    chunks.append(deep_iframe_table_height_lock_css(scope=scope))
+    chunks.append(deep_iframe_related_chips_css(scope=scope, zone="rwa"))
+    chunks.append(deep_iframe_back_link_clickable_css(scope=scope))
     return "\n".join(chunks)
 
 
-def build_rwa_global_body_iframe_html(
+def rwa_global_github_canvas_override_css(
+    *, version: str = RWA_GLOBAL_CANVAS_OVERRIDE_VERSION
+) -> str:
+    from streamlit_site_parity import deep_iframe_kpi_flatten_css
+
+    wash = RWA_GLOBAL_GH_PAGE_WASH
+    soft = RWA_GLOBAL_GH_ZONE_SOFT
+    scope = "body.page-rwa-global-iframe"
+    return f"""
+/* RWA Global GitHub Pages canvas override v{version} */
+html, {scope}.site-experience,
+{scope}.site-experience.page-inner--rich,
+{scope}.mock-rwa-global-inner.site-experience {{
+  background: {wash} !important;
+  background-color: {wash} !important;
+  background-image: none !important;
+}}
+{scope} .page-shell.etp-mock-shell {{
+  background: transparent !important;
+  background-image: none !important;
+}}
+{scope} .inner-rich-zone.zone--rwa,
+{scope} .inner-rich-zone.zone--rwa .inner-rich-zone__body,
+{scope} .etp-mock-zone.inner-rich-zone.zone--rwa,
+{scope} .etp-mock-zone .inner-rich-zone__body {{
+  background: {soft} !important;
+  background-color: {soft} !important;
+  background-image: none !important;
+}}
+{scope} .inner-rich-block,
+{scope} .etp-mock-key-obs-block,
+{scope} .etp-mock-key-obs-block .crypto-story-callout,
+{scope} #js-rwa-global-macro .crypto-story-callout,
+{scope} .etp-mock-insights__panel,
+{scope} .etp-mock-dash__panel,
+{scope} .rwa-kpi-row--home-grid .rwa-kpi-cell,
+{scope} .etp-mock-table-block,
+{scope} .rwa-deep-league-panel {{
+  background: #fff !important;
+  background-color: #fff !important;
+  background-image: none !important;
+}}
+{scope} .etp-mock-key-obs-block .crypto-story-callout__note {{
+  background: rgb(62 92 116 / 0.06) !important;
+  background-image: none !important;
+}}
+""" + deep_iframe_kpi_flatten_css(scope=scope, zone="rwa")
+
+
+def rwa_global_iframe_canvas_override_js(
+    *, version: str = RWA_GLOBAL_CANVAS_OVERRIDE_VERSION
+) -> str:
+    wash = RWA_GLOBAL_GH_PAGE_WASH
+    soft = RWA_GLOBAL_GH_ZONE_SOFT
+    return f"""
+<script id="rwa-global-gh-canvas-override-js-v{version}">
+(function () {{
+  var WASH = "{wash}";
+  var SOFT = "{soft}";
+  var WHITE = "#ffffff";
+  function setBg(el, color) {{
+    if (!el) return;
+    el.style.setProperty("background", color, "important");
+    el.style.setProperty("background-color", color, "important");
+    el.style.setProperty("background-image", "none", "important");
+  }}
+  function paint() {{
+    setBg(document.documentElement, WASH);
+    setBg(document.body, WASH);
+    var main = document.querySelector("main.page-shell.etp-mock-shell");
+    if (main) {{
+      main.style.setProperty("background", "transparent", "important");
+      main.style.setProperty("background-image", "none", "important");
+    }}
+    document.querySelectorAll(
+      ".inner-rich-zone.zone--rwa, .inner-rich-zone.zone--rwa .inner-rich-zone__body"
+    ).forEach(function (el) {{ setBg(el, SOFT); }});
+    document.querySelectorAll(
+      ".inner-rich-block, .etp-mock-key-obs-block, .crypto-story-callout, .etp-mock-insights__panel, .etp-mock-dash__panel, .rwa-kpi-row--home-grid .rwa-kpi-cell, .etp-mock-table-block"
+    ).forEach(function (el) {{
+      setBg(el, WHITE);
+      el.style.setProperty("box-shadow", "none", "important");
+    }});
+    document.querySelectorAll(".rwa-kpi-panel-static").forEach(function (el) {{
+      el.style.setProperty("background", "transparent", "important");
+      el.style.setProperty("border", "none", "important");
+      el.style.setProperty("box-shadow", "none", "important");
+    }});
+  }}
+  paint();
+  window.addEventListener("load", paint);
+  [50, 200, 800, 2000, 5000].forEach(function (ms) {{ setTimeout(paint, ms); }});
+}})();
+</script>
+"""
+
+
+def rwa_global_host_canvas_override_css(
+    *, version: str = RWA_GLOBAL_CANVAS_OVERRIDE_VERSION
+) -> str:
+    wash = RWA_GLOBAL_GH_PAGE_WASH
+    return f"""
+<style id="rwa-global-gh-host-canvas-override-v{version}">
+.stApp:has(.streamlit-rwa-global-iframe-page),
+.withScreencast:has(.streamlit-rwa-global-iframe-page),
+[data-testid="stScreencast"]:has(.streamlit-rwa-global-iframe-page),
+.stApp:has(.streamlit-rwa-global-iframe-page) [data-testid="stAppViewContainer"],
+.stApp:has(.streamlit-rwa-global-iframe-page) section.main,
+.stApp:has(.streamlit-rwa-global-iframe-page) [data-testid="stMain"],
+.stApp:has(.streamlit-rwa-global-iframe-page) [data-testid="stMainBlockContainer"] {{
+  background: {wash} !important;
+  background-color: {wash} !important;
+  background-image: none !important;
+}}
+</style>
+"""
+
+
+def rwa_global_host_canvas_override_js(
+    *, version: str = RWA_GLOBAL_CANVAS_OVERRIDE_VERSION
+) -> str:
+    wash = RWA_GLOBAL_GH_PAGE_WASH
+    return f"""
+<script id="rwa-global-gh-host-canvas-override-js-v{version}">
+(function () {{
+  var WASH = "{wash}";
+  function paint() {{
+    document.querySelectorAll(
+      ".stApp, [data-testid='stAppViewContainer'], section.main, [data-testid='stMain'], [data-testid='stMainBlockContainer']"
+    ).forEach(function (el) {{
+      if (!el.closest || !el.closest(".stApp:has(.streamlit-rwa-global-iframe-page)")) return;
+      el.style.setProperty("background", WASH, "important");
+      el.style.setProperty("background-color", WASH, "important");
+      el.style.setProperty("background-image", "none", "important");
+    }});
+  }}
+  paint();
+  window.addEventListener("load", paint);
+  [50, 300, 1000, 3000].forEach(function (ms) {{ setTimeout(paint, ms); }});
+}})();
+</script>
+"""
+
+
+def inject_rwa_global_host_canvas_override() -> None:
+    st.markdown(
+        rwa_global_host_canvas_override_css() + rwa_global_host_canvas_override_js(),
+        unsafe_allow_html=True,
+    )
+
+
+def inject_rwa_global_iframe_table_actions(payload: dict[str, Any]) -> None:
+    from streamlit_server_deep_page import build_rwa_global_server_export_config
+
+    js_libs = _read_js_files(("table-fullscreen.js", "table-download.js"))
+    export_json = json.dumps(build_rwa_global_server_export_config(payload))
+    libs_json = json.dumps(js_libs)
+    patch_json = json.dumps(_STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH.strip())
+    wire_json = json.dumps(_RWA_GLOBAL_SERVER_TABLE_WIRE_JS.strip())
+    host_modal_json = json.dumps(_TMMF_SERVER_INLINE_HOST_MODAL_JS.strip())
+    bootstrap = f"""
+<script>
+(function () {{
+  var win = window.parent;
+  var doc = win.document;
+  if (win.__jpmRwaGlobalIframeTableHostBound) return;
+  win.__jpmRwaGlobalIframeTableHostBound = true;
+
+  function injectIntoInner(innerDoc, text) {{
+    var s = innerDoc.createElement("script");
+    s.textContent = text;
+    innerDoc.body.appendChild(s);
+  }}
+
+  function injectHost(text) {{
+    var s = doc.createElement("script");
+    s.textContent = text;
+    doc.body.appendChild(s);
+  }}
+
+  function findRwaGlobalInner() {{
+    var frames = doc.querySelectorAll("iframe");
+    for (var i = 0; i < frames.length; i++) {{
+      try {{
+        var inner = frames[i].contentDocument;
+        if (
+          inner &&
+          inner.body &&
+          inner.body.classList &&
+          inner.body.classList.contains("mock-rwa-global-inner")
+        ) {{
+          return {{ frame: frames[i], doc: inner, win: inner.defaultView || inner.parentWindow }};
+        }}
+      }} catch (e) {{}}
+    }}
+    return null;
+  }}
+
+  function ensureHostModal() {{
+    if (typeof win.__jpmOpenTableFullscreenHost === "function") return;
+    injectHost({host_modal_json});
+  }}
+
+  function ensureInnerTableLibs(hit) {{
+    if (!hit || !hit.win || !hit.doc) return false;
+    if (!hit.win.__TABLE_FULLSCREEN) {{
+      injectIntoInner(hit.doc, {libs_json});
+      hit.win.__TMMF_SERVER_EXPORTS = {export_json};
+      injectIntoInner(hit.doc, {patch_json});
+      injectIntoInner(hit.doc, {wire_json});
+      return true;
+    }}
+    if (!hit.win.__ST_TMMF_FULLSCREEN_PATCHED) {{
+      hit.win.__TMMF_SERVER_EXPORTS = {export_json};
+      injectIntoInner(hit.doc, {patch_json});
+      injectIntoInner(hit.doc, {wire_json});
+      return true;
+    }}
+    if (typeof hit.win.__rwaGlobalWireServerTables === "function") {{
+      hit.win.__rwaGlobalWireServerTables();
+    }}
+    return true;
+  }}
+
+  function boot() {{
+    if (!doc.querySelector(".streamlit-rwa-global-iframe-page")) return false;
+    ensureHostModal();
+    var hit = findRwaGlobalInner();
+    if (!hit) return false;
+    return ensureInnerTableLibs(hit);
+  }}
+
+  if (!boot()) {{
+    var tries = 0;
+    var timer = win.setInterval(function () {{
+      tries += 1;
+      if (boot() || tries > 80) win.clearInterval(timer);
+    }}, 250);
+  }}
+  win.addEventListener("load", boot);
+  [100, 400, 1200, 3000, 6000, 10000].forEach(function (ms) {{
+    win.setTimeout(boot, ms);
+  }});
+  if (typeof MutationObserver !== "undefined") {{
+    var mo = new MutationObserver(boot);
+    mo.observe(doc.body, {{ childList: true, subtree: true }});
+    win.setTimeout(function () {{ mo.disconnect(); }}, 25000);
+  }}
+}})();
+</script>
+"""
+    components.html(bootstrap, height=0, width=0)
+
+
+def _rwa_global_back_link_html(*, href: str, label: str) -> str:
+    label_html = (
+        escape(label)
+        .replace("\u2190", "&larr;")
+        .replace("\u00b7", "&middot;")
+    )
+    return _RWA_GLOBAL_IFRAME_BACK_LINK.format(
+        back_href=escape(href),
+        back_label_html=label_html,
+    )
+
+
+def build_rwa_global_server_iframe_html(
     *,
-    payloads: dict[str, Any],
+    payload: dict[str, Any],
     related_chips: str,
     back_href: str = "/?jd_scroll=onchain",
     back_label: str = "← Back to home · On-chain preview",
 ) -> str:
-    from streamlit_site_parity import iframe_internal_link_script
+    from streamlit_server_deep_page import build_rwa_global_server_zone_html
+    from streamlit_site_parity import deep_iframe_table_panel_css, iframe_internal_link_script
 
-    css = _cached_iframe_rwa_global_stylesheet_v1()
-    label_html = (
-        escape(back_label)
-        .replace("\u2190", "&larr;")
-        .replace("\u00b7", "&middot;")
+    css = _cached_iframe_rwa_global_stylesheet()
+    override_css = rwa_global_github_canvas_override_css()
+    table_panel_css = deep_iframe_table_panel_css(scope="body.page-rwa-global-iframe")
+    back_link = _rwa_global_back_link_html(href=back_href, label=back_label)
+    zone = build_rwa_global_server_zone_html(payload=payload, related_chips=related_chips)
+    chart_js_libs = _read_js_files(("static-base.js",))
+    chart_cfg = json.dumps(
+        {
+            "league": {
+                "rows_full": payload.get("rows") or [],
+                "name_column": "Network",
+                "value_column": "Total Value",
+            },
+            "payload": {"chart_max_bars": 5, "chart_include_other": True},
+        }
     )
-    back_link = _RWA_GLOBAL_IFRAME_BACK_LINK.format(
-        back_href=escape(back_href),
-        back_label_html=label_html,
-    )
-    zone = _RWA_GLOBAL_ZONE_BODY.format(
-        related_chips=related_chips.strip(),
-        back_href=escape(back_href),
-        back_label_html=label_html,
-    )
-    payloads_json = _json_for_script(payloads)
-    js_deps = _read_js_files(_RWA_GLOBAL_JS_DEPS)
-    js_boot = _read_js_files(_RWA_GLOBAL_JS_BOOT)
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>{css}</style>
+<style id="rwa-global-gh-canvas-override-v{RWA_GLOBAL_CANVAS_OVERRIDE_VERSION}">{override_css}</style>
+<style id="rwa-global-table-panel-v{RWA_GLOBAL_TABLE_PANEL_VERSION}">{table_panel_css}</style>
 </head>
 <body
   class="page-rwa-global page-rwa-global-iframe site-experience page-inner--rich mock-rwa-global-inner"
@@ -316,31 +707,13 @@ def build_rwa_global_body_iframe_html(
 >
 {back_link}
 {zone}
-<script>
-window.__RWA_GLOBAL_PAGE_PAYLOADS = {payloads_json};
-</script>
 <script defer src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
 <script>
-{js_deps}
+{chart_js_libs}
+window.__RWA_GLOBAL_SERVER_CHART = {chart_cfg};
 </script>
 <script>
-window.loadJson = function (name) {{
-  var key = String(name || "").split("/").pop();
-  if (
-    window.__RWA_GLOBAL_PAGE_PAYLOADS &&
-    Object.prototype.hasOwnProperty.call(window.__RWA_GLOBAL_PAGE_PAYLOADS, key)
-  ) {{
-    return Promise.resolve(window.__RWA_GLOBAL_PAGE_PAYLOADS[key]);
-  }}
-  return Promise.reject(new Error("Unknown RWA global payload: " + name));
-}};
-{_CRYPTO_PATCH_LOAD_JSON_JS}
-</script>
-<script>
-{_STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH}
-</script>
-<script>
-{js_boot}
+{_RWA_GLOBAL_SERVER_CHART_BOOT_JS}
 </script>
 <script>
 {_RWA_GLOBAL_MEASURE_HEIGHT_JS}
@@ -362,7 +735,7 @@ window.loadJson = function (name) {{
       "article.etp-mock-zone",
       "#js-rwa-global-insights",
       "#js-rwa-global-dashboard",
-      "#js-rwa-global-split",
+      "#rwa-global-net-wrap",
       "#js-rwa-global-footer-note",
     ].forEach(function (sel) {{
       var el = document.querySelector(sel);
@@ -380,30 +753,46 @@ window.loadJson = function (name) {{
       sendHeight();
       bindObservers();
     }});
-    [
-      "article.etp-mock-zone",
-      "#js-rwa-global-detail-stack",
-      "#js-rwa-global-insights",
-      "#js-rwa-global-dashboard",
-      "#js-rwa-global-split",
-    ].forEach(function (sel) {{
+    ["article.etp-mock-zone", "#js-rwa-global-dashboard", "#rwa-global-net-wrap"].forEach(function (sel) {{
       var el = document.querySelector(sel);
       if (el) mo.observe(el, {{ childList: true, subtree: true, attributes: true }});
     }});
   }}
-  [100, 400, 1000, 2500, 5000, 8000, 12000, 18000].forEach(function (ms) {{
+  [100, 400, 1000, 2500, 5000, 8000].forEach(function (ms) {{
     setTimeout(sendHeight, ms);
   }});
 }})();
 </script>
+{rwa_global_iframe_canvas_override_js()}
 {iframe_internal_link_script()}
 </body>
 </html>"""
 
 
+build_rwa_global_body_iframe_html = build_rwa_global_server_iframe_html
+
+
 @st.cache_data(show_spinner=False, ttl=3600)
 def _cached_rwa_global_iframe_payloads() -> dict[str, Any]:
     return load_rwa_global_iframe_payloads()
+
+
+@st.cache_data(show_spinner=False, ttl=3600)
+def _cached_rwa_global_server_iframe_html(
+    payload_json: str,
+    related_chips: str,
+    back_href: str,
+    back_label: str,
+    *,
+    _css_version: str = _RWA_GLOBAL_IFRAME_CSS_VERSION,
+) -> str:
+    payload = json.loads(payload_json)
+    return build_rwa_global_server_iframe_html(
+        payload=payload,
+        related_chips=related_chips,
+        back_href=back_href,
+        back_label=back_label,
+    )
 
 
 def render_rwa_global_body_iframe(
@@ -415,12 +804,16 @@ def render_rwa_global_body_iframe(
 ) -> None:
     from streamlit_site_parity import render_subpage_body_iframe
 
+    payload = dict((payloads or {}).get("rwa_global_market.json") or {})
+    payload_json = _json_for_script(payload)
     render_subpage_body_iframe(
-        build_rwa_global_body_iframe_html(
-            payloads=payloads,
-            related_chips=related_chips,
-            back_href=back_href,
-            back_label=back_label,
+        _cached_rwa_global_server_iframe_html(
+            payload_json,
+            related_chips,
+            back_href,
+            back_label,
         ),
-        height=1600,
+        height=1400,
     )
+    inject_rwa_global_host_canvas_override()
+    inject_rwa_global_iframe_table_actions(payload)

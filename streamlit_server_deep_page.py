@@ -465,6 +465,575 @@ def stablecoins_dashboard_html(payload: dict[str, Any]) -> str:
     )
 
 
+_EXPLORE_ASSET_SECTION_SKIP = frozenset({"stablecoins", "tokenized_mmf"})
+
+
+def _rwa_global_scope_note_html(scope_note: str) -> str:
+    text = str(scope_note or "").strip()
+    if not text:
+        return ""
+    if text.lower().startswith("scope:"):
+        body = escape(text[6:].strip())
+        return (
+            f'<p class="rwa-scope-note" id="js-rwa-global-scope-note">'
+            f"<strong>Scope:</strong> {body}</p>"
+        )
+    return f'<p class="rwa-scope-note" id="js-rwa-global-scope-note">{escape(text)}</p>'
+
+
+def rwa_global_mock_insights_html(rows: list[dict[str, Any]]) -> str:
+    if not rows:
+        return ""
+    sorted_rows = sorted(rows, key=lambda r: -(float(r.get("Market Share") or 0)))
+    top_five = sorted_rows[:5]
+    top_five_sum = sum(float(r.get("Market Share") or 0) for r in top_five)
+    items: list[tuple[str, float]] = [
+        (str(r.get("Network") or "—"), float(r.get("Market Share") or 0)) for r in top_five
+    ]
+    other_pct = max(0.0, 100.0 - top_five_sum)
+    if other_pct > 0.15:
+        items.append(("Other", other_pct))
+    return (
+        '<section class="etp-mock-insights etp-mock-insights--crypto-full" id="js-rwa-global-insights" '
+        'aria-labelledby="js-rwa-global-insights-h">'
+        '<h2 class="u-vh" id="js-rwa-global-insights-h">Market structure</h2>'
+        '<div class="etp-mock-insights__panel etp-mock-insights__panel--conc">'
+        '<h3 class="etp-mock-insights__head">Network share (top 5)</h3>'
+        '<p class="etp-mock-conc__dek">Share of aggregate total value by chain (RWA.xyz snapshot).</p>'
+        '<div class="etp-mock-conc__rows etp-mock-conc__rows--grid" role="img" '
+        'aria-label="Top five networks by total value share">'
+        f"{_conc_bar_rows(items)}"
+        "</div></div></section>"
+    )
+
+
+def rwa_global_share_movers_html(rows: list[dict[str, Any]]) -> str:
+    if not rows:
+        return ""
+    top_networks = sorted(rows, key=lambda r: -(float(r.get("Total Value") or 0)))[:15]
+    movers = [
+        r
+        for r in top_networks
+        if r.get("30D Δ share") is not None and math.isfinite(float(r.get("30D Δ share")))
+    ]
+    movers.sort(key=lambda r: abs(float(r.get("30D Δ share") or 0)), reverse=True)
+    movers = movers[:4]
+    if not movers:
+        return (
+            '<ul class="crypto-top-movers__list"></ul>'
+            '<p class="crypto-story-callout__note"><strong>30D Δ share</strong> is 30-day change in '
+            "market share (%). Top 15 networks by total value.</p>"
+        )
+    items: list[str] = []
+    for row in movers:
+        n = float(row["30D Δ share"])
+        cls = "up" if n >= 0 else "down"
+        sign = "+" if n > 0 else ""
+        d7 = row.get("7D Δ value")
+        if d7 is not None and math.isfinite(float(d7)):
+            d7f = float(d7)
+            ctx = (
+                f"7D value {'+' if d7f >= 0 else ''}{d7f:.2f}% · "
+                f"{float(row.get('Market Share') or 0):.1f}% market share"
+            )
+        else:
+            ctx = f"{float(row.get('Market Share') or 0):.1f}% market share"
+        label = escape(str(row.get("Network") or "—"))
+        items.append(
+            '<li class="crypto-top-mover"><div class="crypto-top-mover__row">'
+            f'<span class="crypto-top-mover__label"><strong>{label}</strong></span>'
+            f'<span class="crypto-top-mover__pct pct {cls}">{sign}{n:.2f}%</span></div>'
+            f'<p class="crypto-top-mover__ctx">{escape(ctx)}</p></li>'
+        )
+    return (
+        '<ul class="crypto-top-movers__list">'
+        f"{''.join(items)}"
+        "</ul>"
+        '<p class="crypto-story-callout__note"><strong>30D Δ share</strong> is 30-day change in '
+        "market share (%). Top 15 networks by total value.</p>"
+    )
+
+
+def rwa_global_dashboard_html(payload: dict[str, Any]) -> str:
+    rows = list(payload.get("rows") or [])
+    if not rows:
+        return ""
+    movers = rwa_global_share_movers_html(rows)
+    return (
+        '<section class="etp-mock-dashboard" id="js-rwa-global-dashboard" '
+        'aria-labelledby="js-rwa-global-dashboard-h">'
+        '<h2 class="u-vh" id="js-rwa-global-dashboard-h">Chart and share movers</h2>'
+        '<div class="etp-mock-dash__panel etp-mock-dash__panel--chart">'
+        '<h3 class="etp-mock-dash__head">Top networks by value</h3>'
+        '<div class="stable-dash-chart-body">'
+        '<div id="js-rwa-global-dashboard-chart" class="aum-chart-host" role="img" '
+        'aria-label="Top networks by total value"></div>'
+        "</div>"
+        '<p class="etp-mock-chart__cap">'
+        "Top <strong>5</strong> networks plus <strong>Other</strong> (remaining networks); "
+        "market shares sum to <strong>100%</strong>. Bar length uses total value; labels show share."
+        "</p>"
+        '<p class="etp-mock-chart__method">'
+        "Plotly horizontal bars synced to the searchable networks table below."
+        "</p></div>"
+        '<div class="etp-mock-dash__panel etp-mock-dash__panel--movers">'
+        '<h3 class="etp-mock-dash__head">Largest 30D share shifts (networks)</h3>'
+        f'<div id="js-rwa-global-share-movers">{movers}</div>'
+        "</div></section>"
+    )
+
+
+def rwa_global_networks_league_html(payload: dict[str, Any]) -> str:
+    columns = list(payload.get("columns") or [])
+    rows = list(payload.get("rows") or [])
+    if not columns or not rows:
+        return ""
+    league = {
+        "columns": columns,
+        "rows_full": rows,
+        "table_heading": "Networks table",
+        "section_intro_html": (
+            "<strong>Networks</strong> — total value by chain (RWA.xyz Distributed league). "
+            "Filter by name below."
+        ),
+        "caption_html": str(payload.get("caption_html") or ""),
+        "search_label": "Search network table",
+        "search_placeholder": "Filter by network name…",
+        "filter_note_entity_plural": "networks",
+    }
+    html = league_table_html(league, wrap_id="rwa-global-net-wrap", is_network=True)
+    return html.replace(
+        'class="rwa-deep-league-panel etp-mock-table-block',
+        'class="rwa-deep-league-panel etp-mock-table-block rwa-global-mock-league-block',
+        1,
+    )
+
+
+def build_rwa_global_server_export_config(payload: dict[str, Any]) -> dict[str, Any]:
+    columns = list(payload.get("columns") or [])
+    rows = list(payload.get("rows") or [])
+    return {
+        "rwa-global-net": {
+            "sheetName": "Networks",
+            "headers": columns,
+            "rows": [[_export_cell_value(c, row.get(c), row) for c in columns] for row in rows],
+        }
+    }
+
+
+def build_rwa_global_server_zone_html(
+    *,
+    payload: dict[str, Any],
+    related_chips: str,
+) -> str:
+    """Server-rendered RWA Global Market zone (mock-parity markup)."""
+    title = str(payload.get("page_title") or "RWA Global Market Overview")
+    title = title.replace(" — Digital Assets Dashboard", "").strip()
+    subtitle = str(payload.get("page_subtitle_html") or "")
+    footer = str(payload.get("footer_note") or "")
+    err = str(payload.get("error") or "").strip()
+    rows = list(payload.get("rows") or [])
+    scope_note = _rwa_global_scope_note_html(str(payload.get("scope_note") or ""))
+    links = payload.get("links") or {}
+    cta_href = str(links.get("global_market_on_rwa_xyz") or "").strip()
+    cta_label = str(links.get("global_market_link_label") or "See RWA Networks on RWA.xyz")
+    banner = (
+        f'<div class="data-banner" id="js-rwa-global-banner" role="status">{escape(err)}</div>'
+        if err
+        else '<div class="data-banner" id="js-rwa-global-banner" role="status" hidden></div>'
+    )
+    kpis_block = kpis_html_from_payload(
+        list(payload.get("kpis") or []),
+        note=str(payload.get("kpi_window_note") or ""),
+    )
+    if kpis_block and scope_note:
+        kpis_block = kpis_block.replace(
+            "</div></div></section>",
+            f"{scope_note}</div></div></section>",
+            1,
+        )
+    err_no_rows = bool(err and not rows)
+    empty_no_err = not err and not rows
+    empty_msg = str(payload.get("empty_message") or "No network rows returned.")
+    ko_html = key_observations_html(str(payload.get("macro_observations_html") or ""))
+    if ko_html:
+        ko_html = ko_html.replace('id="js-deep-ko-section"', 'id="js-rwa-global-ko-section"', 1)
+        ko_html = ko_html.replace('id="js-deep-ko"', 'id="js-rwa-global-macro"', 1)
+    explore_html = str(payload.get("explore_gateways_html") or "").strip()
+    explore_block = (
+        f'<div id="js-rwa-global-explore">{explore_html}</div>' if explore_html else ""
+    )
+    bottom_cta = (
+        f'<div class="cta-row etp-mock-bottom-cta rwa-deep-page-cta" id="js-rwa-global-bottom-cta">'
+        f'<a class="btn btn-primary" href="{escape(cta_href)}" target="_blank" rel="noopener noreferrer">'
+        f"{escape(cta_label)}</a></div>"
+        if cta_href
+        else '<div class="cta-row etp-mock-bottom-cta rwa-deep-page-cta" id="js-rwa-global-bottom-cta" hidden></div>'
+    )
+    if err_no_rows:
+        error_cta = (
+            f'<div class="cta-row rwa-deep-page-cta" id="js-rwa-global-error-cta">'
+            f'<a class="btn btn-primary" href="{escape(cta_href)}" target="_blank" rel="noopener noreferrer">'
+            f"{escape(cta_label)}</a></div>"
+            if cta_href
+            else '<div class="cta-row rwa-deep-page-cta" id="js-rwa-global-error-cta" hidden></div>'
+        )
+        body_inner = (
+            f"{banner}"
+            f'<p id="js-rwa-global-empty" class="alert info" hidden></p>'
+            f"{kpis_block}"
+            f'<div id="js-rwa-global-detail-stack" hidden>'
+            f"{error_cta}"
+            "</div>"
+            f'<p class="timestamp-foot" id="js-rwa-global-footer-note">{escape(footer)}</p>'
+        )
+    elif empty_no_err:
+        body_inner = (
+            f"{banner}"
+            f'<p id="js-rwa-global-empty" class="alert info">{escape(empty_msg)}</p>'
+            f'<div id="js-rwa-global-detail-stack" hidden></div>'
+            f'<p class="timestamp-foot" id="js-rwa-global-footer-note">{escape(footer)}</p>'
+        )
+    else:
+        body_inner = (
+            f"{banner}"
+            f'<p id="js-rwa-global-empty" class="alert info" hidden></p>'
+            f"{kpis_block}"
+            f'<div id="js-rwa-global-detail-stack">'
+            f"{ko_html}"
+            f"{explore_block}"
+            f"{rwa_global_mock_insights_html(rows)}"
+            f"{rwa_global_dashboard_html(payload)}"
+            f"{rwa_global_networks_league_html(payload)}"
+            f"{bottom_cta}"
+            f'<p class="timestamp-foot" id="js-rwa-global-footer-note">{escape(footer)}</p>'
+            "</div>"
+        )
+    return (
+        '<main class="page-shell etp-mock-shell">'
+        '<article class="hub-section hub-section--panel inner-rich-zone zone--rwa home-zone home-zone--rwa etp-mock-zone">'
+        '<div class="home-zone__stripe" aria-hidden="true"></div>'
+        '<header class="home-zone__head">'
+        '<span class="home-zone__badge" aria-hidden="true">RWA</span>'
+        '<div class="home-zone__titles">'
+        f'<h1 class="page-intro__title">{escape(title)}</h1>'
+        f'<div class="section-dek section-dek--wide page-intro__dek" id="js-rwa-global-dek">{subtitle}</div>'
+        "</div></header>"
+        '<div class="home-zone__body inner-rich-zone__body etp-mock-zone__body">'
+        f"{related_chips.strip()}"
+        f"{body_inner}"
+        "</div></article></main>"
+    )
+
+
+def _explore_preview_entity(columns: list[str]) -> tuple[str, str, str, str]:
+    if "Network" in columns:
+        return (
+            "networks",
+            "Search network table",
+            "Filter by network name…",
+            "Networks",
+        )
+    if "Platform" in columns:
+        return (
+            "platforms",
+            "Search platform table",
+            "Filter by platform name…",
+            "Platforms",
+        )
+    if "Asset Manager" in columns:
+        return (
+            "asset managers",
+            "Search asset manager table",
+            "Filter by asset manager name…",
+            "Asset managers",
+        )
+    return ("rows", "Filter preview table", "Filter…", "Rows")
+
+
+def _explore_section_preview_dek(sec: dict[str, Any], *, is_participant: bool) -> str:
+    if sec.get("info_html_preview"):
+        return str(sec["info_html_preview"])
+    title = escape(str(sec.get("title") or "this category"))
+    if is_participant:
+        return (
+            f"Distributed and represented RWA value for <strong>{title}</strong> — preview shows "
+            "the first eight rows; open the full overview for charts and complete tables."
+        )
+    return (
+        f"<strong>Networks</strong> league preview for <strong>{title}</strong> (RWA.xyz) — "
+        "first eight rows below; open the full overview for platforms table and complete chart."
+    )
+
+
+def _explore_table_intro_html(
+    sec: dict[str, Any],
+    *,
+    entity: str,
+    intro_strong: str,
+    is_participant: bool,
+) -> str:
+    if sec.get("table_intro_html"):
+        return str(sec["table_intro_html"])
+    if is_participant and entity == "networks":
+        return (
+            "<strong>Networks</strong> &mdash; distributed and represented RWA value by chain "
+            "(RWA.xyz). Filter by name below."
+        )
+    if is_participant and entity == "platforms":
+        return (
+            "<strong>Platforms</strong> &mdash; distributed RWA value by issuance platform "
+            "(RWA.xyz). Filter by name below."
+        )
+    if is_participant and entity == "asset managers":
+        return (
+            "<strong>Asset managers</strong> &mdash; distributed AUM by issuer (RWA.xyz). "
+            "Filter by name below."
+        )
+    return (
+        f"<strong>{escape(intro_strong)}</strong> &mdash; preview league from RWA.xyz. "
+        "Filter by name below."
+    )
+
+
+def _explore_table_block_title(sec: dict[str, Any], *, entity: str) -> str:
+    if sec.get("table_block_title"):
+        return str(sec["table_block_title"])
+    if entity == "networks":
+        return "Networks table"
+    if entity == "platforms":
+        return "Platforms table"
+    if entity == "asset managers":
+        return "Asset managers table"
+    return f"{sec.get('title') or 'Preview'} table"
+
+
+def _explore_primary_internal_cta(sec: dict[str, Any]) -> dict[str, Any] | None:
+    ctas = list(sec.get("cta") or [])
+    for cta in ctas:
+        if cta.get("variant") == "primary" and cta.get("internal"):
+            return cta
+    for cta in ctas:
+        if cta.get("internal"):
+            return cta
+    return ctas[0] if ctas else None
+
+
+def _explore_cta_row_html(ctas: list[dict[str, Any]]) -> str:
+    parts: list[str] = []
+    for cta in ctas:
+        href = escape(str(cta.get("href") or "#"))
+        label = escape(str(cta.get("label") or "Open"))
+        cls = "btn btn-primary" if cta.get("variant") == "primary" else "btn btn-secondary"
+        extra = "" if cta.get("internal") else ' target="_blank" rel="noopener noreferrer"'
+        parts.append(f'<a class="{cls}" href="{href}"{extra}>{label}</a>')
+    return (
+        '<div class="cta-row etp-mock-bottom-cta rwa-exat-cta-row">'
+        f"{''.join(parts)}</div>"
+    )
+
+
+def _explore_section_kpis_html(
+    sec: dict[str, Any],
+    *,
+    snapshot_label: str,
+    footer_note: str,
+) -> str:
+    kpis = list(sec.get("kpis") or [])
+    if not kpis:
+        return ""
+    cells: list[str] = []
+    for k in kpis:
+        delta = k.get("delta_30d_pct")
+        cells.append(
+            "<div class='rwa-kpi-cell'>"
+            f"<span class='rwa-kpi-label'>{escape(str(k.get('label') or ''))}</span>"
+            f"<span class='rwa-kpi-val'>{escape(str(k.get('value_display') or ''))}</span>"
+            f"{_delta30_html(float(delta) if delta is not None else None)}"
+            "</div>"
+        )
+    anchor = str(sec.get("anchor_id") or sec.get("id") or "section")
+    freshness = (
+        f"Snapshot &middot; {escape(snapshot_label)} &middot; {escape(footer_note)}"
+        if footer_note
+        else f"Snapshot &middot; {escape(snapshot_label)} &middot; Source: RWA.xyz"
+    )
+    note = str(sec.get("kpi_window_note") or "").strip()
+    note_html = f'<p class="etp-mock-snapshot__note">{note}</p>' if note else ""
+    return (
+        f'<section class="etp-mock-snapshot" aria-labelledby="{escape(anchor)}-snapshot">'
+        f'<h3 class="subsection-head u-vh" id="{escape(anchor)}-snapshot">'
+        f"{escape(snapshot_label)} snapshot</h3>"
+        f'<p class="data-freshness etp-mock-freshness">{freshness}</p>'
+        '<div class="rwa-exat-kpi-host">'
+        '<div class="rwa-kpi-panel-static rwa-kpi-panel-static--compact">'
+        f'<div class="rwa-kpi-row rwa-kpi-row--home-grid">{"".join(cells)}</div>'
+        "</div></div>"
+        f"{note_html}"
+        "</section>"
+    )
+
+
+def explore_section_html(
+    sec: dict[str, Any],
+    *,
+    is_participant: bool,
+    footer_note: str,
+) -> str:
+    anchor = str(sec.get("anchor_id") or f"preview-{sec.get('id') or 'section'}")
+    sec_id = str(sec.get("id") or anchor)
+    title = str(sec.get("title") or "Section")
+    preview_cls = " rwa-explore-preview--participants" if is_participant else ""
+    eyebrow = "Participant deep page" if is_participant else "Asset deep page"
+    primary = _explore_primary_internal_cta(sec)
+    head_action = ""
+    if primary:
+        href = escape(str(primary.get("href") or "#"))
+        extra = "" if primary.get("internal") else ' target="_blank" rel="noopener noreferrer"'
+        head_action = (
+            f'<a class="rwa-explore-preview__head-action" href="{href}"{extra} '
+            f'aria-label="Open full {escape(title)} overview">'
+            'Full overview <span aria-hidden="true">&rarr;</span></a>'
+        )
+    head = (
+        f'<div class="rwa-explore-preview__head">'
+        '<div class="rwa-explore-preview__head-copy">'
+        f'<p class="rwa-explore-preview__eyebrow">{eyebrow}</p>'
+        f'<h2 class="subsection-head" id="{escape(anchor)}-heading">{escape(title)}</h2>'
+        f'<p class="rwa-explore-preview__dek">{_explore_section_preview_dek(sec, is_participant=is_participant)}</p>'
+        "</div>"
+        f"{head_action}</div>"
+    )
+    snap = _explore_section_kpis_html(sec, snapshot_label=title, footer_note=footer_note)
+    warn = str(sec.get("warn_html") or "")
+    info = str(sec.get("info_html") or "")
+    columns = list(sec.get("columns") or [])
+    rows = list(sec.get("rows_full") or sec.get("rows") or [])
+    table_html = ""
+    if columns:
+        entity, search_label, search_placeholder, intro_strong = _explore_preview_entity(columns)
+        table_title = _explore_table_block_title(sec, entity=entity)
+        table_intro = _explore_table_intro_html(
+            sec,
+            entity=entity,
+            intro_strong=intro_strong,
+            is_participant=is_participant,
+        )
+        prefix = f"explore-{sec_id}"
+        count_note = f"Showing all {len(rows)} {entity}."
+        body = _table_body_html(columns, rows, empty_msg="No preview rows for this section.")
+        mp_cls = " participants-mock-league-block" if is_participant else ""
+        intro_cls = " participants-mock-league-intro" if is_participant else ""
+        preview_note = str(sec.get("preview_note") or "").strip()
+        footnote = (
+            f'<div class="rwa-table-footnote-row"><p class="source-cap rwa-table-footnote-row__cap rwa-exat-preview-note">'
+            f"{preview_note}</p></div>"
+            if preview_note
+            else ""
+        )
+        table_html = (
+            f'<div class="etp-mock-table-block stable-mock-league-block{mp_cls}" id="{escape(prefix)}-wrap">'
+            '<div class="rwa-explore-preview__table-head rwa-split-table-head inner-table-head">'
+            f'<h3 class="subsection-head rwa-split-table-head__title" id="{escape(anchor)}-table">'
+            f"{escape(table_title)}</h3>"
+            f'<div class="rwa-split-table-head__actions" id="{escape(prefix)}-table-actions"></div>'
+            "</div>"
+            f'<p class="stable-mock-league-intro rwa-explore-preview__table-intro{intro_cls}">{table_intro}</p>'
+            '<label class="search-field etp-mock-table-search">'
+            f'<span class="search-field__label">{escape(search_label)}</span>'
+            f'<input type="search" class="search-field__input" id="{escape(prefix)}-q" '
+            f'placeholder="{escape(search_placeholder)}" autocomplete="off" /></label>'
+            '<div class="etp-mock-table-meta" aria-live="polite">'
+            f'<p class="etp-mock-table-meta__count toolbar-note" id="{escape(prefix)}-note">'
+            f"{escape(count_note)}</p>"
+            f'<div class="etp-mock-table-meta__actions" id="{escape(prefix)}-meta-actions"></div>'
+            "</div>"
+            '<div class="table-wrap table-wrap--scroll rwa-split-table-scroll rwa-exat-table-wrap rwa-explore-table-preview" '
+            f'data-fullscreen-title="{escape(table_title)}">'
+            f'<table class="data-table data-table--dense data-table--sortable" '
+            f'aria-labelledby="{escape(anchor)}-table">{body}</table></div>'
+            f"{footnote}</div>"
+        )
+    elif info:
+        table_html = info
+    cta_row = _explore_cta_row_html(list(sec.get("cta") or []))
+    return (
+        f'<section class="rwa-explore-preview{preview_cls}" id="{escape(anchor)}" '
+        f'aria-labelledby="{escape(anchor)}-heading">'
+        f"{head}{snap}{warn}{table_html}{cta_row}</section>"
+    )
+
+
+def build_rwa_explore_server_export_config(payload: dict[str, Any]) -> dict[str, Any]:
+    out: dict[str, Any] = {}
+    for sec in payload.get("sections") or []:
+        columns = list(sec.get("columns") or [])
+        if not columns:
+            continue
+        key = str(sec.get("id") or "section")
+        rows = list(sec.get("rows_full") or sec.get("rows") or [])
+        out[key] = {
+            "sheetName": str(sec.get("title") or "Data")[:31],
+            "headers": columns,
+            "rows": [[_export_cell_value(c, row.get(c), row) for c in columns] for row in rows],
+        }
+    return out
+
+
+def build_rwa_explore_server_zone_html(
+    *,
+    payload: dict[str, Any],
+    related_chips: str,
+    band_label: str,
+    title: str,
+    jump_aria: str,
+    is_participant: bool,
+) -> str:
+    subtitle = str(payload.get("page_subtitle_html") or "")
+    intro = str(payload.get("intro_html") or "")
+    footer = str(payload.get("footer_note") or "")
+    sections = list(payload.get("sections") or [])
+    if not is_participant:
+        sections = [s for s in sections if s.get("id") not in _EXPLORE_ASSET_SECTION_SKIP]
+    jump_links = "".join(
+        f'<a class="rwa-explore-mock-jump__link" href="#{escape(str(s.get("anchor_id") or s.get("id") or "section"))}">'
+        f"{escape(str(s.get('title') or 'Section'))}</a>"
+        for s in sections
+    )
+    jump_nav = (
+        f'<nav class="rwa-explore-mock-jump" id="js-exat-jump" aria-label="{escape(jump_aria)}">'
+        '<span class="rwa-explore-mock-jump__label">Jump to</span>'
+        f"{jump_links}</nav>"
+        if jump_links
+        else f'<nav class="rwa-explore-mock-jump" id="js-exat-jump" aria-label="{escape(jump_aria)}" hidden></nav>'
+    )
+    section_html = "".join(
+        explore_section_html(sec, is_participant=is_participant, footer_note=footer)
+        for sec in sections
+    )
+    return (
+        '<main class="page-shell etp-mock-shell">'
+        '<article class="hub-section hub-section--panel inner-rich-zone zone--rwa home-zone home-zone--rwa etp-mock-zone" '
+        'aria-labelledby="page-title">'
+        '<div class="home-zone__stripe" aria-hidden="true"></div>'
+        '<header class="home-zone__head">'
+        '<span class="home-zone__badge" aria-hidden="true">RWA</span>'
+        '<div class="home-zone__titles">'
+        f'<p class="band-label teal">{escape(band_label)}</p>'
+        f'<h1 class="page-intro__title" id="page-title">{escape(title)}</h1>'
+        f'<div class="section-dek section-dek--wide page-intro__dek" id="js-exat-subtitle">{subtitle}</div>'
+        "</div></header>"
+        '<div class="home-zone__body inner-rich-zone__body etp-mock-zone__body">'
+        f"{related_chips.strip()}"
+        '<div class="data-banner" id="js-exat-banner" role="status" hidden></div>'
+        f'<div class="rwa-exat-intro rwa-explore-mock-intro" id="js-exat-intro">{intro}</div>'
+        f"{jump_nav}"
+        f'<div id="js-exat-sections" class="rwa-exat-sections rwa-explore-previews">{section_html}</div>'
+        f'<p class="timestamp-foot" id="js-exat-timestamp">{escape(footer)}</p>'
+        "</div></article></main>"
+    )
+
+
 def build_stablecoins_server_zone_html(
     *,
     payload: dict[str, Any],

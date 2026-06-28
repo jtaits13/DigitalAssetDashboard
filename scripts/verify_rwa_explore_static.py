@@ -10,41 +10,50 @@ sys.path.insert(0, str(REPO))
 
 
 def _check_kind(kind: str, *, page_class: str, iframe_class: str, host_class: str, payload_key: str) -> int:
-    from streamlit_rwa_explore_static import build_rwa_explore_body_iframe_html
+    from streamlit_rwa_explore_static import build_rwa_explore_server_iframe_html
 
     sample = {
-        payload_key: {
-            "page_subtitle_html": "Test dek",
-            "intro_html": "<p>Intro</p>",
-            "sections": [
-                {
-                    "id": "treasuries",
-                    "title": "US Treasuries",
-                    "anchor_id": "jd-rwa-treasuries",
-                    "kpi_window_note": "30D",
-                    "kpis": [{"label": "Total", "value_display": "$1B", "delta_30d_pct": 1.2}],
-                    "columns": ["Network", "Value"],
-                    "rows": [{"Network": "Ethereum", "Value": 1000000000}],
-                    "cta": [],
-                }
-            ],
-            "footer_note": "test",
-            "links": {"rwa_global": "/RWA_Global_Market_Overview"},
-        }
+        "page_subtitle_html": "Test dek",
+        "intro_html": "<p>Intro</p>",
+        "sections": [
+            {
+                "id": "treasuries",
+                "title": "US Treasuries",
+                "anchor_id": "jd-rwa-treasuries",
+                "kpi_window_note": "30D",
+                "kpis": [{"label": "Total", "value_display": "$1B", "delta_30d_pct": 1.2}],
+                "columns": ["Network", "Total Value"],
+                "rows": [{"Network": "Ethereum", "Total Value": 1000000000}],
+                "rows_full": [{"Network": "Ethereum", "Total Value": 1000000000}],
+                "preview_note": "Preview: first 1 of 1 networks.",
+                "cta": [
+                    {
+                        "href": "/RWA_US_Treasuries",
+                        "label": "Open full overview",
+                        "variant": "primary",
+                        "internal": True,
+                    }
+                ],
+            }
+        ],
+        "footer_note": "test",
+        "links": {"rwa_global": "/RWA_Global_Market_Overview"},
     }
-    html = build_rwa_explore_body_iframe_html(
+    html = build_rwa_explore_server_iframe_html(
         kind=kind,
-        payloads=sample,
+        payload=sample,
         related_chips='<div class="home-related-chips"></div>',
     )
     checks = [
         (iframe_class in html, "iframe body class"),
         (page_class in html, "page parity class"),
-        ("js-exat-sections" in html, "sections host"),
-        ("st-tmmf-fullscreen-postmessage" in html, "fullscreen patch"),
+        ("rwa-explore-preview" in html, "server-rendered section"),
+        ("explore-treasuries-wrap" in html, "server-rendered preview table"),
+        ("js-exat-jump" in html, "jump nav"),
+        ("rwa-explore-gh-canvas-override" in html, "canvas override"),
         ("measureRwaExploreContentHeight" in html, "height measure"),
-        ("__RWA_EXPLORE_PAGE_PAYLOADS" in html, "embedded payloads"),
         (f'data-explore-json="{payload_key}"' in html, "explore json attr"),
+        ("rwa-explore-asset-type-page.js" not in html, "no legacy hydration boot"),
     ]
     for ok, label in checks:
         if not ok:
