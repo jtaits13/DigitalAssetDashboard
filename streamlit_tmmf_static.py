@@ -604,7 +604,7 @@ function measureTmmfContentHeight() {
 # GitHub Pages canvas tokens (static_home/styles.css --wash; zone --hx-tmmf-soft).
 TMMF_GH_PAGE_WASH = "#f3f7fb"
 TMMF_GH_ZONE_SOFT = "#eef2f6"
-TMMF_CANVAS_OVERRIDE_VERSION = "12"
+TMMF_CANVAS_OVERRIDE_VERSION = "13"
 
 
 def tmmf_github_canvas_override_css(*, version: str = TMMF_CANVAS_OVERRIDE_VERSION) -> str:
@@ -693,10 +693,6 @@ def tmmf_iframe_canvas_override_js(*, version: str = TMMF_CANVAS_OVERRIDE_VERSIO
   paint();
   window.addEventListener("load", paint);
   [50, 200, 800, 2000, 5000].forEach(function (ms) {{ setTimeout(paint, ms); }});
-  if (typeof MutationObserver !== "undefined") {{
-    var mo = new MutationObserver(function () {{ paint(); }});
-    mo.observe(document.body, {{ childList: true, subtree: true, attributes: true, attributeFilter: ["style", "class"] }});
-  }}
 }})();
 </script>
 """
@@ -1290,7 +1286,7 @@ def _cached_tmmf_deep_payload() -> dict[str, Any]:
     return load_tmmf_deep_payload()
 
 
-_TMMF_IFRAME_CSS_VERSION = "12"
+_TMMF_IFRAME_CSS_VERSION = "13"
 
 
 @st.cache_data(show_spinner=False, ttl=3600)
