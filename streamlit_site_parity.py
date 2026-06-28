@@ -29,8 +29,9 @@ HOME_CHROME_IFRAME_INITIAL_HEIGHT = 360
 HOME_CHROME_HEIGHT_SLACK_PX = 10
 SUBPAGE_NAV_HEIGHT_SLACK_PX = 6
 SUBPAGE_NAV_HEADER_EST_PX = 64
-# Reserve below the header for primary nav dropdowns (RWA Market ≈ 3 rows; nested flyouts are horizontal).
-SUBPAGE_NAV_DROPDOWN_WELL_PX = 132
+# Reserve below the header for primary nav dropdowns (RWA Market ≈ 3 rows) plus nested
+# RWA · Participants flyout (Networks / Platforms / Asset Managers).
+SUBPAGE_NAV_DROPDOWN_WELL_PX = 176
 SUBPAGE_NAV_IFRAME_INITIAL_HEIGHT = (
     SUBPAGE_NAV_HEADER_EST_PX + SUBPAGE_NAV_DROPDOWN_WELL_PX + SUBPAGE_NAV_HEIGHT_SLACK_PX
 )
