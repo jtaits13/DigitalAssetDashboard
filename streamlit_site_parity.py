@@ -104,6 +104,21 @@ section[data-testid="stSidebar"] { display: none !important; }
   border: 0;
   overflow: hidden !important;
 }
+/* Home nav on subpages: marker and iframe are sibling blocks (same as subpage-chrome). */
+.stApp [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  margin-left: calc(50% - 50vw) !important;
+  margin-right: calc(50% - 50vw) !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+.stApp [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) iframe {
+  display: block !important;
+  width: 100% !important;
+  border: 0;
+  overflow: hidden !important;
+}
 .stApp .home-hero-content-gap {
   display: block;
   width: 100%;
@@ -699,6 +714,20 @@ SUBPAGE_STREAMLIT_CSS = """
   width: 100% !important;
   min-height: 100vh !important;
 }
+/* Full-bleed home nav extends past the 72rem column; Streamlit's default .stApp { overflow:hidden } clips it. */
+.stApp:has(.streamlit-subpage-active):has(.home-chrome-iframe-marker),
+.stApp:has(.streamlit-subpage-root):has(.home-chrome-iframe-marker) {
+  overflow: visible !important;
+  overflow-x: visible !important;
+  max-width: none !important;
+}
+.stApp:has(.streamlit-subpage-active):has(.home-chrome-iframe-marker) section.main,
+.stApp:has(.streamlit-subpage-active):has(.home-chrome-iframe-marker) [data-testid="stMain"],
+.stApp:has(.streamlit-subpage-root):has(.home-chrome-iframe-marker) section.main,
+.stApp:has(.streamlit-subpage-root):has(.home-chrome-iframe-marker) [data-testid="stMain"] {
+  overflow: visible !important;
+  overflow-x: visible !important;
+}
 .withScreencast:has(.streamlit-subpage-active),
 [data-testid="stScreencast"]:has(.streamlit-subpage-active) {
   display: block !important;
@@ -730,6 +759,18 @@ SUBPAGE_STREAMLIT_CSS = """
   display: block !important;
   width: 100% !important;
   border: 0;
+  overflow: hidden !important;
+}
+.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker),
+.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker) {
+  flex: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  max-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
   overflow: hidden !important;
 }
 .stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe),
@@ -2985,6 +3026,11 @@ STREAMLIT_SUBPAGE_EMBED_REVEAL_JS = """
     app.style.setProperty("visibility", "visible", "important");
     app.style.setProperty("width", "100%", "important");
     app.style.setProperty("min-height", "100vh", "important");
+    if (doc.querySelector(".home-chrome-iframe-marker")) {
+      app.style.setProperty("overflow", "visible", "important");
+      app.style.setProperty("overflow-x", "visible", "important");
+      app.style.setProperty("max-width", "none", "important");
+    }
     var screencast = app.closest(".withScreencast") || doc.querySelector('[data-testid="stScreencast"]');
     if (screencast) {
       screencast.style.setProperty("display", "block", "important");
@@ -2997,6 +3043,13 @@ STREAMLIT_SUBPAGE_EMBED_REVEAL_JS = """
       view.style.setProperty("display", "flex", "important");
       view.style.setProperty("width", "100%", "important");
       view.style.setProperty("overflow", "visible", "important");
+    }
+    if (doc.querySelector(".home-chrome-iframe-marker")) {
+      var main = app.querySelector('[data-testid="stMain"]') || app.querySelector("section.main");
+      if (main) {
+        main.style.setProperty("overflow", "visible", "important");
+        main.style.setProperty("overflow-x", "visible", "important");
+      }
     }
   }
   revealEmbeddedSubpage();
