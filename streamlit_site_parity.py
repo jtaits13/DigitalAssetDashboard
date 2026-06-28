@@ -2144,6 +2144,23 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
     frame.style.marginBottom = "0";
     frame.style.paddingBottom = "0";
     frame.setAttribute("height", String(h));
+    var container = frame.closest('[data-testid="stElementContainer"]');
+    if (container) {{
+      container.style.height = "auto";
+      container.style.minHeight = h + "px";
+      container.style.maxHeight = "none";
+      container.style.overflow = "visible";
+      container.style.background = "transparent";
+    }}
+    if (container) {{
+      container.querySelectorAll('[data-testid="stVerticalBlock"], [data-testid="stHtml"], [data-testid="stHtml"] > div').forEach(function (el) {{
+        el.style.height = "auto";
+        el.style.minHeight = "0";
+        el.style.maxHeight = "none";
+        el.style.overflow = "visible";
+        el.style.background = "transparent";
+      }});
+    }}
   }}
 
   function syncHeights() {{
@@ -2721,6 +2738,17 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
 .stApp:has(.streamlit-etps-iframe-page) .block-container,
 .stApp:has(.streamlit-news-feed-iframe-page) .block-container {
   padding-bottom: 0 !important;
+}
+/* TMMF body iframe: Streamlit keeps the wrapper at initial 1200px while JS grows the iframe — flat wash only. */
+.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe[height]:not([height="0"])),
+.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe[height]:not([height="0"])) [data-testid="stVerticalBlock"],
+.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe[height]:not([height="0"])) [data-testid="stHtml"],
+.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe[height]:not([height="0"])) [data-testid="stHtml"] > div {
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+  background: transparent !important;
 }
 .stApp:has(.streamlit-tmmf-iframe-page) .st-tmmf-host-table-modal {
   position: fixed;

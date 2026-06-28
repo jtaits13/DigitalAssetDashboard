@@ -713,7 +713,7 @@ def _json_for_script(payload: dict[str, Any]) -> str:
 
 
 @st.cache_resource(show_spinner=False)
-def _cached_iframe_tmmf_stylesheet_v9() -> str:
+def _cached_iframe_tmmf_stylesheet_v10() -> str:
     """Same CSS stack as ``static_home/rwa-tokenized-mmf.html`` (iframe-safe, no mock banners)."""
     from streamlit_site_parity import _iframe_tmmf_mock_css
 
@@ -825,7 +825,18 @@ body.page-rwa-deep-mmf.mock-tmmf-inner .etp-mock-zone__body.inner-rich-zone__bod
   background-image: none !important;
 }
 body.page-rwa-deep-mmf .methodology-panel {
-  background: #fafcfd !important;
+  background: var(--hx-tmmf-soft, #eef2f6) !important;
+}
+/* Key observations — semi-transparent block + diagonal callout gradient read as a mid-card seam. */
+body.page-rwa-deep-mmf .inner-rich-zone.zone--tmmf .inner-rich-block,
+body.page-rwa-deep-mmf .etp-mock-key-obs-block.inner-rich-block {
+  background: #fff !important;
+  background-image: none !important;
+}
+body.page-rwa-deep-mmf .etp-mock-key-obs-block .crypto-story-callout,
+body.page-rwa-deep-mmf #js-deep-ko .crypto-story-callout {
+  background: #fff !important;
+  background-image: none !important;
 }
 """
     )
@@ -837,7 +848,7 @@ def _cached_tmmf_server_host_stylesheet() -> str:
     """TMMF mock CSS scoped onto the Streamlit host (not a giant components.html blob)."""
     import re
 
-    raw = _cached_iframe_tmmf_stylesheet_v9()
+    raw = _cached_iframe_tmmf_stylesheet_v10()
     css_lines = [
         line
         for line in raw.splitlines()
@@ -987,7 +998,7 @@ def build_tmmf_body_iframe_html(
     """Self-contained iframe document — hydrates via ``rwa-asset-deep-page.js``."""
     from streamlit_site_parity import iframe_internal_link_script
 
-    css = _cached_iframe_tmmf_stylesheet_v9()
+    css = _cached_iframe_tmmf_stylesheet_v10()
     back_link = _tmmf_back_link_html(href=back_href, label=back_label)
     zone = _TMMF_ZONE_BODY.format(related_chips=related_chips.strip())
     payload_json = _json_for_script(payload)
@@ -1090,7 +1101,7 @@ def _cached_tmmf_deep_payload() -> dict[str, Any]:
     return load_tmmf_deep_payload()
 
 
-_TMMF_IFRAME_CSS_VERSION = "9"
+_TMMF_IFRAME_CSS_VERSION = "10"
 
 
 @st.cache_data(show_spinner=False, ttl=3600)
@@ -1230,7 +1241,7 @@ def build_tmmf_server_iframe_html(
     from streamlit_server_deep_page import build_tmmf_server_export_config
     from streamlit_site_parity import iframe_internal_link_script
 
-    css = _cached_iframe_tmmf_stylesheet_v9()
+    css = _cached_iframe_tmmf_stylesheet_v10()
     back_link = _tmmf_back_link_html(href=back_href, label=back_label)
     zone = build_tmmf_server_zone_html(payload=payload, related_chips=related_chips)
     js_libs = _read_js_files(("table-fullscreen.js", "table-download.js"))
