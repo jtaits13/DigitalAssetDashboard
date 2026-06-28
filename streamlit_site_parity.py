@@ -877,6 +877,51 @@ def deep_iframe_table_panel_paint_js() -> str:
 """
 
 
+def deep_iframe_news_feed_panel_css(*, scope: str, zone: str = "news") -> str:
+    """White card panels for news-feed toolbar + stream (Streamlit iframe parity)."""
+    if zone == "etp":
+        border = "rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.16)"
+        shadow = "0 1px 4px rgb(var(--hx-etp-rgb, 62 92 116) / 0.06)"
+    else:
+        border = "rgb(var(--hx-rwa-bright-rgb, 80 113 136) / 0.16)"
+        shadow = "0 1px 4px rgb(var(--hx-rwa-rgb, 62 92 116) / 0.06)"
+    return f"""
+/* News feed — white toolbar + stream panels */
+{scope} .etp-mock-zone .article-feed-toolbar,
+{scope} .etp-mock-zone .article-feed-stream {{
+  background: #fff !important;
+  background-color: #fff !important;
+  background-image: none !important;
+  border: 1px solid {border} !important;
+  border-radius: 12px !important;
+  box-shadow: {shadow} !important;
+  padding: 0.85rem 1rem !important;
+  margin-bottom: 1rem !important;
+}}
+{scope} .etp-mock-zone .hub-section.hub-section--panel {{
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}}
+{scope} .etp-mock-zone .inner-rich-zone__body {{
+  padding-top: 0.15rem;
+}}
+"""
+
+
+def deep_iframe_news_feed_panel_paint_js() -> str:
+    return """
+  function paintNewsFeedPanels() {
+    document.querySelectorAll(".etp-mock-zone .article-feed-toolbar, .etp-mock-zone .article-feed-stream").forEach(function (el) {
+      el.style.setProperty("background", "#fff", "important");
+      el.style.setProperty("background-image", "none", "important");
+      el.style.setProperty("border-radius", "12px", "important");
+    });
+  }
+"""
+
+
 def _iframe_etp_mock_css(css: str) -> str:
     """ETP iframe: no mock banners; scope ETP mock rules onto the iframe ``body``."""
     css = _strip_mock_design_banner_css(css)

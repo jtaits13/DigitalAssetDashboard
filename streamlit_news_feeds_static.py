@@ -1,4 +1,4 @@
-"""Streamlit full news-feed pages — static HTML iframes (parity with static_home/*.html)."""
+"""Streamlit full news-feed pages — server-rendered iframes (parity with static_home/*.html)."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ import json
 from dataclasses import dataclass
 from html import escape
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 import streamlit as st
 import streamlit.components.v1 as components
@@ -16,6 +16,14 @@ from streamlit_tmmf_static import _json_for_script, _read_js_files
 _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
+
+_NEWS_IFRAME_CSS_VERSION = "3"
+NEWS_CANVAS_OVERRIDE_VERSION = "1"
+NEWS_FEED_PANEL_VERSION = "1"
+
+NEWS_GH_PAGE_WASH = "#f3f7fb"
+NEWS_GH_ZONE_SOFT_NEWS = "#eef4f8"
+NEWS_GH_ZONE_SOFT_ETP = "#eef2f7"
 
 _NEWS_JS_DEPS = ("static-base.js", "kpi-hints.js")
 _NEWS_JS_FULL_FEED = ("full-article-feed-page.js",)
@@ -30,9 +38,9 @@ function measureNewsFeedContentHeight() {
     document.getElementById("js-etf-news-nav");
   var nodes = [
     document.querySelector(".page-back-below-header"),
+    document.querySelector("main.page-shell.etp-mock-shell"),
     document.querySelector("main.page-shell"),
     navEl,
-    document.querySelector("main.page-shell > .back-link"),
   ];
   var maxBottom = 0;
   nodes.forEach(function (el) {
@@ -40,12 +48,6 @@ function measureNewsFeedContentHeight() {
     var rect = el.getBoundingClientRect();
     maxBottom = Math.max(maxBottom, rect.bottom + scrollY);
   });
-  if (!maxBottom) {
-    var main = document.querySelector("main.page-shell");
-    if (main) {
-      maxBottom = main.getBoundingClientRect().bottom + scrollY;
-    }
-  }
   if (!maxBottom) return null;
   return Math.ceil(maxBottom + 6);
 }
@@ -54,82 +56,9 @@ function measureNewsFeedContentHeight() {
 _NEWS_IFRAME_BACK_LINK = """
 <div class="page-back-below-header">
   <p class="back-link back-link--below-header">
-    <a href="{back_href}">{back_label_html}</a>
+    <a class="news-server-back-anchor" data-deep-back="explore" href="{back_href}">{back_label_html}</a>
   </p>
 </div>
-"""
-
-_FULL_ARTICLE_ZONE = """
-<main class="page-shell">
-  <article class="hub-section hub-section--panel inner-rich-zone {zone_classes}">
-    <div class="home-zone__stripe" aria-hidden="true"></div>
-    <header class="home-zone__head">
-      <span class="home-zone__badge" aria-hidden="true">{badge}</span>
-      <div class="home-zone__titles">
-        <h1 class="page-intro__title">{title}</h1>
-        <p class="page-intro__dek">{dek_html}</p>
-      </div>
-    </header>
-    <div class="home-zone__body inner-rich-zone__body">
-      <div class="data-banner" id="js-data-banner" role="status" hidden></div>
-      <div class="article-feed-toolbar">
-        <label class="search-field">
-          <span class="search-field__label">Search headlines</span>
-          <input
-            type="search"
-            class="search-field__input"
-            id="js-article-feed-search"
-            placeholder="{search_placeholder}"
-          />
-        </label>
-        <p class="toolbar-note" id="js-article-feed-meta">Loading&hellip;</p>
-      </div>
-      <div class="article-feed-stream" id="js-article-feed-list"></div>
-      <div class="etf-news-nav" id="js-article-feed-nav"></div>
-    </div>
-  </article>
-  <p class="back-link">
-    <a href="{back_href}">{back_label_html}</a>
-  </p>
-</main>
-"""
-
-_ETF_NEWS_ZONE = """
-<main class="page-shell">
-  <article class="hub-section hub-section--panel inner-rich-zone zone--etp home-zone home-zone--etp">
-    <div class="home-zone__stripe" aria-hidden="true"></div>
-    <header class="home-zone__head">
-      <span class="home-zone__badge" aria-hidden="true">ETP</span>
-      <div class="home-zone__titles">
-        <h1 class="page-intro__title">ETF/ETP News</h1>
-        <p class="page-intro__dek">
-          ETF and ETP-related headlines from crypto and finance news sources. Up to
-          <strong>five</strong> ranked stories per <strong>UTC day</strong> with search and pagination.
-        </p>
-      </div>
-    </header>
-    <div class="home-zone__body inner-rich-zone__body">
-      <div class="data-banner" id="js-data-banner" role="status" hidden></div>
-      <div class="article-feed-toolbar">
-        <label class="search-field">
-          <span class="search-field__label">Search headlines</span>
-          <input
-            type="search"
-            class="search-field__input"
-            id="js-etf-news-search"
-            placeholder="Keyword in title or summary&hellip;"
-          />
-        </label>
-        <p class="toolbar-note" id="js-etf-news-meta">Loading&hellip;</p>
-      </div>
-      <div class="article-feed-stream" id="js-etf-news-list"></div>
-      <div class="etf-news-nav" id="js-etf-news-nav"></div>
-    </div>
-  </article>
-  <p class="back-link">
-    <a href="{back_href}">{back_label_html}</a>
-  </p>
-</main>
 """
 
 
@@ -138,7 +67,8 @@ class NewsFeedPageSpec:
     kind: str
     feed_key: str
     use_full_article_feed_js: bool
-    body_extra_class: str
+    canvas_zone: Literal["news", "etp"]
+    body_classes: str
     body_data_attrs: str
     zone_classes: str
     badge: str
@@ -147,6 +77,7 @@ class NewsFeedPageSpec:
     search_placeholder: str
     default_back_href: str
     default_back_label: str
+    configure_active: str
 
 
 NEWS_FEED_SPECS: dict[str, NewsFeedPageSpec] = {
@@ -154,9 +85,13 @@ NEWS_FEED_SPECS: dict[str, NewsFeedPageSpec] = {
         kind="all_articles",
         feed_key="all_articles.json",
         use_full_article_feed_js=True,
-        body_extra_class="",
-        body_data_attrs='data-article-feed="all_articles.json" data-article-feed-page-size="20"',
-        zone_classes="zone--news",
+        canvas_zone="news",
+        body_classes=(
+            "page-full-feed page-article-feed page-article-feed-iframe "
+            "site-experience page-inner--rich"
+        ),
+        body_data_attrs='data-methodology="news" data-article-feed="all_articles.json" data-article-feed-page-size="20"',
+        zone_classes="zone--news home-zone home-zone--news",
         badge="NEWS",
         title="All digital asset headlines",
         dek_html=(
@@ -166,14 +101,22 @@ NEWS_FEED_SPECS: dict[str, NewsFeedPageSpec] = {
         search_placeholder="Keyword in title, summary, or source&hellip;",
         default_back_href="/?jd_scroll=news",
         default_back_label="← Back to home · News Hub",
+        configure_active="news",
     ),
     "regulatory": NewsFeedPageSpec(
         kind="regulatory",
         feed_key="all_regulatory.json",
         use_full_article_feed_js=True,
-        body_extra_class="",
-        body_data_attrs='data-article-feed="all_regulatory.json" data-article-feed-country="1"',
-        zone_classes="zone--news",
+        canvas_zone="news",
+        body_classes=(
+            "page-full-feed page-article-feed page-article-feed-iframe "
+            "site-experience page-inner--rich"
+        ),
+        body_data_attrs=(
+            'data-methodology="news" data-article-feed="all_regulatory.json" '
+            'data-article-feed-country="1"'
+        ),
+        zone_classes="zone--news home-zone home-zone--news",
         badge="NEWS",
         title="All regulatory headlines",
         dek_html=(
@@ -184,14 +127,22 @@ NEWS_FEED_SPECS: dict[str, NewsFeedPageSpec] = {
         search_placeholder="Keyword in title, summary, source, or country&hellip;",
         default_back_href="/?jd_scroll=news",
         default_back_label="← Back to home · News Hub",
+        configure_active="news",
     ),
     "custodian": NewsFeedPageSpec(
         kind="custodian",
         feed_key="all_custodian_news.json",
         use_full_article_feed_js=True,
-        body_extra_class="",
-        body_data_attrs='data-article-feed="all_custodian_news.json" data-article-feed-access="1"',
-        zone_classes="zone--news",
+        canvas_zone="news",
+        body_classes=(
+            "page-full-feed page-article-feed page-article-feed-iframe "
+            "site-experience page-inner--rich"
+        ),
+        body_data_attrs=(
+            'data-methodology="news" data-article-feed="all_custodian_news.json" '
+            'data-article-feed-access="1"'
+        ),
+        zone_classes="zone--news home-zone home-zone--news",
         badge="NEWS",
         title="All custody headlines",
         dek_html=(
@@ -203,20 +154,29 @@ NEWS_FEED_SPECS: dict[str, NewsFeedPageSpec] = {
         search_placeholder="Keyword in title, summary, source, or category&hellip;",
         default_back_href="/?jd_scroll=news",
         default_back_label="← Back to home · News Hub",
+        configure_active="news",
     ),
     "etf_news": NewsFeedPageSpec(
         kind="etf_news",
         feed_key="etf_news.json",
         use_full_article_feed_js=False,
-        body_extra_class="page-etp",
-        body_data_attrs="",
+        canvas_zone="etp",
+        body_classes=(
+            "page-full-feed page-article-feed page-article-feed-iframe page-etp "
+            "site-experience page-inner--rich mock-etp-inner"
+        ),
+        body_data_attrs='data-methodology="etp"',
         zone_classes="zone--etp home-zone home-zone--etp",
         badge="ETP",
         title="ETF/ETP News",
-        dek_html="",
+        dek_html=(
+            "ETF and ETP-related headlines from crypto and finance news sources. Up to "
+            "<strong>five</strong> ranked stories per <strong>UTC day</strong> with search and pagination."
+        ),
         search_placeholder="",
         default_back_href="/US_Crypto_ETPs",
         default_back_label="← Back to U.S. ETP Overview",
+        configure_active="etps",
     ),
 }
 
@@ -266,12 +226,32 @@ def get_news_feed_iframe_payloads(kind: str) -> dict[str, Any]:
     )
 
 
+def _news_zone_soft(zone: str) -> str:
+    return NEWS_GH_ZONE_SOFT_ETP if zone == "etp" else NEWS_GH_ZONE_SOFT_NEWS
+
+
+def _news_back_label_html(label: str) -> str:
+    return (
+        escape(label)
+        .replace("\u2190", "&larr;")
+        .replace("\u2192", "&rarr;")
+        .replace("\u00b7", "&middot;")
+    )
+
+
 @st.cache_resource(show_spinner=False)
-def _cached_iframe_news_stylesheet_v2() -> str:
+def _cached_iframe_news_stylesheet_v3() -> str:
+    from streamlit_site_parity import deep_iframe_news_feed_panel_css
+
     chunks: list[str] = [
         "@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap');",
     ]
-    for rel in ("styles.css", "css/site-experience.css", "css/inner-page-experience.css"):
+    for rel in (
+        "styles.css",
+        "css/site-experience.css",
+        "css/inner-page-experience.css",
+        "css/inner-page-zone-parity.css",
+    ):
         path = _STATIC / rel
         if path.is_file():
             chunks.append(path.read_text(encoding="utf-8"))
@@ -280,11 +260,11 @@ def _cached_iframe_news_stylesheet_v2() -> str:
 html, body.page-article-feed-iframe.site-experience {
   margin: 0;
   padding: 0;
-  background: var(--wash, #f3f7fb);
+  background: var(--wash, #f3f7fb) !important;
+  background-image: none !important;
   overflow: hidden;
 }
-html::before,
-html::after,
+html::before, html::after,
 body.page-article-feed-iframe::before,
 body.page-article-feed-iframe::after {
   display: none !important;
@@ -303,7 +283,7 @@ body.page-article-feed-iframe .page-back-below-header {
 body.page-article-feed-iframe p.back-link.back-link--below-header {
   margin: 0.2rem 0 0.85rem;
 }
-body.page-article-feed-iframe main.page-shell {
+body.page-article-feed-iframe main.page-shell.etp-mock-shell {
   max-width: var(--content-max, 72rem);
   margin: 0 auto;
   padding: 0 1.25rem 1.5rem;
@@ -317,85 +297,213 @@ body.page-article-feed-iframe.page-etp.site-experience.page-inner--rich {
   background: var(--wash, #f3f7fb) !important;
   background-image: none !important;
 }
-body.page-article-feed-iframe.page-etp main.page-shell,
-body.page-article-feed-iframe.page-etp .inner-rich-zone.hub-section,
-body.page-article-feed-iframe.page-etp .home-zone__body {
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-}
 """
     )
+    chunks.append(deep_iframe_news_feed_panel_css(scope="body.page-article-feed-iframe", zone="news"))
+    chunks.append(deep_iframe_news_feed_panel_css(scope="body.page-article-feed-iframe.page-etp", zone="etp"))
     return "\n".join(chunks)
 
 
-def _news_back_label_html(label: str) -> str:
+def news_github_canvas_override_css(*, zone: str, version: str = NEWS_CANVAS_OVERRIDE_VERSION) -> str:
+    from streamlit_site_parity import deep_iframe_news_feed_panel_css
+
+    wash = NEWS_GH_PAGE_WASH
+    soft = _news_zone_soft(zone)
+    scope = "body.page-article-feed-iframe"
+    zone_sel = "zone--etp" if zone == "etp" else "zone--news"
+    scope_etp = f"{scope}.page-etp" if zone == "etp" else scope
+    panel_css = deep_iframe_news_feed_panel_css(scope=scope_etp, zone=zone)
+    return f"""
+/* News feed GitHub Pages canvas override v{version} ({zone}) */
+html, {scope}.site-experience,
+{scope}.site-experience.page-inner--rich,
+{scope}.mock-etp-inner.site-experience {{
+  background: {wash} !important;
+  background-color: {wash} !important;
+  background-image: none !important;
+}}
+{scope} .page-shell.etp-mock-shell {{
+  background: transparent !important;
+  background-image: none !important;
+}}
+{scope} .inner-rich-zone.{zone_sel},
+{scope} .inner-rich-zone.{zone_sel} .inner-rich-zone__body,
+{scope} .etp-mock-zone.inner-rich-zone.{zone_sel},
+{scope} .etp-mock-zone .inner-rich-zone__body {{
+  background: {soft} !important;
+  background-color: {soft} !important;
+  background-image: none !important;
+}}
+{scope} .etp-mock-zone .hub-section.hub-section--panel {{
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}}
+{panel_css}
+"""
+
+
+def news_iframe_canvas_override_js(*, zone: str, version: str = NEWS_CANVAS_OVERRIDE_VERSION) -> str:
+    from streamlit_site_parity import deep_iframe_news_feed_panel_paint_js
+
+    wash = NEWS_GH_PAGE_WASH
+    soft = _news_zone_soft(zone)
+    zone_sel = "zone--etp" if zone == "etp" else "zone--news"
+    panel_paint_js = deep_iframe_news_feed_panel_paint_js()
+    return f"""
+<script id="news-gh-canvas-override-js-v{version}-{zone}">
+(function () {{
+  var WASH = "{wash}";
+  var SOFT = "{soft}";
+  var ZONE_SEL = ".inner-rich-zone.{zone_sel}";
+  function setBg(el, color) {{
+    if (!el) return;
+    el.style.setProperty("background", color, "important");
+    el.style.setProperty("background-color", color, "important");
+    el.style.setProperty("background-image", "none", "important");
+  }}
+{panel_paint_js}
+  function paint() {{
+    setBg(document.documentElement, WASH);
+    setBg(document.body, WASH);
+    var main = document.querySelector("main.page-shell.etp-mock-shell");
+    if (main) {{
+      main.style.setProperty("background", "transparent", "important");
+      main.style.setProperty("background-image", "none", "important");
+    }}
+    document.querySelectorAll(
+      ZONE_SEL + ", " + ZONE_SEL + " .inner-rich-zone__body, .etp-mock-zone .inner-rich-zone__body"
+    ).forEach(function (el) {{ setBg(el, SOFT); }});
+    document.querySelectorAll(".etp-mock-zone .hub-section.hub-section--panel").forEach(function (el) {{
+      el.style.setProperty("background", "transparent", "important");
+      el.style.setProperty("border", "none", "important");
+      el.style.setProperty("box-shadow", "none", "important");
+    }});
+    paintNewsFeedPanels();
+  }}
+  paint();
+  window.addEventListener("load", paint);
+  [50, 200, 800, 2000, 5000].forEach(function (ms) {{ setTimeout(paint, ms); }});
+}})();
+</script>
+"""
+
+
+def news_host_canvas_override_css(*, version: str = NEWS_CANVAS_OVERRIDE_VERSION) -> str:
+    wash = NEWS_GH_PAGE_WASH
+    return f"""
+<style id="news-gh-host-canvas-override-v{version}">
+.stApp:has(.streamlit-news-feed-iframe-page),
+.withScreencast:has(.streamlit-news-feed-iframe-page),
+[data-testid="stScreencast"]:has(.streamlit-news-feed-iframe-page),
+.stApp:has(.streamlit-news-feed-iframe-page) [data-testid="stAppViewContainer"],
+.stApp:has(.streamlit-news-feed-iframe-page) section.main,
+.stApp:has(.streamlit-news-feed-iframe-page) [data-testid="stMain"],
+.stApp:has(.streamlit-news-feed-iframe-page) [data-testid="stMainBlockContainer"],
+.stApp:has(.streamlit-news-feed-iframe-page) .block-container,
+.stApp:has(.streamlit-news-feed-iframe-page) [data-testid="stVerticalBlock"],
+.stApp:has(.streamlit-news-feed-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe),
+.stApp:has(.streamlit-news-feed-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) [data-testid="stVerticalBlock"],
+.stApp:has(.streamlit-news-feed-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) [data-testid="stHtml"],
+.stApp:has(.streamlit-news-feed-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) [data-testid="stHtml"] > div {{
+  background: {wash} !important;
+  background-color: {wash} !important;
+  background-image: none !important;
+}}
+</style>
+"""
+
+
+def news_host_canvas_override_js(*, version: str = NEWS_CANVAS_OVERRIDE_VERSION) -> str:
+    wash = NEWS_GH_PAGE_WASH
+    return f"""
+<script id="news-gh-host-canvas-override-js-v{version}">
+(function () {{
+  var WASH = "{wash}";
+  var doc = window.parent && window.parent.document ? window.parent.document : document;
+  function paint() {{
+    var app = doc.querySelector(".stApp");
+    if (!app || !app.querySelector(".streamlit-news-feed-iframe-page")) return;
+    [
+      app,
+      app.querySelector('[data-testid="stAppViewContainer"]'),
+      app.querySelector("section.main"),
+      app.querySelector('[data-testid="stMainBlockContainer"]'),
+      app.querySelector(".block-container"),
+    ].forEach(function (el) {{
+      if (!el) return;
+      el.style.setProperty("background", WASH, "important");
+      el.style.setProperty("background-color", WASH, "important");
+      el.style.setProperty("background-image", "none", "important");
+    }});
+    doc.querySelectorAll(".withScreencast, [data-testid='stScreencast']").forEach(function (el) {{
+      if (!el.querySelector(".streamlit-news-feed-iframe-page")) return;
+      el.style.setProperty("background", WASH, "important");
+      el.style.setProperty("background-image", "none", "important");
+    }});
+  }}
+  paint();
+  if (window.parent) window.parent.addEventListener("load", paint);
+  [100, 400, 1200, 3000, 6000].forEach(function (ms) {{ setTimeout(paint, ms); }});
+}})();
+</script>
+"""
+
+
+def inject_news_host_canvas_override() -> None:
+    st.markdown(news_host_canvas_override_css(), unsafe_allow_html=True)
+    components.html(news_host_canvas_override_js(), height=0, width=0)
+
+
+def _feed_banner_html(feed_errors: list[str]) -> str:
+    if not feed_errors:
+        return ""
+    banner_text = escape("; ".join(str(e) for e in feed_errors[:4]))
     return (
-        escape(label)
-        .replace("\u2190", "&larr;")
-        .replace("\u2192", "&rarr;")
-        .replace("\u00b7", "&middot;")
+        f'<div class="data-banner" id="js-data-banner" role="status">'
+        f"Partial feed warnings: {banner_text}</div>"
     )
 
 
-def build_news_feed_body_iframe_html(
+def build_news_server_iframe_html(
     *,
     kind: str,
     payloads: dict[str, Any],
+    related_chips: str = "",
     back_href: str | None = None,
     back_label: str | None = None,
 ) -> str:
-    from streamlit_site_parity import iframe_internal_link_script
+    """Self-contained news-feed iframe with GitHub Pages CSS and server-rendered zone."""
+    from streamlit_server_deep_page import build_news_feed_server_zone_html
+    from streamlit_site_parity import deep_iframe_news_feed_panel_css, iframe_internal_link_script
 
     spec = NEWS_FEED_SPECS[kind]
-    css = _cached_iframe_news_stylesheet_v2()
+    css = _cached_iframe_news_stylesheet_v3()
+    override_css = news_github_canvas_override_css(zone=spec.canvas_zone)
+    panel_css = deep_iframe_news_feed_panel_css(
+        scope="body.page-article-feed-iframe.page-etp" if spec.canvas_zone == "etp" else "body.page-article-feed-iframe",
+        zone=spec.canvas_zone,
+    )
     href = back_href or spec.default_back_href
     label = back_label or spec.default_back_label
     label_html = _news_back_label_html(label)
-
-    if spec.use_full_article_feed_js:
-        zone = _FULL_ARTICLE_ZONE.format(
-            zone_classes=spec.zone_classes,
-            badge=escape(spec.badge),
-            title=escape(spec.title),
-            dek_html=spec.dek_html,
-            search_placeholder=spec.search_placeholder,
-            back_href=escape(href),
-            back_label_html=label_html,
-        )
-        js_boot = _read_js_files(_NEWS_JS_FULL_FEED)
-    else:
-        zone = _ETF_NEWS_ZONE.format(
-            back_href=escape(href),
-            back_label_html=label_html,
-        )
-        js_boot = _read_js_files(_NEWS_JS_ETF)
-
     back_link = _NEWS_IFRAME_BACK_LINK.format(back_href=escape(href), back_label_html=label_html)
+
+    feed_data = payloads.get(spec.feed_key) if isinstance(payloads.get(spec.feed_key), dict) else {}
+    feed_errors = feed_data.get("feed_errors") if isinstance(feed_data.get("feed_errors"), list) else []
+    zone = build_news_feed_server_zone_html(
+        zone_classes=spec.zone_classes,
+        badge=spec.badge,
+        title=spec.title,
+        dek_html=spec.dek_html,
+        search_placeholder=spec.search_placeholder,
+        related_chips=related_chips,
+        feed_banner_html=_feed_banner_html(list(feed_errors)),
+        use_etf_news_ids=not spec.use_full_article_feed_js,
+    )
     payloads_json = _json_for_script(payloads)
     js_deps = _read_js_files(_NEWS_JS_DEPS)
-    body_classes = (
-        "page-full-feed page-article-feed page-article-feed-iframe site-experience page-inner--rich "
-        + spec.body_extra_class
-    ).strip()
-
-    feed_errors = []
-    feed_data = payloads.get(spec.feed_key) if isinstance(payloads.get(spec.feed_key), dict) else {}
-    if isinstance(feed_data.get("feed_errors"), list):
-        feed_errors = feed_data["feed_errors"]
-
-    banner_init = ""
-    if feed_errors:
-        banner_text = escape("; ".join(str(e) for e in feed_errors[:4]))
-        banner_init = f"""
-(function () {{
-  var b = document.getElementById("js-data-banner");
-  if (b) {{
-    b.hidden = false;
-    b.textContent = "Partial feed warnings: {banner_text}";
-  }}
-}})();
-"""
+    js_boot = _read_js_files(_NEWS_JS_FULL_FEED if spec.use_full_article_feed_js else _NEWS_JS_ETF)
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -403,8 +511,10 @@ def build_news_feed_body_iframe_html(
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>{css}</style>
+<style id="news-gh-canvas-override-v{NEWS_CANVAS_OVERRIDE_VERSION}-{spec.canvas_zone}">{override_css}</style>
+<style id="news-feed-panel-v{NEWS_FEED_PANEL_VERSION}">{panel_css}</style>
 </head>
-<body class="{body_classes}" {spec.body_data_attrs}>
+<body class="{spec.body_classes.strip()}" {spec.body_data_attrs}>
 {back_link}
 {zone}
 <script>
@@ -441,7 +551,8 @@ window.loadJson = function (name) {{
     if (typeof ResizeObserver === "undefined") return;
     var ro = new ResizeObserver(sendHeight);
     [
-      "main.page-shell",
+      "main.page-shell.etp-mock-shell",
+      "article.etp-mock-zone",
       "#js-article-feed-list",
       "#js-article-feed-nav",
       "#js-etf-news-list",
@@ -455,7 +566,6 @@ window.loadJson = function (name) {{
   window.addEventListener("load", function () {{
     sendHeight();
     bindObservers();
-    {banner_init}
   }});
   if (typeof MutationObserver !== "undefined") {{
     var mo = new MutationObserver(function () {{
@@ -463,6 +573,7 @@ window.loadJson = function (name) {{
       bindObservers();
     }});
     [
+      "article.etp-mock-zone",
       "#js-article-feed-list",
       "#js-etf-news-list",
       "#js-article-feed-nav",
@@ -477,9 +588,14 @@ window.loadJson = function (name) {{
   }});
 }})();
 </script>
+{news_iframe_canvas_override_js(zone=spec.canvas_zone)}
 {iframe_internal_link_script()}
 </body>
 </html>"""
+
+
+# Back-compat aliases for verify scripts and legacy callers.
+build_news_feed_body_iframe_html = build_news_server_iframe_html
 
 
 @st.cache_data(show_spinner=False, ttl=300)
@@ -487,21 +603,47 @@ def _cached_news_feed_iframe_payloads(kind: str) -> dict[str, Any]:
     return load_news_feed_iframe_payloads(kind)
 
 
+@st.cache_data(show_spinner=False, ttl=3600)
+def _cached_news_server_iframe_html(
+    kind: str,
+    payloads_json: str,
+    related_chips: str,
+    back_href: str,
+    back_label: str,
+    *,
+    _css_version: str = _NEWS_IFRAME_CSS_VERSION,
+) -> str:
+    payloads = json.loads(payloads_json)
+    return build_news_server_iframe_html(
+        kind=kind,
+        payloads=payloads,
+        related_chips=related_chips,
+        back_href=back_href,
+        back_label=back_label,
+    )
+
+
 def render_news_feed_body_iframe(
     *,
     kind: str,
     payloads: dict[str, Any],
+    related_chips: str = "",
     back_href: str | None = None,
     back_label: str | None = None,
 ) -> None:
+    """Render a news-feed page inside a Streamlit iframe (deep-page parity)."""
     from streamlit_site_parity import render_subpage_body_iframe
 
+    spec = NEWS_FEED_SPECS[kind]
+    payloads_json = _json_for_script(payloads)
     render_subpage_body_iframe(
-        build_news_feed_body_iframe_html(
-            kind=kind,
-            payloads=payloads,
-            back_href=back_href,
-            back_label=back_label,
+        _cached_news_server_iframe_html(
+            kind,
+            payloads_json,
+            related_chips,
+            back_href or spec.default_back_href,
+            back_label or spec.default_back_label,
         ),
         height=1200,
     )
+    inject_news_host_canvas_override()

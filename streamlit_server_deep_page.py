@@ -1583,3 +1583,56 @@ def build_etp_server_zone_html(
         f'<p class="timestamp-foot" id="js-etp-generated">{escape(footer) if footer else "&mdash;"}</p>'
         "</div></article></main>"
     )
+
+
+def build_news_feed_server_zone_html(
+    *,
+    zone_classes: str,
+    badge: str,
+    title: str,
+    dek_html: str,
+    search_placeholder: str,
+    related_chips: str = "",
+    feed_banner_html: str = "",
+    use_etf_news_ids: bool = False,
+) -> str:
+    """Server-rendered news-feed zone (mock-parity markup for Streamlit iframes)."""
+    if use_etf_news_ids:
+        search_id = "js-etf-news-search"
+        meta_id = "js-etf-news-meta"
+        list_id = "js-etf-news-list"
+        nav_id = "js-etf-news-nav"
+        placeholder = "Keyword in title or summary&hellip;"
+    else:
+        search_id = "js-article-feed-search"
+        meta_id = "js-article-feed-meta"
+        list_id = "js-article-feed-list"
+        nav_id = "js-article-feed-nav"
+        placeholder = search_placeholder
+
+    banner = feed_banner_html or '<div class="data-banner" id="js-data-banner" role="status" hidden></div>'
+    return (
+        '<main class="page-shell etp-mock-shell">'
+        f'<article class="hub-section hub-section--panel inner-rich-zone {zone_classes} etp-mock-zone">'
+        '<div class="home-zone__stripe" aria-hidden="true"></div>'
+        '<header class="home-zone__head">'
+        f'<span class="home-zone__badge" aria-hidden="true">{escape(badge)}</span>'
+        '<div class="home-zone__titles">'
+        f'<h1 class="page-intro__title">{escape(title)}</h1>'
+        f'<p class="page-intro__dek">{dek_html}</p>'
+        "</div></header>"
+        '<div class="home-zone__body inner-rich-zone__body etp-mock-zone__body">'
+        f"{related_chips.strip()}"
+        f"{banner}"
+        '<div class="article-feed-toolbar">'
+        '<label class="search-field">'
+        '<span class="search-field__label">Search headlines</span>'
+        f'<input type="search" class="search-field__input" id="{search_id}" '
+        f'placeholder="{placeholder}" />'
+        "</label>"
+        f'<p class="toolbar-note" id="{meta_id}">Loading&hellip;</p>'
+        "</div>"
+        f'<div class="article-feed-stream" id="{list_id}"></div>'
+        f'<div class="etf-news-nav" id="{nav_id}"></div>'
+        "</div></article></main>"
+    )
