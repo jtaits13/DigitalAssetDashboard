@@ -892,8 +892,9 @@ def _explore_preview_table_rows(sec: dict[str, Any]) -> tuple[list[dict[str, Any
     """Preview rows for explore tables (``rows``), with total count from ``rows_full``."""
     from rwa_explore_page_payloads import EXPLORE_ASSET_PREVIEW_ROWS
 
-    preview = list(sec.get("rows") or [])
-    full = list(sec.get("rows_full") or preview)
+    full = list(sec.get("rows_full") or sec.get("rows") or [])
+    preview = list(sec.get("rows") or full[:EXPLORE_ASSET_PREVIEW_ROWS])
+    preview = preview[:EXPLORE_ASSET_PREVIEW_ROWS]
     if not preview and full:
         preview = full[:EXPLORE_ASSET_PREVIEW_ROWS]
     return preview, len(full)
@@ -949,6 +950,8 @@ def explore_section_html(
             count_note = f"Showing {len(rows)} of {total_rows} {entity} (preview)."
         else:
             count_note = f"Showing all {len(rows)} {entity}."
+        from rwa_explore_page_payloads import EXPLORE_ASSET_PREVIEW_ROWS
+
         body = _table_body_html(columns, rows, empty_msg="No preview rows for this section.")
         mp_cls = " participants-mock-league-block" if is_participant else ""
         intro_cls = " participants-mock-league-intro" if is_participant else ""
@@ -977,6 +980,9 @@ def explore_section_html(
             f'<div class="etp-mock-table-meta__actions" id="{escape(prefix)}-meta-actions"></div>'
             "</div>"
             '<div class="table-wrap table-wrap--scroll rwa-split-table-scroll rwa-exat-table-wrap rwa-explore-table-preview" '
+            f'data-preview-rows="{EXPLORE_ASSET_PREVIEW_ROWS}" '
+            f'data-preview-total="{total_rows}" '
+            f'data-preview-entity="{escape(entity)}" '
             f'data-fullscreen-title="{escape(table_title)}">'
             f'<table class="data-table data-table--dense data-table--sortable" '
             f'aria-labelledby="{escape(anchor)}-table">{body}</table></div>'

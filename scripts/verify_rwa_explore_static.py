@@ -68,6 +68,8 @@ def _check_kind(kind: str, *, page_class: str, iframe_class: str, host_class: st
         ("Showing 8 of 23 networks (preview)." in html, "treasuries preview count note"),
         ("js-exat-jump" in html, "jump nav"),
         ("rwa-explore-gh-canvas-override" in html, "canvas override"),
+        ("data-preview-rows=\"8\"" in html, "preview row cap marker"),
+        ("rwa-explore-iframe-build-v" in html, "iframe build stamp"),
         ("measureRwaExploreContentHeight" in html, "height measure"),
         (f'data-explore-json="{payload_key}"' in html, "explore json attr"),
         ("rwa-explore-asset-type-page.js" not in html, "no legacy hydration boot"),

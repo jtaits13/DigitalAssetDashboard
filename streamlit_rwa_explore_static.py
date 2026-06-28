@@ -22,7 +22,8 @@ _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
 
-_RWA_EXPLORE_IFRAME_CSS_VERSION = "3"
+_RWA_EXPLORE_IFRAME_CSS_VERSION = "4"
+RWA_EXPLORE_IFRAME_BUILD = "4"
 RWA_EXPLORE_CANVAS_OVERRIDE_VERSION = "1"
 
 RWA_EXPLORE_GH_PAGE_WASH = "#f3f7fb"
@@ -125,6 +126,37 @@ _RWA_EXPLORE_SERVER_TABLE_WIRE_JS = """
   setTimeout(boot, 0);
   setTimeout(boot, 400);
   setTimeout(boot, 1200);
+})();
+"""
+
+_RWA_EXPLORE_PREVIEW_ROW_CAP_JS = """
+(function () {
+  var DEFAULT_CAP = 8;
+  function enforceExplorePreviewRowCap() {
+    document.querySelectorAll(".rwa-explore-table-preview[data-preview-rows]").forEach(function (wrap) {
+      var cap = parseInt(wrap.getAttribute("data-preview-rows"), 10);
+      if (!isFinite(cap) || cap < 1) cap = DEFAULT_CAP;
+      var tbody = wrap.querySelector("tbody");
+      if (!tbody) return;
+      var trs = tbody.querySelectorAll("tr");
+      var shown = trs.length;
+      if (shown <= cap) return;
+      var totalAttr = parseInt(wrap.getAttribute("data-preview-total"), 10);
+      var total = isFinite(totalAttr) && totalAttr >= shown ? totalAttr : shown;
+      for (var i = cap; i < shown; i++) trs[i].remove();
+      var block = wrap.closest(".etp-mock-table-block");
+      var note = block && block.querySelector(".etp-mock-table-meta__count");
+      if (!note) return;
+      var entity = wrap.getAttribute("data-preview-entity") || "rows";
+      note.textContent =
+        cap >= total
+          ? "Showing all " + cap + " " + entity + "."
+          : "Showing " + cap + " of " + total + " " + entity + " (preview).";
+    });
+  }
+  enforceExplorePreviewRowCap();
+  window.addEventListener("load", enforceExplorePreviewRowCap);
+  [50, 400, 1200].forEach(function (ms) { setTimeout(enforceExplorePreviewRowCap, ms); });
 })();
 """
 
@@ -665,10 +697,12 @@ def build_rwa_explore_server_iframe_html(
 <style id="rwa-explore-gh-canvas-override-v{RWA_EXPLORE_CANVAS_OVERRIDE_VERSION}">{override_css}</style>
 </head>
 <body class="{body_classes}" data-explore-json="{escape(spec.payload_key)}">
+<span class="rwa-explore-iframe-build-v{RWA_EXPLORE_IFRAME_BUILD}" hidden aria-hidden="true"></span>
 {back_link}
 {zone}
 <script>
 {_RWA_EXPLORE_MEASURE_HEIGHT_JS}
+{_RWA_EXPLORE_PREVIEW_ROW_CAP_JS}
 (function () {{
   function sendHeight() {{
     if (typeof window.parent.postMessage !== "function") return;
@@ -727,26 +761,6 @@ def _cached_rwa_explore_iframe_payloads(kind: str) -> dict[str, Any]:
     return load_rwa_explore_iframe_payloads(kind)
 
 
-@st.cache_data(show_spinner=False, ttl=3600)
-def _cached_rwa_explore_server_iframe_html(
-    kind: str,
-    payload_json: str,
-    related_chips: str,
-    back_href: str,
-    back_label: str,
-    *,
-    _css_version: str = _RWA_EXPLORE_IFRAME_CSS_VERSION,
-) -> str:
-    payload = json.loads(payload_json)
-    return build_rwa_explore_server_iframe_html(
-        kind=kind,
-        payload=payload,
-        related_chips=related_chips,
-        back_href=back_href,
-        back_label=back_label,
-    )
-
-
 def render_rwa_explore_body_iframe(
     *,
     kind: str,
@@ -761,15 +775,15 @@ def render_rwa_explore_body_iframe(
     payload = dict((payloads or {}).get(spec.payload_key) or {})
     href = back_href or spec.default_back_href
     label = back_label or spec.default_back_label
-    payload_json = _json_for_script(payload)
+    html = build_rwa_explore_server_iframe_html(
+        kind=kind,
+        payload=payload,
+        related_chips=related_chips,
+        back_href=href,
+        back_label=label,
+    )
     render_subpage_body_iframe(
-        _cached_rwa_explore_server_iframe_html(
-            kind,
-            payload_json,
-            related_chips,
-            href,
-            label,
-        ),
+        html,
         height=1800,
     )
     inject_rwa_explore_host_canvas_override(kind=kind)
