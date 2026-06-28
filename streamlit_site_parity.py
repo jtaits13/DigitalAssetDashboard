@@ -745,9 +745,16 @@ def deep_iframe_kpi_flatten_css(*, scope: str, zone: str) -> str:
 """
 
 
-def deep_iframe_rwa_zone_body_flatten_css(*, scope: str, soft: str = "#e8eff5") -> str:
-    """Minimal RWA zone flatten — body gradient band between white panels only."""
+def deep_iframe_rwa_zone_body_flatten_css(*, scope: str, soft: str = "#eaf0f6") -> str:
+    """Minimal RWA zone flatten — kill gradient band, zone shadow, and explore/insights gap seam."""
     return f"""
+{scope}.site-experience.page-inner--rich .inner-rich-zone.zone--rwa,
+{scope} .etp-mock-zone.inner-rich-zone.zone--rwa {{
+  background: {soft} !important;
+  background-color: {soft} !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}}
 {scope}.site-experience.page-inner--rich .inner-rich-zone.zone--rwa .inner-rich-zone__body {{
   background: {soft} !important;
   background-color: {soft} !important;
@@ -756,6 +763,22 @@ def deep_iframe_rwa_zone_body_flatten_css(*, scope: str, soft: str = "#e8eff5") 
 {scope} .etp-mock-key-obs-block.inner-rich-block {{
   background: #fff !important;
   background-image: none !important;
+}}
+{scope} .home-explore-compact,
+{scope} #js-rwa-global-explore {{
+  background: {soft} !important;
+  background-image: none !important;
+}}
+{scope} .home-explore-compact {{
+  margin-top: 0 !important;
+  margin-bottom: 0.75rem !important;
+}}
+{scope} #js-rwa-global-explore {{
+  margin: 0 !important;
+  padding: 0 !important;
+}}
+{scope} #js-rwa-global-insights.etp-mock-insights {{
+  margin-top: 0 !important;
 }}
 """
 
@@ -1161,16 +1184,25 @@ SUBPAGE_STREAMLIT_CSS = """
 .stApp:has(.streamlit-crypto-iframe-page):has(.home-chrome-iframe-marker),
 .stApp:has(.streamlit-etps-iframe-page):has(.home-chrome-iframe-marker),
 .stApp:has(.streamlit-news-feed-iframe-page):has(.home-chrome-iframe-marker),
+.stApp:has(.streamlit-rwa-global-iframe-page):has(.home-chrome-iframe-marker),
+.stApp:has(.streamlit-rwa-explore-at-iframe-page):has(.home-chrome-iframe-marker),
+.stApp:has(.streamlit-rwa-explore-mp-iframe-page):has(.home-chrome-iframe-marker),
 .withScreencast:has(.streamlit-tmmf-iframe-page):has(.home-chrome-iframe-marker),
 .withScreencast:has(.streamlit-stablecoins-iframe-page):has(.home-chrome-iframe-marker),
 .withScreencast:has(.streamlit-crypto-iframe-page):has(.home-chrome-iframe-marker),
 .withScreencast:has(.streamlit-etps-iframe-page):has(.home-chrome-iframe-marker),
 .withScreencast:has(.streamlit-news-feed-iframe-page):has(.home-chrome-iframe-marker),
+.withScreencast:has(.streamlit-rwa-global-iframe-page):has(.home-chrome-iframe-marker),
+.withScreencast:has(.streamlit-rwa-explore-at-iframe-page):has(.home-chrome-iframe-marker),
+.withScreencast:has(.streamlit-rwa-explore-mp-iframe-page):has(.home-chrome-iframe-marker),
 [data-testid="stScreencast"]:has(.streamlit-tmmf-iframe-page):has(.home-chrome-iframe-marker),
 [data-testid="stScreencast"]:has(.streamlit-stablecoins-iframe-page):has(.home-chrome-iframe-marker),
 [data-testid="stScreencast"]:has(.streamlit-crypto-iframe-page):has(.home-chrome-iframe-marker),
 [data-testid="stScreencast"]:has(.streamlit-etps-iframe-page):has(.home-chrome-iframe-marker),
-[data-testid="stScreencast"]:has(.streamlit-news-feed-iframe-page):has(.home-chrome-iframe-marker) {
+[data-testid="stScreencast"]:has(.streamlit-news-feed-iframe-page):has(.home-chrome-iframe-marker),
+[data-testid="stScreencast"]:has(.streamlit-rwa-global-iframe-page):has(.home-chrome-iframe-marker),
+[data-testid="stScreencast"]:has(.streamlit-rwa-explore-at-iframe-page):has(.home-chrome-iframe-marker),
+[data-testid="stScreencast"]:has(.streamlit-rwa-explore-mp-iframe-page):has(.home-chrome-iframe-marker) {
   background: var(--wash, #f3f7fb) !important;
   background-image: none !important;
 }

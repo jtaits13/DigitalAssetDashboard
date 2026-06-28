@@ -22,13 +22,13 @@ _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
 
-_RWA_GLOBAL_IFRAME_CSS_VERSION = "5"
-RWA_GLOBAL_IFRAME_BUILD = "5"
-RWA_GLOBAL_CANVAS_OVERRIDE_VERSION = "5"
+_RWA_GLOBAL_IFRAME_CSS_VERSION = "6"
+RWA_GLOBAL_IFRAME_BUILD = "6"
+RWA_GLOBAL_CANVAS_OVERRIDE_VERSION = "6"
 RWA_GLOBAL_TABLE_PANEL_VERSION = "1"
 
 RWA_GLOBAL_GH_PAGE_WASH = "#f3f7fb"
-RWA_GLOBAL_GH_ZONE_SOFT = "#e8eff5"
+RWA_GLOBAL_GH_ZONE_SOFT = "#eaf0f6"
 
 _RWA_GLOBAL_MEASURE_HEIGHT_JS = """
 function measureRwaGlobalContentHeight() {
@@ -431,6 +431,7 @@ html, {scope}.site-experience,
   background: {soft} !important;
   background-color: {soft} !important;
   background-image: none !important;
+  box-shadow: none !important;
 }}
 {scope} .inner-rich-block,
 {scope} .etp-mock-key-obs-block,
@@ -479,11 +480,14 @@ def rwa_global_iframe_canvas_override_js(
     }}
     document.querySelectorAll(
       ".inner-rich-zone.zone--rwa, .inner-rich-zone.zone--rwa .inner-rich-zone__body"
-    ).forEach(function (el) {{ setBg(el, SOFT); }});
-    document.querySelectorAll(
-      ".inner-rich-block, .etp-mock-key-obs-block, .crypto-story-callout, .etp-mock-insights__panel, .etp-mock-dash__panel, .rwa-kpi-row--home-grid .rwa-kpi-cell, .etp-mock-table-block"
     ).forEach(function (el) {{
-      setBg(el, WHITE);
+      setBg(el, SOFT);
+      el.style.setProperty("box-shadow", "none", "important");
+    }});
+    document.querySelectorAll(
+      ".inner-rich-block, .etp-mock-key-obs-block, .crypto-story-callout, .etp-mock-insights__panel, .etp-mock-dash__panel, .rwa-kpi-row--home-grid .rwa-kpi-cell, .etp-mock-table-block, .home-explore-compact"
+    ).forEach(function (el) {{
+      setBg(el, el.classList.contains("home-explore-compact") ? SOFT : WHITE);
       el.style.setProperty("box-shadow", "none", "important");
     }});
     document.querySelectorAll(".rwa-kpi-panel-static").forEach(function (el) {{
