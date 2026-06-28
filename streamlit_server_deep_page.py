@@ -948,7 +948,8 @@ def crypto_prices_table_html(prices: dict[str, Any]) -> str:
     count_note = f"Showing all {count} coins." if count else "Loading market table…"
     tbody = crypto_prices_table_rows_html(rows)
     return (
-        '<section class="etp-mock-table-block" aria-labelledby="crypto-table-heading">'
+        '<section class="rwa-deep-league-panel etp-mock-table-block etp-mock-table-block--funds" '
+        'aria-labelledby="crypto-table-heading">'
         '<div class="rwa-split-table-head inner-table-head">'
         '<h2 class="subsection-head rwa-split-table-head__title" id="crypto-table-heading">Prices table</h2>'
         '<div class="rwa-split-table-head__actions" id="js-crypto-table-actions"></div>'
@@ -967,7 +968,8 @@ def crypto_prices_table_html(prices: dict[str, Any]) -> str:
         "</p>"
         '<div class="rwa-table-actions" id="js-crypto-table-fullscreen"></div>'
         "</div>"
-        '<div class="table-wrap table-wrap--scroll">'
+        '<div class="table-wrap table-wrap--scroll rwa-split-table-scroll deep-market-table-wrap" '
+        'data-fullscreen-title="Crypto prices table">'
         '<table class="data-table data-table--dense data-table--sortable" aria-label="Top 50 cryptocurrencies">'
         '<thead id="js-crypto-thead"><tr>'
         '<th class="th-sortable" data-sort="rank">Rank</th>'
@@ -1447,7 +1449,8 @@ def etp_funds_table_html(etps: dict[str, Any]) -> str:
         else "Fund list unavailable."
     )
     return (
-        '<section class="etp-mock-table-block" aria-labelledby="table-heading">'
+        '<section class="rwa-deep-league-panel etp-mock-table-block etp-mock-table-block--funds" '
+        'aria-labelledby="table-heading">'
         '<div class="rwa-split-table-head inner-table-head">'
         '<h2 class="subsection-head rwa-split-table-head__title" id="table-heading">Fund table</h2>'
         '<div class="rwa-split-table-head__actions" id="js-etp-table-download"></div>'
@@ -1461,7 +1464,8 @@ def etp_funds_table_html(etps: dict[str, Any]) -> str:
         f'<p class="etp-mock-table-meta__count toolbar-note" id="js-etp-toolbar">{count_note}</p>'
         '<div class="rwa-table-actions" id="js-etp-table-actions"></div>'
         "</div>"
-        '<div class="table-wrap table-wrap--scroll">'
+        '<div class="table-wrap table-wrap--scroll rwa-split-table-scroll deep-market-table-wrap" '
+        'data-fullscreen-title="U.S. ETP fund table">'
         '<table class="data-table data-table--dense data-table--sortable">'
         '<thead id="js-etp-thead"><tr>'
         '<th data-sort="symbol" class="th-sortable">Symbol</th>'

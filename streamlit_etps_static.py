@@ -22,7 +22,7 @@ _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
 
-_ETP_IFRAME_CSS_VERSION = "2"
+_ETP_IFRAME_CSS_VERSION = "3"
 ETP_CANVAS_OVERRIDE_VERSION = "1"
 
 ETP_GH_PAGE_WASH = "#f3f7fb"
@@ -174,7 +174,11 @@ def get_etp_iframe_payloads(*, user_agent: str) -> dict[str, Any]:
 @st.cache_resource(show_spinner=False)
 def _cached_iframe_etp_stylesheet() -> str:
     """Same CSS stack as ``static_home/etps.html`` (iframe-safe, no mock banners)."""
-    from streamlit_site_parity import _iframe_etp_mock_css, deep_iframe_kpi_flatten_css
+    from streamlit_site_parity import (
+        _iframe_etp_mock_css,
+        deep_iframe_kpi_flatten_css,
+        deep_iframe_table_panel_css,
+    )
 
     chunks: list[str] = [
         "@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;780&display=swap');",
@@ -294,6 +298,7 @@ body.page-etp-iframe .rwa-table-modal--streamlit-fallback .rwa-table-modal__dial
 """
     )
     chunks.append(deep_iframe_kpi_flatten_css(scope="body.page-etp-iframe", zone="etp"))
+    chunks.append(deep_iframe_table_panel_css(scope="body.page-etp-iframe"))
     return "\n".join(chunks)
 
 

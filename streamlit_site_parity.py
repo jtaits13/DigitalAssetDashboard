@@ -745,6 +745,63 @@ def deep_iframe_kpi_flatten_css(*, scope: str, zone: str) -> str:
 """
 
 
+def deep_iframe_table_panel_css(*, scope: str) -> str:
+    """White inset table panel parity with TMMF ``etp-mock-table-block--funds`` (Streamlit iframes)."""
+    return f"""
+/* Market table — white card + inset scroll (TMMF funds parity) */
+{scope} .etp-mock-table-block.etp-mock-table-block--funds,
+{scope} .rwa-deep-league-panel.etp-mock-table-block--funds {{
+  margin-top: 0 !important;
+  padding: 0.95rem 1rem 1rem !important;
+  border: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.16) !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  box-shadow: 0 1px 4px rgb(var(--hx-etp-rgb, 62 92 116) / 0.06) !important;
+  margin-bottom: var(--etp-mock-gap-lg, 1.2rem) !important;
+  border-top: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.16) !important;
+}}
+{scope} .etp-mock-table-block--funds .inner-table-head {{
+  margin-bottom: 0.35rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid rgb(var(--hx-etp-bright-rgb, 80 113 136) / 0.14);
+}}
+{scope} .etp-mock-table-block--funds .etp-mock-table-search {{
+  margin-bottom: 0.5rem;
+}}
+{scope} .etp-mock-table-block--funds .etp-mock-table-meta {{
+  margin-bottom: 0.35rem;
+}}
+{scope} .etp-mock-table-block--funds .table-wrap--scroll.rwa-split-table-scroll,
+{scope} .etp-mock-table-block--funds .deep-market-table-wrap {{
+  height: var(--tmmf-table-scroll-height, var(--rwa-split-body-height, 420px));
+  max-height: var(--tmmf-table-scroll-height, var(--rwa-split-body-height, 420px));
+  overflow: auto;
+  margin-top: 0.35rem;
+  margin-bottom: 0;
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--line, #dbe8f2) !important;
+  border-radius: 8px !important;
+  background: var(--surface, #fff) !important;
+}}
+{scope} .etp-mock-table-block--funds .rwa-split-table-scroll thead th,
+{scope} .etp-mock-table-block--funds .deep-market-table-wrap thead th {{
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: #f0f6fa !important;
+  box-shadow: 0 1px 0 rgba(199, 216, 232, 0.9);
+}}
+{scope} .etp-mock-table-block--funds .rwa-table-footnote-row {{
+  margin-top: 0.65rem;
+  padding-top: 0.15rem;
+}}
+{scope} .etp-mock-table-block--funds .data-table {{
+  margin: 0;
+}}
+"""
+
+
 def _iframe_etp_mock_css(css: str) -> str:
     """ETP iframe: no mock banners; scope ETP mock rules onto the iframe ``body``."""
     css = _strip_mock_design_banner_css(css)
