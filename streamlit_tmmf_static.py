@@ -713,7 +713,7 @@ def _json_for_script(payload: dict[str, Any]) -> str:
 
 
 @st.cache_resource(show_spinner=False)
-def _cached_iframe_tmmf_stylesheet_v8() -> str:
+def _cached_iframe_tmmf_stylesheet_v9() -> str:
     """Same CSS stack as ``static_home/rwa-tokenized-mmf.html`` (iframe-safe, no mock banners)."""
     from streamlit_site_parity import _iframe_tmmf_mock_css
 
@@ -741,8 +741,14 @@ def _cached_iframe_tmmf_stylesheet_v8() -> str:
 html, body.page-rwa-deep-mmf.site-experience {
   margin: 0;
   padding: 0;
-  background: var(--wash, #f3f7fb);
+  background: var(--wash, #f3f7fb) !important;
+  background-image: none !important;
   overflow: hidden;
+}
+body.page-rwa-deep-mmf.site-experience.page-inner--rich,
+body.page-rwa-deep-mmf.mock-tmmf-inner.site-experience {
+  background: var(--wash, #f3f7fb) !important;
+  background-image: none !important;
 }
 html::before,
 html::after,
@@ -786,6 +792,7 @@ body.page-rwa-deep-mmf .page-shell.etp-mock-shell {
   margin: 0 auto;
   padding: 0 1.25rem 1.5rem;
   box-sizing: border-box;
+  background: transparent !important;
 }
 body.page-rwa-deep-mmf .home-reveal {
   opacity: 1 !important;
@@ -801,6 +808,25 @@ body.page-rwa-deep-mmf .rwa-table-modal--streamlit-fallback .rwa-table-modal__di
   max-height: min(92vh, 980px);
   width: min(96%, 1400px);
 }
+/* Flat zone interior — gradient on .inner-rich-zone__body caused a visible seam above insights. */
+body.page-rwa-deep-mmf .inner-rich-zone.zone--tmmf,
+body.page-rwa-deep-mmf.mock-tmmf-inner .etp-mock-zone.inner-rich-zone.zone--tmmf {
+  background: var(--hx-tmmf-soft, #eef2f6) !important;
+  background-image: none !important;
+}
+body.page-rwa-deep-mmf .inner-rich-zone.zone--tmmf .home-zone__head,
+body.page-rwa-deep-mmf.mock-tmmf-inner .etp-mock-zone .home-zone__head {
+  background: var(--hx-tmmf-head, linear-gradient(180deg, #f2f5f8 0%, #ffffff 100%)) !important;
+}
+body.page-rwa-deep-mmf .inner-rich-zone.zone--tmmf .inner-rich-zone__body,
+body.page-rwa-deep-mmf.mock-tmmf-inner.page-inner--rich .etp-mock-zone .inner-rich-zone__body,
+body.page-rwa-deep-mmf.mock-tmmf-inner .etp-mock-zone__body.inner-rich-zone__body {
+  background: var(--hx-tmmf-soft, #eef2f6) !important;
+  background-image: none !important;
+}
+body.page-rwa-deep-mmf .methodology-panel {
+  background: #fafcfd !important;
+}
 """
     )
     return "\n".join(chunks)
@@ -811,7 +837,7 @@ def _cached_tmmf_server_host_stylesheet() -> str:
     """TMMF mock CSS scoped onto the Streamlit host (not a giant components.html blob)."""
     import re
 
-    raw = _cached_iframe_tmmf_stylesheet_v8()
+    raw = _cached_iframe_tmmf_stylesheet_v9()
     css_lines = [
         line
         for line in raw.splitlines()
@@ -961,7 +987,7 @@ def build_tmmf_body_iframe_html(
     """Self-contained iframe document — hydrates via ``rwa-asset-deep-page.js``."""
     from streamlit_site_parity import iframe_internal_link_script
 
-    css = _cached_iframe_tmmf_stylesheet_v8()
+    css = _cached_iframe_tmmf_stylesheet_v9()
     back_link = _tmmf_back_link_html(href=back_href, label=back_label)
     zone = _TMMF_ZONE_BODY.format(related_chips=related_chips.strip())
     payload_json = _json_for_script(payload)
@@ -1064,7 +1090,7 @@ def _cached_tmmf_deep_payload() -> dict[str, Any]:
     return load_tmmf_deep_payload()
 
 
-_TMMF_IFRAME_CSS_VERSION = "8"
+_TMMF_IFRAME_CSS_VERSION = "9"
 
 
 @st.cache_data(show_spinner=False, ttl=3600)
@@ -1107,6 +1133,24 @@ def render_tmmf_body_iframe(
     )
 
 
+def _tmmf_kpis_with_methodology_html(
+    kpis: list[dict[str, Any]],
+    *,
+    note: str = "",
+) -> str:
+    """KPI strip plus collapsible Data sources panel (matches GitHub Pages page-methodology.js)."""
+    from rwa_league.mmf import tmmf_methodology_panel_html
+    from streamlit_server_deep_page import kpis_html_from_payload
+
+    block = kpis_html_from_payload(kpis, note=note)
+    panel = tmmf_methodology_panel_html()
+    if not block:
+        return panel
+    if block.endswith("</section>"):
+        return f"{block[:-len('</section>')]}{panel}</section>"
+    return f"{block}{panel}"
+
+
 def build_tmmf_server_zone_html(
     *,
     payload: dict[str, Any],
@@ -1116,7 +1160,6 @@ def build_tmmf_server_zone_html(
     from streamlit_server_deep_page import (
         funds_table_html,
         key_observations_html,
-        kpis_html_from_payload,
         league_table_html,
         tmmf_mock_insights_html,
     )
@@ -1163,7 +1206,7 @@ def build_tmmf_server_zone_html(
         '<div class="home-zone__body inner-rich-zone__body etp-mock-zone__body">'
         f"{related_chips.strip()}"
         f"{banner}"
-        f"{kpis_html_from_payload(list(payload.get('kpis') or []), note=str(payload.get('kpi_window_note') or ''))}"
+        f"{_tmmf_kpis_with_methodology_html(list(payload.get('kpis') or []), note=str(payload.get('kpi_window_note') or ''))}"
         f"{key_observations_html(str(payload.get('key_observations_html') or ''))}"
         f"{tmmf_mock_insights_html(payload)}"
         f"{funds_table_html(payload.get('funds_table'))}"
@@ -1187,7 +1230,7 @@ def build_tmmf_server_iframe_html(
     from streamlit_server_deep_page import build_tmmf_server_export_config
     from streamlit_site_parity import iframe_internal_link_script
 
-    css = _cached_iframe_tmmf_stylesheet_v8()
+    css = _cached_iframe_tmmf_stylesheet_v9()
     back_link = _tmmf_back_link_html(href=back_href, label=back_label)
     zone = build_tmmf_server_zone_html(payload=payload, related_chips=related_chips)
     js_libs = _read_js_files(("table-fullscreen.js", "table-download.js"))
