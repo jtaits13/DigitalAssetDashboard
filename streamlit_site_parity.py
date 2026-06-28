@@ -857,13 +857,6 @@ SUBPAGE_STREAMLIT_CSS = """
 .stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) iframe {
   min-height: 0 !important;
 }
-.stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe),
-.stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) [data-testid="stVerticalBlock"],
-.stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) [data-testid="stHtml"],
-.stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) [data-testid="stHtml"] > div {
-  min-height: 0 !important;
-  overflow: hidden !important;
-}
 /* TMMF (and other no-nav subpages): hide empty host back-link shells / phantom pills. */
 .stApp:has(.streamlit-subpage-no-nav) .site-header,
 .stApp:has(.streamlit-subpage-no-nav) .page-back-below-header,
@@ -2069,10 +2062,21 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
     try {{
       if (win && win.__TMMF_MODAL_OPEN) return null;
     }} catch (e) {{}}
+    if (win && typeof win.measureStableContentHeight === "function") {{
+      var stableH = win.measureStableContentHeight();
+      if (stableH !== null && stableH > 200) return stableH;
+    }}
+    if (win && typeof win.measureTmmfContentHeight === "function") {{
+      var tmmfH = win.measureTmmfContentHeight();
+      if (tmmfH !== null && tmmfH > 200) return tmmfH;
+    }}
     var scrollY = win ? (win.scrollY || inner.documentElement.scrollTop || 0) : 0;
     var nodes = [
       inner.querySelector(".page-back-below-header"),
       inner.querySelector("main.page-shell.etp-mock-shell"),
+      inner.getElementById("js-deep-dashboard"),
+      inner.getElementById("deep-net-wrap"),
+      inner.getElementById("deep-plat-wrap"),
       inner.getElementById("js-deep-footer-note"),
     ];
     var maxBottom = 0;
@@ -2096,10 +2100,12 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
 
   function resolveDeepBodyHeight(inner, msgH) {{
     var measured = measureDeepRwaBodyHeight(inner);
-    if (measured !== null) return measured;
     var reported = Number(msgH);
-    if (isFinite(reported) && reported > 200) return reported;
-    return null;
+    if (isFinite(reported) && reported > 200) {{
+      if (measured !== null) return Math.max(measured, reported);
+      return reported;
+    }}
+    return measured;
   }}
 
   function isTmmfBodyIframe(inner) {{
@@ -2207,26 +2213,26 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
     h = Math.ceil(h);
     frame.style.height = h + "px";
     frame.style.minHeight = "0";
-    frame.style.maxHeight = h + "px";
+    frame.style.maxHeight = "none";
     frame.style.marginBottom = "0";
     frame.style.paddingBottom = "0";
     frame.setAttribute("height", String(h));
     var container = frame.closest('[data-testid="stElementContainer"]');
     if (container) {{
-      container.style.height = h + "px";
+      container.style.height = "auto";
       container.style.minHeight = "0";
-      container.style.maxHeight = h + "px";
+      container.style.maxHeight = "none";
       container.style.marginBottom = "0";
       container.style.paddingBottom = "0";
-      container.style.overflow = "hidden";
+      container.style.overflow = "visible";
       container.style.background = "transparent";
     }}
     if (container) {{
       container.querySelectorAll('[data-testid="stVerticalBlock"], [data-testid="stHtml"], [data-testid="stHtml"] > div').forEach(function (el) {{
-        el.style.height = h + "px";
+        el.style.height = "auto";
         el.style.minHeight = "0";
-        el.style.maxHeight = h + "px";
-        el.style.overflow = "hidden";
+        el.style.maxHeight = "none";
+        el.style.overflow = "visible";
         el.style.background = "transparent";
       }});
     }}

@@ -22,7 +22,7 @@ _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
 
-_STABLE_IFRAME_CSS_VERSION = "4"
+_STABLE_IFRAME_CSS_VERSION = "5"
 STABLE_CANVAS_OVERRIDE_VERSION = "2"
 
 # GitHub Pages canvas tokens (static_home/styles.css --wash; zone --hx-stable-soft).
@@ -36,6 +36,9 @@ function measureStableContentHeight() {
   var nodes = [
     document.querySelector(".page-back-below-header"),
     document.querySelector("main.page-shell.etp-mock-shell"),
+    document.getElementById("js-deep-dashboard"),
+    document.getElementById("deep-net-wrap"),
+    document.getElementById("deep-plat-wrap"),
     document.getElementById("js-deep-footer-note"),
   ];
   var maxBottom = 0;
@@ -165,6 +168,13 @@ _STABLE_SERVER_CHART_BOOT_JS = """
     Plotly.react(chartEl, [trace], layout, { displayModeBar: false, responsive: true, scrollZoom: false });
     setTimeout(function () {
       try { Plotly.Plots.resize(chartEl); } catch (e2) {}
+      if (typeof window.parent.postMessage === "function") {
+        var h = typeof measureStableContentHeight === "function" ? measureStableContentHeight() : null;
+        if (h !== null && h > 200) {
+          window.parent.postMessage({ type: "streamlit:setFrameHeight", height: h }, "*");
+          window.parent.postMessage({ type: "jpm-tmmf-height", height: h }, "*");
+        }
+      }
     }, 0);
   }
   function bootChart() {
@@ -708,6 +718,8 @@ window.__STABLE_SERVER_CHART = {chart_cfg};
       "main.page-shell.etp-mock-shell",
       "article.etp-mock-zone",
       "#js-deep-insights",
+      "#js-deep-dashboard",
+      "#js-deep-dashboard-chart",
       "#deep-net-wrap",
       "#deep-plat-wrap",
       "#js-deep-footer-note",
@@ -726,7 +738,7 @@ window.__STABLE_SERVER_CHART = {chart_cfg};
       sendHeight();
       bindObservers();
     }});
-    ["article.etp-mock-zone", "#deep-net-wrap", "#deep-plat-wrap"].forEach(function (sel) {{
+    ["article.etp-mock-zone", "#js-deep-dashboard", "#deep-net-wrap", "#deep-plat-wrap"].forEach(function (sel) {{
       var el = document.querySelector(sel);
       if (el) mo.observe(el, {{ childList: true, subtree: true, attributes: true }});
     }});
