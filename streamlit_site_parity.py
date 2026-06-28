@@ -712,51 +712,23 @@ SUBPAGE_STREAMLIT_CSS = """
   min-height: 100vh !important;
   overflow: visible !important;
 }
-/* Host-rendered subpage nav: edge-to-edge band, dropdowns above body iframes. */
-.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.subpage-host-nav-marker),
-.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.subpage-host-nav-marker) {
-  width: 100vw !important;
-  max-width: 100vw !important;
-  margin-left: calc(50% - 50vw) !important;
-  margin-right: calc(50% - 50vw) !important;
+/* TMMF (and other no-nav subpages): hide empty host back-link shells / phantom pills. */
+.stApp:has(.streamlit-subpage-no-nav) .site-header,
+.stApp:has(.streamlit-subpage-no-nav) .page-back-below-header,
+.stApp:has(.streamlit-subpage-no-nav) p.back-link.back-link--below-header,
+.stApp:has(.streamlit-subpage-no-nav) [data-testid="stElementContainer"]:has(.page-back-below-header),
+.stApp:has(.streamlit-subpage-no-nav) [data-testid="stElementContainer"]:has(p.back-link.back-link--below-header) {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  max-height: 0 !important;
+  margin: 0 !important;
   padding: 0 !important;
-  overflow: visible !important;
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 200 !important;
-  flex: none !important;
+  border: none !important;
+  overflow: hidden !important;
+  visibility: hidden !important;
 }
-.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.subpage-host-nav-marker) [data-testid="stMarkdownContainer"],
-.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.subpage-host-nav-marker) [data-testid="stMarkdownContainer"],
-.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.subpage-host-nav-marker) [data-testid="stMarkdownContainer"] > div,
-.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.subpage-host-nav-marker) [data-testid="stMarkdownContainer"] > div {
-  width: 100% !important;
-  max-width: none !important;
-  overflow: visible !important;
-}
-.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.subpage-host-nav-marker) .site-header,
-.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.subpage-host-nav-marker) .site-header {
-  position: relative;
-  top: auto;
-  width: 100%;
-  margin: 0;
-  box-sizing: border-box;
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(199, 216, 232, 0.85);
-}
-.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.subpage-host-nav-marker) .site-header__inner,
-.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.subpage-host-nav-marker) .site-header__inner {
-  max-width: calc(var(--max, 72rem) + 17.5rem);
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-  box-sizing: border-box;
-}
-.stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe),
-.stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) {
-  z-index: 1 !important;
-}
+/* Subpages: undo home-only hide rule if patched CSS still targets bare .stApp .crypto-story-callout. */
 .stApp:has(.streamlit-subpage-active) .etp-mock-key-obs-block .crypto-story-callout,
 .stApp:has(.streamlit-subpage-active) .inner-key-obs-block .crypto-story-callout,
 .stApp:has(.streamlit-subpage-root) .etp-mock-key-obs-block .crypto-story-callout,
@@ -1272,11 +1244,15 @@ def build_subpage_nav_iframe_html(*, active: str) -> str:
 
 
 def render_subpage_nav(*, active: str) -> None:
-    """Render subpage nav on the Streamlit host (full-bleed band, working dropdowns)."""
-    nav_html = render_site_nav_html(active=active, is_landing=False, for_streamlit=True).strip()
+    """Render subpage nav in an auto-height iframe (parity with home chrome nav)."""
     st.markdown(
-        f'<span class="subpage-host-nav-marker" hidden aria-hidden="true"></span>{nav_html}',
+        '<span class="subpage-chrome-iframe-marker" hidden aria-hidden="true"></span>',
         unsafe_allow_html=True,
+    )
+    components.html(
+        build_subpage_nav_iframe_html(active=active),
+        height=SUBPAGE_NAV_IFRAME_INITIAL_HEIGHT,
+        scrolling=False,
     )
 
 
@@ -2963,6 +2939,7 @@ def configure_subpage(
     active: str,
     style_kind: str = "article",
     delivery: str = "iframe",
+    show_nav: bool = True,
 ) -> None:
     """Shared subpage setup: collapsed sidebar, nav, and static/inner CSS."""
     st.set_page_config(
@@ -3006,11 +2983,13 @@ def configure_subpage(
         iframe_page_class = " streamlit-rwa-explore-at-iframe-page"
     elif style_kind == "rwa_explore_mp":
         iframe_page_class = " streamlit-rwa-explore-mp-iframe-page"
+    no_nav_class = " streamlit-subpage-no-nav" if not show_nav else ""
     st.markdown(
-        f'<span class="streamlit-subpage-active{iframe_page_class}" hidden aria-hidden="true"></span>',
+        f'<span class="streamlit-subpage-active{iframe_page_class}{no_nav_class}" hidden aria-hidden="true"></span>',
         unsafe_allow_html=True,
     )
-    render_subpage_nav(active=active)
+    if show_nav:
+        render_subpage_nav(active=active)
     inject_subpage_embed_reveal()
 
 

@@ -28,6 +28,7 @@ def main() -> None:
         page_title="Tokenized Money Market Funds — Digital Assets Dashboard",
         active="tmmf",
         style_kind="tmmf",
+        show_nav=False,
     )
     related = related_chips_html(
         ("/?jd_scroll=tmmf", "Home TMMF preview"),
