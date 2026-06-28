@@ -232,6 +232,9 @@ def _static_rwa_explore_payload_fallback(*, payload_key: str, error: str = "") -
         merged["error"] = error
         merged["stale"] = True
         data = merged
+    from rwa_explore_page_payloads import _rewrite_explore_payload_for_streamlit
+
+    data = _rewrite_explore_payload_for_streamlit(data)
     return {payload_key: data}
 
 

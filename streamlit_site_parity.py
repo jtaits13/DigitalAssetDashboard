@@ -6,6 +6,7 @@ Loads the same stylesheets as ``static_home/index.html`` and mirrors layout stru
 
 from __future__ import annotations
 
+import json
 import re
 from html import escape
 from pathlib import Path
@@ -101,6 +102,23 @@ PAGES = {
     "articles": "pages/All_Articles.py",
     "regulatory": "pages/All_Regulatory.py",
     "custodian": "pages/All_Custodian_News.py",
+}
+
+# Static GitHub Pages filenames → ``PAGES`` keys (iframe CTAs may still emit these).
+STREAMLIT_STATIC_HTML_PAGE_KEYS: dict[str, str] = {
+    "index.html": "home",
+    "rwa-global.html": "rwa_global",
+    "rwa-explore-asset-type.html": "explore_asset",
+    "rwa-explore-market-participant.html": "explore_participant",
+    "rwa-stablecoins.html": "stablecoins",
+    "rwa-us-treasuries.html": "treasuries",
+    "rwa-tokenized-stocks.html": "stocks",
+    "rwa-tokenized-mmf.html": "tmmf",
+    "rwa-participants-networks.html": "networks",
+    "rwa-participants-platforms.html": "platforms",
+    "rwa-participants-asset-managers.html": "asset_managers",
+    "etps.html": "etps",
+    "crypto-prices.html": "crypto",
 }
 
 STREAMLIT_CHROME_CSS = """
@@ -1857,50 +1875,72 @@ def render_subpage_body_iframe(html: str, *, height: int = 1200) -> None:
     components.html(html, height=height, scrolling=False)
 
 
+def _iframe_static_html_route_js() -> str:
+    """JSON map of static HTML filenames → Streamlit router hrefs for iframe link interception."""
+    routes = {
+        html: _streamlit_page_href(key)
+        for html, key in STREAMLIT_STATIC_HTML_PAGE_KEYS.items()
+    }
+    return json.dumps(routes, separators=(",", ":"))
+
+
 def iframe_internal_link_script() -> str:
     """
     Streamlit ``components.html`` iframes are sandboxed without ``allow-top-navigation``,
     so ``target="_top"`` is ignored. Intercept internal links and ask the host to navigate.
     """
-    return """
+    static_routes = _iframe_static_html_route_js()
+    return f"""
 <script>
-(function () {
-  function normalizeHref(href) {
+(function () {{
+  var STATIC_HTML_ROUTES = {static_routes};
+  function staticHtmlRoute(href) {{
+    var bare = String(href || "").trim().replace(/^\\.\\//, "");
+    var q = bare.indexOf("?");
+    if (q >= 0) bare = bare.slice(0, q);
+    var hash = bare.indexOf("#");
+    if (hash >= 0) bare = bare.slice(0, hash);
+    return STATIC_HTML_ROUTES[bare] || "";
+  }}
+  function normalizeHref(href) {{
     href = String(href || "").trim();
     if (!href) return "";
+    var mapped = staticHtmlRoute(href);
+    if (mapped) return mapped;
     if (href.charAt(0) === "/") return href;
     if (href.charAt(0) === "?") return "/" + href;
     return href;
-  }
-  function isRoutable(href) {
+  }}
+  function isRoutable(href) {{
     if (!href) return false;
     href = href.trim();
     if (href.charAt(0) === "#") return false;
     if (/^https?:\\/\\//i.test(href)) return false;
+    if (staticHtmlRoute(href)) return true;
     if (href.charAt(0) === "/" || href.charAt(0) === "?") return true;
     return false;
-  }
-  function bindInternalLinks() {
-    document.querySelectorAll("a[href]").forEach(function (a) {
+  }}
+  function bindInternalLinks() {{
+    document.querySelectorAll("a[href]").forEach(function (a) {{
       if (a.dataset.jpmNavBound) return;
       var href = a.getAttribute("href") || "";
       if (!isRoutable(href)) return;
       if (a.classList.contains("home-jump-nav__link")) return;
       a.dataset.jpmNavBound = "1";
-      a.addEventListener("click", function (ev) {
+      a.addEventListener("click", function (ev) {{
         ev.preventDefault();
-        try {
+        try {{
           window.parent.postMessage(
-            { type: "jpm-navigate", href: normalizeHref(href) },
+            {{ type: "jpm-navigate", href: normalizeHref(href) }},
             "*"
           );
-        } catch (e) {}
-      });
-    });
-  }
+        }} catch (e) {{}}
+      }});
+    }});
+  }}
   bindInternalLinks();
   window.addEventListener("load", bindInternalLinks);
-})();
+}})();
 </script>"""
 
 

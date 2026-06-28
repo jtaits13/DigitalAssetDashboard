@@ -118,7 +118,10 @@ def _static_payload_fallback(*, payload_file: str, error: str = "") -> dict[str,
         merged = dict(data)
         merged["error"] = error
         merged["stale"] = True
-        return merged
+        data = merged
+    from streamlit_site_parity import _streamlit_page_href
+
+    data["back_href"] = _streamlit_page_href("explore_asset")
     return data
 
 
