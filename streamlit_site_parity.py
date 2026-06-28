@@ -745,6 +745,9 @@ def deep_iframe_kpi_flatten_css(*, scope: str, zone: str) -> str:
 """
 
 
+DEEP_IFRAME_TABLE_PANEL_VERSION = "2"
+
+
 def deep_iframe_table_panel_css(*, scope: str) -> str:
     """White inset table panel parity with TMMF ``etp-mock-table-block--funds`` (Streamlit iframes)."""
     return f"""
@@ -799,6 +802,33 @@ def deep_iframe_table_panel_css(*, scope: str) -> str:
 {scope} .etp-mock-table-block--funds .data-table {{
   margin: 0;
 }}
+"""
+
+
+def deep_iframe_table_panel_paint_js() -> str:
+    """Re-apply market table panel chrome after canvas flatten JS runs."""
+    return """
+  function paintMarketTablePanels() {
+    document.querySelectorAll(".etp-mock-table-block--funds").forEach(function (el) {
+      el.style.setProperty("padding", "0.95rem 1rem 1rem", "important");
+      el.style.setProperty("margin-top", "0", "important");
+      el.style.setProperty("border-radius", "10px", "important");
+      el.style.setProperty("border", "1px solid rgb(80 113 136 / 0.16)", "important");
+      el.style.setProperty("box-shadow", "0 1px 4px rgb(62 92 116 / 0.06)", "important");
+      el.style.setProperty("background", "#fff", "important");
+    });
+    document.querySelectorAll(
+      ".etp-mock-table-block--funds .deep-market-table-wrap, .etp-mock-table-block--funds .rwa-split-table-scroll"
+    ).forEach(function (el) {
+      el.style.setProperty("border", "1px solid #dbe8f2", "important");
+      el.style.setProperty("border-radius", "8px", "important");
+      el.style.setProperty("overflow", "auto", "important");
+      el.style.setProperty("max-height", "420px", "important");
+      el.style.setProperty("height", "420px", "important");
+      el.style.setProperty("margin-top", "0.35rem", "important");
+      el.style.setProperty("background", "#fff", "important");
+    });
+  }
 """
 
 

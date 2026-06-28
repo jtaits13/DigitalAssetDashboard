@@ -21,8 +21,9 @@ _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
 
-_CRYPTO_IFRAME_CSS_VERSION = "5"
-CRYPTO_CANVAS_OVERRIDE_VERSION = "3"
+_CRYPTO_IFRAME_CSS_VERSION = "6"
+CRYPTO_CANVAS_OVERRIDE_VERSION = "4"
+CRYPTO_TABLE_PANEL_VERSION = "2"
 
 CRYPTO_GH_PAGE_WASH = "#f3f7fb"
 CRYPTO_GH_ZONE_SOFT = "#f1f4f7"
@@ -170,7 +171,7 @@ _CRYPTO_IFRAME_BACK_LINK = """
 
 
 def crypto_github_canvas_override_css(*, version: str = CRYPTO_CANVAS_OVERRIDE_VERSION) -> str:
-    from streamlit_site_parity import deep_iframe_kpi_flatten_css
+    from streamlit_site_parity import deep_iframe_kpi_flatten_css, deep_iframe_table_panel_css
 
     wash = CRYPTO_GH_PAGE_WASH
     soft = CRYPTO_GH_ZONE_SOFT
@@ -208,7 +209,7 @@ html, {scope}.site-experience,
 {scope} .etp-mock-insights__panel,
 {scope} .etp-mock-dash__panel,
 {scope} .rwa-kpi-row--home-grid .rwa-kpi-cell,
-{scope} .etp-mock-table-block {{
+{scope} .etp-mock-table-block:not(.etp-mock-table-block--funds) {{
   background: #fff !important;
   background-color: #fff !important;
   background-image: none !important;
@@ -219,12 +220,15 @@ html, {scope}.site-experience,
   background: rgb(72 90 110 / 0.06) !important;
   background-image: none !important;
 }}
-""" + deep_iframe_kpi_flatten_css(scope=scope, zone="crypto")
+""" + deep_iframe_kpi_flatten_css(scope=scope, zone="crypto") + deep_iframe_table_panel_css(scope=scope)
 
 
 def crypto_iframe_canvas_override_js(*, version: str = CRYPTO_CANVAS_OVERRIDE_VERSION) -> str:
+    from streamlit_site_parity import deep_iframe_table_panel_paint_js
+
     wash = CRYPTO_GH_PAGE_WASH
     soft = CRYPTO_GH_ZONE_SOFT
+    table_paint_js = deep_iframe_table_panel_paint_js()
     return f"""
 <script id="crypto-gh-canvas-override-js-v{version}">
 (function () {{
@@ -237,6 +241,7 @@ def crypto_iframe_canvas_override_js(*, version: str = CRYPTO_CANVAS_OVERRIDE_VE
     el.style.setProperty("background-color", color, "important");
     el.style.setProperty("background-image", "none", "important");
   }}
+{table_paint_js}
   function paint() {{
     setBg(document.documentElement, WASH);
     setBg(document.body, WASH);
@@ -249,7 +254,7 @@ def crypto_iframe_canvas_override_js(*, version: str = CRYPTO_CANVAS_OVERRIDE_VE
       ".inner-rich-zone.zone--crypto, .inner-rich-zone.zone--crypto .inner-rich-zone__body, .etp-mock-zone.inner-rich-zone.zone--crypto, .etp-mock-zone .inner-rich-zone__body"
     ).forEach(function (el) {{ setBg(el, SOFT); }});
     document.querySelectorAll(
-      ".inner-rich-block, .etp-mock-key-obs-block, .crypto-story-callout, .review-note.ko-disclaimer, .etp-mock-insights__panel, .etp-mock-dash__panel, .rwa-kpi-row--home-grid .rwa-kpi-cell, .etp-mock-table-block"
+      ".inner-rich-block, .etp-mock-key-obs-block, .crypto-story-callout, .review-note.ko-disclaimer, .etp-mock-insights__panel, .etp-mock-dash__panel, .rwa-kpi-row--home-grid .rwa-kpi-cell, .etp-mock-table-block:not(.etp-mock-table-block--funds)"
     ).forEach(function (el) {{
       setBg(el, WHITE);
       el.style.setProperty("box-shadow", "none", "important");
@@ -263,6 +268,7 @@ def crypto_iframe_canvas_override_js(*, version: str = CRYPTO_CANVAS_OVERRIDE_VE
     document.querySelectorAll(".crypto-story-callout__note").forEach(function (el) {{
       setBg(el, "rgb(72 90 110 / 0.06)");
     }});
+    paintMarketTablePanels();
   }}
   paint();
   window.addEventListener("load", paint);
@@ -508,7 +514,7 @@ def get_crypto_iframe_payloads() -> dict[str, Any]:
 
 
 @st.cache_resource(show_spinner=False)
-def _cached_iframe_crypto_stylesheet() -> str:
+def _cached_iframe_crypto_stylesheet_v6() -> str:
     """Same CSS stack as ``static_home/crypto-prices.html`` (iframe-safe, no mock banners)."""
     from streamlit_site_parity import _iframe_crypto_mock_css, deep_iframe_kpi_flatten_css, deep_iframe_table_panel_css
 
@@ -672,10 +678,14 @@ def build_crypto_server_iframe_html(
         build_crypto_server_export_config,
         build_crypto_server_zone_html,
     )
-    from streamlit_site_parity import iframe_internal_link_script
+    from streamlit_site_parity import (
+        deep_iframe_table_panel_css,
+        iframe_internal_link_script,
+    )
 
-    css = _cached_iframe_crypto_stylesheet()
+    css = _cached_iframe_crypto_stylesheet_v6()
     override_css = crypto_github_canvas_override_css()
+    table_panel_css = deep_iframe_table_panel_css(scope="body.page-crypto-iframe")
     back_link = _crypto_back_link_html(href=back_href, label=back_label)
     zone = build_crypto_server_zone_html(payloads=payloads, related_chips=related_chips)
     payloads_json = _json_for_script(payloads)
@@ -690,6 +700,7 @@ def build_crypto_server_iframe_html(
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>{css}</style>
 <style id="crypto-gh-canvas-override-v{CRYPTO_CANVAS_OVERRIDE_VERSION}">{override_css}</style>
+<style id="crypto-table-panel-v{CRYPTO_TABLE_PANEL_VERSION}">{table_panel_css}</style>
 </head>
 <body
   class="page-crypto page-crypto-iframe site-experience page-inner--rich mock-crypto-inner"

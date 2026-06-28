@@ -22,8 +22,9 @@ _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
 
-_ETP_IFRAME_CSS_VERSION = "3"
-ETP_CANVAS_OVERRIDE_VERSION = "1"
+_ETP_IFRAME_CSS_VERSION = "4"
+ETP_CANVAS_OVERRIDE_VERSION = "2"
+ETP_TABLE_PANEL_VERSION = "2"
 
 ETP_GH_PAGE_WASH = "#f3f7fb"
 ETP_GH_ZONE_SOFT = "#eef2f7"
@@ -172,7 +173,7 @@ def get_etp_iframe_payloads(*, user_agent: str) -> dict[str, Any]:
 
 
 @st.cache_resource(show_spinner=False)
-def _cached_iframe_etp_stylesheet() -> str:
+def _cached_iframe_etp_stylesheet_v4() -> str:
     """Same CSS stack as ``static_home/etps.html`` (iframe-safe, no mock banners)."""
     from streamlit_site_parity import (
         _iframe_etp_mock_css,
@@ -303,7 +304,7 @@ body.page-etp-iframe .rwa-table-modal--streamlit-fallback .rwa-table-modal__dial
 
 
 def etp_github_canvas_override_css(*, version: str = ETP_CANVAS_OVERRIDE_VERSION) -> str:
-    from streamlit_site_parity import deep_iframe_kpi_flatten_css
+    from streamlit_site_parity import deep_iframe_kpi_flatten_css, deep_iframe_table_panel_css
 
     wash = ETP_GH_PAGE_WASH
     soft = ETP_GH_ZONE_SOFT
@@ -337,7 +338,7 @@ html, {scope}.site-experience,
 {scope} .etp-mock-insights__panel,
 {scope} .etp-mock-dash__panel,
 {scope} .rwa-kpi-row--home-grid .rwa-kpi-cell,
-{scope} .etp-mock-table-block {{
+{scope} .etp-mock-table-block:not(.etp-mock-table-block--funds) {{
   background: #fff !important;
   background-color: #fff !important;
   background-image: none !important;
@@ -348,12 +349,15 @@ html, {scope}.site-experience,
   background: rgb(62 92 116 / 0.06) !important;
   background-image: none !important;
 }}
-""" + deep_iframe_kpi_flatten_css(scope=scope, zone="etp")
+""" + deep_iframe_kpi_flatten_css(scope=scope, zone="etp") + deep_iframe_table_panel_css(scope=scope)
 
 
 def etp_iframe_canvas_override_js(*, version: str = ETP_CANVAS_OVERRIDE_VERSION) -> str:
+    from streamlit_site_parity import deep_iframe_table_panel_paint_js
+
     wash = ETP_GH_PAGE_WASH
     soft = ETP_GH_ZONE_SOFT
+    table_paint_js = deep_iframe_table_panel_paint_js()
     return f"""
 <script id="etp-gh-canvas-override-js-v{version}">
 (function () {{
@@ -366,6 +370,7 @@ def etp_iframe_canvas_override_js(*, version: str = ETP_CANVAS_OVERRIDE_VERSION)
     el.style.setProperty("background-color", color, "important");
     el.style.setProperty("background-image", "none", "important");
   }}
+{table_paint_js}
   function paint() {{
     setBg(document.documentElement, WASH);
     setBg(document.body, WASH);
@@ -378,7 +383,7 @@ def etp_iframe_canvas_override_js(*, version: str = ETP_CANVAS_OVERRIDE_VERSION)
       ".inner-rich-zone.zone--etp, .inner-rich-zone.zone--etp .inner-rich-zone__body"
     ).forEach(function (el) {{ setBg(el, SOFT); }});
     document.querySelectorAll(
-      ".inner-rich-block, .etp-mock-key-obs-block, .crypto-story-callout, .review-note.ko-disclaimer, .etp-mock-insights__panel, .etp-mock-dash__panel, .rwa-kpi-row--home-grid .rwa-kpi-cell, .etp-mock-table-block"
+      ".inner-rich-block, .etp-mock-key-obs-block, .crypto-story-callout, .review-note.ko-disclaimer, .etp-mock-insights__panel, .etp-mock-dash__panel, .rwa-kpi-row--home-grid .rwa-kpi-cell, .etp-mock-table-block:not(.etp-mock-table-block--funds)"
     ).forEach(function (el) {{
       setBg(el, WHITE);
       el.style.setProperty("box-shadow", "none", "important");
@@ -392,6 +397,7 @@ def etp_iframe_canvas_override_js(*, version: str = ETP_CANVAS_OVERRIDE_VERSION)
     document.querySelectorAll(".crypto-story-callout__note").forEach(function (el) {{
       setBg(el, "rgb(62 92 116 / 0.06)");
     }});
+    paintMarketTablePanels();
   }}
   paint();
   window.addEventListener("load", paint);
@@ -594,10 +600,14 @@ def build_etp_server_iframe_html(
         build_etp_server_export_config,
         build_etp_server_zone_html,
     )
-    from streamlit_site_parity import iframe_internal_link_script
+    from streamlit_site_parity import (
+        deep_iframe_table_panel_css,
+        iframe_internal_link_script,
+    )
 
-    css = _cached_iframe_etp_stylesheet()
+    css = _cached_iframe_etp_stylesheet_v4()
     override_css = etp_github_canvas_override_css()
+    table_panel_css = deep_iframe_table_panel_css(scope="body.page-etp-iframe")
     back_link = _etp_back_link_html(href=back_href, label=back_label)
     zone = build_etp_server_zone_html(payloads=payloads, related_chips=related_chips)
     payloads_json = _json_for_script(payloads)
@@ -612,6 +622,7 @@ def build_etp_server_iframe_html(
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>{css}</style>
 <style id="etp-gh-canvas-override-v{ETP_CANVAS_OVERRIDE_VERSION}">{override_css}</style>
+<style id="etp-table-panel-v{ETP_TABLE_PANEL_VERSION}">{table_panel_css}</style>
 </head>
 <body
   class="page-etp page-etp-iframe site-experience page-inner--rich mock-etp-inner"
