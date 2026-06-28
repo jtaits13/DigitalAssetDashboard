@@ -22,8 +22,8 @@ _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
 
-_RWA_GLOBAL_IFRAME_CSS_VERSION = "3"
-RWA_GLOBAL_CANVAS_OVERRIDE_VERSION = "2"
+_RWA_GLOBAL_IFRAME_CSS_VERSION = "2"
+RWA_GLOBAL_CANVAS_OVERRIDE_VERSION = "1"
 RWA_GLOBAL_TABLE_PANEL_VERSION = "1"
 
 RWA_GLOBAL_GH_PAGE_WASH = "#f3f7fb"
@@ -316,7 +316,6 @@ def _cached_iframe_rwa_global_stylesheet() -> str:
         deep_iframe_back_link_clickable_css,
         deep_iframe_kpi_flatten_css,
         deep_iframe_related_chips_css,
-        deep_iframe_rwa_zone_seam_css,
         deep_iframe_table_height_lock_css,
         deep_iframe_table_panel_css,
     )
@@ -394,7 +393,6 @@ body.page-rwa-global-iframe .home-reveal {
     )
     scope = "body.page-rwa-global-iframe"
     chunks.append(deep_iframe_kpi_flatten_css(scope=scope, zone="rwa"))
-    chunks.append(deep_iframe_rwa_zone_seam_css(scope=scope, soft=RWA_GLOBAL_GH_ZONE_SOFT))
     chunks.append(deep_iframe_table_panel_css(scope=scope))
     chunks.append(deep_iframe_table_height_lock_css(scope=scope))
     chunks.append(deep_iframe_related_chips_css(scope=scope, zone="rwa"))
@@ -405,7 +403,7 @@ body.page-rwa-global-iframe .home-reveal {
 def rwa_global_github_canvas_override_css(
     *, version: str = RWA_GLOBAL_CANVAS_OVERRIDE_VERSION
 ) -> str:
-    from streamlit_site_parity import deep_iframe_kpi_flatten_css, deep_iframe_rwa_zone_seam_css
+    from streamlit_site_parity import deep_iframe_kpi_flatten_css
 
     wash = RWA_GLOBAL_GH_PAGE_WASH
     soft = RWA_GLOBAL_GH_ZONE_SOFT
@@ -423,11 +421,18 @@ html, {scope}.site-experience,
   background: transparent !important;
   background-image: none !important;
 }}
-{scope} .inner-rich-zone.zone--rwa .home-zone__head,
-{scope} .etp-mock-zone .home-zone__head {{
-  background: var(--hx-rwa-head, linear-gradient(180deg, #eef3f8 0%, #ffffff 100%)) !important;
+{scope} .inner-rich-zone.zone--rwa,
+{scope} .inner-rich-zone.zone--rwa .inner-rich-zone__body,
+{scope} .etp-mock-zone.inner-rich-zone.zone--rwa,
+{scope} .etp-mock-zone .inner-rich-zone__body {{
+  background: {soft} !important;
+  background-color: {soft} !important;
   background-image: none !important;
 }}
+{scope} .inner-rich-block,
+{scope} .etp-mock-key-obs-block,
+{scope} .etp-mock-key-obs-block .crypto-story-callout,
+{scope} #js-rwa-global-macro .crypto-story-callout,
 {scope} .etp-mock-insights__panel,
 {scope} .etp-mock-dash__panel,
 {scope} .rwa-kpi-row--home-grid .rwa-kpi-cell,
@@ -437,7 +442,11 @@ html, {scope}.site-experience,
   background-color: #fff !important;
   background-image: none !important;
 }}
-""" + deep_iframe_kpi_flatten_css(scope=scope, zone="rwa") + deep_iframe_rwa_zone_seam_css(scope=scope, soft=soft)
+{scope} .etp-mock-key-obs-block .crypto-story-callout__note {{
+  background: rgb(62 92 116 / 0.06) !important;
+  background-image: none !important;
+}}
+""" + deep_iframe_kpi_flatten_css(scope=scope, zone="rwa")
 
 
 def rwa_global_iframe_canvas_override_js(
@@ -466,19 +475,13 @@ def rwa_global_iframe_canvas_override_js(
       main.style.setProperty("background-image", "none", "important");
     }}
     document.querySelectorAll(
-      ".inner-rich-zone.zone--rwa, .inner-rich-zone.zone--rwa .inner-rich-zone__body, .etp-mock-zone__body.inner-rich-zone__body"
+      ".inner-rich-zone.zone--rwa, .inner-rich-zone.zone--rwa .inner-rich-zone__body"
     ).forEach(function (el) {{ setBg(el, SOFT); }});
     document.querySelectorAll(
-      ".inner-rich-block, .etp-mock-key-obs-block, .crypto-story-callout, .review-note.ko-disclaimer, .etp-mock-insights__panel, .etp-mock-dash__panel, .rwa-kpi-row--home-grid .rwa-kpi-cell, .etp-mock-table-block, .home-explore-compact"
+      ".inner-rich-block, .etp-mock-key-obs-block, .crypto-story-callout, .etp-mock-insights__panel, .etp-mock-dash__panel, .rwa-kpi-row--home-grid .rwa-kpi-cell, .etp-mock-table-block"
     ).forEach(function (el) {{
-      setBg(el, el.classList.contains("home-explore-compact") ? SOFT : WHITE);
-      el.style.setProperty("box-shadow", "none", "important");
-    }});
-    document.querySelectorAll(".crypto-story-callout__note").forEach(function (el) {{
-      setBg(el, "rgb(62 92 116 / 0.06)");
-    }});
-    document.querySelectorAll(".home-explore-compact__btn").forEach(function (el) {{
       setBg(el, WHITE);
+      el.style.setProperty("box-shadow", "none", "important");
     }});
     document.querySelectorAll(".rwa-kpi-panel-static").forEach(function (el) {{
       el.style.setProperty("background", "transparent", "important");
