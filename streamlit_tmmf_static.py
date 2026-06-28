@@ -76,6 +76,18 @@ _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH = """
     return true;
   }
 
+  function findFullscreenHostWin() {
+    var w = window;
+    for (var depth = 0; depth < 10 && w; depth++) {
+      try {
+        if (typeof w.__jpmOpenTableFullscreenHost === "function") return w;
+      } catch (e) {}
+      if (!w.parent || w.parent === w) break;
+      w = w.parent;
+    }
+    return null;
+  }
+
   function postOpenToHost(tableEl, opts) {
     if (isServerHostPage()) {
       return openServerHostModal(tableEl, opts || {});
@@ -91,6 +103,12 @@ _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH = """
       tableHtml: html,
     };
     try {
+      var hostWin = findFullscreenHostWin();
+      if (hostWin) {
+        hostWin.__jpmOpenTableFullscreenHost(msg);
+        window.__TMMF_MODAL_OPEN = true;
+        return true;
+      }
       var parentWin = window.parent && window.parent !== window ? window.parent : null;
       if (parentWin && typeof parentWin.__jpmOpenTableFullscreenHost === "function") {
         parentWin.__jpmOpenTableFullscreenHost(msg);
@@ -127,11 +145,16 @@ _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH = """
 
   function postCloseToHost() {
     try {
-      var parentWin = window.parent && window.parent !== window ? window.parent : null;
-      if (parentWin && typeof parentWin.__jpmCloseTableFullscreenHost === "function") {
-        parentWin.__jpmCloseTableFullscreenHost();
-      } else if (typeof window.__jpmCloseTableFullscreenHost === "function") {
-        window.__jpmCloseTableFullscreenHost();
+      var hostWin = findFullscreenHostWin();
+      if (hostWin && typeof hostWin.__jpmCloseTableFullscreenHost === "function") {
+        hostWin.__jpmCloseTableFullscreenHost();
+      } else {
+        var parentWin = window.parent && window.parent !== window ? window.parent : null;
+        if (parentWin && typeof parentWin.__jpmCloseTableFullscreenHost === "function") {
+          parentWin.__jpmCloseTableFullscreenHost();
+        } else if (typeof window.__jpmCloseTableFullscreenHost === "function") {
+          window.__jpmCloseTableFullscreenHost();
+        }
       }
       if (typeof window.postMessage === "function") {
         window.postMessage({ type: "jpm-table-fullscreen-close" }, "*");

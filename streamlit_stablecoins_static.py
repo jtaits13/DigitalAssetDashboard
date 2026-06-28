@@ -12,6 +12,7 @@ import streamlit.components.v1 as components
 
 from streamlit_tmmf_static import (
     _STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH,
+    _TMMF_SERVER_INLINE_HOST_MODAL_JS,
     _TMMF_SERVER_TABLE_WIRE_JS,
     _json_for_script,
     _read_js_files,
@@ -21,7 +22,7 @@ _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
 
-_STABLE_IFRAME_CSS_VERSION = "3"
+_STABLE_IFRAME_CSS_VERSION = "4"
 STABLE_CANVAS_OVERRIDE_VERSION = "2"
 
 # GitHub Pages canvas tokens (static_home/styles.css --wash; zone --hx-stable-soft).
@@ -177,59 +178,116 @@ _STABLE_SERVER_CHART_BOOT_JS = """
 })();
 """
 
-_STABLE_IFRAME_TABLE_HOST_BOOTSTRAP_JS = """
+def inject_stablecoins_iframe_table_actions(payload: dict[str, Any]) -> None:
+    """Wire download/fullscreen on Stablecoins body iframe via host script injection.
+
+    Large inline ``<script>`` blocks inside ``components.html`` body iframes may not run
+    reliably on Streamlit Cloud; bootstrap table JS into the inner document from the host.
+    """
+    from streamlit_server_deep_page import build_stablecoins_server_export_config
+
+    js_libs = _read_js_files(("table-fullscreen.js", "table-download.js"))
+    export_json = json.dumps(build_stablecoins_server_export_config(payload))
+    libs_json = json.dumps(js_libs)
+    patch_json = json.dumps(_STREAMLIT_TABLE_FULLSCREEN_HOST_PATCH.strip())
+    wire_json = json.dumps(_TMMF_SERVER_TABLE_WIRE_JS.strip())
+    host_modal_json = json.dumps(_TMMF_SERVER_INLINE_HOST_MODAL_JS.strip())
+    bootstrap = f"""
 <script>
-(function () {
-  var win = window.parent && window.parent !== window ? window.parent : window;
+(function () {{
+  var win = window.parent;
   var doc = win.document;
   if (win.__jpmStableIframeTableHostBound) return;
   win.__jpmStableIframeTableHostBound = true;
 
-  function stableBodyFrame() {
+  function injectIntoInner(innerDoc, text) {{
+    var s = innerDoc.createElement("script");
+    s.textContent = text;
+    innerDoc.body.appendChild(s);
+  }}
+
+  function injectHost(text) {{
+    var s = doc.createElement("script");
+    s.textContent = text;
+    doc.body.appendChild(s);
+  }}
+
+  function findStableInner() {{
     var frames = doc.querySelectorAll("iframe");
-    for (var i = 0; i < frames.length; i++) {
-      try {
+    for (var i = 0; i < frames.length; i++) {{
+      try {{
         var inner = frames[i].contentDocument;
         if (
           inner &&
           inner.body &&
           inner.body.classList &&
           inner.body.classList.contains("mock-stable-inner")
-        ) {
-          return { frame: frames[i], inner: inner, win: inner.defaultView || inner.parentWindow };
-        }
-      } catch (e) {}
-    }
+        ) {{
+          return {{ frame: frames[i], doc: inner, win: inner.defaultView || inner.parentWindow }};
+        }}
+      }} catch (e) {{}}
+    }}
     return null;
-  }
+  }}
 
-  function bootTables() {
-    var hit = stableBodyFrame();
-    if (!hit || !hit.win) return false;
-    if (typeof hit.win.__tmmfWireServerTables === "function") {
-      hit.win.__tmmfWireServerTables();
+  function ensureHostModal() {{
+    if (typeof win.__jpmOpenTableFullscreenHost === "function") return;
+    injectHost({host_modal_json});
+  }}
+
+  function ensureInnerTableLibs(hit) {{
+    if (!hit || !hit.win || !hit.doc) return false;
+    if (!hit.win.__TABLE_FULLSCREEN) {{
+      injectIntoInner(hit.doc, {libs_json});
+      hit.win.__TMMF_SERVER_EXPORTS = {export_json};
+      injectIntoInner(hit.doc, {patch_json});
+      injectIntoInner(hit.doc, {wire_json});
       return true;
-    }
-    return false;
-  }
+    }}
+    if (!hit.win.__ST_TMMF_FULLSCREEN_PATCHED) {{
+      hit.win.__TMMF_SERVER_EXPORTS = {export_json};
+      injectIntoInner(hit.doc, {patch_json});
+      injectIntoInner(hit.doc, {wire_json});
+      return true;
+    }}
+    if (typeof hit.win.__tmmfWireServerTables === "function") {{
+      hit.win.__tmmfWireServerTables();
+    }}
+    return true;
+  }}
 
-  function boot() {
-    bootTables();
-  }
+  function boot() {{
+    if (!doc.querySelector(".streamlit-stablecoins-iframe-page")) return false;
+    ensureHostModal();
+    var hit = findStableInner();
+    if (!hit) return false;
+    return ensureInnerTableLibs(hit);
+  }}
 
-  boot();
+  if (!boot()) {{
+    var tries = 0;
+    var timer = win.setInterval(function () {{
+      tries += 1;
+      if (boot() || tries > 80) win.clearInterval(timer);
+    }}, 250);
+  }}
   win.addEventListener("load", boot);
-  [100, 400, 1200, 3000, 6000, 10000].forEach(function (ms) {
+  [100, 400, 1200, 3000, 6000, 10000].forEach(function (ms) {{
     win.setTimeout(boot, ms);
-  });
-  if (typeof MutationObserver !== "undefined") {
+  }});
+  if (typeof MutationObserver !== "undefined") {{
     var mo = new MutationObserver(boot);
-    mo.observe(doc.body, { childList: true, subtree: true });
-    win.setTimeout(function () { mo.disconnect(); }, 20000);
-  }
-})();
+    mo.observe(doc.body, {{ childList: true, subtree: true }});
+    win.setTimeout(function () {{ mo.disconnect(); }}, 25000);
+  }}
+}})();
 </script>
 """
+    components.html(bootstrap, height=0, width=0)
+
+
+# Back-compat alias for any callers still using the old name.
+inject_stablecoins_iframe_table_bootstrap = inject_stablecoins_iframe_table_actions
 
 _STABLE_IFRAME_BACK_LINK = """
 <div class="page-back-below-header">
@@ -387,11 +445,6 @@ def stablecoins_host_canvas_override_js(*, version: str = STABLE_CANVAS_OVERRIDE
 }})();
 </script>
 """
-
-
-def inject_stablecoins_iframe_table_bootstrap() -> None:
-    """Re-wire table fullscreen/download on the Stablecoins body iframe from the Streamlit host."""
-    components.html(_STABLE_IFRAME_TABLE_HOST_BOOTSTRAP_JS, height=0, width=0)
 
 
 def inject_stablecoins_host_canvas_override() -> None:
@@ -737,4 +790,4 @@ def render_stablecoins_body_iframe(
         height=1200,
     )
     inject_stablecoins_host_canvas_override()
-    inject_stablecoins_iframe_table_bootstrap()
+    inject_stablecoins_iframe_table_actions(payload)

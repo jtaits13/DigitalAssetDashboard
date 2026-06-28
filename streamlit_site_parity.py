@@ -857,6 +857,13 @@ SUBPAGE_STREAMLIT_CSS = """
 .stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) iframe {
   min-height: 0 !important;
 }
+.stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe),
+.stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) [data-testid="stVerticalBlock"],
+.stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) [data-testid="stHtml"],
+.stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) [data-testid="stHtml"] > div {
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
 /* TMMF (and other no-nav subpages): hide empty host back-link shells / phantom pills. */
 .stApp:has(.streamlit-subpage-no-nav) .site-header,
 .stApp:has(.streamlit-subpage-no-nav) .page-back-below-header,
@@ -2197,6 +2204,7 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
 
   function applyFrameHeight(frame, h, minH) {{
     if (!frame || h <= minH) return;
+    h = Math.ceil(h);
     frame.style.height = h + "px";
     frame.style.minHeight = "0";
     frame.style.maxHeight = h + "px";
@@ -2205,18 +2213,20 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
     frame.setAttribute("height", String(h));
     var container = frame.closest('[data-testid="stElementContainer"]');
     if (container) {{
-      container.style.height = "auto";
-      container.style.minHeight = h + "px";
-      container.style.maxHeight = "none";
-      container.style.overflow = "visible";
+      container.style.height = h + "px";
+      container.style.minHeight = "0";
+      container.style.maxHeight = h + "px";
+      container.style.marginBottom = "0";
+      container.style.paddingBottom = "0";
+      container.style.overflow = "hidden";
       container.style.background = "transparent";
     }}
     if (container) {{
       container.querySelectorAll('[data-testid="stVerticalBlock"], [data-testid="stHtml"], [data-testid="stHtml"] > div').forEach(function (el) {{
-        el.style.height = "auto";
+        el.style.height = h + "px";
         el.style.minHeight = "0";
-        el.style.maxHeight = "none";
-        el.style.overflow = "visible";
+        el.style.maxHeight = h + "px";
+        el.style.overflow = "hidden";
         el.style.background = "transparent";
       }});
     }}
@@ -2320,6 +2330,7 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
             return;
           }}
           if (isDeepRwaBodyIframe(inner)) {{
+            if (sourceFrame && sourceFrame !== frame) return;
             var deepH = resolveDeepBodyHeight(inner, msgH);
             if (deepH !== null) applyFrameHeight(frame, deepH, 200);
             return;
@@ -2486,10 +2497,10 @@ STREAMLIT_TMMF_SUBPAGE_CSS = """
   margin: 0 !important;
   border: none !important;
 }
-.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has(iframe) iframe,
-.stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stElementContainer"]:has(iframe) iframe,
-.stApp:has(.streamlit-rwa-global-iframe-page) [data-testid="stElementContainer"]:has(iframe) iframe {
-  min-height: 720px !important;
+.stApp:has(.streamlit-tmmf-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) iframe,
+.stApp:has(.streamlit-stablecoins-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) iframe,
+.stApp:has(.streamlit-rwa-global-iframe-page) [data-testid="stElementContainer"]:has(.subpage-body-iframe-marker) + [data-testid="stElementContainer"]:has(iframe) iframe {
+  min-height: 0 !important;
 }
 .stApp:has(.streamlit-tmmf-server-page) .streamlit-tmmf-server-host .page-shell.etp-mock-shell {
   display: block !important;
