@@ -305,6 +305,240 @@ def build_tmmf_server_export_config(payload: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def build_stablecoins_server_export_config(payload: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "deep-net": league_export_data(payload.get("networks")),
+        "deep-plat": league_export_data(payload.get("platforms")),
+    }
+
+
+def stablecoins_methodology_panel_html() -> str:
+    """Collapsible Data sources panel (matches static_home/js/page-methodology.js rwa-stablecoins)."""
+    from rwa_league.client import APP_STABLECOINS
+
+    rwa = (
+        '<a href="https://app.rwa.xyz/" target="_blank" rel="noopener noreferrer">RWA.xyz</a>'
+    )
+    stablecoins = (
+        f'<a href="{APP_STABLECOINS}" target="_blank" rel="noopener noreferrer">Stablecoins</a>'
+    )
+    bullets = (
+        f"<li><strong>Source</strong> — {rwa} {stablecoins} (Networks and Platforms tabs).</li>"
+        "<li><strong>KPI strip</strong> — overview totals; colored <strong>%</strong> are typically "
+        "<strong>30-day (30D)</strong>.</li>"
+        "<li><strong>Networks table</strong> — <strong>Total Value</strong> is aggregate stablecoin "
+        "market cap on that network; <strong>7D Δ value</strong> uses <code>value_7d_change</code> "
+        "from the embed.</li>"
+        "<li><strong>Platforms table</strong> — issuer-level stablecoin market cap with the same "
+        "7D / 30D conventions.</li>"
+    )
+    return (
+        '<details class="methodology-panel">'
+        "<summary>Data sources &amp; definitions</summary>"
+        f'<div class="methodology-panel__body"><ul>{bullets}</ul></div>'
+        "</details>"
+    )
+
+
+def stablecoins_kpis_html(kpis: list[dict[str, Any]], *, note: str = "") -> str:
+    """KPI strip plus collapsible Data sources panel."""
+    block = kpis_html_from_payload(kpis, note=note)
+    panel = stablecoins_methodology_panel_html()
+    if not block:
+        return panel
+    if block.endswith("</section>"):
+        return f"{block[:-len('</section>')]}{panel}</section>"
+    return f"{block}{panel}"
+
+
+def stablecoins_mock_insights_html(payload: dict[str, Any]) -> str:
+    """Issuer concentration panel (platform share bars)."""
+    plat = payload.get("platforms") or {}
+    rows = sorted(
+        list(plat.get("rows_full") or []),
+        key=lambda r: -(float(r.get("Market Share") or 0)),
+    )
+    if not rows:
+        return ""
+    top3 = rows[:3]
+    top3_sum = sum(float(r.get("Market Share") or 0) for r in top3)
+    items: list[tuple[str, float]] = [
+        (str(r.get("Platform") or "—"), float(r.get("Market Share") or 0)) for r in top3
+    ]
+    other_pct = max(0.0, 100.0 - top3_sum)
+    if other_pct > 0.15:
+        items.append(("Other", other_pct))
+    return (
+        '<section class="etp-mock-insights etp-mock-insights--crypto-full" id="js-deep-insights" '
+        'aria-labelledby="js-deep-insights-h">'
+        '<h2 class="u-vh" id="js-deep-insights-h">Market structure</h2>'
+        '<div class="etp-mock-insights__panel etp-mock-insights__panel--conc">'
+        '<h3 class="etp-mock-insights__head">Issuer concentration (platforms)</h3>'
+        '<p class="etp-mock-conc__dek">Share of aggregate stablecoin market cap by platform '
+        "(RWA.xyz snapshot).</p>"
+        '<div class="etp-mock-conc__rows etp-mock-conc__rows--grid" role="img" '
+        'aria-label="Top platforms by stablecoin market cap share">'
+        f"{_conc_bar_rows(items)}"
+        "</div></div></section>"
+    )
+
+
+def stablecoins_share_movers_html(payload: dict[str, Any]) -> str:
+    """Largest 30D share shifts list for the dashboard movers panel."""
+    net = payload.get("networks") or {}
+    rows = list(net.get("rows_full") or [])
+    if not rows:
+        return ""
+    name_col = str(net.get("name_column") or "Network")
+    val_col = str(net.get("value_column") or "Total Value")
+    top_networks = sorted(rows, key=lambda r: -(float(r.get(val_col) or 0)))[:15]
+    movers = [
+        r
+        for r in top_networks
+        if r.get("30D Δ share") is not None and math.isfinite(float(r.get("30D Δ share")))
+    ]
+    movers.sort(key=lambda r: abs(float(r.get("30D Δ share") or 0)), reverse=True)
+    movers = movers[:4]
+    if not movers:
+        return (
+            '<ul class="crypto-top-movers__list"></ul>'
+            '<p class="crypto-story-callout__note"><strong>30D Δ share</strong> is 30-day change in '
+            "market share (%). Top 15 networks by stablecoin value.</p>"
+        )
+    items: list[str] = []
+    for row in movers:
+        n = float(row["30D Δ share"])
+        cls = "up" if n >= 0 else "down"
+        sign = "+" if n > 0 else ""
+        d7 = row.get("7D Δ value")
+        if d7 is not None and math.isfinite(float(d7)):
+            d7f = float(d7)
+            ctx = (
+                f"7D value {'+' if d7f >= 0 else ''}{d7f:.2f}% · "
+                f"{float(row.get('Market Share') or 0):.1f}% market share"
+            )
+        else:
+            ctx = f"{float(row.get('Market Share') or 0):.1f}% market share"
+        label = escape(str(row.get(name_col) or "—"))
+        items.append(
+            '<li class="crypto-top-mover"><div class="crypto-top-mover__row">'
+            f'<span class="crypto-top-mover__label"><strong>{label}</strong></span>'
+            f'<span class="crypto-top-mover__pct pct {cls}">{sign}{n:.2f}%</span></div>'
+            f'<p class="crypto-top-mover__ctx">{escape(ctx)}</p></li>'
+        )
+    return (
+        '<ul class="crypto-top-movers__list">'
+        f"{''.join(items)}"
+        "</ul>"
+        '<p class="crypto-story-callout__note"><strong>30D Δ share</strong> is 30-day change in '
+        "market share (%). Top 15 networks by stablecoin value.</p>"
+    )
+
+
+def stablecoins_dashboard_html(payload: dict[str, Any]) -> str:
+    """Chart host + pre-rendered share movers (chart drawn by Plotly boot script)."""
+    net = payload.get("networks") or {}
+    if not net.get("rows_full"):
+        return ""
+    movers = stablecoins_share_movers_html(payload)
+    return (
+        '<section class="etp-mock-dashboard" id="js-deep-dashboard" aria-labelledby="js-deep-dashboard-h">'
+        '<h2 class="u-vh" id="js-deep-dashboard-h">Chart and share movers</h2>'
+        '<div class="etp-mock-dash__panel etp-mock-dash__panel--chart">'
+        '<h3 class="etp-mock-dash__head">Stablecoin market cap by network</h3>'
+        '<div class="stable-dash-chart-body">'
+        '<div id="js-deep-dashboard-chart" class="aum-chart-host" role="img" '
+        'aria-label="Stablecoin market cap by network"></div>'
+        "</div>"
+        '<p class="etp-mock-chart__cap">'
+        "Top <strong>5</strong> networks plus <strong>Other</strong> (remaining networks); "
+        "market shares sum to <strong>100%</strong>. Bar length uses total value; labels show share."
+        "</p>"
+        '<p class="etp-mock-chart__method">'
+        "Plotly horizontal bars synced to the searchable networks table below."
+        "</p></div>"
+        '<div class="etp-mock-dash__panel etp-mock-dash__panel--movers">'
+        '<h3 class="etp-mock-dash__head">Largest 30D share shifts (networks)</h3>'
+        f'<div id="js-stable-share-movers">{movers}</div>'
+        "</div></section>"
+    )
+
+
+def build_stablecoins_server_zone_html(
+    *,
+    payload: dict[str, Any],
+    related_chips: str,
+) -> str:
+    """Server-rendered Stablecoins zone body (mock-parity markup, filled at build time)."""
+    title = str(payload.get("page_title") or "Stablecoins")
+    title = title.replace(" — Digital Assets Dashboard", "").strip()
+    band = str(payload.get("band_label") or "Stablecoins")
+    subtitle = str(payload.get("page_subtitle_html") or "")
+    footer = str(payload.get("footer_note") or "")
+    err = str(payload.get("error") or payload.get("error_detail") or "").strip()
+    banner = (
+        f'<div class="data-banner" id="js-deep-banner" role="status">{escape(err)}</div>'
+        if err
+        else '<div class="data-banner" id="js-deep-banner" role="status" hidden></div>'
+    )
+    cta = payload.get("bottom_cta") or {}
+    cta_href = str(cta.get("href") or "").strip()
+    cta_label = str(cta.get("label") or "See Stablecoins on RWA.xyz")
+    cta_html = (
+        f'<div class="cta-row rwa-deep-page-cta" id="js-deep-bottom-cta">'
+        f'<a class="btn btn-primary" href="{escape(cta_href)}" target="_blank" rel="noopener noreferrer">'
+        f"{escape(cta_label)}</a></div>"
+        if cta_href
+        else '<div class="cta-row rwa-deep-page-cta" id="js-deep-bottom-cta"></div>'
+    )
+    has_net = bool((payload.get("networks") or {}).get("rows_full"))
+    has_plat = bool((payload.get("platforms") or {}).get("rows_full"))
+    mid_rule = (
+        '<hr class="jd-divider" id="js-deep-rule-mid" aria-hidden="true" />'
+        if has_net and has_plat
+        else '<hr class="jd-divider" id="js-deep-rule-mid" hidden aria-hidden="true" />'
+    )
+    between_ko = str(payload.get("between_ko_and_leagues_html") or "").strip()
+    between_html = (
+        f'<div id="js-deep-extra-before-leagues" class="rwa-deep-optional-msg">{between_ko}</div>'
+        if between_ko
+        else '<div id="js-deep-extra-before-leagues" class="rwa-deep-optional-msg" hidden></div>'
+    )
+    after_net = str(payload.get("after_network_block_html") or "").strip()
+    after_net_html = (
+        f'<div id="js-deep-extra-after-network" class="rwa-deep-optional-msg">{after_net}</div>'
+        if after_net
+        else '<div id="js-deep-extra-after-network" class="rwa-deep-optional-msg" hidden></div>'
+    )
+    return (
+        '<main class="page-shell etp-mock-shell">'
+        '<article class="hub-section hub-section--panel inner-rich-zone zone--stable home-zone home-zone--stable etp-mock-zone">'
+        '<div class="home-zone__stripe" aria-hidden="true"></div>'
+        '<header class="home-zone__head">'
+        '<span class="home-zone__badge" aria-hidden="true">SC</span>'
+        '<div class="home-zone__titles">'
+        f'<p class="band-label teal" id="js-deep-band">{escape(band)}</p>'
+        f'<h1 class="page-intro__title" id="js-deep-title">{escape(title)}</h1>'
+        f'<div class="section-dek section-dek--wide page-intro__dek" id="js-deep-subtitle">{subtitle}</div>'
+        "</div></header>"
+        '<div class="home-zone__body inner-rich-zone__body etp-mock-zone__body">'
+        f"{related_chips.strip()}"
+        f"{banner}"
+        f"{stablecoins_kpis_html(list(payload.get('kpis') or []), note=str(payload.get('kpi_window_note') or ''))}"
+        f"{key_observations_html(str(payload.get('key_observations_html') or ''))}"
+        f"{stablecoins_mock_insights_html(payload)}"
+        f"{stablecoins_dashboard_html(payload)}"
+        f"{between_html}"
+        f"{league_table_html(payload.get('networks'), wrap_id='deep-net-wrap', is_network=True)}"
+        f"{after_net_html}"
+        f"{mid_rule}"
+        f"{league_table_html(payload.get('platforms'), wrap_id='deep-plat-wrap', is_network=False)}"
+        f"{cta_html}"
+        f'<p class="timestamp-foot" id="js-deep-footer-note">{escape(footer)}</p>'
+        "</div></article></main>"
+    )
+
+
 def league_table_html(
     league: dict[str, Any] | None,
     *,

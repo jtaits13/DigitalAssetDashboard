@@ -25,8 +25,10 @@ def main() -> int:
         ("page-rwa-deep-stablecoins" in html, "stable body class"),
         ("data-methodology=\"rwa-stablecoins\"" in html, "methodology attr"),
         ("js-deep-dashboard" in html, "dashboard section"),
+        ("rwa-kpi-panel-static" in html, "server-rendered KPI strip"),
         ("st-tmmf-fullscreen-postmessage" in html, "fullscreen patch"),
         ("measureStableContentHeight" in html, "height measure"),
+        ("data-rwa-deep-json" not in html, "no JS hydration boot"),
     ]
     for ok, label in checks:
         if not ok:

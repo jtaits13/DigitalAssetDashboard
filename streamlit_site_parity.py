@@ -785,10 +785,13 @@ SUBPAGE_STREAMLIT_CSS = """
   overflow: visible !important;
   overflow-x: visible !important;
 }
-/* TMMF + home nav: gray page canvas like GitHub Pages (white lives only in the nav header iframe). */
+/* TMMF + Stablecoins + home nav: gray page canvas like GitHub Pages (white lives only in the nav header iframe). */
 .stApp:has(.streamlit-tmmf-iframe-page):has(.home-chrome-iframe-marker),
+.stApp:has(.streamlit-stablecoins-iframe-page):has(.home-chrome-iframe-marker),
 .withScreencast:has(.streamlit-tmmf-iframe-page):has(.home-chrome-iframe-marker),
-[data-testid="stScreencast"]:has(.streamlit-tmmf-iframe-page):has(.home-chrome-iframe-marker) {
+.withScreencast:has(.streamlit-stablecoins-iframe-page):has(.home-chrome-iframe-marker),
+[data-testid="stScreencast"]:has(.streamlit-tmmf-iframe-page):has(.home-chrome-iframe-marker),
+[data-testid="stScreencast"]:has(.streamlit-stablecoins-iframe-page):has(.home-chrome-iframe-marker) {
   background: var(--wash, #f3f7fb) !important;
 }
 .withScreencast:has(.streamlit-subpage-active),

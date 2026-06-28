@@ -28,6 +28,8 @@ def main() -> None:
         page_title="Stablecoins — Digital Assets Dashboard",
         active="stablecoins",
         style_kind="stablecoins",
+        show_nav=True,
+        nav_style="home",
     )
     related = related_chips_html(
         ("/?jd_scroll=stablecoins", "Home stablecoins preview"),
