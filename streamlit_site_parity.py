@@ -1018,14 +1018,17 @@ SUBPAGE_STREAMLIT_CSS = """
 .stApp:has(.streamlit-stablecoins-iframe-page):has(.home-chrome-iframe-marker),
 .stApp:has(.streamlit-crypto-iframe-page):has(.home-chrome-iframe-marker),
 .stApp:has(.streamlit-etps-iframe-page):has(.home-chrome-iframe-marker),
+.stApp:has(.streamlit-news-feed-iframe-page):has(.home-chrome-iframe-marker),
 .withScreencast:has(.streamlit-tmmf-iframe-page):has(.home-chrome-iframe-marker),
 .withScreencast:has(.streamlit-stablecoins-iframe-page):has(.home-chrome-iframe-marker),
 .withScreencast:has(.streamlit-crypto-iframe-page):has(.home-chrome-iframe-marker),
 .withScreencast:has(.streamlit-etps-iframe-page):has(.home-chrome-iframe-marker),
+.withScreencast:has(.streamlit-news-feed-iframe-page):has(.home-chrome-iframe-marker),
 [data-testid="stScreencast"]:has(.streamlit-tmmf-iframe-page):has(.home-chrome-iframe-marker),
 [data-testid="stScreencast"]:has(.streamlit-stablecoins-iframe-page):has(.home-chrome-iframe-marker),
 [data-testid="stScreencast"]:has(.streamlit-crypto-iframe-page):has(.home-chrome-iframe-marker),
-[data-testid="stScreencast"]:has(.streamlit-etps-iframe-page):has(.home-chrome-iframe-marker) {
+[data-testid="stScreencast"]:has(.streamlit-etps-iframe-page):has(.home-chrome-iframe-marker),
+[data-testid="stScreencast"]:has(.streamlit-news-feed-iframe-page):has(.home-chrome-iframe-marker) {
   background: var(--wash, #f3f7fb) !important;
   background-image: none !important;
 }
