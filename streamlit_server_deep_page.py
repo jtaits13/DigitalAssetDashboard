@@ -903,16 +903,7 @@ def build_rwa_global_server_zone_html(
         f'<div id="js-rwa-global-explore">{explore_html}</div>' if explore_html else ""
     )
     insights_html = rwa_global_mock_insights_html(rows)
-    if explore_block and insights_html:
-        explore_insights_block = (
-            '<div class="rwa-global-explore-insights-stack" id="js-rwa-global-explore-insights">'
-            f"{explore_block}{insights_html}"
-            "</div>"
-        )
-    elif explore_block:
-        explore_insights_block = explore_block
-    else:
-        explore_insights_block = insights_html
+    explore_insights_block = f"{explore_block}{insights_html}"
     bottom_cta = (
         f'<div class="cta-row etp-mock-bottom-cta rwa-deep-page-cta" id="js-rwa-global-bottom-cta">'
         f'<a class="btn btn-primary" href="{escape(cta_href)}" target="_blank" rel="noopener noreferrer">'

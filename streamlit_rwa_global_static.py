@@ -22,7 +22,7 @@ _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
 
-_RWA_GLOBAL_IFRAME_CSS_VERSION = "8"
+_RWA_GLOBAL_IFRAME_CSS_VERSION = "9"
 RWA_GLOBAL_IFRAME_BUILD = "8"
 RWA_GLOBAL_CANVAS_OVERRIDE_VERSION = "8"
 RWA_GLOBAL_TABLE_PANEL_VERSION = "1"
@@ -442,49 +442,26 @@ body.page-rwa-global-iframe #js-rwa-global-macro .review-note.ko-disclaimer {{
   background-color: #fff !important;
   background-image: none !important;
 }}
-/* Explore + network share — one white panel (no soft band seam between them). */
-body.page-rwa-global-iframe .rwa-global-explore-insights-stack {{
-  background: #fff !important;
-  background-image: none !important;
-  box-shadow: none !important;
-  border: 1px solid rgb(var(--hx-rwa-bright-rgb, 42 95 130) / 0.16) !important;
-  border-radius: 10px !important;
-  margin: 0 0 var(--etp-mock-gap-lg, 1.25rem) !important;
-  overflow: hidden !important;
-}}
-body.page-rwa-global-iframe .rwa-global-explore-insights-stack #js-rwa-global-explore,
-body.page-rwa-global-iframe .rwa-global-explore-insights-stack .home-explore-compact {{
-  background: #fff !important;
-  background-image: none !important;
-  margin: 0 !important;
-  border: none !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-}}
-body.page-rwa-global-iframe .rwa-global-explore-insights-stack .home-explore-compact {{
-  padding: 0.65rem 0.85rem !important;
-  border-bottom: 1px solid rgb(var(--hx-rwa-bright-rgb, 42 95 130) / 0.12) !important;
-}}
-body.page-rwa-global-iframe .rwa-global-explore-insights-stack #js-rwa-global-insights.etp-mock-insights {{
-  margin: 0 !important;
-  gap: 0 !important;
-}}
-body.page-rwa-global-iframe .rwa-global-explore-insights-stack .etp-mock-insights__panel {{
-  border: none !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-}}
-body.page-rwa-global-iframe .home-explore-compact,
+/* Explore gateways — standalone soft box above network share (GitHub Pages parity). */
 body.page-rwa-global-iframe #js-rwa-global-explore {{
-  background: var(--hx-rwa-soft, {RWA_GLOBAL_GH_ZONE_SOFT}) !important;
-  background-image: none !important;
+  margin: 0 0 var(--etp-mock-gap-lg, 1.25rem) !important;
+  padding: 0 !important;
 }}
 body.page-rwa-global-iframe .home-explore-compact {{
-  margin-top: 0 !important;
-  margin-bottom: 0.75rem !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 0.5rem 0.55rem !important;
+  margin: 0 !important;
+  padding: 0.65rem 0.75rem !important;
+  border-radius: 8px !important;
+  background: var(--hx-rwa-soft, {RWA_GLOBAL_GH_ZONE_SOFT}) !important;
+  background-image: none !important;
+  border: 1px solid rgba(42, 95, 130, 0.14) !important;
+  box-shadow: none !important;
 }}
 body.page-rwa-global-iframe #js-rwa-global-insights.etp-mock-insights {{
-  margin-top: 0 !important;
+  margin: 0 0 var(--etp-mock-gap-lg, 1.25rem) !important;
 }}
 body.page-rwa-global-iframe .etp-mock-insights__panel,
 body.page-rwa-global-iframe .etp-mock-dash__panel {{
@@ -533,14 +510,6 @@ html, {scope}.site-experience,
   background-image: none !important;
   box-shadow: none !important;
   border: none !important;
-}}
-{scope} .rwa-global-explore-insights-stack,
-{scope} .rwa-global-explore-insights-stack .etp-mock-insights__panel,
-{scope} .rwa-global-explore-insights-stack .home-explore-compact {{
-  background: #fff !important;
-  background-color: #fff !important;
-  background-image: none !important;
-  box-shadow: none !important;
 }}
 {scope} .inner-rich-block,
 {scope} .etp-mock-key-obs-block,
@@ -604,9 +573,13 @@ def rwa_global_iframe_canvas_override_js(
       el.style.setProperty("box-shadow", "none", "important");
     }});
     document.querySelectorAll(
-      ".inner-rich-block, .etp-mock-key-obs-block, .crypto-story-callout, .review-note.ko-disclaimer, .rwa-global-explore-insights-stack, .etp-mock-insights__panel, .etp-mock-dash__panel, .rwa-kpi-row--home-grid .rwa-kpi-cell, .etp-mock-table-block"
+      ".inner-rich-block, .etp-mock-key-obs-block, .crypto-story-callout, .review-note.ko-disclaimer, .etp-mock-insights__panel, .etp-mock-dash__panel, .rwa-kpi-row--home-grid .rwa-kpi-cell, .etp-mock-table-block"
     ).forEach(function (el) {{
       setBg(el, WHITE);
+      el.style.setProperty("box-shadow", "none", "important");
+    }});
+    document.querySelectorAll(".home-explore-compact, #js-rwa-global-explore").forEach(function (el) {{
+      setBg(el, SOFT);
       el.style.setProperty("box-shadow", "none", "important");
     }});
     document.querySelectorAll(".crypto-story-callout__note").forEach(function (el) {{
