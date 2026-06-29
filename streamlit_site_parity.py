@@ -29,9 +29,12 @@ HOME_CHROME_IFRAME_INITIAL_HEIGHT = 360
 HOME_CHROME_HEIGHT_SLACK_PX = 10
 SUBPAGE_NAV_HEIGHT_SLACK_PX = 6
 SUBPAGE_NAV_HEADER_EST_PX = 64
+SUBPAGE_NAV_BACK_ROW_EST_PX = 44
 # Reserve below the header when a static dropdown well is used (legacy; home nav now sizes dynamically).
 SUBPAGE_NAV_DROPDOWN_WELL_PX = 188
-SUBPAGE_NAV_IFRAME_INITIAL_HEIGHT = SUBPAGE_NAV_HEADER_EST_PX + SUBPAGE_NAV_HEIGHT_SLACK_PX
+SUBPAGE_NAV_IFRAME_INITIAL_HEIGHT = (
+    SUBPAGE_NAV_HEADER_EST_PX + SUBPAGE_NAV_BACK_ROW_EST_PX + SUBPAGE_NAV_HEIGHT_SLACK_PX
+)
 
 # Shared JS: measure primary nav band (+ optional static dropdown well on subpages).
 _NAV_BAND_HEIGHT_MEASURE_JS = """
@@ -1269,6 +1272,8 @@ SUBPAGE_STREAMLIT_CSS = """
   width: 100vw !important;
   max-width: 100vw !important;
   max-height: none !important;
+  height: auto !important;
+  min-height: 0 !important;
   margin-left: calc(50% - 50vw) !important;
   margin-right: calc(50% - 50vw) !important;
   padding: 0 !important;
@@ -1283,8 +1288,9 @@ SUBPAGE_STREAMLIT_CSS = """
   display: block !important;
   width: 100% !important;
   border: 0;
-  overflow: visible !important;
+  overflow: hidden !important;
   background: transparent !important;
+  vertical-align: top;
 }
 .stApp:has(.streamlit-subpage-active) [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker),
 .stApp:has(.streamlit-subpage-root) [data-testid="stElementContainer"]:has(.home-chrome-iframe-marker) {
@@ -2544,7 +2550,7 @@ def iframe_auto_height_script(*, root_selector: str = "body", extra_pad: int = 3
 </script>"""
 
 
-HOME_IFRAME_HEIGHT_SYNC_VERSION = "3"
+HOME_IFRAME_HEIGHT_SYNC_VERSION = "5"
 
 HOME_IFRAME_HEIGHT_SYNC_JS = f"""
 <script id="jpm-iframe-height-sync-v{HOME_IFRAME_HEIGHT_SYNC_VERSION}">
@@ -2571,14 +2577,8 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
     return measureNavBandHeight(inner, navSlack);
   }}
 
-  function applyNavChromeFrameHeight(frame, inner, msgH) {{
-    var measured = measureNavBandHeight(inner, navSlack);
-    var reported = Number(msgH);
-    var h = measured;
-    if (isFinite(reported) && reported > 40 && reported <= measured + 280) {{
-      h = Math.max(measured, reported);
-    }}
-    applyFrameHeight(frame, h, 40);
+  function applyNavChromeFrameHeight(frame, inner) {{
+    applyFrameHeight(frame, measureNavBandHeight(inner, navSlack), 40);
   }}
 
   function isDeepRwaBodyIframe(inner) {{
@@ -2820,7 +2820,7 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
         if (!inner || !inner.body) return;
         if (inner.querySelector(".home-main-split")) return;
         if (isNavChromeBody(inner)) {{
-          applyNavChromeFrameHeight(frame, inner, null);
+          applyNavChromeFrameHeight(frame, inner);
           return;
         }}
         if (isDeepRwaBodyIframe(inner)) {{
@@ -2890,11 +2890,16 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
     if (ev.data.type === "jpm-subpage-nav-height") {{
       var navH = Number(ev.data.height);
       if (!isFinite(navH) || navH <= 40) return;
+      var navSource = null;
+      try {{
+        navSource = ev.source && ev.source.frameElement ? ev.source.frameElement : null;
+      }} catch (e) {{}}
       doc.querySelectorAll("iframe").forEach(function (frame) {{
         try {{
           var inner = frame.contentDocument;
           if (inner && isNavChromeBody(inner)) {{
-            applyNavChromeFrameHeight(frame, inner, navH);
+            if (navSource && navSource !== frame) return;
+            applyNavChromeFrameHeight(frame, inner);
           }}
         }} catch (e) {{}}
       }});
@@ -2912,7 +2917,7 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
           if (!inner || !inner.body) return;
           if (isNavChromeBody(inner)) {{
             if (!sourceFrame || sourceFrame !== frame) return;
-            applyNavChromeFrameHeight(frame, inner, msgH);
+            applyNavChromeFrameHeight(frame, inner);
             return;
           }}
           if (isDeepRwaBodyIframe(inner)) {{
@@ -4220,8 +4225,10 @@ def build_home_nav_iframe_html(
     css = _cached_iframe_home_stylesheet()
     nav_extra = """
 html, body.page-home.home-nav-chrome-only.site-experience {
-  overflow: visible;
-  height: auto;
+  overflow: hidden;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
   background: transparent !important;
   pointer-events: none;
 }
