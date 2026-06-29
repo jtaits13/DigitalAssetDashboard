@@ -903,6 +903,8 @@ def render_rwa_global_body_iframe(
     render_subpage_body_iframe(
         html,
         height=1400,
+        back_href=back_href,
+        back_label=back_label,
     )
     inject_rwa_global_host_canvas_override()
     inject_rwa_global_iframe_table_actions(payload)
