@@ -1,4 +1,4 @@
-"""Smoke checks for nav-iframe back pills and body iframe deduplication."""
+"""Smoke checks for body-iframe back pills on deep subpages."""
 
 from __future__ import annotations
 
@@ -12,29 +12,25 @@ sys.path.insert(0, str(REPO))
 def main() -> int:
     from streamlit_site_parity import (
         HOME_IFRAME_HEIGHT_SYNC_JS,
-        _nav_chrome_back_link_html,
-        _subpage_nav_back_defaults,
         build_home_nav_iframe_html,
         deep_iframe_back_link_clickable_css,
         iframe_home_nav_height_script,
     )
+    from streamlit_tmmf_static import build_tmmf_body_iframe_html
 
     body_css = deep_iframe_back_link_clickable_css(scope="body.page-rwa-deep-mmf")
-    nav_html = build_home_nav_iframe_html(
-        active="tmmf",
-        back_href="/?jd_scroll=tmmf",
-        back_label="← Back to home · TMMF preview",
+    nav_html = build_home_nav_iframe_html(active="tmmf")
+    tmmf_html = build_tmmf_body_iframe_html(
+        payload={"title": "Tokenized Money Market Funds"},
+        related_chips="",
     )
-    back_row = _nav_chrome_back_link_html(href="/?jd_scroll=tmmf", label="← Back to home · TMMF preview")
-    tmmf_defaults = _subpage_nav_back_defaults("tmmf")
     checks = [
-        ("display: none" in body_css, "body iframe back link hidden"),
-        ("nav-chrome-back-row" in nav_html, "nav iframe includes back row"),
-        ("nav-chrome-back-pill" in nav_html, "nav iframe back pill class"),
-        ("nav-chrome-back-row" in back_row, "back row helper markup"),
-        (tmmf_defaults is not None and tmmf_defaults[0] == "/?jd_scroll=tmmf", "tmmf default back href"),
-        ("nav-chrome-back-row" in iframe_home_nav_height_script(), "nav height observes back row"),
-        (".nav-chrome-back-row" in HOME_IFRAME_HEIGHT_SYNC_JS, "host height measures back row"),
+        ("pointer-events: auto" in body_css, "body iframe back link clickable"),
+        ("display: none" not in body_css, "body iframe back link visible"),
+        ("nav-chrome-back-row" not in nav_html, "nav iframe excludes back row"),
+        ("page-back-below-header" in tmmf_html, "body iframe includes back row"),
+        ("nav-chrome-back-row" not in iframe_home_nav_height_script(), "nav height ignores back row"),
+        (".nav-chrome-back-row" not in HOME_IFRAME_HEIGHT_SYNC_JS, "host height ignores back row"),
         ("if (!sourceFrame || sourceFrame !== frame) return;" in HOME_IFRAME_HEIGHT_SYNC_JS, "nav ignores foreign heights"),
     ]
     for ok, label in checks:

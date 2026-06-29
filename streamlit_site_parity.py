@@ -29,12 +29,9 @@ HOME_CHROME_IFRAME_INITIAL_HEIGHT = 360
 HOME_CHROME_HEIGHT_SLACK_PX = 10
 SUBPAGE_NAV_HEIGHT_SLACK_PX = 6
 SUBPAGE_NAV_HEADER_EST_PX = 64
-SUBPAGE_NAV_BACK_ROW_EST_PX = 44
 # Reserve below the header when a static dropdown well is used (legacy; home nav now sizes dynamically).
 SUBPAGE_NAV_DROPDOWN_WELL_PX = 188
-SUBPAGE_NAV_IFRAME_INITIAL_HEIGHT = (
-    SUBPAGE_NAV_HEADER_EST_PX + SUBPAGE_NAV_BACK_ROW_EST_PX + SUBPAGE_NAV_HEIGHT_SLACK_PX
-)
+SUBPAGE_NAV_IFRAME_INITIAL_HEIGHT = SUBPAGE_NAV_HEADER_EST_PX + SUBPAGE_NAV_HEIGHT_SLACK_PX
 
 # Shared JS: measure primary nav band (+ optional static dropdown well on subpages).
 _NAV_BAND_HEIGHT_MEASURE_JS = """
@@ -56,9 +53,6 @@ _NAV_BAND_HEIGHT_MEASURE_JS = """
     var docTop = inner.documentElement.getBoundingClientRect().top;
     var bottom = docTop;
     inner.querySelectorAll(".site-header").forEach(function (el) {
-      bottom = Math.max(bottom, el.getBoundingClientRect().bottom);
-    });
-    inner.querySelectorAll(".nav-chrome-back-row").forEach(function (el) {
       bottom = Math.max(bottom, el.getBoundingClientRect().bottom);
     });
     inner.querySelectorAll(".site-nav__sub").forEach(function (sub) {
@@ -1094,19 +1088,25 @@ def deep_iframe_related_chips_css(*, scope: str, zone: str = "news") -> str:
 
 
 def deep_iframe_back_link_clickable_css(*, scope: str, well_px: int | None = None) -> str:
-    """Hide duplicate body-iframe back pills; nav iframe renders the clickable copy."""
+    """Keep back pills interactive (pointer events + cursor) inside body iframes."""
     _ = well_px
     return f"""
 {scope} .page-back-below-header {{
-  display: none !important;
-  height: 0 !important;
-  min-height: 0 !important;
-  max-height: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  overflow: hidden !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
+  position: relative !important;
+  z-index: 12 !important;
+  pointer-events: auto !important;
+}}
+{scope} .page-back-below-header a,
+{scope} p.back-link.back-link--below-header a,
+{scope} a.tmmf-st-back-pill,
+{scope} a.tmmf-server-back-anchor,
+{scope} a.stable-server-back-anchor,
+{scope} a.etp-server-back-anchor,
+{scope} a.rwa-asset-server-back-anchor {{
+  position: relative !important;
+  z-index: 13 !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
 }}
 """
 
@@ -2495,7 +2495,7 @@ def iframe_home_nav_height_script() -> str:
   }}
   if (typeof ResizeObserver !== "undefined") {{
     var ro = new ResizeObserver(sendHeight);
-    document.querySelectorAll(".site-header, .nav-chrome-back-row, .site-nav__sub").forEach(function (el) {{
+    document.querySelectorAll(".site-header, .site-nav__sub").forEach(function (el) {{
       ro.observe(el);
     }});
   }}
@@ -2550,7 +2550,7 @@ def iframe_auto_height_script(*, root_selector: str = "body", extra_pad: int = 3
 </script>"""
 
 
-HOME_IFRAME_HEIGHT_SYNC_VERSION = "5"
+HOME_IFRAME_HEIGHT_SYNC_VERSION = "6"
 
 HOME_IFRAME_HEIGHT_SYNC_JS = f"""
 <script id="jpm-iframe-height-sync-v{HOME_IFRAME_HEIGHT_SYNC_VERSION}">
@@ -3919,35 +3919,6 @@ def inject_subpage_embed_reveal() -> None:
     components.html(STREAMLIT_SUBPAGE_EMBED_REVEAL_JS, height=0, width=0)
 
 
-def _subpage_nav_back_defaults(style_kind: str) -> tuple[str, str] | None:
-    """Default back pill targets for home-chrome subpages (Streamlit nav iframe)."""
-    defaults: dict[str, tuple[str, str]] = {
-        "tmmf": ("/?jd_scroll=tmmf", "← Back to home · TMMF preview"),
-        "stablecoins": ("/?jd_scroll=stablecoins", "← Back to home · Stablecoins preview"),
-        "crypto": ("/?jd_scroll=crypto", "← Back to home · Crypto preview"),
-        "etp": ("/?jd_scroll=markets", "← Back to home · ETP preview"),
-        "rwa_global": ("/?jd_scroll=onchain", "← Back to home · On-chain preview"),
-        "rwa_explore_at": (_streamlit_page_href("rwa_global"), "← RWA Global Market Overview"),
-        "rwa_explore_mp": (_streamlit_page_href("rwa_global"), "← RWA Global Market Overview"),
-        "treasuries": (_streamlit_page_href("explore_asset"), "← Explore by Asset Type"),
-        "stocks": (_streamlit_page_href("explore_asset"), "← Explore by Asset Type"),
-        "networks": (_streamlit_page_href("explore_participant"), "← Explore by Market Participant"),
-        "platforms": (_streamlit_page_href("explore_participant"), "← Explore by Market Participant"),
-        "asset_managers": (_streamlit_page_href("explore_participant"), "← Explore by Market Participant"),
-        "news_feed": ("/?jd_scroll=news", "← Back to home · News Hub"),
-    }
-    return defaults.get(style_kind)
-
-
-def _nav_chrome_back_link_html(*, href: str, label: str) -> str:
-    label_html = escape(label).replace("\u2190", "&larr;").replace("\u00b7", "&middot;")
-    return (
-        f'<div class="nav-chrome-back-row page-back-below-header site-experience">'
-        f'<p class="back-link back-link--below-header">'
-        f'<a class="nav-chrome-back-pill" href="{escape(href)}">{label_html}</a></p></div>'
-    )
-
-
 def configure_subpage(
     *,
     page_title: str,
@@ -3956,8 +3927,6 @@ def configure_subpage(
     delivery: str = "iframe",
     show_nav: bool = True,
     nav_style: str = "subpage",
-    back_href: str | None = None,
-    back_label: str | None = None,
 ) -> None:
     """Shared subpage setup: collapsed sidebar, nav, and static/inner CSS."""
     st.set_page_config(
@@ -4020,15 +3989,8 @@ def configure_subpage(
         unsafe_allow_html=True,
     )
     if show_nav:
-        nav_back = _subpage_nav_back_defaults(style_kind)
-        resolved_back_href = back_href or (nav_back[0] if nav_back else None)
-        resolved_back_label = back_label or (nav_back[1] if nav_back else None)
         if nav_style == "home":
-            render_home_chrome_nav(
-                active=active,
-                back_href=resolved_back_href,
-                back_label=resolved_back_label,
-            )
+            render_home_chrome_nav(active=active)
         else:
             render_subpage_nav(active=active)
     inject_subpage_embed_reveal()
@@ -4215,12 +4177,7 @@ def build_home_chrome_iframe_html(*, include_refresh: bool = False) -> str:
 </html>"""
 
 
-def build_home_nav_iframe_html(
-    *,
-    active: str,
-    back_href: str | None = None,
-    back_label: str | None = None,
-) -> str:
+def build_home_nav_iframe_html(*, active: str) -> str:
     """Home chrome nav band only (same stylesheet + nav markup as the home page)."""
     css = _cached_iframe_home_stylesheet()
     nav_extra = """
@@ -4241,38 +4198,6 @@ body.page-home.home-nav-chrome-only.site-experience .site-header {
   z-index: 2;
   pointer-events: auto;
 }
-body.page-home.home-nav-chrome-only.site-experience .nav-chrome-back-row {
-  pointer-events: auto;
-  position: relative;
-  z-index: 3;
-  max-width: calc(var(--content-max, 72rem) + 17.5rem);
-  width: 100%;
-  margin: 0 auto;
-  padding: 0.35rem 1.25rem 0;
-  box-sizing: border-box;
-}
-body.page-home.home-nav-chrome-only.site-experience .nav-chrome-back-row .back-link {
-  margin: 0.2rem 0 0.5rem;
-}
-body.page-home.home-nav-chrome-only.site-experience .nav-chrome-back-pill {
-  display: inline-block;
-  font-weight: 650;
-  font-size: 0.84rem;
-  line-height: 1.35;
-  color: var(--ink-soft, #1f4c67);
-  text-decoration: none;
-  padding: 0.35rem 0.65rem;
-  border-radius: 999px;
-  border: 1px solid rgba(199, 216, 232, 0.85);
-  background: rgba(255, 255, 255, 0.85);
-  white-space: nowrap;
-  cursor: pointer;
-}
-body.page-home.home-nav-chrome-only.site-experience .nav-chrome-back-pill:hover {
-  color: var(--teal, #2a5f82);
-  border-color: rgb(var(--hx-rwa-bright-rgb, 80 113 136) / 0.35);
-  background: #f8fcfe;
-}
 body.page-home.home-nav-chrome-only.site-experience .site-nav__dropdown,
 body.page-home.home-nav-chrome-only.site-experience .site-nav__item--flyout,
 body.page-home.home-nav-chrome-only.site-experience .site-nav__sub {
@@ -4284,10 +4209,7 @@ body.page-home.home-nav-chrome-only.site-experience .site-nav__sub {
 }
 """
     nav = render_site_nav_html(active=active, is_landing=False, for_streamlit=True).strip()
-    back_row = ""
-    if back_href and back_label:
-        back_row = _nav_chrome_back_link_html(href=back_href, label=back_label)
-    body = f"{nav}\n{back_row}"
+    body = nav
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -4303,19 +4225,14 @@ body.page-home.home-nav-chrome-only.site-experience .site-nav__sub {
 </html>"""
 
 
-def render_home_chrome_nav(
-    *,
-    active: str,
-    back_href: str | None = None,
-    back_label: str | None = None,
-) -> None:
-    """Render the home page nav band on a subpage (nav iframe + optional back pill)."""
+def render_home_chrome_nav(*, active: str) -> None:
+    """Render the home page nav band on a subpage (nav iframe only)."""
     st.markdown(
         '<span class="home-chrome-iframe-marker" hidden aria-hidden="true"></span>',
         unsafe_allow_html=True,
     )
     components.html(
-        build_home_nav_iframe_html(active=active, back_href=back_href, back_label=back_label),
+        build_home_nav_iframe_html(active=active),
         height=SUBPAGE_NAV_IFRAME_INITIAL_HEIGHT,
         scrolling=False,
     )
