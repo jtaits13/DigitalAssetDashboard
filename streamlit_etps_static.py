@@ -788,8 +788,6 @@ def render_etps_body_iframe(
             back_label,
         ),
         height=1500,
-        back_href=back_href,
-        back_label=back_label,
     )
     inject_etp_host_canvas_override()
     inject_etp_iframe_table_actions(payloads)

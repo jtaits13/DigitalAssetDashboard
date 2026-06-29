@@ -1366,8 +1366,6 @@ def render_tmmf_body_iframe(
             back_label,
         ),
         height=1200,
-        back_href=back_href,
-        back_label=back_label,
     )
     inject_tmmf_host_canvas_override()
 

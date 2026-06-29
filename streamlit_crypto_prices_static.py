@@ -865,8 +865,6 @@ def render_crypto_prices_body_iframe(
             back_label,
         ),
         height=1200,
-        back_href=back_href,
-        back_label=back_label,
     )
     inject_crypto_host_canvas_override()
     inject_crypto_iframe_table_actions(payloads)

@@ -725,16 +725,13 @@ def render_rwa_asset_deep_body_iframe(
 ) -> None:
     from streamlit_site_parity import render_subpage_body_iframe
 
-    spec = _spec(kind)
-    href = back_href or str(payload.get("back_href") or "/RWA_Explore_By_Asset_Type")
-    label = back_label or spec.default_back_label
     html = build_rwa_asset_deep_server_iframe_html(
         kind=kind,
         payload=payload,
         related_chips=related_chips,
-        back_href=href,
-        back_label=label,
+        back_href=back_href,
+        back_label=back_label,
     )
-    render_subpage_body_iframe(html, height=1600, back_href=href, back_label=label)
+    render_subpage_body_iframe(html, height=1600)
     inject_rwa_asset_host_canvas_override(kind=kind)
     inject_rwa_asset_iframe_table_actions(kind=kind, payload=payload)

@@ -788,8 +788,6 @@ def render_rwa_explore_body_iframe(
     render_subpage_body_iframe(
         html,
         height=1800,
-        back_href=href,
-        back_label=label,
     )
     inject_rwa_explore_host_canvas_override(kind=kind)
     inject_rwa_explore_iframe_table_actions(kind=kind, payload=payload)

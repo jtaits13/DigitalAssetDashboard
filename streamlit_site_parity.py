@@ -1088,19 +1088,25 @@ def deep_iframe_related_chips_css(*, scope: str, zone: str = "news") -> str:
 
 
 def deep_iframe_back_link_clickable_css(*, scope: str, well_px: int | None = None) -> str:
-    """Hide duplicate in-iframe back pills; Streamlit host renders the clickable copy."""
+    """Keep back pills interactive (pointer events + cursor); layout clearance lives in the nav iframe."""
     _ = well_px
     return f"""
 {scope} .page-back-below-header {{
-  display: none !important;
-  height: 0 !important;
-  min-height: 0 !important;
-  max-height: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  overflow: hidden !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
+  position: relative !important;
+  z-index: 12 !important;
+  pointer-events: auto !important;
+}}
+{scope} .page-back-below-header a,
+{scope} p.back-link.back-link--below-header a,
+{scope} a.tmmf-st-back-pill,
+{scope} a.tmmf-server-back-anchor,
+{scope} a.stable-server-back-anchor,
+{scope} a.etp-server-back-anchor,
+{scope} a.rwa-asset-server-back-anchor {{
+  position: relative !important;
+  z-index: 13 !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
 }}
 """
 
@@ -1409,13 +1415,6 @@ SUBPAGE_STREAMLIT_CSS = """
   display: block;
   width: 100%;
   max-width: 100%;
-}
-.stApp:has(.streamlit-subpage-active):has(.subpage-host-back-link-marker) [data-testid="stElementContainer"]:has(.page-back-below-header),
-.stApp:has(.streamlit-subpage-root):has(.subpage-host-back-link-marker) [data-testid="stElementContainer"]:has(.page-back-below-header) {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-  position: relative;
-  z-index: 150;
 }
 .stApp:has(.streamlit-subpage-active):not(:has(.streamlit-tmmf-server-page)) .page-back-below-header,
 .stApp:has(.streamlit-subpage-root):not(:has(.streamlit-tmmf-server-page)) .page-back-below-header {
@@ -1868,16 +1867,8 @@ def render_subpage_nav(*, active: str) -> None:
     )
 
 
-def render_subpage_body_iframe(
-    html: str,
-    *,
-    height: int = 1200,
-    back_href: str | None = None,
-    back_label: str | None = None,
-) -> None:
+def render_subpage_body_iframe(html: str, *, height: int = 1200) -> None:
     """Render a subpage body iframe (marker must precede iframe for host CSS selectors)."""
-    if back_href and back_label:
-        render_subpage_back_link(href=back_href, label=back_label)
     st.markdown(
         '<span class="subpage-body-iframe-marker" hidden aria-hidden="true"></span>',
         unsafe_allow_html=True,
@@ -2556,7 +2547,7 @@ def iframe_auto_height_script(*, root_selector: str = "body", extra_pad: int = 3
 </script>"""
 
 
-HOME_IFRAME_HEIGHT_SYNC_VERSION = "4"
+HOME_IFRAME_HEIGHT_SYNC_VERSION = "3"
 
 HOME_IFRAME_HEIGHT_SYNC_JS = f"""
 <script id="jpm-iframe-height-sync-v{HOME_IFRAME_HEIGHT_SYNC_VERSION}">
@@ -2584,8 +2575,13 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
   }}
 
   function applyNavChromeFrameHeight(frame, inner, msgH) {{
-    _ = msgH;
-    applyFrameHeight(frame, measureNavBandHeight(inner, navSlack), 40);
+    var measured = measureNavBandHeight(inner, navSlack);
+    var reported = Number(msgH);
+    var h = measured;
+    if (isFinite(reported) && reported > 40 && reported <= measured + 280) {{
+      h = Math.max(measured, reported);
+    }}
+    applyFrameHeight(frame, h, 40);
   }}
 
   function isDeepRwaBodyIframe(inner) {{
@@ -3999,10 +3995,6 @@ def configure_subpage(
 
 
 def render_subpage_back_link(*, href: str, label: str) -> None:
-    st.markdown(
-        '<span class="subpage-host-back-link-marker" hidden aria-hidden="true"></span>',
-        unsafe_allow_html=True,
-    )
     label_html = (
         escape(label)
         .replace("\u2190", "&larr;")

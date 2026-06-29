@@ -645,18 +645,14 @@ def render_news_feed_body_iframe(
 
     spec = NEWS_FEED_SPECS[kind]
     payloads_json = _json_for_script(payloads)
-    href = back_href or spec.default_back_href
-    label = back_label or spec.default_back_label
     render_subpage_body_iframe(
         _cached_news_server_iframe_html(
             kind,
             payloads_json,
             related_chips,
-            href,
-            label,
+            back_href or spec.default_back_href,
+            back_label or spec.default_back_label,
         ),
         height=1200,
-        back_href=href,
-        back_label=label,
     )
     inject_news_host_canvas_override()
