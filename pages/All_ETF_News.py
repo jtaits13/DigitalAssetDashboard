@@ -30,6 +30,8 @@ def main() -> None:
         style_kind="news_feed",
         show_nav=True,
         nav_style="home",
+        back_href=_streamlit_page_href("etps"),
+        back_label="← Back to U.S. ETP Overview",
     )
     related = related_chips_html(
         (_streamlit_page_href("etps"), "U.S. ETP overview"),
