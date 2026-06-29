@@ -2547,8 +2547,10 @@ def iframe_auto_height_script(*, root_selector: str = "body", extra_pad: int = 3
 </script>"""
 
 
+HOME_IFRAME_HEIGHT_SYNC_VERSION = "3"
+
 HOME_IFRAME_HEIGHT_SYNC_JS = f"""
-<script>
+<script id="jpm-iframe-height-sync-v{HOME_IFRAME_HEIGHT_SYNC_VERSION}">
 (function () {{
   var doc = window.parent && window.parent.document ? window.parent.document : document;
   var chromeSlack = {HOME_CHROME_HEIGHT_SLACK_PX};
@@ -2576,7 +2578,7 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
     var measured = measureNavBandHeight(inner, navSlack);
     var reported = Number(msgH);
     var h = measured;
-    if (isFinite(reported) && reported > 40) {{
+    if (isFinite(reported) && reported > 40 && reported <= measured + 280) {{
       h = Math.max(measured, reported);
     }}
     applyFrameHeight(frame, h, 40);
@@ -2912,7 +2914,7 @@ HOME_IFRAME_HEIGHT_SYNC_JS = f"""
           var inner = frame.contentDocument;
           if (!inner || !inner.body) return;
           if (isNavChromeBody(inner)) {{
-            if (sourceFrame && sourceFrame !== frame) return;
+            if (!sourceFrame || sourceFrame !== frame) return;
             applyNavChromeFrameHeight(frame, inner, msgH);
             return;
           }}

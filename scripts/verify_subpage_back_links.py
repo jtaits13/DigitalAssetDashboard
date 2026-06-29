@@ -15,6 +15,7 @@ def main() -> int:
         SUBPAGE_NAV_HEIGHT_SLACK_PX,
         SUBPAGE_NAV_IFRAME_INITIAL_HEIGHT,
         SUBPAGE_STREAMLIT_CSS,
+        HOME_IFRAME_HEIGHT_SYNC_JS,
         build_home_nav_iframe_html,
         deep_iframe_back_link_clickable_css,
         iframe_home_nav_height_script,
@@ -32,6 +33,7 @@ def main() -> int:
         ("bindDropdownResize" in iframe_home_nav_height_script(), "dynamic nav height on hover"),
         ("watchInternalLinks" in iframe_internal_link_script(), "iframe link observer"),
         ("bindIframeBackLinks" in STREAMLIT_SITE_NAV_ROUTER_JS, "host iframe back-link binder"),
+        ("if (!sourceFrame || sourceFrame !== frame) return;" in HOME_IFRAME_HEIGHT_SYNC_JS, "nav height ignores foreign iframe messages"),
         ("margin-top: -188px" not in host_css and "margin-top: -SUBPAGE_NAV_DROPDOWN_WELL" not in host_css, "no body iframe pull-up"),
         (
             SUBPAGE_NAV_IFRAME_INITIAL_HEIGHT
