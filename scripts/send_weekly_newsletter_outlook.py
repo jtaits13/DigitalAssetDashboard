@@ -19,14 +19,11 @@ Task Scheduler (Monday 8:30 AM local):
 
   JPM Weekly Newsletter - Keep Awake   Monday 8:15 AM — block sleep through send window
   JPM Weekly Newsletter - Prep         Monday 8:25 AM — start Outlook
-  JPM Weekly Newsletter                Monday 8:30 AM — build and send
+  JPM Weekly Newsletter                Monday 8:30 AM — build and send (wake + missed-run)
+  JPM Weekly Newsletter - Catch-up     At logon/unlock — send if Monday was missed
 
-  Optional auto-login (admin, stores password — see script warnings):
-    powershell -ExecutionPolicy Bypass -File scripts/enable_windows_auto_logon.ps1
-
-  The scheduled task must run while your Windows user session can access Outlook
-  (logged in, or locked with an active session). Sleep/hibernate: wake timers can
-  rouse the PC; shut down or the sign-in screen needs auto-login or manual sign-in.
+  Manual send: powershell -File scripts/run_weekly_newsletter_outlook.ps1 -Force
+  Send state: logs/newsletter-last-send.json  Run log: logs/newsletter-outlook-run.log
 """
 
 from __future__ import annotations
@@ -130,6 +127,29 @@ def _send_via_outlook(
         print(f"Sent to {to!r} — subject: {subject}")
 
 
+def _append_send_log(*, to: str, subject: str, draft: bool) -> None:
+    LOG_DIR.mkdir(parents=True, exist_ok=True)
+    log_line = (
+        f"{datetime.now().isoformat(timespec='seconds')} "
+        f"{'draft' if draft else 'sent'} to={to} subject={subject}\n"
+    )
+    log_path = LOG_DIR / "newsletter-outlook-send.log"
+    with log_path.open("a", encoding="utf-8") as fh:
+        fh.write(log_line)
+        fh.flush()
+
+
+def _record_send_state(*, week_label: str, to: str, draft: bool) -> None:
+    if draft:
+        return
+    try:
+        from newsletter_send_state import write_send_state
+
+        write_send_state(week_label=week_label, to=to, draft=draft)
+    except Exception as exc:
+        print(f"Warning: could not write send state: {exc}", file=sys.stderr)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Send executive weekly newsletter via Outlook.")
     parser.add_argument(
@@ -153,6 +173,11 @@ def main() -> None:
         help="Build HTML only; do not open Outlook.",
     )
     parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Send even if this week's newsletter was already sent.",
+    )
+    parser.add_argument(
         "--update-attachment-mock",
         action="store_true",
         help="Also write static_home/mockups/weekly-newsletter-email-executive-mock.html.",
@@ -164,6 +189,16 @@ def main() -> None:
     to = (args.to or os.environ.get("NEWSLETTER_TO_EMAIL") or DEFAULT_TO).strip()
     if not to:
         raise SystemExit("No recipient — set --to or NEWSLETTER_TO_EMAIL.")
+
+    if not args.force and not args.draft and not args.dry_run:
+        try:
+            from newsletter_send_state import already_sent_for_current_week
+
+            if already_sent_for_current_week():
+                print("Newsletter for the current week was already sent (use --force to resend).")
+                return
+        except Exception as exc:
+            print(f"Warning: send-state check skipped: {exc}", file=sys.stderr)
 
     print("Building executive newsletter…")
     attachment_html, week_end = _build_executive_html(outlook_body=False)
@@ -203,12 +238,8 @@ def main() -> None:
         attach_html=not args.no_attach,
     )
 
-    LOG_DIR.mkdir(parents=True, exist_ok=True)
-    log_line = (
-        f"{datetime.now().isoformat(timespec='seconds')} "
-        f"{'draft' if args.draft else 'sent'} to={to} subject={subject}\n"
-    )
-    (LOG_DIR / "newsletter-outlook-send.log").open("a", encoding="utf-8").write(log_line)
+    _append_send_log(to=to, subject=subject, draft=args.draft)
+    _record_send_state(week_label=week_label, to=to, draft=args.draft)
 
 
 if __name__ == "__main__":
