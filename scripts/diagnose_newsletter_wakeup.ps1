@@ -42,7 +42,7 @@ if (Test-Path $statePath) {
 }
 
 Write-Host "`n=== Guidance ==="
-Write-Host "- Missed Monday while asleep: Catch-up runs at logon/unlock (Mon 8 AM+ or Tue before noon)."
+Write-Host "- Missed Monday while asleep: Catch-up runs at logon (Mon after 8:40 AM or Tue before noon)."
 Write-Host "- Modern Standby (S0) laptops often cannot wake from sleep on a timer."
 Write-Host "- Reliable Monday setup: PC plugged in, logged in, locked - do not sleep overnight."
-Write-Host "- 8:15 keep-awake task prevents sleep during the send window if the PC is already on."
+Write-Host "- 8:25 keep-awake task prevents sleep during the send window if the PC is already on."

@@ -1,6 +1,6 @@
 @echo off
 setlocal
-REM Launch classic Outlook desktop so the 9:00 AM send task can use COM automation.
+REM Launch classic Outlook desktop so the 8:40 AM send task can use COM automation.
 set "OUTLOOK=%ProgramFiles%\Microsoft Office\root\Office16\OUTLOOK.EXE"
 if not exist "%OUTLOOK%" set "OUTLOOK=%ProgramFiles(x86)%\Microsoft Office\root\Office16\OUTLOOK.EXE"
 if not exist "%OUTLOOK%" (

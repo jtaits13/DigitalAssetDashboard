@@ -13,13 +13,13 @@ Environment:
   NEWSLETTER_TO_EMAIL   — recipient (default: jack.taitel@jpmchase.com)
   SITE_BASE_URL         — passed through to the newsletter builder
 
-Task Scheduler (Monday 8:30 AM local):
+Task Scheduler (Monday 8:40 AM local):
   Run once to register tasks:
     powershell -ExecutionPolicy Bypass -File scripts/setup_weekly_newsletter_scheduler.ps1
 
-  JPM Weekly Newsletter - Keep Awake   Monday 8:15 AM — block sleep through send window
-  JPM Weekly Newsletter - Prep         Monday 8:25 AM — start Outlook
-  JPM Weekly Newsletter                Monday 8:30 AM — build and send (wake + missed-run)
+  JPM Weekly Newsletter - Keep Awake   Monday 8:25 AM — block sleep through send window
+  JPM Weekly Newsletter - Prep         Monday 8:35 AM — start Outlook
+  JPM Weekly Newsletter                Monday 8:40 AM — build and send (wake + missed-run)
   JPM Weekly Newsletter - Catch-up     At logon/unlock — send if Monday was missed
 
   Manual send: powershell -File scripts/run_weekly_newsletter_outlook.ps1 -Force

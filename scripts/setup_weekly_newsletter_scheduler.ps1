@@ -2,12 +2,19 @@
 # Run from repo root:  powershell -ExecutionPolicy Bypass -File scripts/setup_weekly_newsletter_scheduler.ps1
 #
 # Creates/updates:
-#   JPM Weekly Newsletter - Keep Awake   Monday 8:15 AM  block sleep through send window
-#   JPM Weekly Newsletter - Prep         Monday 8:25 AM  start Outlook
-#   JPM Weekly Newsletter                Monday 8:30 AM  build and send (wake + missed-run catch-up)
-#   JPM Weekly Newsletter - Catch-up     At logon + session unlock  send if Monday was missed
+#   JPM Weekly Newsletter - Keep Awake   Monday 8:25 AM  block sleep through send window
+#   JPM Weekly Newsletter - Prep         Monday 8:35 AM  start Outlook
+#   JPM Weekly Newsletter                Monday 8:40 AM  build and send (wake + missed-run catch-up)
+#   JPM Weekly Newsletter - Catch-up     At logon  send if Monday was missed
 
 $ErrorActionPreference = "Stop"
+
+$keepAwakeAt = "8:25AM"
+$prepAt = "8:35AM"
+$sendAt = "8:40AM"
+$keepAwakeLabel = "8:25 AM"
+$prepLabel = "8:35 AM"
+$sendLabel = "8:40 AM"
 
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $prepBat = Join-Path $repoRoot "scripts\open_outlook_for_newsletter.bat"
@@ -32,9 +39,9 @@ function New-NewsletterTaskSettings {
 
 $principal = New-ScheduledTaskPrincipal -UserId $env:USERNAME -LogonType Interactive -RunLevel Limited
 
-# --- 8:25 AM Monday: open Outlook (5 min before send) ---
+# --- Prep Monday: open Outlook (5 min before send) ---
 $prepAction = New-ScheduledTaskAction -Execute $prepBat -WorkingDirectory $repoRoot
-$prepTrigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday -At "8:25AM"
+$prepTrigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday -At $prepAt
 $prepSettings = New-ScheduledTaskSettingsSet `
     -WakeToRun `
     -StartWhenAvailable `
@@ -43,22 +50,22 @@ $prepSettings = New-ScheduledTaskSettingsSet `
     -ExecutionTimeLimit (New-TimeSpan -Minutes 30) `
     -MultipleInstances IgnoreNew
 
-Register-ScheduledTask @{
-    TaskName    = "JPM Weekly Newsletter - Prep"
-    Action      = $prepAction
-    Trigger     = $prepTrigger
-    Settings    = $prepSettings
-    Principal   = $principal
-    Description = "Start Outlook five minutes before the weekly newsletter send task."
-} -Force | Out-Null
-Write-Host "Registered: JPM Weekly Newsletter - Prep (Monday 8:25 AM, Outlook)"
+Register-ScheduledTask `
+    -TaskName "JPM Weekly Newsletter - Prep" `
+    -Action $prepAction `
+    -Trigger $prepTrigger `
+    -Settings $prepSettings `
+    -Principal $principal `
+    -Description "Start Outlook five minutes before the weekly newsletter send task." `
+    -Force | Out-Null
+Write-Host "Registered: JPM Weekly Newsletter - Prep (Monday $prepLabel, Outlook)"
 
-# --- 8:15 AM Monday: keep system awake through send window ---
+# --- Keep system awake through send window ---
 $keepAwakePs1 = Join-Path $repoRoot "scripts\keep_awake_for_newsletter.ps1"
 $keepAction = New-ScheduledTaskAction -Execute "powershell.exe" `
     -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$keepAwakePs1`"" `
     -WorkingDirectory $repoRoot
-$keepTrigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday -At "8:15AM"
+$keepTrigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday -At $keepAwakeAt
 $keepSettings = New-ScheduledTaskSettingsSet `
     -WakeToRun `
     -StartWhenAvailable `
@@ -73,26 +80,26 @@ Register-ScheduledTask `
     -Trigger $keepTrigger `
     -Settings $keepSettings `
     -Principal $principal `
-    -Description "Prevent sleep from 8:15-8:50 AM Monday while the newsletter sends (PC must already be on)." `
+    -Description "Prevent sleep from $keepAwakeLabel-9:00 AM Monday while the newsletter sends (PC must already be on)." `
     -Force | Out-Null
-Write-Host "Registered: JPM Weekly Newsletter - Keep Awake (Monday 8:15 AM)"
+Write-Host "Registered: JPM Weekly Newsletter - Keep Awake (Monday $keepAwakeLabel)"
 
-# --- 8:30 AM Monday: build and send ---
+# --- Build and send ---
 $sendAction = New-ScheduledTaskAction -Execute "powershell.exe" `
     -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$sendPs1`"" `
     -WorkingDirectory $repoRoot
-$sendTrigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday -At "8:30AM"
+$sendTrigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday -At $sendAt
 $sendSettings = New-NewsletterTaskSettings
 
-Register-ScheduledTask @{
-    TaskName    = "JPM Weekly Newsletter"
-    Action      = $sendAction
-    Trigger     = $sendTrigger
-    Settings    = $sendSettings
-    Principal   = $principal
-    Description = "Build and send the executive weekly newsletter via Outlook every Monday at 8:30 AM local time."
-} -Force | Out-Null
-Write-Host "Registered: JPM Weekly Newsletter (Monday 8:30 AM, send)"
+Register-ScheduledTask `
+    -TaskName "JPM Weekly Newsletter" `
+    -Action $sendAction `
+    -Trigger $sendTrigger `
+    -Settings $sendSettings `
+    -Principal $principal `
+    -Description "Build and send the executive weekly newsletter via Outlook every Monday at $sendLabel local time." `
+    -Force | Out-Null
+Write-Host "Registered: JPM Weekly Newsletter (Monday $sendLabel, send)"
 
 # --- Catch-up: at logon and session unlock (if Monday send was missed while asleep) ---
 $catchAction = New-ScheduledTaskAction -Execute "powershell.exe" `
@@ -108,14 +115,14 @@ $catchSettings = New-ScheduledTaskSettingsSet `
 $logonTrigger = New-ScheduledTaskTrigger -AtLogOn -User $env:USERNAME
 $logonTrigger.Delay = "PT3M"
 
-Register-ScheduledTask @{
-    TaskName    = "JPM Weekly Newsletter - Catch-up"
-    Action      = $catchAction
-    Trigger     = $logonTrigger
-    Settings    = $catchSettings
-    Principal   = $principal
-    Description = "After logon, send the newsletter if Monday 8:30 was missed (Mon after 8 AM or Tue before noon)."
-} -Force | Out-Null
+Register-ScheduledTask `
+    -TaskName "JPM Weekly Newsletter - Catch-up" `
+    -Action $catchAction `
+    -Trigger $logonTrigger `
+    -Settings $catchSettings `
+    -Principal $principal `
+    -Description "After logon, send the newsletter if Monday $sendLabel was missed (Mon after $sendLabel or Tue before noon)." `
+    -Force | Out-Null
 Write-Host "Registered: JPM Weekly Newsletter - Catch-up (at logon, 3 min delay)"
 
 # Allow scheduled wake timers on battery as well as AC.
@@ -134,8 +141,8 @@ Get-ScheduledTask -TaskName "JPM Weekly Newsletter*" |
 
 Write-Host ""
 Write-Host "Notes:"
-Write-Host '  - StartWhenAvailable + WakeToRun: missed 8:30 runs when the PC wakes (if timer wake is supported).'
-Write-Host '  - Catch-up task sends after logon/unlock Mon (8 AM+) or Tue (before noon) if not sent yet.'
+Write-Host "  - StartWhenAvailable + WakeToRun: missed $sendLabel runs when the PC wakes (if timer wake is supported)."
+Write-Host "  - Catch-up task sends after logon Mon (after $sendLabel) or Tue (before noon) if not sent yet."
 Write-Host '  - Modern Standby (S0) laptops often cannot wake from sleep on a timer; leave plugged in Mon AM.'
 Write-Host '  - Send state: logs/newsletter-last-send.json prevents duplicate sends.'
 Write-Host '  - Run log: logs/newsletter-outlook-run.log'

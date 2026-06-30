@@ -18,7 +18,7 @@ $hour = $now.Hour
 $inWindow = $false
 if ($Force) {
     $inWindow = $true
-} elseif ($dow -eq "Monday" -and $hour -ge 8) {
+} elseif ($dow -eq "Monday" -and (($hour -gt 8) -or ($hour -eq 8 -and $now.Minute -ge 40))) {
     $inWindow = $true
 } elseif ($dow -eq "Tuesday" -and $hour -lt 12) {
     $inWindow = $true
