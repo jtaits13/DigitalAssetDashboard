@@ -730,3 +730,18 @@
   text-decoration: underline;
   text-underline-offset: 0.12em;
 }
+
+/* KPI strip — flat white tiles on non-home pages (Streamlit deep iframe parity) */
+.site-experience:not(.page-home) .rwa-kpi-row--home-grid .rwa-kpi-cell {
+  background: #fff !important;
+  background-color: #fff !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+.site-experience:not(.page-home) .rwa-kpi-row--home-grid .rwa-kpi-cell:hover {
+  background: #fff !important;
+  background-color: #fff !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
