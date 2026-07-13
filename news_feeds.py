@@ -9,6 +9,7 @@ from datetime import date, datetime, timedelta, timezone
 from html import escape
 from email.utils import parsedate_to_datetime
 from typing import Any, Optional
+from urllib.request import Request, urlopen
 
 import feedparser
 import streamlit as st
@@ -389,7 +390,7 @@ DEFAULT_FEEDS: list[tuple[str, str]] = [
     ("CoinTelegraph", "https://cointelegraph.com/rss"),
     ("Decrypt", "https://decrypt.co/feed"),
     ("CoinDesk", "https://www.coindesk.com/arc/outboundfeeds/rss/"),
-    ("The Block", "https://www.theblockcrypto.com/rss.xml"),
+    ("The Block", "https://www.theblock.co/rss.xml"),
 ]
 
 # Extra ETF/ETP-dedicated + broader crypto/finance sources (checked with feedparser). Appended to :data:`DEFAULT_FEEDS`
@@ -442,7 +443,7 @@ ALL_ARTICLES_SUPPLEMENT_FEEDS: list[tuple[str, str]] = [
 # GitHub Pages / Streamlit / FastAPI ``All digital asset headlines`` only.
 ALL_ARTICLES_FEEDS: list[tuple[str, str]] = [
     ("CoinDesk", "https://www.coindesk.com/arc/outboundfeeds/rss/"),
-    ("The Block", "https://www.theblockcrypto.com/rss.xml"),
+    ("The Block", "https://www.theblock.co/rss.xml"),
 ]
 
 
@@ -528,9 +529,39 @@ def extract_summary(entry: Any) -> str:
     return plain
 
 
+def _sanitize_rss_xml(raw: str) -> str:
+    """
+    Strip empty content-module tags that cause feedparser to blank ``<description>``.
+
+    CoinDesk ships empty ``<content:encoded/>`` / ``<dc:description/>`` alongside a real
+    description CDATA; feedparser then yields an empty summary.
+    """
+    cleaned = re.sub(r"<content:encoded\s*/>", "", raw, flags=re.I)
+    cleaned = re.sub(r"<content:encoded>\s*</content:encoded>", "", cleaned, flags=re.I | re.S)
+    cleaned = re.sub(r"<dc:description\s*/>", "", cleaned, flags=re.I)
+    cleaned = re.sub(r"<dc:description>\s*</dc:description>", "", cleaned, flags=re.I | re.S)
+    return cleaned
+
+
+def _download_rss(url: str, *, timeout: float = 25.0) -> bytes:
+    req = Request(
+        url,
+        headers={
+            "User-Agent": (
+                "Mozilla/5.0 (compatible; DigitalAssetDashboard/1.0; +https://github.com/jtaits13/DigitalAssetDashboard)"
+            ),
+            "Accept": "application/rss+xml, application/xml, text/xml, */*",
+        },
+    )
+    with urlopen(req, timeout=timeout) as resp:
+        return resp.read()
+
+
 @st.cache_data(ttl=300, show_spinner=False)
 def fetch_feed(source_name: str, url: str) -> list[dict[str, Any]]:
-    parsed = feedparser.parse(url)
+    raw = _download_rss(url)
+    text = raw.decode("utf-8", errors="replace")
+    parsed = feedparser.parse(_sanitize_rss_xml(text))
     out: list[dict[str, Any]] = []
     for entry in getattr(parsed, "entries", []) or []:
         link = getattr(entry, "link", "") or ""
@@ -548,7 +579,6 @@ def fetch_feed(source_name: str, url: str) -> list[dict[str, Any]]:
             }
         )
     return out
-
 
 def _load_one_rss(name: str, url: str) -> tuple[list[dict[str, Any]], str | None]:
     try:
