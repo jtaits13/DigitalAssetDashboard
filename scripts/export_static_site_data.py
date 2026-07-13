@@ -2155,7 +2155,7 @@ def main() -> None:
 
     from key_observations.feeds import merge_takeaway_pools
 
-    takeaway_pool = merge_takeaway_pools(home_unique, all_unique, reg_top)
+    takeaway_pool = merge_takeaway_pools(home_unique, all_prepared, reg_top)
 
     from rwa_explore_page_payloads import (
         build_rwa_explore_asset_type_page_payload,
