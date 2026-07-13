@@ -95,8 +95,9 @@ NEWS_FEED_SPECS: dict[str, NewsFeedPageSpec] = {
         badge="NEWS",
         title="All digital asset headlines",
         dek_html=(
-            "Digital-asset-related headlines from CoinDesk, CoinTelegraph, Decrypt, The Block, and The Defiant. "
-            "Stories from the <strong>last seven days</strong> (UTC); <strong>20</strong> per page with search."
+            "Digital-asset headlines from <strong>CoinDesk</strong> and <strong>The Block</strong> only. "
+            "Near-duplicate topics are collapsed to one story; at most <strong>8</strong> headlines per UTC day. "
+            "Stories from the <strong>last seven days</strong>; <strong>20</strong> per page with search."
         ),
         search_placeholder="Keyword in title, summary, or source&hellip;",
         default_back_href="/?jd_scroll=news",

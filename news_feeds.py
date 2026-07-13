@@ -423,8 +423,7 @@ ETP_SUPPLEMENT_FEEDS: list[tuple[str, str]] = [
 
 ETP_NEWS_FEEDS: list[tuple[str, str]] = list(DEFAULT_FEEDS) + ETP_SUPPLEMENT_FEEDS
 
-# Broader market-news sources used on Streamlit/FastAPI ``All Articles`` and static ``all_articles.json`` export to
-# stretch calendar coverage beyond each outlet’s short RSS tail (typically ~50–100 items/search).
+# Legacy Google News supplements (unused). All-articles is restricted to CoinDesk + The Block.
 ALL_ARTICLES_SUPPLEMENT_FEEDS: list[tuple[str, str]] = [
     (
         "Google News (digital assets)",
@@ -440,7 +439,11 @@ ALL_ARTICLES_SUPPLEMENT_FEEDS: list[tuple[str, str]] = [
     ),
 ]
 
-ALL_ARTICLES_FEEDS: list[tuple[str, str]] = list(DEFAULT_FEEDS) + ALL_ARTICLES_SUPPLEMENT_FEEDS
+# GitHub Pages / Streamlit / FastAPI ``All digital asset headlines`` only.
+ALL_ARTICLES_FEEDS: list[tuple[str, str]] = [
+    ("CoinDesk", "https://www.coindesk.com/arc/outboundfeeds/rss/"),
+    ("The Block", "https://www.theblockcrypto.com/rss.xml"),
+]
 
 
 def parse_entry_date(entry: Any) -> Optional[datetime]:
@@ -610,10 +613,64 @@ _MARKET_NEWS_IMPORTANCE_KW: tuple[tuple[re.Pattern[str], int], ...] = (
     (re.compile(r"\b(hack|exploit|breach|bankruptcy|liquidation|inflow|outflow)\b", re.I), 2),
 )
 
-# ``All Articles`` / FastAPI ``/articles`` / static ``all_articles.json``: ``ALL_ARTICLES_FEEDS`` plus ranked cap per UTC day
-# (same pattern as regulatory headlines). No separate calendar window or global row cap—volume follows RSS depth × daily cap.
-ALL_ARTICLES_FEED_DAY_CAP = 5
+# ``All Articles`` / FastAPI ``/articles`` / static ``all_articles.json``: CoinDesk + The Block, topic-deduped, ≤N/UTC day.
+ALL_ARTICLES_FEED_DAY_CAP = 8
 ALL_ARTICLES_PER_PAGE = 20
+ALL_ARTICLES_TOPIC_JACCARD = 0.48
+_ALL_ARTICLES_TITLE_STOPWORDS = frozenset(
+    {
+        "a",
+        "an",
+        "the",
+        "and",
+        "or",
+        "of",
+        "to",
+        "in",
+        "on",
+        "for",
+        "with",
+        "as",
+        "at",
+        "by",
+        "from",
+        "is",
+        "are",
+        "was",
+        "be",
+        "its",
+        "it",
+        "this",
+        "that",
+        "after",
+        "over",
+        "into",
+        "vs",
+        "amid",
+        "says",
+        "say",
+        "said",
+        "new",
+        "will",
+        "may",
+        "can",
+        "has",
+        "have",
+        "about",
+        "than",
+        "their",
+        "how",
+        "why",
+        "what",
+        "when",
+        "where",
+        "who",
+        "as",
+        "up",
+        "out",
+        "via",
+    }
+)
 
 # Items with ``published.date() >= (today UTC − lookback)`` (~31 UTC calendar days inclusive with today).
 HOME_MARKET_NEWS_LOOKBACK_DAYS = 30
@@ -678,6 +735,88 @@ def cap_market_news_per_day(
         out.extend(no_date[:max_per_day])
 
     return out
+
+
+def _significant_title_tokens(title: str) -> frozenset[str]:
+    t = re.sub(r"[^\w\s]+", " ", (title or "").lower())
+    out: set[str] = set()
+    for w in t.split():
+        if len(w) <= 2 or w in _ALL_ARTICLES_TITLE_STOPWORDS or w.isdigit():
+            continue
+        # Light plural/singular fold so "ETF"/"ETFs", "inflow"/"inflows" match.
+        if len(w) > 4 and w.endswith("s") and not w.endswith("ss"):
+            w = w[:-1]
+        out.add(w)
+    return frozenset(out)
+
+
+def titles_cover_same_topic(
+    title_a: str,
+    title_b: str,
+    *,
+    jaccard_threshold: float = ALL_ARTICLES_TOPIC_JACCARD,
+) -> bool:
+    """True when two headlines look like the same story (shared significant tokens)."""
+    ta = _significant_title_tokens(title_a)
+    tb = _significant_title_tokens(title_b)
+    if not ta or not tb:
+        return False
+    inter = len(ta & tb)
+    if inter < 2:
+        return False
+    union = len(ta | tb)
+    if (inter / union) >= jaccard_threshold:
+        return True
+    # Fallback: enough shared keywords even when one title adds extra color words.
+    return inter >= 3 and (inter / min(len(ta), len(tb))) >= 0.6
+
+
+def dedupe_similar_topic_articles(
+    articles: list[dict[str, Any]],
+    *,
+    jaccard_threshold: float = ALL_ARTICLES_TOPIC_JACCARD,
+) -> list[dict[str, Any]]:
+    """
+    Drop later/lower-ranked duplicates of the same topic (e.g. CoinDesk + The Block on one story).
+
+    Prefer higher :func:`market_news_importance_score` (CoinDesk outranks The Block), then newer ``published``.
+    """
+    ranked = sorted(
+        articles,
+        key=lambda x: (
+            market_news_importance_score(x),
+            x.get("published") or datetime.min.replace(tzinfo=timezone.utc),
+        ),
+        reverse=True,
+    )
+    kept: list[dict[str, Any]] = []
+    kept_titles: list[str] = []
+    for item in ranked:
+        title = str(item.get("title") or "")
+        if any(
+            titles_cover_same_topic(title, prev, jaccard_threshold=jaccard_threshold)
+            for prev in kept_titles
+        ):
+            continue
+        kept.append(item)
+        kept_titles.append(title)
+    return kept
+
+
+def prepare_all_digital_asset_articles(
+    articles: list[dict[str, Any]],
+    *,
+    max_per_day: int = ALL_ARTICLES_FEED_DAY_CAP,
+) -> list[dict[str, Any]]:
+    """URL/title dedupe → topic near-dedupe → ≤``max_per_day`` ranked items per UTC day."""
+    unique = dedupe_articles(articles, max_items=None)
+    unique = dedupe_similar_topic_articles(unique)
+    capped = cap_market_news_per_day(unique, max_per_day=max_per_day)
+    capped.sort(
+        key=lambda x: x.get("published") or datetime.min.replace(tzinfo=timezone.utc),
+        reverse=True,
+    )
+    return capped
 
 
 def filter_market_news_calendar_lookback(

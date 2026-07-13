@@ -11,7 +11,6 @@ from scripts.export_static_site_data import (
     STATIC_THE_DEFIANT_REG_EXTRA,
     _article_json,
     articles_published_within_utc_days,
-    dedupe_repetitive_headlines,
     enrich_custodian_access,
 )
 
@@ -19,15 +18,15 @@ from scripts.export_static_site_data import (
 def build_all_articles_page_payload() -> dict[str, Any]:
     from news_feeds import (
         ALL_ARTICLES_FEEDS,
-        dedupe_articles,
         load_all_feeds,
+        prepare_all_digital_asset_articles,
     )
 
     feed_errors: list[str] = []
-    articles, errs = load_all_feeds(list(ALL_ARTICLES_FEEDS) + [STATIC_THE_DEFIANT_FEED])
+    articles, errs = load_all_feeds(list(ALL_ARTICLES_FEEDS))
     feed_errors.extend(errs)
-    unique = dedupe_repetitive_headlines(dedupe_articles(articles, max_items=None))
-    windowed = articles_published_within_utc_days(unique, ALL_DIGITAL_NEWS_LOOKBACK_DAYS)
+    prepared = prepare_all_digital_asset_articles(articles)
+    windowed = articles_published_within_utc_days(prepared, ALL_DIGITAL_NEWS_LOOKBACK_DAYS)
     windowed.sort(
         key=lambda x: x["published"]
         if isinstance(x.get("published"), datetime)

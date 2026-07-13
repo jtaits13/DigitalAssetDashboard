@@ -1961,13 +1961,14 @@ def main() -> None:
 
     export_crypto_json_bundle(manifest, news_articles=home_unique)
 
-    # --- All digital asset headlines: core + supplement + The Defiant; dedupe; last rolling week only (no per-day cap).
-    articles_all, feed_errs_all = load_all_feeds(list(ALL_ARTICLES_FEEDS) + [STATIC_THE_DEFIANT_FEED])
+    # --- All digital asset headlines: CoinDesk + The Block; topic-dedupe; ≤8/UTC day; rolling week.
+    from news_feeds import prepare_all_digital_asset_articles
+
+    articles_all, feed_errs_all = load_all_feeds(list(ALL_ARTICLES_FEEDS))
     for e in feed_errs_all:
         manifest["errors"].append(f"news RSS (all articles): {e}")
-    all_unique = dedupe_articles(articles_all, max_items=None)
-    all_unique = dedupe_repetitive_headlines(all_unique)
-    articles_for_all_json = articles_published_within_utc_days(all_unique, ALL_DIGITAL_NEWS_LOOKBACK_DAYS)
+    all_prepared = prepare_all_digital_asset_articles(articles_all)
+    articles_for_all_json = articles_published_within_utc_days(all_prepared, ALL_DIGITAL_NEWS_LOOKBACK_DAYS)
     articles_for_all_json.sort(
         key=lambda x: x["published"] if isinstance(x.get("published"), datetime) else datetime.min.replace(tzinfo=timezone.utc),
         reverse=True,

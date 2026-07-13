@@ -43,12 +43,11 @@ from news_feeds import (
     build_full_page_market_news_feed_html,
     build_full_page_regulatory_feed_html,
     build_home_news_lane_body_html,
-    cap_market_news_per_day,
-    dedupe_articles,
     fetch_feed,
     filter_headlines_by_keyword,
     load_all_feeds,
     load_all_etf_etp_news_cached,
+    prepare_all_digital_asset_articles,
     prepare_home_hub_market_news_lane,
 )
 from price_ticker import fetch_top_crypto_tickers
@@ -238,8 +237,7 @@ async def all_articles(
 ) -> HTMLResponse:
     articles, feed_errors = load_all_feeds(ALL_ARTICLES_FEEDS)
     search_q = (q or "").strip()
-    unique = dedupe_articles(articles, max_items=None)
-    unique = cap_market_news_per_day(unique, max_per_day=ALL_ARTICLES_FEED_DAY_CAP)
+    unique = prepare_all_digital_asset_articles(articles)
     filtered = filter_headlines_by_keyword(unique, search_q)
     n = len(filtered)
     total_pages = max(1, (n + PER_PAGE - 1) // PER_PAGE) if n else 1
@@ -269,8 +267,8 @@ async def all_articles(
             "headline": section_label_teal("All digital asset headlines", placement="first"),
             "subhead": (
                 '<p class="jd-hub-dek jd-hub-dek-large">'
-                "Same <strong>All articles</strong> bundle as Streamlit and the static export; after deduplication, up to "
-                f"<strong>{ALL_ARTICLES_FEED_DAY_CAP}</strong> ranked headlines per UTC calendar day. "
+                "<strong>CoinDesk</strong> and <strong>The Block</strong> only; near-duplicate topics collapsed; "
+                f"up to <strong>{ALL_ARTICLES_FEED_DAY_CAP}</strong> ranked headlines per UTC calendar day. "
                 f"<strong>{PER_PAGE}</strong> per page.</p>"
             ),
             "search_q": search_q,
