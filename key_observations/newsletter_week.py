@@ -272,15 +272,20 @@ def _pick_section_article(
     week_headlines: list[Any],
     *,
     used_links: set[str],
+    topic_keys: tuple[str, ...] = (),
+    force_matcher: bool = False,
 ) -> dict[str, Any] | None:
     families = SECTION_NEWS_FAMILIES.get(section_id, ())
     try:
-        from key_observations.week_headlines import pick_brief_family_article
+        from key_observations.week_headlines import (
+            match_article_for_takeaway,
+            pick_brief_family_article,
+        )
     except Exception:
+        match_article_for_takeaway = None  # type: ignore[assignment]
         pick_brief_family_article = None  # type: ignore[assignment]
 
-    # Prefer the stricter brief-family picker first (especially TMMF).
-    if pick_brief_family_article:
+    if not force_matcher and pick_brief_family_article:
         for family in families:
             art = pick_brief_family_article(
                 articles, family, exclude_links=used_links, max_age_days=7.0
@@ -288,22 +293,43 @@ def _pick_section_article(
             if art:
                 return art
 
-    for pick in week_headlines:
-        family = str(getattr(pick, "theme_family", "") or "")
-        if family not in families:
-            continue
-        link = str(getattr(pick, "link", "") or "").strip()
-        if link and link in used_links:
-            continue
-        title = str(getattr(pick, "title", "") or "").strip()
-        if not title:
-            continue
-        return {
-            "title": title,
-            "link": link,
-            "source": str(getattr(pick, "source", "") or "").strip(),
-            "summary": "",
-        }
+    if not force_matcher:
+        for pick in week_headlines:
+            family = str(getattr(pick, "theme_family", "") or "")
+            if family not in families:
+                continue
+            link = str(getattr(pick, "link", "") or "").strip()
+            if link and link in used_links:
+                continue
+            title = str(getattr(pick, "title", "") or "").strip()
+            if not title:
+                continue
+            return {
+                "title": title,
+                "link": link,
+                "source": str(getattr(pick, "source", "") or "").strip(),
+                "summary": "",
+            }
+
+    # Broader topic matcher used by legacy takeaways — good fallback for Related links.
+    if match_article_for_takeaway and topic_keys:
+        probe = {
+            "tmmf": "tokenized money market fund settlement cash rails BUIDL",
+            "stablecoins": "stablecoin reserves payments bank issuer USDC",
+            "rwa": "RWA tokenization real-world assets treasuries on-chain",
+            "etp": "bitcoin ether ETF ETP flows filing AUM",
+            "crypto": "bitcoin ethereum crypto market structure dominance",
+        }.get(section_id, section_id)
+        art = match_article_for_takeaway(
+            probe,
+            bullet_lead=probe,
+            bullet_html=probe,
+            topic_keys=topic_keys,
+            articles=articles,
+            used_links=used_links,
+        )
+        if art:
+            return art
     return None
 
 
@@ -356,12 +382,16 @@ def select_weekly_section_takeaways(
     used_links: set[str] | None = None,
     max_items: int = 2,
     skip_fund_launch_slot: bool = False,
+    topic_keys: tuple[str, ...] = (),
 ) -> list[WeeklyTakeaway]:
     """
     Build up to ``max_items`` weekly takeaways for one newsletter section.
 
-    Priority: meaningful WoW → news → flat-week note. Structural page KO leads
-    are not used. Cooled leads from recent weeks are skipped when possible.
+    Default stack when space allows:
+      1) data takeaway (meaningful WoW, else flat note)
+      2) section-specific news bullet with a linked article
+
+    Structural page KO leads are not used. Cooled news/Wow leads are skipped when possible.
     """
     slots = max(0, max_items - (1 if skip_fund_launch_slot else 0))
     if slots <= 0:
@@ -374,40 +404,58 @@ def select_weekly_section_takeaways(
 
     move = _section_kpi_move(section_id, explore, etp=etp, crypto=crypto)
     wow = _wow_takeaway(move, lane=_lane_label(section_id)) if move else None
-    if wow and wow.lead_key not in cooled:
-        out.append(wow)
+    if wow and wow.lead_key in cooled:
+        wow = None
+    data_tw = wow or _flat_takeaway(move, lane=_lane_label(section_id))
 
-    art = _pick_section_article(section_id, articles, headlines, used_links=links)
-    if art and len(out) < slots:
-        news = _news_takeaway(section_id, art, cooled=cooled | {t.lead_key for t in out})
-        if news:
-            link = str(art.get("link") or "").strip()
-            if link:
-                links.add(link)
-            out.append(news)
+    news_tw: WeeklyTakeaway | None = None
+    # Try a few exclusive candidates so we keep a news + article bullet whenever possible.
+    for _ in range(4):
+        art = _pick_section_article(
+            section_id,
+            articles,
+            headlines,
+            used_links=links,
+            topic_keys=topic_keys,
+        )
+        if not art:
+            break
+        cand = _news_takeaway(section_id, art, cooled=cooled | {data_tw.lead_key})
+        link = str(art.get("link") or "").strip()
+        if link:
+            links.add(link)
+        if cand:
+            news_tw = cand
+            break
 
-    # If still empty or news missing under flat conditions, add an explicit flat note
-    # rather than recycling page KO templates.
-    if len(out) < slots:
-        # Prefer news second if wow already taken but news missed cooldown.
-        if not any(t.kind == "news" for t in out):
-            art2 = _pick_section_article(section_id, articles, headlines, used_links=links)
-            if art2:
-                news2 = _news_takeaway(
-                    section_id, art2, cooled=cooled | {t.lead_key for t in out}
-                )
-                if news2:
-                    link = str(art2.get("link") or "").strip()
-                    if link:
-                        links.add(link)
-                    out.append(news2)
-        if len(out) < slots and not any(t.kind == "wow" for t in out):
-            flat = _flat_takeaway(move, lane=_lane_label(section_id))
-            if flat.lead_key not in cooled and flat.lead_key not in {t.lead_key for t in out}:
-                out.append(flat)
-            elif flat.lead_key not in {t.lead_key for t in out}:
-                # Cooldown exhausted: allow flat once as last resort.
-                out.append(flat)
+    if slots == 1:
+        # With only one slot (fund-launch already used the other), prefer news+article.
+        chosen = news_tw or data_tw
+        return [chosen]
+
+    # Two+ slots: takeaway first, then news with article backup.
+    out.append(data_tw)
+    if news_tw:
+        out.append(news_tw)
+    elif slots > 1:
+        # Last-ditch news via topic matcher only (may still fail if the pool is thin).
+        art = _pick_section_article(
+            section_id,
+            articles,
+            headlines,
+            used_links=links,
+            topic_keys=topic_keys,
+            force_matcher=True,
+        )
+        if art:
+            news_tw = _news_takeaway(
+                section_id, art, cooled=cooled | {t.lead_key for t in out}
+            )
+            if news_tw:
+                link = str(art.get("link") or "").strip()
+                if link:
+                    links.add(link)
+                out.append(news_tw)
 
     return out[:slots]
 

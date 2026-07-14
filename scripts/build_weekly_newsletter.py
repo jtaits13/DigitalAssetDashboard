@@ -934,6 +934,7 @@ def _ko_bullets_html(
                 used_links=links,
                 max_items=max_items,
                 skip_fund_launch_slot=bool(fund_launch),
+                topic_keys=topic_keys,
             )
         except Exception:
             weekly = []
@@ -953,15 +954,37 @@ def _ko_bullets_html(
             )
         if shipped_leads is not None:
             shipped_leads.setdefault(section_id, [])
+        try:
+            from key_observations.week_headlines import match_article_for_takeaway
+        except Exception:
+            match_article_for_takeaway = None  # type: ignore[assignment,misc]
         for i, tw in enumerate(weekly):
             if shipped_leads is not None and tw.lead and tw.kind != "flat":
                 shipped_leads[section_id].append(tw.lead)
             chunk = f"<strong>{escape(tw.lead)}</strong> {escape(tw.body)}"
+            related = tw.article
+            # Data takeaways still get a Related article when the matcher finds one.
+            if (
+                related is None
+                and match_article_for_takeaway
+                and topic_keys
+                and tw.kind in {"wow", "flat"}
+            ):
+                related = match_article_for_takeaway(
+                    f"{tw.lead} {tw.body}",
+                    bullet_lead=tw.lead,
+                    bullet_html=chunk,
+                    topic_keys=topic_keys,
+                    articles=articles,
+                    used_links=links,
+                )
+            if related and related.get("link"):
+                links.add(str(related.get("link") or "").strip())
             items.append(
                 _ko_li_email_html(
                     chunk,
                     is_last=(i == len(weekly) - 1),
-                    related_article=tw.article,
+                    related_article=related,
                     accent=accent,
                     outlook=outlook,
                     section=section,
