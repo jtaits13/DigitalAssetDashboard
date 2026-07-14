@@ -2583,3 +2583,56 @@ def build_news_feed_server_zone_html(
         f'<div class="etf-news-nav" id="{nav_id}"></div>'
         "</div></article></main>"
     )
+
+
+def build_news_hub_server_zone_html(*, initial_lane: str = "digital", feed_banner_html: str = "") -> str:
+    """Unified news hub zone matching ``static_home/news.html`` (lanes + magazine layout)."""
+    lane = (initial_lane or "digital").strip().lower()
+    if lane not in {"digital", "etf", "regulatory", "custody"}:
+        lane = "digital"
+    banner = feed_banner_html or '<div class="data-banner" id="js-data-banner" role="status" hidden></div>'
+
+    def _lane_btn(lid: str, label: str) -> str:
+        active = " is-active" if lid == lane else ""
+        sel = "true" if lid == lane else "false"
+        return (
+            f'<button type="button" class="news-hub-lanes__btn{active}" role="tab" '
+            f'aria-selected="{sel}" data-lane="{lid}">{label}</button>'
+        )
+
+    zone_cls = "zone--etp home-zone home-zone--etp" if lane == "etf" else "zone--news home-zone home-zone--news"
+    return (
+        '<main class="page-shell etp-mock-shell">'
+        f'<article class="hub-section hub-section--panel inner-rich-zone {zone_cls} etp-mock-zone">'
+        '<div class="home-zone__stripe" aria-hidden="true"></div>'
+        '<header class="home-zone__head">'
+        '<span class="home-zone__badge" id="js-news-hub-badge" aria-hidden="true">NEWS</span>'
+        '<div class="home-zone__titles">'
+        '<h1 class="page-intro__title" id="js-news-hub-title">Digital asset news</h1>'
+        '<p class="page-intro__dek" id="js-news-hub-dek"></p>'
+        "</div></header>"
+        '<div class="home-zone__body inner-rich-zone__body etp-mock-zone__body">'
+        f"{banner}"
+        '<div class="news-hub-lanes" role="tablist" aria-label="News lanes">'
+        + _lane_btn("digital", "Digital assets")
+        + _lane_btn("etf", "ETF / ETP")
+        + _lane_btn("regulatory", "Regulatory")
+        + _lane_btn("custody", "Custody")
+        + "</div>"
+        '<div class="article-feed-toolbar">'
+        '<label class="search-field">'
+        '<span class="search-field__label">Search this lane</span>'
+        '<input type="search" class="search-field__input" id="js-article-feed-search" '
+        'placeholder="Search title, summary, or source…" />'
+        "</label>"
+        '<p class="toolbar-note" id="js-article-feed-meta">Loading&hellip;</p>'
+        "</div>"
+        '<div class="news-hub-feature" id="js-news-hub-feature" aria-live="polite"></div>'
+        '<div id="js-news-hub-latest-head" class="news-hub-latest-head">'
+        '<h2 class="news-hub-latest-head__title">Latest</h2>'
+        '<p class="news-hub-latest-head__hint">Summary under each headline — click through to the source</p>'
+        "</div>"
+        '<div class="article-feed-stream" id="js-article-feed-list"></div>'
+        '<div class="etf-news-nav" id="js-article-feed-nav"></div>'
+        "</div></article></main>"
+    )

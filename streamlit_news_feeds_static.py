@@ -17,7 +17,7 @@ _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
 
-_NEWS_IFRAME_CSS_VERSION = "5"
+_NEWS_IFRAME_CSS_VERSION = "6"
 NEWS_CANVAS_OVERRIDE_VERSION = "1"
 NEWS_FEED_PANEL_VERSION = "1"
 
@@ -28,6 +28,21 @@ NEWS_GH_ZONE_SOFT_ETP = "#eef2f7"
 _NEWS_JS_DEPS = ("static-base.js", "kpi-hints.js")
 _NEWS_JS_FULL_FEED = ("full-article-feed-page.js",)
 _NEWS_JS_ETF = ("etf-news-page.js",)
+_NEWS_JS_HUB = ("news-hub-page.js",)
+
+_NEWS_HUB_FEED_KEYS = (
+    "all_articles.json",
+    "etf_news.json",
+    "all_regulatory.json",
+    "all_custodian_news.json",
+)
+
+_LANE_TO_KIND = {
+    "digital": "all_articles",
+    "etf": "etf_news",
+    "regulatory": "regulatory",
+    "custody": "custodian",
+}
 
 _NEWS_MEASURE_HEIGHT_JS = """
 function measureNewsFeedContentHeight() {
@@ -241,7 +256,7 @@ def _news_back_label_html(label: str) -> str:
 
 
 @st.cache_resource(show_spinner=False)
-def _cached_iframe_news_stylesheet_v3() -> str:
+def _cached_iframe_news_stylesheet_v4() -> str:
     from streamlit_site_parity import deep_iframe_news_feed_panel_css
 
     chunks: list[str] = [
@@ -252,6 +267,7 @@ def _cached_iframe_news_stylesheet_v3() -> str:
         "css/site-experience.css",
         "css/inner-page-experience.css",
         "css/inner-page-zone-parity.css",
+        "css/news-hub.css",
     ):
         path = _STATIC / rel
         if path.is_file():
@@ -488,7 +504,7 @@ def build_news_server_iframe_html(
     from streamlit_site_parity import deep_iframe_news_feed_panel_css, iframe_internal_link_script
 
     spec = NEWS_FEED_SPECS[kind]
-    css = _cached_iframe_news_stylesheet_v3()
+    css = _cached_iframe_news_stylesheet_v4()
     override_css = news_github_canvas_override_css(zone=spec.canvas_zone)
     panel_css = deep_iframe_news_feed_panel_css(
         scope="body.page-article-feed-iframe.page-etp" if spec.canvas_zone == "etp" else "body.page-article-feed-iframe",
@@ -606,6 +622,203 @@ window.loadJson = function (name) {{
 
 # Back-compat aliases for verify scripts and legacy callers.
 build_news_feed_body_iframe_html = build_news_server_iframe_html
+
+
+def _static_news_hub_fallback() -> dict[str, Any]:
+    out: dict[str, Any] = {}
+    for key in _NEWS_HUB_FEED_KEYS:
+        path = _DATA / key
+        if not path.is_file():
+            continue
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        if isinstance(data, dict):
+            out[key] = data
+    return out
+
+
+def load_news_hub_iframe_payloads() -> dict[str, Any]:
+    """Load all four lane JSON payloads for the unified news hub."""
+    payloads: dict[str, Any] = {}
+    errors: list[str] = []
+    for kind in ("all_articles", "etf_news", "regulatory", "custodian"):
+        try:
+            pack = load_news_feed_iframe_payloads(kind)
+        except Exception as exc:  # noqa: BLE001
+            errors.append(f"{kind}: {exc}")
+            continue
+        for key, val in pack.items():
+            if isinstance(val, dict):
+                payloads[key] = val
+    if errors and not payloads:
+        raise RuntimeError("; ".join(errors[:4]))
+    return payloads
+
+
+def get_news_hub_iframe_payloads() -> dict[str, Any]:
+    from streamlit_payload_stale_first import load_static_first_with_live_fallback, mark_payload_map_stale
+
+    return load_static_first_with_live_fallback(
+        load_stale=lambda: _static_news_hub_fallback() or None,
+        load_live_cached=lambda: _cached_news_hub_iframe_payloads(),
+        mark_stale=mark_payload_map_stale,
+    )
+
+
+@st.cache_data(show_spinner=False, ttl=300)
+def _cached_news_hub_iframe_payloads() -> dict[str, Any]:
+    return load_news_hub_iframe_payloads()
+
+
+def build_news_hub_iframe_html(
+    *,
+    payloads: dict[str, Any],
+    initial_lane: str = "digital",
+    back_href: str = "/?jd_scroll=news",
+    back_label: str = "← Back to home · News Hub",
+) -> str:
+    from streamlit_server_deep_page import build_news_hub_server_zone_html
+    from streamlit_site_parity import deep_iframe_news_feed_panel_css, iframe_internal_link_script
+
+    lane = (initial_lane or "digital").strip().lower()
+    if lane not in _LANE_TO_KIND:
+        lane = "digital"
+    zone = "etp" if lane == "etf" else "news"
+    css = _cached_iframe_news_stylesheet_v4()
+    override_css = news_github_canvas_override_css(zone=zone)
+    panel_css = deep_iframe_news_feed_panel_css(
+        scope="body.page-article-feed-iframe.page-etp" if zone == "etp" else "body.page-article-feed-iframe",
+        zone=zone,
+    )
+    label_html = _news_back_label_html(back_label)
+    back_link = _NEWS_IFRAME_BACK_LINK.format(back_href=escape(back_href), back_label_html=label_html)
+
+    err_bits: list[str] = []
+    for key in _NEWS_HUB_FEED_KEYS:
+        feed = payloads.get(key) if isinstance(payloads.get(key), dict) else {}
+        fe = feed.get("feed_errors") if isinstance(feed, dict) else None
+        if isinstance(fe, list):
+            err_bits.extend(str(e) for e in fe[:2])
+    zone_html = build_news_hub_server_zone_html(
+        initial_lane=lane,
+        feed_banner_html=_feed_banner_html(err_bits[:4]),
+    )
+    payloads_json = _json_for_script(payloads)
+    js_deps = _read_js_files(_NEWS_JS_DEPS)
+    js_boot = _read_js_files(_NEWS_JS_HUB)
+    body_etp = " page-etp" if lane == "etf" else ""
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>{css}</style>
+<style id="news-gh-canvas-override-v{NEWS_CANVAS_OVERRIDE_VERSION}-{zone}">{override_css}</style>
+<style id="news-feed-panel-v{NEWS_FEED_PANEL_VERSION}">{panel_css}</style>
+</head>
+<body class="page-full-feed page-article-feed page-article-feed-iframe page-news-hub site-experience page-inner--rich lane-{lane}{body_etp}" data-news-lane="{lane}">
+{back_link}
+{zone_html}
+<script>
+window.__NEWS_FEED_PAYLOADS = {payloads_json};
+</script>
+<script>
+{js_deps}
+</script>
+<script>
+window.loadJson = function (name) {{
+  var key = String(name || "").split("/").pop();
+  if (window.__NEWS_FEED_PAYLOADS && Object.prototype.hasOwnProperty.call(window.__NEWS_FEED_PAYLOADS, key)) {{
+    return Promise.resolve(window.__NEWS_FEED_PAYLOADS[key]);
+  }}
+  return Promise.reject(new Error("Unknown news payload: " + name));
+}};
+</script>
+<script>
+{js_boot}
+</script>
+<script>
+{_NEWS_MEASURE_HEIGHT_JS}
+(function () {{
+  function sendHeight() {{
+    if (typeof window.parent.postMessage !== "function") return;
+    var h = measureNewsFeedContentHeight();
+    if (h === null || h < 200) return;
+    window.parent.postMessage({{ type: "streamlit:setFrameHeight", height: h }}, "*");
+    try {{
+      window.parent.postMessage({{ type: "jpm-tmmf-height", height: h }}, "*");
+    }} catch (e) {{}}
+  }}
+  function bindObservers() {{
+    if (typeof ResizeObserver === "undefined") return;
+    var ro = new ResizeObserver(sendHeight);
+    [
+      "main.page-shell.etp-mock-shell",
+      "article.etp-mock-zone",
+      "#js-article-feed-list",
+      "#js-article-feed-nav",
+      "#js-news-hub-feature",
+    ].forEach(function (sel) {{
+      var el = document.querySelector(sel);
+      if (el) ro.observe(el);
+    }});
+  }}
+  sendHeight();
+  window.addEventListener("load", function () {{
+    sendHeight();
+    bindObservers();
+  }});
+  [100, 400, 1000, 2500, 5000, 8000, 12000].forEach(function (ms) {{
+    setTimeout(sendHeight, ms);
+  }});
+}})();
+</script>
+{news_iframe_canvas_override_js(zone=zone)}
+{iframe_internal_link_script()}
+</body>
+</html>"""
+
+
+@st.cache_data(show_spinner=False, ttl=3600)
+def _cached_news_hub_iframe_html(
+    payloads_json: str,
+    initial_lane: str,
+    back_href: str,
+    back_label: str,
+    *,
+    _css_version: str = _NEWS_IFRAME_CSS_VERSION,
+) -> str:
+    payloads = json.loads(payloads_json)
+    return build_news_hub_iframe_html(
+        payloads=payloads,
+        initial_lane=initial_lane,
+        back_href=back_href,
+        back_label=back_label,
+    )
+
+
+def render_news_hub_body_iframe(
+    *,
+    payloads: dict[str, Any],
+    initial_lane: str = "digital",
+    back_href: str = "/?jd_scroll=news",
+    back_label: str = "← Back to home · News Hub",
+) -> None:
+    from streamlit_site_parity import render_subpage_body_iframe
+
+    payloads_json = _json_for_script(payloads)
+    render_subpage_body_iframe(
+        _cached_news_hub_iframe_html(
+            payloads_json,
+            initial_lane,
+            back_href,
+            back_label,
+        ),
+        height=1400,
+    )
+    inject_news_host_canvas_override()
 
 
 @st.cache_data(show_spinner=False, ttl=300)

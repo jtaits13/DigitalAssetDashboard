@@ -4325,13 +4325,9 @@ def consume_jd_page_query() -> None:
 
 def render_site_nav_html(*, active: str = "home", is_landing: bool = False, for_streamlit: bool = False) -> str:
     top = "_top" if for_streamlit else ""
-    news_href = (
-        "/?jd_scroll=news"
-        if for_streamlit or not is_landing
-        else "#section-news"
-    )
     t = f' target="{top}"' if top else ""
     ph = lambda key: _nav_page_href(key, for_streamlit=for_streamlit, is_landing=is_landing)
+    news_href = ph("articles") if for_streamlit else ("#section-news" if is_landing else "/All_Articles")
 
     def a(href: str, label: str, *, active_link: bool = False, extra_cls: str = "") -> str:
         cls = "is-active" if active_link else ""
@@ -4627,11 +4623,11 @@ def build_static_news_rail_html(articles: list[dict[str, Any]]) -> str:
     <h3 class="home-news-block__heading">Latest Headlines</h3>
     <ul class="headline-list headline-list--rail">{list_body}</ul>
     <div class="home-news-rail__more">
-      <a class="btn btn-secondary home-news-rail__cta" href="/All_Articles">All digital asset headlines →</a>
+      <a class="btn btn-secondary home-news-rail__cta" href="/All_Articles">Open news hub →</a>
     </div>
   </div>
   <div class="home-news-block home-news-block--feeds">
-    <h3 class="home-news-block__heading">Focused News Feeds</h3>
+    <h3 class="home-news-block__heading">Focused News Lanes</h3>
     <nav class="home-feed-links" aria-label="Focused news feeds">
       <a class="btn btn-secondary home-feed-link home-feed-link--regulatory" href="/All_Regulatory">Regulatory News</a>
       <a class="btn btn-secondary home-feed-link home-feed-link--etp" href="/All_ETF_News">ETF / ETP News</a>
