@@ -85,7 +85,7 @@
     return "digital";
   }
 
-  def writeLaneToUrl(id) {
+  function writeLaneToUrl(id) {
     try {
       if (!window.location || window.location.protocol === "about:") return;
       var u = new URL(window.location.href);

@@ -328,7 +328,11 @@
       }
 
       var visibleManifestErrors = (manifest.errors || []).filter(function (msg) {
-        return String(msg || "").indexOf("Crypto global snapshot:") !== 0;
+        var s = String(msg || "");
+        // CoinPaprika global is optional; ETF RSS 403s from CI IPs are common and non-fatal.
+        if (s.indexOf("Crypto global snapshot:") === 0) return false;
+        if (/HTTP Error 403|HTTP 403/i.test(s)) return false;
+        return true;
       });
 
       if (visibleManifestErrors.length && banner) {
