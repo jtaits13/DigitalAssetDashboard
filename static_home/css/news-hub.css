@@ -182,7 +182,7 @@
   .news-hub-feature {
     grid-template-columns: 1.45fr 1fr;
     gap: 1.15rem;
-    align-items: start;
+    align-items: stretch;
   }
 }
 
@@ -191,8 +191,9 @@
   flex-direction: column;
   justify-content: flex-start;
   gap: 0.15rem;
-  min-height: 0;
-  height: auto;
+  min-height: 12rem;
+  height: 100%;
+  box-sizing: border-box;
   padding: 1.15rem 1.3rem 1.2rem;
   background:
     linear-gradient(180deg, #ffffff 0%, var(--nh-lead-wash) 100%),
