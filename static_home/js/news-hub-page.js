@@ -69,6 +69,7 @@
   var filtered = [];
   var page = 0;
   var searchAllMode = false;
+  var activeQuery = "";
   var corpus = [];
   var corpusReady = false;
   var corpusLoading = null;
@@ -142,6 +143,27 @@
     if (!t) return "";
     if (t.length <= max) return t;
     return t.substring(0, max).replace(/\s+\S*$/, "") + "…";
+  }
+
+  function highlightText(text, q) {
+    var raw = String(text || "");
+    if (!q) return esc(raw);
+    var lower = raw.toLowerCase();
+    var needle = String(q).toLowerCase();
+    if (!needle) return esc(raw);
+    var out = "";
+    var i = 0;
+    while (i < raw.length) {
+      var at = lower.indexOf(needle, i);
+      if (at < 0) {
+        out += esc(raw.slice(i));
+        break;
+      }
+      out += esc(raw.slice(i, at));
+      out += '<mark class="news-hub-mark">' + esc(raw.slice(at, at + needle.length)) + "</mark>";
+      i = at + needle.length;
+    }
+    return out;
   }
 
   function metaExtras(a, c) {
@@ -226,8 +248,9 @@
 
   function storyRowHtml(a, c) {
     var href = a.link || "#";
-    var title = esc(a.title || "Untitled");
-    var dek = snip(a.summary || "", 200);
+    var titleHtml = highlightText(a.title || "Untitled", activeQuery);
+    var dekRaw = snip(a.summary || "", searchAllMode ? 220 : 200);
+    var dekHtml = dekRaw ? highlightText(dekRaw, activeQuery) : "";
     var topic = classifyTopic(a);
     var extras = metaExtras(a, c);
     var access = accessHtml(a, c);
@@ -238,7 +261,9 @@
       toplineBits.push('<span class="news-hub-story__when">' + esc(extras) + "</span>");
     }
     return (
-      '<li class="news-hub-story">' +
+      '<li class="news-hub-story' +
+      (searchAllMode ? " news-hub-story--result" : "") +
+      '">' +
       '<a class="news-hub-story__link" href="' +
       esc(href) +
       '" target="_blank" rel="noopener noreferrer">' +
@@ -250,9 +275,9 @@
       toplineBits.join("") +
       "</div>" +
       '<p class="news-hub-story__title">' +
-      title +
+      titleHtml +
       "</p>" +
-      (dek ? '<p class="news-hub-story__dek">' + esc(dek) + "</p>" : "") +
+      (dekHtml ? '<p class="news-hub-story__dek">' + dekHtml + "</p>" : "") +
       "</div>" +
       '<span class="news-hub-story__go" aria-hidden="true">Read →</span>' +
       "</a></li>"
@@ -314,6 +339,13 @@
 
   function listByDayHtml(items, c) {
     if (!items.length) {
+      if (searchAllMode && activeQuery) {
+        return (
+          '<p class="article-feed-empty news-hub-search-empty">No stories match “' +
+          esc(activeQuery) +
+          '”. Try another word, or clear search to browse this lane.</p>'
+        );
+      }
       return '<p class="article-feed-empty">' + esc(c.empty) + "</p>";
     }
     var prevKey = null;
@@ -411,21 +443,49 @@
   function applyFilter() {
     var el = document.getElementById("js-article-feed-search");
     var c = lane();
-    var q = (el && el.value ? el.value : "").trim().toLowerCase();
+    var raw = (el && el.value ? el.value : "").trim();
+    var q = raw.toLowerCase();
     page = 0;
+    activeQuery = raw;
     if (!q) {
       searchAllMode = false;
+      document.body.classList.remove("is-news-search");
       filtered = all.slice();
       render();
       return;
     }
     searchAllMode = true;
+    document.body.classList.add("is-news-search");
     ensureCorpus().then(function (rows) {
       filtered = rows.filter(function (a) {
         return matchesQuery(a, q, c);
       });
       render();
     });
+  }
+
+  function setResultsChrome(sorted) {
+    var latestHead = document.getElementById("js-news-hub-latest-head");
+    if (!latestHead) return;
+    if (searchAllMode) {
+      latestHead.hidden = false;
+      latestHead.innerHTML =
+        '<h2 class="news-hub-latest-head__title">Search results</h2>' +
+        '<p class="news-hub-latest-head__hint">' +
+        (sorted.length
+          ? sorted.length +
+            " match" +
+            (sorted.length === 1 ? "" : "es") +
+            " for “" +
+            esc(activeQuery) +
+            "” · all lanes"
+          : "No matches for “" + esc(activeQuery) + "”") +
+        "</p>";
+      return;
+    }
+    latestHead.innerHTML =
+      '<h2 class="news-hub-latest-head__title">Latest</h2>' +
+      '<p class="news-hub-latest-head__hint">Summary under each headline — click through to the source</p>';
   }
 
   function render() {
@@ -441,12 +501,25 @@
         ? sortArticlesByPublishedDesc(filtered)
         : filtered.slice();
 
-    var start;
-    var slice;
+    setResultsChrome(sorted);
+    document.body.classList.toggle("is-news-search", searchAllMode);
+
+    var start = 0;
     var featureItems = [];
     var listItems;
+    var np;
 
-    if (page === 0) {
+    if (searchAllMode) {
+      // Results mode: skip magazine lead — show a scannable flat list.
+      if (featureEl) {
+        featureEl.hidden = true;
+        featureEl.innerHTML = "";
+      }
+      start = page * PAGE_SIZE;
+      listItems = sorted.slice(start, start + PAGE_SIZE);
+      if (latestHead) latestHead.hidden = false;
+      np = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE) || 1);
+    } else if (page === 0) {
       featureItems = sorted.slice(0, FEATURE_COUNT);
       var rest = sorted.slice(FEATURE_COUNT);
       var listBudget = Math.max(0, PAGE_SIZE - featureItems.length);
@@ -457,11 +530,22 @@
         featureEl.innerHTML = featureHtml(featureItems, c);
       }
       if (latestHead) latestHead.hidden = !listItems.length && !featureItems.length;
+      var remainingAfter0 =
+        Math.max(
+          0,
+          sorted.length -
+            FEATURE_COUNT -
+            Math.max(0, PAGE_SIZE - Math.min(FEATURE_COUNT, sorted.length))
+        );
+      var extraPages = Math.ceil(remainingAfter0 / PAGE_SIZE);
+      np = 1 + Math.max(0, extraPages);
+      if (sorted.length <= FEATURE_COUNT) np = 1;
     } else {
-      var offset = FEATURE_COUNT + (page - 1) * PAGE_SIZE;
-      // page 1+ uses full PAGE_SIZE from remaining after features on page 0
       var afterFeature = Math.max(0, sorted.length - FEATURE_COUNT);
-      var page0List = Math.max(0, Math.min(PAGE_SIZE - Math.min(FEATURE_COUNT, sorted.length), afterFeature));
+      var page0List = Math.max(
+        0,
+        Math.min(PAGE_SIZE - Math.min(FEATURE_COUNT, sorted.length), afterFeature)
+      );
       start = FEATURE_COUNT + page0List + (page - 1) * PAGE_SIZE;
       listItems = sorted.slice(start, start + PAGE_SIZE);
       featureItems = [];
@@ -470,25 +554,31 @@
         featureEl.innerHTML = "";
       }
       if (latestHead) latestHead.hidden = !listItems.length;
+      var rem0 =
+        Math.max(
+          0,
+          sorted.length -
+            FEATURE_COUNT -
+            Math.max(0, PAGE_SIZE - Math.min(FEATURE_COUNT, sorted.length))
+        );
+      np = 1 + Math.max(0, Math.ceil(rem0 / PAGE_SIZE));
+      if (sorted.length <= FEATURE_COUNT) np = 1;
     }
 
     listEl.innerHTML = listByDayHtml(listItems, c);
 
-    var shownStart = page === 0 ? (sorted.length ? 1 : 0) : start + 1;
-    var shownEnd =
-      page === 0
-        ? Math.min(featureItems.length + listItems.length, sorted.length)
-        : Math.min(start + listItems.length, sorted.length);
+    var shownStart = sorted.length ? start + 1 : 0;
+    var shownEnd = Math.min(start + listItems.length, sorted.length);
+    if (!searchAllMode && page === 0) {
+      shownStart = sorted.length ? 1 : 0;
+      shownEnd = Math.min(featureItems.length + listItems.length, sorted.length);
+    }
 
     if (metaEl) {
       metaEl.textContent = searchAllMode
-        ? "Showing " +
-          shownStart +
-          "–" +
-          shownEnd +
-          " of " +
-          sorted.length +
-          " across all news lanes"
+        ? sorted.length
+          ? "Showing " + shownStart + "–" + shownEnd + " of " + sorted.length + " matches"
+          : "No matches"
         : "Showing " +
           shownStart +
           "–" +
@@ -501,11 +591,6 @@
     }
 
     if (navEl) {
-      var remainingAfter0 =
-        Math.max(0, sorted.length - FEATURE_COUNT - Math.max(0, PAGE_SIZE - Math.min(FEATURE_COUNT, sorted.length)));
-      var extraPages = Math.ceil(remainingAfter0 / PAGE_SIZE);
-      var np = 1 + Math.max(0, extraPages);
-      if (sorted.length <= FEATURE_COUNT) np = 1;
       navEl.innerHTML =
         '<button type="button" class="btn btn-nav" id="article-feed-prev" ' +
         (page <= 0 ? "disabled" : "") +

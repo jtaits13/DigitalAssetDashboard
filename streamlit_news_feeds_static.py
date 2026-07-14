@@ -17,7 +17,7 @@ _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
 
-_NEWS_IFRAME_CSS_VERSION = "11"
+_NEWS_IFRAME_CSS_VERSION = "12"
 NEWS_CANVAS_OVERRIDE_VERSION = "1"
 NEWS_FEED_PANEL_VERSION = "1"
 
