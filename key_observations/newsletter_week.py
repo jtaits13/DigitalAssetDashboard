@@ -37,7 +37,7 @@ _WS_RE = re.compile(r"\s+")
 class WeeklyTakeaway:
     lead: str
     body: str
-    kind: str  # wow | news | flat | soft
+    kind: str  # wow | news | flat | soft | launch | launch_none
     article: dict[str, Any] | None = None
     lead_key: str = ""
 
@@ -590,6 +590,65 @@ def _fetch_article_blurb(url: str, *, timeout: float = 6.0) -> str:
     return " ".join(paras)[:800]
 
 
+def _tmmf_no_launch_takeaway() -> WeeklyTakeaway:
+    # Renderer appends the terminal period; keep leads unpunctuated like WoW/flat.
+    lead = "No notable TMMF fund launches this week"
+    return WeeklyTakeaway(
+        lead=lead,
+        body=(
+            "New product debuts were quiet; existing issuer AUM and distribution rails "
+            "carried the TMMF story instead."
+        ),
+        kind="launch_none",
+        article=None,
+        lead_key=normalize_lead(lead),
+    )
+
+
+def _tmmf_fund_launch_takeaway(
+    articles: list[dict[str, Any]] | None,
+    *,
+    cooled: set[str],
+    used_links: set[str],
+) -> WeeklyTakeaway:
+    """Second TMMF bullet: notable fund launch this week, or an explicit none."""
+    try:
+        from key_observations.week_headlines import launch_section_copy, pick_fund_launch
+    except Exception:
+        return _tmmf_no_launch_takeaway()
+
+    pool = [
+        art
+        for art in (articles or [])
+        if str(art.get("link") or "").strip() not in used_links
+    ]
+    launch = pick_fund_launch(pool, "tmmf", max_age_days=7.0)
+    if not launch:
+        return _tmmf_no_launch_takeaway()
+
+    lead, _ = launch_section_copy(launch)
+    lead = lead.strip().rstrip(".!?…:")
+    key = normalize_lead(lead)
+    if key in cooled:
+        return _tmmf_no_launch_takeaway()
+
+    return WeeklyTakeaway(
+        lead=lead,
+        body=(
+            "New wrappers expand who can hold on-chain cash and use TMMFs in settlement or "
+            "treasury workflows, even before aggregate AUM jumps again."
+        ),
+        kind="launch",
+        article={
+            "title": launch.title,
+            "link": launch.link,
+            "source": launch.source,
+            "summary": launch.summary,
+        },
+        lead_key=key,
+    )
+
+
 def _news_takeaway(
     section_id: str,
     article: dict[str, Any],
@@ -715,11 +774,14 @@ def select_weekly_section_takeaways(
 
     Default stack when space allows:
       1) data takeaway (meaningful WoW, else flat note)
-      2) section-specific news bullet with a linked article
+      2) TMMF: notable fund launch, or an explicit none; other sections: news + article
+      3) optional extra section news when max_items > 2
 
-    Structural page KO leads are not used. Cooled news/Wow leads are skipped when possible.
+    Structural page KO leads are not used. Cooled news/launch leads are skipped when possible.
     """
-    slots = max(0, max_items - (1 if skip_fund_launch_slot else 0))
+    # TMMF owns its launch bullet inside this selector; do not reserve an outer slot for it.
+    skip_outer_launch = bool(skip_fund_launch_slot) and section_id != "tmmf"
+    slots = max(0, max_items - (1 if skip_outer_launch else 0))
     if slots <= 0:
         return []
 
@@ -733,37 +795,23 @@ def select_weekly_section_takeaways(
     # Keep current KPI moves even if a similar lead shipped last week; cooldown is for news.
     data_tw = wow or _flat_takeaway(move, lane=_lane_label(section_id), section_id=section_id)
 
-    news_tw: WeeklyTakeaway | None = None
-    # Try a few exclusive candidates so we keep a news + article bullet whenever possible.
-    for _ in range(4):
-        art = _pick_section_article(
-            section_id,
-            articles,
-            headlines,
-            used_links=links,
-            topic_keys=topic_keys,
-        )
-        if not art:
-            break
-        cand = _news_takeaway(section_id, art, cooled=cooled | {data_tw.lead_key})
-        link = str(art.get("link") or "").strip()
-        if link:
-            links.add(link)
-        if cand:
-            news_tw = cand
-            break
-
-    if slots == 1:
-        # With only one slot (fund-launch already used the other), prefer news+article.
-        chosen = news_tw or data_tw
-        return [chosen]
-
-    # Two+ slots: takeaway first, then news with article backup.
-    out.append(data_tw)
-    if news_tw:
-        out.append(news_tw)
-    elif slots > 1:
-        # Last-ditch news via topic matcher only (may still fail if the pool is thin).
+    def _pick_news(*, extra_cooled: set[str]) -> WeeklyTakeaway | None:
+        for _ in range(4):
+            art = _pick_section_article(
+                section_id,
+                articles,
+                headlines,
+                used_links=links,
+                topic_keys=topic_keys,
+            )
+            if not art:
+                break
+            cand = _news_takeaway(section_id, art, cooled=extra_cooled)
+            link = str(art.get("link") or "").strip()
+            if link:
+                links.add(link)
+            if cand:
+                return cand
         art = _pick_section_article(
             section_id,
             articles,
@@ -772,16 +820,39 @@ def select_weekly_section_takeaways(
             topic_keys=topic_keys,
             force_matcher=True,
         )
-        if art:
-            news_tw = _news_takeaway(
-                section_id, art, cooled=cooled | {t.lead_key for t in out}
-            )
-            if news_tw:
-                link = str(art.get("link") or "").strip()
-                if link:
-                    links.add(link)
-                out.append(news_tw)
+        if not art:
+            return None
+        cand = _news_takeaway(section_id, art, cooled=extra_cooled)
+        link = str(art.get("link") or "").strip()
+        if link:
+            links.add(link)
+        return cand
 
+    if section_id == "tmmf":
+        out.append(data_tw)
+        if slots >= 2:
+            launch_tw = _tmmf_fund_launch_takeaway(
+                articles, cooled=cooled | {data_tw.lead_key}, used_links=links
+            )
+            link = str((launch_tw.article or {}).get("link") or "").strip()
+            if link:
+                links.add(link)
+            out.append(launch_tw)
+        if slots >= 3:
+            news_tw = _pick_news(extra_cooled=cooled | {t.lead_key for t in out})
+            if news_tw:
+                out.append(news_tw)
+        return out[:slots]
+
+    news_tw = _pick_news(extra_cooled=cooled | {data_tw.lead_key})
+
+    if slots == 1:
+        # With only one slot (outer fund-launch already used the other), prefer news+article.
+        return [news_tw or data_tw]
+
+    out.append(data_tw)
+    if news_tw:
+        out.append(news_tw)
     return out[:slots]
 
 

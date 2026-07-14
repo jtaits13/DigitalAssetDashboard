@@ -924,6 +924,9 @@ def _ko_bullets_html(
         try:
             from key_observations.newsletter_week import select_weekly_section_takeaways
 
+            # TMMF weekly stack owns the launch/none bullet as #2; other sections
+            # still reserve a slot when an outer fund-launch bullet is prepended.
+            weekly_owns_launch = section_id == "tmmf"
             weekly = select_weekly_section_takeaways(
                 section_id,
                 explore=explore or {},
@@ -933,13 +936,14 @@ def _ko_bullets_html(
                 week_headlines=week_headlines or [],
                 used_links=links,
                 max_items=max_items,
-                skip_fund_launch_slot=bool(fund_launch),
+                skip_fund_launch_slot=bool(fund_launch) and not weekly_owns_launch,
                 topic_keys=topic_keys,
             )
         except Exception:
             weekly = []
+            weekly_owns_launch = False
         items: list[str] = []
-        if fund_launch:
+        if fund_launch and not weekly_owns_launch:
             link = str(getattr(fund_launch, "link", "") or "").strip()
             if link:
                 links.add(link)
@@ -959,7 +963,7 @@ def _ko_bullets_html(
         except Exception:
             match_article_for_takeaway = None  # type: ignore[assignment,misc]
         for i, tw in enumerate(weekly):
-            if shipped_leads is not None and tw.lead and tw.kind == "news":
+            if shipped_leads is not None and tw.lead and tw.kind in {"news", "launch"}:
                 shipped_leads[section_id].append(tw.lead)
             chunk = f"<strong>{escape(tw.lead)}</strong> {escape(tw.body)}"
             related = tw.article
