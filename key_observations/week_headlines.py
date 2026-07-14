@@ -649,6 +649,160 @@ def pick_fund_launch(
     )
 
 
+# Broader than headline "notable launch" gates: section takeaways include non-major issuers.
+_TMMF_SECTION_LAUNCH_RE = re.compile(
+    r"\b(tokenized money[- ]market|tokenized mmf|tokenized (?:money[- ]market )?fund|"
+    r"on[- ]chain money[- ]market|tokenized cash(?: fund)?|buidl|benji|ibenji|"
+    r"jltxx|usyc|jtrsy|wtrig|money[- ]market fund)\b",
+    re.IGNORECASE,
+)
+_TMMF_PRODUCT_RE = re.compile(
+    r"\b(buidl|benji|ibenji|jltxx|usyc|jtrsy|wtrig)\b",
+    re.IGNORECASE,
+)
+_TMMF_ISSUER_DISPLAY = {
+    "state street": "State Street",
+    "blackrock": "BlackRock",
+    "fidelity": "Fidelity",
+    "franklin templeton": "Franklin Templeton",
+    "jpmorgan": "JPMorgan",
+    "jpmorgan chase": "JPMorgan",
+    "jpm": "JPMorgan",
+    "goldman sachs": "Goldman Sachs",
+    "morgan stanley": "Morgan Stanley",
+    "citigroup": "Citi",
+    "citi": "Citi",
+    "bank of america": "Bank of America",
+    "bofa": "Bank of America",
+    "bny mellon": "BNY Mellon",
+    "vanguard": "Vanguard",
+    "invesco": "Invesco",
+    "wisdomtree": "WisdomTree",
+    "grayscale": "Grayscale",
+    "schwab": "Schwab",
+    "charles schwab": "Schwab",
+    "ubs": "UBS",
+    "hsbc": "HSBC",
+    "dbs": "DBS",
+    "northern trust": "Northern Trust",
+    "wells fargo": "Wells Fargo",
+    "amex": "American Express",
+    "american express": "American Express",
+}
+_TMMF_TITLE_ISSUER_RE = re.compile(
+    r"^([A-Z][\w&.\'-]*(?:[\s-](?:[A-Z][\w&.\'-]+|and|&)){0,4})\s+"
+    r"(?:launches|launched|debuts|debuted|unveils|unveiled|introduces|introduced|"
+    r"rolls out|rolled out|lists|listed)",
+    re.IGNORECASE,
+)
+
+
+def _is_tmmf_section_launch_article(art: dict[str, Any]) -> bool:
+    """TMMF launch candidate for section takeaways (major-issuer not required)."""
+    text = _article_text(art)
+    title = str(art.get("title") or "")
+    if _is_price_headline(art):
+        return False
+    if not _LAUNCH_VERB_RE.search(text):
+        return False
+    if _POST_LAUNCH_FLOW_RE.search(text) and not _LAUNCH_VERB_RE.search(title):
+        return False
+    if _STABLECOIN_RESERVE_LAUNCH_RE.search(text):
+        return False
+    if _CRYPTO_ETF_LAUNCH_RE.search(text) and re.search(r"\betf\b", text, re.IGNORECASE):
+        if not _TMMF_LAUNCH_RE.search(text):
+            return False
+    return bool(_TMMF_SECTION_LAUNCH_RE.search(text) or _TMMF_LAUNCH_RE.search(text))
+
+
+def pick_tmmf_fund_launch(
+    articles: list[dict[str, Any]] | None,
+    *,
+    max_age_days: float = 7.0,
+) -> FundLaunch | None:
+    """
+    Pick a TMMF fund launch for the newsletter section bullet.
+
+    Major-institution ("notable") hits are ranked first when several match;
+    non-major issuer launches still qualify.
+    """
+    best_rank: tuple[Any, ...] | None = None
+    best_art: dict[str, Any] | None = None
+    for art in articles or []:
+        age = _article_age_days(art)
+        if age is not None and age > max_age_days:
+            continue
+        if not _is_tmmf_section_launch_article(art):
+            continue
+        text = _article_text(art)
+        is_major = 1 if _MAJOR_INSTITUTION_RE.search(text) else 0
+        rank = (is_major, _article_sort_key(art))
+        if best_rank is None or rank > best_rank:
+            best_rank = rank
+            best_art = art
+    if not best_art:
+        return None
+    return FundLaunch(
+        category="tmmf",
+        title=str(best_art.get("title") or "").strip(),
+        link=str(best_art.get("link") or "").strip(),
+        source=str(best_art.get("source") or "Industry").strip(),
+        summary=str(best_art.get("summary") or "").strip(),
+    )
+
+
+def _tmmf_issuer_label(text: str) -> str | None:
+    m = _MAJOR_INSTITUTION_RE.search(text or "")
+    if m:
+        key = m.group(0).lower()
+        return _TMMF_ISSUER_DISPLAY.get(key, m.group(0).strip().title())
+    tm = _TMMF_TITLE_ISSUER_RE.search((text or "").strip())
+    if not tm:
+        return None
+    name = re.sub(r"\s+", " ", tm.group(1)).strip(" -")
+    if len(name) < 2 or len(name) > 48:
+        return None
+    return name
+
+
+def _tmmf_product_label(text: str) -> str | None:
+    m = _TMMF_PRODUCT_RE.search(text or "")
+    return m.group(0).upper() if m else None
+
+
+def tmmf_launch_takeaway_copy(launch: FundLaunch) -> tuple[str, str]:
+    """Lead + market-impact body for the TMMF section launch bullet."""
+    blob = f"{launch.title} {launch.summary}".strip()
+    issuer = _tmmf_issuer_label(blob)
+    product = _tmmf_product_label(blob)
+
+    if issuer and product:
+        lead = f"{issuer} launched {product}, a tokenized money-market fund"
+        body = (
+            f"{issuer}'s {product} adds another on-chain cash wrapper institutions can use "
+            "for settlement and treasury, even before aggregate TMMF AUM jumps again."
+        )
+    elif product:
+        lead = f"{product} launched as a tokenized money-market fund"
+        body = (
+            f"{product} expands the tokenized cash menu institutions can use for "
+            "settlement and treasury workflows."
+        )
+    elif issuer:
+        lead = f"{issuer} launched a new tokenized money-market fund"
+        body = (
+            f"{issuer} is widening who can hold on-chain cash through a new TMMF wrapper—"
+            "useful for settlement and treasury even before aggregate AUM jumps."
+        )
+    else:
+        lead = "A new tokenized money-market fund launched"
+        body = (
+            "New wrappers expand who can hold on-chain cash and use TMMFs in settlement or "
+            "treasury workflows, even before aggregate AUM jumps again."
+        )
+    return lead, body
+
+
 def detect_fund_launches(
     articles: list[dict[str, Any]] | None,
     *,

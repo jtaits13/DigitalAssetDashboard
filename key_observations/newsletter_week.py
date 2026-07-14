@@ -592,7 +592,7 @@ def _fetch_article_blurb(url: str, *, timeout: float = 6.0) -> str:
 
 def _tmmf_no_launch_takeaway() -> WeeklyTakeaway:
     # Renderer appends the terminal period; keep leads unpunctuated like WoW/flat.
-    lead = "No notable TMMF fund launches this week"
+    lead = "No TMMF fund launches this week"
     return WeeklyTakeaway(
         lead=lead,
         body=(
@@ -611,9 +611,12 @@ def _tmmf_fund_launch_takeaway(
     cooled: set[str],
     used_links: set[str],
 ) -> WeeklyTakeaway:
-    """Second TMMF bullet: notable fund launch this week, or an explicit none."""
+    """Second TMMF bullet: fund launch this week (notable preferred), or an explicit none."""
     try:
-        from key_observations.week_headlines import launch_section_copy, pick_fund_launch
+        from key_observations.week_headlines import (
+            pick_tmmf_fund_launch,
+            tmmf_launch_takeaway_copy,
+        )
     except Exception:
         return _tmmf_no_launch_takeaway()
 
@@ -622,11 +625,12 @@ def _tmmf_fund_launch_takeaway(
         for art in (articles or [])
         if str(art.get("link") or "").strip() not in used_links
     ]
-    launch = pick_fund_launch(pool, "tmmf", max_age_days=7.0)
+    # Broader than headline gates: any TMMF launch qualifies; major issuers rank first.
+    launch = pick_tmmf_fund_launch(pool, max_age_days=7.0)
     if not launch:
         return _tmmf_no_launch_takeaway()
 
-    lead, _ = launch_section_copy(launch)
+    lead, body = tmmf_launch_takeaway_copy(launch)
     lead = lead.strip().rstrip(".!?…:")
     key = normalize_lead(lead)
     if key in cooled:
@@ -634,10 +638,7 @@ def _tmmf_fund_launch_takeaway(
 
     return WeeklyTakeaway(
         lead=lead,
-        body=(
-            "New wrappers expand who can hold on-chain cash and use TMMFs in settlement or "
-            "treasury workflows, even before aggregate AUM jumps again."
-        ),
+        body=body,
         kind="launch",
         article={
             "title": launch.title,
@@ -774,7 +775,7 @@ def select_weekly_section_takeaways(
 
     Default stack when space allows:
       1) data takeaway (meaningful WoW, else flat note)
-      2) TMMF: notable fund launch, or an explicit none; other sections: news + article
+      2) TMMF: fund launch (major issuers preferred), or an explicit none; other sections: news + article
       3) optional extra section news when max_items > 2
 
     Structural page KO leads are not used. Cooled news/launch leads are skipped when possible.
