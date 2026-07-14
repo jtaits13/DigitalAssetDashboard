@@ -73,7 +73,8 @@ STATIC_THE_DEFIANT_FEED: tuple[str, str] = ("The Defiant", STATIC_THE_DEFIANT_RS
 STATIC_THE_DEFIANT_REG_EXTRA: list[tuple[str, str, str, bool]] = [
     ("The Defiant", STATIC_THE_DEFIANT_RSS, "Global", False),
 ]
-ALL_DIGITAL_NEWS_LOOKBACK_DAYS = 7
+ALL_DIGITAL_NEWS_LOOKBACK_DAYS = 5
+ETF_NEWS_LOOKBACK_DAYS = 5
 CUSTODIAN_ACCESS_FETCH_MAX = 25
 HOME_RWA_PREVIEW_ROWS = 8
 HOME_CRYPTO_PREVIEW_ROWS = 5
@@ -177,17 +178,91 @@ def dedupe_repetitive_headlines(articles: list[dict[str, Any]]) -> list[dict[str
 
 
 def articles_published_within_utc_days(articles: list[dict[str, Any]], days: int) -> list[dict[str, Any]]:
-    """Keep only items with ``published`` in the last ``days`` full UTC-relative window (rolling)."""
+    """Keep items on the last ``days`` UTC calendar dates inclusive (today through today−days+1)."""
     if days < 1:
         return []
-    now = datetime.now(timezone.utc)
-    cutoff = now - timedelta(days=days)
+    today = datetime.now(timezone.utc).date()
+    cutoff = today - timedelta(days=days - 1)
     out: list[dict[str, Any]] = []
     for a in articles:
         pub = a.get("published")
-        if isinstance(pub, datetime) and pub.astimezone(timezone.utc) >= cutoff:
+        if isinstance(pub, datetime) and pub.astimezone(timezone.utc).date() >= cutoff:
             out.append(a)
     return out
+
+
+def _rehydrate_article_from_json(row: dict[str, Any]) -> dict[str, Any]:
+    """Turn a committed ``*_articles.json`` row back into an in-memory article dict."""
+    pub_raw = row.get("published")
+    pub: datetime | None = None
+    if isinstance(pub_raw, datetime):
+        pub = pub_raw if pub_raw.tzinfo else pub_raw.replace(tzinfo=timezone.utc)
+    elif isinstance(pub_raw, str) and pub_raw.strip():
+        try:
+            pub = datetime.fromisoformat(pub_raw.replace("Z", "+00:00"))
+            if pub.tzinfo is None:
+                pub = pub.replace(tzinfo=timezone.utc)
+        except ValueError:
+            pub = None
+    out: dict[str, Any] = {
+        "title": row.get("title") or "",
+        "link": row.get("link") or "",
+        "source": row.get("source") or "",
+        "published": pub,
+        "summary": row.get("summary") or "",
+        "country": row.get("country") or "",
+    }
+    if row.get("access"):
+        out["access"] = row["access"]
+    if row.get("category"):
+        out["category"] = row["category"]
+    return out
+
+
+def merge_rolling_news_archive(
+    fresh: list[dict[str, Any]],
+    *,
+    prior_path: Path,
+    lookback_days: int,
+    max_per_day: int | None = None,
+) -> list[dict[str, Any]]:
+    """
+    Union live RSS items with previously exported JSON so short RSS windows still
+    accumulate a multi-day hub history across scheduled refreshes.
+    """
+    from news_feeds import ALL_ARTICLES_FEED_DAY_CAP, cap_market_news_per_day
+
+    by_key: dict[str, dict[str, Any]] = {}
+    if prior_path.is_file():
+        try:
+            prior = json.loads(prior_path.read_text(encoding="utf-8"))
+            prior_items = prior.get("items") if isinstance(prior, dict) else None
+            if isinstance(prior_items, list):
+                for row in prior_items:
+                    if not isinstance(row, dict):
+                        continue
+                    art = _rehydrate_article_from_json(row)
+                    key = (art.get("link") or art.get("title") or "").strip()
+                    if key:
+                        by_key[key] = art
+        except (OSError, ValueError, TypeError):
+            pass
+    for art in fresh:
+        key = (art.get("link") or art.get("title") or "").strip()
+        if key:
+            by_key[key] = art
+    merged = list(by_key.values())
+    merged = articles_published_within_utc_days(merged, lookback_days)
+    day_cap = ALL_ARTICLES_FEED_DAY_CAP if max_per_day is None else max_per_day
+    if day_cap > 0:
+        merged = cap_market_news_per_day(merged, max_per_day=day_cap)
+    merged.sort(
+        key=lambda x: x["published"]
+        if isinstance(x.get("published"), datetime)
+        else datetime.min.replace(tzinfo=timezone.utc),
+        reverse=True,
+    )
+    return merged
 
 
 def _etp_row_json(
@@ -1968,10 +2043,10 @@ def main() -> None:
     for e in feed_errs_all:
         manifest["errors"].append(f"news RSS (all articles): {e}")
     all_prepared = prepare_all_digital_asset_articles(articles_all)
-    articles_for_all_json = articles_published_within_utc_days(all_prepared, ALL_DIGITAL_NEWS_LOOKBACK_DAYS)
-    articles_for_all_json.sort(
-        key=lambda x: x["published"] if isinstance(x.get("published"), datetime) else datetime.min.replace(tzinfo=timezone.utc),
-        reverse=True,
+    articles_for_all_json = merge_rolling_news_archive(
+        all_prepared,
+        prior_path=OUT / "all_articles.json",
+        lookback_days=ALL_DIGITAL_NEWS_LOOKBACK_DAYS,
     )
 
     reg_articles, reg_errs = load_regulatory_articles(extra_feeds=STATIC_THE_DEFIANT_REG_EXTRA)
@@ -2025,7 +2100,8 @@ def main() -> None:
     for e in etf_feed_errs:
         manifest["errors"].append(f"ETF news RSS: {e}")
 
-    etf_items = [_article_json(a) for a in etf_all]
+    etf_windowed = articles_published_within_utc_days(etf_all, ETF_NEWS_LOOKBACK_DAYS)
+    etf_items = [_article_json(a) for a in etf_windowed]
     (OUT / "etf_news.json").write_text(
         json.dumps({"items": etf_items}, indent=2),
         encoding="utf-8",

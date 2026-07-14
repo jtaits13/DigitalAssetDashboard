@@ -14,7 +14,8 @@
       title: "Digital asset news",
       dek:
         "Curated headlines from <strong>CoinDesk</strong> and <strong>The Block</strong> — " +
-        "duplicates collapsed, up to eight stories per day. Built to scan like a newsroom, filtered for digital assets.",
+        "duplicates collapsed, up to eight stories per day, rolling <strong>five</strong> UTC days. " +
+        "Built to scan like a newsroom, filtered for digital assets.",
       searchPlaceholder: "Search title, summary, or source…",
       includeCountry: false,
       includeAccess: false,
@@ -27,7 +28,7 @@
       title: "ETF &amp; ETP news",
       dek:
         "Crypto and finance headlines focused on exchange-traded products — flows, filings, approvals, and issuers. " +
-        "Up to five ranked stories per UTC day.",
+        "Up to five ranked stories per UTC day across a rolling <strong>five</strong>-day window.",
       searchPlaceholder: "Search ETF/ETP headlines…",
       includeCountry: false,
       includeAccess: false,
@@ -238,8 +239,11 @@
         prevKey = key;
         var label =
           typeof articleDayHeading === "function" ? articleDayHeading(a.published) : String(key);
+        var isPrior = String(label).trim().toUpperCase() !== "TODAY";
         html +=
-          '<section class="news-hub-day">' +
+          '<section class="news-hub-day' +
+          (isPrior ? " news-hub-day--prior" : "") +
+          '">' +
           '<h3 class="news-hub-day__label">' +
           esc(label) +
           "</h3>" +

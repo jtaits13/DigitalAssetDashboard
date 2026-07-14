@@ -7,15 +7,19 @@ from typing import Any
 
 from scripts.export_static_site_data import (
     ALL_DIGITAL_NEWS_LOOKBACK_DAYS,
+    ETF_NEWS_LOOKBACK_DAYS,
     STATIC_THE_DEFIANT_FEED,
     STATIC_THE_DEFIANT_REG_EXTRA,
     _article_json,
     articles_published_within_utc_days,
     enrich_custodian_access,
+    merge_rolling_news_archive,
 )
 
 
 def build_all_articles_page_payload() -> dict[str, Any]:
+    from pathlib import Path
+
     from news_feeds import (
         ALL_ARTICLES_FEEDS,
         load_all_feeds,
@@ -26,12 +30,11 @@ def build_all_articles_page_payload() -> dict[str, Any]:
     articles, errs = load_all_feeds(list(ALL_ARTICLES_FEEDS))
     feed_errors.extend(errs)
     prepared = prepare_all_digital_asset_articles(articles)
-    windowed = articles_published_within_utc_days(prepared, ALL_DIGITAL_NEWS_LOOKBACK_DAYS)
-    windowed.sort(
-        key=lambda x: x["published"]
-        if isinstance(x.get("published"), datetime)
-        else datetime.min.replace(tzinfo=timezone.utc),
-        reverse=True,
+    prior = Path(__file__).resolve().parent / "static_home" / "data" / "all_articles.json"
+    windowed = merge_rolling_news_archive(
+        prepared,
+        prior_path=prior,
+        lookback_days=ALL_DIGITAL_NEWS_LOOKBACK_DAYS,
     )
     ts = datetime.now(timezone.utc).isoformat()
     return {
@@ -95,12 +98,19 @@ def build_etf_news_page_payload() -> dict[str, Any]:
     feed_errors: list[str] = []
     articles, errs = load_all_etf_etp_news_cached(extra_feeds=[STATIC_THE_DEFIANT_FEED])
     feed_errors.extend(errs)
+    windowed = articles_published_within_utc_days(articles, ETF_NEWS_LOOKBACK_DAYS)
+    windowed.sort(
+        key=lambda x: x["published"]
+        if isinstance(x.get("published"), datetime)
+        else datetime.min.replace(tzinfo=timezone.utc),
+        reverse=True,
+    )
     ts = datetime.now(timezone.utc).isoformat()
     return {
         "payloads": {
             "etf_news.json": {
                 "generated_at": ts,
-                "items": [_article_json(a) for a in articles],
+                "items": [_article_json(a) for a in windowed],
             },
         },
         "feed_errors": feed_errors,

@@ -17,7 +17,7 @@ _REPO = Path(__file__).resolve().parent
 _STATIC = _REPO / "static_home"
 _DATA = _STATIC / "data"
 
-_NEWS_IFRAME_CSS_VERSION = "6"
+_NEWS_IFRAME_CSS_VERSION = "7"
 NEWS_CANVAS_OVERRIDE_VERSION = "1"
 NEWS_FEED_PANEL_VERSION = "1"
 
@@ -112,7 +112,7 @@ NEWS_FEED_SPECS: dict[str, NewsFeedPageSpec] = {
         dek_html=(
             "Digital-asset headlines from <strong>CoinDesk</strong> and <strong>The Block</strong> only. "
             "Near-duplicate topics are collapsed to one story; at most <strong>8</strong> headlines per UTC day. "
-            "Stories from the <strong>last seven days</strong>; <strong>20</strong> per page with search."
+            "Stories from the rolling <strong>last five days</strong>."
         ),
         search_placeholder="Keyword in title, summary, or source&hellip;",
         default_back_href="/?jd_scroll=news",
@@ -187,7 +187,8 @@ NEWS_FEED_SPECS: dict[str, NewsFeedPageSpec] = {
         title="ETF/ETP News",
         dek_html=(
             "ETF and ETP-related headlines from crypto and finance news sources. Up to "
-            "<strong>five</strong> ranked stories per <strong>UTC day</strong> with search and pagination."
+            "<strong>five</strong> ranked stories per <strong>UTC day</strong> across a rolling "
+            "<strong>five</strong>-day window, with search and pagination."
         ),
         search_placeholder="",
         default_back_href="/US_Crypto_ETPs",
