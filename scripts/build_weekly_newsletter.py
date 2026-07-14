@@ -8,6 +8,7 @@ Usage:
 
 Env:
   SITE_BASE_URL — absolute site root for CTA links (no trailing slash).
+  NEWSLETTER_WEEKLY_TAKEAWAYS — set to 0 to revert section takeaways to page KO bullets.
 """
 
 from __future__ import annotations
@@ -877,6 +878,15 @@ def _fund_launch_bullet_html(
     )
 
 
+def _weekly_takeaways_active() -> bool:
+    try:
+        from key_observations.newsletter_week import weekly_takeaways_enabled
+
+        return weekly_takeaways_enabled()
+    except Exception:
+        return False
+
+
 def _ko_bullets_html(
     html_sources: tuple[str, ...],
     *,
@@ -889,9 +899,78 @@ def _ko_bullets_html(
     outlook: bool = False,
     section: bool = False,
     executive_news_only: bool = False,
+    explore: dict[str, dict[str, Any]] | None = None,
+    etp: dict[str, Any] | None = None,
+    crypto: dict[str, Any] | None = None,
+    week_headlines: list[Any] | None = None,
+    shipped_leads: dict[str, list[str]] | None = None,
+    force_legacy_takeaways: bool = False,
 ) -> str:
     profile = _SECTION_KO[section_id]
     topic_keys: tuple[str, ...] = profile["topic_keys"]
+    links = used_links if used_links is not None else set()
+    ul_style = (
+        f"margin:0;padding:0 0 0 18px;list-style:disc;list-style-position:outside;{_ol_font()}"
+        if outlook
+        else _UL_STYLE
+    )
+
+    use_weekly = (
+        not force_legacy_takeaways
+        and _weekly_takeaways_active()
+        and section_id in {"tmmf", "stablecoins", "rwa", "etp", "crypto"}
+    )
+    if use_weekly:
+        try:
+            from key_observations.newsletter_week import select_weekly_section_takeaways
+
+            weekly = select_weekly_section_takeaways(
+                section_id,
+                explore=explore or {},
+                etp=etp,
+                crypto=crypto,
+                articles=articles,
+                week_headlines=week_headlines or [],
+                used_links=links,
+                max_items=max_items,
+                skip_fund_launch_slot=bool(fund_launch),
+            )
+        except Exception:
+            weekly = []
+        items: list[str] = []
+        if fund_launch:
+            link = str(getattr(fund_launch, "link", "") or "").strip()
+            if link:
+                links.add(link)
+            items.append(
+                _fund_launch_bullet_html(
+                    fund_launch,
+                    accent=accent,
+                    is_last=(not weekly),
+                    outlook=outlook,
+                    section=section,
+                )
+            )
+        if shipped_leads is not None:
+            shipped_leads.setdefault(section_id, [])
+        for i, tw in enumerate(weekly):
+            if shipped_leads is not None and tw.lead and tw.kind != "flat":
+                shipped_leads[section_id].append(tw.lead)
+            chunk = f"<strong>{escape(tw.lead)}</strong> {escape(tw.body)}"
+            items.append(
+                _ko_li_email_html(
+                    chunk,
+                    is_last=(i == len(weekly) - 1),
+                    related_article=tw.article,
+                    accent=accent,
+                    outlook=outlook,
+                    section=section,
+                )
+            )
+        if items:
+            return f'<ul style="{ul_style}">{"".join(items)}</ul>'
+        # Fall through to legacy page-KO path if weekly returned nothing.
+
     chunks = _select_section_ko_chunks(
         *html_sources,
         section_id=section_id,
@@ -903,13 +982,12 @@ def _ko_bullets_html(
         chunks = chunks[:max_items]
     if not chunks and not fund_launch:
         return ""
-    links = used_links if used_links is not None else set()
     try:
         from key_observations.week_headlines import match_article_for_takeaway
     except Exception:
         match_article_for_takeaway = None  # type: ignore[assignment,misc]
 
-    items: list[str] = []
+    items = []
     if fund_launch:
         link = str(getattr(fund_launch, "link", "") or "").strip()
         if link:
@@ -923,11 +1001,6 @@ def _ko_bullets_html(
                 section=section,
             )
         )
-    ul_style = (
-        f"margin:0;padding:0 0 0 18px;list-style:disc;list-style-position:outside;{_ol_font()}"
-        if outlook
-        else _UL_STYLE
-    )
     for i, chunk in enumerate(chunks):
         related: dict[str, Any] | None = None
         if match_article_for_takeaway and topic_keys:
@@ -1217,6 +1290,12 @@ def _section_block(
     outlook: bool = False,
     executive_news_only: bool = False,
     scope_note: str = "",
+    explore: dict[str, dict[str, Any]] | None = None,
+    etp: dict[str, Any] | None = None,
+    crypto: dict[str, Any] | None = None,
+    week_headlines: list[Any] | None = None,
+    shipped_leads: dict[str, list[str]] | None = None,
+    force_legacy_takeaways: bool = False,
 ) -> str:
     section_links = used_links if used_links is not None else set(reserved_headline_links or set())
     if ko_body_html is None:
@@ -1232,6 +1311,12 @@ def _section_block(
             outlook=outlook,
             section=outlook,
             executive_news_only=executive_news_only,
+            explore=explore,
+            etp=etp,
+            crypto=crypto,
+            week_headlines=week_headlines,
+            shipped_leads=shipped_leads,
+            force_legacy_takeaways=force_legacy_takeaways,
         )
     else:
         bullets = ko_body_html
@@ -2040,6 +2125,7 @@ def build_newsletter_html(
     site_base: str = DEFAULT_SITE_BASE,
     variant: str = "standard",
     outlook_body: bool = False,
+    force_legacy_takeaways: bool = False,
 ) -> tuple[str, datetime]:
     site = site_base.rstrip("/")
     generated: list[datetime] = []
@@ -2090,12 +2176,19 @@ def build_newsletter_html(
     for pick in week_headlines:
         if pick.link:
             newsletter_used_links.add(str(pick.link).strip())
+    shipped_leads: dict[str, list[str]] = {}
     section_base_kw = {
         "takeaways_label": "Key takeaways",
         "max_bullets": max_bullets,
         "articles": articles,
         "used_links": newsletter_used_links,
         "executive_news_only": is_executive,
+        "explore": explore,
+        "etp": etp,
+        "crypto": crypto,
+        "week_headlines": week_headlines,
+        "shipped_leads": shipped_leads,
+        "force_legacy_takeaways": force_legacy_takeaways,
     }
     headlines_block = _week_headlines_html(week_headlines, outlook=ol)
 
@@ -2342,6 +2435,17 @@ def build_newsletter_html(
 </body>
 </html>
 """
+    if (
+        not force_legacy_takeaways
+        and _weekly_takeaways_active()
+        and shipped_leads
+    ):
+        try:
+            from key_observations.newsletter_week import record_shipped_leads
+
+            record_shipped_leads(week_label=week_label, leads_by_section=shipped_leads)
+        except Exception:
+            pass
     return html, week_end
 
 
@@ -2356,15 +2460,28 @@ def main() -> None:
     )
     parser.add_argument("--site-base", default=DEFAULT_SITE_BASE, help="Absolute site URL for links")
     parser.add_argument("--standard-only", action="store_true", help="Skip executive variant output")
+    parser.add_argument(
+        "--legacy-takeaways",
+        action="store_true",
+        help="Revert section Key takeaways to page KO scraping (disable weekly first-cut path).",
+    )
     args = parser.parse_args()
 
-    html, week_end = build_newsletter_html(site_base=args.site_base, variant="standard")
+    html, week_end = build_newsletter_html(
+        site_base=args.site_base,
+        variant="standard",
+        force_legacy_takeaways=args.legacy_takeaways,
+    )
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(html, encoding="utf-8")
     print(f"Wrote {args.out} (week ending {week_end.date().isoformat()})")
 
     if not args.standard_only:
-        exec_html, _ = build_newsletter_html(site_base=args.site_base, variant="executive")
+        exec_html, _ = build_newsletter_html(
+            site_base=args.site_base,
+            variant="executive",
+            force_legacy_takeaways=args.legacy_takeaways,
+        )
         args.exec_out.parent.mkdir(parents=True, exist_ok=True)
         args.exec_out.write_text(exec_html, encoding="utf-8")
         print(f"Wrote {args.exec_out} (executive variant)")
