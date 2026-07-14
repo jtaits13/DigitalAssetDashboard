@@ -397,6 +397,10 @@ def _article_theme_flags(text: str) -> set[str]:
         flags.add("payments")
     if re.search(r"\b(etf|etp|inflow|outflow|filing|sec approval|spot bitcoin|spot ether)\b", t):
         flags.add("listed_access")
+    if re.search(r"\b(outflow|redemption|selloff|sell-off|net selling|withdrawals?)\b", t):
+        flags.add("flow_out")
+    if re.search(r"\b(inflow|creation|net buying|subscriptions?)\b", t):
+        flags.add("flow_in")
     if re.search(r"\b(regulat|sec\b|cftc|legislation|policy|oversight|compliance)\b", t):
         flags.add("policy")
     if re.search(r"\b(tokeniz|rwa|treasury|treasuries|money market|mmf|buidl)\b", t):
@@ -425,6 +429,18 @@ def _interpret_news_for_market(section_id: str, title: str, blurb: str) -> str:
             return (
                 "For listed crypto products, that kind of stress usually weighs on risk appetite "
                 "and can slow creations until confidence in spot liquidity returns."
+            )
+        if "flow_out" in flags and "flow_in" not in flags:
+            return (
+                "Outflows through listed wrappers are an early institutional positioning read: "
+                "risk is leaving the regulated channel, which can soften spot liquidity even if "
+                "longer-term AUM remains large."
+            )
+        if "flow_in" in flags:
+            return (
+                "Inflows into listed products signal that traditional channels are still taking "
+                "crypto beta; that usually supports primary-market creations and secondary "
+                "liquidity around the majors."
             )
         if "policy" in flags:
             return (
@@ -465,6 +481,11 @@ def _interpret_news_for_market(section_id: str, title: str, blurb: str) -> str:
         return (
             f"For {lane} markets, the stakes are mainly permissioning-clearer rules can "
             "unlock balance-sheet adoption, while ambiguity keeps institutions on the sidelines."
+        )
+    if "flow_out" in flags and "flow_in" not in flags:
+        return (
+            f"For {lane} markets, money leaving listed or primary channels usually marks "
+            "de-risking: expect tighter secondary liquidity until creations resume."
         )
     if "listed_access" in flags:
         return (
