@@ -241,28 +241,178 @@ def _headline_hook(title: str, *, max_len: int = 72) -> str:
 def _news_so_what(section_id: str) -> str:
     return {
         "tmmf": (
-            "Watch whether the story reinforces institutional cash rails, new fund launches, "
-            "or distribution partnerships versus a change in aggregate TMMF AUM."
+            "Watch whether this reinforces institutional cash rails, new fund launches, "
+            "or distribution partnerships."
         ),
         "stablecoins": (
-            "Ask whether reserves, bank rails, or issuer policy shifted—or if the print is "
-            "mostly narrative without a market-cap move."
+            "Ask whether reserves, bank rails, or issuer policy are what actually shifted."
         ),
         "rwa": (
-            "Map the headline to tokenization plumbing: issuance, distribution, collateral, "
-            "or regulation—not just a one-off product mention."
+            "Map the move to issuance, distribution, collateral, or regulation—"
+            "not just a one-off product mention."
         ),
         "etp": (
-            "Compare the news with listed-access signals—flows, filings, or product pipeline—"
-            "rather than price alone."
+            "Compare the development with listed-access signals—flows, filings, or pipeline."
         ),
         "crypto": (
-            "Use the story as market context for the KPI strip; separate structural plumbing "
-            "news from short-horizon price chatter."
+            "Separate structural plumbing news from short-horizon price chatter."
         ),
     }.get(
         section_id,
-        "Read the story against this section's KPIs before treating it as a structural shift.",
+        "Read the development against this section's KPIs before calling it a structural shift.",
+    )
+
+
+_META_DESC_RE = re.compile(
+    r'<meta[^>]+(?:name|property)=["\'](?:description|og:description|twitter:description)["\'][^>]+'
+    r'content=["\']([^"\']+)["\']',
+    re.I,
+)
+_META_DESC_RE_ALT = re.compile(
+    r'<meta[^>]+content=["\']([^"\']+)["\'][^>]+(?:name|property)=["\'](?:description|og:description)["\']',
+    re.I,
+)
+_P_TAG_RE = re.compile(r"<p[^>]*>(.*?)</p>", re.I | re.S)
+_TAG_RE = re.compile(r"<[^>]+>")
+_WS_COMPRESS_RE = re.compile(r"\s+")
+_SENTENCE_SPLIT_RE = re.compile(r"(?<=[.!?])\s+")
+
+
+def _strip_html_text(html: str) -> str:
+    from html import unescape
+
+    text = _TAG_RE.sub(" ", html or "")
+    text = unescape(text)
+    return _WS_COMPRESS_RE.sub(" ", text).strip()
+
+
+def _fetch_article_blurb(url: str, *, timeout: float = 6.0) -> str:
+    """Best-effort page fetch for a short article blurb (meta / lead paragraphs)."""
+    link = (url or "").strip()
+    if not link.startswith("http"):
+        return ""
+    try:
+        from urllib.request import Request, urlopen
+
+        req = Request(
+            link,
+            headers={
+                "User-Agent": (
+                    "Mozilla/5.0 (compatible; DigitalAssetDashboard/1.0; "
+                    "+https://github.com/jtaits13/DigitalAssetDashboard)"
+                ),
+                "Accept": "text/html,application/xhtml+xml",
+            },
+        )
+        with urlopen(req, timeout=timeout) as resp:
+            raw = resp.read(180_000)
+        html = raw.decode("utf-8", errors="replace")
+    except Exception:
+        return ""
+
+    for rx in (_META_DESC_RE, _META_DESC_RE_ALT):
+        m = rx.search(html)
+        if m:
+            desc = _strip_html_text(m.group(1))
+            if len(desc) >= 40:
+                return desc[:600]
+
+    paras: list[str] = []
+    for m in _P_TAG_RE.finditer(html):
+        p = _strip_html_text(m.group(1))
+        if len(p) < 60:
+            continue
+        if re.search(r"cookie|subscribe|sign up|advertisement|newsletter", p, re.I):
+            continue
+        paras.append(p)
+        if len(paras) >= 3:
+            break
+    return " ".join(paras)[:800]
+
+
+def _pick_takeaway_sentence(blurb: str, *, title: str) -> str:
+    text = _WS_COMPRESS_RE.sub(" ", (blurb or "").strip())
+    if not text:
+        return ""
+    title_norm = normalize_lead(title)
+    sentences = [s.strip() for s in _SENTENCE_SPLIT_RE.split(text) if s.strip()]
+    scored: list[tuple[int, str]] = []
+    for s in sentences:
+        if len(s) < 45:
+            continue
+        if normalize_lead(s) == title_norm:
+            continue
+        # Prefer mid-length factual sentences.
+        score = min(len(s), 220)
+        if re.search(
+            r"\b(said|announced|launched|approved|filed|will|plans?|raising|cut|rose|fell)\b",
+            s,
+            re.I,
+        ):
+            score += 40
+        scored.append((score, s))
+    if not scored:
+        return text[:220].rsplit(" ", 1)[0] + ("…" if len(text) > 220 else "")
+    scored.sort(key=lambda row: row[0], reverse=True)
+    best = scored[0][1]
+    if len(best) > 260:
+        best = best[:257].rsplit(" ", 1)[0] + "…"
+    return best
+
+
+def _compose_news_body(section_id: str, article: dict[str, Any]) -> str:
+    """Build a concrete takeaway body from article text (fetch) or RSS summary."""
+    title = str(article.get("title") or "").strip()
+    summary = _strip_html_text(str(article.get("summary") or ""))
+    link = str(article.get("link") or "").strip()
+    blurb = _fetch_article_blurb(link) if link else ""
+    if not blurb:
+        blurb = summary
+    claim = _pick_takeaway_sentence(blurb, title=title)
+    if claim:
+        # Keep one concrete claim; add a short section lens only when helpful.
+        lens = _news_so_what(section_id)
+        # Avoid restating the claim as a generic "centers on that story" line.
+        if len(claim) >= 80:
+            return claim
+        return f"{claim} {lens}"
+    # Last resort if fetch/summary both empty.
+    return _news_so_what(section_id)
+
+
+def _news_takeaway(
+    section_id: str,
+    article: dict[str, Any],
+    *,
+    cooled: set[str],
+) -> WeeklyTakeaway | None:
+    title = str(article.get("title") or "").strip()
+    if not title:
+        return None
+    blob = f"{title} {article.get('summary') or ''}"
+    if section_id == "rwa" and not re.search(
+        r"tokeniz|\brwa\b|real[-\s]?world|treasur|private credit|securitiz|on[-\s]?chain|bond",
+        blob,
+        re.I,
+    ):
+        return None
+    if section_id == "tmmf" and not re.search(
+        r"money market|tmmf|buidl|benji|tokenized (?:fund|cash)|mmf\b",
+        blob,
+        re.I,
+    ):
+        return None
+    lead = _headline_hook(title).rstrip(".!?…:")
+    key = normalize_lead(lead)
+    if key in cooled:
+        return None
+    body = _compose_news_body(section_id, article)
+    return WeeklyTakeaway(
+        lead=lead,
+        body=body,
+        kind="news",
+        article=article,
+        lead_key=key,
     )
 
 
@@ -304,6 +454,10 @@ def _pick_section_article(
             title = str(getattr(pick, "title", "") or "").strip()
             if not title:
                 continue
+            # Prefer the richer RSS row when available (summary helps article takeaways).
+            for row in articles or []:
+                if str(row.get("link") or "").strip() == link and str(row.get("title") or "").strip():
+                    return row
             return {
                 "title": title,
                 "link": link,
@@ -311,7 +465,6 @@ def _pick_section_article(
                 "summary": "",
             }
 
-    # Broader topic matcher used by legacy takeaways — good fallback for Related links.
     if match_article_for_takeaway and topic_keys:
         probe = {
             "tmmf": "tokenized money market fund settlement cash rails BUIDL",
@@ -327,48 +480,11 @@ def _pick_section_article(
             topic_keys=topic_keys,
             articles=articles,
             used_links=used_links,
+            strict=True,
         )
         if art:
             return art
     return None
-
-
-def _news_takeaway(
-    section_id: str,
-    article: dict[str, Any],
-    *,
-    cooled: set[str],
-) -> WeeklyTakeaway | None:
-    title = str(article.get("title") or "").strip()
-    if not title:
-        return None
-    blob = f"{title} {article.get('summary') or ''}"
-    if section_id == "rwa" and not re.search(
-        r"tokeniz|\brwa\b|real[-\s]?world|treasur|private credit|securitiz|on[-\s]?chain",
-        blob,
-        re.I,
-    ):
-        return None
-    if section_id == "tmmf" and not re.search(
-        r"money market|tmmf|buidl|benji|tokenized (?:fund|cash)|mmf\b",
-        blob,
-        re.I,
-    ):
-        return None
-    lead = _headline_hook(title).rstrip(".!?…:")
-    key = normalize_lead(lead)
-    if key in cooled:
-        return None
-    src = str(article.get("source") or "").strip()
-    src_bit = f" ({src})" if src else ""
-    body = f"This week's on-topic coverage centers on that story{src_bit}. {_news_so_what(section_id)}"
-    return WeeklyTakeaway(
-        lead=lead,
-        body=body,
-        kind="news",
-        article=article,
-        lead_key=key,
-    )
 
 
 def select_weekly_section_takeaways(
@@ -404,8 +520,7 @@ def select_weekly_section_takeaways(
 
     move = _section_kpi_move(section_id, explore, etp=etp, crypto=crypto)
     wow = _wow_takeaway(move, lane=_lane_label(section_id)) if move else None
-    if wow and wow.lead_key in cooled:
-        wow = None
+    # Keep current KPI moves even if a similar lead shipped last week; cooldown is for news.
     data_tw = wow or _flat_takeaway(move, lane=_lane_label(section_id))
 
     news_tw: WeeklyTakeaway | None = None

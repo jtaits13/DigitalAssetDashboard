@@ -959,16 +959,17 @@ def _ko_bullets_html(
         except Exception:
             match_article_for_takeaway = None  # type: ignore[assignment,misc]
         for i, tw in enumerate(weekly):
-            if shipped_leads is not None and tw.lead and tw.kind != "flat":
+            if shipped_leads is not None and tw.lead and tw.kind == "news":
                 shipped_leads[section_id].append(tw.lead)
             chunk = f"<strong>{escape(tw.lead)}</strong> {escape(tw.body)}"
             related = tw.article
-            # Data takeaways still get a Related article when the matcher finds one.
+            # Data takeaways: Related only when a high-confidence match exists.
+            # Flat/directional "no move" notes should not force a weak article.
             if (
                 related is None
                 and match_article_for_takeaway
                 and topic_keys
-                and tw.kind in {"wow", "flat"}
+                and tw.kind == "wow"
             ):
                 related = match_article_for_takeaway(
                     f"{tw.lead} {tw.body}",
@@ -977,6 +978,7 @@ def _ko_bullets_html(
                     topic_keys=topic_keys,
                     articles=articles,
                     used_links=links,
+                    strict=True,
                 )
             if related and related.get("link"):
                 links.add(str(related.get("link") or "").strip())

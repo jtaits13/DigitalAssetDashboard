@@ -1724,8 +1724,13 @@ def match_article_for_takeaway(
     articles: list[dict[str, Any]] | None,
     used_links: set[str],
     max_age_days: float = 14.0,
+    strict: bool = False,
 ) -> dict[str, Any] | None:
-    """Best weekly article for a takeaway bullet; always returns a link when the pool allows."""
+    """Best weekly article for a takeaway bullet.
+
+    When ``strict`` is True, only higher-confidence passes run (optional Related
+    links on data takeaways — skip weak force-matches).
+    """
     pool = list(articles or [])
     if not pool and not bullet_html:
         return None
@@ -1880,6 +1885,8 @@ def match_article_for_takeaway(
     ]
 
     for pass_cfg in passes:
+        if strict and float(pass_cfg.get("min_score") or 0) < 4.0:
+            continue
         picked = _pick_takeaway_article(
             pool,
             bullet_text=bullet_text,
