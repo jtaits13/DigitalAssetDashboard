@@ -360,29 +360,29 @@ def _headline_hook(title: str, *, max_len: int = 72) -> str:
 def _news_so_what(section_id: str) -> str:
     return {
         "tmmf": (
-            "For tokenized cash markets, that points more to distribution and institutional "
-            "adoption of on-chain liquidity rails than to a short-term yield trade."
+            "Institutional adoption of on-chain cash rails still matters more than any "
+            "short-term yield trade in tokenized money markets."
         ),
         "stablecoins": (
-            "For the broader market, that matters mainly through payment rails, reserve "
-            "quality, and how easily dollars can move on-chain."
+            "Payment rails, reserve quality, and how easily dollars move on-chain remain "
+            "the main stablecoin drivers for broader crypto liquidity."
         ),
         "rwa": (
-            "For RWA markets, the implication is about whether TradFi balance sheets keep "
-            "migrating into tokenized treasuries, funds, or credit wrappers."
+            "TradFi balance sheets are still the open variable for tokenized treasuries, "
+            "funds, and credit wrappers."
         ),
         "etp": (
-            "For listed crypto access, that mainly informs whether traditional channels "
-            "are still the preferred path for institutional beta."
+            "Traditional channels remain the main path for institutional crypto beta when "
+            "listed products stay open and liquid."
         ),
         "crypto": (
-            "For crypto risk appetite, that is less about one venue and more about whether "
-            "liquidity and institutional plumbing are improving or retrenching."
+            "Liquidity and institutional plumbing still set risk appetite more than any "
+            "single venue or product headline."
         ),
     }.get(
         section_id,
-        "For the broader market, treat this as a plumbing or policy signal until prices and "
-        "flows confirm a broader regime shift.",
+        "Plumbing and policy still lead prices and flows until a clearer regime shift shows up "
+        "in the printed market.",
     )
 
 
@@ -413,7 +413,7 @@ def _article_theme_flags(text: str) -> set[str]:
 
 
 def _interpret_news_for_market(section_id: str, title: str, blurb: str) -> str:
-    """Market implication of a story — avoid restating the headline/summary."""
+    """Direct market-impact copy for readers (no meta framing or title paraphrase)."""
     flags = _article_theme_flags(f"{title} {blurb}")
     lane = {
         "tmmf": "tokenized money-market",
@@ -427,91 +427,87 @@ def _interpret_news_for_market(section_id: str, title: str, blurb: str) -> str:
     if section_id == "etp":
         if "risk" in flags:
             return (
-                "For listed crypto products, that kind of stress usually weighs on risk appetite "
-                "and can slow creations until confidence in spot liquidity returns."
+                "Stress around listed crypto products usually weighs on risk appetite and can "
+                "slow creations until spot-liquidity confidence returns."
             )
         if "flow_out" in flags and "flow_in" not in flags:
             return (
-                "Outflows through listed wrappers are an early institutional positioning read: "
-                "risk is leaving the regulated channel, which can soften spot liquidity even if "
-                "longer-term AUM remains large."
+                "Risk is leaving the regulated channel through listed outflows, which can "
+                "soften spot liquidity even while longer-term AUM stays large."
             )
         if "flow_in" in flags:
             return (
-                "Inflows into listed products signal that traditional channels are still taking "
-                "crypto beta; that usually supports primary-market creations and secondary "
-                "liquidity around the majors."
+                "Traditional channels are still absorbing crypto beta through listed inflows, "
+                "supporting primary-market creations and secondary liquidity in the majors."
             )
         if "policy" in flags:
             return (
-                "For ETP markets, the key question is access: clearer oversight tends to support "
-                "new listings and advisor adoption, while ambiguity caps who can allocate."
+                "Clearer oversight tends to open new listings and advisor adoption; ambiguity "
+                "keeps more allocators on the sidelines."
             )
         if "listed_access" in flags or "launch" in flags or "capital" in flags:
             return (
-                "That reads as a traditional-channel demand or product-pipeline signal: whether "
-                "more capital wants crypto beta through U.S. listed wrappers."
+                "More capital can still reach crypto beta through U.S. listed wrappers when "
+                "product pipelines and traditional-channel access keep expanding."
             )
         return (
-            "For listed crypto ETPs, treat this as context around whether traditional channels "
-            "remain the preferred on-ramp versus spot and offshore venues."
+            "Listed wrappers remain the preferred on-ramp for many institutions versus spot "
+            "and offshore venues when access stays clean."
         )
     if section_id == "tmmf":
         if "risk" in flags:
             return (
-                "In tokenized cash markets, that usually raises collateral and counterparty caution-"
-                "institutions may keep using TMMFs, but onboarding and size checks get tighter."
+                "Collateral and counterparty caution rises in tokenized cash markets: institutions "
+                "may keep using TMMFs, but onboarding and size checks get tighter."
             )
         if "launch" in flags or "partnership" in flags or "tokenization" in flags:
             return (
-                "For TMMFs, that is mostly a distribution signal: more wrappers and rails expand "
-                "who can hold on-chain cash, even before aggregate AUM jumps again."
+                "New wrappers and distribution rails expand who can hold on-chain cash, even "
+                "before aggregate TMMF AUM jumps again."
             )
         return (
-            "For tokenized money markets, the implication is whether institutional cash keeps "
-            "treating TMMFs as operational liquidity infrastructure."
+            "Institutional cash keeps leaning on TMMFs as operational liquidity infrastructure "
+            "rather than a niche yield sleeve."
         )
 
     if "risk" in flags:
         return (
-            f"In {lane} markets, that kind of setback usually tightens due diligence and can "
-            "slow new allocations until counterparties look cleaner again."
+            f"Due diligence usually tightens across {lane} markets after this kind of setback, "
+            "and new allocations can slow until counterparties look cleaner again."
         )
     if "policy" in flags:
         return (
-            f"For {lane} markets, the stakes are mainly permissioning-clearer rules can "
-            "unlock balance-sheet adoption, while ambiguity keeps institutions on the sidelines."
+            f"Clearer rules can unlock balance-sheet adoption in {lane} markets, while ambiguity "
+            "keeps more institutions on the sidelines."
         )
     if "flow_out" in flags and "flow_in" not in flags:
         return (
-            f"For {lane} markets, money leaving listed or primary channels usually marks "
-            "de-risking: expect tighter secondary liquidity until creations resume."
+            f"Money leaving listed or primary {lane} channels usually marks de-risking and can "
+            "tighten secondary liquidity until creations resume."
         )
     if "listed_access" in flags:
         return (
-            "That reads as a traditional-channel demand signal: whether risk capital wants "
-            "crypto beta through listed wrappers, not just through spot or offshore venues."
+            "Risk capital still prefers crypto beta through listed wrappers when traditional "
+            "channels stay open, not only through spot or offshore venues."
         )
     if "payments" in flags:
         return (
-            f"The market implication is utility over speculation-if payment and banking rails "
-            f"expand, {lane} demand becomes more structural and less dependent on risk cycles."
+            f"If payment and banking rails keep expanding, {lane} demand becomes more structural "
+            "and less dependent on speculative risk cycles."
         )
     if "launch" in flags or "partnership" in flags:
         return (
-            f"For {lane} markets, this is a distribution/access signal: more wrappers and "
-            "counterparties usually widen who can hold exposure, even before aggregate AUM jumps."
+            f"More wrappers and counterparties widen who can hold {lane} exposure, even before "
+            "aggregate AUM jumps."
         )
     if "capital" in flags:
         return (
-            f"That points to sustained build-out capital behind {lane} infrastructure-"
-            "investors are still funding rails, not only trading beta."
+            f"Build-out capital is still funding {lane} infrastructure, not only trading beta."
         )
     if "tokenization" in flags:
         return (
-            "The broader read is balance-sheet migration: more activity around tokenized "
-            "cash and real-world assets keeps TradFi plumbing in the spotlight versus pure "
-            "crypto-native cycles."
+            "Tokenized cash and real-world assets keep pulling TradFi balance sheets into "
+            "on-chain plumbing alongside crypto-native cycles."
         )
     return _news_so_what(section_id)
 
