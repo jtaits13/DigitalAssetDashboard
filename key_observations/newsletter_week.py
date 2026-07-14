@@ -186,7 +186,139 @@ def explore_kpi_move(
     )
 
 
-def _wow_takeaway(move: SectionKpiMove, *, lane: str) -> WeeklyTakeaway | None:
+def _wow_market_read(section_id: str, move: SectionKpiMove) -> str:
+    """User-facing interpretation of a directional KPI move (not editor notes)."""
+    up = (move.delta_pct or 0) >= 0
+    level = move.value_display
+    metric = (move.label or "metric").lower()
+    mag = f"{abs(move.delta_pct or 0):.1f}%"
+
+    if section_id == "tmmf":
+        if up:
+            return (
+                f"With distributed value at {level} ({mag} higher over 30D), more institutional cash appears "
+                "to be parking in tokenized MMFs—supporting the view that TMMFs are being used as "
+                "operational liquidity, not just a niche yield experiment."
+            )
+        return (
+            f"With distributed value at {level} ({mag} lower over 30D), tokenized-cash balances look lighter—"
+            "suggesting some institutions pulled liquidity or rotated away from TMMF wrappers even if "
+            "headline product news stayed busy."
+        )
+    if section_id == "stablecoins":
+        if "market cap" in metric or "cap" in metric:
+            if up:
+                return (
+                    f"Stablecoin market cap at {level} ({mag} higher over 30D) implies fresh dry powder "
+                    "entering crypto rails—usually a constructive backdrop for settlement, trading, and "
+                    "on-chain cash demand."
+                )
+            return (
+                f"Stablecoin market cap at {level} ({mag} lower over 30D) points to contracting crypto "
+                "dollar liquidity—often a tighter tape for market-making, DeFi collateral, and risk appetite."
+            )
+        if up:
+            return (
+                f"{move.label} moving up to {level} ({mag} over 30D) supports broader stablecoin utility "
+                "gains across payments and treasury use cases."
+            )
+        return (
+            f"{move.label} softening to {level} ({mag} over 30D) suggests some stablecoin activity cooled—"
+            "watch issuer concentration and bank-rail headlines for confirmation."
+        )
+    if section_id == "rwa":
+        if up:
+            return (
+                f"On-chain RWA distributed value at {level} ({mag} higher over 30D) shows tokenization "
+                "still adding balance sheet—consistent with Institutions building exposure through "
+                "treasury, credit, or fund wrappers rather than pausing after prior growth."
+            )
+        return (
+            f"On-chain RWA distributed value at {level} ({mag} lower over 30D) hints that tokenized "
+            "asset growth paused or reversed—more consistent with risk-off allocation or redemptions "
+            "than a pure news cycle."
+        )
+    if section_id == "etp":
+        if "flow" in metric:
+            if up:
+                return (
+                    f"Listed-product flows printing {level} ({mag} over 30D) indicate investors are still "
+                    "using ETPs as the primary regulated gateway into crypto beta—supporting demand even "
+                    "when spot prices are choppy."
+                )
+            return (
+                f"Listed-product flows at {level} ({mag} over 30D) show net risk coming out of U.S. crypto "
+                "ETPs—often an early read on institutional de-risking that can precede softer spot "
+                "liquidity."
+            )
+        if up:
+            return (
+                f"Aggregate ETP AUM at {level} ({mag} higher over 30D) means more capital is parked in "
+                "listed crypto wrappers—keeping traditional-channel access relevant beside OTC and spot."
+            )
+        return (
+            f"Aggregate ETP AUM at {level} ({mag} lower over 30D) signals shrinkage in listed crypto "
+            "exposure—typically a softer institutional footprint until inflows resume."
+        )
+    if section_id == "crypto":
+        if up:
+            return (
+                f"Total crypto market cap at {level} ({mag} higher over 30D) reflects a broader risk-on "
+                "tape—liquidity and alt performance usually improve when the headline book expands."
+            )
+        return (
+            f"Total crypto market cap at {level} ({mag} lower over 30D) points to a risk-off or "
+            "digestive market—capital is more selective, and plumbing stories matter more than beta "
+            "chase."
+        )
+    direction = "higher" if up else "lower"
+    return (
+        f"{move.label} at {level} is {direction} by {mag} over 30D, marking a real change in this "
+        "lane's printed stance rather than a noise-level print."
+    )
+
+
+def _flat_market_read(section_id: str, move: SectionKpiMove | None) -> str:
+    if move and move.delta_pct is not None:
+        level = move.value_display
+        delta = move.delta_display
+        metric = move.label
+    else:
+        level, delta, metric = "—", "—", "KPIs"
+
+    if section_id == "tmmf":
+        return (
+            f"{metric} near {level} ({delta} 30D) leaves tokenized-cash balances largely range-bound—"
+            "the market story this week is more about issuer and distribution news than a shift in AUM."
+        )
+    if section_id == "stablecoins":
+        return (
+            f"{metric} near {level} ({delta} 30D) means crypto dollar liquidity did not re-price hard—"
+            "incremental demand is coming from product and banking-rail headlines rather than a market-cap "
+            "surge."
+        )
+    if section_id == "rwa":
+        return (
+            f"{metric} near {level} ({delta} 30D) keeps on-chain RWA exposure in a holding pattern—"
+            "tokenization momentum is still news- and pipeline-driven until distributed value breaks range."
+        )
+    if section_id == "etp":
+        return (
+            f"{metric} near {level} ({delta} 30D) suggests listed crypto access is waiting for a clearer "
+            "flow regime—filings and product news can still move attention without a large AUM remake."
+        )
+    if section_id == "crypto":
+        return (
+            f"{metric} near {level} ({delta} 30D) frames a consolidating market—directional conviction is "
+            "low, so structural headlines (custody, rails, regulation) carry more weight than beta alone."
+        )
+    return (
+        f"{metric} near {level} ({delta} 30D) did not post a material 30D shift—interpretation should "
+        "come from section news until the KPI strip moves again."
+    )
+
+
+def _wow_takeaway(move: SectionKpiMove, *, lane: str, section_id: str) -> WeeklyTakeaway | None:
     if move.delta_pct is None:
         return None
     if abs(move.delta_pct) < _WOW_THRESHOLD:
@@ -194,11 +326,7 @@ def _wow_takeaway(move: SectionKpiMove, *, lane: str) -> WeeklyTakeaway | None:
     verb = _move_verb(move.delta_pct)
     mag = f"{abs(move.delta_pct):.1f}%"
     lead = f"{lane} {move.label.lower()} {verb} {mag} over 30D"
-    body = (
-        f"Printed dashboard level: {move.value_display}. "
-        "This is the clearest near-term move in the lane strip - treat it as the week's "
-        "data signal unless a launch or policy story overrides it."
-    )
+    body = _wow_market_read(section_id, move)
     return WeeklyTakeaway(
         lead=lead.rstrip(".!?…:"),
         body=body,
@@ -207,20 +335,11 @@ def _wow_takeaway(move: SectionKpiMove, *, lane: str) -> WeeklyTakeaway | None:
     )
 
 
-def _flat_takeaway(move: SectionKpiMove | None, *, lane: str) -> WeeklyTakeaway:
-    if move and move.delta_pct is not None:
-        lead = f"{lane} printed metrics were roughly flat this week"
-        body = (
-            f"{move.label} held near {move.value_display} ({move.delta_display} 30D). "
-            "With no material WoW move, the section takeaway leans on news rather than "
-            "repeating a structural market narrative."
-        )
-    else:
+def _flat_takeaway(move: SectionKpiMove | None, *, lane: str, section_id: str) -> WeeklyTakeaway:
+    lead = f"{lane} printed metrics were roughly flat this week"
+    if move is None or move.delta_pct is None:
         lead = f"{lane} printed metrics did not show a clear weekly move"
-        body = (
-            "KPI deltas were missing or soft in this export, so this lane's takeaway "
-            "prioritizes recent coverage over standing page observations."
-        )
+    body = _flat_market_read(section_id, move)
     return WeeklyTakeaway(
         lead=lead.rstrip(".!?…:"),
         body=body,
@@ -241,26 +360,150 @@ def _headline_hook(title: str, *, max_len: int = 72) -> str:
 def _news_so_what(section_id: str) -> str:
     return {
         "tmmf": (
-            "Watch whether this reinforces institutional cash rails, new fund launches, "
-            "or distribution partnerships."
+            "For tokenized cash markets, that points more to distribution and institutional "
+            "adoption of on-chain liquidity rails than to a short-term yield trade."
         ),
         "stablecoins": (
-            "Ask whether reserves, bank rails, or issuer policy are what actually shifted."
+            "For the broader market, that matters mainly through payment rails, reserve "
+            "quality, and how easily dollars can move on-chain."
         ),
         "rwa": (
-            "Map the move to issuance, distribution, collateral, or regulation—"
-            "not just a one-off product mention."
+            "For RWA markets, the implication is about whether TradFi balance sheets keep "
+            "migrating into tokenized treasuries, funds, or credit wrappers."
         ),
         "etp": (
-            "Compare the development with listed-access signals—flows, filings, or pipeline."
+            "For listed crypto access, that mainly informs whether traditional channels "
+            "are still the preferred path for institutional beta."
         ),
         "crypto": (
-            "Separate structural plumbing news from short-horizon price chatter."
+            "For crypto risk appetite, that is less about one venue and more about whether "
+            "liquidity and institutional plumbing are improving or retrenching."
         ),
     }.get(
         section_id,
-        "Read the development against this section's KPIs before calling it a structural shift.",
+        "For the broader market, treat this as a plumbing or policy signal until prices and "
+        "flows confirm a broader regime shift.",
     )
+
+
+def _article_theme_flags(text: str) -> set[str]:
+    t = (text or "").lower()
+    flags: set[str] = set()
+    if re.search(r"\b(launch|launches|launched|debut|unveil|rolls? out|announc)\b", t):
+        flags.add("launch")
+    if re.search(r"\b(partner|ties up|teams up|integration|distribution deal)\b", t):
+        flags.add("partnership")
+    if re.search(r"\b(reserve|banking|bank rail|payments?|remittance|card network)\b", t):
+        flags.add("payments")
+    if re.search(r"\b(etf|etp|inflow|outflow|filing|sec approval|spot bitcoin|spot ether)\b", t):
+        flags.add("listed_access")
+    if re.search(r"\b(regulat|sec\b|cftc|legislation|policy|oversight|compliance)\b", t):
+        flags.add("policy")
+    if re.search(r"\b(tokeniz|rwa|treasury|treasuries|money market|mmf|buidl)\b", t):
+        flags.add("tokenization")
+    if re.search(r"\b(aum|assets under management|raised \$|funding|series [a-c])\b", t):
+        flags.add("capital")
+    if re.search(r"\b(hack|exploit|outage|lawsuit|probe|investigation|downgrade)\b", t):
+        flags.add("risk")
+    return flags
+
+
+def _interpret_news_for_market(section_id: str, title: str, blurb: str) -> str:
+    """Market implication of a story — avoid restating the headline/summary."""
+    flags = _article_theme_flags(f"{title} {blurb}")
+    lane = {
+        "tmmf": "tokenized money-market",
+        "stablecoins": "stablecoin",
+        "rwa": "tokenized RWA",
+        "etp": "listed crypto ETP",
+        "crypto": "broader crypto",
+    }.get(section_id, "digital-asset")
+
+    # Bias by section so a payments-flavored article in the ETP lane still reads as ETP.
+    if section_id == "etp":
+        if "risk" in flags:
+            return (
+                "For listed crypto products, that kind of stress usually weighs on risk appetite "
+                "and can slow creations until confidence in spot liquidity returns."
+            )
+        if "policy" in flags:
+            return (
+                "For ETP markets, the key question is access: clearer oversight tends to support "
+                "new listings and advisor adoption, while ambiguity caps who can allocate."
+            )
+        if "listed_access" in flags or "launch" in flags or "capital" in flags:
+            return (
+                "That reads as a traditional-channel demand or product-pipeline signal: whether "
+                "more capital wants crypto beta through U.S. listed wrappers."
+            )
+        return (
+            "For listed crypto ETPs, treat this as context around whether traditional channels "
+            "remain the preferred on-ramp versus spot and offshore venues."
+        )
+    if section_id == "tmmf":
+        if "risk" in flags:
+            return (
+                "In tokenized cash markets, that usually raises collateral and counterparty caution-"
+                "institutions may keep using TMMFs, but onboarding and size checks get tighter."
+            )
+        if "launch" in flags or "partnership" in flags or "tokenization" in flags:
+            return (
+                "For TMMFs, that is mostly a distribution signal: more wrappers and rails expand "
+                "who can hold on-chain cash, even before aggregate AUM jumps again."
+            )
+        return (
+            "For tokenized money markets, the implication is whether institutional cash keeps "
+            "treating TMMFs as operational liquidity infrastructure."
+        )
+
+    if "risk" in flags:
+        return (
+            f"In {lane} markets, that kind of setback usually tightens due diligence and can "
+            "slow new allocations until counterparties look cleaner again."
+        )
+    if "policy" in flags:
+        return (
+            f"For {lane} markets, the stakes are mainly permissioning-clearer rules can "
+            "unlock balance-sheet adoption, while ambiguity keeps institutions on the sidelines."
+        )
+    if "listed_access" in flags:
+        return (
+            "That reads as a traditional-channel demand signal: whether risk capital wants "
+            "crypto beta through listed wrappers, not just through spot or offshore venues."
+        )
+    if "payments" in flags:
+        return (
+            f"The market implication is utility over speculation-if payment and banking rails "
+            f"expand, {lane} demand becomes more structural and less dependent on risk cycles."
+        )
+    if "launch" in flags or "partnership" in flags:
+        return (
+            f"For {lane} markets, this is a distribution/access signal: more wrappers and "
+            "counterparties usually widen who can hold exposure, even before aggregate AUM jumps."
+        )
+    if "capital" in flags:
+        return (
+            f"That points to sustained build-out capital behind {lane} infrastructure-"
+            "investors are still funding rails, not only trading beta."
+        )
+    if "tokenization" in flags:
+        return (
+            "The broader read is balance-sheet migration: more activity around tokenized "
+            "cash and real-world assets keeps TradFi plumbing in the spotlight versus pure "
+            "crypto-native cycles."
+        )
+    return _news_so_what(section_id)
+
+
+def _compose_news_body(section_id: str, article: dict[str, Any]) -> str:
+    """Interpret what the article means for the market (not a title paraphrase)."""
+    title = str(article.get("title") or "").strip()
+    summary = _strip_html_text(str(article.get("summary") or ""))
+    link = str(article.get("link") or "").strip()
+    blurb = _fetch_article_blurb(link) if link else ""
+    if not blurb:
+        blurb = summary
+    return _interpret_news_for_market(section_id, title, blurb)
 
 
 _META_DESC_RE = re.compile(
@@ -328,56 +571,6 @@ def _fetch_article_blurb(url: str, *, timeout: float = 6.0) -> str:
         if len(paras) >= 3:
             break
     return " ".join(paras)[:800]
-
-
-def _pick_takeaway_sentence(blurb: str, *, title: str) -> str:
-    text = _WS_COMPRESS_RE.sub(" ", (blurb or "").strip())
-    if not text:
-        return ""
-    title_norm = normalize_lead(title)
-    sentences = [s.strip() for s in _SENTENCE_SPLIT_RE.split(text) if s.strip()]
-    scored: list[tuple[int, str]] = []
-    for s in sentences:
-        if len(s) < 45:
-            continue
-        if normalize_lead(s) == title_norm:
-            continue
-        # Prefer mid-length factual sentences.
-        score = min(len(s), 220)
-        if re.search(
-            r"\b(said|announced|launched|approved|filed|will|plans?|raising|cut|rose|fell)\b",
-            s,
-            re.I,
-        ):
-            score += 40
-        scored.append((score, s))
-    if not scored:
-        return text[:220].rsplit(" ", 1)[0] + ("…" if len(text) > 220 else "")
-    scored.sort(key=lambda row: row[0], reverse=True)
-    best = scored[0][1]
-    if len(best) > 260:
-        best = best[:257].rsplit(" ", 1)[0] + "…"
-    return best
-
-
-def _compose_news_body(section_id: str, article: dict[str, Any]) -> str:
-    """Build a concrete takeaway body from article text (fetch) or RSS summary."""
-    title = str(article.get("title") or "").strip()
-    summary = _strip_html_text(str(article.get("summary") or ""))
-    link = str(article.get("link") or "").strip()
-    blurb = _fetch_article_blurb(link) if link else ""
-    if not blurb:
-        blurb = summary
-    claim = _pick_takeaway_sentence(blurb, title=title)
-    if claim:
-        # Keep one concrete claim; add a short section lens only when helpful.
-        lens = _news_so_what(section_id)
-        # Avoid restating the claim as a generic "centers on that story" line.
-        if len(claim) >= 80:
-            return claim
-        return f"{claim} {lens}"
-    # Last resort if fetch/summary both empty.
-    return _news_so_what(section_id)
 
 
 def _news_takeaway(
@@ -519,9 +712,9 @@ def select_weekly_section_takeaways(
     out: list[WeeklyTakeaway] = []
 
     move = _section_kpi_move(section_id, explore, etp=etp, crypto=crypto)
-    wow = _wow_takeaway(move, lane=_lane_label(section_id)) if move else None
+    wow = _wow_takeaway(move, lane=_lane_label(section_id), section_id=section_id) if move else None
     # Keep current KPI moves even if a similar lead shipped last week; cooldown is for news.
-    data_tw = wow or _flat_takeaway(move, lane=_lane_label(section_id))
+    data_tw = wow or _flat_takeaway(move, lane=_lane_label(section_id), section_id=section_id)
 
     news_tw: WeeklyTakeaway | None = None
     # Try a few exclusive candidates so we keep a news + article bullet whenever possible.
