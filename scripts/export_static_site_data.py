@@ -54,7 +54,7 @@ from crypto_etps.flows import (
     load_farside_flow_series_with_source,
 )
 from news_feeds import (
-    ALL_ARTICLES_FEEDS,
+    all_articles_feed_list,
     DEFAULT_FEEDS,
     ETP_PULSE_PREVIEW_COUNT,
     dedupe_articles,
@@ -121,7 +121,10 @@ def _serialize_dt(o: object) -> str | None:
 
 
 def _article_json(a: dict) -> dict:
+    from news_feeds import classify_hub_site_topic
+
     pub = a.get("published")
+    topic_id, topic_label = classify_hub_site_topic(a)
     out = {
         "title": a.get("title") or "",
         "link": a.get("link") or "",
@@ -129,6 +132,8 @@ def _article_json(a: dict) -> dict:
         "published": _serialize_dt(pub) if isinstance(pub, datetime) else None,
         "summary": (a.get("summary") or "")[:500],
         "country": a.get("country") or "",
+        "topic": topic_id,
+        "topic_label": topic_label,
     }
     access = a.get("access")
     if access:
@@ -216,6 +221,10 @@ def _rehydrate_article_from_json(row: dict[str, Any]) -> dict[str, Any]:
         out["access"] = row["access"]
     if row.get("category"):
         out["category"] = row["category"]
+    if row.get("topic"):
+        out["topic"] = str(row["topic"])
+    if row.get("topic_label"):
+        out["topic_label"] = str(row["topic_label"])
     return out
 
 
@@ -225,14 +234,30 @@ def merge_rolling_news_archive(
     prior_path: Path,
     lookback_days: int,
     max_per_day: int | None = None,
+    allowed_sources: frozenset[str] | None = None,
 ) -> list[dict[str, Any]]:
     """
     Union live RSS items with previously exported JSON so short RSS windows still
     accumulate a multi-day hub history across scheduled refreshes.
     """
-    from news_feeds import ALL_ARTICLES_FEED_DAY_CAP, cap_market_news_per_day
+    from news_feeds import (
+        ALL_ARTICLES_ALLOWED_SOURCES,
+        ALL_ARTICLES_FEED_DAY_CAP,
+        cap_market_news_per_day,
+        filter_all_articles_allowed_sources,
+    )
 
+    allow = allowed_sources if allowed_sources is not None else ALL_ARTICLES_ALLOWED_SOURCES
     by_key: dict[str, dict[str, Any]] = {}
+
+    def _accept(art: dict[str, Any]) -> None:
+        src = str(art.get("source") or "").strip()
+        if allow and src not in allow:
+            return
+        key = (art.get("link") or art.get("title") or "").strip()
+        if key:
+            by_key[key] = art
+
     if prior_path.is_file():
         try:
             prior = json.loads(prior_path.read_text(encoding="utf-8"))
@@ -241,19 +266,41 @@ def merge_rolling_news_archive(
                 for row in prior_items:
                     if not isinstance(row, dict):
                         continue
-                    art = _rehydrate_article_from_json(row)
-                    key = (art.get("link") or art.get("title") or "").strip()
-                    if key:
-                        by_key[key] = art
+                    _accept(_rehydrate_article_from_json(row))
         except (OSError, ValueError, TypeError):
             pass
+    # Seed CoinDesk / The Block rows found in sibling exports (ETF/regulatory pools).
+    for sibling in (
+        "etf_news.json",
+        "etf_pulse.json",
+        "all_regulatory.json",
+        "home_news.json",
+    ):
+        sib_path = prior_path.parent / sibling
+        if not sib_path.is_file() or sib_path.resolve() == prior_path.resolve():
+            continue
+        try:
+            payload = json.loads(sib_path.read_text(encoding="utf-8"))
+            rows = payload.get("items") if isinstance(payload, dict) else None
+            if not isinstance(rows, list):
+                continue
+            for row in rows:
+                if isinstance(row, dict):
+                    _accept(_rehydrate_article_from_json(row))
+        except (OSError, ValueError, TypeError):
+            continue
     for art in fresh:
-        key = (art.get("link") or art.get("title") or "").strip()
-        if key:
-            by_key[key] = art
+        _accept(art)
     merged = list(by_key.values())
+    if allow is ALL_ARTICLES_ALLOWED_SOURCES:
+        merged = filter_all_articles_allowed_sources(merged)
     merged = articles_published_within_utc_days(merged, lookback_days)
     day_cap = ALL_ARTICLES_FEED_DAY_CAP if max_per_day is None else max_per_day
+    if allow is ALL_ARTICLES_ALLOWED_SOURCES:
+        from news_feeds import prepare_all_digital_asset_articles
+
+        # Re-run digital prep so CoinDesk / The Block stay balanced after archive merge.
+        return prepare_all_digital_asset_articles(merged, max_per_day=day_cap)
     if day_cap > 0:
         merged = cap_market_news_per_day(merged, max_per_day=day_cap)
     merged.sort(
@@ -2039,7 +2086,7 @@ def main() -> None:
     # --- All digital asset headlines: CoinDesk + The Block; topic-dedupe; ≤8/UTC day; rolling week.
     from news_feeds import prepare_all_digital_asset_articles
 
-    articles_all, feed_errs_all = load_all_feeds(list(ALL_ARTICLES_FEEDS))
+    articles_all, feed_errs_all = load_all_feeds(all_articles_feed_list())
     for e in feed_errs_all:
         manifest["errors"].append(f"news RSS (all articles): {e}")
     all_prepared = prepare_all_digital_asset_articles(articles_all)

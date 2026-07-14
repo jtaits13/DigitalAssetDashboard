@@ -34,11 +34,11 @@ from home_layout import (
     subpage_toolbar_note_html,
 )
 from news_feeds import (
-    ALL_ARTICLES_FEEDS,
     ALL_ARTICLES_FEED_DAY_CAP,
     DEFAULT_FEEDS,
     ETF_ETP_NEWS_FEED_DAY_CAP,
     ETP_PULSE_PREVIEW_COUNT,
+    all_articles_feed_list,
     build_etp_market_news_box_html,
     build_full_page_market_news_feed_html,
     build_full_page_regulatory_feed_html,
@@ -235,7 +235,7 @@ async def all_articles(
     q: str = "",
     page: int = Query(1, ge=1),
 ) -> HTMLResponse:
-    articles, feed_errors = load_all_feeds(ALL_ARTICLES_FEEDS)
+    articles, feed_errors = load_all_feeds(all_articles_feed_list())
     search_q = (q or "").strip()
     unique = prepare_all_digital_asset_articles(articles)
     filtered = filter_headlines_by_keyword(unique, search_q)

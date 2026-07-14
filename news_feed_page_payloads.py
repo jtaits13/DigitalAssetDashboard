@@ -21,13 +21,13 @@ def build_all_articles_page_payload() -> dict[str, Any]:
     from pathlib import Path
 
     from news_feeds import (
-        ALL_ARTICLES_FEEDS,
+        all_articles_feed_list,
         load_all_feeds,
         prepare_all_digital_asset_articles,
     )
 
     feed_errors: list[str] = []
-    articles, errs = load_all_feeds(list(ALL_ARTICLES_FEEDS))
+    articles, errs = load_all_feeds(all_articles_feed_list())
     feed_errors.extend(errs)
     prepared = prepare_all_digital_asset_articles(articles)
     prior = Path(__file__).resolve().parent / "static_home" / "data" / "all_articles.json"

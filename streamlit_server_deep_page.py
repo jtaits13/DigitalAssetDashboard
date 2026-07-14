@@ -2621,9 +2621,9 @@ def build_news_hub_server_zone_html(*, initial_lane: str = "digital", feed_banne
         + "</div>"
         '<div class="article-feed-toolbar">'
         '<label class="search-field">'
-        '<span class="search-field__label">Search this lane</span>'
+        '<span class="search-field__label">Search all news</span>'
         '<input type="search" class="search-field__input" id="js-article-feed-search" '
-        'placeholder="Search title, summary, or source…" />'
+        'placeholder="Search all news — title, summary, source, or topic…" />'
         "</label>"
         '<p class="toolbar-note" id="js-article-feed-meta">Loading&hellip;</p>'
         "</div>"

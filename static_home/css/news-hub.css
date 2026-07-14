@@ -107,8 +107,8 @@
   line-height: 1.35;
 }
 
-/* Source chips */
-.news-hub-source {
+/* Topic chips (site page buckets) */
+.news-hub-topic {
   display: inline-flex;
   align-items: center;
   max-width: 100%;
@@ -126,34 +126,47 @@
   color: var(--nh-chrome);
 }
 
-.news-hub-source--coindesk {
-  background: rgba(26, 61, 92, 0.12);
-  color: #1a3d5c;
+.news-hub-topic--tmmf {
+  background: rgba(42, 95, 130, 0.14);
+  color: #1f4d68;
 }
 
-.news-hub-source--block {
-  background: rgba(90, 72, 48, 0.12);
-  color: #5a4830;
+.news-hub-topic--stablecoins {
+  background: rgba(46, 112, 92, 0.14);
+  color: #2a5c4a;
 }
 
-.news-hub-source--etf {
-  background: rgba(30, 58, 88, 0.12);
+.news-hub-topic--etp {
+  background: rgba(30, 58, 88, 0.14);
   color: #1e3a58;
 }
 
-.news-hub-source--reg {
-  background: rgba(55, 90, 78, 0.14);
-  color: #375a4e;
+.news-hub-topic--rwa {
+  background: rgba(120, 78, 42, 0.14);
+  color: #6a4424;
 }
 
-.news-hub-source--custody {
-  background: rgba(70, 58, 78, 0.12);
-  color: #463a4e;
+.news-hub-topic--crypto {
+  background: rgba(70, 58, 110, 0.12);
+  color: #45386a;
 }
 
-.news-hub-source--default {
+.news-hub-topic--other {
   background: rgba(108, 102, 92, 0.12);
   color: #5c564c;
+}
+
+.news-hub-lane-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.66rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  background: rgba(21, 42, 61, 0.06);
+  color: var(--nh-meta);
+  border: 1px solid rgba(60, 70, 80, 0.14);
 }
 
 /* Magazine: lead + two side stories */
@@ -266,7 +279,7 @@
   padding: 1rem 1.05rem;
   background: #fbfaf7;
   border: 1px solid var(--nh-line);
-  border-left: 3px solid rgba(26, 61, 92, 0.28);
+  border-left: 3px solid rgba(108, 102, 92, 0.35);
   border-radius: 12px;
   text-decoration: none;
   color: inherit;
@@ -275,9 +288,32 @@
     box-shadow 0.15s ease;
 }
 
+.news-hub-side__card--tmmf {
+  border-left-color: #2a5f82;
+}
+
+.news-hub-side__card--stablecoins {
+  border-left-color: #3d7a64;
+}
+
+.news-hub-side__card--etp {
+  border-left-color: #2a5080;
+}
+
+.news-hub-side__card--rwa {
+  border-left-color: #8a5a2c;
+}
+
+.news-hub-side__card--crypto {
+  border-left-color: #5a4a7a;
+}
+
+.news-hub-side__card--other {
+  border-left-color: #8a8378;
+}
+
 .news-hub-side__card:hover {
   border-color: rgba(42, 95, 130, 0.35);
-  border-left-color: var(--hx-rwa-bright, #2a5f82);
   box-shadow: 0 4px 14px rgba(21, 42, 61, 0.06);
 }
 
@@ -356,7 +392,7 @@
   color: var(--nh-meta);
 }
 
-/* Dense story rows with dek + source rail */
+/* Dense story rows with dek + topic rail */
 .news-hub-stories {
   list-style: none;
   margin: 0;
@@ -397,27 +433,27 @@
   margin: 0.15rem 0;
 }
 
-.news-hub-story__rail--coindesk {
-  background: #1a3d5c;
+.news-hub-story__rail--tmmf {
+  background: #2a5f82;
 }
 
-.news-hub-story__rail--block {
-  background: #8a7048;
+.news-hub-story__rail--stablecoins {
+  background: #3d7a64;
 }
 
-.news-hub-story__rail--etf {
+.news-hub-story__rail--etp {
   background: #2a5080;
 }
 
-.news-hub-story__rail--reg {
-  background: #3d6b5c;
+.news-hub-story__rail--rwa {
+  background: #8a5a2c;
 }
 
-.news-hub-story__rail--custody {
-  background: #5a4a62;
+.news-hub-story__rail--crypto {
+  background: #5a4a7a;
 }
 
-.news-hub-story__rail--default {
+.news-hub-story__rail--other {
   background: #8a8378;
 }
 

@@ -441,10 +441,62 @@ ALL_ARTICLES_SUPPLEMENT_FEEDS: list[tuple[str, str]] = [
 ]
 
 # GitHub Pages / Streamlit / FastAPI ``All digital asset headlines`` only.
+# Direct outlet RSS is shallow (~1–2 days). Site-scoped Google News RSS is used only as a
+# history backfill; items are labeled CoinDesk / The Block (never “Google News”).
 ALL_ARTICLES_FEEDS: list[tuple[str, str]] = [
     ("CoinDesk", "https://www.coindesk.com/arc/outboundfeeds/rss/"),
     ("The Block", "https://www.theblock.co/rss.xml"),
 ]
+ALL_ARTICLES_HISTORY_FEEDS: list[tuple[str, str]] = [
+    (
+        "CoinDesk",
+        "https://news.google.com/rss/search?q=site:coindesk.com+when:7d&hl=en-US&gl=US&ceid=US:en",
+    ),
+    (
+        "The Block",
+        "https://news.google.com/rss/search?q=site:theblock.co+OR+site:www.theblock.co+when:7d"
+        "&hl=en-US&gl=US&ceid=US:en",
+    ),
+]
+ALL_ARTICLES_ALLOWED_SOURCES: frozenset[str] = frozenset({"CoinDesk", "The Block"})
+
+
+def all_articles_feed_list() -> list[tuple[str, str]]:
+    """Direct outlet RSS plus site-scoped history backfill (still CoinDesk / The Block only)."""
+    return list(ALL_ARTICLES_FEEDS) + list(ALL_ARTICLES_HISTORY_FEEDS)
+
+
+_OUTLET_TITLE_SUFFIX_RE = re.compile(
+    r"\s*[-–—]\s*(?:CoinDesk|The Block)\s*$",
+    re.I,
+)
+
+
+def normalize_all_articles_item(item: dict[str, Any]) -> dict[str, Any]:
+    """Keep CoinDesk/The Block labeling; strip Google News title suffixes."""
+    out = dict(item)
+    title = str(out.get("title") or "").strip()
+    if title:
+        out["title"] = _OUTLET_TITLE_SUFFIX_RE.sub("", title).strip() or title
+    src = str(out.get("source") or "").strip()
+    if src not in ALL_ARTICLES_ALLOWED_SOURCES:
+        blob = f"{title} {out.get('link') or ''}".lower()
+        if "coindesk" in blob:
+            out["source"] = "CoinDesk"
+        elif "theblock" in blob or "the block" in blob:
+            out["source"] = "The Block"
+    return out
+
+
+def filter_all_articles_allowed_sources(articles: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Drop anything that is not CoinDesk / The Block (guards against archive bleed)."""
+    out: list[dict[str, Any]] = []
+    for a in articles:
+        norm = normalize_all_articles_item(a)
+        src = str(norm.get("source") or "").strip()
+        if src in ALL_ARTICLES_ALLOWED_SOURCES:
+            out.append(norm)
+    return out
 
 
 def parse_entry_date(entry: Any) -> Optional[datetime]:
@@ -838,15 +890,141 @@ def prepare_all_digital_asset_articles(
     *,
     max_per_day: int = ALL_ARTICLES_FEED_DAY_CAP,
 ) -> list[dict[str, Any]]:
-    """URL/title dedupe → topic near-dedupe → ≤``max_per_day`` ranked items per UTC day."""
-    unique = dedupe_articles(articles, max_items=None)
+    """URL/title dedupe → topic near-dedupe → ≤``max_per_day`` ranked items per UTC day.
+
+    Balances CoinDesk / The Block so one outlet cannot crowd the other out of the
+    daily cap when both have eligible headlines.
+    """
+    unique = dedupe_articles(filter_all_articles_allowed_sources(articles), max_items=None)
     unique = dedupe_similar_topic_articles(unique)
-    capped = cap_market_news_per_day(unique, max_per_day=max_per_day)
+
+    by_day: dict[date, list[dict[str, Any]]] = {}
+    for item in unique:
+        pub = item.get("published")
+        if isinstance(pub, datetime):
+            by_day.setdefault(pub.astimezone(timezone.utc).date(), []).append(item)
+
+    capped: list[dict[str, Any]] = []
+    for dk in sorted(by_day.keys(), reverse=True):
+        day_items = sorted(
+            by_day[dk],
+            key=lambda x: (
+                market_news_importance_score(x),
+                x.get("published") or datetime.min.replace(tzinfo=timezone.utc),
+            ),
+            reverse=True,
+        )
+        if max_per_day < 1:
+            continue
+        by_src: dict[str, list[dict[str, Any]]] = {}
+        for item in day_items:
+            by_src.setdefault(str(item.get("source") or "").strip(), []).append(item)
+        sources = [s for s in ("CoinDesk", "The Block") if by_src.get(s)]
+        if len(sources) <= 1:
+            capped.extend(day_items[:max_per_day])
+            continue
+        # Round-robin so both outlets appear when available.
+        pointers = {s: 0 for s in sources}
+        picked: list[dict[str, Any]] = []
+        while len(picked) < max_per_day:
+            progressed = False
+            for s in sources:
+                idx = pointers[s]
+                rows = by_src[s]
+                if idx < len(rows):
+                    picked.append(rows[idx])
+                    pointers[s] = idx + 1
+                    progressed = True
+                    if len(picked) >= max_per_day:
+                        break
+            if not progressed:
+                break
+        capped.extend(picked)
+
     capped.sort(
         key=lambda x: x.get("published") or datetime.min.replace(tzinfo=timezone.utc),
         reverse=True,
     )
     return capped
+
+
+# Site-hub topic rails (match dashboard pages): ordered most-specific first.
+_HUB_TOPIC_BUCKETS: tuple[tuple[str, str, tuple[re.Pattern[str], ...]], ...] = (
+    (
+        "tmmf",
+        "TMMFs",
+        (
+            re.compile(
+                r"\b(?:tokenized\s+money\s+market|money\s+market\s+fund|mmf\b|buidl|"
+                r"cash\s+management\s+fund|liquidity\s+fund|blackrock\s+buidl)\b",
+                re.I,
+            ),
+        ),
+    ),
+    (
+        "stablecoins",
+        "Stablecoins",
+        (
+            re.compile(
+                r"\b(?:stablecoin|stable\s*coin|usdc|usdt|tether|dai\b|pyusd|eurc|"
+                r"circle\b|de-?peg|reserves?\s+attestation)\b",
+                re.I,
+            ),
+        ),
+    ),
+    (
+        "etp",
+        "U.S. ETPs",
+        (
+            re.compile(
+                r"\b(?:\betf\b|\betp\b|etns?|exchange[-\s]?traded|"
+                r"spot\s+bitcoin\s+etf|spot\s+ether(?:eum)?\s+etf|"
+                r"ibit\b|fbtc\b|fbac\b|etha\b|arkb\b|bitb\b|farside)\b",
+                re.I,
+            ),
+        ),
+    ),
+    (
+        "rwa",
+        "RWA Market",
+        (
+            re.compile(
+                r"\b(?:\brwa\b|real[-\s]?world\s+assets?|tokenized\s+treasur|"
+                r"tokenised\s+treasur|tokenized\s+stock|tokenised\s+stock|"
+                r"ondo\b|securitize|tokenization\b|tokenised\s+fund|"
+                r"tokenized\s+fund|transfer\s+agent)\b",
+                re.I,
+            ),
+        ),
+    ),
+    (
+        "crypto",
+        "Crypto Prices",
+        (
+            re.compile(
+                r"\b(?:bitcoin|btc\b|ethereum|ether\b|eth\b|solana|sol\b|xrp\b|"
+                r"crypto\s+(?:price|market|rally|selloff|winter)|spot\s+price|"
+                r"market\s+cap|altcoin|memecoin)\b",
+                re.I,
+            ),
+        ),
+    ),
+)
+
+
+def classify_hub_site_topic(item: dict[str, Any]) -> tuple[str, str]:
+    """
+    Map a headline to a dashboard page topic for news-hub color rails.
+
+    Returns ``(topic_id, label)`` where id is one of
+    ``tmmf|stablecoins|etp|rwa|crypto|other``.
+    """
+    blob = f"{item.get('title') or ''} {item.get('summary') or ''} {item.get('category') or ''}"
+    for topic_id, label, patterns in _HUB_TOPIC_BUCKETS:
+        for pat in patterns:
+            if pat.search(blob):
+                return topic_id, label
+    return "other", "Other"
 
 
 def filter_market_news_calendar_lookback(

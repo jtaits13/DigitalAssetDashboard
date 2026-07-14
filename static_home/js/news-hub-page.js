@@ -13,10 +13,10 @@
       badge: "NEWS",
       title: "Digital asset news",
       dek:
-        "Curated headlines from <strong>CoinDesk</strong> and <strong>The Block</strong> — " +
-        "duplicates collapsed, up to eight stories per day, rolling <strong>five</strong> UTC days. " +
-        "Built to scan like a newsroom, filtered for digital assets.",
-      searchPlaceholder: "Search title, summary, or source…",
+        "Curated headlines from <strong>CoinDesk</strong> and <strong>The Block</strong> only — " +
+        "duplicates collapsed, up to eight stories per UTC day across a rolling <strong>five</strong>-day window. " +
+        "Topic chips map stories to site pages (TMMFs, Stablecoins, RWA Market, U.S. ETPs, Crypto Prices, or Other).",
+      searchPlaceholder: "Search all news — title, summary, source, or topic…",
       includeCountry: false,
       includeAccess: false,
       empty: "No digital-asset headlines match. Try another lane or clear search.",
@@ -27,9 +27,10 @@
       badge: "ETP",
       title: "ETF &amp; ETP news",
       dek:
-        "Crypto and finance headlines focused on exchange-traded products — flows, filings, approvals, and issuers. " +
-        "Up to five ranked stories per UTC day across a rolling <strong>five</strong>-day window.",
-      searchPlaceholder: "Search ETF/ETP headlines…",
+        "Crypto and finance headlines focused on exchange-traded products — including specialist ETF outlets " +
+        "and Google News ETF queries when direct RSS is blocked. Up to five ranked stories per UTC day " +
+        "across a rolling <strong>five</strong>-day window.",
+      searchPlaceholder: "Search all news — title, summary, source, or topic…",
       includeCountry: false,
       includeAccess: false,
       empty: "No ETF/ETP headlines match. Try another lane or clear search.",
@@ -41,8 +42,8 @@
       title: "Regulatory &amp; policy news",
       dek:
         "Regulator, central-bank, and policy coverage for digital assets. " +
-        "Up to five ranked stories per UTC day — filter by country in search when relevant.",
-      searchPlaceholder: "Search title, summary, source, or country…",
+        "Up to five ranked stories per UTC day — search runs across every news lane.",
+      searchPlaceholder: "Search all news — title, summary, source, or topic…",
       includeCountry: true,
       includeAccess: false,
       empty: "No regulatory headlines match. Try another lane or clear search.",
@@ -55,7 +56,7 @@
       dek:
         "Digital-asset custody and infrastructure coverage from Global Custodian and related sources. " +
         "Access badges are best-effort (Free / Subscriber / Check site).",
-      searchPlaceholder: "Search title, summary, source, or category…",
+      searchPlaceholder: "Search all news — title, summary, source, or topic…",
       includeCountry: false,
       includeAccess: true,
       empty: "No custody headlines match. Try another lane or clear search.",
@@ -67,6 +68,42 @@
   var all = [];
   var filtered = [];
   var page = 0;
+  var searchAllMode = false;
+  var corpus = [];
+  var corpusReady = false;
+  var corpusLoading = null;
+
+  var TOPIC_LABELS = {
+    tmmf: "TMMFs",
+    stablecoins: "Stablecoins",
+    etp: "U.S. ETPs",
+    rwa: "RWA Market",
+    crypto: "Crypto Prices",
+    other: "Other",
+  };
+
+  var TOPIC_RULES = [
+    {
+      id: "tmmf",
+      re: /\b(?:tokenized\s+money\s+market|money\s+market\s+fund|mmf\b|buidl|cash\s+management\s+fund|liquidity\s+fund|blackrock\s+buidl)\b/i,
+    },
+    {
+      id: "stablecoins",
+      re: /\b(?:stablecoin|stable\s*coin|usdc|usdt|tether|dai\b|pyusd|eurc|circle\b|de-?peg|reserves?\s+attestation)\b/i,
+    },
+    {
+      id: "etp",
+      re: /\b(?:\betf\b|\betp\b|etns?|exchange[-\s]?traded|spot\s+bitcoin\s+etf|spot\s+ether(?:eum)?\s+etf|ibit\b|fbtc\b|etha\b|arkb\b|bitb\b|farside)\b/i,
+    },
+    {
+      id: "rwa",
+      re: /\b(?:\brwa\b|real[-\s]?world\s+assets?|tokenized\s+treasur|tokenised\s+treasur|tokenized\s+stock|tokenised\s+stock|ondo\b|securitize|tokenization\b|tokenised\s+fund|tokenized\s+fund|transfer\s+agent)\b/i,
+    },
+    {
+      id: "crypto",
+      re: /\b(?:bitcoin|btc\b|ethereum|ether\b|eth\b|solana|sol\b|xrp\b|crypto\s+(?:price|market|rally|selloff|winter)|spot\s+price|market\s+cap|altcoin|memecoin)\b/i,
+    },
+  ];
 
   function esc(s) {
     return typeof escapeHtml === "function" ? escapeHtml(s) : String(s || "");
@@ -109,6 +146,7 @@
 
   function metaExtras(a, c) {
     var parts = [
+      a.source || "",
       c.includeCountry && a.country ? a.country : "",
       a.category || "",
       typeof fmtTimeOnly === "function" ? fmtTimeOnly(a.published) || "" : "",
@@ -116,44 +154,27 @@
     return parts.join(" · ");
   }
 
-  function sourceTone(source) {
-    var s = String(source || "")
-      .toLowerCase()
-      .replace(/\s+/g, " ")
-      .trim();
-    if (!s) return "default";
-    if (s.indexOf("coindesk") >= 0) return "coindesk";
-    if (s.indexOf("the block") >= 0 || s === "block") return "block";
-    if (
-      s.indexOf("etf") >= 0 ||
-      s.indexOf("benzinga") >= 0 ||
-      s.indexOf("yahoo") >= 0 ||
-      s.indexOf("vettafi") >= 0 ||
-      s.indexOf("globenewswire") >= 0 ||
-      s.indexOf("google news") >= 0
-    ) {
-      return "etf";
+  function classifyTopic(a) {
+    var id = String(a.topic || "").trim().toLowerCase();
+    if (TOPIC_LABELS[id]) {
+      return { id: id, label: a.topic_label || TOPIC_LABELS[id] };
     }
-    if (s.indexOf("custodian") >= 0 || s.indexOf("custody") >= 0) return "custody";
-    if (
-      s.indexOf("sec") >= 0 ||
-      s.indexOf("fed") >= 0 ||
-      s.indexOf("regulator") >= 0 ||
-      s.indexOf("defiant") >= 0
-    ) {
-      return "reg";
+    var blob = ((a.title || "") + " " + (a.summary || "") + " " + (a.category || "")).toLowerCase();
+    for (var i = 0; i < TOPIC_RULES.length; i++) {
+      if (TOPIC_RULES[i].re.test(blob)) {
+        return { id: TOPIC_RULES[i].id, label: TOPIC_LABELS[TOPIC_RULES[i].id] };
+      }
     }
-    return "default";
+    return { id: "other", label: TOPIC_LABELS.other };
   }
 
-  function sourceChipHtml(a) {
-    var src = String(a.source || "").trim();
-    if (!src) return "";
+  function topicChipHtml(a) {
+    var t = classifyTopic(a);
     return (
-      '<span class="news-hub-source news-hub-source--' +
-      sourceTone(src) +
+      '<span class="news-hub-topic news-hub-topic--' +
+      t.id +
       '">' +
-      esc(src) +
+      esc(t.label) +
       "</span>"
     );
   }
@@ -161,6 +182,12 @@
   function accessHtml(a, c) {
     if (!c.includeAccess || typeof articleAccessBadgeHtml !== "function") return "";
     return articleAccessBadgeHtml(a.access);
+  }
+
+  function laneBadgeHtml(laneKey) {
+    var L = LANES[laneKey];
+    if (!L) return "";
+    return '<span class="news-hub-lane-tag">' + esc(L.title.replace(/&amp;/g, "&")) + "</span>";
   }
 
   function setActiveLaneButtons() {
@@ -201,17 +228,14 @@
     var href = a.link || "#";
     var title = esc(a.title || "Untitled");
     var dek = snip(a.summary || "", 200);
-    var tone = sourceTone(a.source);
+    var topic = classifyTopic(a);
     var extras = metaExtras(a, c);
     var access = accessHtml(a, c);
-    var when =
-      typeof fmtTimeOnly === "function" ? fmtTimeOnly(a.published) || "" : "";
-    var toplineBits = [sourceChipHtml(a)];
+    var toplineBits = [topicChipHtml(a)];
+    if (searchAllMode && a._hubLane) toplineBits.push(laneBadgeHtml(a._hubLane));
     if (access) toplineBits.push(access);
-    if (extras && extras !== when) {
+    if (extras) {
       toplineBits.push('<span class="news-hub-story__when">' + esc(extras) + "</span>");
-    } else if (when) {
-      toplineBits.push('<span class="news-hub-story__when">' + esc(when) + "</span>");
     }
     return (
       '<li class="news-hub-story">' +
@@ -219,7 +243,7 @@
       esc(href) +
       '" target="_blank" rel="noopener noreferrer">' +
       '<span class="news-hub-story__rail news-hub-story__rail--' +
-      tone +
+      topic.id +
       '" aria-hidden="true"></span>' +
       '<div class="news-hub-story__body">' +
       '<div class="news-hub-story__topline">' +
@@ -252,7 +276,8 @@
       "</h2>" +
       (leadDek ? '<p class="news-hub-lead__dek">' + esc(leadDek) + "</p>" : "") +
       '<div class="news-hub-lead__meta">' +
-      sourceChipHtml(lead) +
+      topicChipHtml(lead) +
+      (searchAllMode && lead._hubLane ? laneBadgeHtml(lead._hubLane) : "") +
       accessHtml(lead, c) +
       (leadExtras ? "<span>" + esc(leadExtras) + "</span>" : "") +
       '<span class="news-hub-lead__cta">Read story →</span>' +
@@ -264,11 +289,14 @@
         var dek = snip(a.summary || "", 160);
         var extras = metaExtras(a, c);
         html +=
-          '<a class="news-hub-side__card" href="' +
+          '<a class="news-hub-side__card news-hub-side__card--' +
+          classifyTopic(a).id +
+          '" href="' +
           esc(a.link || "#") +
           '" target="_blank" rel="noopener noreferrer">' +
           '<div class="news-hub-side__topline">' +
-          sourceChipHtml(a) +
+          topicChipHtml(a) +
+          (searchAllMode && a._hubLane ? laneBadgeHtml(a._hubLane) : "") +
           "</div>" +
           '<p class="news-hub-side__title">' +
           esc(a.title || "Untitled") +
@@ -315,27 +343,89 @@
     return html;
   }
 
+  function matchesQuery(a, q, c) {
+    if (!q) return true;
+    var topic = classifyTopic(a);
+    var blob =
+      (a.title || "") +
+      " " +
+      (a.summary || "") +
+      " " +
+      (a.source || "") +
+      " " +
+      topic.label +
+      " " +
+      topic.id +
+      (c.includeCountry ? " " + (a.country || "") : "") +
+      (c.includeAccess ? " " + (a.access || "") + " " + (a.category || "") : "");
+    return blob.toLowerCase().indexOf(q) >= 0;
+  }
+
+  function ensureCorpus() {
+    if (corpusReady) return Promise.resolve(corpus);
+    if (corpusLoading) return corpusLoading;
+    if (typeof loadJson !== "function") return Promise.resolve([]);
+    var keys = Object.keys(LANES);
+    corpusLoading = Promise.all(
+      keys.map(function (id) {
+        var feed = LANES[id].feed;
+        if (cache[feed]) {
+          return Promise.resolve({ id: id, items: cache[feed] });
+        }
+        return loadJson(feed)
+          .then(function (data) {
+            cache[feed] = data.items || [];
+            return { id: id, items: cache[feed] };
+          })
+          .catch(function () {
+            cache[feed] = cache[feed] || [];
+            return { id: id, items: cache[feed] };
+          });
+      })
+    ).then(function (packs) {
+      var byLink = {};
+      packs.forEach(function (pack) {
+        (pack.items || []).forEach(function (item) {
+          var key = (item.link || item.title || "").trim();
+          if (!key) return;
+          if (!byLink[key]) {
+            var copy = {};
+            Object.keys(item).forEach(function (k) {
+              copy[k] = item[k];
+            });
+            copy._hubLane = pack.id;
+            byLink[key] = copy;
+          }
+        });
+      });
+      corpus = Object.keys(byLink).map(function (k) {
+        return byLink[k];
+      });
+      corpusReady = true;
+      corpusLoading = null;
+      return corpus;
+    });
+    return corpusLoading;
+  }
+
   function applyFilter() {
     var el = document.getElementById("js-article-feed-search");
     var c = lane();
     var q = (el && el.value ? el.value : "").trim().toLowerCase();
-    if (!q) {
-      filtered = all.slice();
-    } else {
-      filtered = all.filter(function (a) {
-        var blob =
-          (a.title || "") +
-          " " +
-          (a.summary || "") +
-          " " +
-          (a.source || "") +
-          (c.includeCountry ? " " + (a.country || "") : "") +
-          (c.includeAccess ? " " + (a.access || "") + " " + (a.category || "") : "");
-        return blob.toLowerCase().indexOf(q) >= 0;
-      });
-    }
     page = 0;
-    render();
+    if (!q) {
+      searchAllMode = false;
+      filtered = all.slice();
+      render();
+      return;
+    }
+    searchAllMode = true;
+    ensureCorpus().then(function (rows) {
+      filtered = rows.filter(function (a) {
+        return matchesQuery(a, q, c);
+      });
+      render();
+    });
   }
 
   function render() {
@@ -391,16 +481,23 @@
         : Math.min(start + listItems.length, sorted.length);
 
     if (metaEl) {
-      metaEl.textContent =
-        "Showing " +
-        shownStart +
-        "–" +
-        shownEnd +
-        " of " +
-        sorted.length +
-        " · " +
-        all.length +
-        " in this lane";
+      metaEl.textContent = searchAllMode
+        ? "Showing " +
+          shownStart +
+          "–" +
+          shownEnd +
+          " of " +
+          sorted.length +
+          " across all news lanes"
+        : "Showing " +
+          shownStart +
+          "–" +
+          shownEnd +
+          " of " +
+          sorted.length +
+          " · " +
+          all.length +
+          " in this lane";
     }
 
     if (navEl) {
