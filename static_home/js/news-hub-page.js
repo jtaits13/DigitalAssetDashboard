@@ -107,14 +107,55 @@
     return t.substring(0, max).replace(/\s+\S*$/, "") + "…";
   }
 
-  function metaLine(a, c) {
+  function metaExtras(a, c) {
     var parts = [
-      a.source || "",
       c.includeCountry && a.country ? a.country : "",
       a.category || "",
       typeof fmtTimeOnly === "function" ? fmtTimeOnly(a.published) || "" : "",
     ].filter(Boolean);
     return parts.join(" · ");
+  }
+
+  function sourceTone(source) {
+    var s = String(source || "")
+      .toLowerCase()
+      .replace(/\s+/g, " ")
+      .trim();
+    if (!s) return "default";
+    if (s.indexOf("coindesk") >= 0) return "coindesk";
+    if (s.indexOf("the block") >= 0 || s === "block") return "block";
+    if (
+      s.indexOf("etf") >= 0 ||
+      s.indexOf("benzinga") >= 0 ||
+      s.indexOf("yahoo") >= 0 ||
+      s.indexOf("vettafi") >= 0 ||
+      s.indexOf("globenewswire") >= 0 ||
+      s.indexOf("google news") >= 0
+    ) {
+      return "etf";
+    }
+    if (s.indexOf("custodian") >= 0 || s.indexOf("custody") >= 0) return "custody";
+    if (
+      s.indexOf("sec") >= 0 ||
+      s.indexOf("fed") >= 0 ||
+      s.indexOf("regulator") >= 0 ||
+      s.indexOf("defiant") >= 0
+    ) {
+      return "reg";
+    }
+    return "default";
+  }
+
+  function sourceChipHtml(a) {
+    var src = String(a.source || "").trim();
+    if (!src) return "";
+    return (
+      '<span class="news-hub-source news-hub-source--' +
+      sourceTone(src) +
+      '">' +
+      esc(src) +
+      "</span>"
+    );
   }
 
   function accessHtml(a, c) {
@@ -160,20 +201,34 @@
     var href = a.link || "#";
     var title = esc(a.title || "Untitled");
     var dek = snip(a.summary || "", 200);
-    var meta = metaLine(a, c);
+    var tone = sourceTone(a.source);
+    var extras = metaExtras(a, c);
     var access = accessHtml(a, c);
+    var when =
+      typeof fmtTimeOnly === "function" ? fmtTimeOnly(a.published) || "" : "";
+    var toplineBits = [sourceChipHtml(a)];
+    if (access) toplineBits.push(access);
+    if (extras && extras !== when) {
+      toplineBits.push('<span class="news-hub-story__when">' + esc(extras) + "</span>");
+    } else if (when) {
+      toplineBits.push('<span class="news-hub-story__when">' + esc(when) + "</span>");
+    }
     return (
       '<li class="news-hub-story">' +
       '<a class="news-hub-story__link" href="' +
       esc(href) +
       '" target="_blank" rel="noopener noreferrer">' +
+      '<span class="news-hub-story__rail news-hub-story__rail--' +
+      tone +
+      '" aria-hidden="true"></span>' +
+      '<div class="news-hub-story__body">' +
+      '<div class="news-hub-story__topline">' +
+      toplineBits.join("") +
+      "</div>" +
       '<p class="news-hub-story__title">' +
       title +
       "</p>" +
       (dek ? '<p class="news-hub-story__dek">' + esc(dek) + "</p>" : "") +
-      '<div class="news-hub-story__meta">' +
-      access +
-      esc(meta) +
       "</div>" +
       '<span class="news-hub-story__go" aria-hidden="true">Read →</span>' +
       "</a></li>"
@@ -186,6 +241,7 @@
     var side = items.slice(1, FEATURE_COUNT);
     var leadHref = lead.link || "#";
     var leadDek = snip(lead.summary || "", 280);
+    var leadExtras = metaExtras(lead, c);
     var html =
       '<a class="news-hub-lead" href="' +
       esc(leadHref) +
@@ -196,10 +252,9 @@
       "</h2>" +
       (leadDek ? '<p class="news-hub-lead__dek">' + esc(leadDek) + "</p>" : "") +
       '<div class="news-hub-lead__meta">' +
+      sourceChipHtml(lead) +
       accessHtml(lead, c) +
-      "<span>" +
-      esc(metaLine(lead, c)) +
-      "</span>" +
+      (leadExtras ? "<span>" + esc(leadExtras) + "</span>" : "") +
       '<span class="news-hub-lead__cta">Read story →</span>' +
       "</div></a>";
 
@@ -207,17 +262,21 @@
       html += '<div class="news-hub-side">';
       side.forEach(function (a) {
         var dek = snip(a.summary || "", 160);
+        var extras = metaExtras(a, c);
         html +=
           '<a class="news-hub-side__card" href="' +
           esc(a.link || "#") +
           '" target="_blank" rel="noopener noreferrer">' +
+          '<div class="news-hub-side__topline">' +
+          sourceChipHtml(a) +
+          "</div>" +
           '<p class="news-hub-side__title">' +
           esc(a.title || "Untitled") +
           "</p>" +
           (dek ? '<p class="news-hub-side__dek">' + esc(dek) + "</p>" : "") +
           '<div class="news-hub-side__meta">' +
           accessHtml(a, c) +
-          esc(metaLine(a, c)) +
+          esc(extras) +
           "</div></a>";
       });
       html += "</div>";

@@ -2628,11 +2628,13 @@ def build_news_hub_server_zone_html(*, initial_lane: str = "digital", feed_banne
         '<p class="toolbar-note" id="js-article-feed-meta">Loading&hellip;</p>'
         "</div>"
         '<div class="news-hub-feature" id="js-news-hub-feature" aria-live="polite"></div>'
+        '<div class="news-hub-latest">'
         '<div id="js-news-hub-latest-head" class="news-hub-latest-head">'
         '<h2 class="news-hub-latest-head__title">Latest</h2>'
         '<p class="news-hub-latest-head__hint">Summary under each headline — click through to the source</p>'
         "</div>"
         '<div class="article-feed-stream" id="js-article-feed-list"></div>'
         '<div class="etf-news-nav" id="js-article-feed-nav"></div>'
+        "</div>"
         "</div></article></main>"
     )
