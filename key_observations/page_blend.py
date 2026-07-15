@@ -23,29 +23,6 @@ _TOPIC_SECTION: dict[str, str] = {
     "crypto": "crypto",
 }
 
-# Broader market framing appended to the dynamic KPI bullet (page-only).
-_PAGE_FRAME_TAIL: dict[str, str] = {
-    "tmmf": (
-        "That keeps TMMFs relevant as institutional settlement and treasury "
-        "infrastructure, not only a short-term yield sleeve."
-    ),
-    "stablecoins": (
-        "That keeps the focus on payment rails, reserve quality, and how dollar "
-        "liquidity reaches on-chain markets."
-    ),
-    "rwa": (
-        "That still bears on whether TradFi balance sheets keep migrating into "
-        "tokenized treasuries, funds, and credit wrappers."
-    ),
-    "etp": (
-        "That still shapes whether traditional channels remain the preferred "
-        "on-ramp for institutional crypto beta."
-    ),
-    "crypto": (
-        "That still frames whether risk appetite is improving through liquidity "
-        "and institutional plumbing, not only through single-asset headlines."
-    ),
-}
 
 _WOW_THEMES: dict[str, tuple[str, ...]] = {
     "tmmf": ("institutional_settlement", "tokenization_growth"),
@@ -111,16 +88,8 @@ def _wow_candidate(
         lead = (tw.lead or "").strip().rstrip(".!?…:")
         body = (tw.body or "").strip()
 
-    tail = _PAGE_FRAME_TAIL.get(section_id, "").strip()
-    if topic == "tokenized_stocks":
-        tail = (
-            "That still hinges on broker distribution, custody confidence, and venue "
-            "interoperability more than listing count alone."
-        )
-    if tail:
-        if body and not body.endswith((".", "!", "?")):
-            body = f"{body}."
-        body = f"{body} {tail}".strip()
+    if body and not body.endswith((".", "!", "?")):
+        body = f"{body}."
 
     cand_id = f"wow_{topic}" if topic == "tokenized_stocks" else f"wow_{section_id}"
     return ObservationCandidate(
@@ -234,15 +203,16 @@ def blend_page_ko_candidates(
     if not section_id:
         return framing, ()
 
-    framing = _weave_framing_with_move(
-        framing, topic, section_id, explore=explore, etp=etp, crypto=crypto
-    )
     wow = _wow_candidate(
         topic, section_id, explore=explore, etp=etp, crypto=crypto
     )
     if wow is None:
+        framing = _weave_framing_with_move(
+            framing, topic, section_id, explore=explore, etp=etp, crypto=crypto
+        )
         return framing, ()
 
-    # Avoid duplicate ids if a domain builder already used wow_*.
     framing = [c for c in framing if c.id != wow.id]
+    if topic == "tokenized_mmf":
+        framing = [c for c in framing if c.id != "mmf_settlement"]
     return [wow, *framing], (wow.id,)

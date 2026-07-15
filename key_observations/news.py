@@ -10,7 +10,7 @@ from urllib.parse import quote_plus
 
 import feedparser
 
-from key_observations.interpretations import page_theme_interpretation, resolve_topic_key
+from key_observations.interpretations import page_theme_interpretation
 from key_observations.models import ObservationCandidate, TopicTheme
 
 _GOOGLE_NEWS_RSS = "https://news.google.com/rss/search?q={query}&hl=en-US&gl=US&ceid=US:en"
@@ -44,18 +44,20 @@ def _article_text(article: dict[str, Any]) -> str:
     ).lower()
 
 
-def _article_sort_key(article: dict[str, Any]) -> tuple[int, float, float]:
+def _article_sort_key(article: dict[str, Any]) -> tuple[int, int, float, float]:
     src = str(article.get("source") or "").lower()
+    link = str(article.get("link") or "").lower()
     pref = 0
     for i, needle in enumerate(_PREFERRED_SOURCES):
         if needle in src:
             pref = len(_PREFERRED_SOURCES) - i
             break
+    google_penalty = 1 if "news.google.com" in link else 0
     pub = article.get("published")
     ts = pub.timestamp() if isinstance(pub, datetime) and hasattr(pub, "timestamp") else 0.0
     age = _article_age_days(article)
     recency = -(age if age is not None else 999.0)
-    return (pref, ts, recency)
+    return (pref, -google_penalty, ts, recency)
 
 
 def _matches_theme(article: dict[str, Any], theme: TopicTheme) -> bool:
@@ -147,7 +149,7 @@ def theme_news_strength(headlines_by_theme: dict[str, list[dict[str, Any]]]) -> 
     return out
 
 
-def _headline_link_html(article: dict[str, Any]) -> str:
+def headline_link_html(article: dict[str, Any]) -> str:
     title = escape(str(article.get("title") or "").strip())
     link = str(article.get("link") or "").strip()
     src = escape(str(article.get("source") or "").strip())
@@ -156,6 +158,13 @@ def _headline_link_html(article: dict[str, Any]) -> str:
     if src:
         return f"{title} ({src})"
     return title
+
+
+def strip_embedded_headlines(body: str) -> str:
+    """Remove legacy inline headline lists and Related tails before re-matching."""
+    text = re.sub(r"<a[^>]*>.*?</a>\s*(?:\([^)]*\))?\s*(?:;\s*)?", "", body or "", flags=re.IGNORECASE)
+    text = re.split(r"\s*Related:", text, maxsplit=1, flags=re.IGNORECASE)[0]
+    return re.sub(r"\s+", " ", text).strip()
 
 
 def _declarative_news_lead(theme: TopicTheme) -> str:
@@ -188,6 +197,14 @@ def _declarative_news_lead(theme: TopicTheme) -> str:
     return lead.rstrip(".!?…:")
 
 
+def _theme_is_active(items: list[dict[str, Any]], strength: float, *, min_strength: float) -> bool:
+    if len(items) >= 2 and strength >= min_strength:
+        return True
+    if len(items) >= 1 and strength >= max(min_strength, 0.52):
+        return True
+    return False
+
+
 def news_observation_candidates(
     topic: str,
     themes: tuple[TopicTheme, ...],
@@ -196,20 +213,21 @@ def news_observation_candidates(
     min_strength: float = 0.42,
 ) -> list[ObservationCandidate]:
     """Headline-driven bullets when a theme is active in recent news."""
-    out: list[ObservationCandidate] = []
+    ranked_themes: list[tuple[float, TopicTheme, list[dict[str, Any]]]] = []
     for theme in themes:
         items = headlines_by_theme.get(theme.id) or []
-        if len(items) < 2:
-            continue
         strength = theme_news_strength({theme.id: items}).get(theme.id, 0.0)
-        if strength < min_strength:
+        if not _theme_is_active(items, strength, min_strength=min_strength):
             continue
-        cites = "; ".join(_headline_link_html(a) for a in items[:2])
+        ranked_themes.append((strength, theme, items))
+    ranked_themes.sort(key=lambda row: row[0], reverse=True)
+
+    out: list[ObservationCandidate] = []
+    for strength, theme, _items in ranked_themes[:4]:
         interpretation = page_theme_interpretation(topic, theme.id).strip()
         if interpretation and not interpretation.endswith((".", "!", "?")):
             interpretation = f"{interpretation}."
-        # Weave sources in after the market read — no "Recent coverage includes" preface.
-        body = f"{interpretation} {cites}." if cites else interpretation
+        body = interpretation
         score = 52.0 + strength * 38.0
         out.append(
             ObservationCandidate(

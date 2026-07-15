@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from html import escape
 from typing import Any, Literal
 
@@ -10,7 +11,9 @@ from key_observations.models import ObservationCandidate
 from key_observations.news import (
     apply_news_adjustments,
     collect_headlines_for_topic,
+    headline_link_html,
     news_observation_candidates,
+    strip_embedded_headlines,
     theme_news_strength,
 )
 from key_observations.interpretations import resolve_topic_key
@@ -18,11 +21,102 @@ from key_observations.topics import TOPIC_THEMES
 
 Variant = Literal["boxed", "crypto", "inner_page"]
 
+# Topic keys passed to weekly article matcher (section guardrails).
+_PAGE_TOPIC_KEYS: dict[str, tuple[str, ...]] = {
+    "tokenized_mmf": ("tokenized_mmf",),
+    "stablecoins": ("stablecoins",),
+    "us_treasuries": ("us_treasuries", "rwa_global"),
+    "tokenized_stocks": ("tokenized_stocks", "rwa_global"),
+    "rwa_global": ("rwa_global", "us_treasuries", "tokenized_stocks"),
+    "participants": ("participants", "rwa_global"),
+    "participants_networks": ("participants", "rwa_global"),
+    "participants_platforms": ("participants", "rwa_global"),
+    "participants_asset_managers": ("participants", "rwa_global"),
+    "etp": ("etp",),
+    "crypto": ("crypto",),
+}
+
+# Themes that express the same takeaway — keep only the highest-scoring bullet.
+_OVERLAP_THEME_GROUPS: tuple[frozenset[str], ...] = (
+    frozenset({"institutional_settlement", "issuer_models"}),
+    frozenset({"regulation", "stablecoin_policy"}),
+    frozenset({"etf_flows", "concentration"}),
+    frozenset({"tokenized_treasuries", "institutional_adoption"}),
+    frozenset({"chain_efficiency", "multichain"}),
+)
+
 
 def _bullet_html(cand: ObservationCandidate) -> str:
     if cand.lead:
         return f"<li><strong>{escape(cand.lead)}</strong> {cand.body}</li>"
     return f"<li>{cand.body}</li>"
+
+
+def _themes_overlap(a: ObservationCandidate, b: ObservationCandidate) -> bool:
+    if not a.themes or not b.themes:
+        return False
+    ta, tb = set(a.themes), set(b.themes)
+    if ta.intersection(tb):
+        return True
+    for group in _OVERLAP_THEME_GROUPS:
+        if (ta & group) and (tb & group):
+            return True
+    return False
+
+
+def _normalize_body(body: str) -> str:
+    text = strip_embedded_headlines(body or "")
+    text = re.sub(r"\s+", " ", text).strip()
+    if text and not text.endswith((".", "!", "?")):
+        text = f"{text}."
+    return text
+
+
+def _attach_related_articles(
+    selected: list[ObservationCandidate],
+    topic: str,
+    articles: list[dict[str, Any]] | None,
+) -> list[ObservationCandidate]:
+    """One tightly matched related article per bullet (skip weak matches)."""
+    if not articles:
+        return selected
+    try:
+        from key_observations.week_headlines import match_article_for_takeaway
+    except Exception:
+        return selected
+
+    theme_key = resolve_topic_key(topic)
+    topic_keys = _PAGE_TOPIC_KEYS.get(topic) or _PAGE_TOPIC_KEYS.get(theme_key) or (theme_key,)
+    used_links: set[str] = set()
+    out: list[ObservationCandidate] = []
+
+    for cand in selected:
+        body = _normalize_body(cand.body)
+        plain = re.sub(r"<[^>]+>", " ", f"{cand.lead or ''} {body}")
+        plain = re.sub(r"\s+", " ", plain).strip()
+        art = match_article_for_takeaway(
+            plain,
+            bullet_lead=(cand.lead or "").strip().rstrip(":"),
+            topic_keys=topic_keys,
+            articles=articles,
+            used_links=used_links,
+            max_age_days=21.0,
+            strict=True,
+        )
+        if art is not None:
+            base = body.rstrip(".!? ")
+            body = f"{base}. Related: {headline_link_html(art)}."
+        out.append(
+            ObservationCandidate(
+                id=cand.id,
+                lead=cand.lead,
+                body=body,
+                score=cand.score,
+                themes=cand.themes,
+                source=cand.source,
+            )
+        )
+    return out
 
 
 def select_observations(
@@ -50,16 +144,28 @@ def select_observations(
             chosen.append(cand)
             used_themes.update(cand.themes)
 
+    def _blocks_overlap(cand: ObservationCandidate) -> bool:
+        for picked in chosen:
+            if not _themes_overlap(cand, picked):
+                continue
+            # One news angle per theme cluster; avoid headline pile-up.
+            if cand.source == "news" or picked.source == "news":
+                return True
+            # WoW KPI read can sit beside a different data cut on the same theme.
+            if picked.id.startswith("wow_") or cand.id.startswith("wow_"):
+                continue
+            if any(
+                g & set(cand.themes) & set(picked.themes) for g in _OVERLAP_THEME_GROUPS
+            ):
+                return True
+            if set(cand.themes) == set(picked.themes):
+                return True
+        return False
+
     def _try_add(cand: ObservationCandidate, *, force: bool = False) -> bool:
         if cand in chosen:
             return False
-        if (
-            not force
-            and cand.themes
-            and used_themes.intersection(cand.themes)
-            and cand.score < 72
-            and len(chosen) >= min_count
-        ):
+        if not force and _blocks_overlap(cand):
             return False
         chosen.append(cand)
         used_themes.update(cand.themes)
@@ -85,6 +191,8 @@ def select_observations(
         for cand in ranked:
             if cand in chosen:
                 continue
+            if _blocks_overlap(cand):
+                continue
             chosen.append(cand)
             if len(chosen) >= min_count:
                 break
@@ -104,7 +212,7 @@ def render_observations_html(
     items = "".join(_bullet_html(c) for c in selected)
     note_text = (
         f"{escape(context_note)} "
-        "Bullets are ranked from on-page data and recent industry headlines (dashboard RSS plus Google News fallback)."
+        "Bullets combine on-page data with recent industry headlines."
     )
     note = f'<p class="takeaways__note">{note_text}</p>'
     review = key_observations_disclaimer_html() if include_disclaimer else ""
@@ -165,7 +273,7 @@ def build_key_observations_html(
     has_news = any(c.source == "news" for c in pool)
     has_data = any(c.source == "data" for c in pool)
     min_data = 2 if has_data and has_news else 0
-    max_news = 2 if has_data and has_news else max_bullets
+    max_news = 1 if has_data and has_news else max_bullets
 
     if include_monthly_review is not None:
         include_disclaimer = include_monthly_review
@@ -178,6 +286,7 @@ def build_key_observations_html(
         max_news=max_news,
         pin_candidate_ids=pin_candidate_ids,
     )
+    selected = _attach_related_articles(selected, topic, articles)
     return render_observations_html(
         selected,
         context_note=context_note,
