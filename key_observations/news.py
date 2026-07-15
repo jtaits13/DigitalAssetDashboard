@@ -159,27 +159,27 @@ def _headline_link_html(article: dict[str, Any]) -> str:
 
 
 def _declarative_news_lead(theme: TopicTheme) -> str:
-    """Punchy insight lead — no 'Industry headlines emphasize' meta framing."""
+    """Setup lead that the interpretation completes — clear takeaway, no meta framing."""
     by_id = {
-        "institutional_settlement": "Settlement and cash-rail stories are reinforcing institutional TMMF use",
-        "regulation": "Regulatory clarity is shaping who can hold and distribute these products",
-        "chain_efficiency": "Fee and throughput narratives are steering network-share migration",
-        "issuer_models": "Issuer strategy coverage is splitting institutional rails from retail yield products",
-        "rates_yields": "Rates and money-market yield stories are reshaping tokenized cash flows",
-        "multichain": "Multi-chain deployments still look more like distribution requirements than deep liquidity",
-        "stablecoin_policy": "Policy and reserve headlines are repricing stablecoin issuer priorities",
-        "bank_integration": "Bank and payments integrations are framing stablecoins as treasury infrastructure",
-        "tokenized_treasuries": "Tokenized T-bill product headlines mark where institutional supply is expanding",
-        "tokenized_equities": "Equity tokenization is still an access and settlement experiment",
-        "market_structure": "Breadth and dominance narratives are clarifying whether moves are Bitcoin- or alt-led",
-        "etf_flows": "Spot ETF flow stories are still the main listed-channel demand read",
-        "market_sizing": "Forward AUM scenarios remain planning ranges, not base-case forecasts",
-        "launch_pipeline": "Filing waves are foreshadowing issuer and custodian competition ahead of launches",
-        "concentration": "Concentration narratives still matter for listed-product distribution economics",
-        "tokenization_growth": "Tokenization growth headlines are leading shifts in network rank and share",
-        "macro_rates": "Rates and inflation coverage are steering which RWA categories attract inflows",
-        "infrastructure": "Infrastructure and custody headlines often map to near-term platform and network rank shifts",
-        "institutional_adoption": "Institutional adoption stories usually precede measurable on-chain share shifts",
+        "institutional_settlement": "Institutional settlement use is still the clearest TMMF read",
+        "regulation": "Regulatory framing still decides product access",
+        "chain_efficiency": "Settlement economics are reshaping network share",
+        "issuer_models": "Issuer models are splitting the TMMF market",
+        "rates_yields": "Rates still matter as much as product and chain choice",
+        "multichain": "Multi-chain footprints are a distribution signal",
+        "stablecoin_policy": "Policy and reserves are resetting issuer priorities",
+        "bank_integration": "Bank rails are pushing stablecoins into treasury workflows",
+        "tokenized_treasuries": "Tokenized T-bill supply is still expanding through new products",
+        "tokenized_equities": "Tokenized equities remain an early access market",
+        "market_structure": "Market-structure signals still separate Bitcoin-led from alt-led tapes",
+        "etf_flows": "Listed ETF flows remain the cleanest demand gauge",
+        "market_sizing": "Long-run AUM scenarios are still planning tools",
+        "launch_pipeline": "The filing pipeline remains crowded",
+        "concentration": "Scale still concentrates in the largest wrappers",
+        "tokenization_growth": "Tokenization growth is still reallocating network share",
+        "macro_rates": "Macro rates are steering RWA category preference",
+        "infrastructure": "Custody and issuance integrations are moving rankings first",
+        "institutional_adoption": "Institutional commitments are still a leading share signal",
     }
     lead = by_id.get(theme.id)
     if not lead:
