@@ -1530,16 +1530,24 @@ def _clean_notable_part(part: str) -> str:
 
 def _extract_industry_headline_titles(bullet_text: str) -> list[str]:
     m = re.search(r"Recent coverage includes\s*(.+)", bullet_text, re.IGNORECASE)
-    if not m:
-        return []
-    body = m.group(1).strip()
-    body = re.split(
-        r"\.\s+(?:Reserve|Coverage|Flow|Enforcement|Tokenization|Issuer|Increased|Spot|Industry|Network|platform|issuer)",
-        body,
-        maxsplit=1,
-        flags=re.IGNORECASE,
-    )[0]
-    parts = [p.strip() for p in body.split(";") if p.strip()]
+    if m:
+        body = m.group(1).strip()
+        body = re.split(
+            r"\.\s+(?:Reserve|Coverage|Flow|Enforcement|Tokenization|Issuer|Increased|Spot|Industry|Network|platform|issuer)",
+            body,
+            maxsplit=1,
+            flags=re.IGNORECASE,
+        )[0]
+        parts = [p.strip() for p in body.split(";") if p.strip()]
+    else:
+        # Declarative news bodies append linked titles after the insight.
+        parts = [
+            re.sub(r"<[^>]+>", "", t).strip()
+            for t in re.findall(r"<a\b[^>]*>(.*?)</a>", bullet_text or "", flags=re.I | re.S)
+        ]
+        parts = [p for p in parts if len(p) >= 12]
+        if not parts:
+            return []
     titles: list[str] = []
     for part in parts:
         if re.match(r"\+\d+\s+more", part, re.I):

@@ -339,7 +339,6 @@ def build_mmf_key_observations_html(
     if not mmfs:
         return ""
     from key_observations.page_blend import blend_page_ko_candidates
-    from rwa_league.mmf import TMMF_KEY_OBS_DEK_HTML
 
     data, pins = blend_page_ko_candidates(
         "tokenized_mmf",
@@ -354,6 +353,5 @@ def build_mmf_key_observations_html(
         min_bullets=3,
         max_bullets=5,
         variant="inner_page",
-        intro_dek_html=TMMF_KEY_OBS_DEK_HTML,
         pin_candidate_ids=pins,
     )

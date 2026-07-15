@@ -164,6 +164,6 @@ def page_theme_interpretation(topic: str, theme_id: str) -> str:
     if theme_id in _THEME_FALLBACKS:
         return _THEME_FALLBACKS[theme_id]
     return (
-        "Recent coverage may be a leading indicator for this page—"
-        "compare themes in these headlines with rank, share, and concentration in the tables above."
+        "Named themes in recent coverage can still lead rank, share, and concentration "
+        "shifts on this page before totals fully reprice."
     )

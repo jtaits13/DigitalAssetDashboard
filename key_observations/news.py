@@ -158,6 +158,36 @@ def _headline_link_html(article: dict[str, Any]) -> str:
     return title
 
 
+def _declarative_news_lead(theme: TopicTheme) -> str:
+    """Punchy insight lead — no 'Industry headlines emphasize' meta framing."""
+    by_id = {
+        "institutional_settlement": "Settlement and cash-rail stories are reinforcing institutional TMMF use",
+        "regulation": "Regulatory clarity is shaping who can hold and distribute these products",
+        "chain_efficiency": "Fee and throughput narratives are steering network-share migration",
+        "issuer_models": "Issuer strategy coverage is splitting institutional rails from retail yield products",
+        "rates_yields": "Rates and money-market yield stories are reshaping tokenized cash flows",
+        "multichain": "Multi-chain deployments still look more like distribution requirements than deep liquidity",
+        "stablecoin_policy": "Policy and reserve headlines are repricing stablecoin issuer priorities",
+        "bank_integration": "Bank and payments integrations are framing stablecoins as treasury infrastructure",
+        "tokenized_treasuries": "Tokenized T-bill product headlines mark where institutional supply is expanding",
+        "tokenized_equities": "Equity tokenization is still an access and settlement experiment",
+        "market_structure": "Breadth and dominance narratives are clarifying whether moves are Bitcoin- or alt-led",
+        "etf_flows": "Spot ETF flow stories are still the main listed-channel demand read",
+        "market_sizing": "Forward AUM scenarios remain planning ranges, not base-case forecasts",
+        "launch_pipeline": "Filing waves are foreshadowing issuer and custodian competition ahead of launches",
+        "concentration": "Concentration narratives still matter for listed-product distribution economics",
+        "tokenization_growth": "Tokenization growth headlines are leading shifts in network rank and share",
+        "macro_rates": "Rates and inflation coverage are steering which RWA categories attract inflows",
+        "infrastructure": "Infrastructure and custody headlines often map to near-term platform and network rank shifts",
+        "institutional_adoption": "Institutional adoption stories usually precede measurable on-chain share shifts",
+    }
+    lead = by_id.get(theme.id)
+    if not lead:
+        label = re.sub(r"\s*&\s*", " and ", (theme.label or "").strip())
+        lead = f"{label} is driving the near-term market conversation"
+    return lead.rstrip(".!?…:")
+
+
 def news_observation_candidates(
     topic: str,
     themes: tuple[TopicTheme, ...],
@@ -175,13 +205,16 @@ def news_observation_candidates(
         if strength < min_strength:
             continue
         cites = "; ".join(_headline_link_html(a) for a in items[:2])
-        interpretation = page_theme_interpretation(topic, theme.id)
-        body = f"Recent coverage includes {cites}. {interpretation}"
+        interpretation = page_theme_interpretation(topic, theme.id).strip()
+        if interpretation and not interpretation.endswith((".", "!", "?")):
+            interpretation = f"{interpretation}."
+        # Weave sources in after the market read — no "Recent coverage includes" preface.
+        body = f"{interpretation} {cites}." if cites else interpretation
         score = 52.0 + strength * 38.0
         out.append(
             ObservationCandidate(
                 id=f"news_{theme.id}",
-                lead=f"Industry headlines emphasize {theme.label}",
+                lead=f"{_declarative_news_lead(theme)}:",
                 body=body,
                 score=score,
                 themes=(theme.id,),
