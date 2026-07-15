@@ -80,6 +80,7 @@
     etp: "U.S. ETPs",
     rwa: "RWA Market",
     crypto: "Crypto Prices",
+    regulatory: "Regulatory",
     other: "Other",
   };
 
@@ -103,6 +104,10 @@
     {
       id: "crypto",
       re: /\b(?:bitcoin|btc\b|ethereum|ether\b|eth\b|solana|sol\b|xrp\b|crypto\s+(?:price|market|rally|selloff|winter)|spot\s+price|market\s+cap|altcoin|memecoin)\b/i,
+    },
+    {
+      id: "regulatory",
+      re: /\b(?:regulation|regulatory|regulator|rulemaking|rule\s+making|compliance|enforcement|enforce\b|oversight|supervision|legislation|legislative|statute|\bbill\b|congress|senate|executive\s+order|framework|lawsuit|litigation|license|licence|approval|proposed\s+rule|final\s+rule|notice\s+of\s+proposed\s+rulemaking|\bnprm\b|investigation|charges?\b|warning\s+notice|market\s+structure|legal\s+action|securities\s+law|market\s+abuse|aml\b|kyc\b|\bsec\b|cftc\b|fincen\b|\bocc\b|\bfdic\b|esma\b|mica\b|genius\s+act|bitlicense|court\s+rules?|court\s+order|align\s+rules|roadmap|fatwa|cbdc\s+ban)\b/i,
     },
   ];
 

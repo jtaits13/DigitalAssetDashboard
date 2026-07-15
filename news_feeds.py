@@ -1009,6 +1009,25 @@ _HUB_TOPIC_BUCKETS: tuple[tuple[str, str, tuple[re.Pattern[str], ...]], ...] = (
             ),
         ),
     ),
+    (
+        "regulatory",
+        "Regulatory",
+        (
+            re.compile(
+                r"\b(?:regulation|regulatory|regulator|rulemaking|rule\s+making|compliance|"
+                r"enforcement|enforce\b|oversight|supervision|legislation|legislative|"
+                r"statute|\bbill\b|congress|senate|executive\s+order|framework|"
+                r"lawsuit|litigation|license|licence|approval|proposed\s+rule|final\s+rule|"
+                r"notice\s+of\s+proposed\s+rulemaking|\bnprm\b|investigation|"
+                r"charges?\b|warning\s+notice|market\s+structure|legal\s+action|"
+                r"securities\s+law|market\s+abuse|aml\b|kyc\b|"
+                r"\bsec\b|cftc\b|fincen\b|\bocc\b|\bfdic\b|esma\b|mica\b|"
+                r"genius\s+act|bitlicense|court\s+rules?|court\s+order|"
+                r"align\s+rules|roadmap|fatwa|cbdc\s+ban)\b",
+                re.I,
+            ),
+        ),
+    ),
 )
 
 
@@ -1017,7 +1036,7 @@ def classify_hub_site_topic(item: dict[str, Any]) -> tuple[str, str]:
     Map a headline to a dashboard page topic for news-hub color rails.
 
     Returns ``(topic_id, label)`` where id is one of
-    ``tmmf|stablecoins|etp|rwa|crypto|other``.
+    ``tmmf|stablecoins|etp|rwa|crypto|regulatory|other``.
     """
     blob = f"{item.get('title') or ''} {item.get('summary') or ''} {item.get('category') or ''}"
     for topic_id, label, patterns in _HUB_TOPIC_BUCKETS:
