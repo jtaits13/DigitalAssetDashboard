@@ -1,36 +1,36 @@
 {
-  "generated_at": "2026-06-08T20:23:50.245766+00:00",
+  "generated_at": "2026-07-13T21:02:55.223370+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
-    "value_display": "$2.28T",
+    "value_display": "$2.25T",
     "delta": {
-      "pct": -19.0052,
+      "pct": -1.9012,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$63,214",
+    "value_display": "$62,156",
     "delta": {
-      "pct": -21.8418,
+      "pct": -3.2544,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$1,681",
+    "value_display": "$1,765",
     "delta": {
-      "pct": -27.818,
+      "pct": 5.1976,
       "window": "1M"
     }
   },
   "btc_dominance": {
     "label": "BTC dominance",
-    "value_display": "55.5%",
+    "value_display": "55.3%",
     "delta": {
-      "pct": -3.4799,
+      "pct": -1.3794,
       "window": "1M"
     }
   },
@@ -38,16 +38,16 @@
     "label": "Stablecoin share",
     "value_display": "13.5%",
     "delta": {
-      "pct": 22.6565,
+      "pct": 1.9694,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 55.55,
-    "stablecoin_share_top50_pct": 13.54,
-    "top50_market_cap_usd": 2157213733301.0,
-    "stablecoin_market_cap_usd": 292150303124.0,
-    "btc_market_cap_usd": 1266109831330.0
+    "btc_dominance_pct": 55.32,
+    "stablecoin_share_top50_pct": 13.52,
+    "top50_market_cap_usd": 2128599939099.0,
+    "stablecoin_market_cap_usd": 287799559799.0,
+    "btc_market_cap_usd": 1246501767061.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -63,49 +63,49 @@
     "footnote": "Largest 1-month % moves in the top-50 table (stablecoins excluded). Context lines match recent headlines from dashboard news feeds, with Google News as fallback.",
     "movers": [
       {
-        "symbol": "LAB",
-        "name": "LAB",
-        "pct_30d": 170.4927,
-        "category": "",
-        "category_label": "",
-        "detail_url": "https://www.coingecko.com/en/coins/lab",
+        "symbol": "DEXE",
+        "name": "DeXe",
+        "pct_30d": 140.2723,
+        "category": "other",
+        "category_label": "Other",
+        "detail_url": "https://www.coingecko.com/en/coins/dexe",
         "direction": "up",
         "context": {
-          "title": "Is LAB\u2019s current rally real? Price rises 16% on Futures buying - Cryptonews.net",
+          "title": "AI Crypto Coin DEXE Risks Pullback After 1,400% Rally in 2026 - Yahoo! Finance Canada",
           "source": "Google News",
-          "link": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE5CeG1UaW1SZWVmOWR6NjNRUTRveDZOVThLQVc2cFJJYUttRWx3bWU1WTBzNDd0NWJkZjNBT2M5QXpqZ3pJYnFXNTVCSFR6N2RIWlF6Vlk5UDhfbFE?oc=5"
+          "link": "https://news.google.com/rss/articles/CBMif0FVX3lxTFA3TEVNbzNUWlU2SWlITlJVMXM4elNmSHNIUFRiWm9ILUlsWVYwR25LTnluOFc0M25QVWIxMHpTSmYyZ3FoS01NNlRwRzJmVDlRLUR6anRzZ2JiZ29fVFRHdjZNUEo0OXNrSVBqcWxWbGdFbHpxZS1PTGRlWUZnUnM?oc=5"
         }
       },
       {
-        "symbol": "WLD",
-        "name": "Worldcoin",
-        "pct_30d": 97.1273,
-        "category": "",
-        "category_label": "",
-        "detail_url": "https://www.coingecko.com/en/coins/worldcoin-wld",
-        "direction": "up",
+        "symbol": "M",
+        "name": "MemeCore",
+        "pct_30d": -59.5047,
+        "category": "meme",
+        "category_label": "Meme",
+        "detail_url": "https://www.coingecko.com/en/coins/memecore",
+        "direction": "down",
         "context": {
-          "title": "Worldcoin Surges 5.01% Amid Broader AI-Token Rally - CoinMarketCap",
+          "title": "Smaller tokens lead as bitcoin, sol rally in 'first real bounce of the selloff' - CoinDesk",
           "source": "Google News",
-          "link": "https://news.google.com/rss/articles/CBMicEFVX3lxTE45X2NoYWdHSDhhWXVxUkEzbEZHakYxZ2FWWmp5UWtWQTlmYkh4TlgxVU1hQXlWbzVid1RHN0NsOEJiSzVySE5LUDgtVjIxS01nTnJqbmVsbmE5c1FpNzdCSDB6Yi02eFdpRURxV01XWUU?oc=5"
+          "link": "https://news.google.com/rss/articles/CBMivAFBVV95cUxQMW1xa2Uyc2dZdFByWVVIQkJVSUdrSUFlLUJJUWhVTjJqaUZNN2F2OTJXT01ZT0VIT2hJck1mU29ZLXV0U2NhUGszYXRBOUszMlVsZmRqbDIwRXUzTE9aRkhGWUdYdTkwQWtHQ2VxSURnQjdScDQ4d2VzRTdXR2FJcEtQX091ZUQ2QW1CUFU4Y1c1UU05Zkl0R3NJTEljMHZ3T2w1ek43eDRFZm1KMjJSSkp0QXh0QlhwZFM0OA?oc=5"
         }
       },
       {
-        "symbol": "RAIN",
-        "name": "Rain",
-        "pct_30d": 77.2804,
-        "category": "",
-        "category_label": "",
-        "detail_url": "https://www.coingecko.com/en/coins/rain",
+        "symbol": "UNI",
+        "name": "Uniswap",
+        "pct_30d": 37.3025,
+        "category": "defi",
+        "category_label": "DeFi",
+        "detail_url": "https://www.coingecko.com/en/coins/uniswap",
         "direction": "up",
         "context": {
-          "title": "RAIN price rally tests exhaustion zone after 90% weekly surge - TradingView",
-          "source": "Google News",
-          "link": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxPYVRuaExMZzZISjZOYXN3dE1FUjVJc3R1SW5jZ0x2cS1ZZkx6R0R0LVcwOHRHSUs0RGVQNVdwWFFNd1dDaTZGTFhxQThDNzRXMUg1WnBaUm9vN0YwSDM5QXJsSTE4TEpaWG1OeHRrV0ZyenpTc0hGd1duU3ZwWFNIRWRpMzREZzhUdjFveFJteW1VWWROTW4tT1pKSXEwMFRRaGkyZ0RpWlFYU1M3dzlQTUVWaG5tYzdG?oc=5"
+          "title": "Uniswap Auctions Go Live on Robinhood Chain",
+          "source": "The Defiant",
+          "link": "https://thedefiant.io/news/defi/uniswap-auctions-go-live-on-robinhood-chain"
         }
       }
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Losses broadened among top-50 alts:</strong> 7 names up more than ~0.5%, 30 down more than ~0.5%, and 13 roughly flat out of <strong>50</strong> non-stable coins with a valid 1M % (top-50 table).</li><li><strong>Others (top-50 coins outside Layer 1, stablecoins, CEX, DeFi, meme, and RWA tabs, e.g. HYPE, LAB, MNT, WLD, WLFI) outpaced DeFi tokens over 1M:</strong> the stronger group averaged about <strong>+53.0%</strong> cap-weighted in the top-50, while the weaker averaged about <strong>-23.1%</strong>\u2014the widest gap among category tabs.</li><li><strong>Industry headlines emphasize ETF &amp; institutional flows</strong> Recent coverage includes <a href=\"https://news.google.com/rss/articles/CBMiiwFBVV95cUxNOUV4NEdjbGFYUmxBY013cm5nczZLUkVKZTkxb1VOY3Jvbk4yOEJyNTlaaU83MTR6aktIa28wX285ZDZNVHBhSXFyV3AyVUNkMkJlbWlWUWFhSy1uVXg3YzY4eWJJNm5pMl84Vi1YbkhGQUNWd00xZWVZaWN3dzJlSFlXeTlaT2tSX0g4?oc=5\" target=\"_blank\" rel=\"noopener noreferrer\">Spot bitcoin ETFs log $1.7 billion in weekly outflows, largest since February 2025 - The Block</a> (Google News); <a href=\"https://news.google.com/rss/articles/CBMiqgFBVV95cUxNQWNTUW9XS0NJR0lZZ1FVTlBYTk80WTB6MFN4Rmx4NWw4Y2lhTkM5ZE1mVFNmTURhSENoajlJMmZNSGVaa0tvZlF0b092TlpUNW02YU1iZDY2LXNoNV9LZkRxbm5CY0xfdEFONW52XzhnYV83aHdoa19ESkZIZG1aajByQ3l1eVo0NTJ1eWRHbzRDaUdTU05ZV2lfNXNlNUQ4aDBwYW1yZDdXUQ?oc=5\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin and ether spot exchange-traded funds end record multibillion outflow streak - CoinDesk</a> (Google News). Spot ETF flow stories often move Bitcoin first\u2014compare headline flow narratives with the 30-day net-flow KPI and IBIT/ETHA AUM on this page.</li><li><strong>Industry headlines emphasize Crypto regulation</strong> Recent coverage includes <a href=\"https://news.google.com/rss/articles/CBMioAFBVV95cUxOOTcxTXNYbTY2dy1Jak9MQmZaN05yNUN6ZWQ4Tk16bDhXOEhRX01fS1huWTRiOEhHUjVjandsMDlYRFV2SUhrNUxXNVVCSm9LQ2ZoNThxY2lSWVpIZ0w1bmpjcW1QYzJOUEM1akplaWRFcUtNUEhFcXFwcFpzdUlTT1htZTZCOHlIWDNGSE4wTE9PV1pUSVRYcEhNVEdib0Z0?oc=5\" target=\"_blank\" rel=\"noopener noreferrer\">SEC Unveils New Strategic Plan, Pledges Clear Digital Asset Rules and Innovation-Friendly Regulation - Yahoo Finance</a> (Google News); <a href=\"https://news.google.com/rss/articles/CBMi2gFBVV95cUxNUnN6dm94RFpLVDc0S0YwYkptS0RCS2RnSDkxQWhuTW5MeUZZdjJxTUE1bkl3ZTh5REdWZ1BqUmRHWjZPVElwcEVBS2lpQ3FxZ2o5VWRxYVZmVXVna2x6WHM5WEJMWXNJdU5LTUJWam95eTNSNVhqaDhOSDZ6dmVtWmsyS1pURWRaLS1Gd2NBQTBRUlA5NjdQc1JlMHZwaVZ4d2VlVGNDalo3dHR5cFAyNmQyYXB3M3FPUExRenpjeVE4bkZJYzBYQUdLYjgwVFJCRXlDRUQ2aG1oZw?oc=5\" target=\"_blank\" rel=\"noopener noreferrer\">A Potential Turning Point in Crypto Regulation: SEC\u2013CFTC Joint Interpretation Caps a Decade of Shifting SEC Policy - Baker Donelson</a> (Google News). Enforcement and legislation headlines can shift risk appetite across the top-50\u2014watch whether beta concentrates in majors or spreads into higher-beta categories.</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets are ranked from on-page data and recent industry headlines (dashboard RSS plus Google News fallback).</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto printed metrics were roughly flat this week:</strong> Total market cap near $2.25T (-1.9% 30D) frames a consolidating market\u2014directional conviction is low, so structural headlines (custody, rails, regulation) carry more weight than beta alone. That still frames whether risk appetite is improving through liquidity and institutional plumbing, not only through single-asset headlines.</li><li><strong>Losses broadened among top-50 alts:</strong> 14 names up more than ~0.5%, 24 down more than ~0.5%, and 3 roughly flat out of <strong>41</strong> non-stable coins with a valid 1M % (top-50 table).</li><li><strong>Industry headlines emphasize Crypto regulation</strong> Recent coverage includes <a href=\"https://www.coindesk.com/business/2026/07/14/jpmorgan-says-hyperliquid-s-rise-threatens-circle-s-usdc-economics\" target=\"_blank\" rel=\"noopener noreferrer\">JPMorgan says Hyperliquid&#x27;s rise threatens Circle&#x27;s USDC economics</a> (CoinDesk); <a href=\"https://cointelegraph.com/news/velocity-raises-38m-to-build-stablecoin-treasury-infrastructure-for-enterprises?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Velocity raises $38M to build stablecoin treasury infrastructure for enterprises</a> (CoinTelegraph). Enforcement and legislation headlines can shift risk appetite across the top-50\u2014watch whether beta concentrates in majors or spreads into higher-beta categories.</li><li><strong>Industry headlines emphasize Crypto market structure</strong> Recent coverage includes <a href=\"https://www.coindesk.com/tech/2026/07/14/ethereum-foundation-spinout-ethsystems-targets-banks-with-blockchain-privacy-technology\" target=\"_blank\" rel=\"noopener noreferrer\">Ethereum Foundation spinout EthSystems targets banks with blockchain privacy technology</a> (CoinDesk); <a href=\"https://www.coindesk.com/daybook-us/2026/07/14/u-s-iran-escalation-weighs-on-bitcoin-stocks-as-oil-climbs\" target=\"_blank\" rel=\"noopener noreferrer\">U.S.-Iran escalation weighs on bitcoin, stocks as oil climbs</a> (CoinDesk). Breadth and dominance narratives help explain whether moves are Bitcoin-led or alt-led\u2014compare with BTC/ETH 1M % and the category mix in the top-50 table.</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets are ranked from on-page data and recent industry headlines (dashboard RSS plus Google News fallback).</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }

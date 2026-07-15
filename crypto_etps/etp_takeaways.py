@@ -202,20 +202,37 @@ def build_etp_key_observations_html(
     *,
     net_flow_1m_display: str = "—",
     net_flow_1m_pct: float | None = None,
+    aggregate_pct: float | None = None,
+    total_aum_display: str = "—",
     articles: list[dict[str, Any]] | None = None,
 ) -> str:
     if not rows:
         return ""
+    from key_observations.page_blend import blend_page_ko_candidates
+
+    framing = etp_data_candidates(
+        rows,
+        net_flow_1m_display=net_flow_1m_display,
+        net_flow_1m_pct=net_flow_1m_pct,
+    )
+    etp_ctx = {
+        "net_flow_1m_display": net_flow_1m_display,
+        "net_flow_1m_pct": net_flow_1m_pct,
+        "aggregate_pct": aggregate_pct,
+        "total_aum_display": total_aum_display,
+    }
+    data, pins = blend_page_ko_candidates("etp", framing, etp=etp_ctx)
+    # Keep one structural framing pin behind the WoW read when no WoW pin landed.
+    if not pins:
+        pins = ("etp_market_sizing", "etp_launch_pipeline")
+    elif "etp_market_sizing" not in pins:
+        pins = pins + ("etp_market_sizing",)
     return build_key_observations_html(
         "etp",
-        etp_data_candidates(
-            rows,
-            net_flow_1m_display=net_flow_1m_display,
-            net_flow_1m_pct=net_flow_1m_pct,
-        ),
+        data,
         articles,
         context_note=_ETP_CONTEXT_NOTE,
-        min_bullets=4,
+        min_bullets=3,
         max_bullets=5,
-        pin_candidate_ids=("etp_market_sizing", "etp_launch_pipeline"),
+        pin_candidate_ids=pins,
     )

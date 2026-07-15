@@ -562,6 +562,8 @@ def _build_rwa_stablecoins_deep_payload(
     sc_pack: tuple[Any, Any, Any, Any],
     manifest: dict[str, Any],
     articles: list[dict[str, Any]] | None = None,
+    *,
+    explore: dict[str, dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     from home_layout import rwa_xyz_mirror_footer_text
     from rwa_league.client import APP_STABLECOINS
@@ -621,7 +623,7 @@ def _build_rwa_stablecoins_deep_payload(
     try:
         from key_observations.page_ko import build_legacy_page_ko
 
-        ko_html = build_legacy_page_ko("stablecoins", articles)
+        ko_html = build_legacy_page_ko("stablecoins", articles, explore=explore)
     except Exception as exc:  # pragma: no cover - export-only
         manifest["errors"].append(f"Stablecoins takeaway HTML export: {exc}")
         ko_html = ""
@@ -696,6 +698,8 @@ def _build_rwa_us_treasuries_deep_payload(
     tr_pack: tuple[Any, Any, Any, Any],
     manifest: dict[str, Any],
     articles: list[dict[str, Any]] | None = None,
+    *,
+    explore: dict[str, dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     from home_layout import rwa_xyz_mirror_footer_text
     from rwa_league.client import APP_TREASURIES
@@ -752,7 +756,7 @@ def _build_rwa_us_treasuries_deep_payload(
     try:
         from key_observations.page_ko import build_legacy_page_ko
 
-        ko_html = build_legacy_page_ko("us_treasuries", articles)
+        ko_html = build_legacy_page_ko("us_treasuries", articles, explore=explore)
     except Exception as exc:
         manifest["errors"].append(f"US Treasuries takeaway HTML export: {exc}")
         ko_html = ""
@@ -791,6 +795,8 @@ def _build_rwa_tokenized_stocks_deep_payload(
     st_pack: tuple[Any, Any, Any, Any],
     manifest: dict[str, Any],
     articles: list[dict[str, Any]] | None = None,
+    *,
+    explore: dict[str, dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     from home_layout import rwa_xyz_mirror_footer_text
     from rwa_league.client import APP_STOCKS
@@ -848,7 +854,7 @@ def _build_rwa_tokenized_stocks_deep_payload(
     try:
         from key_observations.page_ko import build_legacy_page_ko
 
-        ko_html = build_legacy_page_ko("tokenized_stocks", articles)
+        ko_html = build_legacy_page_ko("tokenized_stocks", articles, explore=explore)
     except Exception as exc:
         manifest["errors"].append(f"Tokenized Stocks takeaway HTML export: {exc}")
         ko_html = ""
@@ -899,6 +905,7 @@ def _build_rwa_tokenized_mmf_deep_payload(
     articles: list[dict[str, Any]] | None = None,
     *,
     fund_assets: list[dict[str, Any]] | None = None,
+    explore: dict[str, dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     from rwa_league.client import APP_GOVERNMENT_BONDS, APP_TREASURIES
     from rwa_league.mmf import (
@@ -1076,7 +1083,7 @@ def _build_rwa_tokenized_mmf_deep_payload(
             from rwa_league.mmf_takeaways import build_mmf_key_observations_html
 
             b["key_observations_html"] = build_mmf_key_observations_html(
-                fund_assets, list(rows_net), articles
+                fund_assets, list(rows_net), articles, explore=explore
             )
         except Exception as exc:
             manifest["errors"].append(f"Tokenized MMF takeaway HTML export: {exc}")
@@ -1966,6 +1973,8 @@ def build_etp_page_payloads(
             rows,
             net_flow_1m_display=kpis["net_flow_1m_display"],
             net_flow_1m_pct=net_flow_1m_pct,
+            aggregate_pct=agg_pct,
+            total_aum_display=aum_s,
             articles=etf_articles,
         )
     except Exception as exc:
@@ -2323,20 +2332,44 @@ def main() -> None:
         encoding="utf-8",
     )
 
+    from key_observations.page_blend import explore_sections_from_payload
+
+    explore_map = explore_sections_from_payload(explore_at_payload)
+
     (OUT / "rwa_stablecoins.json").write_text(
-        json.dumps(_build_rwa_stablecoins_deep_payload(sc_pack, manifest, takeaway_pool), indent=2),
+        json.dumps(
+            _build_rwa_stablecoins_deep_payload(
+                sc_pack, manifest, takeaway_pool, explore=explore_map
+            ),
+            indent=2,
+        ),
         encoding="utf-8",
     )
     (OUT / "rwa_us_treasuries.json").write_text(
-        json.dumps(_build_rwa_us_treasuries_deep_payload(tr_pack, manifest, takeaway_pool), indent=2),
+        json.dumps(
+            _build_rwa_us_treasuries_deep_payload(
+                tr_pack, manifest, takeaway_pool, explore=explore_map
+            ),
+            indent=2,
+        ),
         encoding="utf-8",
     )
     (OUT / "rwa_tokenized_stocks.json").write_text(
-        json.dumps(_build_rwa_tokenized_stocks_deep_payload(st_pack, manifest, takeaway_pool), indent=2),
+        json.dumps(
+            _build_rwa_tokenized_stocks_deep_payload(
+                st_pack, manifest, takeaway_pool, explore=explore_map
+            ),
+            indent=2,
+        ),
         encoding="utf-8",
     )
     (OUT / "rwa_tokenized_mmf.json").write_text(
-        json.dumps(_build_rwa_tokenized_mmf_deep_payload(mmf_pack, manifest, takeaway_pool), indent=2),
+        json.dumps(
+            _build_rwa_tokenized_mmf_deep_payload(
+                mmf_pack, manifest, takeaway_pool, explore=explore_map
+            ),
+            indent=2,
+        ),
         encoding="utf-8",
     )
 

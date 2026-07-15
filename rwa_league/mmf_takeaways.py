@@ -332,19 +332,28 @@ def build_mmf_key_observations_html(
     mmfs: list[dict[str, Any]],
     net_rows: list[RwaTreasuryDistributedNetworkRow] | None = None,
     articles: list[dict[str, Any]] | None = None,
+    *,
+    explore: dict[str, dict[str, Any]] | None = None,
 ) -> str:
-    """Key observations HTML from MMF data + industry headlines."""
+    """Key observations HTML from MMF data + WoW dynamics + industry headlines."""
     if not mmfs:
         return ""
+    from key_observations.page_blend import blend_page_ko_candidates
     from rwa_league.mmf import TMMF_KEY_OBS_DEK_HTML
 
-    return build_key_observations_html(
+    data, pins = blend_page_ko_candidates(
         "tokenized_mmf",
         mmf_data_candidates(mmfs, net_rows),
+        explore=explore,
+    )
+    return build_key_observations_html(
+        "tokenized_mmf",
+        data,
         articles,
         context_note=_MMF_CONTEXT_NOTE,
         min_bullets=3,
         max_bullets=5,
         variant="inner_page",
         intro_dek_html=TMMF_KEY_OBS_DEK_HTML,
+        pin_candidate_ids=pins,
     )

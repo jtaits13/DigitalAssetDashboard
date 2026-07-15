@@ -428,6 +428,7 @@ def crypto_key_takeaways_html(
     """HTML for static Key observations: table-derived signals ranked with industry headlines."""
     del mover_limit
     from key_observations import build_key_observations_html
+    from key_observations.page_blend import blend_page_ko_candidates
 
     candidates: list[ObservationCandidate] = []
     b1 = _breadth_takeaway_li(rows)
@@ -449,12 +450,13 @@ def crypto_key_takeaways_html(
         if c:
             candidates.append(c)
 
-    if not candidates and not articles:
+    data, pins = blend_page_ko_candidates("crypto", candidates, crypto=kpis)
+    if not data and not articles:
         return ""
 
     return build_key_observations_html(
         "crypto",
-        candidates,
+        data,
         articles,
         context_note=(
             "Context only—not investment advice. Observations rank the top-50 table and KPI math on this page "
@@ -463,4 +465,5 @@ def crypto_key_takeaways_html(
         min_bullets=2,
         max_bullets=4,
         variant="crypto",
+        pin_candidate_ids=pins,
     )
