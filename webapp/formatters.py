@@ -167,12 +167,9 @@ def etp_summary_kpi_row_html(
     cells: list[tuple[str, str, str]] = [
         ("Total AUM (listed)", escape(aum_s), _etf_delta_html(agg_pct, etp_delta_window_caption(agg_win))),
         (
-            "BTC & ETH Fund flows (listed)",
+            "Spot BTC/ETH net flow",
             escape(format_flow_usd_compact(net_flow_1m)),
-            _etf_delta_html(
-                net_flow_1m_pct,
-                etp_delta_window_caption(net_flow_pct_win or net_flow_win),
-            ),
+            _etf_delta_html(net_flow_1m_pct, "vs prior 30D"),
         ),
         ("IBIT · AUM", escape(ibit_aum), _etf_delta_html(ip, etp_delta_window_caption(ip_win))),
         ("ETHA · AUM", escape(etha_aum), _etf_delta_html(ep, etp_delta_window_caption(ep_win))),

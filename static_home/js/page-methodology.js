@@ -160,7 +160,7 @@
       bullets: [
         "<strong>Total AUM / IBIT / ETHA</strong> — latest listed assets from <a href=\"https://stockanalysis.com/list/crypto-etfs/\" target=\"_blank\" rel=\"noopener noreferrer\">StockAnalysis</a>; colored <strong>%</strong> on AUM tiles use Yahoo Finance adjusted closes (~1 mo when available).",
         "<strong>Aggregate AUM %</strong> — estimated weekly aggregate AUM (Yahoo prices — latest reported AUM per fund).",
-        "<strong>BTC &amp; ETH Fund flows</strong> — sum of daily net creations/redemptions over ~30 calendar days from <a href=\"https://farside.co.uk/bitcoin-etf-flow-all-data/\" target=\"_blank\" rel=\"noopener noreferrer\">Farside BTC flows</a> and <a href=\"https://farside.co.uk/ethereum-etf-flow-all-data/\" target=\"_blank\" rel=\"noopener noreferrer\">Farside ETH flows</a> (spot ETFs on those tables only). The flow <strong>%</strong> compares that 30-day total to the prior 30 days—not fund performance.",
+        "<strong>BTC &amp; ETH Fund flows</strong> — sum of daily net creations/redemptions over ~30 calendar days from <a href=\"https://farside.co.uk/bitcoin-etf-flow-all-data/\" target=\"_blank\" rel=\"noopener noreferrer\">Farside BTC flows</a> and <a href=\"https://farside.co.uk/ethereum-etf-flow-all-data/\" target=\"_blank\" rel=\"noopener noreferrer\">Farside ETH flows</a> (spot ETFs on those tables only). The flow <strong>%</strong> is labeled <strong>vs prior 30D</strong>: it compares that 30-day total to the prior 30 days—not fund performance or AUM change.",
         "<strong>Table 1Y Flow</strong> — trailing ~12-month sum of the same Farside daily flows per fund.",
       ],
     },

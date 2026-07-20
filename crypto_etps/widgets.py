@@ -301,9 +301,9 @@ def _render_etp_home_kpi_row(
             _etf_delta_html(agg_pct, etp_delta_window_caption(agg_window)),
         ),
         (
-            "BTC & ETH Fund flows (listed)",
+            "Spot BTC/ETH net flow",
             escape(format_flow_usd_compact(net_flow_1m_usd)),
-            _etf_delta_html(net_flow_1m_pct, etp_delta_window_caption(net_flow_pct_window)),
+            _etf_delta_html(net_flow_1m_pct, "vs prior 30D"),
         ),
         (
             "IBIT · AUM",

@@ -101,13 +101,18 @@ def _delta30_html(frac: float | None) -> str:
     return f'<span class="rwa-kpi-delta {cls}">{sign}{pct:.2f}%</span>'
 
 
-def _snapshot_pct_html(pct: float | None) -> str:
+def _snapshot_pct_html(pct: float | None, *, caption: str = "") -> str:
     if pct is None or (isinstance(pct, float) and math.isnan(pct)):
         return '<span class="rwa-kpi-delta neutral">—</span>'
     n = float(pct)
     cls = "up" if n > 0 else "down" if n < 0 else "neutral"
     sign = "+" if n > 0 else ""
-    return f'<span class="rwa-kpi-delta {cls}">{sign}{n:.2f}%</span>'
+    cap = (
+        f' <span class="rwa-kpi-delta-caption">{escape(caption.strip())}</span>'
+        if caption and caption.strip()
+        else ""
+    )
+    return f'<span class="rwa-kpi-delta {cls}">{sign}{n:.2f}%{cap}</span>'
 
 
 def rwa_snapshot_kpi_html(kpis: list[RwaGlobalKpi], *, legend: str = "") -> str:
@@ -160,18 +165,18 @@ def etp_snapshot_kpi_html(rows: list[CryptoEtpRow]) -> str:
         return None
 
     cells = [
-        ("Total AUM (listed)", aum_s, agg_pct),
-        ("BTC & ETH Fund flows (listed)", format_flow_usd_compact(net_flow), net_flow_pct),
-        ("IBIT · AUM", _aum(ibit), _pct("IBIT", ibit)),
-        ("ETHA · AUM", _aum(etha), _pct("ETHA", etha)),
+        ("Total AUM (listed)", aum_s, agg_pct, ""),
+        ("Spot BTC/ETH net flow", format_flow_usd_compact(net_flow), net_flow_pct, "vs prior 30D"),
+        ("IBIT · AUM", _aum(ibit), _pct("IBIT", ibit), ""),
+        ("ETHA · AUM", _aum(etha), _pct("ETHA", etha), ""),
     ]
     parts = []
-    for label, val, delta in cells:
+    for label, val, delta, caption in cells:
         parts.append(
             "<div class='rwa-kpi-cell'>"
             f"<span class='rwa-kpi-label'>{escape(label)}</span>"
             f"<span class='rwa-kpi-val'>{escape(val)}</span>"
-            f"{_snapshot_pct_html(delta)}"
+            f"{_snapshot_pct_html(delta, caption=caption)}"
             "</div>"
         )
     return (

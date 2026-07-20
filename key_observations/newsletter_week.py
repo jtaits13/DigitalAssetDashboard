@@ -242,12 +242,12 @@ def _wow_market_read(section_id: str, move: SectionKpiMove) -> str:
         if "flow" in metric:
             if up:
                 return (
-                    f"Listed-product flows printing {level} ({mag} over 30D) indicate investors are still "
+                    f"Listed-product flows printing {level} ({mag} vs prior 30D) indicate investors are still "
                     "using ETPs as the primary regulated gateway into crypto beta—supporting demand even "
                     "when spot prices are choppy."
                 )
             return (
-                f"Listed-product flows at {level} ({mag} over 30D) show net risk coming out of U.S. crypto "
+                f"Listed-product flows at {level} ({mag} vs prior 30D) show net risk coming out of U.S. crypto "
                 "ETPs—often an early read on institutional de-risking that can precede softer spot "
                 "liquidity."
             )

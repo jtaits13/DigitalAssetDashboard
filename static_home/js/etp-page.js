@@ -301,7 +301,7 @@
       (top3Share != null ? top3Share + "%" : "—") +
       "</span></div>" +
       '<div class="etp-mock-stat">' +
-      '<span class="etp-mock-stat__lbl">30D spot BTC &amp; ETH flows</span>' +
+      '<span class="etp-mock-stat__lbl">Spot BTC/ETH net flow (30D)</span>' +
       '<span class="etp-mock-stat__val">' +
       escapeHtml(flowDisplay) +
       "</span></div>";

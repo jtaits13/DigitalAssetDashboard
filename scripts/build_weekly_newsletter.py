@@ -1072,12 +1072,14 @@ def _kpi_row(
     delta: str,
     *,
     delta_color: str | None = None,
+    delta_caption: str = "30D",
     is_last: bool = False,
     outlook: bool = False,
 ) -> str:
     dc = delta_color or (
         _COLOR_POS if delta.startswith("+") else _COLOR_NEG if delta.startswith("-") else _COLOR_NEUTRAL
     )
+    caption = escape(delta_caption or "30D")
     divider = "" if is_last else f"border-right:1px solid {_OL_BORDER};"
     if outlook:
         return (
@@ -1092,7 +1094,7 @@ def _kpi_row(
             f'<p style="margin:{_OL_KPI_DELTA_GAP} 0 0;font-size:{_OL_TEXT_META};line-height:{_OL_KPI_DELTA_LH};'
             f'mso-line-height-rule:exactly;font-weight:400;color:{dc};font-family:{_OL_KPI_VALUE_FONT};">'
             f'<span style="font-weight:700;">{escape(delta)}</span> '
-            f'<span style="font-weight:400;color:{_COLOR_MUTED};{_ol_font()}">30D</span></p>'
+            f'<span style="font-weight:400;color:{_COLOR_MUTED};{_ol_font()}">{caption}</span></p>'
             f"</td>"
         )
     return (
@@ -1102,7 +1104,7 @@ def _kpi_row(
         f'<div style="font-size:19px;font-weight:600;color:{_COLOR_INK};margin-top:0.25rem;letter-spacing:-0.01em;">'
         f"{escape(value)}</div>"
         f'<div style="font-size:12px;color:{dc};margin-top:0.2rem;font-weight:600;">'
-        f'{escape(delta)} <span style="font-weight:400;color:{_COLOR_MUTED};">30D</span></div>'
+        f'{escape(delta)} <span style="font-weight:400;color:{_COLOR_MUTED};">{caption}</span></div>'
         f"</td>"
     )
 
@@ -2320,7 +2322,13 @@ def build_newsletter_html(
     etp_cells = "".join(
         [
             _kpi_row("Aggregate AUM", str(etp.get("total_aum_display") or "—"), _fmt_pct(etp.get("aggregate_pct"), unit="percent"), outlook=ol),
-            _kpi_row("30D net flow", str(etp.get("net_flow_1m_display") or "—"), _fmt_pct(etp.get("net_flow_1m_pct"), unit="percent"), outlook=ol),
+            _kpi_row(
+                "Spot BTC/ETH net flow",
+                str(etp.get("net_flow_1m_display") or "—"),
+                _fmt_pct(etp.get("net_flow_1m_pct"), unit="percent"),
+                delta_caption="vs prior 30D",
+                outlook=ol,
+            ),
             _kpi_row(
                 "IBIT AUM",
                 str((etp.get("ibit") or {}).get("aum_display") or "—"),

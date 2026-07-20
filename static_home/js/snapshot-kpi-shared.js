@@ -8,15 +8,19 @@
     return String(s);
   }
 
-  function fmtSnapshotPctDelta(pct) {
+  function fmtSnapshotPctDelta(pct, caption) {
     if (pct == null || pct === "" || !isFinite(Number(pct))) {
       return '<span class="rwa-kpi-delta neutral">—</span>';
     }
     var n = Number(pct);
     var cls = n > 0 ? "up" : n < 0 ? "down" : "neutral";
     var sign = n > 0 ? "+" : "";
+    var cap =
+      caption && String(caption).trim()
+        ? ' <span class="rwa-kpi-delta-caption">' + esc(String(caption).trim()) + "</span>"
+        : "";
     return (
-      '<span class="rwa-kpi-delta ' + cls + '">' + sign + n.toFixed(2) + "%</span>"
+      '<span class="rwa-kpi-delta ' + cls + '">' + sign + n.toFixed(2) + "%" + cap + "</span>"
     );
   }
 
@@ -107,9 +111,9 @@
     var cells =
       snapshotCell("Total AUM (listed)", k.total_aum_display, pct(k.aggregate_pct)) +
       snapshotCell(
-        "BTC & ETH Fund flows (listed)",
+        "Spot BTC/ETH net flow",
         k.net_flow_1m_display,
-        pct(k.net_flow_1m_pct)
+        pct(k.net_flow_1m_pct, "vs prior 30D")
       ) +
       snapshotCell(
         "IBIT · AUM",
