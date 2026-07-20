@@ -43,14 +43,17 @@ raise SystemExit(0 if already_sent_for_current_week() else 1)
 }
 
 if (-not $DryRun) {
-    Write-RunLog "Starting Outlook…"
-    & cmd /c "`"$prepBat`""
+    Write-RunLog "Ensuring classic Outlook is running…"
+    $prepOut = & cmd /c "`"$prepBat`"" 2>&1
+    foreach ($line in @($prepOut)) {
+        if ("$line".Trim()) { Write-RunLog "$line" }
+    }
     if ($LASTEXITCODE -ne 0) {
         Write-RunLog "ERROR: Outlook prep failed with exit code $LASTEXITCODE"
         exit $LASTEXITCODE
     }
-  # Give classic Outlook time to register COM automation after wake / cold start.
-    Start-Sleep -Seconds 20
+    # Give classic Outlook time to register COM automation after wake / cold start.
+    Start-Sleep -Seconds 8
 }
 
 $pyArgs = @($sendPy)
