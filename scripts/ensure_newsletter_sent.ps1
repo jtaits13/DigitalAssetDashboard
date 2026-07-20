@@ -1,4 +1,4 @@
-# Catch-up send after logon / unlock if Monday's scheduled run was missed (PC asleep, etc.).
+# Catch-up send after logon if Sunday night's scheduled run was missed (PC asleep, etc.).
 param([switch]$Force)
 
 $ErrorActionPreference = "Stop"
@@ -18,9 +18,11 @@ $hour = $now.Hour
 $inWindow = $false
 if ($Force) {
     $inWindow = $true
-} elseif ($dow -eq "Monday" -and (($hour -gt 8) -or ($hour -eq 8 -and $now.Minute -ge 40))) {
+} elseif ($dow -eq "Sunday" -and $hour -ge 22) {
+    # After the 10:00 PM Sunday send window.
     $inWindow = $true
-} elseif ($dow -eq "Tuesday" -and $hour -lt 12) {
+} elseif ($dow -eq "Monday" -and $hour -lt 12) {
+    # Missed Sunday night — catch up Monday morning.
     $inWindow = $true
 }
 

@@ -1,4 +1,4 @@
-# Keep the system awake during the Monday newsletter window (logged-in session required).
+# Keep the system awake during the Sunday-night newsletter window (logged-in session required).
 $log = Join-Path (Split-Path $PSScriptRoot -Parent) "logs\newsletter-keep-awake.log"
 $durationMinutes = 35
 

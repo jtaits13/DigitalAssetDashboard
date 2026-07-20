@@ -1,20 +1,21 @@
-# Register Monday morning tasks for the executive weekly newsletter.
+# Register Sunday night tasks for the executive weekly newsletter.
 # Run from repo root:  powershell -ExecutionPolicy Bypass -File scripts/setup_weekly_newsletter_scheduler.ps1
 #
 # Creates/updates:
-#   JPM Weekly Newsletter - Keep Awake   Monday 8:25 AM  block sleep through send window
-#   JPM Weekly Newsletter - Prep         Monday 8:35 AM  start Outlook
-#   JPM Weekly Newsletter                Monday 8:40 AM  build and send (wake + missed-run catch-up)
-#   JPM Weekly Newsletter - Catch-up     At logon  send if Monday was missed
+#   JPM Weekly Newsletter - Keep Awake   Sunday 9:45 PM  block sleep through send window
+#   JPM Weekly Newsletter - Prep         Sunday 9:55 PM  start Outlook
+#   JPM Weekly Newsletter                Sunday 10:00 PM build and send (wake + missed-run catch-up)
+#   JPM Weekly Newsletter - Catch-up     At logon  send if Sunday night was missed
 
 $ErrorActionPreference = "Stop"
 
-$keepAwakeAt = "8:25AM"
-$prepAt = "8:35AM"
-$sendAt = "8:40AM"
-$keepAwakeLabel = "8:25 AM"
-$prepLabel = "8:35 AM"
-$sendLabel = "8:40 AM"
+$keepAwakeAt = "9:45PM"
+$prepAt = "9:55PM"
+$sendAt = "10:00PM"
+$keepAwakeLabel = "9:45 PM"
+$prepLabel = "9:55 PM"
+$sendLabel = "10:00 PM"
+$scheduleDay = "Sunday"
 
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $prepBat = Join-Path $repoRoot "scripts\open_outlook_for_newsletter.bat"
@@ -39,9 +40,9 @@ function New-NewsletterTaskSettings {
 
 $principal = New-ScheduledTaskPrincipal -UserId $env:USERNAME -LogonType Interactive -RunLevel Limited
 
-# --- Prep Monday: open Outlook (5 min before send) ---
+# --- Prep Sunday: open Outlook (5 min before send) ---
 $prepAction = New-ScheduledTaskAction -Execute $prepBat -WorkingDirectory $repoRoot
-$prepTrigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday -At $prepAt
+$prepTrigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek $scheduleDay -At $prepAt
 $prepSettings = New-ScheduledTaskSettingsSet `
     -WakeToRun `
     -StartWhenAvailable `
@@ -58,14 +59,14 @@ Register-ScheduledTask `
     -Principal $principal `
     -Description "Start Outlook five minutes before the weekly newsletter send task." `
     -Force | Out-Null
-Write-Host "Registered: JPM Weekly Newsletter - Prep (Monday $prepLabel, Outlook)"
+Write-Host "Registered: JPM Weekly Newsletter - Prep ($scheduleDay $prepLabel, Outlook)"
 
 # --- Keep system awake through send window ---
 $keepAwakePs1 = Join-Path $repoRoot "scripts\keep_awake_for_newsletter.ps1"
 $keepAction = New-ScheduledTaskAction -Execute "powershell.exe" `
     -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$keepAwakePs1`"" `
     -WorkingDirectory $repoRoot
-$keepTrigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday -At $keepAwakeAt
+$keepTrigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek $scheduleDay -At $keepAwakeAt
 $keepSettings = New-ScheduledTaskSettingsSet `
     -WakeToRun `
     -StartWhenAvailable `
@@ -80,15 +81,15 @@ Register-ScheduledTask `
     -Trigger $keepTrigger `
     -Settings $keepSettings `
     -Principal $principal `
-    -Description "Prevent sleep from $keepAwakeLabel-9:00 AM Monday while the newsletter sends (PC must already be on)." `
+    -Description "Prevent sleep from $keepAwakeLabel-$sendLabel $scheduleDay while the newsletter sends (PC must already be on)." `
     -Force | Out-Null
-Write-Host "Registered: JPM Weekly Newsletter - Keep Awake (Monday $keepAwakeLabel)"
+Write-Host "Registered: JPM Weekly Newsletter - Keep Awake ($scheduleDay $keepAwakeLabel)"
 
 # --- Build and send ---
 $sendAction = New-ScheduledTaskAction -Execute "powershell.exe" `
     -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$sendPs1`"" `
     -WorkingDirectory $repoRoot
-$sendTrigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday -At $sendAt
+$sendTrigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek $scheduleDay -At $sendAt
 $sendSettings = New-NewsletterTaskSettings
 
 Register-ScheduledTask `
@@ -97,11 +98,11 @@ Register-ScheduledTask `
     -Trigger $sendTrigger `
     -Settings $sendSettings `
     -Principal $principal `
-    -Description "Build and send the executive weekly newsletter via Outlook every Monday at $sendLabel local time." `
+    -Description "Build and send the executive weekly newsletter via Outlook every $scheduleDay at $sendLabel local time." `
     -Force | Out-Null
-Write-Host "Registered: JPM Weekly Newsletter (Monday $sendLabel, send)"
+Write-Host "Registered: JPM Weekly Newsletter ($scheduleDay $sendLabel, send)"
 
-# --- Catch-up: at logon and session unlock (if Monday send was missed while asleep) ---
+# --- Catch-up: at logon (if Sunday night send was missed while asleep) ---
 $catchAction = New-ScheduledTaskAction -Execute "powershell.exe" `
     -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$catchUpPs1`"" `
     -WorkingDirectory $repoRoot
@@ -121,7 +122,7 @@ Register-ScheduledTask `
     -Trigger $logonTrigger `
     -Settings $catchSettings `
     -Principal $principal `
-    -Description "After logon, send the newsletter if Monday $sendLabel was missed (Mon after $sendLabel or Tue before noon)." `
+    -Description "After logon, send the newsletter if Sunday $sendLabel was missed (Sun after $sendLabel or Mon before noon)." `
     -Force | Out-Null
 Write-Host "Registered: JPM Weekly Newsletter - Catch-up (at logon, 3 min delay)"
 
@@ -142,8 +143,8 @@ Get-ScheduledTask -TaskName "JPM Weekly Newsletter*" |
 Write-Host ""
 Write-Host "Notes:"
 Write-Host "  - StartWhenAvailable + WakeToRun: missed $sendLabel runs when the PC wakes (if timer wake is supported)."
-Write-Host "  - Catch-up task sends after logon Mon (after $sendLabel) or Tue (before noon) if not sent yet."
-Write-Host '  - Modern Standby (S0) laptops often cannot wake from sleep on a timer; leave plugged in Mon AM.'
+Write-Host "  - Catch-up task sends after logon Sun (after $sendLabel) or Mon (before noon) if not sent yet."
+Write-Host '  - Modern Standby (S0) laptops often cannot wake from sleep on a timer; leave plugged in Sunday evening.'
 Write-Host '  - Send state: logs/newsletter-last-send.json prevents duplicate sends.'
 Write-Host '  - Run log: logs/newsletter-outlook-run.log'
 Write-Host '  - Manual send now: powershell -File scripts/run_weekly_newsletter_outlook.ps1 -Force'

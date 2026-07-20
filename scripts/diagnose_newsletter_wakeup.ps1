@@ -1,4 +1,4 @@
-# Quick diagnosis for Monday newsletter wake / sleep behavior.
+# Quick diagnosis for Sunday-night newsletter wake / sleep behavior.
 Write-Host "=== Sleep modes ==="
 & powercfg /a
 
@@ -42,7 +42,7 @@ if (Test-Path $statePath) {
 }
 
 Write-Host "`n=== Guidance ==="
-Write-Host "- Missed Monday while asleep: Catch-up runs at logon (Mon after 8:40 AM or Tue before noon)."
+Write-Host "- Missed Sunday 10:00 PM while asleep: Catch-up runs at logon (Sun after 10 PM or Mon before noon)."
 Write-Host "- Modern Standby (S0) laptops often cannot wake from sleep on a timer."
-Write-Host "- Reliable Monday setup: PC plugged in, logged in, locked - do not sleep overnight."
-Write-Host "- 8:25 keep-awake task prevents sleep during the send window if the PC is already on."
+Write-Host "- Reliable Sunday setup: PC plugged in, logged in, locked around 9:45-10:15 PM."
+Write-Host "- 9:45 PM keep-awake task prevents sleep during the send window if the PC is already on."

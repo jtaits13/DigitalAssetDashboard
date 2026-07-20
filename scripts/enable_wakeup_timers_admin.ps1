@@ -33,7 +33,7 @@ Write-Host ""
 if ($enabled -eq 0) {
     Write-Host "No programmable timer devices were found on this machine."
     Write-Host "This PC uses Modern Standby (S0) — scheduled wake is often unreliable."
-    Write-Host "Recommended: leave the PC plugged in and awake (locked is fine) on Monday mornings."
+    Write-Host "Recommended: leave the PC plugged in and awake (locked is fine) Sunday evening around 10 PM."
 } else {
     Write-Host "Wake timer devices updated. Test again with sleep if desired."
 }
