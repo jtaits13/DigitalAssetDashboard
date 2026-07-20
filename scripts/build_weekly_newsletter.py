@@ -52,14 +52,26 @@ def _read_json(path: Path) -> dict[str, Any] | None:
         return None
 
 
-def _fmt_pct(raw: object, *, decimals: int = 1) -> str:
+def _fmt_pct(raw: object, *, decimals: int = 1, unit: str = "auto") -> str:
+    """Format a change as ``+X.Y%``.
+
+    ``unit``:
+      - ``"fraction"`` — value is a share (0.027 → +2.7%); used for RWA explore deltas
+      - ``"percent"`` — value is already percentage points (-1.4 → -1.4%); crypto/ETP KPIs
+      - ``"auto"`` — scale only when ``abs(n) < 1`` (legacy heuristic; prefer an explicit unit)
+    """
     if raw is None:
         return "—"
     try:
         n = float(raw)
     except (TypeError, ValueError):
         return "—"
-    if abs(n) <= 1.5 and n != 0:
+    mode = (unit or "auto").strip().lower()
+    if mode == "fraction":
+        n *= 100.0
+    elif mode == "percent":
+        pass
+    elif abs(n) < 1.0 and n != 0:
         n *= 100.0
     sign = "+" if n >= 0 else ""
     return f"{sign}{n:.{decimals}f}%"
@@ -1419,7 +1431,7 @@ def _explore_kpi_cells(explore: dict[str, dict[str, Any]], section_id: str, *, o
         cells += _kpi_row(
             str(k.get("label") or "—"),
             str(k.get("value_display") or "—"),
-            _fmt_pct(k.get("delta_30d_pct")),
+            _fmt_pct(k.get("delta_30d_pct"), unit="fraction"),
             is_last=(i == len(kpis) - 1),
             outlook=outlook,
         )
@@ -1461,7 +1473,7 @@ def _load_rwa_global_kpi_cells(*, outlook: bool = False) -> str:
         cells += _kpi_row(
             label if k else "—",
             str(k.get("value_display") or "—"),
-            _fmt_pct(k.get("delta_30d_pct")),
+            _fmt_pct(k.get("delta_30d_pct"), unit="fraction"),
             is_last=(i == len(labels) - 1),
             outlook=outlook,
         )
@@ -1568,7 +1580,7 @@ def _week_in_brief_bullet(
     *,
     flat_threshold: float = _RAIL_FLAT_THRESHOLD,
 ) -> str:
-    pct = _fmt_pct(raw_pct)
+    pct = _fmt_pct(raw_pct, unit="fraction")
     verb = _brief_move_verb(pct, flat_threshold=flat_threshold)
     data_html = f'<strong style="color:{_pct_color(pct)};">{escape(pct)}</strong>'
     return f"{lead} {verb} ({data_html} {metric}, 30D); {watch}."
@@ -1608,6 +1620,26 @@ _BRIEF_HOOK_TRUNC_STOPWORDS = frozenset({
     "that", "while", "after", "before", "into", "from", "over", "under", "its", "their",
     "aim", "aims", "aiming", "won", "says", "said", "by",
 })
+
+
+def _brief_hook_link_html(hook: str, link: str | None = None) -> str:
+    """Escape a Week-in-brief article hook; wrap in a link when a URL is available."""
+    text = (hook or "").strip()
+    if not text:
+        return ""
+    safe = escape(text)
+    href = str(link or "").strip()
+    if not href:
+        return safe
+    return (
+        f'<a href="{escape(href, quote=True)}" target="_blank" rel="noopener noreferrer" '
+        f'style="color:{_COLOR_INK};text-decoration:underline;">{safe}</a>'
+    )
+
+
+def _brief_pick_link(pick: Any) -> str | None:
+    href = str(getattr(pick, "link", "") or "").strip()
+    return href or None
 
 
 def _brief_headline_hook(title_or_pick: Any, *, max_len: int = 60) -> str:
@@ -1651,7 +1683,7 @@ def _tmmf_network_anchor(explore: dict[str, dict[str, Any]]) -> str:
 def _tmmf_watch_hook(
     articles: list[dict[str, Any]] | None,
     week_headlines: list[Any],
-) -> str | None:
+) -> tuple[str, str | None] | None:
     """Plain-language TMMF context for Week in brief watch clauses."""
     if not articles:
         return None
@@ -1661,10 +1693,12 @@ def _tmmf_watch_hook(
     art = pick_brief_tmmf_article(articles, exclude_links=exclude)
     if not art:
         return None
-    return plain_language_tmmf_hook(
+    hook = plain_language_tmmf_hook(
         str(art.get("title") or ""),
         summary=str(art.get("summary") or ""),
     )
+    link = str(art.get("link") or "").strip() or None
+    return (hook, link)
 
 
 def _tmmf_hook_from_pick(pick: Any) -> str:
@@ -1687,7 +1721,7 @@ def _week_in_brief_watch_tmmf(
     from key_observations.week_headlines import FundLaunch, plain_language_launch_brief
 
     if isinstance(fund_launch, FundLaunch):
-        hook = plain_language_launch_brief(fund_launch)
+        hook = _brief_hook_link_html(plain_language_launch_brief(fund_launch), fund_launch.link)
         if _is_flat_move(tmmf_pct):
             return (
                 f"issuer headlines stayed active ({hook}); "
@@ -1704,15 +1738,16 @@ def _week_in_brief_watch_tmmf(
             "track which networks capture incremental settlement demand"
         )
 
-    extra_hook = _tmmf_watch_hook(articles, week_headlines)
+    extra = _tmmf_watch_hook(articles, week_headlines)
+    extra_hook = _brief_hook_link_html(extra[0], extra[1]) if extra else ""
     net_delta = _explore_kpi(explore, "tokenized_mmf", label_match="network share").get(
         "delta_30d_pct"
     )
-    net_mix_flat = _is_flat_move(_fmt_pct(net_delta), threshold=1.0)
+    net_mix_flat = _is_flat_move(_fmt_pct(net_delta, unit="fraction"), threshold=1.0)
     network_anchor = _tmmf_network_anchor(explore)
 
     if picks := by_family.get("tmmf"):
-        hook = _tmmf_hook_from_pick(picks[0])
+        hook = _brief_hook_link_html(_tmmf_hook_from_pick(picks[0]), _brief_pick_link(picks[0]))
         return (
             f"tokenized-cash headlines centered on {hook}, "
             "with issuer settlement and routing still the bottleneck—not fund yields"
@@ -1766,7 +1801,7 @@ def _week_in_brief_watch_stablecoins(
     from key_observations.week_headlines import FundLaunch, plain_language_launch_brief
 
     if isinstance(fund_launch, FundLaunch):
-        hook = plain_language_launch_brief(fund_launch)
+        hook = _brief_hook_link_html(plain_language_launch_brief(fund_launch), fund_launch.link)
         if _is_flat_move(sc_pct):
             return (
                 f"a major reserve-fund launch led the week ({hook}), "
@@ -1784,7 +1819,7 @@ def _week_in_brief_watch_stablecoins(
         )
 
     if picks := by_family.get("stablecoins"):
-        hook = _brief_headline_hook(picks[0])
+        hook = _brief_hook_link_html(_brief_headline_hook(picks[0]), _brief_pick_link(picks[0]))
         return (
             f"bank-led issuance led the week ({hook}), "
             "suggesting issuance is running ahead of the flat market-cap read"
@@ -1810,7 +1845,7 @@ def _week_in_brief_watch_rwa(
     by_family: dict[str, list[Any]],
 ) -> str:
     if picks := by_family.get("tokenization"):
-        hook = _brief_headline_hook(picks[0])
+        hook = _brief_hook_link_html(_brief_headline_hook(picks[0]), _brief_pick_link(picks[0]))
         return (
             f"tokenization stayed in the news ({hook}), "
             "with TradFi distribution and collateral plumbing still the bottleneck"
@@ -1845,7 +1880,7 @@ def _week_in_brief_watch_etp(
     from key_observations.week_headlines import FundLaunch, plain_language_launch_brief
 
     if isinstance(fund_launch, FundLaunch):
-        hook = plain_language_launch_brief(fund_launch)
+        hook = _brief_hook_link_html(plain_language_launch_brief(fund_launch), fund_launch.link)
         aum_n = _pct_value(etp_pct)
         if aum_n is not None and aum_n < -10:
             return (
@@ -1859,13 +1894,13 @@ def _week_in_brief_watch_etp(
 
     for family in ("etp", "etp_flows"):
         if picks := by_family.get(family):
-            hook = _brief_headline_hook(picks[0])
+            hook = _brief_hook_link_html(_brief_headline_hook(picks[0]), _brief_pick_link(picks[0]))
             return (
                 f"listed-access headlines drove the week ({hook}), "
                 "with product pipeline and flows still front-running AUM marks"
             )
     flow_disp = str(etp.get("net_flow_1m_display") or "").strip()
-    flow_pct = _fmt_pct(etp.get("net_flow_1m_pct"))
+    flow_pct = _fmt_pct(etp.get("net_flow_1m_pct"), unit="percent")
     aum_n = _pct_value(etp_pct)
     flow_n = _pct_value(flow_pct)
     flow_usd_raw = etp.get("net_flow_1m_usd")
@@ -1917,10 +1952,16 @@ def _week_in_brief_watch_crypto(
             "watch whether flows rotate back into rails or concentrate in listed beta"
         )
     if picks := by_family.get("regulation"):
-        hook = _brief_headline_hook(picks[0])
+        hook = _brief_hook_link_html(_brief_headline_hook(picks[0]), _brief_pick_link(picks[0]))
         return (
             f"oversight headlines shared attention with prices ({hook}), "
             "but policy noise was not the main market driver"
+        )
+    if picks := by_family.get("market_structure"):
+        hook = _brief_hook_link_html(_brief_headline_hook(picks[0]), _brief_pick_link(picks[0]))
+        return (
+            f"market-structure headlines shared the tape ({hook}), "
+            "but daily price noise still dominated the near-term read"
         )
     return (
         "macro and ETF-flow data matter more than daily price noise for this week's read"
@@ -2033,11 +2074,11 @@ def _week_in_brief_html(
     *,
     outlook: bool = False,
 ) -> str:
-    crypto_pct = _fmt_pct((crypto.get("primary") or {}).get("delta", {}).get("pct"))
-    etp_pct = _fmt_pct(etp.get("aggregate_pct"))
-    tmmf_pct = _fmt_pct(_explore_kpi(explore, "tokenized_mmf", label_match="distributed").get("delta_30d_pct"))
-    sc_pct = _fmt_pct(_explore_kpi(explore, "stablecoins", label_match="market cap").get("delta_30d_pct"))
-    tre_pct = _fmt_pct(_explore_kpi(explore, "treasuries", label_match="distributed").get("delta_30d_pct"))
+    crypto_pct = _fmt_pct((crypto.get("primary") or {}).get("delta", {}).get("pct"), unit="percent")
+    etp_pct = _fmt_pct(etp.get("aggregate_pct"), unit="percent")
+    tmmf_pct = _fmt_pct(_explore_kpi(explore, "tokenized_mmf", label_match="distributed").get("delta_30d_pct"), unit="fraction")
+    sc_pct = _fmt_pct(_explore_kpi(explore, "stablecoins", label_match="market cap").get("delta_30d_pct"), unit="fraction")
+    tre_pct = _fmt_pct(_explore_kpi(explore, "treasuries", label_match="distributed").get("delta_30d_pct"), unit="fraction")
 
     tmmf_raw = _explore_kpi(explore, "tokenized_mmf", label_match="distributed").get("delta_30d_pct")
     sc_raw = _explore_kpi(explore, "stablecoins", label_match="market cap").get("delta_30d_pct")
@@ -2168,8 +2209,17 @@ def build_newsletter_html(
         if dt:
             generated.append(dt)
 
-    week_end = max(generated) if generated else datetime.now(timezone.utc)
+    week_end = datetime.now(timezone.utc)
     week_label = week_end.strftime("%-d %b %Y") if os.name != "nt" else week_end.strftime("%d %b %Y")
+    data_as_of = max(generated) if generated else None
+    if data_as_of is not None:
+        data_label = (
+            data_as_of.strftime("%-d %b %Y")
+            if os.name != "nt"
+            else data_as_of.strftime("%d %b %Y")
+        )
+    else:
+        data_label = week_label
 
     try:
         from key_observations.feeds import load_takeaway_articles
@@ -2269,12 +2319,12 @@ def build_newsletter_html(
     # --- 4. U.S. crypto ETPs ---
     etp_cells = "".join(
         [
-            _kpi_row("Aggregate AUM", str(etp.get("total_aum_display") or "—"), _fmt_pct(etp.get("aggregate_pct")), outlook=ol),
-            _kpi_row("30D net flow", str(etp.get("net_flow_1m_display") or "—"), _fmt_pct(etp.get("net_flow_1m_pct")), outlook=ol),
+            _kpi_row("Aggregate AUM", str(etp.get("total_aum_display") or "—"), _fmt_pct(etp.get("aggregate_pct"), unit="percent"), outlook=ol),
+            _kpi_row("30D net flow", str(etp.get("net_flow_1m_display") or "—"), _fmt_pct(etp.get("net_flow_1m_pct"), unit="percent"), outlook=ol),
             _kpi_row(
                 "IBIT AUM",
                 str((etp.get("ibit") or {}).get("aum_display") or "—"),
-                _fmt_pct((etp.get("ibit") or {}).get("delta", {}).get("pct")),
+                _fmt_pct((etp.get("ibit") or {}).get("delta", {}).get("pct"), unit="percent"),
                 is_last=True,
                 outlook=ol,
             ),
@@ -2299,19 +2349,19 @@ def build_newsletter_html(
             _kpi_row(
                 str(crypto.get("primary", {}).get("label") or "Total market cap"),
                 str(crypto.get("primary", {}).get("value_display") or "—"),
-                _fmt_pct((crypto.get("primary") or {}).get("delta", {}).get("pct")),
+                _fmt_pct((crypto.get("primary") or {}).get("delta", {}).get("pct"), unit="percent"),
                 outlook=ol,
             ),
             _kpi_row(
                 str(crypto.get("btc_dominance", {}).get("label") or "BTC dominance"),
                 str(crypto.get("btc_dominance", {}).get("value_display") or "—"),
-                _fmt_pct((crypto.get("btc_dominance") or {}).get("delta", {}).get("pct")),
+                _fmt_pct((crypto.get("btc_dominance") or {}).get("delta", {}).get("pct"), unit="percent"),
                 outlook=ol,
             ),
             _kpi_row(
                 str(crypto.get("stablecoin_share", {}).get("label") or "Stablecoin share"),
                 str(crypto.get("stablecoin_share", {}).get("value_display") or "—"),
-                _fmt_pct((crypto.get("stablecoin_share") or {}).get("delta", {}).get("pct")),
+                _fmt_pct((crypto.get("stablecoin_share") or {}).get("delta", {}).get("pct"), unit="percent"),
                 is_last=True,
                 outlook=ol,
             ),
@@ -2342,12 +2392,12 @@ def build_newsletter_html(
         footer_generation_html = ""
         disclaimer = (
             "Context only — not investment advice. Brief prepared from dashboard data and industry coverage; "
-            "figures as of the week-ending date shown."
+            f"week ending {week_label} (UTC); figures from latest export as of {data_label}."
         )
     else:
         intro = (
             "KPIs and key takeaways from the live dashboard, grouped by asset class. "
-            f"Figures reflect the latest export as of {week_label} (UTC)."
+            f"Week ending {week_label} (UTC). Figures from latest export as of {data_label}."
         )
         intro_block = _callout_card(
             _prose(escape(intro), margin="0", color=_COLOR_BODY),
