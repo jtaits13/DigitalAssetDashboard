@@ -107,29 +107,74 @@ def _write_compose_eml(
     html_file: Path | None,
     attachment_display_name: str,
 ) -> Path:
-    """Write a draft .eml Outlook can open when COM CreateItem is blocked."""
-    import mimetypes
-    from email.message import EmailMessage
+    """Write a draft .eml Outlook can open when COM CreateItem is blocked.
 
-    msg = EmailMessage()
-    msg["To"] = to
-    msg["Subject"] = _encode_header(subject)
-    msg["X-Unsent"] = "1"  # Outlook opens as an unsent compose window
-    msg.set_content("HTML newsletter — view this message in HTML.")
-    msg.add_alternative(html_body, subtype="html")
+    HTML must use base64 (not quoted-printable). QP soft-wraps at ~76 chars and
+    Outlook often renders those ``=`` breaks as literal text, shredding the layout.
+    """
+    import base64
+    import re
+    from email.utils import formatdate
+
+    def _b64_lines(data: bytes) -> str:
+        return base64.encodebytes(data).decode("ascii")
+
+    safe_to = re.sub(r"[\r\n]+", " ", to).strip()
+    safe_subj = _encode_header(re.sub(r"[\r\n]+", " ", subject).strip())
+    mixed = "----=_JPM_NL_Mixed_001"
+    alt = "----=_JPM_NL_Alt_001"
+    html_b64 = _b64_lines(html_body.encode("utf-8"))
+    plain = (
+        "Digital Assets executive weekly brief.\r\n"
+        "Open this message in HTML, or use the attached full formatted version.\r\n"
+    )
+    plain_b64 = _b64_lines(plain.encode("utf-8"))
+
+    parts: list[str] = [
+        "MIME-Version: 1.0",
+        f"To: {safe_to}",
+        f"Subject: {safe_subj}",
+        f"Date: {formatdate(localtime=True)}",
+        "X-Unsent: 1",
+        f'Content-Type: multipart/mixed; boundary="{mixed}"',
+        "",
+        f"--{mixed}",
+        f'Content-Type: multipart/alternative; boundary="{alt}"',
+        "",
+        f"--{alt}",
+        'Content-Type: text/plain; charset="utf-8"',
+        "Content-Transfer-Encoding: base64",
+        "",
+        plain_b64.rstrip("\n"),
+        f"--{alt}",
+        'Content-Type: text/html; charset="utf-8"',
+        "Content-Transfer-Encoding: base64",
+        "",
+        html_b64.rstrip("\n"),
+        f"--{alt}--",
+    ]
+
     if html_file is not None and html_file.is_file():
-        data = html_file.read_bytes()
-        ctype, _ = mimetypes.guess_type(attachment_display_name)
-        maintype, subtype = (ctype or "text/html").split("/", 1)
-        msg.add_attachment(
-            data,
-            maintype=maintype,
-            subtype=subtype,
-            filename=attachment_display_name,
+        attach_name = re.sub(r'[\r\n"]+', "", attachment_display_name).strip() or "newsletter.html"
+        attach_b64 = _b64_lines(html_file.read_bytes())
+        parts.extend(
+            [
+                f"--{mixed}",
+                'Content-Type: text/html; charset="utf-8"',
+                "Content-Transfer-Encoding: base64",
+                f'Content-Disposition: attachment; filename="{attach_name}"',
+                "",
+                attach_b64.rstrip("\n"),
+            ]
         )
+
+    parts.append(f"--{mixed}--")
+    parts.append("")
+
     LOG_DIR.mkdir(parents=True, exist_ok=True)
     out = LOG_DIR / "newsletter-compose-fallback.eml"
-    out.write_bytes(msg.as_bytes())
+    # CRLF line endings help classic Outlook parse .eml reliably.
+    out.write_bytes("\r\n".join(parts).encode("utf-8"))
     return out
 
 
