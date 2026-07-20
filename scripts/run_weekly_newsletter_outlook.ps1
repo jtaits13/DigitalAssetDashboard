@@ -23,14 +23,20 @@ function Write-RunLog {
 Write-RunLog "=== Newsletter run started (Force=$Force DryRun=$DryRun Draft=$Draft) ==="
 
 if (-not $Force -and -not $DryRun -and -not $Draft) {
-    $check = & python -c @"
+    # Native Python may write harmless warnings to stderr (e.g. Streamlit cache).
+    # With $ErrorActionPreference=Stop, PowerShell treats that as a terminating error —
+    # so run the check under Continue and ignore stderr.
+    $prevEap = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    $null = & python -c @"
 import sys
-from pathlib import Path
 sys.path.insert(0, r'$repoRoot\scripts')
 from newsletter_send_state import already_sent_for_current_week
 raise SystemExit(0 if already_sent_for_current_week() else 1)
-"@ 2>$null
-    if ($LASTEXITCODE -eq 0) {
+"@ 2>&1
+    $alreadySent = ($LASTEXITCODE -eq 0)
+    $ErrorActionPreference = $prevEap
+    if ($alreadySent) {
         Write-RunLog "Skip: newsletter for the current week was already sent (use -Force to resend)."
         exit 0
     }
