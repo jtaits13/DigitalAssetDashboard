@@ -65,8 +65,12 @@ def normalize_lead(lead: str) -> str:
     return _WS_RE.sub(" ", t).strip()
 
 
-def _pct_value(raw: Any) -> float | None:
-    """Return percentage points (e.g. 2.7 for +2.7%), matching newsletter `_fmt_pct`."""
+def _pct_value(raw: Any, *, unit: str = "percent") -> float | None:
+    """Return percentage points (e.g. 2.7 for +2.7%).
+
+    Explore/RWA deltas are stored as fractions; crypto and ETP deltas are
+    already percentage points. Callers must identify the unit explicitly.
+    """
     if raw is None:
         return None
     if isinstance(raw, (int, float)):
@@ -79,8 +83,7 @@ def _pct_value(raw: Any) -> float | None:
             n = float(s)
         except ValueError:
             return None
-    # Explore KPIs often store fractions (0.027 -> 2.7pp).
-    if abs(n) <= 1.5 and n != 0:
+    if unit == "fraction":
         n *= 100.0
     return n
 
@@ -177,7 +180,7 @@ def explore_kpi_move(
         picked = kpis[0]
     if not picked:
         return None
-    delta = _pct_value(picked.get("delta_30d_pct"))
+    delta = _pct_value(picked.get("delta_30d_pct"), unit="fraction")
     return SectionKpiMove(
         label=str(picked.get("label") or "KPI"),
         value_display=str(picked.get("value_display") or "—"),
@@ -325,7 +328,12 @@ def _wow_takeaway(move: SectionKpiMove, *, lane: str, section_id: str) -> Weekly
         return None
     verb = _move_verb(move.delta_pct)
     mag = f"{abs(move.delta_pct):.1f}%"
-    lead = f"{lane} {move.label.lower()} {verb} {mag} over 30D"
+    window = (
+        "vs prior 30D"
+        if section_id == "etp" and "flow" in (move.label or "").lower()
+        else "over 30D"
+    )
+    lead = f"{lane} {move.label.lower()} {verb} {mag} {window}"
     body = _wow_market_read(section_id, move)
     return WeeklyTakeaway(
         lead=lead.rstrip(".!?…:"),
@@ -879,14 +887,17 @@ def _section_kpi_move(
     if section_id == "stablecoins":
         return explore_kpi_move(explore, "stablecoins", label_match="market cap")
     if section_id == "rwa":
-        # Prefer treasuries distributed; fall back to first rwa explore strip if needed.
+        # Match the newsletter section's all-RWA (ex-stablecoin) KPI strip.
+        move = explore_kpi_move(explore, "rwa_global", label_match="distributed asset")
+        if move:
+            return move
         move = explore_kpi_move(explore, "treasuries", label_match="distributed")
         if move:
             return move
         return explore_kpi_move(explore, "tokenized_stocks", label_match="distributed")
     if section_id == "etp" and etp:
         # Prefer 30D net flow signal when present; else aggregate AUM %.
-        flow = _pct_value(etp.get("net_flow_1m_pct"))
+        flow = _pct_value(etp.get("net_flow_1m_pct"), unit="percent")
         if flow is not None and abs(flow) >= _WOW_THRESHOLD:
             return SectionKpiMove(
                 label="30D net flow",
@@ -894,7 +905,7 @@ def _section_kpi_move(
                 delta_pct=flow,
                 delta_display=_fmt_pct(flow),
             )
-        agg = _pct_value(etp.get("aggregate_pct"))
+        agg = _pct_value(etp.get("aggregate_pct"), unit="percent")
         return SectionKpiMove(
             label="Aggregate AUM",
             value_display=str(etp.get("total_aum_display") or "—"),
@@ -903,7 +914,7 @@ def _section_kpi_move(
         )
     if section_id == "crypto" and crypto:
         primary = crypto.get("primary") or {}
-        delta = _pct_value((primary.get("delta") or {}).get("pct"))
+        delta = _pct_value((primary.get("delta") or {}).get("pct"), unit="percent")
         return SectionKpiMove(
             label=str(primary.get("label") or "Total market cap"),
             value_display=str(primary.get("value_display") or "—"),

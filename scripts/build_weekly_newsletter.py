@@ -18,7 +18,7 @@ import json
 import os
 import re
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from html import escape
 from pathlib import Path
 from typing import Any
@@ -85,6 +85,18 @@ def _parse_iso_dt(raw: object) -> datetime | None:
         return datetime.fromisoformat(s)
     except ValueError:
         return None
+
+
+def _newsletter_week_end(now: datetime | None = None) -> datetime:
+    """Monday date assigned to the Sunday-night/Monday newsletter cycle.
+
+    Use local time, not UTC: the scheduled Sunday 10 PM run occurs on Monday
+    in UTC, but should carry the upcoming local Monday's date.
+    """
+    local_now = now.astimezone() if now is not None else datetime.now().astimezone()
+    days_to_monday = (-local_now.weekday()) % 7
+    target = local_now + timedelta(days=days_to_monday)
+    return target.replace(hour=0, minute=0, second=0, microsecond=0)
 
 
 def _strip_tags(html: str) -> str:
@@ -1420,6 +1432,9 @@ def _load_explore_sections() -> dict[str, dict[str, Any]]:
         sid = sec.get("id")
         if sid:
             out[str(sid)] = sec
+    rwa_global = _read_json(DATA / "rwa_global_market.json") or {}
+    if rwa_global.get("kpis"):
+        out["rwa_global"] = {"kpis": list(rwa_global["kpis"])}
     return out
 
 
@@ -1581,8 +1596,9 @@ def _week_in_brief_bullet(
     watch: str,
     *,
     flat_threshold: float = _RAIL_FLAT_THRESHOLD,
+    pct_unit: str = "fraction",
 ) -> str:
-    pct = _fmt_pct(raw_pct, unit="fraction")
+    pct = _fmt_pct(raw_pct, unit=pct_unit)
     verb = _brief_move_verb(pct, flat_threshold=flat_threshold)
     data_html = f'<strong style="color:{_pct_color(pct)};">{escape(pct)}</strong>'
     return f"{lead} {verb} ({data_html} {metric}, 30D); {watch}."
@@ -2080,11 +2096,11 @@ def _week_in_brief_html(
     etp_pct = _fmt_pct(etp.get("aggregate_pct"), unit="percent")
     tmmf_pct = _fmt_pct(_explore_kpi(explore, "tokenized_mmf", label_match="distributed").get("delta_30d_pct"), unit="fraction")
     sc_pct = _fmt_pct(_explore_kpi(explore, "stablecoins", label_match="market cap").get("delta_30d_pct"), unit="fraction")
-    tre_pct = _fmt_pct(_explore_kpi(explore, "treasuries", label_match="distributed").get("delta_30d_pct"), unit="fraction")
+    rwa_pct = _fmt_pct(_explore_kpi(explore, "rwa_global", label_match="distributed asset").get("delta_30d_pct"), unit="fraction")
 
     tmmf_raw = _explore_kpi(explore, "tokenized_mmf", label_match="distributed").get("delta_30d_pct")
     sc_raw = _explore_kpi(explore, "stablecoins", label_match="market cap").get("delta_30d_pct")
-    tre_raw = _explore_kpi(explore, "treasuries", label_match="distributed").get("delta_30d_pct")
+    rwa_raw = _explore_kpi(explore, "rwa_global", label_match="distributed asset").get("delta_30d_pct")
     by_family = _headlines_by_family(week_headlines)
     launches = fund_launches or {}
 
@@ -2120,9 +2136,9 @@ def _week_in_brief_html(
             "RWA tokenization",
             _week_in_brief_bullet(
                 "TradFi-to-on-chain bridge",
-                tre_raw,
-                "tokenized Treasuries",
-                _week_in_brief_watch_rwa(tre_pct, crypto_pct, by_family),
+                rwa_raw,
+                "distributed asset value",
+                _week_in_brief_watch_rwa(rwa_pct, crypto_pct, by_family),
             ),
         ),
         (
@@ -2135,13 +2151,14 @@ def _week_in_brief_html(
                     etp, etp_pct, by_family, fund_launch=launches.get("crypto_etf")
                 ),
                 flat_threshold=1.0,
+                pct_unit="percent",
             ),
         ),
         (
             "Crypto prices",
             _week_in_brief_crypto_bullet(
                 crypto_pct,
-                _week_in_brief_watch_crypto(crypto_pct, [tmmf_pct, sc_pct, tre_pct], by_family),
+                _week_in_brief_watch_crypto(crypto_pct, [tmmf_pct, sc_pct, rwa_pct], by_family),
             ),
         ),
     ]
@@ -2152,7 +2169,7 @@ def _week_in_brief_html(
         for i, (label, body) in enumerate(priorities)
     )
     synthesis = _week_in_brief_synthesis(
-        crypto_pct, [tmmf_pct, sc_pct, tre_pct], etp_pct, week_headlines
+        crypto_pct, [tmmf_pct, sc_pct, rwa_pct], etp_pct, week_headlines
     )
     if outlook:
         synthesis_html = (
@@ -2211,7 +2228,7 @@ def build_newsletter_html(
         if dt:
             generated.append(dt)
 
-    week_end = datetime.now(timezone.utc)
+    week_end = _newsletter_week_end()
     week_label = week_end.strftime("%-d %b %Y") if os.name != "nt" else week_end.strftime("%d %b %Y")
     data_as_of = max(generated) if generated else None
     if data_as_of is not None:
