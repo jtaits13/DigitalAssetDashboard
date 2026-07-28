@@ -1236,25 +1236,50 @@ def _fetch_props_payload() -> tuple[dict[str, Any] | None, str | None]:
     return props, None
 
 
+def _league_rows_from_networks_tab(rows: list[RwaNetworksTabRow]) -> list[RwaNetworkLeagueRow]:
+    """Map ``/networks`` list rows onto the Global Market league shape (distributed value)."""
+    return [
+        RwaNetworkLeagueRow(
+            rank=int(r.rank),
+            network=r.network,
+            network_href=r.network_href,
+            rwa_count=int(r.rwa_count),
+            total_value_usd=float(r.distributed_usd),
+            value_change_7d_raw=r.value_change_7d_raw,
+            market_share_raw=float(r.market_share_raw),
+            market_share_change_7d_raw=None,
+            market_share_change_30d_raw=r.market_share_change_30d_raw,
+        )
+        for r in rows
+    ]
+
+
 def fetch_rwa_home_data() -> tuple[list[RwaNetworkLeagueRow], list[RwaGlobalKpi], str | None]:
     """
     Homepage Networks league (**Distributed** tab) plus Global Market Overview aggregates.
 
     Percentage change in total value comes from the **7-day** change field on each league row.
     Overview metrics use **30-day** percentage change when the homepage provides it.
+
+    RWA.xyz removed ``leagueTableTabs`` from the homepage embed; when that happens we keep
+    homepage aggregates and load the Networks table from ``/networks`` (``listQueryResponse``).
     """
     props, err = _fetch_props_payload()
     if err:
         return [], [], err
     assert props is not None
 
-    raw_rows = _network_rows_from_props(props)
-    if not raw_rows:
-        kpis = _parse_aggregates(props)
-        return [], kpis, "Networks league table not found in page data."
-
     kpis = _parse_aggregates(props)
-    return _rows_from_raw(raw_rows), kpis, None
+    raw_rows = _network_rows_from_props(props)
+    if raw_rows:
+        return _rows_from_raw(raw_rows), kpis, None
+
+    # Homepage no longer embeds the Distributed parent-networks league.
+    net_rows, net_kpis, net_err = fetch_rwa_networks_page_data()
+    if net_rows:
+        return _league_rows_from_networks_tab(net_rows), kpis or net_kpis, None
+
+    return [], kpis or net_kpis, net_err or "Networks league table not found in page data."
 
 
 def fetch_rwa_network_league() -> tuple[list[RwaNetworksTabRow], str | None]:
