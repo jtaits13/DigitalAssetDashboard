@@ -33,7 +33,7 @@ USER_AGENT = (
 
 TMMF_SERIES = "tmmf"
 STABLE_SERIES = "stablecoins"
-CHART_LOOKBACK_DAYS = 61  # last ~2 months of weekly points
+CHART_LOOKBACK_DAYS = 30  # last ~1 month, matching the 30D KPI window
 RWA_LLAMA_TOP_N = 20
 
 NEWSLETTER_CHART_FILES: dict[str, Path] = {
