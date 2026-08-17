@@ -30,7 +30,7 @@ USER_AGENT = (
 
 TMMF_SERIES = "tmmf"
 STABLE_SERIES = "stablecoins"
-CHART_LOOKBACK_DAYS = 92  # last ~3 months of weekly points
+CHART_LOOKBACK_DAYS = 61  # last ~2 months of weekly points
 
 NEWSLETTER_CHART_FILES: dict[str, Path] = {
     "tmmf-weekly": CHART_DIR / "tmmf-weekly.png",
