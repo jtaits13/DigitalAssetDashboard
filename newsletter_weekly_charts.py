@@ -2,14 +2,15 @@
 
 Stablecoin history is backfilled from DefiLlama. Crypto total market cap is
 backfilled from CoinPaprika. TMMF stores Monday RWA.xyz snapshots. U.S. crypto
-ETPs use the dashboard aggregate AUM weekly series. RWA on-chain uses a current
-network ranking from the dashboard league table. Charts are PNG files Outlook
-can display.
+ETPs use the dashboard aggregate AUM weekly series. RWA on-chain uses DefiLlama
+RWA protocol TVL (top protocols) as a two-month weekly path. Charts are PNG
+files Outlook can display.
 """
 
 from __future__ import annotations
 
 import json
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
@@ -22,6 +23,8 @@ CHART_DIR = ROOT / "static_home" / "mockups" / "newsletter-charts"
 SERIES_PATH = DATA / "newsletter_weekly_series.json"
 
 DEFILLAMA_STABLE_CHARTS = "https://stablecoins.llama.fi/stablecoincharts/all"
+DEFILLAMA_PROTOCOLS_URL = "https://api.llama.fi/protocols"
+DEFILLAMA_PROTOCOL_URL = "https://api.llama.fi/protocol/{slug}"
 COINPAPRIKA_TOTAL_1Y_URL = "https://coinpaprika.com/market-overview/data/total/1y/"
 USER_AGENT = (
     "Digital-Assets-Dashboard/1.0 (weekly newsletter charts; "
@@ -31,14 +34,14 @@ USER_AGENT = (
 TMMF_SERIES = "tmmf"
 STABLE_SERIES = "stablecoins"
 CHART_LOOKBACK_DAYS = 61  # last ~2 months of weekly points
-RWA_RANK_N = 8
+RWA_LLAMA_TOP_N = 20
 
 NEWSLETTER_CHART_FILES: dict[str, Path] = {
     "tmmf-weekly": CHART_DIR / "tmmf-weekly.png",
     "stablecoins-weekly": CHART_DIR / "stablecoins-weekly.png",
     "etp-weekly": CHART_DIR / "etp-weekly.png",
     "crypto-weekly": CHART_DIR / "crypto-weekly.png",
-    "rwa-ranking": CHART_DIR / "rwa-ranking.png",
+    "rwa-weekly": CHART_DIR / "rwa-weekly.png",
 }
 
 _COLOR_INK = "#1a3d5c"
@@ -393,68 +396,81 @@ def _crypto_caption() -> str:
     return "Weekly crypto total market cap (CoinPaprika). Headline KPI uses the same source."
 
 
-def _rwa_ranking_rows(limit: int = RWA_RANK_N) -> list[tuple[str, float]]:
-    payload = _read_json(DATA / "rwa_global_market.json")
-    ranked: list[tuple[str, float]] = []
-    for row in payload.get("rows") or []:
+def _llama_headers() -> dict[str, str]:
+    return {"User-Agent": USER_AGENT, "Accept": "application/json"}
+
+
+def _fetch_protocol_tvl_days(slug: str) -> list[tuple[date, float]]:
+    resp = requests.get(
+        DEFILLAMA_PROTOCOL_URL.format(slug=slug),
+        headers=_llama_headers(),
+        timeout=25,
+    )
+    resp.raise_for_status()
+    payload = resp.json()
+    rows = payload.get("tvl") if isinstance(payload, dict) else None
+    by_day: dict[date, float] = {}
+    if not isinstance(rows, list):
+        return []
+    for row in rows:
         if not isinstance(row, dict):
             continue
         try:
-            value = float(row.get("Total Value"))
+            ts = int(row.get("date") or 0)
+            value = float(row.get("totalLiquidityUSD"))
         except (TypeError, ValueError):
             continue
-        if value <= 0:
+        if ts <= 0 or value <= 0:
             continue
-        name = str(row.get("Network") or "").strip()
-        if not name:
-            continue
-        ranked.append((name, value))
-    ranked.sort(key=lambda item: item[1], reverse=True)
-    return ranked[:limit]
+        by_day[datetime.fromtimestamp(ts, tz=timezone.utc).date()] = value
+    return list(by_day.items())
 
 
-def render_ranking_png(dest: Path, rows: list[tuple[str, float]]) -> bool:
-    if len(rows) < 2:
-        return False
-    try:
-        import matplotlib
+def _defillama_rwa_weekly_series(week_end: date) -> dict[str, Any]:
+    resp = requests.get(DEFILLAMA_PROTOCOLS_URL, headers=_llama_headers(), timeout=40)
+    resp.raise_for_status()
+    protocols = resp.json()
+    if not isinstance(protocols, list):
+        return {"title": "RWA distributed value", "points": []}
+    rwa = [
+        p
+        for p in protocols
+        if isinstance(p, dict) and str(p.get("category") or "") == "RWA" and p.get("slug")
+    ]
+    rwa.sort(key=lambda p: float(p.get("tvl") or 0), reverse=True)
+    slugs = [str(p.get("slug")) for p in rwa[:RWA_LLAMA_TOP_N]]
+    by_day: dict[date, float] = {}
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        futs = [pool.submit(_fetch_protocol_tvl_days, slug) for slug in slugs]
+        for fut in as_completed(futs):
+            try:
+                days = fut.result()
+            except (requests.RequestException, ValueError, json.JSONDecodeError):
+                continue
+            for day, value in days:
+                if day > week_end:
+                    continue
+                by_day[day] = by_day.get(day, 0.0) + value
+    by_monday: dict[date, float] = {}
+    for day, value in sorted(by_day.items()):
+        by_monday[_monday_of(day)] = value
+    mondays = _mondays_in_lookback(by_monday, week_end)
+    return {
+        "title": "RWA distributed value",
+        "unit": "usd",
+        "source": "DefiLlama RWA protocol TVL (weekly)",
+        "points": [
+            {"week_end": d.isoformat(), "value": by_monday[d], "source": "defillama"}
+            for d in mondays
+        ],
+    }
 
-        matplotlib.use("Agg")
-        import matplotlib.pyplot as plt
-        from matplotlib.ticker import FuncFormatter
-    except ImportError:
-        return False
 
-    labels = [item[0] for item in reversed(rows)]
-    values = [item[1] for item in reversed(rows)]
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    height = max(2.8, 0.38 * len(rows) + 0.7)
-    fig, ax = plt.subplots(figsize=(10.2, height), dpi=140)
-    fig.patch.set_facecolor(_COLOR_BG)
-    ax.set_facecolor(_COLOR_BG)
-    bars = ax.barh(labels, values, color=_COLOR_LINE, height=0.62, zorder=3)
-    ax.xaxis.set_major_formatter(FuncFormatter(_usd_axis_label))
-    ax.set_xlim(0, max(values) * 1.22)
-    ax.grid(axis="x", color=_COLOR_GRID, linewidth=0.8, zorder=0)
-    ax.spines["top"].set_visible(False)
-    ax.spines["right"].set_visible(False)
-    ax.spines["left"].set_color(_COLOR_GRID)
-    ax.spines["bottom"].set_color(_COLOR_GRID)
-    ax.tick_params(colors=_COLOR_MUTED, labelsize=8.5, length=0)
-    for bar, value in zip(bars, values):
-        ax.text(
-            bar.get_width(),
-            bar.get_y() + bar.get_height() / 2,
-            f"  {_usd_axis_label(value)}",
-            va="center",
-            ha="left",
-            fontsize=8,
-            color=_COLOR_MUTED,
-        )
-    fig.tight_layout(pad=0.35)
-    fig.savefig(dest, dpi=140, facecolor=_COLOR_BG, bbox_inches="tight")
-    plt.close(fig)
-    return dest.is_file()
+def _rwa_caption() -> str:
+    return (
+        "Weekly RWA protocol TVL (DefiLlama, largest protocols). "
+        "Headline KPI above is RWA.xyz distributed asset value and can differ."
+    )
 
 
 def _chart_block_html(
@@ -534,15 +550,15 @@ def prepare_newsletter_charts(*, week_end: date, outlook: bool = False) -> dict[
             outlook=outlook,
         )
     rwa_html = ""
-    rwa_rows = _rwa_ranking_rows()
-    if render_ranking_png(NEWSLETTER_CHART_FILES["rwa-ranking"], rwa_rows):
+    try:
+        rwa_series = _defillama_rwa_weekly_series(week_end)
+    except (requests.RequestException, ValueError, json.JSONDecodeError):
+        rwa_series = {"points": []}
+    if render_series_png(rwa_series, NEWSLETTER_CHART_FILES["rwa-weekly"]):
         rwa_html = _chart_block_html(
-            cid="rwa-ranking",
-            title="RWA distributed value by network",
-            caption=(
-                f"Top {len(rwa_rows)} networks by distributed RWA value (RWA.xyz). "
-                "Snapshot of current league standings, not a weekly path. Excludes stablecoins."
-            ),
+            cid="rwa-weekly",
+            title=str(rwa_series.get("title") or "RWA distributed value"),
+            caption=_rwa_caption(),
             outlook=outlook,
         )
     return {
@@ -568,14 +584,18 @@ def main() -> None:
         crypto_series = {"points": []}
         print(f"Crypto series skipped: {exc}")
     crypto_ok = render_series_png(crypto_series, NEWSLETTER_CHART_FILES["crypto-weekly"])
-    rwa_rows = _rwa_ranking_rows()
-    rwa_ok = render_ranking_png(NEWSLETTER_CHART_FILES["rwa-ranking"], rwa_rows)
+    try:
+        rwa_series = _defillama_rwa_weekly_series(_monday_of(date.today()))
+    except Exception as exc:
+        rwa_series = {"points": []}
+        print(f"RWA series skipped: {exc}")
+    rwa_ok = render_series_png(rwa_series, NEWSLETTER_CHART_FILES["rwa-weekly"])
     print(f"Wrote {SERIES_PATH}")
     print(f"TMMF points: {len(tmmf.get('points') or [])} png={tmmf_ok}")
     print(f"Stablecoin points: {len(stable.get('points') or [])} png={stable_ok}")
     print(f"ETP points: {len(etp.get('points') or [])} png={etp_ok}")
     print(f"Crypto points: {len(crypto_series.get('points') or [])} png={crypto_ok}")
-    print(f"RWA ranking rows: {len(rwa_rows)} png={rwa_ok}")
+    print(f"RWA points: {len(rwa_series.get('points') or [])} png={rwa_ok}")
 
 
 if __name__ == "__main__":
