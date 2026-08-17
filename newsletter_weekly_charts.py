@@ -1,10 +1,9 @@
-"""Weekly TMMF / stablecoin / ETP series for the executive newsletter.
+"""Weekly newsletter charts for TMMF, stablecoins, ETPs, crypto, and RWA.
 
-Stablecoin history is backfilled from DefiLlama (daily circulating USD, resampled
-to Mondays). TMMF has no public weekly series, so we store each Monday snapshot
-from the RWA.xyz dashboard JSON and optionally seed the RWA 30-day-ago level as
-the first point. U.S. crypto ETPs use the dashboard aggregate AUM weekly series
-(Yahoo prices scaled from current reported AUM). Charts are PNG files Outlook
+Stablecoin history is backfilled from DefiLlama. Crypto total market cap is
+backfilled from CoinPaprika. TMMF stores Monday RWA.xyz snapshots. U.S. crypto
+ETPs use the dashboard aggregate AUM weekly series. RWA on-chain uses a current
+network ranking from the dashboard league table. Charts are PNG files Outlook
 can display.
 """
 
@@ -23,6 +22,7 @@ CHART_DIR = ROOT / "static_home" / "mockups" / "newsletter-charts"
 SERIES_PATH = DATA / "newsletter_weekly_series.json"
 
 DEFILLAMA_STABLE_CHARTS = "https://stablecoins.llama.fi/stablecoincharts/all"
+COINPAPRIKA_TOTAL_1Y_URL = "https://coinpaprika.com/market-overview/data/total/1y/"
 USER_AGENT = (
     "Digital-Assets-Dashboard/1.0 (weekly newsletter charts; "
     "https://github.com/jtaits13/DigitalAssetDashboard)"
@@ -31,11 +31,14 @@ USER_AGENT = (
 TMMF_SERIES = "tmmf"
 STABLE_SERIES = "stablecoins"
 CHART_LOOKBACK_DAYS = 61  # last ~2 months of weekly points
+RWA_RANK_N = 8
 
 NEWSLETTER_CHART_FILES: dict[str, Path] = {
     "tmmf-weekly": CHART_DIR / "tmmf-weekly.png",
     "stablecoins-weekly": CHART_DIR / "stablecoins-weekly.png",
     "etp-weekly": CHART_DIR / "etp-weekly.png",
+    "crypto-weekly": CHART_DIR / "crypto-weekly.png",
+    "rwa-ranking": CHART_DIR / "rwa-ranking.png",
 }
 
 _COLOR_INK = "#1a3d5c"
@@ -344,6 +347,116 @@ def _etp_caption() -> str:
     )
 
 
+def _crypto_weekly_series(week_end: date) -> dict[str, Any]:
+    resp = requests.get(
+        COINPAPRIKA_TOTAL_1Y_URL,
+        headers={"User-Agent": USER_AGENT, "Accept": "application/json"},
+        timeout=30,
+    )
+    resp.raise_for_status()
+    payload = resp.json()
+    usd: list[Any] = []
+    if isinstance(payload, list) and payload and isinstance(payload[0], dict):
+        raw = payload[0].get("usd")
+        if isinstance(raw, list):
+            usd = raw
+    by_monday: dict[date, float] = {}
+    for point in usd:
+        if not isinstance(point, (list, tuple)) or len(point) < 2:
+            continue
+        try:
+            ts = float(point[0])
+            value = float(point[1])
+        except (TypeError, ValueError):
+            continue
+        if ts > 1e12:
+            ts /= 1000.0
+        if ts <= 0 or value <= 0:
+            continue
+        day = datetime.fromtimestamp(ts, tz=timezone.utc).date()
+        if day > week_end:
+            continue
+        by_monday[_monday_of(day)] = value
+    mondays = _mondays_in_lookback(by_monday, week_end)
+    return {
+        "title": "Crypto total market cap",
+        "unit": "usd",
+        "source": "CoinPaprika total market cap (weekly)",
+        "points": [
+            {"week_end": d.isoformat(), "value": by_monday[d], "source": "coinpaprika"}
+            for d in mondays
+        ],
+    }
+
+
+def _crypto_caption() -> str:
+    return "Weekly crypto total market cap (CoinPaprika). Headline KPI uses the same source."
+
+
+def _rwa_ranking_rows(limit: int = RWA_RANK_N) -> list[tuple[str, float]]:
+    payload = _read_json(DATA / "rwa_global_market.json")
+    ranked: list[tuple[str, float]] = []
+    for row in payload.get("rows") or []:
+        if not isinstance(row, dict):
+            continue
+        try:
+            value = float(row.get("Total Value"))
+        except (TypeError, ValueError):
+            continue
+        if value <= 0:
+            continue
+        name = str(row.get("Network") or "").strip()
+        if not name:
+            continue
+        ranked.append((name, value))
+    ranked.sort(key=lambda item: item[1], reverse=True)
+    return ranked[:limit]
+
+
+def render_ranking_png(dest: Path, rows: list[tuple[str, float]]) -> bool:
+    if len(rows) < 2:
+        return False
+    try:
+        import matplotlib
+
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+        from matplotlib.ticker import FuncFormatter
+    except ImportError:
+        return False
+
+    labels = [item[0] for item in reversed(rows)]
+    values = [item[1] for item in reversed(rows)]
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    height = max(2.8, 0.38 * len(rows) + 0.7)
+    fig, ax = plt.subplots(figsize=(10.2, height), dpi=140)
+    fig.patch.set_facecolor(_COLOR_BG)
+    ax.set_facecolor(_COLOR_BG)
+    bars = ax.barh(labels, values, color=_COLOR_LINE, height=0.62, zorder=3)
+    ax.xaxis.set_major_formatter(FuncFormatter(_usd_axis_label))
+    ax.set_xlim(0, max(values) * 1.22)
+    ax.grid(axis="x", color=_COLOR_GRID, linewidth=0.8, zorder=0)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["left"].set_color(_COLOR_GRID)
+    ax.spines["bottom"].set_color(_COLOR_GRID)
+    ax.tick_params(colors=_COLOR_MUTED, labelsize=8.5, length=0)
+    for bar, value in zip(bars, values):
+        ax.text(
+            bar.get_width(),
+            bar.get_y() + bar.get_height() / 2,
+            f"  {_usd_axis_label(value)}",
+            va="center",
+            ha="left",
+            fontsize=8,
+            color=_COLOR_MUTED,
+        )
+    fig.tight_layout(pad=0.35)
+    fig.savefig(dest, dpi=140, facecolor=_COLOR_BG, bbox_inches="tight")
+    plt.close(fig)
+    return dest.is_file()
+
+
 def _chart_block_html(
     *,
     cid: str,
@@ -408,10 +521,36 @@ def prepare_newsletter_charts(*, week_end: date, outlook: bool = False) -> dict[
             caption=_etp_caption(),
             outlook=outlook,
         )
+    crypto_html = ""
+    try:
+        crypto_series = _crypto_weekly_series(week_end)
+    except (requests.RequestException, ValueError, json.JSONDecodeError):
+        crypto_series = {"points": []}
+    if render_series_png(crypto_series, NEWSLETTER_CHART_FILES["crypto-weekly"]):
+        crypto_html = _chart_block_html(
+            cid="crypto-weekly",
+            title=str(crypto_series.get("title") or "Crypto total market cap"),
+            caption=_crypto_caption(),
+            outlook=outlook,
+        )
+    rwa_html = ""
+    rwa_rows = _rwa_ranking_rows()
+    if render_ranking_png(NEWSLETTER_CHART_FILES["rwa-ranking"], rwa_rows):
+        rwa_html = _chart_block_html(
+            cid="rwa-ranking",
+            title="RWA distributed value by network",
+            caption=(
+                f"Top {len(rwa_rows)} networks by distributed RWA value (RWA.xyz). "
+                "Snapshot of current league standings, not a weekly path. Excludes stablecoins."
+            ),
+            outlook=outlook,
+        )
     return {
         "tmmf": tmmf_html,
         "stablecoins": stable_html,
         "etp": etp_html,
+        "crypto": crypto_html,
+        "rwa": rwa_html,
     }
 
 
@@ -423,10 +562,20 @@ def main() -> None:
     stable_ok = render_series_png(stable, NEWSLETTER_CHART_FILES["stablecoins-weekly"])
     etp = _etp_weekly_series(_monday_of(date.today()))
     etp_ok = render_series_png(etp, NEWSLETTER_CHART_FILES["etp-weekly"])
+    try:
+        crypto_series = _crypto_weekly_series(_monday_of(date.today()))
+    except Exception as exc:
+        crypto_series = {"points": []}
+        print(f"Crypto series skipped: {exc}")
+    crypto_ok = render_series_png(crypto_series, NEWSLETTER_CHART_FILES["crypto-weekly"])
+    rwa_rows = _rwa_ranking_rows()
+    rwa_ok = render_ranking_png(NEWSLETTER_CHART_FILES["rwa-ranking"], rwa_rows)
     print(f"Wrote {SERIES_PATH}")
     print(f"TMMF points: {len(tmmf.get('points') or [])} png={tmmf_ok}")
     print(f"Stablecoin points: {len(stable.get('points') or [])} png={stable_ok}")
     print(f"ETP points: {len(etp.get('points') or [])} png={etp_ok}")
+    print(f"Crypto points: {len(crypto_series.get('points') or [])} png={crypto_ok}")
+    print(f"RWA ranking rows: {len(rwa_rows)} png={rwa_ok}")
 
 
 if __name__ == "__main__":

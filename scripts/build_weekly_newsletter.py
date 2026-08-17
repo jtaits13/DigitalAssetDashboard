@@ -2345,6 +2345,7 @@ def build_newsletter_html(
         section_divider=True,
         outlook=ol,
         scope_note=RWA_GLOBAL_SCOPE_NOTE,
+        chart_html=section_charts.get("rwa") or "",
         **section_base_kw,
     )
 
@@ -2414,15 +2415,14 @@ def build_newsletter_html(
         accent=_COLOR_BRAND,
         section_id="crypto",
         section_divider=True,
+        chart_html=section_charts.get("crypto") or "",
         outlook=ol,
         **section_base_kw,
     )
 
     if is_executive:
         intro = ""
-        intro_block = _week_in_brief_html(
-            crypto, etp, explore, week_headlines, articles, fund_launches, outlook=ol
-        )
+        intro_block = ""
         header_kicker = "Executive weekly brief"
         page_title = "Digital Assets Dashboard — Executive weekly brief"
         preview_text = "Executive weekly brief — tokenized cash, stablecoins, RWAs, ETPs, and crypto market context."
