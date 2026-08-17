@@ -384,6 +384,11 @@ def main() -> None:
         help="Send even if this week's newsletter was already sent.",
     )
     parser.add_argument(
+        "--allow-stale",
+        action="store_true",
+        help="Send even if live KPIs failed to refresh this week (not recommended).",
+    )
+    parser.add_argument(
         "--update-attachment-mock",
         action="store_true",
         help="Also write static_home/mockups/weekly-newsletter-email-executive-mock.html.",
@@ -409,6 +414,19 @@ def main() -> None:
     print("Building executive newsletter…")
     attachment_html, week_end = _build_executive_html(outlook_body=False)
     body_html, _ = _build_executive_html(outlook_body=True)
+    try:
+        from newsletter_live_kpis import kpi_refresh_issues
+
+        issues = kpi_refresh_issues(week_end.date())
+    except Exception:
+        issues = []
+    if issues and not args.allow_stale:
+        detail = "\n".join(f"  - {item}" for item in issues)
+        raise SystemExit(
+            "Refusing to send: newsletter KPIs did not refresh this week.\n"
+            f"{detail}\n"
+            "Rebuild after live sources recover, or pass --allow-stale to override."
+        )
     week_label = _week_label(week_end)
     subject = f"Executive weekly brief — week ending {week_label}"
     attachment_name = _attachment_filename(week_end)

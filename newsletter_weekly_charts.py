@@ -126,12 +126,12 @@ def _tmmf_distributed_kpi() -> dict[str, Any]:
     try:
         from newsletter_live_kpis import tmmf_distributed_kpi
 
-        live = tmmf_distributed_kpi()
+        live = tmmf_distributed_kpi(live_only=True)
         if live and live.get("value_display"):
             return live
     except Exception:
         pass
-    return _kpi_from_explore("tokenized_mmf", "distributed")
+    return {}
 
 
 def _tmmf_snapshot(week_end: date, series: dict[str, Any]) -> dict[str, Any]:
