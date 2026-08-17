@@ -30,8 +30,7 @@ USER_AGENT = (
 
 TMMF_SERIES = "tmmf"
 STABLE_SERIES = "stablecoins"
-MAX_STABLE_WEEKS = 26
-MAX_ETP_WEEKS = 26
+CHART_LOOKBACK_DAYS = 92  # last ~3 months of weekly points
 
 NEWSLETTER_CHART_FILES: dict[str, Path] = {
     "tmmf-weekly": CHART_DIR / "tmmf-weekly.png",
@@ -80,6 +79,14 @@ def parse_usd_compact(raw: object) -> float | None:
 
 def _monday_of(day: date) -> date:
     return day - timedelta(days=day.weekday())
+
+
+def _mondays_in_lookback(by_monday: dict[date, float], week_end: date) -> list[date]:
+    if not by_monday:
+        return []
+    end = min(week_end, max(by_monday))
+    start = end - timedelta(days=CHART_LOOKBACK_DAYS)
+    return [d for d in sorted(by_monday) if start <= d <= end]
 
 
 def _kpi_from_explore(section_id: str, label_match: str) -> dict[str, Any]:
@@ -163,7 +170,7 @@ def _defillama_stable_points(week_end: date) -> list[dict[str, Any]]:
         if total <= 0:
             continue
         by_monday[_monday_of(day)] = total
-    mondays = sorted(by_monday)[-MAX_STABLE_WEEKS:]
+    mondays = _mondays_in_lookback(by_monday, week_end)
     return [
         {"week_end": d.isoformat(), "value": by_monday[d], "source": "defillama"}
         for d in mondays
@@ -318,7 +325,7 @@ def _etp_weekly_series(week_end: date) -> dict[str, Any]:
         if day > week_end or aum_b <= 0:
             continue
         by_monday[_monday_of(day)] = aum_b * 1e9
-    mondays = sorted(by_monday)[-MAX_ETP_WEEKS:]
+    mondays = _mondays_in_lookback(by_monday, week_end)
     return {
         "title": "U.S. crypto ETP aggregate AUM",
         "unit": "usd",
