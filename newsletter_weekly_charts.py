@@ -1,11 +1,15 @@
 """Weekly newsletter charts for TMMF, stablecoins, ETPs, crypto, and RWA.
 
-Stablecoin history is backfilled from DefiLlama. Crypto total market cap is
-backfilled from CoinPaprika. TMMF stores each week's printed newsletter figure
-and keeps recovered Mondays from git / Wayback. U.S. crypto
-ETPs use the dashboard aggregate AUM weekly series. RWA on-chain uses DefiLlama
-RWA protocol TVL (top protocols) as a two-month weekly path. Charts are PNG
-files Outlook can display.
+Each section has a repeatable weekly refresh. If that refresh fails, the last
+committed series is reused and a do-not-send issue is raised.
+
+- TMMF: freeze this week's printed RWA.xyz figure (no public daily series).
+- Stablecoins: refetch DefiLlama circulating USD (Mondays).
+- RWA chart: refetch DefiLlama RWA protocol TVL. Headline KPI is RWA.xyz.
+- Crypto: refetch CoinPaprika 30D total market cap (same series as the KPI).
+- U.S. crypto ETPs: refetch the dashboard aggregate AUM weekly series.
+
+Charts are PNG files Outlook can display.
 """
 
 from __future__ import annotations
@@ -35,7 +39,18 @@ USER_AGENT = (
 
 TMMF_SERIES = "tmmf"
 STABLE_SERIES = "stablecoins"
+CRYPTO_SERIES = "crypto"
+ETP_SERIES = "etp"
+RWA_SERIES = "rwa"
 CHART_LOOKBACK_DAYS = 30  # last ~1 month, matching the 30D KPI window
+# Last point may trail week_end (T-1 APIs / weekends). TMMF must be this Monday.
+CHART_MAX_LAG_DAYS = {
+    TMMF_SERIES: 0,
+    STABLE_SERIES: 8,
+    CRYPTO_SERIES: 4,
+    RWA_SERIES: 8,
+}
+_CHART_ISSUES: list[str] = []
 RWA_LLAMA_TOP_N = 20
 # Recovered curated TMMF totals: git dashboard exports, plus Wayback copies of
 # app.rwa.xyz/treasuries (same fund allowlist). Archive timestamps: 20260727104342,
@@ -111,18 +126,6 @@ def _dates_in_30d_kpi_window(by_date: dict[date, float], week_end: date) -> list
     prior = [d for d in by_date if d <= cut]
     start = max(prior) if prior else min(d for d in by_date if d <= end)
     return [d for d in sorted(by_date) if start <= d <= end]
-
-
-def _kpi_from_explore(section_id: str, label_match: str) -> dict[str, Any]:
-    explore = _read_json(DATA / "rwa_explore_asset_type.json")
-    needle = label_match.lower()
-    for sec in explore.get("sections") or []:
-        if str(sec.get("id") or "") != section_id:
-            continue
-        for kpi in sec.get("kpis") or []:
-            if needle in str(kpi.get("label") or "").lower():
-                return kpi if isinstance(kpi, dict) else {}
-    return {}
 
 
 _TMMF_FILL_SOURCES = frozenset({"rwa_xyz_val_7d", "rwa_xyz_val_30d"})
@@ -283,17 +286,8 @@ def _defillama_stable_points(week_end: date) -> list[dict[str, Any]]:
     ]
 
 
-def _stablecoin_snapshot(week_end: date, series: dict[str, Any]) -> dict[str, Any]:
-    points = list(series.get("points") or [])
-    try:
-        filled = _defillama_stable_points(week_end)
-        if filled:
-            points = filled
-    except (requests.RequestException, ValueError, json.JSONDecodeError):
-        kpi = _kpi_from_explore("stablecoins", "market cap")
-        value = parse_usd_compact(kpi.get("value_display"))
-        if value is not None:
-            points = _upsert_point(points, week_end, value, "rwa_xyz")
+def _stablecoin_live_series(week_end: date) -> dict[str, Any]:
+    points = _defillama_stable_points(week_end)
     return {
         "title": "Stablecoin circulating USD",
         "unit": "usd",
@@ -302,12 +296,132 @@ def _stablecoin_snapshot(week_end: date, series: dict[str, Any]) -> dict[str, An
     }
 
 
+def chart_refresh_issues() -> list[str]:
+    return list(_CHART_ISSUES)
+
+
+def _set_chart_issues(issues: list[str]) -> None:
+    global _CHART_ISSUES
+    _CHART_ISSUES = [str(item) for item in issues if str(item).strip()]
+
+
+def _series_lag_issue(
+    label: str,
+    series: dict[str, Any],
+    week_end: date,
+    max_lag_days: int,
+) -> str | None:
+    points = _parsed_points(series)
+    if len(points) < 2:
+        return f"{label}: chart does not have a usable series for week ending {week_end.isoformat()}."
+    last = points[-1][0]
+    lag = (week_end - last).days
+    if lag > max_lag_days:
+        return (
+            f"{label}: chart last point is {last.isoformat()}, "
+            f"more than {max_lag_days} days before week ending {week_end.isoformat()}."
+        )
+    return None
+
+
+def _with_previous_series(
+    *,
+    label: str,
+    live: dict[str, Any],
+    previous: dict[str, Any],
+    week_end: date,
+    max_lag_days: int | None,
+) -> tuple[dict[str, Any], str | None]:
+    live_pts = _parsed_points(live)
+    prev_pts = _parsed_points(previous)
+    if len(live_pts) >= 2:
+        if max_lag_days is None:
+            return live, None
+        return live, _series_lag_issue(label, live, week_end, max_lag_days)
+    if len(prev_pts) >= 2:
+        return previous, (
+            f"{label}: chart did not refresh for week ending {week_end.isoformat()}; "
+            "using last week's series."
+        )
+    chosen = live if live_pts else previous
+    if _parsed_points(chosen):
+        return chosen, (
+            f"{label}: chart does not have a usable series for week ending {week_end.isoformat()}."
+        )
+    return chosen or {"points": []}, f"{label}: chart fetch failed this week."
+
+
 def update_weekly_series(week_end: date | None = None) -> dict[str, Any]:
     monday = week_end or _monday_of(date.today())
     payload = _read_json(SERIES_PATH)
     payload["updated_at"] = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
-    payload[TMMF_SERIES] = _tmmf_snapshot(monday, payload.get(TMMF_SERIES) or {})
-    payload[STABLE_SERIES] = _stablecoin_snapshot(monday, payload.get(STABLE_SERIES) or {})
+    issues: list[str] = []
+    _set_chart_issues([])
+
+    tmmf = _tmmf_snapshot(monday, payload.get(TMMF_SERIES) or {})
+    payload[TMMF_SERIES] = tmmf
+    lag = _series_lag_issue("TMMF", tmmf, monday, CHART_MAX_LAG_DAYS[TMMF_SERIES])
+    if lag:
+        issues.append(lag)
+
+    try:
+        stable_live = _stablecoin_live_series(monday)
+    except (requests.RequestException, ValueError, json.JSONDecodeError):
+        stable_live = {"points": []}
+    stable, stable_issue = _with_previous_series(
+        label="Stablecoins",
+        live=stable_live,
+        previous=payload.get(STABLE_SERIES) or {},
+        week_end=monday,
+        max_lag_days=CHART_MAX_LAG_DAYS[STABLE_SERIES],
+    )
+    payload[STABLE_SERIES] = stable
+    if stable_issue:
+        issues.append(stable_issue)
+
+    try:
+        crypto_live = _crypto_weekly_series(monday)
+    except (requests.RequestException, ValueError, json.JSONDecodeError):
+        crypto_live = {"points": []}
+    crypto, crypto_issue = _with_previous_series(
+        label="Crypto",
+        live=crypto_live,
+        previous=payload.get(CRYPTO_SERIES) or {},
+        week_end=monday,
+        max_lag_days=CHART_MAX_LAG_DAYS[CRYPTO_SERIES],
+    )
+    payload[CRYPTO_SERIES] = crypto
+    if crypto_issue:
+        issues.append(crypto_issue)
+
+    try:
+        rwa_live = _defillama_rwa_weekly_series(monday)
+    except (requests.RequestException, ValueError, json.JSONDecodeError):
+        rwa_live = {"points": []}
+    rwa, rwa_issue = _with_previous_series(
+        label="RWA",
+        live=rwa_live,
+        previous=payload.get(RWA_SERIES) or {},
+        week_end=monday,
+        max_lag_days=CHART_MAX_LAG_DAYS[RWA_SERIES],
+    )
+    payload[RWA_SERIES] = rwa
+    if rwa_issue:
+        issues.append(rwa_issue)
+
+    etp_live = _etp_weekly_series(monday)
+    etp, etp_issue = _with_previous_series(
+        label="U.S. crypto ETPs",
+        live=etp_live,
+        previous=payload.get(ETP_SERIES) or {},
+        week_end=monday,
+        max_lag_days=None,
+    )
+    payload[ETP_SERIES] = etp
+    if etp_issue:
+        issues.append(etp_issue)
+
+    _set_chart_issues(issues)
     _write_json(SERIES_PATH, payload)
     return payload
 
@@ -438,8 +552,6 @@ def _etp_weekly_series(week_end: date) -> dict[str, Any]:
             payload = {"series": live_series}
     except Exception:
         payload = {}
-    if not payload.get("series"):
-        payload = _read_json(DATA / "aum_series.json")
     by_monday: dict[date, float] = {}
     for row in payload.get("series") or []:
         if not isinstance(row, dict):
@@ -663,11 +775,14 @@ def _chart_block_html(
 def prepare_newsletter_charts(*, week_end: date, outlook: bool = False) -> tuple[dict[str, str], dict[str, Any]]:
     """Update series, render PNGs, return HTML snippets and same-source KPI overlays."""
     payload = update_weekly_series(week_end)
+    issues = chart_refresh_issues()
     tmmf = payload.get(TMMF_SERIES) or {}
     stable = payload.get(STABLE_SERIES) or {}
+    etp = payload.get(ETP_SERIES) or {}
+    crypto_series = payload.get(CRYPTO_SERIES) or {}
+    rwa_series = payload.get(RWA_SERIES) or {}
+
     tmmf_html = ""
-    stable_html = ""
-    etp_html = ""
     if render_series_png(tmmf, NEWSLETTER_CHART_FILES["tmmf-weekly"]):
         tmmf_html = _chart_block_html(
             cid="tmmf-weekly",
@@ -675,6 +790,10 @@ def prepare_newsletter_charts(*, week_end: date, outlook: bool = False) -> tuple
             caption=_tmmf_caption(tmmf),
             outlook=outlook,
         )
+    elif len(_parsed_points(tmmf)) >= 2:
+        issues.append("TMMF: chart image did not render.")
+
+    stable_html = ""
     if render_series_png(stable, NEWSLETTER_CHART_FILES["stablecoins-weekly"]):
         stable_html = _chart_block_html(
             cid="stablecoins-weekly",
@@ -682,7 +801,10 @@ def prepare_newsletter_charts(*, week_end: date, outlook: bool = False) -> tuple
             caption=_stable_caption(stable),
             outlook=outlook,
         )
-    etp = _etp_weekly_series(week_end)
+    elif len(_parsed_points(stable)) >= 2:
+        issues.append("Stablecoins: chart image did not render.")
+
+    etp_html = ""
     if render_series_png(etp, NEWSLETTER_CHART_FILES["etp-weekly"]):
         etp_html = _chart_block_html(
             cid="etp-weekly",
@@ -690,12 +812,10 @@ def prepare_newsletter_charts(*, week_end: date, outlook: bool = False) -> tuple
             caption=_etp_caption(),
             outlook=outlook,
         )
+    elif len(_parsed_points(etp)) >= 2:
+        issues.append("U.S. crypto ETPs: chart image did not render.")
+
     crypto_html = ""
-    crypto_series: dict[str, Any] = {"points": []}
-    try:
-        crypto_series = _crypto_weekly_series(week_end)
-    except (requests.RequestException, ValueError, json.JSONDecodeError):
-        crypto_series = {"points": []}
     if render_series_png(crypto_series, NEWSLETTER_CHART_FILES["crypto-weekly"]):
         crypto_html = _chart_block_html(
             cid="crypto-weekly",
@@ -703,11 +823,10 @@ def prepare_newsletter_charts(*, week_end: date, outlook: bool = False) -> tuple
             caption=_crypto_caption(),
             outlook=outlook,
         )
+    elif len(_parsed_points(crypto_series)) >= 2:
+        issues.append("Crypto: chart image did not render.")
+
     rwa_html = ""
-    try:
-        rwa_series = _defillama_rwa_weekly_series(week_end)
-    except (requests.RequestException, ValueError, json.JSONDecodeError):
-        rwa_series = {"points": []}
     if render_series_png(rwa_series, NEWSLETTER_CHART_FILES["rwa-weekly"]):
         rwa_html = _chart_block_html(
             cid="rwa-weekly",
@@ -715,6 +834,17 @@ def prepare_newsletter_charts(*, week_end: date, outlook: bool = False) -> tuple
             caption=_rwa_caption(),
             outlook=outlook,
         )
+    elif len(_parsed_points(rwa_series)) >= 2:
+        issues.append("RWA: chart image did not render.")
+
+    _set_chart_issues(issues)
+    try:
+        from newsletter_live_kpis import append_refresh_issues
+
+        append_refresh_issues(issues)
+    except Exception:
+        pass
+
     html = {
         "tmmf": tmmf_html,
         "stablecoins": stable_html,
@@ -736,21 +866,13 @@ def main() -> None:
     payload = update_weekly_series()
     tmmf = payload.get(TMMF_SERIES) or {}
     stable = payload.get(STABLE_SERIES) or {}
+    etp = payload.get(ETP_SERIES) or {}
+    crypto_series = payload.get(CRYPTO_SERIES) or {}
+    rwa_series = payload.get(RWA_SERIES) or {}
     tmmf_ok = render_series_png(tmmf, NEWSLETTER_CHART_FILES["tmmf-weekly"])
     stable_ok = render_series_png(stable, NEWSLETTER_CHART_FILES["stablecoins-weekly"])
-    etp = _etp_weekly_series(_monday_of(date.today()))
     etp_ok = render_series_png(etp, NEWSLETTER_CHART_FILES["etp-weekly"])
-    try:
-        crypto_series = _crypto_weekly_series(_monday_of(date.today()))
-    except Exception as exc:
-        crypto_series = {"points": []}
-        print(f"Crypto series skipped: {exc}")
     crypto_ok = render_series_png(crypto_series, NEWSLETTER_CHART_FILES["crypto-weekly"])
-    try:
-        rwa_series = _defillama_rwa_weekly_series(_monday_of(date.today()))
-    except Exception as exc:
-        rwa_series = {"points": []}
-        print(f"RWA series skipped: {exc}")
     rwa_ok = render_series_png(rwa_series, NEWSLETTER_CHART_FILES["rwa-weekly"])
     print(f"Wrote {SERIES_PATH}")
     print(f"TMMF points: {len(tmmf.get('points') or [])} png={tmmf_ok}")
@@ -758,6 +880,8 @@ def main() -> None:
     print(f"ETP points: {len(etp.get('points') or [])} png={etp_ok}")
     print(f"Crypto points: {len(crypto_series.get('points') or [])} png={crypto_ok}")
     print(f"RWA points: {len(rwa_series.get('points') or [])} png={rwa_ok}")
+    for item in chart_refresh_issues():
+        print(f"Chart issue: {item}")
 
 
 if __name__ == "__main__":

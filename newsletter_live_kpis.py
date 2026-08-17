@@ -200,14 +200,36 @@ def live_etp_aum_series() -> list[dict[str, Any]] | None:
 def kpi_refresh_issues(week_end: date | None = None) -> list[str]:
     live = _LIVE
     if live is None:
-        return ["Newsletter KPIs were not refreshed (live fetch never ran)."]
-    issues = list(live.get("issues") or [])
-    if week_end is not None:
-        extra = _etp_series_lag_issue(week_end)
-        if extra and extra not in issues:
-            issues.append(extra)
-            live["issues"] = issues
+        issues = ["Newsletter KPIs were not refreshed (live fetch never ran)."]
+    else:
+        issues = list(live.get("issues") or [])
+        if week_end is not None:
+            extra = _etp_series_lag_issue(week_end)
+            if extra and extra not in issues:
+                issues.append(extra)
+                live["issues"] = issues
+    try:
+        from newsletter_weekly_charts import chart_refresh_issues
+
+        for item in chart_refresh_issues():
+            if item not in issues:
+                issues.append(item)
+    except Exception:
+        pass
     return issues
+
+
+def append_refresh_issues(extra: list[str]) -> None:
+    items = [str(item) for item in extra if str(item).strip()]
+    if not items:
+        return
+    if _LIVE is None:
+        return
+    issues = list(_LIVE.get("issues") or [])
+    for item in items:
+        if item not in issues:
+            issues.append(item)
+    _LIVE["issues"] = issues
 
 
 def kpi_stale_banner_html(issues: list[str], *, outlook: bool = False) -> str:
