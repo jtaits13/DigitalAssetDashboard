@@ -2377,6 +2377,7 @@ def build_newsletter_html(
         section_id="etp",
         section_divider=True,
         fund_launch=fund_launches.get("crypto_etf"),
+        chart_html=section_charts.get("etp") or "",
         outlook=ol,
         **section_base_kw,
     )

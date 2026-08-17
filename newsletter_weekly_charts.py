@@ -1,9 +1,10 @@
-"""Weekly TMMF / stablecoin series for the executive newsletter.
+"""Weekly TMMF / stablecoin series and ETP ranking bars for the executive newsletter.
 
 Stablecoin history is backfilled from DefiLlama (daily circulating USD, resampled
 to Mondays). TMMF has no public weekly series, so we store each Monday snapshot
 from the RWA.xyz dashboard JSON and optionally seed the RWA 30-day-ago level as
-the first point. Charts are PNG files Outlook can display.
+the first point. U.S. crypto ETPs use a current AUM ranking bar from etps.json.
+Charts are PNG files Outlook can display.
 """
 
 from __future__ import annotations
@@ -30,9 +31,12 @@ TMMF_SERIES = "tmmf"
 STABLE_SERIES = "stablecoins"
 MAX_STABLE_WEEKS = 26
 
+ETP_RANK_N = 8
+
 NEWSLETTER_CHART_FILES: dict[str, Path] = {
     "tmmf-weekly": CHART_DIR / "tmmf-weekly.png",
     "stablecoins-weekly": CHART_DIR / "stablecoins-weekly.png",
+    "etp-ranking": CHART_DIR / "etp-ranking.png",
 }
 
 _COLOR_INK = "#1a3d5c"
@@ -300,19 +304,81 @@ def _chart_img_html(cid: str, *, outlook: bool, alt: str) -> str:
     )
 
 
+def _etp_ranking_rows(limit: int = ETP_RANK_N) -> list[tuple[str, float]]:
+    payload = _read_json(DATA / "etps.json")
+    ranked: list[tuple[str, float]] = []
+    for row in payload.get("rows") or []:
+        if not isinstance(row, dict):
+            continue
+        try:
+            aum = float(row.get("assets_usd"))
+        except (TypeError, ValueError):
+            continue
+        if aum <= 0:
+            continue
+        symbol = str(row.get("symbol") or "").strip().upper()
+        if not symbol:
+            continue
+        ranked.append((symbol, aum))
+    ranked.sort(key=lambda item: item[1], reverse=True)
+    return ranked[:limit]
+
+
+def render_etp_ranking_png(dest: Path, rows: list[tuple[str, float]] | None = None) -> bool:
+    ranked = rows if rows is not None else _etp_ranking_rows()
+    if len(ranked) < 2:
+        return False
+    try:
+        import matplotlib
+
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+        from matplotlib.ticker import FuncFormatter
+    except ImportError:
+        return False
+
+    labels = [item[0] for item in reversed(ranked)]
+    values = [item[1] for item in reversed(ranked)]
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    height = max(2.8, 0.38 * len(ranked) + 0.7)
+    fig, ax = plt.subplots(figsize=(10.2, height), dpi=140)
+    fig.patch.set_facecolor(_COLOR_BG)
+    ax.set_facecolor(_COLOR_BG)
+    bars = ax.barh(labels, values, color=_COLOR_LINE, height=0.62, zorder=3)
+    ax.xaxis.set_major_formatter(FuncFormatter(_usd_axis_label))
+    ax.set_xlim(0, max(values) * 1.22)
+    ax.grid(axis="x", color=_COLOR_GRID, linewidth=0.8, zorder=0)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["left"].set_color(_COLOR_GRID)
+    ax.spines["bottom"].set_color(_COLOR_GRID)
+    ax.tick_params(colors=_COLOR_MUTED, labelsize=8.5, length=0)
+    for bar, value in zip(bars, values):
+        ax.text(
+            bar.get_width(),
+            bar.get_y() + bar.get_height() / 2,
+            f"  {_usd_axis_label(value)}",
+            va="center",
+            ha="left",
+            fontsize=8,
+            color=_COLOR_MUTED,
+        )
+    fig.tight_layout(pad=0.35)
+    fig.savefig(dest, dpi=140, facecolor=_COLOR_BG, bbox_inches="tight")
+    plt.close(fig)
+    return dest.is_file()
+
+
 def _chart_block_html(
-    series: dict[str, Any],
     *,
     cid: str,
+    title: str,
     caption: str,
     outlook: bool,
 ) -> str:
     png = NEWSLETTER_CHART_FILES.get(cid)
     if png is None or not png.is_file():
         return ""
-    if len(_parsed_points(series)) < 2:
-        return ""
-    title = str(series.get("title") or "Weekly chart")
     img = _chart_img_html(cid, outlook=outlook, alt=title)
     if outlook:
         return (
@@ -342,15 +408,38 @@ def prepare_newsletter_charts(*, week_end: date, outlook: bool = False) -> dict[
     payload = update_weekly_series(week_end)
     tmmf = payload.get(TMMF_SERIES) or {}
     stable = payload.get(STABLE_SERIES) or {}
-    render_series_png(tmmf, NEWSLETTER_CHART_FILES["tmmf-weekly"])
-    render_series_png(stable, NEWSLETTER_CHART_FILES["stablecoins-weekly"])
+    tmmf_html = ""
+    stable_html = ""
+    etp_html = ""
+    if render_series_png(tmmf, NEWSLETTER_CHART_FILES["tmmf-weekly"]):
+        tmmf_html = _chart_block_html(
+            cid="tmmf-weekly",
+            title=str(tmmf.get("title") or "Tokenized MMF distributed value"),
+            caption=_tmmf_caption(tmmf),
+            outlook=outlook,
+        )
+    if render_series_png(stable, NEWSLETTER_CHART_FILES["stablecoins-weekly"]):
+        stable_html = _chart_block_html(
+            cid="stablecoins-weekly",
+            title=str(stable.get("title") or "Stablecoin circulating USD"),
+            caption=_stable_caption(stable),
+            outlook=outlook,
+        )
+    etp_rows = _etp_ranking_rows()
+    if render_etp_ranking_png(NEWSLETTER_CHART_FILES["etp-ranking"], etp_rows):
+        etp_html = _chart_block_html(
+            cid="etp-ranking",
+            title="Largest U.S. crypto ETPs by AUM",
+            caption=(
+                f"Top {len(etp_rows)} funds by listed AUM (StockAnalysis). "
+                "Snapshot of current league standings, not a weekly path."
+            ),
+            outlook=outlook,
+        )
     return {
-        "tmmf": _chart_block_html(
-            tmmf, cid="tmmf-weekly", caption=_tmmf_caption(tmmf), outlook=outlook
-        ),
-        "stablecoins": _chart_block_html(
-            stable, cid="stablecoins-weekly", caption=_stable_caption(stable), outlook=outlook
-        ),
+        "tmmf": tmmf_html,
+        "stablecoins": stable_html,
+        "etp": etp_html,
     }
 
 
@@ -360,9 +449,12 @@ def main() -> None:
     stable = payload.get(STABLE_SERIES) or {}
     tmmf_ok = render_series_png(tmmf, NEWSLETTER_CHART_FILES["tmmf-weekly"])
     stable_ok = render_series_png(stable, NEWSLETTER_CHART_FILES["stablecoins-weekly"])
+    etp_rows = _etp_ranking_rows()
+    etp_ok = render_etp_ranking_png(NEWSLETTER_CHART_FILES["etp-ranking"], etp_rows)
     print(f"Wrote {SERIES_PATH}")
     print(f"TMMF points: {len(tmmf.get('points') or [])} png={tmmf_ok}")
     print(f"Stablecoin points: {len(stable.get('points') or [])} png={stable_ok}")
+    print(f"ETP ranking rows: {len(etp_rows)} png={etp_ok}")
 
 
 if __name__ == "__main__":
