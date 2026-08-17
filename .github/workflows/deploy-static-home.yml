@@ -1,5 +1,6 @@
 # Fast GitHub Pages deploy: publishes committed files under `static_home/` as-is (no API export).
-# Fresh JSON from RSS / ETP / RWA / CoinGecko runs on the 6-hour schedule in `refresh-static-home-data.yml`.
+# Fresh JSON from RSS / ETP / RWA / CoinGecko is committed by `refresh-static-home-data.yml`
+# so this push deploy cannot wipe home_news.json / rwa_onchain_home.json.
 # Repo → Settings → Pages → Source → GitHub Actions.
 name: Deploy static home to GitHub Pages
 
@@ -20,8 +21,8 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages-push
-  cancel-in-progress: true
+  group: github-pages
+  cancel-in-progress: false
 
 jobs:
   deploy:

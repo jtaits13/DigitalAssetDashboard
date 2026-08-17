@@ -18,16 +18,26 @@ static_home/data/*.json
 !static_home/data/crypto_kpis.json
 !static_home/data/crypto_prices.json
 !static_home/data/crypto_market_cap_series.json
+!static_home/data/crypto_ticker.json
 !static_home/data/aum_series.json
 !static_home/data/etf_pulse.json
 !static_home/data/manifest.json
 !static_home/data/farside_flow_cache.json
-# RWA + news bundles — committed so Streamlit subpages render instantly without live scrapes.
+# RWA + news bundles — committed so Pages deploys still have data when the
+# scheduled refresh has not run (gitignored JSON is missing from push deploys).
 !static_home/data/rwa_tokenized_mmf.json
 !static_home/data/rwa_stablecoins.json
+!static_home/data/rwa_onchain_home.json
+!static_home/data/rwa_us_treasuries.json
+!static_home/data/rwa_tokenized_stocks.json
+!static_home/data/rwa_participants_networks.json
+!static_home/data/rwa_participants_platforms.json
+!static_home/data/rwa_participants_asset_managers.json
 !static_home/data/newsletter_weekly_series.json
 !static_home/data/newsletter_kpi_snapshot.json
 !static_home/data/rwa_global_market.json
+!static_home/data/home_news.json
+!static_home/data/regulatory.json
 !static_home/data/all_articles.json
 !static_home/data/all_regulatory.json
 !static_home/data/all_custodian_news.json

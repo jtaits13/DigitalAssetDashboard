@@ -224,7 +224,7 @@
       var prices = results[1] || { rows: [] };
       if (freshApi.renderFreshness) {
         freshApi.renderFreshness(document.getElementById("js-home-crypto-as-of"), {
-          at: (kpis && kpis.generated_at) || prices.generated_at,
+          at: (kpis && kpis.generated_at) || (prices && prices.generated_at),
           source: (kpis && kpis.source) || prices.source || "CoinPaprika + CoinGecko",
           mode: "snapshot",
         });

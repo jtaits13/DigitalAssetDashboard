@@ -303,25 +303,28 @@
     }),
   ])
     .then(function (results) {
-      var manifest = results[0];
-      var homeNews = results[1];
+      var manifest = results[0] || { errors: [] };
+      var homeNews = results[1] || { items: [] };
       var kpis = results[2];
-      var etps = results[3];
-      var rwaOnchain = results[4];
+      var etps = results[3] || { rows: [] };
+      var rwaOnchain = results[4] || {};
       var sections = manifest.sections || {};
 
       if (freshApi.renderFreshness) {
         freshApi.renderFreshness(document.getElementById("js-home-etp-as-of"), {
           at:
             (kpis && kpis.generated_at) ||
-            etps.generated_at ||
+            (etps && etps.generated_at) ||
             sections.etp ||
             manifest.etp_refreshed_at,
           source: "StockAnalysis · Yahoo · Farside",
           mode: "snapshot",
         });
         freshApi.renderFreshness(document.getElementById("js-rwa-onchain-as-of"), {
-          at: rwaOnchain.generated_at || sections.rwa || manifest.generated_at,
+          at:
+            (rwaOnchain && rwaOnchain.generated_at) ||
+            sections.rwa ||
+            manifest.generated_at,
           source: "RWA.xyz",
           mode: "snapshot",
         });

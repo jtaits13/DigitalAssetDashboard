@@ -474,9 +474,9 @@
       }
       var tsIso =
         (kpis && kpis.generated_at) ||
-        etps.generated_at ||
-        manifest.etp_refreshed_at ||
-        manifest.generated_at;
+        (etps && etps.generated_at) ||
+        (manifest && manifest.etp_refreshed_at) ||
+        (manifest && manifest.generated_at);
       if (freshApi.renderFreshness) {
         freshApi.renderFreshness(els.snapshotAsOf, {
           at: tsIso,
