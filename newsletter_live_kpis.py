@@ -16,7 +16,7 @@ import os
 import sys
 import tempfile
 from concurrent.futures import ThreadPoolExecutor
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from html import escape
 from pathlib import Path
 from typing import Any
@@ -61,6 +61,7 @@ def fetch_live_newsletter_kpis(*, force: bool = False) -> dict[str, Any]:
         "crypto": None,
         "etp": None,
         "etp_aum_series": None,
+        "tmmf_history": [],
         "errors": [],
         "fetched_at": fetched_at,
         "fetched_sources": {},
@@ -480,6 +481,8 @@ def _merge_named(out: dict[str, Any], name: str, result: dict[str, Any]) -> None
     ok = False
     if name == "tmmf" and result.get("kpis"):
         out["tmmf_kpis"] = result["kpis"]
+        if result.get("history"):
+            out["tmmf_history"] = result["history"]
         ok = True
     elif name == "stable" and result.get("kpis"):
         out["stable_kpis"] = result["kpis"]
@@ -505,15 +508,61 @@ def _kpis_to_dicts(kpis: list[Any]) -> list[dict[str, Any]]:
     return [_rwa_kpi_to_dict(k) for k in kpis]
 
 
+def tmmf_history_points() -> list[dict[str, Any]]:
+    live = fetch_live_newsletter_kpis()
+    rows = live.get("tmmf_history")
+    return list(rows) if isinstance(rows, list) else []
+
+
+def _tmmf_offset_history(mmfs: list[Any], as_of: date | None = None) -> list[dict[str, Any]]:
+    from rwa_league.mmf import _token_val_30d, asset_distributed_value_usd
+
+    day = as_of or datetime.now(timezone.utc).date()
+    now = 0.0
+    val_7d = 0.0
+    val_30d = 0.0
+    for asset in mmfs:
+        if not isinstance(asset, dict):
+            continue
+        now += asset_distributed_value_usd(asset)
+        for tok in asset.get("tokens") or []:
+            if not isinstance(tok, dict):
+                continue
+            val_30d += _token_val_30d(tok)
+            bridged = tok.get("bridged_token_value_dollar")
+            if isinstance(bridged, dict) and isinstance(bridged.get("val_7d"), (int, float)):
+                val_7d += float(bridged["val_7d"])
+    out: list[dict[str, Any]] = []
+    if val_30d > 0:
+        out.append(
+            {
+                "week_end": (day - timedelta(days=30)).isoformat(),
+                "value": val_30d,
+                "source": "rwa_xyz_val_30d",
+            }
+        )
+    if val_7d > 0:
+        out.append(
+            {
+                "week_end": (day - timedelta(days=7)).isoformat(),
+                "value": val_7d,
+                "source": "rwa_xyz_val_7d",
+            }
+        )
+    if now > 0:
+        out.append({"week_end": day.isoformat(), "value": now, "source": "rwa_xyz"})
+    return out
+
+
 def _fetch_tmmf() -> dict[str, Any]:
-    from rwa_league.client import fetch_rwa_tokenized_mmf_data
+    from rwa_league.mmf import build_curated_mmf_dashboard_data
 
     try:
-        _net, _plat, kpis, err = fetch_rwa_tokenized_mmf_data()
+        mmfs, _net, _plat, kpis, err = build_curated_mmf_dashboard_data()
         rows = _kpis_to_dicts(kpis)
         if not rows:
             return {"error": err or "TMMF live KPIs were empty."}
-        return {"kpis": rows, "error": err}
+        return {"kpis": rows, "error": err, "history": _tmmf_offset_history(mmfs)}
     except Exception as exc:
         return {"error": f"{type(exc).__name__}: {exc}"}
 

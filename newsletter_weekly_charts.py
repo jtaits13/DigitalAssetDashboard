@@ -36,6 +36,11 @@ TMMF_SERIES = "tmmf"
 STABLE_SERIES = "stablecoins"
 CHART_LOOKBACK_DAYS = 30  # last ~1 month, matching the 30D KPI window
 RWA_LLAMA_TOP_N = 20
+# Real dashboard exports before the JSON freeze (same curated TMMF table).
+TMMF_GIT_SNAPSHOTS: tuple[dict[str, Any], ...] = (
+    {"week_end": "2026-07-13", "value": 13291670555.06899, "source": "git_snapshot"},
+    {"week_end": "2026-07-20", "value": 12953855021.563791, "source": "git_snapshot"},
+)
 
 NEWSLETTER_CHART_FILES: dict[str, Path] = {
     "tmmf-weekly": CHART_DIR / "tmmf-weekly.png",
@@ -135,28 +140,41 @@ def _tmmf_distributed_kpi() -> dict[str, Any]:
 
 
 def _tmmf_snapshot(week_end: date, series: dict[str, Any]) -> dict[str, Any]:
-    kpi = _tmmf_distributed_kpi()
-    value = parse_usd_compact(kpi.get("value_display"))
     points = list(series.get("points") or [])
-    if value is not None:
-        points = _upsert_point(points, week_end, value, "rwa_xyz")
-        delta = kpi.get("delta_30d_pct")
+    for snap in TMMF_GIT_SNAPSHOTS:
         try:
-            delta_f = float(delta) if delta is not None else None
+            snap_day = date.fromisoformat(str(snap.get("week_end") or ""))
+            snap_val = float(snap.get("value"))
         except (TypeError, ValueError):
-            delta_f = None
-        dashboard_weeks = {str(p.get("week_end")) for p in points if p.get("source") == "rwa_xyz"}
-        points = [p for p in points if str(p.get("source") or "") != "rwa_30d_implied"]
-        if delta_f is not None and delta_f > -0.99 and len(dashboard_weeks) < 4:
-            prior = value / (1.0 + delta_f)
-            prior_day = week_end - timedelta(days=30)
-            prior_week = _monday_of(prior_day)
-            if prior_week.isoformat() not in dashboard_weeks:
-                points = _upsert_point(points, prior_week, prior, "rwa_30d_implied")
+            continue
+        points = _upsert_point(points, snap_day, snap_val, str(snap.get("source") or "git_snapshot"))
+    history: list[dict[str, Any]] = []
+    try:
+        from newsletter_live_kpis import tmmf_history_points
+
+        history = tmmf_history_points()
+    except Exception:
+        history = []
+    for row in history:
+        if not isinstance(row, dict):
+            continue
+        try:
+            day = date.fromisoformat(str(row.get("week_end") or ""))
+            value = float(row.get("value"))
+        except (TypeError, ValueError):
+            continue
+        points = _upsert_point(points, day, value, str(row.get("source") or "rwa_xyz"))
+    points = [p for p in points if str(p.get("source") or "") != "rwa_30d_implied"]
+    if not any(str(p.get("week_end") or "") == week_end.isoformat() for p in points):
+        kpi = _tmmf_distributed_kpi()
+        value = parse_usd_compact(kpi.get("value_display"))
+        if value is not None:
+            points = _upsert_point(points, week_end, value, "rwa_xyz")
+    points.sort(key=lambda p: str(p.get("week_end") or ""))
     return {
         "title": "Tokenized MMF distributed value",
         "unit": "usd",
-        "source": "RWA.xyz curated TMMF snapshot (weekly)",
+        "source": "RWA.xyz curated TMMF snapshots",
         "points": points,
     }
 
@@ -311,6 +329,13 @@ def render_series_png(series: dict[str, Any], dest: Path) -> bool:
 
 def _tmmf_caption(series: dict[str, Any]) -> str:
     sources = {str(p.get("source") or "") for p in (series.get("points") or [])}
+    if sources & {"rwa_xyz_val_7d", "rwa_xyz_val_30d", "git_snapshot"}:
+        return (
+            "Curated TMMF distributed value from RWA.xyz. "
+            "Live points are the current total plus the public 7D-ago and 30D-ago token values; "
+            "13 Jul and 20 Jul are dashboard snapshots taken before the feed froze. "
+            "RWA.xyz public pages do not publish a daily series, so some weeks are missing."
+        )
     if "rwa_30d_implied" in sources:
         return (
             "Weekly snapshots of curated TMMF distributed value (RWA.xyz). "

@@ -1,18 +1,33 @@
 {
-  "updated_at": "2026-08-17T20:55:18+00:00",
+  "updated_at": "2026-08-17T21:07:30+00:00",
   "tmmf": {
     "title": "Tokenized MMF distributed value",
     "unit": "usd",
-    "source": "RWA.xyz curated TMMF snapshot (weekly)",
+    "source": "RWA.xyz curated TMMF snapshots",
     "points": [
       {
         "week_end": "2026-07-13",
-        "value": 12882226792.827944,
-        "source": "rwa_30d_implied"
+        "value": 13291670555.06899,
+        "source": "git_snapshot"
+      },
+      {
+        "week_end": "2026-07-18",
+        "value": 12880093659.006641,
+        "source": "rwa_xyz_val_30d"
+      },
+      {
+        "week_end": "2026-07-20",
+        "value": 12953855021.563791,
+        "source": "git_snapshot"
+      },
+      {
+        "week_end": "2026-08-10",
+        "value": 13139763253.159077,
+        "source": "rwa_xyz_val_7d"
       },
       {
         "week_end": "2026-08-17",
-        "value": 13130000000.0,
+        "value": 13127825838.069447,
         "source": "rwa_xyz"
       }
     ]
