@@ -122,8 +122,20 @@ def _upsert_point(points: list[dict[str, Any]], week_end: date, value: float, so
     return kept
 
 
+def _tmmf_distributed_kpi() -> dict[str, Any]:
+    try:
+        from newsletter_live_kpis import tmmf_distributed_kpi
+
+        live = tmmf_distributed_kpi()
+        if live and live.get("value_display"):
+            return live
+    except Exception:
+        pass
+    return _kpi_from_explore("tokenized_mmf", "distributed")
+
+
 def _tmmf_snapshot(week_end: date, series: dict[str, Any]) -> dict[str, Any]:
-    kpi = _kpi_from_explore("tokenized_mmf", "distributed")
+    kpi = _tmmf_distributed_kpi()
     value = parse_usd_compact(kpi.get("value_display"))
     points = list(series.get("points") or [])
     if value is not None:
@@ -134,6 +146,7 @@ def _tmmf_snapshot(week_end: date, series: dict[str, Any]) -> dict[str, Any]:
         except (TypeError, ValueError):
             delta_f = None
         dashboard_weeks = {str(p.get("week_end")) for p in points if p.get("source") == "rwa_xyz"}
+        points = [p for p in points if str(p.get("source") or "") != "rwa_30d_implied"]
         if delta_f is not None and delta_f > -0.99 and len(dashboard_weeks) < 4:
             prior = value / (1.0 + delta_f)
             prior_day = week_end - timedelta(days=30)
@@ -325,7 +338,17 @@ def _chart_img_html(cid: str, *, outlook: bool, alt: str) -> str:
 
 
 def _etp_weekly_series(week_end: date) -> dict[str, Any]:
-    payload = _read_json(DATA / "aum_series.json")
+    payload: dict[str, Any] = {}
+    try:
+        from newsletter_live_kpis import live_etp_aum_series
+
+        live_series = live_etp_aum_series()
+        if live_series:
+            payload = {"series": live_series}
+    except Exception:
+        payload = {}
+    if not payload.get("series"):
+        payload = _read_json(DATA / "aum_series.json")
     by_monday: dict[date, float] = {}
     for row in payload.get("series") or []:
         if not isinstance(row, dict):

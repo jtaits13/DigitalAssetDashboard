@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Build a weekly digest HTML email from committed static_home/data JSON (KPIs + Key observations).
+Build a weekly digest HTML email from live KPIs (RWA.xyz, CoinPaprika/CoinGecko,
+StockAnalysis/Farside), falling back to committed static_home/data JSON.
 
 Usage:
   python scripts/build_weekly_newsletter.py
@@ -1482,10 +1483,18 @@ def _scope_note_html(text: str, *, outlook: bool = False) -> str:
     )
 
 
-def _load_rwa_global_kpi_cells(*, outlook: bool = False) -> str:
+def _load_rwa_global_kpi_cells(
+    explore: dict[str, dict[str, Any]] | None = None,
+    *,
+    outlook: bool = False,
+) -> str:
     from rwa_global_page_payloads import RWA_GLOBAL_NEWSLETTER_KPI_LABELS
 
-    payload = _read_json(DATA / "rwa_global_market.json") or {}
+    payload: dict[str, Any] = {}
+    if explore and (explore.get("rwa_global") or {}).get("kpis"):
+        payload = explore["rwa_global"]
+    else:
+        payload = _read_json(DATA / "rwa_global_market.json") or {}
     by_label = {str(k.get("label") or ""): k for k in (payload.get("kpis") or [])}
     cells = ""
     labels = list(RWA_GLOBAL_NEWSLETTER_KPI_LABELS)
@@ -2226,6 +2235,12 @@ def build_newsletter_html(
     crypto = _read_json(DATA / "crypto_kpis.json") or {}
     etp = _read_json(DATA / "etp_kpis.json") or {}
     explore = _load_explore_sections()
+    try:
+        from newsletter_live_kpis import apply_live_newsletter_kpis
+
+        crypto, etp, explore = apply_live_newsletter_kpis(crypto, etp, explore)
+    except Exception as exc:
+        print(f"Warning: live newsletter KPIs skipped: {exc}", file=sys.stderr)
 
     for payload in (crypto, etp):
         dt = _parse_iso_dt(payload.get("generated_at"))
@@ -2346,7 +2361,7 @@ def build_newsletter_html(
     rwa_section = _section_block(
         "RWA — On-chain data",
         f"{site}/rwa-global.html",
-        _load_rwa_global_kpi_cells(outlook=ol),
+        _load_rwa_global_kpi_cells(explore, outlook=ol),
         "",
         accent=_COLOR_BRAND,
         section_id="rwa",
