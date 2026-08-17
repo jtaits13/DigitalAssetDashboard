@@ -25,6 +25,7 @@ SERIES_PATH = DATA / "newsletter_weekly_series.json"
 DEFILLAMA_STABLE_CHARTS = "https://stablecoins.llama.fi/stablecoincharts/all"
 DEFILLAMA_PROTOCOLS_URL = "https://api.llama.fi/protocols"
 DEFILLAMA_PROTOCOL_URL = "https://api.llama.fi/protocol/{slug}"
+COINPAPRIKA_TOTAL_30D_URL = "https://coinpaprika.com/market-overview/data/total/30d/"
 COINPAPRIKA_TOTAL_1Y_URL = "https://coinpaprika.com/market-overview/data/total/1y/"
 USER_AGENT = (
     "Digital-Assets-Dashboard/1.0 (weekly newsletter charts; "
@@ -87,12 +88,18 @@ def _monday_of(day: date) -> date:
     return day - timedelta(days=day.weekday())
 
 
-def _mondays_in_lookback(by_monday: dict[date, float], week_end: date) -> list[date]:
-    if not by_monday:
+def _dates_in_30d_kpi_window(by_date: dict[date, float], week_end: date) -> list[date]:
+    """Last observation on or before 30 days before the latest point, through latest.
+
+    Matches the dashboard 30D method (prior point on or before end-30d vs latest).
+    """
+    if not by_date:
         return []
-    end = min(week_end, max(by_monday))
-    start = end - timedelta(days=CHART_LOOKBACK_DAYS)
-    return [d for d in sorted(by_monday) if start <= d <= end]
+    end = min(week_end, max(by_date))
+    cut = end - timedelta(days=CHART_LOOKBACK_DAYS)
+    prior = [d for d in by_date if d <= cut]
+    start = max(prior) if prior else min(d for d in by_date if d <= end)
+    return [d for d in sorted(by_date) if start <= d <= end]
 
 
 def _kpi_from_explore(section_id: str, label_match: str) -> dict[str, Any]:
@@ -176,7 +183,7 @@ def _defillama_stable_points(week_end: date) -> list[dict[str, Any]]:
         if total <= 0:
             continue
         by_monday[_monday_of(day)] = total
-    mondays = _mondays_in_lookback(by_monday, week_end)
+    mondays = _dates_in_30d_kpi_window(by_monday, week_end)
     return [
         {"week_end": d.isoformat(), "value": by_monday[d], "source": "defillama"}
         for d in mondays
@@ -215,7 +222,7 @@ def update_weekly_series(week_end: date | None = None) -> dict[str, Any]:
 def _usd_axis_label(value: float, _pos: object = None) -> str:
     abs_v = abs(value)
     if abs_v >= 1e12:
-        return f"${value / 1e12:.1f}T"
+        return f"${value / 1e12:.2f}T"
     if abs_v >= 1e9:
         return f"${value / 1e9:.1f}B"
     if abs_v >= 1e6:
@@ -331,7 +338,7 @@ def _etp_weekly_series(week_end: date) -> dict[str, Any]:
         if day > week_end or aum_b <= 0:
             continue
         by_monday[_monday_of(day)] = aum_b * 1e9
-    mondays = _mondays_in_lookback(by_monday, week_end)
+    mondays = _dates_in_30d_kpi_window(by_monday, week_end)
     return {
         "title": "U.S. crypto ETP aggregate AUM",
         "unit": "usd",
@@ -345,25 +352,18 @@ def _etp_weekly_series(week_end: date) -> dict[str, Any]:
 
 def _etp_caption() -> str:
     return (
-        "Estimated weekly aggregate AUM for listed U.S. crypto ETPs "
-        "(Yahoo prices scaled from current reported AUM). Same series as the dashboard."
+        "30D path of estimated aggregate AUM (Yahoo prices scaled from current reported AUM). "
+        "The Aggregate AUM % above uses this same series."
     )
 
 
-def _crypto_weekly_series(week_end: date) -> dict[str, Any]:
-    resp = requests.get(
-        COINPAPRIKA_TOTAL_1Y_URL,
-        headers={"User-Agent": USER_AGENT, "Accept": "application/json"},
-        timeout=30,
-    )
-    resp.raise_for_status()
-    payload = resp.json()
+def _paprika_payload_to_daily(payload: object, week_end: date) -> dict[date, float]:
     usd: list[Any] = []
     if isinstance(payload, list) and payload and isinstance(payload[0], dict):
         raw = payload[0].get("usd")
         if isinstance(raw, list):
             usd = raw
-    by_monday: dict[date, float] = {}
+    by_day: dict[date, float] = {}
     for point in usd:
         if not isinstance(point, (list, tuple)) or len(point) < 2:
             continue
@@ -379,21 +379,60 @@ def _crypto_weekly_series(week_end: date) -> dict[str, Any]:
         day = datetime.fromtimestamp(ts, tz=timezone.utc).date()
         if day > week_end:
             continue
-        by_monday[_monday_of(day)] = value
-    mondays = _mondays_in_lookback(by_monday, week_end)
+        by_day[day] = value
+    return by_day
+
+
+def _weekly_chart_dates(by_day: dict[date, float], week_end: date) -> list[date]:
+    window = _dates_in_30d_kpi_window(by_day, week_end)
+    if not window:
+        return []
+    start, end = window[0], window[-1]
+    mondays = [d for d in window if d.weekday() == 0]
+    return sorted(set(mondays + [start, end]))
+
+
+def _crypto_weekly_series(week_end: date) -> dict[str, Any]:
+    headers = {"User-Agent": USER_AGENT, "Accept": "application/json"}
+    by_day: dict[date, float] = {}
+    for url in (COINPAPRIKA_TOTAL_30D_URL, COINPAPRIKA_TOTAL_1Y_URL):
+        resp = requests.get(url, headers=headers, timeout=30)
+        resp.raise_for_status()
+        by_day = _paprika_payload_to_daily(resp.json(), week_end)
+        if by_day:
+            break
+    dates = _weekly_chart_dates(by_day, week_end)
     return {
         "title": "Crypto total market cap",
         "unit": "usd",
-        "source": "CoinPaprika total market cap (weekly)",
+        "source": "CoinPaprika total market cap (30D)",
         "points": [
-            {"week_end": d.isoformat(), "value": by_monday[d], "source": "coinpaprika"}
-            for d in mondays
+            {"week_end": d.isoformat(), "value": by_day[d], "source": "coinpaprika"}
+            for d in dates
         ],
     }
 
 
 def _crypto_caption() -> str:
-    return "Weekly crypto total market cap (CoinPaprika). Headline KPI uses the same source."
+    return (
+        "30D CoinPaprika total market cap (weekly points, same window as the KPI above)."
+    )
+
+
+def _primary_from_series(series: dict[str, Any]) -> dict[str, Any] | None:
+    points = _parsed_points(series)
+    if len(points) < 2:
+        return None
+    first = points[0][1]
+    last = points[-1][1]
+    if first <= 0:
+        return None
+    from crypto_etps.client import format_usd_compact
+
+    return {
+        "value_display": format_usd_compact(last),
+        "delta_pct": (last - first) / first * 100.0,
+    }
 
 
 def _llama_headers() -> dict[str, str]:
@@ -454,7 +493,7 @@ def _defillama_rwa_weekly_series(week_end: date) -> dict[str, Any]:
     by_monday: dict[date, float] = {}
     for day, value in sorted(by_day.items()):
         by_monday[_monday_of(day)] = value
-    mondays = _mondays_in_lookback(by_monday, week_end)
+    mondays = _dates_in_30d_kpi_window(by_monday, week_end)
     return {
         "title": "RWA distributed value",
         "unit": "usd",
@@ -507,8 +546,8 @@ def _chart_block_html(
     )
 
 
-def prepare_newsletter_charts(*, week_end: date, outlook: bool = False) -> dict[str, str]:
-    """Update series, render PNGs, return HTML snippets keyed by section id."""
+def prepare_newsletter_charts(*, week_end: date, outlook: bool = False) -> tuple[dict[str, str], dict[str, Any]]:
+    """Update series, render PNGs, return HTML snippets and same-source KPI overlays."""
     payload = update_weekly_series(week_end)
     tmmf = payload.get(TMMF_SERIES) or {}
     stable = payload.get(STABLE_SERIES) or {}
@@ -538,6 +577,7 @@ def prepare_newsletter_charts(*, week_end: date, outlook: bool = False) -> dict[
             outlook=outlook,
         )
     crypto_html = ""
+    crypto_series: dict[str, Any] = {"points": []}
     try:
         crypto_series = _crypto_weekly_series(week_end)
     except (requests.RequestException, ValueError, json.JSONDecodeError):
@@ -561,13 +601,21 @@ def prepare_newsletter_charts(*, week_end: date, outlook: bool = False) -> dict[
             caption=_rwa_caption(),
             outlook=outlook,
         )
-    return {
+    html = {
         "tmmf": tmmf_html,
         "stablecoins": stable_html,
         "etp": etp_html,
         "crypto": crypto_html,
         "rwa": rwa_html,
     }
+    aligned: dict[str, Any] = {}
+    crypto_primary = _primary_from_series(crypto_series)
+    if crypto_primary:
+        aligned["crypto_primary"] = crypto_primary
+    etp_primary = _primary_from_series(etp)
+    if etp_primary:
+        aligned["etp_aggregate"] = etp_primary
+    return html, aligned
 
 
 def main() -> None:

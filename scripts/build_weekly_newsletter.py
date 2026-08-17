@@ -2283,7 +2283,16 @@ def build_newsletter_html(
     try:
         from newsletter_weekly_charts import prepare_newsletter_charts
 
-        section_charts = prepare_newsletter_charts(week_end=week_end.date(), outlook=ol)
+        section_charts, chart_align = prepare_newsletter_charts(week_end=week_end.date(), outlook=ol)
+        crypto_primary = chart_align.get("crypto_primary") or {}
+        if crypto_primary.get("value_display") and crypto_primary.get("delta_pct") is not None:
+            primary = dict(crypto.get("primary") or {})
+            primary["value_display"] = str(crypto_primary["value_display"])
+            primary["delta"] = {"pct": float(crypto_primary["delta_pct"]), "window": "1M"}
+            crypto = {**crypto, "primary": primary}
+        etp_agg = chart_align.get("etp_aggregate") or {}
+        if etp_agg.get("delta_pct") is not None:
+            etp = {**etp, "aggregate_pct": float(etp_agg["delta_pct"])}
     except Exception as exc:
         print(f"Warning: newsletter weekly charts skipped: {exc}", file=sys.stderr)
     section_base_kw = {
