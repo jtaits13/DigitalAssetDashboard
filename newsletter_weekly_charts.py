@@ -36,10 +36,15 @@ TMMF_SERIES = "tmmf"
 STABLE_SERIES = "stablecoins"
 CHART_LOOKBACK_DAYS = 30  # last ~1 month, matching the 30D KPI window
 RWA_LLAMA_TOP_N = 20
-# Real dashboard exports before the JSON freeze (same curated TMMF table).
-TMMF_GIT_SNAPSHOTS: tuple[dict[str, Any], ...] = (
+# Recovered curated TMMF totals: git dashboard exports, plus Wayback copies of
+# app.rwa.xyz/treasuries (same fund allowlist). Archive timestamps: 20260727104342,
+# 20260731124452, 20260805094824.
+TMMF_ARCHIVAL_SNAPSHOTS: tuple[dict[str, Any], ...] = (
     {"week_end": "2026-07-13", "value": 13291670555.06899, "source": "git_snapshot"},
     {"week_end": "2026-07-20", "value": 12953855021.563791, "source": "git_snapshot"},
+    {"week_end": "2026-07-27", "value": 13177150147.0, "source": "wayback_rwa_xyz"},
+    {"week_end": "2026-07-31", "value": 13168063688.0, "source": "wayback_rwa_xyz"},
+    {"week_end": "2026-08-05", "value": 13214277873.0, "source": "wayback_rwa_xyz"},
 )
 
 NEWSLETTER_CHART_FILES: dict[str, Path] = {
@@ -141,7 +146,7 @@ def _tmmf_distributed_kpi() -> dict[str, Any]:
 
 def _tmmf_snapshot(week_end: date, series: dict[str, Any]) -> dict[str, Any]:
     points = list(series.get("points") or [])
-    for snap in TMMF_GIT_SNAPSHOTS:
+    for snap in TMMF_ARCHIVAL_SNAPSHOTS:
         try:
             snap_day = date.fromisoformat(str(snap.get("week_end") or ""))
             snap_val = float(snap.get("value"))
@@ -329,12 +334,12 @@ def render_series_png(series: dict[str, Any], dest: Path) -> bool:
 
 def _tmmf_caption(series: dict[str, Any]) -> str:
     sources = {str(p.get("source") or "") for p in (series.get("points") or [])}
-    if sources & {"rwa_xyz_val_7d", "rwa_xyz_val_30d", "git_snapshot"}:
+    if sources & {"rwa_xyz_val_7d", "rwa_xyz_val_30d", "git_snapshot", "wayback_rwa_xyz"}:
         return (
             "Curated TMMF distributed value from RWA.xyz. "
-            "Live points are the current total plus the public 7D-ago and 30D-ago token values; "
-            "13 Jul and 20 Jul are dashboard snapshots taken before the feed froze. "
-            "RWA.xyz public pages do not publish a daily series, so some weeks are missing."
+            "Latest / 7D / 30D are live token totals; 13 Jul and 20 Jul are dashboard snapshots; "
+            "27 Jul, 31 Jul, and 5 Aug are Wayback captures of the RWA.xyz Treasuries page "
+            "(same fund list). Public pages do not publish a daily series."
         )
     if "rwa_30d_implied" in sources:
         return (
