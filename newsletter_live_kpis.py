@@ -437,6 +437,11 @@ def _write_snapshot(
         "fingerprints": dict(live.get("fingerprints") or {}),
         "fetched_at": live.get("fetched_at"),
     }
+    tmmf_usd = _tmmf_distributed_usd(live, latest.get("tmmf_kpis") or [])
+    if tmmf_usd is None:
+        tmmf_usd = _tmmf_usd_from_fingerprint((latest.get("fingerprints") or {}).get("tmmf"))
+    if tmmf_usd is not None:
+        latest["tmmf_distributed_usd"] = tmmf_usd
     history = [row for row in (prev.get("history") or []) if isinstance(row, dict)]
     week_key = week_end.isoformat()
     history = [row for row in history if str(row.get("week_end") or "") != week_key]
@@ -446,6 +451,7 @@ def _write_snapshot(
             "fetched_at": live.get("fetched_at"),
             "sources": dict(sources),
             "fingerprints": dict(live.get("fingerprints") or {}),
+            "tmmf_distributed_usd": tmmf_usd,
             "issues": list(live.get("issues") or []),
         }
     )
@@ -512,6 +518,86 @@ def tmmf_history_points() -> list[dict[str, Any]]:
     live = fetch_live_newsletter_kpis()
     rows = live.get("tmmf_history")
     return list(rows) if isinstance(rows, list) else []
+
+
+def tmmf_newsletter_weekly_points(snap: dict[str, Any] | None = None) -> list[dict[str, Any]]:
+    """Frozen TMMF figures printed in prior newsletters, one point per week."""
+    payload = snap if snap is not None else _read_snapshot()
+    if not payload:
+        return []
+    by_week: dict[str, float] = {}
+    latest = payload.get("latest") or {}
+    latest_week = str(payload.get("week_end") or "")
+    latest_usd = latest.get("tmmf_distributed_usd")
+    if latest_usd is None:
+        latest_usd = _tmmf_distributed_usd({"tmmf_history": []}, latest.get("tmmf_kpis") or [])
+    if latest_usd is None:
+        latest_usd = _tmmf_usd_from_fingerprint((latest.get("fingerprints") or {}).get("tmmf"))
+    if latest_week and isinstance(latest_usd, (int, float)) and float(latest_usd) > 0:
+        by_week[latest_week] = float(latest_usd)
+    for row in payload.get("history") or []:
+        if not isinstance(row, dict):
+            continue
+        week = str(row.get("week_end") or "")
+        if not week:
+            continue
+        value = row.get("tmmf_distributed_usd")
+        if value is None:
+            value = _tmmf_usd_from_fingerprint((row.get("fingerprints") or {}).get("tmmf"))
+        try:
+            usd = float(value)
+        except (TypeError, ValueError):
+            continue
+        if usd > 0:
+            by_week[week] = usd
+    return [
+        {"week_end": week, "value": by_week[week], "source": "newsletter"}
+        for week in sorted(by_week)
+    ]
+
+
+def _parse_compact_usd(raw: object) -> float | None:
+    s = str(raw or "").strip().replace(",", "").replace("$", "")
+    if not s or s in ("-", "—"):
+        return None
+    s = s.upper()
+    mult = 1.0
+    if s[-1] in "KMBT":
+        suffix = s[-1]
+        s = s[:-1]
+        mult = {"K": 1e3, "M": 1e6, "B": 1e9, "T": 1e12}[suffix]
+    try:
+        return float(s) * mult
+    except ValueError:
+        return None
+
+
+def _tmmf_usd_from_fingerprint(raw: object) -> float | None:
+    display = str(raw or "").split("|", 1)[0].strip()
+    return _parse_compact_usd(display)
+
+
+def _tmmf_distributed_usd(live: dict[str, Any], kpis: list[Any]) -> float | None:
+    week = str(live.get("week_end") or "")
+    fallback: float | None = None
+    for row in live.get("tmmf_history") or []:
+        if not isinstance(row, dict):
+            continue
+        try:
+            value = float(row.get("value"))
+        except (TypeError, ValueError):
+            continue
+        if value <= 0:
+            continue
+        row_week = str(row.get("week_end") or "")
+        if week and row_week == week:
+            return value
+        if str(row.get("source") or "") == "rwa_xyz":
+            fallback = value
+    if fallback is not None:
+        return fallback
+    kpi = _kpi_by_label(list(kpis or []), "distributed") or {}
+    return _parse_compact_usd(kpi.get("value_display"))
 
 
 def _tmmf_offset_history(mmfs: list[Any], as_of: date | None = None) -> list[dict[str, Any]]:

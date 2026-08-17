@@ -1,7 +1,8 @@
 """Weekly newsletter charts for TMMF, stablecoins, ETPs, crypto, and RWA.
 
 Stablecoin history is backfilled from DefiLlama. Crypto total market cap is
-backfilled from CoinPaprika. TMMF stores Monday RWA.xyz snapshots. U.S. crypto
+backfilled from CoinPaprika. TMMF stores each week's printed newsletter figure
+and keeps recovered Mondays from git / Wayback. U.S. crypto
 ETPs use the dashboard aggregate AUM weekly series. RWA on-chain uses DefiLlama
 RWA protocol TVL (top protocols) as a two-month weekly path. Charts are PNG
 files Outlook can display.
@@ -124,12 +125,38 @@ def _kpi_from_explore(section_id: str, label_match: str) -> dict[str, Any]:
     return {}
 
 
+_TMMF_FILL_SOURCES = frozenset({"rwa_xyz_val_7d", "rwa_xyz_val_30d"})
+
+
 def _upsert_point(points: list[dict[str, Any]], week_end: date, value: float, source: str) -> list[dict[str, Any]]:
     key = week_end.isoformat()
     kept = [p for p in points if str(p.get("week_end") or "") != key]
     kept.append({"week_end": key, "value": float(value), "source": source})
     kept.sort(key=lambda p: str(p.get("week_end") or ""))
     return kept
+
+
+def _point_on(points: list[dict[str, Any]], week_end: date) -> dict[str, Any] | None:
+    key = week_end.isoformat()
+    for row in points:
+        if str(row.get("week_end") or "") == key:
+            return row
+    return None
+
+
+def _upsert_fill(points: list[dict[str, Any]], week_end: date, value: float, source: str) -> list[dict[str, Any]]:
+    """Add a rolling 7D/30D point only when that date is still empty."""
+    if _point_on(points, week_end) is not None:
+        return points
+    return _upsert_point(points, week_end, value, source)
+
+
+def _upsert_frozen(points: list[dict[str, Any]], week_end: date, value: float, source: str) -> list[dict[str, Any]]:
+    """Keep printed/archival weekly values; replace fill-only dates."""
+    existing = _point_on(points, week_end)
+    if existing is not None and str(existing.get("source") or "") not in _TMMF_FILL_SOURCES:
+        return points
+    return _upsert_point(points, week_end, value, source)
 
 
 def _tmmf_distributed_kpi() -> dict[str, Any]:
@@ -146,13 +173,29 @@ def _tmmf_distributed_kpi() -> dict[str, Any]:
 
 def _tmmf_snapshot(week_end: date, series: dict[str, Any]) -> dict[str, Any]:
     points = list(series.get("points") or [])
+    printed: list[dict[str, Any]] = []
+    try:
+        from newsletter_live_kpis import tmmf_newsletter_weekly_points
+
+        printed = tmmf_newsletter_weekly_points()
+    except Exception:
+        printed = []
+    for row in printed:
+        if not isinstance(row, dict):
+            continue
+        try:
+            day = date.fromisoformat(str(row.get("week_end") or ""))
+            value = float(row.get("value"))
+        except (TypeError, ValueError):
+            continue
+        points = _upsert_frozen(points, day, value, "newsletter")
     for snap in TMMF_ARCHIVAL_SNAPSHOTS:
         try:
             snap_day = date.fromisoformat(str(snap.get("week_end") or ""))
             snap_val = float(snap.get("value"))
         except (TypeError, ValueError):
             continue
-        points = _upsert_point(points, snap_day, snap_val, str(snap.get("source") or "git_snapshot"))
+        points = _upsert_frozen(points, snap_day, snap_val, str(snap.get("source") or "git_snapshot"))
     history: list[dict[str, Any]] = []
     try:
         from newsletter_live_kpis import tmmf_history_points
@@ -160,6 +203,7 @@ def _tmmf_snapshot(week_end: date, series: dict[str, Any]) -> dict[str, Any]:
         history = tmmf_history_points()
     except Exception:
         history = []
+    current_live: float | None = None
     for row in history:
         if not isinstance(row, dict):
             continue
@@ -168,13 +212,26 @@ def _tmmf_snapshot(week_end: date, series: dict[str, Any]) -> dict[str, Any]:
             value = float(row.get("value"))
         except (TypeError, ValueError):
             continue
-        points = _upsert_point(points, day, value, str(row.get("source") or "rwa_xyz"))
+        source = str(row.get("source") or "rwa_xyz")
+        if source in _TMMF_FILL_SOURCES:
+            points = _upsert_fill(points, day, value, source)
+            continue
+        if day == week_end:
+            current_live = value
+            continue
+        points = _upsert_fill(points, day, value, "newsletter")
     points = [p for p in points if str(p.get("source") or "") != "rwa_30d_implied"]
-    if not any(str(p.get("week_end") or "") == week_end.isoformat() for p in points):
+    if current_live is None:
         kpi = _tmmf_distributed_kpi()
-        value = parse_usd_compact(kpi.get("value_display"))
-        if value is not None:
-            points = _upsert_point(points, week_end, value, "rwa_xyz")
+        current_live = parse_usd_compact(kpi.get("value_display"))
+    if current_live is not None:
+        points = _upsert_point(points, week_end, current_live, "newsletter")
+    elif _point_on(points, week_end) is not None:
+        existing = _point_on(points, week_end) or {}
+        if str(existing.get("source") or "") in {"rwa_xyz", ""}:
+            points = _upsert_point(
+                points, week_end, float(existing.get("value")), "newsletter"
+            )
     points.sort(key=lambda p: str(p.get("week_end") or ""))
     return {
         "title": "Tokenized MMF distributed value",
@@ -339,14 +396,18 @@ def _tmmf_caption(series: dict[str, Any]) -> str:
             "Curated TMMF distributed value from RWA.xyz. "
             "Latest / 7D / 30D are live token totals; 13 Jul and 20 Jul are dashboard snapshots; "
             "27 Jul, 31 Jul, and 5 Aug are Wayback captures of the RWA.xyz Treasuries page "
-            "(same fund list). Public pages do not publish a daily series."
+            "(same fund list). Later Mondays are that week's printed newsletter figure. "
+            "Public pages do not publish a daily series."
         )
     if "rwa_30d_implied" in sources:
         return (
             "Weekly snapshots of curated TMMF distributed value (RWA.xyz). "
             "The first point is the RWA.xyz 30-day-ago level; later Mondays fill in from dashboard snapshots."
         )
-    return "Weekly snapshots of curated TMMF distributed value (RWA.xyz)."
+    return (
+        "Weekly snapshots of curated TMMF distributed value (RWA.xyz). "
+        "Each Monday is the figure printed in that week's newsletter."
+    )
 
 
 def _stable_caption(series: dict[str, Any]) -> str:
