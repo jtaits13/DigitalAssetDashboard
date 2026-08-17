@@ -91,6 +91,30 @@ def _get_outlook_application():
 
 
 OL_FORMAT_HTML = 2
+PR_ATTACH_CONTENT_ID = "http://schemas.microsoft.com/mapi/proptag/0x3712001F"
+PR_ATTACHMENT_HIDDEN = "http://schemas.microsoft.com/mapi/proptag/0x7FFE000B"
+
+
+def _chart_cid_files(html_body: str) -> list[tuple[str, Path]]:
+    try:
+        from newsletter_weekly_charts import NEWSLETTER_CHART_FILES
+    except Exception:
+        return []
+    return [
+        (cid, path)
+        for cid, path in NEWSLETTER_CHART_FILES.items()
+        if path.is_file() and f"cid:{cid}" in html_body
+    ]
+
+
+def _embed_cid_images(mail, html_body: str) -> None:
+    for cid, path in _chart_cid_files(html_body):
+        att = mail.Attachments.Add(str(path.resolve()))
+        att.PropertyAccessor.SetProperty(PR_ATTACH_CONTENT_ID, cid)
+        try:
+            att.PropertyAccessor.SetProperty(PR_ATTACHMENT_HIDDEN, True)
+        except Exception:
+            pass
 
 
 def _encode_header(value: str) -> str:
@@ -123,12 +147,14 @@ def _write_compose_eml(
     safe_subj = _encode_header(re.sub(r"[\r\n]+", " ", subject).strip())
     mixed = "----=_JPM_NL_Mixed_001"
     alt = "----=_JPM_NL_Alt_001"
+    related = "----=_JPM_NL_Related_001"
     html_b64 = _b64_lines(html_body.encode("utf-8"))
     plain = (
         "Digital Assets executive weekly brief.\r\n"
         "Open this message in HTML, or use the attached full formatted version.\r\n"
     )
     plain_b64 = _b64_lines(plain.encode("utf-8"))
+    cid_files = _chart_cid_files(html_body)
 
     parts: list[str] = [
         "MIME-Version: 1.0",
@@ -139,6 +165,9 @@ def _write_compose_eml(
         f'Content-Type: multipart/mixed; boundary="{mixed}"',
         "",
         f"--{mixed}",
+        f'Content-Type: multipart/related; type="multipart/alternative"; boundary="{related}"',
+        "",
+        f"--{related}",
         f'Content-Type: multipart/alternative; boundary="{alt}"',
         "",
         f"--{alt}",
@@ -153,6 +182,19 @@ def _write_compose_eml(
         html_b64.rstrip("\n"),
         f"--{alt}--",
     ]
+    for cid, path in cid_files:
+        parts.extend(
+            [
+                f"--{related}",
+                "Content-Type: image/png",
+                "Content-Transfer-Encoding: base64",
+                f"Content-ID: <{cid}>",
+                f'Content-Disposition: inline; filename="{path.name}"',
+                "",
+                _b64_lines(path.read_bytes()).rstrip("\n"),
+            ]
+        )
+    parts.append(f"--{related}--")
 
     if html_file is not None and html_file.is_file():
         attach_name = re.sub(r'[\r\n"]+', "", attachment_display_name).strip() or "newsletter.html"
@@ -259,6 +301,8 @@ def _send_via_outlook(
     mail.Subject = subject
     mail.BodyFormat = OL_FORMAT_HTML
     # Outlook-optimized HTML body; attachment carries the full formatted version.
+    mail.HTMLBody = html_body
+    _embed_cid_images(mail, html_body)
     mail.HTMLBody = html_body
     if attach_html and html_file.is_file():
         att = mail.Attachments.Add(str(html_file.resolve()))

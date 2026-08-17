@@ -29,6 +29,7 @@ if str(ROOT) not in sys.path:
 DATA = ROOT / "static_home" / "data"
 DEFAULT_OUT = ROOT / "static_home" / "mockups" / "weekly-newsletter-email.html"
 DEFAULT_EXEC_OUT = ROOT / "static_home" / "mockups" / "weekly-newsletter-email-executive-mock.html"
+DEFAULT_EXEC_OUTLOOK_BODY = ROOT / "static_home" / "mockups" / "weekly-newsletter-email-executive-outlook-body.html"
 NEWSLETTER_MAX_WIDTH = "1100px"
 
 DEFAULT_SITE_BASE = os.environ.get(
@@ -1342,6 +1343,7 @@ def _section_block(
     ko_html_sources: tuple[str, ...] | None = None,
     section_divider: bool = False,
     fund_launch: Any | None = None,
+    chart_html: str = "",
     outlook: bool = False,
     executive_news_only: bool = False,
     scope_note: str = "",
@@ -1397,6 +1399,7 @@ def _section_block(
             f'{_ol_font()}">{escape(title)}</h2></td></tr>'
             f'<tr><td style="padding:{_OL_GAP_SM} 0 0;">'
             f"{_kpi_strip_html(kpi_cells, outlook=True, section=True)}"
+            f"{chart_html}"
             f"{scope_html}"
             f"{takeaways}"
             f'{_ol_centered_action_link_html(page_href, "Open full page →", sandwich=True)}'
@@ -1416,6 +1419,7 @@ def _section_block(
   <tr>
     <td>
       {_kpi_strip_html(kpi_cells)}
+      {chart_html}
       {scope_html}
       {takeaways}
       {_centered_action_link_html(page_href, "Open full page →", sandwich=True)}
@@ -2275,6 +2279,13 @@ def build_newsletter_html(
         if pick.link:
             newsletter_used_links.add(str(pick.link).strip())
     shipped_leads: dict[str, list[str]] = {}
+    section_charts: dict[str, str] = {}
+    try:
+        from newsletter_weekly_charts import prepare_newsletter_charts
+
+        section_charts = prepare_newsletter_charts(week_end=week_end.date(), outlook=ol)
+    except Exception as exc:
+        print(f"Warning: newsletter weekly charts skipped: {exc}", file=sys.stderr)
     section_base_kw = {
         "takeaways_label": "Key takeaways",
         "max_bullets": max_bullets,
@@ -2300,6 +2311,7 @@ def build_newsletter_html(
         section_id="tmmf",
         section_divider=True,
         fund_launch=fund_launches.get("tmmf"),
+        chart_html=section_charts.get("tmmf") or "",
         outlook=ol,
         **section_base_kw,
     )
@@ -2314,6 +2326,7 @@ def build_newsletter_html(
         section_id="stablecoins",
         section_divider=True,
         fund_launch=fund_launches.get("stablecoin_reserve"),
+        chart_html=section_charts.get("stablecoins") or "",
         outlook=ol,
         **section_base_kw,
     )
@@ -2589,6 +2602,15 @@ def main() -> None:
         args.exec_out.parent.mkdir(parents=True, exist_ok=True)
         args.exec_out.write_text(exec_html, encoding="utf-8")
         print(f"Wrote {args.exec_out} (executive variant)")
+
+        exec_outlook, _ = build_newsletter_html(
+            site_base=args.site_base,
+            variant="executive",
+            outlook_body=True,
+            force_legacy_takeaways=args.legacy_takeaways,
+        )
+        DEFAULT_EXEC_OUTLOOK_BODY.write_text(exec_outlook, encoding="utf-8")
+        print(f"Wrote {DEFAULT_EXEC_OUTLOOK_BODY} (Outlook body preview)")
 
 
 if __name__ == "__main__":

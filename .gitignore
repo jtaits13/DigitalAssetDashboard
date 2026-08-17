@@ -25,6 +25,7 @@ static_home/data/*.json
 # RWA + news bundles — committed so Streamlit subpages render instantly without live scrapes.
 !static_home/data/rwa_tokenized_mmf.json
 !static_home/data/rwa_stablecoins.json
+!static_home/data/newsletter_weekly_series.json
 !static_home/data/rwa_global_market.json
 !static_home/data/all_articles.json
 !static_home/data/all_regulatory.json
