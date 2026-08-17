@@ -1,10 +1,11 @@
-"""Weekly TMMF / stablecoin series and ETP ranking bars for the executive newsletter.
+"""Weekly TMMF / stablecoin / ETP series for the executive newsletter.
 
 Stablecoin history is backfilled from DefiLlama (daily circulating USD, resampled
 to Mondays). TMMF has no public weekly series, so we store each Monday snapshot
 from the RWA.xyz dashboard JSON and optionally seed the RWA 30-day-ago level as
-the first point. U.S. crypto ETPs use a current AUM ranking bar from etps.json.
-Charts are PNG files Outlook can display.
+the first point. U.S. crypto ETPs use the dashboard aggregate AUM weekly series
+(Yahoo prices scaled from current reported AUM). Charts are PNG files Outlook
+can display.
 """
 
 from __future__ import annotations
@@ -30,13 +31,12 @@ USER_AGENT = (
 TMMF_SERIES = "tmmf"
 STABLE_SERIES = "stablecoins"
 MAX_STABLE_WEEKS = 26
-
-ETP_RANK_N = 8
+MAX_ETP_WEEKS = 26
 
 NEWSLETTER_CHART_FILES: dict[str, Path] = {
     "tmmf-weekly": CHART_DIR / "tmmf-weekly.png",
     "stablecoins-weekly": CHART_DIR / "stablecoins-weekly.png",
-    "etp-ranking": CHART_DIR / "etp-ranking.png",
+    "etp-weekly": CHART_DIR / "etp-weekly.png",
 }
 
 _COLOR_INK = "#1a3d5c"
@@ -304,69 +304,37 @@ def _chart_img_html(cid: str, *, outlook: bool, alt: str) -> str:
     )
 
 
-def _etp_ranking_rows(limit: int = ETP_RANK_N) -> list[tuple[str, float]]:
-    payload = _read_json(DATA / "etps.json")
-    ranked: list[tuple[str, float]] = []
-    for row in payload.get("rows") or []:
+def _etp_weekly_series(week_end: date) -> dict[str, Any]:
+    payload = _read_json(DATA / "aum_series.json")
+    by_monday: dict[date, float] = {}
+    for row in payload.get("series") or []:
         if not isinstance(row, dict):
             continue
         try:
-            aum = float(row.get("assets_usd"))
+            day = datetime.fromisoformat(str(row.get("date") or "")).date()
+            aum_b = float(row.get("aum_billions"))
         except (TypeError, ValueError):
             continue
-        if aum <= 0:
+        if day > week_end or aum_b <= 0:
             continue
-        symbol = str(row.get("symbol") or "").strip().upper()
-        if not symbol:
-            continue
-        ranked.append((symbol, aum))
-    ranked.sort(key=lambda item: item[1], reverse=True)
-    return ranked[:limit]
+        by_monday[_monday_of(day)] = aum_b * 1e9
+    mondays = sorted(by_monday)[-MAX_ETP_WEEKS:]
+    return {
+        "title": "U.S. crypto ETP aggregate AUM",
+        "unit": "usd",
+        "source": "Yahoo-scaled listed AUM (weekly)",
+        "points": [
+            {"week_end": d.isoformat(), "value": by_monday[d], "source": "yahoo_scaled"}
+            for d in mondays
+        ],
+    }
 
 
-def render_etp_ranking_png(dest: Path, rows: list[tuple[str, float]] | None = None) -> bool:
-    ranked = rows if rows is not None else _etp_ranking_rows()
-    if len(ranked) < 2:
-        return False
-    try:
-        import matplotlib
-
-        matplotlib.use("Agg")
-        import matplotlib.pyplot as plt
-        from matplotlib.ticker import FuncFormatter
-    except ImportError:
-        return False
-
-    labels = [item[0] for item in reversed(ranked)]
-    values = [item[1] for item in reversed(ranked)]
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    height = max(2.8, 0.38 * len(ranked) + 0.7)
-    fig, ax = plt.subplots(figsize=(10.2, height), dpi=140)
-    fig.patch.set_facecolor(_COLOR_BG)
-    ax.set_facecolor(_COLOR_BG)
-    bars = ax.barh(labels, values, color=_COLOR_LINE, height=0.62, zorder=3)
-    ax.xaxis.set_major_formatter(FuncFormatter(_usd_axis_label))
-    ax.set_xlim(0, max(values) * 1.22)
-    ax.grid(axis="x", color=_COLOR_GRID, linewidth=0.8, zorder=0)
-    ax.spines["top"].set_visible(False)
-    ax.spines["right"].set_visible(False)
-    ax.spines["left"].set_color(_COLOR_GRID)
-    ax.spines["bottom"].set_color(_COLOR_GRID)
-    ax.tick_params(colors=_COLOR_MUTED, labelsize=8.5, length=0)
-    for bar, value in zip(bars, values):
-        ax.text(
-            bar.get_width(),
-            bar.get_y() + bar.get_height() / 2,
-            f"  {_usd_axis_label(value)}",
-            va="center",
-            ha="left",
-            fontsize=8,
-            color=_COLOR_MUTED,
-        )
-    fig.tight_layout(pad=0.35)
-    fig.savefig(dest, dpi=140, facecolor=_COLOR_BG, bbox_inches="tight")
-    plt.close(fig)
-    return dest.is_file()
+def _etp_caption() -> str:
+    return (
+        "Estimated weekly aggregate AUM for listed U.S. crypto ETPs "
+        "(Yahoo prices scaled from current reported AUM). Same series as the dashboard."
+    )
 
 
 def _chart_block_html(
@@ -425,15 +393,12 @@ def prepare_newsletter_charts(*, week_end: date, outlook: bool = False) -> dict[
             caption=_stable_caption(stable),
             outlook=outlook,
         )
-    etp_rows = _etp_ranking_rows()
-    if render_etp_ranking_png(NEWSLETTER_CHART_FILES["etp-ranking"], etp_rows):
+    etp = _etp_weekly_series(week_end)
+    if render_series_png(etp, NEWSLETTER_CHART_FILES["etp-weekly"]):
         etp_html = _chart_block_html(
-            cid="etp-ranking",
-            title="Largest U.S. crypto ETPs by AUM",
-            caption=(
-                f"Top {len(etp_rows)} funds by listed AUM (StockAnalysis). "
-                "Snapshot of current league standings, not a weekly path."
-            ),
+            cid="etp-weekly",
+            title=str(etp.get("title") or "U.S. crypto ETP aggregate AUM"),
+            caption=_etp_caption(),
             outlook=outlook,
         )
     return {
@@ -449,12 +414,12 @@ def main() -> None:
     stable = payload.get(STABLE_SERIES) or {}
     tmmf_ok = render_series_png(tmmf, NEWSLETTER_CHART_FILES["tmmf-weekly"])
     stable_ok = render_series_png(stable, NEWSLETTER_CHART_FILES["stablecoins-weekly"])
-    etp_rows = _etp_ranking_rows()
-    etp_ok = render_etp_ranking_png(NEWSLETTER_CHART_FILES["etp-ranking"], etp_rows)
+    etp = _etp_weekly_series(_monday_of(date.today()))
+    etp_ok = render_series_png(etp, NEWSLETTER_CHART_FILES["etp-weekly"])
     print(f"Wrote {SERIES_PATH}")
     print(f"TMMF points: {len(tmmf.get('points') or [])} png={tmmf_ok}")
     print(f"Stablecoin points: {len(stable.get('points') or [])} png={stable_ok}")
-    print(f"ETP ranking rows: {len(etp_rows)} png={etp_ok}")
+    print(f"ETP points: {len(etp.get('points') or [])} png={etp_ok}")
 
 
 if __name__ == "__main__":
