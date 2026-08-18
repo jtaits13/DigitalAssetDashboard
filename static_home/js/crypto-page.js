@@ -520,6 +520,9 @@
     var chartPromise = loadTimed("crypto_market_cap_series.json", 10000).catch(function () {
       return DEFAULT_CHART_META;
     });
+    var manifestPromise = loadTimed("manifest.json", 12000).catch(function () {
+      return {};
+    });
 
     kpisPromise.then(function (kpis) {
       renderKpi(kpis || {}, state.rows);
@@ -546,12 +549,30 @@
       if (chart.error) showErr(chart.error);
     });
 
-    Promise.all([kpisPromise, pricesPromise, chartPromise])
+    Promise.all([kpisPromise, pricesPromise, chartPromise, manifestPromise])
       .then(function (results) {
         var kpis = results[0];
         var prices = results[1];
+        var manifest = results[3] || {};
         renderSnapshotFreshness(kpis, prices);
         renderTimestamp(kpis && kpis.generated_at ? kpis : prices);
+        if (
+          freshApi.showPageStaleWarning &&
+          els.banner &&
+          els.banner.hidden &&
+          !(kpis && kpis.error) &&
+          !(prices && prices.error)
+        ) {
+          freshApi.showPageStaleWarning(
+            els.banner,
+            manifest,
+            { crypto: (kpis && kpis.generated_at) || (prices && prices.generated_at) },
+            {
+              title: "Crypto snapshot data may be outdated",
+              body: "Market figures below may not reflect the latest prices.",
+            }
+          );
+        }
       })
       .catch(function (err) {
         showErr(

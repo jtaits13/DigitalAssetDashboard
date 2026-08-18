@@ -552,7 +552,7 @@
     }
   }
 
-  function renderFull(data) {
+  function renderFull(data, manifest) {
     var H = global.__RWA_STATIC_HELPERS || {};
     var renderKpis = H.renderKpis;
     var renderTable = H.renderTable;
@@ -568,7 +568,21 @@
       } else {
         banner.hidden = true;
         banner.textContent = "";
+        banner.classList.remove("data-banner--stale");
+        banner.innerHTML = "";
       }
+    }
+    var freshApi = global.__DATA_FRESHNESS || {};
+    if (banner && freshApi.showPageStaleWarning) {
+      freshApi.showPageStaleWarning(
+        banner,
+        manifest || {},
+        { rwa: data.generated_at || (manifest && manifest.sections && manifest.sections.rwa) },
+        {
+          title: "RWA snapshot data may be outdated",
+          body: "Market figures below may not reflect the latest on-chain totals.",
+        }
+      );
     }
 
     var dek = $("js-rwa-global-dek");
@@ -715,8 +729,15 @@
       return;
     }
 
-    loadJson("rwa_global_market.json")
-      .then(renderFull)
+    Promise.all([
+      loadJson("rwa_global_market.json"),
+      loadJson("manifest.json").catch(function () {
+        return {};
+      }),
+    ])
+      .then(function (results) {
+        renderFull(results[0], results[1]);
+      })
       .catch(function (e) {
         var banner = $("js-rwa-global-banner");
         if (banner) {

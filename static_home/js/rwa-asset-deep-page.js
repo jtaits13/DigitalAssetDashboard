@@ -251,7 +251,7 @@
     }, 0);
   }
 
-  function renderDeepPage(payload) {
+  function renderDeepPage(payload, manifest) {
     var H = global.__RWA_STATIC_HELPERS || {};
     var renderKpis = H.renderKpis;
     var renderTable = H.renderTable;
@@ -1282,6 +1282,15 @@
       banner.hidden = true;
       banner.textContent = "";
       banner.innerHTML = "";
+      banner.classList.remove("data-banner--stale");
+    }
+
+    var freshApi = global.__DATA_FRESHNESS;
+    if (banner && freshApi && freshApi.showPageStaleWarning && payload.generated_at) {
+      freshApi.showPageStaleWarning(banner, manifest || {}, { rwa: payload.generated_at }, {
+        title: "RWA snapshot data may be outdated",
+        body: "Figures below may not reflect the latest market data.",
+      });
     }
 
     var hasKo = !!(payload.key_observations_html && String(payload.key_observations_html).trim());
@@ -1292,7 +1301,6 @@
       ruleKo.hidden = !hasKo;
     }
     var koAsOf = $("js-deep-ko-as-of");
-    var freshApi = global.__DATA_FRESHNESS;
     if (koAsOf) {
       if (
         hasKo &&
@@ -1387,9 +1395,15 @@
   function boot() {
     var name = document.body.getAttribute("data-rwa-deep-json");
     if (!name) return;
-    global
-      .loadJson(name)
-      .then(renderDeepPage)
+    Promise.all([
+      global.loadJson(name),
+      global.loadJson("manifest.json").catch(function () {
+        return {};
+      }),
+    ])
+      .then(function (results) {
+        renderDeepPage(results[0], results[1]);
+      })
       .catch(function (e) {
         var b = $("js-deep-banner");
         if (b) {

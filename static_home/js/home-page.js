@@ -338,10 +338,31 @@
         return true;
       });
 
-      if (visibleManifestErrors.length && banner) {
-        banner.hidden = false;
-        banner.textContent =
-          "Some data sources reported issues (site still works): " + visibleManifestErrors.slice(0, 3).join("; ");
+      var staleIssues = [];
+      if (freshApi.collectStaleIssues) {
+        staleIssues = freshApi.collectStaleIssues(manifest, {
+          etp: (kpis && kpis.generated_at) || (etps && etps.generated_at),
+          rwa: (rwaOnchain && rwaOnchain.generated_at) || sections.rwa,
+          news: (homeNews && homeNews.generated_at) || sections.news,
+        });
+      }
+
+      if (banner) {
+        if (visibleManifestErrors.length) {
+          banner.hidden = false;
+          banner.textContent =
+            "Some data sources reported issues (site still works): " +
+            visibleManifestErrors.slice(0, 3).join("; ");
+        }
+        if (staleIssues.length && freshApi.showStaleBanner) {
+          freshApi.showStaleBanner(banner, staleIssues, {
+            title: "Snapshot data may be outdated",
+            body:
+              visibleManifestErrors.length
+                ? "Export completed with warnings. Figures below may not reflect the latest market data."
+                : "Figures below may not reflect the latest market data.",
+          });
+        }
       }
 
       renderList(newsEl, homeNews.items || [], true, false);

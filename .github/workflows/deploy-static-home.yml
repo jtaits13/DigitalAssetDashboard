@@ -37,7 +37,7 @@ jobs:
       - name: Validate static HTML text encoding
         run: python scripts/check_static_html_encoding.py
 
-      - name: Validate committed static JSON (ETP bundle)
+      - name: Validate committed static JSON (ETP + home snapshots)
         run: python scripts/validate_static_json.py
 
       - name: Upload static_home as site root

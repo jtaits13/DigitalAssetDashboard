@@ -2855,6 +2855,26 @@ p.back-link.back-link--below-header {
   display: none !important;
 }
 
+.data-banner--stale {
+  border-color: #b42318;
+  background: #fff5f5;
+  color: #7f1d1d;
+}
+
+.data-banner--stale strong {
+  color: #b42318;
+}
+
+.data-banner__list {
+  margin: 0.45rem 0 0;
+  padding-left: 1.15rem;
+  line-height: 1.5;
+}
+
+.data-banner__list li + li {
+  margin-top: 0.25rem;
+}
+
 .kpi-win {
   font-size: 0.68rem;
   font-weight: 600;

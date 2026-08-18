@@ -212,6 +212,9 @@
   }
 
   Promise.all([
+    loadTimed("manifest.json", 12000).catch(function () {
+      return {};
+    }),
     loadTimed("crypto_kpis.json", 12000).catch(function () {
       return null;
     }),
@@ -220,8 +223,9 @@
     }),
   ])
     .then(function (results) {
-      var kpis = results[0];
-      var prices = results[1] || { rows: [] };
+      var manifest = results[0] || {};
+      var kpis = results[1];
+      var prices = results[2] || { rows: [] };
       if (freshApi.renderFreshness) {
         freshApi.renderFreshness(document.getElementById("js-home-crypto-as-of"), {
           at: (kpis && kpis.generated_at) || (prices && prices.generated_at),
@@ -238,6 +242,16 @@
       }
       if ((prices && prices.error) || (kpis && kpis.error)) {
         showErr(prices.error || kpis.error);
+      } else if (freshApi.showPageStaleWarning && els.banner) {
+        freshApi.showPageStaleWarning(
+          els.banner,
+          manifest,
+          { crypto: (kpis && kpis.generated_at) || (prices && prices.generated_at) },
+          {
+            title: "Crypto snapshot data may be outdated",
+            body: "Market figures below may not reflect the latest prices.",
+          }
+        );
       }
     })
     .catch(function (err) {

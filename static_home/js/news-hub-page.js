@@ -64,6 +64,7 @@
   };
 
   var cache = {};
+  var manifestCache = null;
   var laneId = "digital";
   var all = [];
   var filtered = [];
@@ -629,6 +630,16 @@
     }
   }
 
+  var freshApi = window.__DATA_FRESHNESS || {};
+
+  function maybeWarnStaleNewsFeed(banner, data) {
+    if (!banner || !freshApi.showPageStaleWarning || !data || !data.generated_at) return;
+    freshApi.showPageStaleWarning(banner, manifestCache || {}, { news: data.generated_at }, {
+      title: "News snapshot may be outdated",
+      body: "Headlines below may not include the latest stories.",
+    });
+  }
+
   function loadLane(id, opts) {
     opts = opts || {};
     if (!LANES[id]) id = "digital";
@@ -649,6 +660,7 @@
 
     if (cache[c.feed]) {
       accept(cache[c.feed]);
+      maybeWarnStaleNewsFeed(banner, cache[c.feed + "__meta"]);
       return;
     }
 
@@ -663,7 +675,9 @@
     loadJson(c.feed)
       .then(function (data) {
         cache[c.feed] = data.items || [];
+        cache[c.feed + "__meta"] = data;
         accept(cache[c.feed]);
+        maybeWarnStaleNewsFeed(banner, data);
       })
       .catch(function () {
         if (banner) {
@@ -676,6 +690,15 @@
 
   function init() {
     laneId = readLaneFromUrl();
+    if (typeof loadJson === "function") {
+      loadJson("manifest.json")
+        .then(function (m) {
+          manifestCache = m || {};
+        })
+        .catch(function () {
+          manifestCache = {};
+        });
+    }
     document.querySelectorAll(".news-hub-lanes__btn").forEach(function (btn) {
       btn.addEventListener("click", function () {
         var id = btn.getAttribute("data-lane");

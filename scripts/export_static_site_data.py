@@ -2069,9 +2069,16 @@ def merge_etp_refresh_into_manifest(summary: dict[str, Any], manifest_path: Path
         if not any(str(e).startswith(p) for p in _ETP_MANIFEST_ERROR_PREFIXES)
     ]
     manifest["errors"] = kept + list(summary.get("errors") or [])
-    manifest["etp_refreshed_at"] = summary.get("etp_refreshed_at")
+    etp_at = summary.get("etp_refreshed_at")
+    manifest["etp_refreshed_at"] = etp_at
+    sections = manifest.get("sections") if isinstance(manifest.get("sections"), dict) else {}
+    if etp_at:
+        sections["etp"] = etp_at
+        manifest["sections"] = sections
+    if etp_at:
+        manifest["export_completed_at"] = etp_at
     if not manifest.get("generated_at"):
-        manifest["generated_at"] = summary.get("etp_refreshed_at")
+        manifest["generated_at"] = etp_at
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
 
@@ -2127,11 +2134,11 @@ def main() -> None:
     )
     # Full list for static GitHub Pages (search + pagination).
     (OUT / "all_articles.json").write_text(
-        json.dumps({"items": [_article_json(a) for a in articles_for_all_json]}, indent=2),
+        json.dumps({"generated_at": news_ts, "items": [_article_json(a) for a in articles_for_all_json]}, indent=2),
         encoding="utf-8",
     )
     (OUT / "all_regulatory.json").write_text(
-        json.dumps({"items": [_article_json(a) for a in reg_articles]}, indent=2),
+        json.dumps({"generated_at": news_ts, "items": [_article_json(a) for a in reg_articles]}, indent=2),
         encoding="utf-8",
     )
 
@@ -2147,7 +2154,7 @@ def main() -> None:
         reverse=True,
     )
     (OUT / "all_custodian_news.json").write_text(
-        json.dumps({"items": [_article_json(a) for a in cust_articles]}, indent=2),
+        json.dumps({"generated_at": news_ts, "items": [_article_json(a) for a in cust_articles]}, indent=2),
         encoding="utf-8",
     )
 
@@ -2159,7 +2166,7 @@ def main() -> None:
     etf_windowed = articles_published_within_utc_days(etf_all, ETF_NEWS_LOOKBACK_DAYS)
     etf_items = [_article_json(a) for a in etf_windowed]
     (OUT / "etf_news.json").write_text(
-        json.dumps({"items": etf_items}, indent=2),
+        json.dumps({"generated_at": news_ts, "items": etf_items}, indent=2),
         encoding="utf-8",
     )
     pulse = etf_items[:ETP_PULSE_PREVIEW_COUNT]
@@ -2227,6 +2234,7 @@ def main() -> None:
         rwa_kpis=rwa_kpis,
         rwa_err=rwa_err,
     )
+    rwa_global_payload["generated_at"] = rwa_ts
 
     (OUT / "rwa_global_market.json").write_text(
         json.dumps(rwa_global_payload, indent=2),
@@ -2373,12 +2381,23 @@ def main() -> None:
         encoding="utf-8",
     )
 
+    export_completed_at = datetime.now(timezone.utc).isoformat()
+    manifest["export_completed_at"] = export_completed_at
+    manifest["generated_at"] = export_completed_at
+    manifest["refresh_interval_hours"] = 6
+    manifest["stale_threshold_hours"] = {
+        "etp": 9,
+        "crypto": 9,
+        "rwa": 9,
+        "news": 12,
+        "regulatory": 24,
+    }
     manifest["sections"] = {
         "news": news_ts,
         "regulatory": news_ts,
-        "etp": manifest.get("etp_refreshed_at") or manifest["generated_at"],
+        "etp": manifest.get("etp_refreshed_at") or export_completed_at,
         "rwa": rwa_ts,
-        "crypto": manifest.get("crypto_refreshed_at") or manifest["generated_at"],
+        "crypto": manifest.get("crypto_refreshed_at") or export_completed_at,
     }
     (OUT / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     print(

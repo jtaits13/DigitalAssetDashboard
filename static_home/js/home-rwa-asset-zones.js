@@ -155,6 +155,9 @@
   }
 
   Promise.all([
+    loadTimed("manifest.json", 12000).catch(function () {
+      return {};
+    }),
     loadTimed("rwa_explore_asset_type.json", 12000).catch(function () {
       return null;
     }),
@@ -162,14 +165,43 @@
       return null;
     }),
   ]).then(function (results) {
-    var explore = results[0];
-    var mmfPage = results[1];
+    var manifest = results[0] || {};
+    var explore = results[1];
+    var mmfPage = results[2];
     var generatedAt =
       (explore && explore.generated_at) ||
       (mmfPage && mmfPage.generated_at) ||
       (explore && explore.footer_note) ||
       null;
+    var rwaAt =
+      generatedAt ||
+      (manifest.sections && manifest.sections.rwa) ||
+      manifest.generated_at;
+
+    function maybeStaleBanner(bannerId, label, hasData) {
+      if (!hasData || !freshApi.showPageStaleWarning) return;
+      var el = document.getElementById(bannerId);
+      if (!el || !el.hidden) return;
+      freshApi.showPageStaleWarning(el, manifest, { rwa: rwaAt }, {
+        title: label + " snapshot may be outdated",
+        body: label + " figures below may not reflect the latest market data.",
+      });
+    }
+
     renderStablecoinsHome(explore, generatedAt);
     renderTmmfHome(findSection(explore, "tokenized_mmf"), mmfPage, generatedAt);
+    maybeStaleBanner(
+      "js-home-stable-banner",
+      "Stablecoins",
+      !!findSection(explore, "stablecoins")
+    );
+    maybeStaleBanner(
+      "js-home-tmmf-banner",
+      "TMMF",
+      !!(
+        (mmfPage && mmfPage.funds_table && mmfPage.funds_table.rows_full && mmfPage.funds_table.rows_full.length) ||
+        findSection(explore, "tokenized_mmf")
+      )
+    );
   });
 })();

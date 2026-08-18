@@ -2,7 +2,7 @@
 Validate committed static_home/data JSON before GitHub Pages deploy.
 
 Ensures required snapshot files exist, parse as JSON, and meet minimum shape checks
-so pages do not silently render empty after a code-only deploy.
+so pages do not silently render empty or stale after a code-only deploy.
 
 Run from repo root:  python scripts/validate_static_json.py
 """
@@ -79,6 +79,27 @@ def _etp_rows(data: dict[str, Any] | list[Any], _path: Path) -> str | None:
     return _min_rows("rows", 50)(data, _path)
 
 
+def _generated_at_object(data: dict[str, Any] | list[Any], _path: Path) -> str | None:
+    if not isinstance(data, dict):
+        return "expected object"
+    return _require_keys(data, ("generated_at",))
+
+
+def _manifest(data: dict[str, Any] | list[Any], _path: Path) -> str | None:
+    if not isinstance(data, dict):
+        return "expected object"
+    err = _require_keys(data, ("generated_at", "sections"))
+    if err:
+        return err
+    sections = data.get("sections")
+    if not isinstance(sections, dict):
+        return "sections must be an object"
+    for key in ("news", "etp", "rwa", "crypto"):
+        if key not in sections:
+            return f"sections missing {key!r} timestamp"
+    return None
+
+
 def _etp_kpi_row_sum(data: dict[str, Any] | list[Any], path: Path) -> str | None:
     """Cross-check etp_kpis.json total vs etps.json row sum when both exist."""
     if path.name != "etp_kpis.json":
@@ -107,11 +128,14 @@ def _etp_kpi_row_sum(data: dict[str, Any] | list[Any], path: Path) -> str | None
 
 
 REQUIRED: tuple[Check, ...] = (
+    Check("manifest.json", _manifest),
+    Check("home_news.json", lambda d, p: _generated_at_object(d, p) or _min_rows("items", 1)(d, p)),
+    Check("rwa_onchain_home.json", _generated_at_object),
+    Check("crypto_kpis.json", _generated_at_object),
     Check("etps.json", _etp_rows),
     Check("etp_kpis.json", lambda d, p: _etp_kpis(d, p) or _etp_kpi_row_sum(d, p)),
     Check("aum_series.json", _min_series(10)),
     Check("etf_pulse.json", _min_rows("items", 1)),
-    Check("manifest.json", lambda d, p: None if isinstance(d, dict) else "expected object"),
 )
 
 
@@ -123,7 +147,7 @@ def main() -> int:
         path = DATA / check.path
         label = check.path
         if not path.is_file():
-            failures.append(f"{label}: file missing (not committed — ETP page will be empty on deploy)")
+            failures.append(f"{label}: file missing (not committed — pages may be empty or stale on deploy)")
             print(f"[FAIL] {label}")
             print("       file missing")
             continue
@@ -144,8 +168,8 @@ def main() -> int:
 
     print(f"\nSummary: {len(REQUIRED) - len(failures)} OK, {len(failures)} FAIL")
     if failures:
-        print("\nFix: python scripts/export_etp_static_data.py")
-        print("Then ensure static_home/data/etps.json (and related files) are committed — see .gitignore exceptions.")
+        print("\nFix: python scripts/export_static_site_data.py")
+        print("Then ensure static_home/data/*.json are committed — see .gitignore exceptions.")
         return 1
     return 0
 

@@ -467,15 +467,23 @@
             "KPI snapshot unavailable; showing fund table from the latest committed export.";
         }
       }
-      if (manifest.errors && manifest.errors.length && els.banner) {
+      if (manifest.errors && manifest.errors.length && els.banner && !els.banner.classList.contains("data-banner--stale")) {
         els.banner.hidden = false;
         els.banner.textContent =
           "Partial feed warnings: " + manifest.errors.slice(0, 4).join("; ");
       }
-      var tsIso =
+      var etpAt =
         (kpis && kpis.generated_at) ||
         (etps && etps.generated_at) ||
-        (manifest && manifest.etp_refreshed_at) ||
+        (manifest && manifest.etp_refreshed_at);
+      if (freshApi.showPageStaleWarning && els.banner && !etpLoadError) {
+        freshApi.showPageStaleWarning(els.banner, manifest, { etp: etpAt }, {
+          title: "ETP snapshot data may be outdated",
+          body: "Fund figures below may not reflect the latest market data.",
+        });
+      }
+      var tsIso =
+        etpAt ||
         (manifest && manifest.generated_at);
       if (freshApi.renderFreshness) {
         freshApi.renderFreshness(els.snapshotAsOf, {

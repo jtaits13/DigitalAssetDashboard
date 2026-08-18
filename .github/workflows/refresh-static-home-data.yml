@@ -61,11 +61,19 @@ jobs:
           COINGECKO_DEMO_API_KEY: ${{ secrets.COINGECKO_DEMO_API_KEY }}
           COINGECKO_BLURB_FETCH_LIMIT: "15"
 
-      - name: Validate ETP JSON bundle
+      - name: Validate static JSON bundle
         run: python scripts/validate_static_json.py
 
+      - name: Upload static_home as site root
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: static_home
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
+
       - name: Commit refreshed JSON snapshots
-        continue-on-error: true
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -81,12 +89,3 @@ jobs:
             git commit -m "Refresh GitHub Pages data snapshots."
             git push origin main
           fi
-
-      - name: Upload static_home as site root
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: static_home
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v5
