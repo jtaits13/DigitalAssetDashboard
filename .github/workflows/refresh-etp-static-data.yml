@@ -23,6 +23,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          ref: main
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -50,6 +53,7 @@ jobs:
         run: python scripts/validate_static_json.py
 
       - name: Commit refreshed ETP JSON
+        continue-on-error: true
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -60,7 +64,7 @@ jobs:
             echo "No ETP JSON snapshot changes to commit"
           else
             git commit -m "Refresh GitHub Pages ETP data snapshots."
-            git push
+            git push origin main
           fi
 
       - name: Upload static_home as site root
