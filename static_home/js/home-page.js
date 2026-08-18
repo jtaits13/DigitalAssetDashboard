@@ -344,6 +344,11 @@
           etp: (kpis && kpis.generated_at) || (etps && etps.generated_at),
           rwa: (rwaOnchain && rwaOnchain.generated_at) || sections.rwa,
           news: (homeNews && homeNews.generated_at) || sections.news,
+          staleFlags: {
+            etp: !!(kpis && kpis.stale) || !!(etps && etps.stale),
+            rwa: !!(rwaOnchain && rwaOnchain.stale),
+            news: !!(homeNews && homeNews.stale),
+          },
         });
       }
 

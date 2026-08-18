@@ -559,17 +559,21 @@
         if (
           freshApi.showPageStaleWarning &&
           els.banner &&
-          els.banner.hidden &&
-          !(kpis && kpis.error) &&
-          !(prices && prices.error)
+          (els.banner.hidden || (kpis && kpis.stale) || (prices && prices.stale))
         ) {
           freshApi.showPageStaleWarning(
             els.banner,
             manifest,
-            { crypto: (kpis && kpis.generated_at) || (prices && prices.generated_at) },
+            {
+              crypto: (kpis && kpis.generated_at) || (prices && prices.generated_at),
+              staleFlags: { crypto: !!(kpis && kpis.stale) || !!(prices && prices.stale) },
+            },
             {
               title: "Crypto snapshot data may be outdated",
-              body: "Market figures below may not reflect the latest prices.",
+              body:
+                (kpis && kpis.stale) || (prices && prices.stale)
+                  ? "Live market data could not be pulled. Figures below are from the last saved snapshot."
+                  : "Market figures below may not reflect the latest prices.",
             }
           );
         }

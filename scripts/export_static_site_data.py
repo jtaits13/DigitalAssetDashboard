@@ -21,7 +21,7 @@ import os
 import re
 import sys
 from html import escape as html_escape
-from typing import Any
+from typing import Any, Callable
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -225,6 +225,50 @@ def _rehydrate_article_from_json(row: dict[str, Any]) -> dict[str, Any]:
         out["topic"] = str(row["topic"])
     if row.get("topic_label"):
         out["topic_label"] = str(row["topic_label"])
+    return out
+
+
+def _payload_has_items(payload: dict[str, Any]) -> bool:
+    return bool(payload.get("items"))
+
+
+def _payload_has_rwa_home(payload: dict[str, Any]) -> bool:
+    return bool(payload.get("kpis") or payload.get("rows"))
+
+
+def _payload_has_explore(payload: dict[str, Any]) -> bool:
+    return bool(payload.get("sections"))
+
+
+def _payload_has_rwa_deep(payload: dict[str, Any]) -> bool:
+    if payload.get("kpis"):
+        return True
+    networks = payload.get("networks") if isinstance(payload.get("networks"), dict) else {}
+    funds = payload.get("funds_table") if isinstance(payload.get("funds_table"), dict) else {}
+    return bool(networks.get("rows") or funds.get("rows_full") or funds.get("rows"))
+
+
+def write_json_keep_prior_if_empty(
+    path: Path,
+    payload: dict[str, Any],
+    *,
+    has_data: Callable[[dict[str, Any]], bool],
+    section: str,
+    stale_sections: list[str],
+) -> dict[str, Any]:
+    """Write JSON, but keep the last good file if this export has no usable rows."""
+    out = dict(payload)
+    if not has_data(out) and path.is_file():
+        try:
+            prior = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            prior = None
+        if isinstance(prior, dict) and has_data(prior):
+            out = dict(prior)
+            out["stale"] = True
+            if section not in stale_sections:
+                stale_sections.append(section)
+    path.write_text(json.dumps(out, indent=2, default=str), encoding="utf-8")
     return out
 
 
@@ -1834,6 +1878,18 @@ def build_crypto_prices_page_payloads(
                 "coinpaprika_total": merged.get("coinpaprika_total") or coinpaprika_total,
             },
         )
+    elif merged.get("_used_cached_rows") or (merged.get("kpis") or {}).get("stale"):
+        cache_at = (
+            (cached or {}).get("generated_at")
+            or ((cached or {}).get("kpis") or {}).get("generated_at")
+            or ((cached or {}).get("prices") or {}).get("generated_at")
+        )
+        if cache_at:
+            merged["generated_at"] = cache_at
+            if isinstance(merged.get("kpis"), dict):
+                merged["kpis"]["generated_at"] = cache_at
+            if isinstance(merged.get("prices"), dict):
+                merged["prices"]["generated_at"] = cache_at
 
     return {
         "generated_at": merged["generated_at"],
@@ -1865,6 +1921,10 @@ def export_crypto_json_bundle(
         encoding="utf-8",
     )
     manifest["crypto_refreshed_at"] = pack["generated_at"]
+    if (pack.get("kpis") or {}).get("stale") or (pack.get("prices") or {}).get("stale"):
+        manifest.setdefault("_stale_sections", [])
+        if "crypto" not in manifest["_stale_sections"]:
+            manifest["_stale_sections"].append("crypto")
 
 
 _ETP_MANIFEST_ERROR_PREFIXES = ("ETP scrape:", "ETP flows:", "AUM chart:")
@@ -1996,6 +2056,14 @@ def build_etp_page_payloads(
     cached = load_etp_live_cache(cache_path, static_dir=OUT)
     merged_payloads = apply_etp_live_cache_fallback(payloads, cache=cached)
     used_cached_rows = not rows_payload and bool((merged_payloads.get("etps.json") or {}).get("rows"))
+    generated_at = refreshed_at
+    if used_cached_rows or (merged_payloads.get("etp_kpis.json") or {}).get("stale"):
+        cache_at = (
+            (merged_payloads.get("etps.json") or {}).get("generated_at")
+            or (cached or {}).get("generated_at")
+        )
+        if cache_at:
+            generated_at = cache_at
 
     if rows_payload and not used_cached_rows:
         save_etp_live_cache(
@@ -2007,7 +2075,7 @@ def build_etp_page_payloads(
         )
 
     return {
-        "generated_at": refreshed_at,
+        "generated_at": generated_at,
         "payloads": merged_payloads,
         "errors": etp_errors,
         "etp_count": len((merged_payloads.get("etps.json") or {}).get("rows") or []),
@@ -2048,6 +2116,7 @@ def export_etp_json_bundle(
         "errors": summary["errors"],
         "etp_count": summary["etp_count"],
         "aum_points": summary["aum_points"],
+        "stale": bool((payloads.get("etp_kpis.json") or {}).get("stale") or (payloads.get("etps.json") or {}).get("stale")),
     }
 
 
@@ -2071,12 +2140,18 @@ def merge_etp_refresh_into_manifest(summary: dict[str, Any], manifest_path: Path
     manifest["errors"] = kept + list(summary.get("errors") or [])
     etp_at = summary.get("etp_refreshed_at")
     manifest["etp_refreshed_at"] = etp_at
-    sections = manifest.get("sections") if isinstance(manifest.get("sections"), dict) else {}
     if etp_at:
+        sections = manifest.get("sections") if isinstance(manifest.get("sections"), dict) else {}
         sections["etp"] = etp_at
         manifest["sections"] = sections
-    if etp_at:
         manifest["export_completed_at"] = etp_at
+    stale_sections = list(manifest.get("stale_sections") or [])
+    if summary.get("stale"):
+        if "etp" not in stale_sections:
+            stale_sections.append("etp")
+    elif "etp" in stale_sections:
+        stale_sections = [s for s in stale_sections if s != "etp"]
+    manifest["stale_sections"] = stale_sections
     if not manifest.get("generated_at"):
         manifest["generated_at"] = etp_at
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -2086,9 +2161,12 @@ def merge_etp_refresh_into_manifest(summary: dict[str, Any], manifest_path: Path
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     manifest: dict = {"generated_at": datetime.now(timezone.utc).isoformat(), "errors": []}
+    stale_sections: list[str] = []
 
     etp_summary = export_etp_json_bundle(errors_out=manifest["errors"])
     manifest["etp_refreshed_at"] = etp_summary["etp_refreshed_at"]
+    if etp_summary.get("stale"):
+        stale_sections.append("etp")
 
     # --- Home RSS lane (also used for crypto Top Movers headline context).
     articles_home, feed_errs_home = load_all_feeds(list(DEFAULT_FEEDS) + [STATIC_THE_DEFIANT_FEED])
@@ -2118,28 +2196,36 @@ def main() -> None:
     reg_top = reg_articles[:REG_N]
 
     news_ts = datetime.now(timezone.utc).isoformat()
-    (OUT / "home_news.json").write_text(
-        json.dumps(
-            {"generated_at": news_ts, "items": [_article_json(a) for a in home_news_items]},
-            indent=2,
-        ),
-        encoding="utf-8",
+    home_news = write_json_keep_prior_if_empty(
+        OUT / "home_news.json",
+        {"generated_at": news_ts, "items": [_article_json(a) for a in home_news_items]},
+        has_data=_payload_has_items,
+        section="news",
+        stale_sections=stale_sections,
     )
-    (OUT / "regulatory.json").write_text(
-        json.dumps(
-            {"generated_at": news_ts, "items": [_article_json(a) for a in reg_top]},
-            indent=2,
-        ),
-        encoding="utf-8",
+    if home_news.get("stale") and home_news.get("generated_at"):
+        news_ts = str(home_news["generated_at"])
+    write_json_keep_prior_if_empty(
+        OUT / "regulatory.json",
+        {"generated_at": news_ts, "items": [_article_json(a) for a in reg_top]},
+        has_data=_payload_has_items,
+        section="regulatory",
+        stale_sections=stale_sections,
     )
     # Full list for static GitHub Pages (search + pagination).
-    (OUT / "all_articles.json").write_text(
-        json.dumps({"generated_at": news_ts, "items": [_article_json(a) for a in articles_for_all_json]}, indent=2),
-        encoding="utf-8",
+    write_json_keep_prior_if_empty(
+        OUT / "all_articles.json",
+        {"generated_at": news_ts, "items": [_article_json(a) for a in articles_for_all_json]},
+        has_data=_payload_has_items,
+        section="news",
+        stale_sections=stale_sections,
     )
-    (OUT / "all_regulatory.json").write_text(
-        json.dumps({"generated_at": news_ts, "items": [_article_json(a) for a in reg_articles]}, indent=2),
-        encoding="utf-8",
+    write_json_keep_prior_if_empty(
+        OUT / "all_regulatory.json",
+        {"generated_at": news_ts, "items": [_article_json(a) for a in reg_articles]},
+        has_data=_payload_has_items,
+        section="regulatory",
+        stale_sections=stale_sections,
     )
 
     cust_raw, cust_errs = load_custodian_articles(per_day_cap=0)
@@ -2153,9 +2239,12 @@ def main() -> None:
         else datetime.min.replace(tzinfo=timezone.utc),
         reverse=True,
     )
-    (OUT / "all_custodian_news.json").write_text(
-        json.dumps({"generated_at": news_ts, "items": [_article_json(a) for a in cust_articles]}, indent=2),
-        encoding="utf-8",
+    write_json_keep_prior_if_empty(
+        OUT / "all_custodian_news.json",
+        {"generated_at": news_ts, "items": [_article_json(a) for a in cust_articles]},
+        has_data=_payload_has_items,
+        section="news",
+        stale_sections=stale_sections,
     )
 
     # --- ETF / ETP headline pool (same filter + ranked daily cap as Streamlit / FastAPI) ---
@@ -2165,9 +2254,12 @@ def main() -> None:
 
     etf_windowed = articles_published_within_utc_days(etf_all, ETF_NEWS_LOOKBACK_DAYS)
     etf_items = [_article_json(a) for a in etf_windowed]
-    (OUT / "etf_news.json").write_text(
-        json.dumps({"generated_at": news_ts, "items": etf_items}, indent=2),
-        encoding="utf-8",
+    write_json_keep_prior_if_empty(
+        OUT / "etf_news.json",
+        {"generated_at": news_ts, "items": etf_items},
+        has_data=_payload_has_items,
+        section="news",
+        stale_sections=stale_sections,
     )
     pulse = etf_items[:ETP_PULSE_PREVIEW_COUNT]
     (OUT / "etf_pulse.json").write_text(
@@ -2221,10 +2313,15 @@ def main() -> None:
         },
     }
 
-    (OUT / "rwa_onchain_home.json").write_text(
-        json.dumps(rwa_onchain_payload, indent=2),
-        encoding="utf-8",
+    rwa_onchain_payload = write_json_keep_prior_if_empty(
+        OUT / "rwa_onchain_home.json",
+        rwa_onchain_payload,
+        has_data=_payload_has_rwa_home,
+        section="rwa",
+        stale_sections=stale_sections,
     )
+    if rwa_onchain_payload.get("stale") and rwa_onchain_payload.get("generated_at"):
+        rwa_ts = str(rwa_onchain_payload["generated_at"])
 
     # --- Full static RWA Global Market Overview (mirrors Streamlit / FastAPI ``/rwa/global``) ---
     from rwa_global_page_payloads import build_rwa_global_page_payload
@@ -2235,10 +2332,12 @@ def main() -> None:
         rwa_err=rwa_err,
     )
     rwa_global_payload["generated_at"] = rwa_ts
-
-    (OUT / "rwa_global_market.json").write_text(
-        json.dumps(rwa_global_payload, indent=2),
-        encoding="utf-8",
+    write_json_keep_prior_if_empty(
+        OUT / "rwa_global_market.json",
+        rwa_global_payload,
+        has_data=_payload_has_rwa_home,
+        section="rwa",
+        stale_sections=stale_sections,
     )
 
     from rwa_league.client import (
@@ -2305,83 +2404,95 @@ def main() -> None:
     explore_at_payload = build_rwa_explore_asset_type_page_payload(
         sc_pack=sc_pack, tr_pack=tr_pack, st_pack=st_pack, mmf_pack=mmf_pack
     )
-    (OUT / "rwa_explore_asset_type.json").write_text(
-        json.dumps(explore_at_payload, indent=2),
-        encoding="utf-8",
+    explore_at_payload["generated_at"] = rwa_ts
+    write_json_keep_prior_if_empty(
+        OUT / "rwa_explore_asset_type.json",
+        explore_at_payload,
+        has_data=_payload_has_explore,
+        section="rwa",
+        stale_sections=stale_sections,
     )
 
     explore_mp_payload = build_rwa_explore_market_participant_page_payload(
         net_pack=p_net_pack, plat_pack=p_plat_pack, am_pack=p_am_pack
     )
-    (OUT / "rwa_explore_market_participant.json").write_text(
-        json.dumps(explore_mp_payload, indent=2),
-        encoding="utf-8",
+    explore_mp_payload["generated_at"] = rwa_ts
+    write_json_keep_prior_if_empty(
+        OUT / "rwa_explore_market_participant.json",
+        explore_mp_payload,
+        has_data=_payload_has_explore,
+        section="rwa",
+        stale_sections=stale_sections,
     )
 
-    (OUT / "rwa_participants_networks.json").write_text(
-        json.dumps(
-            _build_rwa_participants_networks_deep_payload(p_net_pack, manifest, takeaway_pool),
-            indent=2,
-        ),
-        encoding="utf-8",
+    write_json_keep_prior_if_empty(
+        OUT / "rwa_participants_networks.json",
+        _build_rwa_participants_networks_deep_payload(p_net_pack, manifest, takeaway_pool),
+        has_data=_payload_has_rwa_deep,
+        section="rwa",
+        stale_sections=stale_sections,
     )
-    (OUT / "rwa_participants_platforms.json").write_text(
-        json.dumps(
-            _build_rwa_participants_platforms_deep_payload(p_plat_pack, manifest, takeaway_pool),
-            indent=2,
-        ),
-        encoding="utf-8",
+    write_json_keep_prior_if_empty(
+        OUT / "rwa_participants_platforms.json",
+        _build_rwa_participants_platforms_deep_payload(p_plat_pack, manifest, takeaway_pool),
+        has_data=_payload_has_rwa_deep,
+        section="rwa",
+        stale_sections=stale_sections,
     )
-    (OUT / "rwa_participants_asset_managers.json").write_text(
-        json.dumps(
-            _build_rwa_participants_asset_managers_deep_payload(p_am_pack, manifest, takeaway_pool),
-            indent=2,
-        ),
-        encoding="utf-8",
+    write_json_keep_prior_if_empty(
+        OUT / "rwa_participants_asset_managers.json",
+        _build_rwa_participants_asset_managers_deep_payload(p_am_pack, manifest, takeaway_pool),
+        has_data=_payload_has_rwa_deep,
+        section="rwa",
+        stale_sections=stale_sections,
     )
 
     from key_observations.page_blend import explore_sections_from_payload
 
     explore_map = explore_sections_from_payload(explore_at_payload)
 
-    (OUT / "rwa_stablecoins.json").write_text(
-        json.dumps(
-            _build_rwa_stablecoins_deep_payload(
-                sc_pack, manifest, takeaway_pool, explore=explore_map
-            ),
-            indent=2,
+    write_json_keep_prior_if_empty(
+        OUT / "rwa_stablecoins.json",
+        _build_rwa_stablecoins_deep_payload(
+            sc_pack, manifest, takeaway_pool, explore=explore_map
         ),
-        encoding="utf-8",
+        has_data=_payload_has_rwa_deep,
+        section="rwa",
+        stale_sections=stale_sections,
     )
-    (OUT / "rwa_us_treasuries.json").write_text(
-        json.dumps(
-            _build_rwa_us_treasuries_deep_payload(
-                tr_pack, manifest, takeaway_pool, explore=explore_map
-            ),
-            indent=2,
+    write_json_keep_prior_if_empty(
+        OUT / "rwa_us_treasuries.json",
+        _build_rwa_us_treasuries_deep_payload(
+            tr_pack, manifest, takeaway_pool, explore=explore_map
         ),
-        encoding="utf-8",
+        has_data=_payload_has_rwa_deep,
+        section="rwa",
+        stale_sections=stale_sections,
     )
-    (OUT / "rwa_tokenized_stocks.json").write_text(
-        json.dumps(
-            _build_rwa_tokenized_stocks_deep_payload(
-                st_pack, manifest, takeaway_pool, explore=explore_map
-            ),
-            indent=2,
+    write_json_keep_prior_if_empty(
+        OUT / "rwa_tokenized_stocks.json",
+        _build_rwa_tokenized_stocks_deep_payload(
+            st_pack, manifest, takeaway_pool, explore=explore_map
         ),
-        encoding="utf-8",
+        has_data=_payload_has_rwa_deep,
+        section="rwa",
+        stale_sections=stale_sections,
     )
-    (OUT / "rwa_tokenized_mmf.json").write_text(
-        json.dumps(
-            _build_rwa_tokenized_mmf_deep_payload(
-                mmf_pack, manifest, takeaway_pool, explore=explore_map
-            ),
-            indent=2,
+    write_json_keep_prior_if_empty(
+        OUT / "rwa_tokenized_mmf.json",
+        _build_rwa_tokenized_mmf_deep_payload(
+            mmf_pack, manifest, takeaway_pool, explore=explore_map
         ),
-        encoding="utf-8",
+        has_data=_payload_has_rwa_deep,
+        section="rwa",
+        stale_sections=stale_sections,
     )
 
     export_completed_at = datetime.now(timezone.utc).isoformat()
+    for extra in manifest.pop("_stale_sections", []) or []:
+        if extra not in stale_sections:
+            stale_sections.append(extra)
+    manifest["stale_sections"] = stale_sections
     manifest["export_completed_at"] = export_completed_at
     manifest["generated_at"] = export_completed_at
     manifest["refresh_interval_hours"] = 6

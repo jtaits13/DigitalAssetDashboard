@@ -477,7 +477,10 @@
         (etps && etps.generated_at) ||
         (manifest && manifest.etp_refreshed_at);
       if (freshApi.showPageStaleWarning && els.banner && !etpLoadError) {
-        freshApi.showPageStaleWarning(els.banner, manifest, { etp: etpAt }, {
+        freshApi.showPageStaleWarning(els.banner, manifest, {
+          etp: etpAt,
+          staleFlags: { etp: !!(kpis && kpis.stale) || !!(etps && etps.stale) },
+        }, {
           title: "ETP snapshot data may be outdated",
           body: "Fund figures below may not reflect the latest market data.",
         });

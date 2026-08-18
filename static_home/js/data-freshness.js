@@ -96,6 +96,11 @@
     var sections = manifest.sections || {};
     var refreshHours = refreshIntervalHours(manifest);
     var issues = [];
+    var staleFlags = overrides.staleFlags || {};
+    var listed = manifest.stale_sections || [];
+    function isBackup(key) {
+      return !!(staleFlags[key] || listed.indexOf(key) >= 0);
+    }
     var checks = [
       ["U.S. ETPs", overrides.etp || sections.etp || manifest.etp_refreshed_at, "etp"],
       ["Crypto", overrides.crypto || sections.crypto || manifest.crypto_refreshed_at, "crypto"],
@@ -104,7 +109,18 @@
       ["Regulatory news", overrides.regulatory || sections.regulatory, "regulatory"],
     ];
     checks.forEach(function (row) {
-      var issue = staleSectionIssue(row[0], row[1], thresholdHours(manifest, row[2]), refreshHours);
+      var at = row[1];
+      var key = row[2];
+      if (isBackup(key)) {
+        issues.push(
+          row[0] +
+            ": live data could not be pulled, so the last saved snapshot is shown" +
+            (at ? " (" + formatAge(at) + " old)" : "") +
+            "."
+        );
+        return;
+      }
+      var issue = staleSectionIssue(row[0], at, thresholdHours(manifest, key), refreshHours);
       if (issue) issues.push(issue);
     });
     var exportAt =

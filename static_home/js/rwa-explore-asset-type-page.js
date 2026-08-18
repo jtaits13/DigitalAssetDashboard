@@ -206,6 +206,20 @@
       ts.textContent = "Generated " + data.footer_note;
     }
 
+    var banner = $("js-exat-banner");
+    var freshApi = global.__DATA_FRESHNESS || {};
+    if (banner && freshApi.showPageStaleWarning && (data.stale || data.generated_at)) {
+      freshApi.showPageStaleWarning(
+        banner,
+        {},
+        { rwa: data.generated_at, staleFlags: { rwa: !!data.stale } },
+        {
+          title: "RWA snapshot data may be outdated",
+          body: "Figures below may not reflect the latest market data.",
+        }
+      );
+    }
+
     var L = data.links || {};
     document.querySelectorAll('a[data-exat-link="global"]').forEach(function (el) {
       if (L.rwa_global) el.setAttribute("href", assetPath(L.rwa_global));

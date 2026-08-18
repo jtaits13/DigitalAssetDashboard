@@ -577,7 +577,8 @@
       freshApi.showPageStaleWarning(
         banner,
         manifest || {},
-        { rwa: data.generated_at || (manifest && manifest.sections && manifest.sections.rwa) },
+        { rwa: data.generated_at || (manifest && manifest.sections && manifest.sections.rwa),
+          staleFlags: { rwa: !!data.stale } },
         {
           title: "RWA snapshot data may be outdated",
           body: "Market figures below may not reflect the latest on-chain totals.",

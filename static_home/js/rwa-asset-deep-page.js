@@ -1286,8 +1286,11 @@
     }
 
     var freshApi = global.__DATA_FRESHNESS;
-    if (banner && freshApi && freshApi.showPageStaleWarning && payload.generated_at) {
-      freshApi.showPageStaleWarning(banner, manifest || {}, { rwa: payload.generated_at }, {
+    if (banner && freshApi && freshApi.showPageStaleWarning && (payload.generated_at || payload.stale)) {
+      freshApi.showPageStaleWarning(banner, manifest || {}, {
+        rwa: payload.generated_at,
+        staleFlags: { rwa: !!payload.stale },
+      }, {
         title: "RWA snapshot data may be outdated",
         body: "Figures below may not reflect the latest market data.",
       });

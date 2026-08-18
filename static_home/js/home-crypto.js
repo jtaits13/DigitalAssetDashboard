@@ -241,7 +241,24 @@
         els.source.textContent = kpis.source_note;
       }
       if ((prices && prices.error) || (kpis && kpis.error)) {
-        showErr(prices.error || kpis.error);
+        if ((kpis && kpis.stale) || (prices && prices.stale)) {
+          if (freshApi.showPageStaleWarning && els.banner) {
+            freshApi.showPageStaleWarning(
+              els.banner,
+              manifest,
+              {
+                crypto: (kpis && kpis.generated_at) || (prices && prices.generated_at),
+                staleFlags: { crypto: true },
+              },
+              {
+                title: "Crypto snapshot data may be outdated",
+                body: "Live market data could not be pulled. Figures below are from the last saved snapshot.",
+              }
+            );
+          }
+        } else {
+          showErr(prices.error || kpis.error);
+        }
       } else if (freshApi.showPageStaleWarning && els.banner) {
         freshApi.showPageStaleWarning(
           els.banner,

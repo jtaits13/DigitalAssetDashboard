@@ -182,7 +182,10 @@
       if (!hasData || !freshApi.showPageStaleWarning) return;
       var el = document.getElementById(bannerId);
       if (!el || !el.hidden) return;
-      freshApi.showPageStaleWarning(el, manifest, { rwa: rwaAt }, {
+      freshApi.showPageStaleWarning(el, manifest, {
+        rwa: rwaAt,
+        staleFlags: { rwa: !!(explore && explore.stale) || !!(mmfPage && mmfPage.stale) },
+      }, {
         title: label + " snapshot may be outdated",
         body: label + " figures below may not reflect the latest market data.",
       });

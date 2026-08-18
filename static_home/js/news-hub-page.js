@@ -634,7 +634,10 @@
 
   function maybeWarnStaleNewsFeed(banner, data) {
     if (!banner || !freshApi.showPageStaleWarning || !data || !data.generated_at) return;
-    freshApi.showPageStaleWarning(banner, manifestCache || {}, { news: data.generated_at }, {
+    freshApi.showPageStaleWarning(banner, manifestCache || {}, {
+      news: data.generated_at,
+      staleFlags: { news: !!data.stale },
+    }, {
       title: "News snapshot may be outdated",
       body: "Headlines below may not include the latest stories.",
     });
