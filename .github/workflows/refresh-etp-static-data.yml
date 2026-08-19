@@ -72,5 +72,6 @@ jobs:
             echo "No ETP JSON snapshot changes to commit"
           else
             git commit -m "Refresh GitHub Pages ETP data snapshots."
+            git pull --rebase origin main
             git push origin main
           fi
