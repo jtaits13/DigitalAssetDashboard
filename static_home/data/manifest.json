@@ -1,13 +1,28 @@
 {
-  "generated_at": "2026-08-17T21:36:54.560673+00:00",
-  "errors": [],
-  "etp_refreshed_at": "2026-08-17T21:39:52.257487+00:00",
-  "crypto_refreshed_at": "2026-08-17T21:39:56.759538+00:00",
+  "generated_at": "2026-08-19T07:18:48.177891+00:00",
+  "errors": [
+    "ETF news RSS: ETFdb: HTTP Error 403: Forbidden",
+    "ETF news RSS: ETF Trends (VettaFi): HTTP Error 403: Forbidden",
+    "ETF news RSS: ETFdb: HTTP Error 403: Forbidden",
+    "ETF news RSS: ETF Trends (VettaFi): HTTP Error 403: Forbidden"
+  ],
+  "etp_refreshed_at": "2026-08-19T07:13:21.606914+00:00",
+  "crypto_refreshed_at": "2026-08-19T07:13:24.743682+00:00",
+  "stale_sections": [],
+  "export_completed_at": "2026-08-19T07:18:48.177891+00:00",
+  "refresh_interval_hours": 6,
+  "stale_threshold_hours": {
+    "etp": 9,
+    "crypto": 9,
+    "rwa": 9,
+    "news": 12,
+    "regulatory": 24
+  },
   "sections": {
-    "news": "2026-08-17T21:40:50.409078+00:00",
-    "regulatory": "2026-08-17T21:40:50.409078+00:00",
-    "etp": "2026-08-17T21:39:52.257487+00:00",
-    "rwa": "2026-08-17T21:42:33.335012+00:00",
-    "crypto": "2026-08-17T21:39:56.759538+00:00"
+    "news": "2026-08-19T07:17:11.479565+00:00",
+    "regulatory": "2026-08-19T07:17:11.479565+00:00",
+    "etp": "2026-08-19T07:13:21.606914+00:00",
+    "rwa": "2026-08-19T07:18:42.584639+00:00",
+    "crypto": "2026-08-19T07:13:24.743682+00:00"
   }
 }
