@@ -1,53 +1,53 @@
 {
-  "generated_at": "2026-08-19T19:00:00.015412+00:00",
+  "generated_at": "2026-08-20T01:57:30.367516+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
-    "value_display": "$2.42T",
+    "value_display": "$2.49T",
     "delta": {
-      "pct": 3.6469,
+      "pct": 6.2981,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$68,320",
+    "value_display": "$69,668",
     "delta": {
-      "pct": 4.2,
+      "pct": 6.5,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,088",
+    "value_display": "$2,265",
     "delta": {
-      "pct": 10.2,
+      "pct": 19.0,
       "window": "1M"
     }
   },
   "btc_dominance": {
     "label": "BTC dominance",
-    "value_display": "56.6%",
+    "value_display": "56.2%",
     "delta": {
-      "pct": 0.5336,
+      "pct": 0.1531,
       "window": "1M"
     }
   },
   "stablecoin_share": {
     "label": "Stablecoin share",
-    "value_display": "12.3%",
+    "value_display": "12.0%",
     "delta": {
-      "pct": -3.6337,
+      "pct": -6.2246,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 56.63,
-    "stablecoin_share_top50_pct": 12.35,
-    "top50_market_cap_usd": 2307166246757.0,
-    "stablecoin_market_cap_usd": 284967667266.0,
-    "btc_market_cap_usd": 1371199046155.0
+    "btc_dominance_pct": 56.16,
+    "stablecoin_share_top50_pct": 12.0,
+    "top50_market_cap_usd": 2368252846001.0,
+    "stablecoin_market_cap_usd": 284082598572.0,
+    "btc_market_cap_usd": 1398470595516.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,7 +65,7 @@
       {
         "symbol": "OKB",
         "name": "OKB",
-        "pct_30d": 24.2,
+        "pct_30d": 25.7,
         "category": "cex",
         "category_label": "CEX",
         "detail_url": "https://www.coingecko.com/en/coins/okb",
@@ -79,7 +79,7 @@
       {
         "symbol": "XMR",
         "name": "Monero",
-        "pct_30d": 22.9,
+        "pct_30d": 25.3,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/monero",
@@ -91,21 +91,21 @@
         }
       },
       {
-        "symbol": "CC",
-        "name": "Canton",
-        "pct_30d": -21.7,
-        "category": "l1",
-        "category_label": "Layer 1",
-        "detail_url": "https://www.coingecko.com/en/coins/canton-network",
-        "direction": "down",
+        "symbol": "LINK",
+        "name": "Chainlink",
+        "pct_30d": 22.8,
+        "category": "defi",
+        "category_label": "DeFi",
+        "detail_url": "https://www.coingecko.com/en/coins/chainlink",
+        "direction": "up",
         "context": {
-          "title": "FalconX, Interstice Connect Canton to Ethereum, Solana and Robinhood Chain",
-          "source": "CoinTelegraph",
-          "link": "https://cointelegraph.com/news/interstice-falconx-cross-chain-swap-engine-canton-solana-ethereum-robinhood-chain?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound"
+          "title": "Ethereum engineering firm Nethermind leaves LayerZero verifier role for Chainlink",
+          "source": "The Block",
+          "link": "https://www.theblock.co/news/ecosystems/2026-08-19-nethermind-layerzero-chainlink-412226"
         }
       }
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 3.6% over 30D:</strong> Total crypto market cap at $2.42T (3.6% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://cointelegraph.com/news/sec-proposal-forward-inapt-crypto-rules-commissioner-peirce?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">SEC regulatory proposal marks \u2018important\u2019 step forward from \u2018inapt\u2019 crypto rules: Commissioner Peirce</a> (CoinTelegraph).</li><li><strong>Top-50 alts showed mixed 1M moves:</strong> 18 names up more than ~0.5%, 17 down more than ~0.5%, and 6 roughly flat out of <strong>41</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://cointelegraph.com/news/occ-head-jonathan-gould-genius-rules-november?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">OCC head promises final GENIUS rules by November</a> (CoinTelegraph).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://cointelegraph.com/news/us-sec-crypto-rules-clarity-act?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">SEC proposes new crypto rules in absence of CLARITY Act</a> (CoinTelegraph).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://thedefiant.io/converge/tradfi-and-fintech/banco-santander-discloses-spot-bitcoin-etf-stake-in-13f-filing\" target=\"_blank\" rel=\"noopener noreferrer\">Banco Santander Discloses Spot Bitcoin ETF Stake in 13F Filing</a> (The Defiant).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 6.3% over 30D:</strong> Total crypto market cap at $2.49T (6.3% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://cointelegraph.com/news/sec-proposal-forward-inapt-crypto-rules-commissioner-peirce?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">SEC regulatory proposal marks \u2018important\u2019 step forward from \u2018inapt\u2019 crypto rules: Commissioner Peirce</a> (CoinTelegraph).</li><li><strong>Gains broadened among top-50 alts:</strong> 26 names up more than ~0.5%, 11 down more than ~0.5%, and 5 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://cointelegraph.com/news/bitcoincom-integrates-uae-registered-usdu-stablecoin-into-self-custodial-wallet?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin.com integrates UAE-registered US dollar stablecoin into self-custodial wallet</a> (CoinTelegraph).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://www.coindesk.com/markets/2026/08/19/bitcoin-is-flashing-8-of-12-capitulation-signals-but-its-not-a-bottom-yet\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin is flashing 8 of 12 capitulation signals, but bottom&#x27;s not yet in, says VanEck</a> (CoinDesk).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://cointelegraph.com/news/us-sec-crypto-rules-clarity-act?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">SEC proposes new crypto rules in absence of CLARITY Act</a> (CoinTelegraph).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
