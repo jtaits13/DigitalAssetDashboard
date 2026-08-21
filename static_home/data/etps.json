@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-21T07:15:46.293844+00:00",
+  "generated_at": "2026-08-21T13:24:19.892411+00:00",
   "rows": [
     {
       "symbol": "IBIT",
@@ -249,6 +249,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BITQ%20S-1"
     },
     {
+      "symbol": "GDLC",
+      "name": "Grayscale CoinDesk Crypto 5 ETF",
+      "price": "33.19",
+      "pct_52w": -36.07,
+      "assets_usd": 388810000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Grayscale",
+      "custodian": "",
+      "inception": "Feb 19, 2018",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=GDLC%20S-1"
+    },
+    {
       "symbol": "BRRR",
       "name": "Coinshares Bitcoin ETF",
       "price": "20.49",
@@ -286,19 +299,6 @@
       "custodian": "Coinbase, BNY (Cash, TA)",
       "inception": "Jan 11, 2024",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=EZBC%20S-1"
-    },
-    {
-      "symbol": "GDLC",
-      "name": "Grayscale CoinDesk Crypto 5 ETF",
-      "price": "33.19",
-      "pct_52w": -36.07,
-      "assets_usd": 333740000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Grayscale",
-      "custodian": "",
-      "inception": "Feb 19, 2018",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=GDLC%20S-1"
     },
     {
       "symbol": "BTCO",
@@ -968,7 +968,7 @@
       "name": "Morgan Stanley Ethereum Trust ETF",
       "price": "24.97",
       "pct_52w": null,
-      "assets_usd": 22960000.0,
+      "assets_usd": 23050000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "Morgan Stanley",
@@ -1735,7 +1735,7 @@
       "name": "Vaneck BNB ETF Common Shares Of Beneficial Interest",
       "price": "25.23",
       "pct_52w": null,
-      "assets_usd": 2350000.0,
+      "assets_usd": 2340000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "VanEck",
@@ -1904,7 +1904,7 @@
       "name": "Volatility Shares 2x Chainlink ETF",
       "price": "25.31",
       "pct_52w": null,
-      "assets_usd": 1220000.0,
+      "assets_usd": 1210000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "",
@@ -2164,7 +2164,7 @@
       "name": "2x Avalanche ETF",
       "price": "8.88",
       "pct_52w": null,
-      "assets_usd": 352040.0,
+      "assets_usd": 354210.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "",
