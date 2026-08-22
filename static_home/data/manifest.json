@@ -1,15 +1,19 @@
 {
-  "generated_at": "2026-08-21T19:10:53.556718+00:00",
+  "generated_at": "2026-08-22T02:02:57.289977+00:00",
   "errors": [
-    "ETF news RSS: ETFdb: HTTP Error 403: Forbidden",
     "ETF news RSS: ETF Trends (VettaFi): HTTP Error 403: Forbidden",
     "ETF news RSS: ETFdb: HTTP Error 403: Forbidden",
-    "ETF news RSS: ETF Trends (VettaFi): HTTP Error 403: Forbidden"
+    "ETF news RSS: The Block: The read operation timed out",
+    "news RSS (home): The Block: The read operation timed out",
+    "news RSS (all articles): The Block: The read operation timed out",
+    "ETF news RSS: ETF Trends (VettaFi): HTTP Error 403: Forbidden",
+    "ETF news RSS: ETFdb: HTTP Error 403: Forbidden",
+    "ETF news RSS: The Block: The read operation timed out"
   ],
-  "etp_refreshed_at": "2026-08-21T19:04:52.342309+00:00",
-  "crypto_refreshed_at": "2026-08-21T19:04:55.326812+00:00",
+  "etp_refreshed_at": "2026-08-22T01:56:36.446935+00:00",
+  "crypto_refreshed_at": "2026-08-22T01:57:28.360522+00:00",
   "stale_sections": [],
-  "export_completed_at": "2026-08-21T19:10:53.556718+00:00",
+  "export_completed_at": "2026-08-22T02:02:57.289977+00:00",
   "refresh_interval_hours": 6,
   "stale_threshold_hours": {
     "etp": 9,
@@ -19,10 +23,10 @@
     "regulatory": 24
   },
   "sections": {
-    "news": "2026-08-21T19:08:30.687628+00:00",
-    "regulatory": "2026-08-21T19:08:30.687628+00:00",
-    "etp": "2026-08-21T19:04:52.342309+00:00",
-    "rwa": "2026-08-21T19:10:47.313784+00:00",
-    "crypto": "2026-08-21T19:04:55.326812+00:00"
+    "news": "2026-08-22T02:01:29.712826+00:00",
+    "regulatory": "2026-08-22T02:01:29.712826+00:00",
+    "etp": "2026-08-22T01:56:36.446935+00:00",
+    "rwa": "2026-08-22T02:02:50.862410+00:00",
+    "crypto": "2026-08-22T01:57:28.360522+00:00"
   }
 }
