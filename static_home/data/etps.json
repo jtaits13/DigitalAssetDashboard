@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-22T13:07:46.416715+00:00",
+  "generated_at": "2026-08-22T18:55:10.484545+00:00",
   "rows": [
     {
       "symbol": "IBIT",
@@ -184,6 +184,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=ETHB%20S-1"
     },
     {
+      "symbol": "BSOL",
+      "name": "Bitwise Solana Staking ETF",
+      "price": "12.48",
+      "pct_52w": null,
+      "assets_usd": 761070000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Bitwise",
+      "custodian": "",
+      "inception": "Oct 28, 2025",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BSOL%20S-1"
+    },
+    {
       "symbol": "ETHU",
       "name": "2x Ether ETF",
       "price": "25.36",
@@ -210,19 +223,6 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BITW%20S-1"
     },
     {
-      "symbol": "BSOL",
-      "name": "Bitwise Solana Staking ETF",
-      "price": "12.48",
-      "pct_52w": null,
-      "assets_usd": 620620000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Bitwise",
-      "custodian": "",
-      "inception": "Oct 28, 2025",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BSOL%20S-1"
-    },
-    {
       "symbol": "MSBT",
       "name": "Morgan Stanley Bitcoin Trust ETF",
       "price": "22.09",
@@ -234,6 +234,32 @@
       "custodian": "Coinbase, BNY, BNY (Cash, TA)",
       "inception": "Apr 7, 2026",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=MSBT%20S-1"
+    },
+    {
+      "symbol": "NCIQ",
+      "name": "Hashdex Nasdaq CME Crypto Index ETF",
+      "price": "19.32",
+      "pct_52w": -38.12,
+      "assets_usd": 432270000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "",
+      "custodian": "",
+      "inception": "Feb 13, 2025",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=NCIQ%20S-1"
+    },
+    {
+      "symbol": "XRP",
+      "name": "Bitwise XRP ETF",
+      "price": "15.34",
+      "pct_52w": null,
+      "assets_usd": 426570000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Bitwise",
+      "custodian": "",
+      "inception": "Nov 19, 2025",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=XRP%20S-1"
     },
     {
       "symbol": "BITQ",
@@ -340,43 +366,17 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=XRPC%20S-1"
     },
     {
-      "symbol": "XRP",
-      "name": "Bitwise XRP ETF",
-      "price": "15.34",
-      "pct_52w": null,
-      "assets_usd": 298820000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Bitwise",
-      "custodian": "",
-      "inception": "Nov 19, 2025",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=XRP%20S-1"
-    },
-    {
       "symbol": "BLOX",
       "name": "Nicholas Crypto Income ETF",
       "price": "13.65",
       "pct_52w": -9.4,
-      "assets_usd": 290230000.0,
+      "assets_usd": 300870000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "",
       "custodian": "",
       "inception": "Jun 17, 2025",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BLOX%20S-1"
-    },
-    {
-      "symbol": "NCIQ",
-      "name": "Hashdex Nasdaq CME Crypto Index ETF",
-      "price": "19.32",
-      "pct_52w": -38.12,
-      "assets_usd": 271030000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "",
-      "custodian": "",
-      "inception": "Feb 13, 2025",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=NCIQ%20S-1"
     },
     {
       "symbol": "FDIG",
@@ -457,6 +457,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=ETHT%20S-1"
     },
     {
+      "symbol": "FSOL",
+      "name": "Fidelity Solana Fund",
+      "price": "10.77",
+      "pct_52w": null,
+      "assets_usd": 154930000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Fidelity",
+      "custodian": "",
+      "inception": "Nov 17, 2025",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=FSOL%20S-1"
+    },
+    {
       "symbol": "TOXR",
       "name": "21Shares XRP ETF Beneficial INT SH",
       "price": "13.34",
@@ -483,6 +496,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=XBCI%20S-1"
     },
     {
+      "symbol": "HYPG",
+      "name": "Grayscale Hyperliquid Staking ETF",
+      "price": "26.54",
+      "pct_52w": null,
+      "assets_usd": 141090000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Grayscale",
+      "custodian": "",
+      "inception": "Jun 3, 2026",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=HYPG%20S-1"
+    },
+    {
       "symbol": "BTCW",
       "name": "WisdomTree Bitcoin Fund",
       "price": "81.45",
@@ -507,19 +533,6 @@
       "custodian": "",
       "inception": "Jan 18, 2024",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=YBTC%20S-1"
-    },
-    {
-      "symbol": "FSOL",
-      "name": "Fidelity Solana Fund",
-      "price": "10.77",
-      "pct_52w": null,
-      "assets_usd": 128919999.99999999,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Fidelity",
-      "custodian": "",
-      "inception": "Nov 17, 2025",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=FSOL%20S-1"
     },
     {
       "symbol": "MSTX",
@@ -561,19 +574,6 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BHYP%20S-1"
     },
     {
-      "symbol": "HYPG",
-      "name": "Grayscale Hyperliquid Staking ETF",
-      "price": "26.54",
-      "pct_52w": null,
-      "assets_usd": 118370000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Grayscale",
-      "custodian": "",
-      "inception": "Jun 3, 2026",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=HYPG%20S-1"
-    },
-    {
       "symbol": "BITI",
       "name": "ProShares Short Bitcoin ETF",
       "price": "19.68",
@@ -613,6 +613,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=GSOL%20S-1"
     },
     {
+      "symbol": "NEHI",
+      "name": "NEOS Ethereum High Income ETF",
+      "price": "31.46",
+      "pct_52w": null,
+      "assets_usd": 99320000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Neos",
+      "custodian": "",
+      "inception": "Dec 3, 2025",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=NEHI%20S-1"
+    },
+    {
       "symbol": "ETHV",
       "name": "VanEck Ethereum ETF",
       "price": "35.26",
@@ -639,19 +652,6 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=CRPT%20S-1"
     },
     {
-      "symbol": "NEHI",
-      "name": "NEOS Ethereum High Income ETF",
-      "price": "31.46",
-      "pct_52w": null,
-      "assets_usd": 82690000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Neos",
-      "custodian": "",
-      "inception": "Dec 3, 2025",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=NEHI%20S-1"
-    },
-    {
       "symbol": "XRPI",
       "name": "Volatility Shares Trust XRP ETF",
       "price": "7.50",
@@ -663,6 +663,19 @@
       "custodian": "",
       "inception": "May 22, 2025",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=XRPI%20S-1"
+    },
+    {
+      "symbol": "XRPT",
+      "name": "Volatility Shares Trust XRP 2X ETF",
+      "price": "35.22",
+      "pct_52w": -90.5,
+      "assets_usd": 80930000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "",
+      "custodian": "",
+      "inception": "May 22, 2025",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=XRPT%20S-1"
     },
     {
       "symbol": "HECO",
@@ -730,6 +743,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=RSSX%20S-1"
     },
     {
+      "symbol": "HBR",
+      "name": "Canary HBAR ETF",
+      "price": "10.35",
+      "pct_52w": null,
+      "assets_usd": 55320000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "",
+      "custodian": "",
+      "inception": "Oct 28, 2025",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=HBR%20S-1"
+    },
+    {
       "symbol": "EETH",
       "name": "ProShares Ether ETF",
       "price": "29.33",
@@ -743,6 +769,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=EETH%20S-1"
     },
     {
+      "symbol": "XRPR",
+      "name": "REX-Osprey XRP ETF",
+      "price": "11.19",
+      "pct_52w": null,
+      "assets_usd": 52470000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "",
+      "custodian": "",
+      "inception": "Sep 18, 2025",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=XRPR%20S-1"
+    },
+    {
       "symbol": "ETHD",
       "name": "ProShares UltraShort Ether ETF",
       "price": "33.12",
@@ -754,19 +793,6 @@
       "custodian": "",
       "inception": "Jun 7, 2024",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=ETHD%20S-1"
-    },
-    {
-      "symbol": "HBR",
-      "name": "Canary HBAR ETF",
-      "price": "10.35",
-      "pct_52w": null,
-      "assets_usd": 46770000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "",
-      "custodian": "",
-      "inception": "Oct 28, 2025",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=HBR%20S-1"
     },
     {
       "symbol": "UXRP",
@@ -795,17 +821,17 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BTGD%20S-1"
     },
     {
-      "symbol": "XRPT",
-      "name": "Volatility Shares Trust XRP 2X ETF",
-      "price": "35.22",
-      "pct_52w": -90.5,
-      "assets_usd": 43720000.0,
+      "symbol": "CLNK",
+      "name": "Bitwise Chainlink ETF Beneficial Interest",
+      "price": "21.22",
+      "pct_52w": null,
+      "assets_usd": 42260000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
-      "issuer": "",
+      "issuer": "Bitwise",
       "custodian": "",
-      "inception": "May 22, 2025",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=XRPT%20S-1"
+      "inception": "Jan 13, 2026",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=CLNK%20S-1"
     },
     {
       "symbol": "EZET",
@@ -821,24 +847,11 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=EZET%20S-1"
     },
     {
-      "symbol": "XRPR",
-      "name": "REX-Osprey XRP ETF",
-      "price": "11.19",
-      "pct_52w": null,
-      "assets_usd": 38430000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "",
-      "custodian": "",
-      "inception": "Sep 18, 2025",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=XRPR%20S-1"
-    },
-    {
       "symbol": "FIAT",
       "name": "YieldMax Short COIN Option Income Strategy ETF",
       "price": "16.58",
       "pct_52w": 15.84,
-      "assets_usd": 36230000.0,
+      "assets_usd": 30930000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "YieldMax",
@@ -858,19 +871,6 @@
       "custodian": "",
       "inception": "Aug 20, 2024",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=SMST%20S-1"
-    },
-    {
-      "symbol": "CLNK",
-      "name": "Bitwise Chainlink ETF Beneficial Interest",
-      "price": "21.22",
-      "pct_52w": null,
-      "assets_usd": 29280000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Bitwise",
-      "custodian": "",
-      "inception": "Jan 13, 2026",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=CLNK%20S-1"
     },
     {
       "symbol": "MAXI",
@@ -897,6 +897,19 @@
       "custodian": "",
       "inception": "Jul 27, 2026",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=MSSE%20S-1"
+    },
+    {
+      "symbol": "GSUI",
+      "name": "Grayscale Sui Staking ETF",
+      "price": "11.67",
+      "pct_52w": null,
+      "assets_usd": 26870000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Grayscale",
+      "custodian": "",
+      "inception": "Feb 18, 2026",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=GSUI%20S-1"
     },
     {
       "symbol": "MSOL",
@@ -975,19 +988,6 @@
       "custodian": "",
       "inception": "Apr 8, 2026",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=NGHT%20S-1"
-    },
-    {
-      "symbol": "GSUI",
-      "name": "Grayscale Sui Staking ETF",
-      "price": "11.67",
-      "pct_52w": null,
-      "assets_usd": 22630000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Grayscale",
-      "custodian": "",
-      "inception": "Feb 18, 2026",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=GSUI%20S-1"
     },
     {
       "symbol": "BTCZ",
@@ -1107,6 +1107,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=CBXJ%20S-1"
     },
     {
+      "symbol": "OWNB",
+      "name": "Bitwise Bitcoin Standard Corporations ETF",
+      "price": "20.10",
+      "pct_52w": -30.74,
+      "assets_usd": 16600000.000000002,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Bitwise",
+      "custodian": "",
+      "inception": "Mar 10, 2025",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=OWNB%20S-1"
+    },
+    {
       "symbol": "QETH",
       "name": "Invesco Galaxy Ethereum ETF",
       "price": "24.00",
@@ -1131,6 +1144,19 @@
       "custodian": "",
       "inception": "Apr 2, 2025",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BTCC%20S-1"
+    },
+    {
+      "symbol": "TSUI",
+      "name": "21Shares Sui ETF",
+      "price": "16.02",
+      "pct_52w": null,
+      "assets_usd": 15650000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "",
+      "custodian": "",
+      "inception": "Feb 24, 2026",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=TSUI%20S-1"
     },
     {
       "symbol": "TETH",
@@ -1198,32 +1224,6 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BITC%20S-1"
     },
     {
-      "symbol": "OWNB",
-      "name": "Bitwise Bitcoin Standard Corporations ETF",
-      "price": "20.10",
-      "pct_52w": -30.74,
-      "assets_usd": 14090000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Bitwise",
-      "custodian": "",
-      "inception": "Mar 10, 2025",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=OWNB%20S-1"
-    },
-    {
-      "symbol": "TSUI",
-      "name": "21Shares Sui ETF",
-      "price": "16.02",
-      "pct_52w": null,
-      "assets_usd": 13240000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "",
-      "custodian": "",
-      "inception": "Feb 24, 2026",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=TSUI%20S-1"
-    },
-    {
       "symbol": "XRPM",
       "name": "Amplify XRP 3% Monthly Premium Income ETF",
       "price": "11.02",
@@ -1280,7 +1280,7 @@
       "name": "GraniteShares YieldBOOST Bitcoin ETF",
       "price": "5.56",
       "pct_52w": -43.95,
-      "assets_usd": 11320000.0,
+      "assets_usd": 11010000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "GraniteShares",
@@ -1293,7 +1293,7 @@
       "name": "Amplify Bitcoin Max Income Covered Call ETF",
       "price": "24.40",
       "pct_52w": -39.34,
-      "assets_usd": 11010000.0,
+      "assets_usd": 11000000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "Amplify Investments",
@@ -1358,13 +1358,26 @@
       "name": "Global X Bitcoin Covered Call ETF",
       "price": "12.89",
       "pct_52w": -27.9,
-      "assets_usd": 8710000.0,
+      "assets_usd": 9400000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "Global X",
       "custodian": "",
       "inception": "Jun 3, 2025",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BCCC%20S-1"
+    },
+    {
+      "symbol": "GDOG",
+      "name": "Grayscale Dogecoin Trust ETF Accred Inv",
+      "price": "9.98",
+      "pct_52w": null,
+      "assets_usd": 9120000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Grayscale",
+      "custodian": "",
+      "inception": "Nov 24, 2025",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=GDOG%20S-1"
     },
     {
       "symbol": "SOEZ",
@@ -1378,6 +1391,19 @@
       "custodian": "",
       "inception": "Dec 3, 2025",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=SOEZ%20S-1"
+    },
+    {
+      "symbol": "BBB",
+      "name": "CYBER HORNET S&P 500 and Bitcoin 75/25 Strategy ETF",
+      "price": "31.46",
+      "pct_52w": 5.57,
+      "assets_usd": 7870000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "",
+      "custodian": "",
+      "inception": "Dec 28, 2023",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BBB%20S-1"
     },
     {
       "symbol": "ISBG",
@@ -1406,19 +1432,6 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BFOC%20S-1"
     },
     {
-      "symbol": "BBB",
-      "name": "CYBER HORNET S&P 500 and Bitcoin 75/25 Strategy ETF",
-      "price": "31.46",
-      "pct_52w": 5.57,
-      "assets_usd": 7560000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "",
-      "custodian": "",
-      "inception": "Dec 28, 2023",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BBB%20S-1"
-    },
-    {
       "symbol": "BETE",
       "name": "ProShares Bitcoin & Ether Equal Weight ETF",
       "price": "37.76",
@@ -1443,19 +1456,6 @@
       "custodian": "",
       "inception": "Oct 7, 2021",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=SATO%20S-1"
-    },
-    {
-      "symbol": "GDOG",
-      "name": "Grayscale Dogecoin Trust ETF Accred Inv",
-      "price": "9.98",
-      "pct_52w": null,
-      "assets_usd": 6970000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Grayscale",
-      "custodian": "",
-      "inception": "Nov 24, 2025",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=GDOG%20S-1"
     },
     {
       "symbol": "CBXO",
@@ -1536,6 +1536,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=CBTA%20S-1"
     },
     {
+      "symbol": "GAVA",
+      "name": "Grayscale Avalanche Staking ETF",
+      "price": "18.36",
+      "pct_52w": null,
+      "assets_usd": 4920000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Grayscale",
+      "custodian": "",
+      "inception": "Mar 12, 2026",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=GAVA%20S-1"
+    },
+    {
       "symbol": "CBOA",
       "name": "Calamos Bitcoin Structured Alt Protection ETF - April",
       "price": "24.74",
@@ -1547,6 +1560,19 @@
       "custodian": "",
       "inception": "Apr 7, 2025",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=CBOA%20S-1"
+    },
+    {
+      "symbol": "QSOL",
+      "name": "Invesco Galaxy Solana ETF",
+      "price": "9.18",
+      "pct_52w": null,
+      "assets_usd": 4630000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Invesco",
+      "custodian": "",
+      "inception": "Dec 15, 2025",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=QSOL%20S-1"
     },
     {
       "symbol": "CBXA",
@@ -1562,6 +1588,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=CBXA%20S-1"
     },
     {
+      "symbol": "EHY",
+      "name": "Amplify Ethereum Max Income Covered Call ETF",
+      "price": "8.42",
+      "pct_52w": null,
+      "assets_usd": 4530000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Amplify Investments",
+      "custodian": "",
+      "inception": "Oct 8, 2025",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=EHY%20S-1"
+    },
+    {
       "symbol": "AETH",
       "name": "Bitwise Trendwise Ether and Treasuries Rotation Strategy ETF",
       "price": "37.16",
@@ -1575,56 +1614,30 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=AETH%20S-1"
     },
     {
-      "symbol": "QSOL",
-      "name": "Invesco Galaxy Solana ETF",
-      "price": "9.18",
-      "pct_52w": null,
-      "assets_usd": 4230000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Invesco",
-      "custodian": "",
-      "inception": "Dec 15, 2025",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=QSOL%20S-1"
-    },
-    {
-      "symbol": "EHY",
-      "name": "Amplify Ethereum Max Income Covered Call ETF",
-      "price": "8.42",
-      "pct_52w": null,
-      "assets_usd": 4179999.9999999995,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Amplify Investments",
-      "custodian": "",
-      "inception": "Oct 8, 2025",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=EHY%20S-1"
-    },
-    {
-      "symbol": "GAVA",
-      "name": "Grayscale Avalanche Staking ETF",
-      "price": "18.36",
-      "pct_52w": null,
-      "assets_usd": 4130000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Grayscale",
-      "custodian": "",
-      "inception": "Mar 12, 2026",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=GAVA%20S-1"
-    },
-    {
       "symbol": "ETCO",
       "name": "Grayscale Ethereum Covered Call ETF",
       "price": "8.83",
       "pct_52w": null,
-      "assets_usd": 4040000.0,
+      "assets_usd": 4240000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "Grayscale",
       "custodian": "",
       "inception": "Sep 4, 2025",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=ETCO%20S-1"
+    },
+    {
+      "symbol": "ETTY",
+      "name": "Amplify Ethereum 3% Monthly Option Income ETF",
+      "price": "9.68",
+      "pct_52w": null,
+      "assets_usd": 3190000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Amplify Investments",
+      "custodian": "",
+      "inception": "Oct 8, 2025",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=ETTY%20S-1"
     },
     {
       "symbol": "TSOL",
@@ -1679,30 +1692,30 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BTCU%20S-1"
     },
     {
-      "symbol": "ETTY",
-      "name": "Amplify Ethereum 3% Monthly Option Income ETF",
-      "price": "9.68",
-      "pct_52w": null,
-      "assets_usd": 2810000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Amplify Investments",
-      "custodian": "",
-      "inception": "Oct 8, 2025",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=ETTY%20S-1"
-    },
-    {
       "symbol": "CBTL",
       "name": "Calamos Laddered Bitcoin 80 Series Structured Alt Protection ETF",
       "price": "18.97",
       "pct_52w": null,
-      "assets_usd": 2650000.0,
+      "assets_usd": 2850000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "Calamos",
       "custodian": "",
       "inception": "Oct 14, 2025",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=CBTL%20S-1"
+    },
+    {
+      "symbol": "TDOG",
+      "name": "21Shares Dogecoin ETF",
+      "price": "17.06",
+      "pct_52w": null,
+      "assets_usd": 2550000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "",
+      "custodian": "",
+      "inception": "Jan 22, 2026",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=TDOG%20S-1"
     },
     {
       "symbol": "TXXS",
@@ -1781,19 +1794,6 @@
       "custodian": "",
       "inception": "Apr 3, 2025",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BFAP%20S-1"
-    },
-    {
-      "symbol": "TDOG",
-      "name": "21Shares Dogecoin ETF",
-      "price": "17.06",
-      "pct_52w": null,
-      "assets_usd": 2120000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "",
-      "custodian": "",
-      "inception": "Jan 22, 2026",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=TDOG%20S-1"
     },
     {
       "symbol": "STBQ",
@@ -1913,6 +1913,32 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=STLU%20S-1"
     },
     {
+      "symbol": "KRYP",
+      "name": "ProShares CoinDesk 20 Crypto ETF",
+      "price": "21.52",
+      "pct_52w": null,
+      "assets_usd": 1290000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "ProShares",
+      "custodian": "",
+      "inception": "Feb 2, 2026",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=KRYP%20S-1"
+    },
+    {
+      "symbol": "EHCC",
+      "name": "Global X Ethereum Covered Call ETF",
+      "price": "22.42",
+      "pct_52w": null,
+      "assets_usd": 1250000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Global X",
+      "custodian": "",
+      "inception": "Apr 1, 2026",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=EHCC%20S-1"
+    },
+    {
       "symbol": "COIA",
       "name": "ProShares Ultra COIN",
       "price": "9.53",
@@ -1924,19 +1950,6 @@
       "custodian": "",
       "inception": "Sep 8, 2025",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=COIA%20S-1"
-    },
-    {
-      "symbol": "EHCC",
-      "name": "Global X Ethereum Covered Call ETF",
-      "price": "22.42",
-      "pct_52w": null,
-      "assets_usd": 1190000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Global X",
-      "custodian": "",
-      "inception": "Apr 1, 2026",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=EHCC%20S-1"
     },
     {
       "symbol": "SUIL",
@@ -1963,19 +1976,6 @@
       "custodian": "",
       "inception": "Oct 6, 2025",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=DIME%20S-1"
-    },
-    {
-      "symbol": "KRYP",
-      "name": "ProShares CoinDesk 20 Crypto ETF",
-      "price": "21.52",
-      "pct_52w": null,
-      "assets_usd": 1060000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "ProShares",
-      "custodian": "",
-      "inception": "Feb 2, 2026",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=KRYP%20S-1"
     },
     {
       "symbol": "TKNQ",
@@ -2082,6 +2082,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=XEY%20S-1"
     },
     {
+      "symbol": "BWOW",
+      "name": "Bitwise Dogecoin ETF",
+      "price": "13.94",
+      "pct_52w": null,
+      "assets_usd": 553560.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Bitwise",
+      "custodian": "",
+      "inception": "Nov 25, 2025",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BWOW%20S-1"
+    },
+    {
       "symbol": "EEE",
       "name": "CYBER HORNET S&P 500 and Ethereum 75/25 Strategy ETF",
       "price": "22.40",
@@ -2145,19 +2158,6 @@
       "custodian": "",
       "inception": "Jan 29, 2026",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=XXX%20S-1"
-    },
-    {
-      "symbol": "BWOW",
-      "name": "Bitwise Dogecoin ETF",
-      "price": "13.94",
-      "pct_52w": null,
-      "assets_usd": 460510.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Bitwise",
-      "custodian": "",
-      "inception": "Nov 25, 2025",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BWOW%20S-1"
     },
     {
       "symbol": "AVAZ",

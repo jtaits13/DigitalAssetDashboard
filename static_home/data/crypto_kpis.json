@@ -1,28 +1,28 @@
 {
-  "generated_at": "2026-08-22T13:07:49.299887+00:00",
+  "generated_at": "2026-08-22T18:55:14.001172+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
     "value_display": "$2.73T",
     "delta": {
-      "pct": 17.8884,
+      "pct": 18.4177,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$77,227",
+    "value_display": "$77,151",
     "delta": {
-      "pct": 18.0,
+      "pct": 19.3,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,427",
+    "value_display": "$2,423",
     "delta": {
-      "pct": 26.1,
+      "pct": 28.5,
       "window": "1M"
     }
   },
@@ -30,7 +30,7 @@
     "label": "BTC dominance",
     "value_display": "56.7%",
     "delta": {
-      "pct": 0.0658,
+      "pct": 0.8255,
       "window": "1M"
     }
   },
@@ -38,16 +38,16 @@
     "label": "Stablecoin share",
     "value_display": "11.0%",
     "delta": {
-      "pct": -14.3896,
+      "pct": -15.224,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 56.7,
-    "stablecoin_share_top50_pct": 10.98,
-    "top50_market_cap_usd": 2599445676219.0,
-    "stablecoin_market_cap_usd": 285447696008.0,
-    "btc_market_cap_usd": 1550087775298.0
+    "btc_dominance_pct": 56.67,
+    "stablecoin_share_top50_pct": 10.99,
+    "top50_market_cap_usd": 2596886151725.0,
+    "stablecoin_market_cap_usd": 285440496357.0,
+    "btc_market_cap_usd": 1548540863290.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,7 +65,7 @@
       {
         "symbol": "PUMP",
         "name": "Pump.fun",
-        "pct_30d": 137.8,
+        "pct_30d": 148.0,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/pump-fun",
@@ -79,7 +79,7 @@
       {
         "symbol": "ZEC",
         "name": "Zcash",
-        "pct_30d": 54.3,
+        "pct_30d": 60.2,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/zcash",
@@ -93,7 +93,7 @@
       {
         "symbol": "LINK",
         "name": "Chainlink",
-        "pct_30d": 37.5,
+        "pct_30d": 37.9,
         "category": "defi",
         "category_label": "DeFi",
         "detail_url": "https://www.coingecko.com/en/coins/chainlink",
@@ -107,5 +107,5 @@
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 17.9% over 30D:</strong> Total crypto market cap at $2.73T (17.9% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://www.theblock.co/news/web3/2026-08-21-ai-adoption-in-crypto-crime-trm-412297\" target=\"_blank\" rel=\"noopener noreferrer\">AI adoption in crypto crime rose 40% over the past year, TRM Labs says</a> (The Block).</li><li><strong>Gains broadened among top-50 alts:</strong> 31 names up more than ~0.5%, 7 down more than ~0.5%, and 4 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.theblock.co/news/regulation/2026-08-21-grayscale-moves-closer-launching-first-zcash-etf-in-us-sec-amended-filing-412517\" target=\"_blank\" rel=\"noopener noreferrer\">Grayscale moves closer to launching first Zcash ETF in US with fresh amended SEC filing</a> (The Block).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://decrypt.co/376103/bitcoin-price-pumping-prediction-next-move\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin Is Pumping But Prediction Market Traders Aren&#x27;t Convinced</a> (Decrypt).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.coindesk.com/opinion/2026/08/21/the-hard-truth-is-that-the-clarity-act-is-an-anti-crypto-bill\" target=\"_blank\" rel=\"noopener noreferrer\">The hard truth is that the Clarity Act is an anti-crypto bill</a> (CoinDesk).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 18.4% over 30D:</strong> Total crypto market cap at $2.73T (18.4% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://www.theblock.co/news/web3/2026-08-21-ai-adoption-in-crypto-crime-trm-412297\" target=\"_blank\" rel=\"noopener noreferrer\">AI adoption in crypto crime rose 40% over the past year, TRM Labs says</a> (The Block).</li><li><strong>Gains broadened among top-50 alts:</strong> 30 names up more than ~0.5%, 5 down more than ~0.5%, and 7 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.theblock.co/news/regulation/2026-08-21-grayscale-moves-closer-launching-first-zcash-etf-in-us-sec-amended-filing-412517\" target=\"_blank\" rel=\"noopener noreferrer\">Grayscale moves closer to launching first Zcash ETF in US with fresh amended SEC filing</a> (The Block).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://www.theblock.co/news/ecosystems/2026-08-22-zcash-hits-eight-year-high-near-850-with-futures-volume-near-10-billion-amid-grayscale-etf-push-412528\" target=\"_blank\" rel=\"noopener noreferrer\">Zcash hits eight-year high near $850 with futures volume near $10 billion amid Grayscale ETF push</a> (The Block).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.coindesk.com/opinion/2026/08/21/the-hard-truth-is-that-the-clarity-act-is-an-anti-crypto-bill\" target=\"_blank\" rel=\"noopener noreferrer\">The hard truth is that the Clarity Act is an anti-crypto bill</a> (CoinDesk).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
