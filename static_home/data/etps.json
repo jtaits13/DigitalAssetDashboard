@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-23T13:08:35.325518+00:00",
+  "generated_at": "2026-08-23T18:54:31.425526+00:00",
   "rows": [
     {
       "symbol": "IBIT",
@@ -132,6 +132,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BITO%20S-1"
     },
     {
+      "symbol": "BITX",
+      "name": "Volatility Shares 2x Bitcoin ETF",
+      "price": "17.18",
+      "pct_52w": -67.77,
+      "assets_usd": 1210000000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "",
+      "custodian": "",
+      "inception": "Jun 27, 2023",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BITX%20S-1"
+    },
+    {
       "symbol": "FETH",
       "name": "Fidelity Ethereum Fund ETF",
       "price": "24.05",
@@ -169,19 +182,6 @@
       "custodian": "",
       "inception": "Jun 4, 2024",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=ETHU%20S-1"
-    },
-    {
-      "symbol": "BITX",
-      "name": "Volatility Shares 2x Bitcoin ETF",
-      "price": "17.18",
-      "pct_52w": -67.77,
-      "assets_usd": 870980000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "",
-      "custodian": "",
-      "inception": "Jun 27, 2023",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BITX%20S-1"
     },
     {
       "symbol": "ETHB",
@@ -730,6 +730,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=RSSX%20S-1"
     },
     {
+      "symbol": "EETH",
+      "name": "ProShares Ether ETF",
+      "price": "29.33",
+      "pct_52w": -46.94,
+      "assets_usd": 69270000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "ProShares",
+      "custodian": "",
+      "inception": "Oct 2, 2023",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=EETH%20S-1"
+    },
+    {
       "symbol": "BITA",
       "name": "iShares Bitcoin Premium Income ETF",
       "price": "59.38",
@@ -767,19 +780,6 @@
       "custodian": "",
       "inception": "Oct 28, 2025",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=HBR%20S-1"
-    },
-    {
-      "symbol": "EETH",
-      "name": "ProShares Ether ETF",
-      "price": "29.33",
-      "pct_52w": -46.94,
-      "assets_usd": 54880000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "ProShares",
-      "custodian": "",
-      "inception": "Oct 2, 2023",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=EETH%20S-1"
     },
     {
       "symbol": "XRPR",
@@ -1172,6 +1172,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BTCC%20S-1"
     },
     {
+      "symbol": "BITC",
+      "name": "Bitwise Trendwise Bitcoin and Treasuries Rotation Strategy ETF",
+      "price": "40.02",
+      "pct_52w": -12.27,
+      "assets_usd": 15980000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Bitwise",
+      "custodian": "",
+      "inception": "Mar 20, 2023",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BITC%20S-1"
+    },
+    {
       "symbol": "TSUI",
       "name": "21Shares Sui ETF",
       "price": "16.02",
@@ -1224,32 +1237,6 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BTF%20S-1"
     },
     {
-      "symbol": "SETH",
-      "name": "ProShares Short Ether ETF",
-      "price": "33.95",
-      "pct_52w": 22.01,
-      "assets_usd": 14580000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "ProShares",
-      "custodian": "",
-      "inception": "Nov 2, 2023",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=SETH%20S-1"
-    },
-    {
-      "symbol": "BITC",
-      "name": "Bitwise Trendwise Bitcoin and Treasuries Rotation Strategy ETF",
-      "price": "40.02",
-      "pct_52w": -12.27,
-      "assets_usd": 14200000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Bitwise",
-      "custodian": "",
-      "inception": "Mar 20, 2023",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BITC%20S-1"
-    },
-    {
       "symbol": "QBF",
       "name": "Innovator Uncapped Bitcoin 20 Floor ETF - Quarterly",
       "price": "17.73",
@@ -1287,6 +1274,32 @@
       "custodian": "",
       "inception": "Nov 18, 2025",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=XRPM%20S-1"
+    },
+    {
+      "symbol": "SETH",
+      "name": "ProShares Short Ether ETF",
+      "price": "33.95",
+      "pct_52w": 22.01,
+      "assets_usd": 11970000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "ProShares",
+      "custodian": "",
+      "inception": "Nov 2, 2023",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=SETH%20S-1"
+    },
+    {
+      "symbol": "BETH",
+      "name": "ProShares Bitcoin & Ether Market Cap Weight ETF",
+      "price": "43.03",
+      "pct_52w": -37.44,
+      "assets_usd": 11610000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "ProShares",
+      "custodian": "",
+      "inception": "Oct 2, 2023",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BETH%20S-1"
     },
     {
       "symbol": "DOJE",
@@ -1352,19 +1365,6 @@
       "custodian": "",
       "inception": "Apr 21, 2026",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BESO%20S-1"
-    },
-    {
-      "symbol": "BETH",
-      "name": "ProShares Bitcoin & Ether Market Cap Weight ETF",
-      "price": "43.03",
-      "pct_52w": -37.44,
-      "assets_usd": 9650000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "ProShares",
-      "custodian": "",
-      "inception": "Oct 2, 2023",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BETH%20S-1"
     },
     {
       "symbol": "BCCC",
@@ -1757,6 +1757,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=VBNB%20S-1"
     },
     {
+      "symbol": "BPI",
+      "name": "Grayscale Bitcoin Premium Income ETF",
+      "price": "24.07",
+      "pct_52w": -30.58,
+      "assets_usd": 2400000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Grayscale",
+      "custodian": "",
+      "inception": "Apr 2, 2025",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BPI%20S-1"
+    },
+    {
       "symbol": "CBOL",
       "name": "Calamos Laddered Bitcoin Structured Alt Protection ETF",
       "price": "23.81",
@@ -1820,19 +1833,6 @@
       "custodian": "",
       "inception": "May 27, 2026",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=EVMU%20S-1"
-    },
-    {
-      "symbol": "BPI",
-      "name": "Grayscale Bitcoin Premium Income ETF",
-      "price": "24.07",
-      "pct_52w": -30.58,
-      "assets_usd": 2049999.9999999998,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Grayscale",
-      "custodian": "",
-      "inception": "Apr 2, 2025",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BPI%20S-1"
     },
     {
       "symbol": "COIA",
@@ -1926,6 +1926,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=STLU%20S-1"
     },
     {
+      "symbol": "EHCC",
+      "name": "Global X Ethereum Covered Call ETF",
+      "price": "22.42",
+      "pct_52w": null,
+      "assets_usd": 1320000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Global X",
+      "custodian": "",
+      "inception": "Apr 1, 2026",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=EHCC%20S-1"
+    },
+    {
       "symbol": "KRYP",
       "name": "ProShares CoinDesk 20 Crypto ETF",
       "price": "21.52",
@@ -1950,19 +1963,6 @@
       "custodian": "",
       "inception": "Oct 6, 2025",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=DIME%20S-1"
-    },
-    {
-      "symbol": "EHCC",
-      "name": "Global X Ethereum Covered Call ETF",
-      "price": "22.42",
-      "pct_52w": null,
-      "assets_usd": 1250000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Global X",
-      "custodian": "",
-      "inception": "Apr 1, 2026",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=EHCC%20S-1"
     },
     {
       "symbol": "SUIL",
