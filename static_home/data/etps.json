@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-24T07:34:52.288531+00:00",
+  "generated_at": "2026-08-24T13:28:45.798716+00:00",
   "rows": [
     {
       "symbol": "IBIT",
@@ -58,7 +58,7 @@
       "name": "Grayscale Bitcoin Mini Trust ETF",
       "price": "34.08",
       "pct_52w": -32.67,
-      "assets_usd": 4120000000.0,
+      "assets_usd": 4660000000.0,
       "flow_1y_usd": 1668700000.0,
       "flow_1y_window": "1Y",
       "issuer": "Grayscale",
@@ -392,6 +392,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=ETHT%20S-1"
     },
     {
+      "symbol": "FDIG",
+      "name": "Fidelity Crypto Industry and Digital Payments ETF",
+      "price": "44.08",
+      "pct_52w": 17.81,
+      "assets_usd": 266630000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Fidelity",
+      "custodian": "",
+      "inception": "Apr 19, 2022",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=FDIG%20S-1"
+    },
+    {
       "symbol": "ETHW",
       "name": "Bitwise Ethereum ETF",
       "price": "17.26",
@@ -405,24 +418,24 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=ETHW%20S-1"
     },
     {
-      "symbol": "FDIG",
-      "name": "Fidelity Crypto Industry and Digital Payments ETF",
-      "price": "44.08",
-      "pct_52w": 17.81,
-      "assets_usd": 252500000.0,
+      "symbol": "STCE",
+      "name": "Schwab Crypto Thematic Natural Language Processing ETF",
+      "price": "65.92",
+      "pct_52w": 22.51,
+      "assets_usd": 230740000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
-      "issuer": "Fidelity",
+      "issuer": "Charles Schwab",
       "custodian": "",
-      "inception": "Apr 19, 2022",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=FDIG%20S-1"
+      "inception": "Aug 4, 2022",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=STCE%20S-1"
     },
     {
       "symbol": "WGMI",
       "name": "CoinShares Bitcoin Mining ETF",
       "price": "45.73",
       "pct_52w": 67.69,
-      "assets_usd": 222370000.0,
+      "assets_usd": 225020000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "",
@@ -442,19 +455,6 @@
       "custodian": "",
       "inception": "Aug 14, 2024",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=MSTX%20S-1"
-    },
-    {
-      "symbol": "STCE",
-      "name": "Schwab Crypto Thematic Natural Language Processing ETF",
-      "price": "65.92",
-      "pct_52w": 22.51,
-      "assets_usd": 215560000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Charles Schwab",
-      "custodian": "",
-      "inception": "Aug 4, 2022",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=STCE%20S-1"
     },
     {
       "symbol": "BTCW",
@@ -652,6 +652,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BPRO%20S-1"
     },
     {
+      "symbol": "CRPT",
+      "name": "First Trust SkyBridge Crypto Industry & Digital Economy ETF",
+      "price": "14.03",
+      "pct_52w": -32.5,
+      "assets_usd": 105290000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "First Trust",
+      "custodian": "",
+      "inception": "Sep 20, 2021",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=CRPT%20S-1"
+    },
+    {
       "symbol": "NEHI",
       "name": "NEOS Ethereum High Income ETF",
       "price": "31.46",
@@ -663,19 +676,6 @@
       "custodian": "",
       "inception": "Dec 3, 2025",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=NEHI%20S-1"
-    },
-    {
-      "symbol": "CRPT",
-      "name": "First Trust SkyBridge Crypto Industry & Digital Economy ETF",
-      "price": "14.03",
-      "pct_52w": -32.5,
-      "assets_usd": 87680000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "First Trust",
-      "custodian": "",
-      "inception": "Sep 20, 2021",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=CRPT%20S-1"
     },
     {
       "symbol": "SSK",
@@ -860,6 +860,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BTCL%20S-1"
     },
     {
+      "symbol": "MAXI",
+      "name": "Simplify Bitcoin Strategy ETF",
+      "price": "13.39",
+      "pct_52w": -42.52,
+      "assets_usd": 35240000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Simplify",
+      "custodian": "",
+      "inception": "Sep 29, 2022",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=MAXI%20S-1"
+    },
+    {
       "symbol": "MSSE",
       "name": "Morgan Stanley Ethereum Trust ETF",
       "price": "25.99",
@@ -897,19 +910,6 @@
       "custodian": "",
       "inception": "Jul 27, 2026",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=MSOL%20S-1"
-    },
-    {
-      "symbol": "MAXI",
-      "name": "Simplify Bitcoin Strategy ETF",
-      "price": "13.39",
-      "pct_52w": -42.52,
-      "assets_usd": 27500000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Simplify",
-      "custodian": "",
-      "inception": "Sep 29, 2022",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=MAXI%20S-1"
     },
     {
       "symbol": "GSUI",

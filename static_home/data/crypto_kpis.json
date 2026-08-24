@@ -1,53 +1,53 @@
 {
-  "generated_at": "2026-08-24T07:34:54.674134+00:00",
+  "generated_at": "2026-08-24T13:28:49.172728+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
-    "value_display": "$2.75T",
+    "value_display": "$2.79T",
     "delta": {
-      "pct": 20.3815,
+      "pct": 21.7263,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$77,494",
+    "value_display": "$79,005",
     "delta": {
-      "pct": 21.1,
+      "pct": 23.7,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,459",
+    "value_display": "$2,508",
     "delta": {
-      "pct": 32.2,
+      "pct": 35.4,
       "window": "1M"
     }
   },
   "btc_dominance": {
     "label": "BTC dominance",
-    "value_display": "56.6%",
+    "value_display": "56.9%",
     "delta": {
-      "pct": 0.7275,
+      "pct": 1.6214,
       "window": "1M"
     }
   },
   "stablecoin_share": {
     "label": "Stablecoin share",
-    "value_display": "10.9%",
+    "value_display": "10.8%",
     "delta": {
-      "pct": -16.4089,
+      "pct": -17.9376,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 56.65,
-    "stablecoin_share_top50_pct": 10.94,
-    "top50_market_cap_usd": 2609732906973.0,
-    "stablecoin_market_cap_usd": 285378173608.0,
-    "btc_market_cap_usd": 1555421644178.0
+    "btc_dominance_pct": 56.86,
+    "stablecoin_share_top50_pct": 10.76,
+    "top50_market_cap_usd": 2651919437887.0,
+    "stablecoin_market_cap_usd": 285251302499.0,
+    "btc_market_cap_usd": 1585402014354.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,7 +65,7 @@
       {
         "symbol": "PUMP",
         "name": "Pump.fun",
-        "pct_30d": 179.2,
+        "pct_30d": 184.9,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/pump-fun",
@@ -79,21 +79,21 @@
       {
         "symbol": "ZEC",
         "name": "Zcash",
-        "pct_30d": 76.5,
+        "pct_30d": 79.6,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/zcash",
         "direction": "up",
         "context": {
-          "title": "Zcash jumps 48% to over $800 as Grayscale spot ETF push adds to \u2018next bitcoin\u2019 buzz",
-          "source": "CoinDesk",
-          "link": "https://www.coindesk.com/markets/2026/08/22/zcash-tops-usd800-for-first-time-since-2016"
+          "title": "Morning Minute: CFTC Will Give Crypto Clarity If Congress Won\u2019t",
+          "source": "Decrypt",
+          "link": "https://decrypt.co/376174/morning-minute-cftc-crypto-clarity-act"
         }
       },
       {
         "symbol": "AAVE",
         "name": "Aave",
-        "pct_30d": 55.0,
+        "pct_30d": 51.8,
         "category": "defi",
         "category_label": "DeFi",
         "detail_url": "https://www.coingecko.com/en/coins/aave",
@@ -107,5 +107,5 @@
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 20.4% over 30D:</strong> Total crypto market cap at $2.75T (20.4% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://www.coindesk.com/policy/2026/08/23/regulation-crypto-is-here-state-of-crypto\" target=\"_blank\" rel=\"noopener noreferrer\">Regulation Crypto is here: State of Crypto</a> (CoinDesk).</li><li><strong>Gains broadened among top-50 alts:</strong> 32 names up more than ~0.5%, 4 down more than ~0.5%, and 6 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/business/2026/08/22/stablecoin-neobank-fasset-lands-usd1-billion-valuation-as-sbi-backs-its-payments-push\" target=\"_blank\" rel=\"noopener noreferrer\">Stablecoin neobank Fasset lands $1 billion valuation as SBI backs its payments push</a> (CoinDesk).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://www.coindesk.com/markets/2026/08/24/ether-is-crushing-bitcoin-and-the-golden-cross-says-it-may-not-be-done-yet\" target=\"_blank\" rel=\"noopener noreferrer\">Ether is crushing bitcoin and the &#x27;golden cross&#x27; says it may not be done yet</a> (CoinDesk).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.theblock.co/news/regulation/2026-08-21-grayscale-moves-closer-launching-first-zcash-etf-in-us-sec-amended-filing-412517\" target=\"_blank\" rel=\"noopener noreferrer\">Grayscale moves closer to launching first Zcash ETF in US with fresh amended SEC filing</a> (The Block).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 21.7% over 30D:</strong> Total crypto market cap at $2.79T (21.7% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://www.coindesk.com/policy/2026/08/23/regulation-crypto-is-here-state-of-crypto\" target=\"_blank\" rel=\"noopener noreferrer\">Regulation Crypto is here: State of Crypto</a> (CoinDesk).</li><li><strong>Gains broadened among top-50 alts:</strong> 35 names up more than ~0.5%, 2 down more than ~0.5%, and 5 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/business/2026/08/24/standard-chartered-first-bank-to-distribute-anchorpoint-s-hong-kong-dollar-stablecoin\" target=\"_blank\" rel=\"noopener noreferrer\">Standard Chartered becomes first bank to distribute Hong Kong dollar stablecoin</a> (CoinDesk).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.theblock.co/news/business/2026-08-24-bernstein-says-circles-growth-cycle-can-continue-without-the-clarity-act-sees-59-upside-412573\" target=\"_blank\" rel=\"noopener noreferrer\">Bernstein says Circle\u2019s growth cycle can continue without the Clarity Act, sees 59% upside</a> (The Block).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://cointelegraph.com/markets/bitcoin-etf-inflows-billion-strongest-week-october?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin ETF inflows hit $1.9B in strongest week since October 2025</a> (CoinTelegraph).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
