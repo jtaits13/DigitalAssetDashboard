@@ -1,53 +1,53 @@
 {
-  "generated_at": "2026-08-25T01:58:58.648029+00:00",
+  "generated_at": "2026-08-25T07:16:55.389508+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
-    "value_display": "$2.80T",
+    "value_display": "$2.83T",
     "delta": {
-      "pct": 21.9012,
+      "pct": 23.1455,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$79,651",
+    "value_display": "$80,700",
     "delta": {
-      "pct": 24.0,
+      "pct": 25.0,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,493",
+    "value_display": "$2,507",
     "delta": {
-      "pct": 33.1,
+      "pct": 32.6,
       "window": "1M"
     }
   },
   "btc_dominance": {
     "label": "BTC dominance",
-    "value_display": "57.0%",
+    "value_display": "57.2%",
     "delta": {
-      "pct": 1.7217,
+      "pct": 1.506,
       "window": "1M"
     }
   },
   "stablecoin_share": {
     "label": "Stablecoin share",
-    "value_display": "10.7%",
+    "value_display": "10.6%",
     "delta": {
-      "pct": -17.8508,
+      "pct": -18.1333,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 57.02,
-    "stablecoin_share_top50_pct": 10.71,
-    "top50_market_cap_usd": 2666156607992.0,
-    "stablecoin_market_cap_usd": 285580851314.0,
-    "btc_market_cap_usd": 1598799206702.0
+    "btc_dominance_pct": 57.22,
+    "stablecoin_share_top50_pct": 10.6,
+    "top50_market_cap_usd": 2691754126521.0,
+    "stablecoin_market_cap_usd": 285434706941.0,
+    "btc_market_cap_usd": 1620284078392.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,7 +65,7 @@
       {
         "symbol": "PUMP",
         "name": "Pump.fun",
-        "pct_30d": 170.3,
+        "pct_30d": 165.0,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/pump-fun",
@@ -79,7 +79,7 @@
       {
         "symbol": "ZEC",
         "name": "Zcash",
-        "pct_30d": 72.6,
+        "pct_30d": 74.2,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/zcash",
@@ -93,7 +93,7 @@
       {
         "symbol": "AAVE",
         "name": "Aave",
-        "pct_30d": 44.9,
+        "pct_30d": 42.0,
         "category": "defi",
         "category_label": "DeFi",
         "detail_url": "https://www.coingecko.com/en/coins/aave",
@@ -107,5 +107,5 @@
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 21.9% over 30D:</strong> Total crypto market cap at $2.80T (21.9% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://www.theblock.co/news/markets/2026-08-24-crypto-exchange-volumes-double-in-five-days-as-market-activity-rebounds-412641\" target=\"_blank\" rel=\"noopener noreferrer\">Crypto exchange volumes double in five days as market activity rebounds</a> (The Block).</li><li><strong>Gains broadened among top-50 alts:</strong> 36 names up more than ~0.5%, 3 down more than ~0.5%, and 3 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://thedefiant.io/news/markets/bitcoin-stalls-a-cent-below-usd80-000-as-altcoins-give-back-weekend-gains\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin Stalls a Cent Below $80,000 as Altcoins Give Back Weekend Gains</a> (The Defiant).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://cointelegraph.com/markets/first-bear-market-trend-line-reclaim-since-2025-five-things-to-know-in-bitcoin-this-week?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">First bear-market trend line reclaim since 2025: Five things to know in Bitcoin this week</a> (CoinTelegraph).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.coindesk.com/business/2026/08/24/standard-chartered-first-bank-to-distribute-anchorpoint-s-hong-kong-dollar-stablecoin\" target=\"_blank\" rel=\"noopener noreferrer\">Standard Chartered becomes first bank to distribute Hong Kong dollar stablecoin</a> (CoinDesk).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 23.1% over 30D:</strong> Total crypto market cap at $2.83T (23.1% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://www.theblock.co/news/markets/2026-08-24-crypto-exchange-volumes-double-in-five-days-as-market-activity-rebounds-412641\" target=\"_blank\" rel=\"noopener noreferrer\">Crypto exchange volumes double in five days as market activity rebounds</a> (The Block).</li><li><strong>Gains broadened among top-50 alts:</strong> 33 names up more than ~0.5%, 4 down more than ~0.5%, and 5 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://thedefiant.io/news/markets/bitcoin-stalls-a-cent-below-usd80-000-as-altcoins-give-back-weekend-gains\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin Stalls a Cent Below $80,000 as Altcoins Give Back Weekend Gains</a> (The Defiant).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://cointelegraph.com/markets/first-bear-market-trend-line-reclaim-since-2025-five-things-to-know-in-bitcoin-this-week?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">First bear-market trend line reclaim since 2025: Five things to know in Bitcoin this week</a> (CoinTelegraph).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://cointelegraph.com/markets/bitcoin-etf-inflows-billion-strongest-week-october?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin ETF inflows hit $1.9B in strongest week since October 2025</a> (CoinTelegraph).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
