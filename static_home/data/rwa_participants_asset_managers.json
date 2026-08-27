@@ -6,13 +6,13 @@
   "kpis": [
     {
       "label": "Distributed AUM",
-      "value_display": "$29.51B",
-      "delta_30d_pct": 0.018148343758929632
+      "value_display": "$29.74B",
+      "delta_30d_pct": 0.02597800031316266
     },
     {
       "label": "Represented AUM",
       "value_display": "$14.29B",
-      "delta_30d_pct": 0.002776199298157473
+      "delta_30d_pct": 0.0027550014044239544
     },
     {
       "label": "RWA Holders",
@@ -32,13 +32,13 @@
   ],
   "chart_max_bars": 12,
   "back_href": "rwa-explore-market-participant.html",
-  "footer_note": "2026-08-27 10:10:09 UTC \u00b7 Source: RWA.xyz",
+  "footer_note": "2026-08-27 22:34:48 UTC \u00b7 Source: RWA.xyz",
   "bottom_cta": {
     "href": "https://app.rwa.xyz/asset-managers",
     "label": "See RWA Asset Managers on RWA.xyz"
   },
   "error_mode": "",
-  "key_observations_html": "<div style=\"border:1px solid #C7D8E8;border-radius:10px;padding:0.75rem 0.95rem;margin:0.1rem 0 0.55rem;background:#ffffff;box-shadow:0 1px 3px rgba(15,23,42,0.06);\"><ul style=\"margin:0.1rem 0 0 1.05rem;padding:0;color:#1F4C67;font-size:0.9rem;line-height:1.45;\"><li><strong>Asset-manager participation remains top-heavy:</strong> a smaller set of large managers still accounts for most distributed value and often anchors category momentum. Related: <a href=\"https://www.theblock.co/news/business/2026-08-27-mirae-asset-109-billion-digital-asset-push-412883\" target=\"_blank\" rel=\"noopener noreferrer\">Mirae Asset maps out $109 billion digital asset push with Digital X: report</a> (The Block).</li><li><strong>Share shifts are usually distribution-sensitive:</strong> advisor access, custody confidence, and repeat issuance cadence are key drivers of manager-level position changes. Related: <a href=\"https://www.theblock.co/news/regulation/2026-08-26-sec-sends-crypto-custody-rule-changes-to-white-house-for-review-412811\" target=\"_blank\" rel=\"noopener noreferrer\">SEC sends crypto custody rule changes to White House for review</a> (The Block).</li><li><strong>Custody and issuance integrations are moving rankings first:</strong> Large-manager launches and migrations move slowly but often re-anchor category momentum in this table before the broader market reprices. Related: <a href=\"https://www.coindesk.com/news-analysis/2026/08/26/sec-resurrecting-u-s-crypto-custody-rule-the-previous-administration-failed-to-land\" target=\"_blank\" rel=\"noopener noreferrer\">SEC resurrecting U.S. crypto custody rule the previous administration failed to land</a> (CoinDesk).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Bullets combine on-page data with recent industry headlines.</p></div><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p>",
+  "key_observations_html": "<div style=\"border:1px solid #C7D8E8;border-radius:10px;padding:0.75rem 0.95rem;margin:0.1rem 0 0.55rem;background:#ffffff;box-shadow:0 1px 3px rgba(15,23,42,0.06);\"><ul style=\"margin:0.1rem 0 0 1.05rem;padding:0;color:#1F4C67;font-size:0.9rem;line-height:1.45;\"><li><strong>Asset-manager participation remains top-heavy:</strong> a smaller set of large managers still accounts for most distributed value and often anchors category momentum. Related: <a href=\"https://cointelegraph.com/news/mirae-asset-lays-out-crypto-stablecoin-and-tokenization-plans?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Mirae Asset lays out crypto, stablecoin, tokenization plans for Digital X</a> (CoinTelegraph).</li><li><strong>Share shifts are usually distribution-sensitive:</strong> advisor access, custody confidence, and repeat issuance cadence are key drivers of manager-level position changes. Related: <a href=\"https://www.theblock.co/news/regulation/2026-08-26-sec-sends-crypto-custody-rule-changes-to-white-house-for-review-412811\" target=\"_blank\" rel=\"noopener noreferrer\">SEC sends crypto custody rule changes to White House for review</a> (The Block).</li><li><strong>Custody and issuance integrations are moving rankings first:</strong> Large-manager launches and migrations move slowly but often re-anchor category momentum in this table before the broader market reprices. Related: <a href=\"https://news.google.com/rss/articles/CBMizgFBVV95cUxPbzRaOXA1NENaV09reHhHcm9GSF8zdGpKbWx3YkJyOVBQc0wzQUFzUkY1amtoeHgwdTM0cnByTGxZaWtSWlAyVHR3V0x5Mko5SUs2VU1LcWh3dVEtZUZHTVBaeWhiWTlVSnJPMkR6eDRJZzRMc2NYQ1k2NlZadlVoT0NZMHVEQUxLckxIajhzakoyREppZ1dfa2VrVFlvYl9GaVM5SXdxdEdaUVBKYkJqZjFEY2stSHEzY29CS25HX05WbGNzU2VlaFRLeU9Tdw?oc=5\" target=\"_blank\" rel=\"noopener noreferrer\">SEC resurrecting U.S. crypto custody rule the previous administration failed to land</a> (CoinDesk).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Bullets combine on-page data with recent industry headlines.</p></div><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p>",
   "networks": {
     "block_heading": "By asset manager (Distributed \u00b7 Asset Managers)",
     "table_heading": "Asset Managers table",
@@ -92,13 +92,13 @@
         "Asset manager": "BlackRock",
         "Link": "https://app.rwa.xyz/asset-managers/blackrock",
         "RWA Count": 6,
-        "RWA value (distributed)": 2799474229.9812355,
+        "RWA value (distributed)": 2799474229.981236,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 2799474229.9812355,
-        "7D \u0394 value": 5.246779327993763,
-        "Market Share": 9.413257280283307,
-        "30D \u0394 share": 0.2369243392432871
+        "RWA total (excl. stablecoins)": 2799474229.981236,
+        "7D \u0394 value": 5.246779327993781,
+        "Market Share": 9.41325728028331,
+        "30D \u0394 share": 0.23692433924328848
       },
       {
         "#": 4,
@@ -118,13 +118,13 @@
         "Asset manager": "Franklin Templeton",
         "Link": "https://app.rwa.xyz/asset-managers/franklin-templeton",
         "RWA Count": 16,
-        "RWA value (distributed)": 2518400961.992695,
+        "RWA value (distributed)": 2518400961.9926953,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 2518400961.992695,
-        "7D \u0394 value": -2.167938156984453,
-        "Market Share": 8.468145888347442,
-        "30D \u0394 share": -0.4125126822836195
+        "RWA total (excl. stablecoins)": 2518400961.9926953,
+        "7D \u0394 value": -2.1679381569844343,
+        "Market Share": 8.468145888347443,
+        "30D \u0394 share": -0.4125126822836181
       },
       {
         "#": 6,
@@ -157,13 +157,13 @@
         "Asset manager": "Maple Protocol Pool Operations",
         "Link": "https://app.rwa.xyz/asset-managers/maple-protocol-pool-operations",
         "RWA Count": 2,
-        "RWA value (distributed)": 1312660258.148043,
+        "RWA value (distributed)": 1312660258.1480427,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 1312660258.148043,
-        "7D \u0394 value": -4.273365933841743,
-        "Market Share": 4.413831925730373,
-        "30D \u0394 share": -0.3168206215528921
+        "RWA total (excl. stablecoins)": 1312660258.1480427,
+        "7D \u0394 value": -4.27336593384176,
+        "Market Share": 4.413831925730372,
+        "30D \u0394 share": -0.3168206215528928
       },
       {
         "#": 9,
@@ -235,13 +235,13 @@
         "Asset manager": "China Asset Management",
         "Link": "https://app.rwa.xyz/asset-managers/china-asset-management",
         "RWA Count": 12,
-        "RWA value (distributed)": 731594640.7806088,
+        "RWA value (distributed)": 731594640.7806087,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 731594640.7806088,
-        "7D \u0394 value": -11.232558427564367,
+        "RWA total (excl. stablecoins)": 731594640.7806087,
+        "7D \u0394 value": -11.232558427564381,
         "Market Share": 2.4599935605017076,
-        "30D \u0394 share": -0.38327783414275585
+        "30D \u0394 share": -0.3832778341427562
       },
       {
         "#": 15,
@@ -261,13 +261,13 @@
         "Asset manager": "Securitize Capital",
         "Link": "https://app.rwa.xyz/asset-managers/securitize-capital",
         "RWA Count": 6,
-        "RWA value (distributed)": 473480840.39170337,
+        "RWA value (distributed)": 473480840.3917033,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 473480840.39170337,
-        "7D \u0394 value": -1.7485568317764717,
-        "Market Share": 1.5920835848957735,
-        "30D \u0394 share": -0.07042912747837436
+        "RWA total (excl. stablecoins)": 473480840.3917033,
+        "7D \u0394 value": -1.7485568317764841,
+        "Market Share": 1.5920835848957733,
+        "30D \u0394 share": -0.07042912747837471
       },
       {
         "#": 17,
@@ -534,13 +534,13 @@
         "Asset manager": "Mubadala Capital",
         "Link": "https://app.rwa.xyz/asset-managers/mubadala-capital",
         "RWA Count": 2,
-        "RWA value (distributed)": 74495840.68883914,
+        "RWA value (distributed)": 74495840.68883915,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 74495840.68883914,
-        "7D \u0394 value": 15.211631130280164,
-        "Market Share": 0.2504929344249548,
-        "30D \u0394 share": 0.027424970337823658
+        "RWA total (excl. stablecoins)": 74495840.68883915,
+        "7D \u0394 value": 15.211631130280187,
+        "Market Share": 0.25049293442495485,
+        "30D \u0394 share": 0.0274249703378237
       },
       {
         "#": 38,
