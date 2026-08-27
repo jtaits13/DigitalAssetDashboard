@@ -1,28 +1,28 @@
 {
-  "generated_at": "2026-08-26T20:18:25.248471+00:00",
+  "generated_at": "2026-08-27T10:04:00.316399+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
-    "value_display": "$2.76T",
+    "value_display": "$2.82T",
     "delta": {
-      "pct": 18.7853,
+      "pct": 24.1284,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$78,439",
+    "value_display": "$79,977",
     "delta": {
-      "pct": 21.1,
+      "pct": 26.2,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,470",
+    "value_display": "$2,534",
     "delta": {
-      "pct": 27.6,
+      "pct": 34.6,
       "window": "1M"
     }
   },
@@ -30,24 +30,24 @@
     "label": "BTC dominance",
     "value_display": "57.0%",
     "delta": {
-      "pct": 1.8861,
+      "pct": 1.6311,
       "window": "1M"
     }
   },
   "stablecoin_share": {
     "label": "Stablecoin share",
-    "value_display": "10.9%",
+    "value_display": "10.7%",
     "delta": {
-      "pct": -15.753,
+      "pct": -18.9501,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 57.05,
-    "stablecoin_share_top50_pct": 10.89,
-    "top50_market_cap_usd": 2620798817581.0,
-    "stablecoin_market_cap_usd": 285418358540.0,
-    "btc_market_cap_usd": 1574227909331.0
+    "btc_dominance_pct": 56.98,
+    "stablecoin_share_top50_pct": 10.68,
+    "top50_market_cap_usd": 2674382716926.0,
+    "stablecoin_market_cap_usd": 285735571843.0,
+    "btc_market_cap_usd": 1605214604090.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,7 +65,7 @@
       {
         "symbol": "PUMP",
         "name": "Pump.fun",
-        "pct_30d": 126.5,
+        "pct_30d": 133.8,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/pump-fun",
@@ -79,7 +79,7 @@
       {
         "symbol": "ZEC",
         "name": "Zcash",
-        "pct_30d": 61.7,
+        "pct_30d": 69.3,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/zcash",
@@ -93,19 +93,19 @@
       {
         "symbol": "HYPE",
         "name": "Hyperliquid",
-        "pct_30d": 43.1,
+        "pct_30d": 50.8,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/hyperliquid",
         "direction": "up",
         "context": {
-          "title": "Bitcoin holds $79,000, ether, solana slip as traders bank a week of gains",
-          "source": "CoinDesk",
-          "link": "https://www.coindesk.com/markets/2026/08/26/bitcoin-holds-usd79-000-ether-solana-slip-4-as-traders-bank-a-week-of-gains"
+          "title": "Hyperliquid Policy Center, TradeXYZ urge CFTC to create path for US oil perpetuals",
+          "source": "The Block",
+          "link": "https://www.theblock.co/news/regulation/2026-08-26-hyperliquid-policy-center-tradexyz-urges-cftc-create-path-us-oil-perpetuals-412834"
         }
       }
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 18.8% over 30D:</strong> Total crypto market cap at $2.76T (18.8% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://cointelegraph.com/news/sec-crypto-custody-rules-investment-firms-white-house?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">SEC sends crypto custody rule overhaul to White House for review</a> (CoinTelegraph).</li><li><strong>Gains broadened among top-50 alts:</strong> 33 names up more than ~0.5%, 5 down more than ~0.5%, and 4 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/markets/2026/08/26/bitcoin-holds-usd79-000-ether-solana-slip-4-as-traders-bank-a-week-of-gains\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin holds $79,000, ether, solana slip as traders bank a week of gains</a> (CoinDesk).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.coindesk.com/business/2026/08/26/south-korea-s-shinhan-financial-joins-visa-to-build-stablecoin-infrastructure\" target=\"_blank\" rel=\"noopener noreferrer\">South Korea\u2019s top financial conglomerate team up with Visa to test stablecoin issuance and B2B settlements</a> (CoinDesk).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://cointelegraph.com/news/bitcoin-etf-august-inflows-surge-past-3-billion?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin ETFs tear through 2026 outflows in 7-day hot streak</a> (CoinTelegraph).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 24.1% over 30D:</strong> Total crypto market cap at $2.82T (24.1% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://www.coindesk.com/news-analysis/2026/08/26/sec-resurrecting-u-s-crypto-custody-rule-the-previous-administration-failed-to-land\" target=\"_blank\" rel=\"noopener noreferrer\">SEC resurrecting U.S. crypto custody rule the previous administration failed to land</a> (CoinDesk).</li><li><strong>Gains broadened among top-50 alts:</strong> 33 names up more than ~0.5%, 6 down more than ~0.5%, and 3 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://thedefiant.io/news/markets/bitcoin-stalls-a-cent-below-usd80-000-as-altcoins-give-back-weekend-gains\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin Stalls a Cent Below $80,000 as Altcoins Give Back Weekend Gains</a> (The Defiant).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://www.coindesk.com/markets/2026/08/27/lesser-tracked-bitcoin-market-dynamic-lends-credibility-to-august-surge-to-usd80-000\" target=\"_blank\" rel=\"noopener noreferrer\">Lesser-tracked bitcoin market dynamic lends credibility to August surge to $80,000</a> (CoinDesk).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://cointelegraph.com/markets/bitcoin-etf-inflows-slow-232-million-btc-under-80k?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin ETF inflows slow to $232M as BTC holds under $80K</a> (CoinTelegraph).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
