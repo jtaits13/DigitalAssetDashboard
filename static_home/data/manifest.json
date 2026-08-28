@@ -1,15 +1,18 @@
 {
-  "generated_at": "2026-08-28T11:40:26.108300+00:00",
+  "generated_at": "2026-08-28T22:36:26.914684+00:00",
   "errors": [
+    "ETF news RSS: ETFdb: HTTP Error 403: Forbidden",
     "ETF news RSS: ETF Trends (VettaFi): HTTP Error 403: Forbidden",
     "ETF news RSS: ETFdb: HTTP Error 403: Forbidden",
     "ETF news RSS: ETF Trends (VettaFi): HTTP Error 403: Forbidden",
-    "ETF news RSS: ETFdb: HTTP Error 403: Forbidden"
+    "RWA home overview: 403 Client Error: Forbidden for url: https://app.rwa.xyz/"
   ],
-  "etp_refreshed_at": "2026-08-28T11:35:02.564342+00:00",
-  "crypto_refreshed_at": "2026-08-28T11:35:05.543696+00:00",
-  "stale_sections": [],
-  "export_completed_at": "2026-08-28T11:40:26.108300+00:00",
+  "etp_refreshed_at": "2026-08-28T22:30:39.865762+00:00",
+  "crypto_refreshed_at": "2026-08-28T22:30:43.093961+00:00",
+  "stale_sections": [
+    "rwa"
+  ],
+  "export_completed_at": "2026-08-28T22:36:26.914684+00:00",
   "refresh_interval_hours": 6,
   "stale_threshold_hours": {
     "etp": 9,
@@ -19,10 +22,10 @@
     "regulatory": 24
   },
   "sections": {
-    "news": "2026-08-28T11:38:41.126090+00:00",
-    "regulatory": "2026-08-28T11:38:41.126090+00:00",
-    "etp": "2026-08-28T11:35:02.564342+00:00",
+    "news": "2026-08-28T22:34:18.853123+00:00",
+    "regulatory": "2026-08-28T22:34:18.853123+00:00",
+    "etp": "2026-08-28T22:30:39.865762+00:00",
     "rwa": "2026-08-28T11:40:20.522808+00:00",
-    "crypto": "2026-08-28T11:35:05.543696+00:00"
+    "crypto": "2026-08-28T22:30:43.093961+00:00"
   }
 }

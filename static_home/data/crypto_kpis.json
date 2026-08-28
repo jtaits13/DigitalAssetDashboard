@@ -1,53 +1,53 @@
 {
-  "generated_at": "2026-08-28T11:35:05.543696+00:00",
+  "generated_at": "2026-08-28T22:30:43.093961+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
-    "value_display": "$2.81T",
+    "value_display": "$2.74T",
     "delta": {
-      "pct": 22.1389,
+      "pct": 19.8963,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$79,683",
+    "value_display": "$77,573",
     "delta": {
-      "pct": 23.1,
+      "pct": 21.9,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,505",
+    "value_display": "$2,434",
     "delta": {
-      "pct": 30.5,
+      "pct": 28.7,
       "window": "1M"
     }
   },
   "btc_dominance": {
     "label": "BTC dominance",
-    "value_display": "57.0%",
+    "value_display": "56.9%",
     "delta": {
-      "pct": 0.7869,
+      "pct": 1.6712,
       "window": "1M"
     }
   },
   "stablecoin_share": {
     "label": "Stablecoin share",
-    "value_display": "10.7%",
+    "value_display": "11.0%",
     "delta": {
-      "pct": -17.3261,
+      "pct": -16.5162,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 57.01,
-    "stablecoin_share_top50_pct": 10.72,
-    "top50_market_cap_usd": 2665728725977.0,
-    "stablecoin_market_cap_usd": 285773836620.0,
-    "btc_market_cap_usd": 1599714274724.0
+    "btc_dominance_pct": 56.85,
+    "stablecoin_share_top50_pct": 10.98,
+    "top50_market_cap_usd": 2604597443494.0,
+    "stablecoin_market_cap_usd": 285906466804.0,
+    "btc_market_cap_usd": 1557397636244.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,7 +65,7 @@
       {
         "symbol": "PUMP",
         "name": "Pump.fun",
-        "pct_30d": 155.3,
+        "pct_30d": 147.8,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/pump-fun",
@@ -79,7 +79,7 @@
       {
         "symbol": "ZEC",
         "name": "Zcash",
-        "pct_30d": 72.9,
+        "pct_30d": 73.6,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/zcash",
@@ -93,7 +93,7 @@
       {
         "symbol": "HYPE",
         "name": "Hyperliquid",
-        "pct_30d": 51.4,
+        "pct_30d": 49.2,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/hyperliquid",
@@ -107,5 +107,5 @@
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 22.1% over 30D:</strong> Total crypto market cap at $2.81T (22.1% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://www.coindesk.com/business/2026/08/27/mirae-asset-eyes-usd109-billion-crypto-empire-after-acquiring-digital-x\" target=\"_blank\" rel=\"noopener noreferrer\">Mirae Asset eyes $109 billion crypto empire after acquiring Digital X</a> (CoinDesk).</li><li><strong>Gains broadened among top-50 alts:</strong> 33 names up more than ~0.5%, 4 down more than ~0.5%, and 5 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/business/2026/08/28/visa-doubles-down-on-south-korea-with-upbit-operator-dunamu-on-stablecoin-payments\" target=\"_blank\" rel=\"noopener noreferrer\">Visa doubles down on South Korea with Upbit operator Dunamu on stablecoin payments</a> (CoinDesk).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://cointelegraph.com/markets/bitcoin-bear-market-over-as-price-metric-copies-2023-recovery-cryptoquant-ceo?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin bear market \u2018over\u2019 as price metric copies 2023 recovery: CryptoQuant CEO</a> (CoinTelegraph).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://thedefiant.io/news/defi/aave-opens-ios-early-access-keeps-android-and-web-waitlisted\" target=\"_blank\" rel=\"noopener noreferrer\">Aave Opens iOS Early Access, Keeps Android and Web Waitlisted</a> (The Defiant).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 19.9% over 30D:</strong> Total crypto market cap at $2.74T (19.9% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://cointelegraph.com/news/donald-trump-crypto-investors-losses-public-citizen?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Trump cost investors $4.7B through crypto \u2018schemes\u2019: Public Citizen</a> (CoinTelegraph).</li><li><strong>Gains broadened among top-50 alts:</strong> 34 names up more than ~0.5%, 5 down more than ~0.5%, and 3 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/business/2026/08/28/visa-doubles-down-on-south-korea-with-upbit-operator-dunamu-on-stablecoin-payments\" target=\"_blank\" rel=\"noopener noreferrer\">Visa doubles down on South Korea with Upbit operator Dunamu on stablecoin payments</a> (CoinDesk).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.theblock.co/news/markets/2026-08-28-bitwise-fund-is-first-solana-etf-to-hit-1-billion-aum-413035\" target=\"_blank\" rel=\"noopener noreferrer\">Bitwise fund is first Solana ETF to hit $1 billion AUM</a> (The Block).</li><li><strong>ETH outpaced BTC over 1M:</strong> about <strong>6.8pp</strong> on spot from the top-50 table. Related: <a href=\"https://www.coindesk.com/business/2026/08/28/sbi-stakes-usd270-million-in-ajaib-to-expand-yen-stablecoin-in-southeast-asia\" target=\"_blank\" rel=\"noopener noreferrer\">SBI buys 20% stake in Indonesia&#x27;s Ajaib for $270 million to expand yen stablecoin in Southeast Asia</a> (CoinDesk).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
