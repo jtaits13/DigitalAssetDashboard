@@ -1,36 +1,36 @@
 {
-  "generated_at": "2026-08-27T22:28:21.880936+00:00",
+  "generated_at": "2026-08-28T11:35:05.543696+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
-    "value_display": "$2.82T",
+    "value_display": "$2.81T",
     "delta": {
-      "pct": 23.5079,
+      "pct": 22.1389,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$80,317",
+    "value_display": "$79,683",
     "delta": {
-      "pct": 25.5,
+      "pct": 23.1,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,512",
+    "value_display": "$2,505",
     "delta": {
-      "pct": 30.6,
+      "pct": 30.5,
       "window": "1M"
     }
   },
   "btc_dominance": {
     "label": "BTC dominance",
-    "value_display": "57.1%",
+    "value_display": "57.0%",
     "delta": {
-      "pct": 1.6129,
+      "pct": 0.7869,
       "window": "1M"
     }
   },
@@ -38,16 +38,16 @@
     "label": "Stablecoin share",
     "value_display": "10.7%",
     "delta": {
-      "pct": -18.4915,
+      "pct": -17.3261,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 57.08,
-    "stablecoin_share_top50_pct": 10.65,
-    "top50_market_cap_usd": 2684566548729.0,
-    "stablecoin_market_cap_usd": 285801218980.0,
-    "btc_market_cap_usd": 1612531996456.0
+    "btc_dominance_pct": 57.01,
+    "stablecoin_share_top50_pct": 10.72,
+    "top50_market_cap_usd": 2665728725977.0,
+    "stablecoin_market_cap_usd": 285773836620.0,
+    "btc_market_cap_usd": 1599714274724.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,7 +65,7 @@
       {
         "symbol": "PUMP",
         "name": "Pump.fun",
-        "pct_30d": 147.3,
+        "pct_30d": 155.3,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/pump-fun",
@@ -79,7 +79,7 @@
       {
         "symbol": "ZEC",
         "name": "Zcash",
-        "pct_30d": 72.6,
+        "pct_30d": 72.9,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/zcash",
@@ -93,19 +93,19 @@
       {
         "symbol": "HYPE",
         "name": "Hyperliquid",
-        "pct_30d": 52.9,
+        "pct_30d": 51.4,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/hyperliquid",
         "direction": "up",
         "context": {
-          "title": "PURR jumps 15% as Hyperliquid Strategies updates $1.9 billion HYPE treasury and \u2018fortress balance sheet\u2019",
-          "source": "The Block",
-          "link": "https://www.theblock.co/news/business/2026-08-27-purr-jumps-hyperliquid-strategies-1-9-billion-hype-treasury-fortress-balance-sheet-412926"
+          "title": "Bitcoin under $80,000, solana leads majors higher before Warsh's Jackson Hole debut",
+          "source": "CoinDesk",
+          "link": "https://www.coindesk.com/markets/2026/08/28/bitcoin-holds-usd80-000-solana-leads-majors-higher-before-warsh-s-jackson-hole-debut"
         }
       }
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 23.5% over 30D:</strong> Total crypto market cap at $2.82T (23.5% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://www.coindesk.com/business/2026/08/27/mirae-asset-eyes-usd109-billion-crypto-empire-after-acquiring-digital-x\" target=\"_blank\" rel=\"noopener noreferrer\">Mirae Asset eyes $109 billion crypto empire after acquiring Digital X</a> (CoinDesk).</li><li><strong>Gains broadened among top-50 alts:</strong> 32 names up more than ~0.5%, 5 down more than ~0.5%, and 5 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/business/2026/08/27/live-updates-bitcoin-etf-inflows-hit-eight-straight-days-as-august-tops-usd3-billion\" target=\"_blank\" rel=\"noopener noreferrer\">Live updates: Bitcoin trades near $80,000 as stocks close with gains</a> (CoinDesk).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://thedefiant.io/news/defi/aave-opens-ios-early-access-keeps-android-and-web-waitlisted\" target=\"_blank\" rel=\"noopener noreferrer\">Aave Opens iOS Early Access, Keeps Android and Web Waitlisted</a> (The Defiant).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://cointelegraph.com/markets/bitcoin-etf-inflows-slow-232-million-btc-under-80k?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin ETF inflows slow to $232M as BTC holds under $80K</a> (CoinTelegraph).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 22.1% over 30D:</strong> Total crypto market cap at $2.81T (22.1% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://www.coindesk.com/business/2026/08/27/mirae-asset-eyes-usd109-billion-crypto-empire-after-acquiring-digital-x\" target=\"_blank\" rel=\"noopener noreferrer\">Mirae Asset eyes $109 billion crypto empire after acquiring Digital X</a> (CoinDesk).</li><li><strong>Gains broadened among top-50 alts:</strong> 33 names up more than ~0.5%, 4 down more than ~0.5%, and 5 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/business/2026/08/28/visa-doubles-down-on-south-korea-with-upbit-operator-dunamu-on-stablecoin-payments\" target=\"_blank\" rel=\"noopener noreferrer\">Visa doubles down on South Korea with Upbit operator Dunamu on stablecoin payments</a> (CoinDesk).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://cointelegraph.com/markets/bitcoin-bear-market-over-as-price-metric-copies-2023-recovery-cryptoquant-ceo?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin bear market \u2018over\u2019 as price metric copies 2023 recovery: CryptoQuant CEO</a> (CoinTelegraph).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://thedefiant.io/news/defi/aave-opens-ios-early-access-keeps-android-and-web-waitlisted\" target=\"_blank\" rel=\"noopener noreferrer\">Aave Opens iOS Early Access, Keeps Android and Web Waitlisted</a> (The Defiant).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
