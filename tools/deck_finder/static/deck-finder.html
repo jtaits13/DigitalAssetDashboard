@@ -169,8 +169,14 @@
     }
     .btn-secondary {
       color: #19456f;
-      background: linear-gradient(180deg, #eff6ff 0%, #e1eefb 100%);
+      background: #fff;
       border-color: rgba(80, 122, 172, 0.36);
+    }
+    .open-deck {
+      color: #fff;
+      background: linear-gradient(135deg, #1d5a96 0%, #2b7fbd 100%);
+      border-color: rgba(12, 58, 100, 0.28);
+      box-shadow: 0 4px 9px rgba(34, 68, 106, 0.11);
     }
     button.linkish, .lib-tools button {
       background: none;
@@ -249,16 +255,15 @@
       display: inline-flex;
       font-size: 11px;
       font-weight: 700;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-      background: #ddeeff;
-      color: #244e79;
-      border: 1px solid #b0caea;
-      padding: 4px 9px;
-      border-radius: 999px;
+      letter-spacing: 0.02em;
+      color: #3d6a48;
+      background: none;
+      border: 0;
+      padding: 0;
+      border-radius: 0;
       white-space: nowrap;
     }
-    .badge.old { background: #f4f8fc; color: #5b7491; }
+    .badge.old { color: #7a5a20; }
     .actions { display: flex; gap: 8px; flex-shrink: 0; align-items: center; }
     ul.hits { list-style: none; margin: 10px 0 0; padding: 0; }
     ul.hits li { margin: 0 0 8px; }
@@ -514,9 +519,12 @@
         const deck = group.deck;
         const article = document.createElement("article");
         article.className = "deck";
-        const badge = deck.is_latest
-          ? '<span class="badge">' + (deck.family_size > 1 ? "Current of " + deck.family_size : "Current") + "</span>"
-          : '<span class="badge old">Older version</span>';
+        let badge = "";
+        if (!deck.is_latest) {
+          badge = '<span class="badge old">Older version</span>';
+        } else if ((deck.family_size || 1) > 1) {
+          badge = '<span class="badge">Latest of ' + deck.family_size + "</span>";
+        }
         const folder = deck.folder ? deck.folder + " · " : "";
         const hits = group.hits || [];
         const previewSlides = (!searching && (deck.slides || [])) || [];
@@ -528,7 +536,7 @@
               '<div class="meta-line"></div>' +
             "</div>" +
             '<div class="actions">' + badge +
-              '<button class="btn-secondary open-deck" type="button">Open deck</button>' +
+              '<button class="open-deck" type="button">Open deck</button>' +
             "</div>" +
           "</div>";
         article.querySelector("h3").textContent = deck.title || deck.filename;
