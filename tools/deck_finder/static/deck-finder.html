@@ -217,7 +217,7 @@
       color: var(--muted);
       font-size: 0.84rem;
     }
-    .groups { display: grid; gap: 12px; }
+    .groups { display: grid; gap: 14px; }
     article.deck {
       background: linear-gradient(180deg, var(--card), var(--card-2));
       border: 1px solid var(--stroke);
@@ -236,6 +236,40 @@
       border-radius: 4px;
       background: linear-gradient(180deg, #4f9ce9 0%, #78b8f4 100%);
     }
+    .family {
+      background: #eaf2fb;
+      border: 1px solid rgba(86, 124, 168, 0.28);
+      border-radius: 18px;
+      padding: 6px;
+      box-shadow: var(--shadow);
+    }
+    .family > article.deck {
+      box-shadow: none;
+      margin: 0;
+    }
+    .family-older {
+      margin: 6px 6px 6px 22px;
+      padding-left: 14px;
+      border-left: 2px solid #9bb8d6;
+      display: grid;
+      gap: 8px;
+    }
+    .family-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #4d7399;
+      padding: 2px 8px 6px 10px;
+    }
+    article.deck.older {
+      background: #f7fbff;
+      box-shadow: none;
+      border-radius: 12px;
+      padding: 11px 14px 10px 14px;
+    }
+    article.deck.older::before { display: none; }
+    article.deck.older h3 { font-size: 0.98rem; color: #3d5d81; }
     .deck-top {
       display: flex;
       justify-content: space-between;
@@ -247,23 +281,17 @@
       font-size: 1.05rem;
       color: #244d76;
     }
+    .version-line {
+      margin: 0 0 4px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #2b67a4;
+    }
+    .version-line.old { color: #7a5a20; }
     .meta-line {
       color: var(--muted);
       font-size: 0.82rem;
     }
-    .badge {
-      display: inline-flex;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      color: #3d6a48;
-      background: none;
-      border: 0;
-      padding: 0;
-      border-radius: 0;
-      white-space: nowrap;
-    }
-    .badge.old { color: #7a5a20; }
     .actions { display: flex; gap: 8px; flex-shrink: 0; align-items: center; }
     ul.hits { list-style: none; margin: 10px 0 0; padding: 0; }
     ul.hits li { margin: 0 0 8px; }
@@ -484,6 +512,94 @@
       ul.appendChild(li);
     }
 
+    function versionCaption(deck, nested) {
+      if (nested || !deck.is_latest) return "Older version";
+      if ((deck.family_size || 1) > 1) return "Latest of " + deck.family_size + " versions";
+      return "";
+    }
+
+    function renderDeckCard(group, searching, nested) {
+      const deck = group.deck;
+      const article = document.createElement("article");
+      article.className = nested ? "deck older" : "deck";
+      const caption = versionCaption(deck, nested);
+      const folder = deck.folder ? deck.folder + " · " : "";
+      const hits = group.hits || [];
+      const previewSlides = (!searching && (deck.slides || [])) || [];
+
+      article.innerHTML =
+        '<div class="deck-top">' +
+          "<div>" +
+            "<h3></h3>" +
+            (caption ? '<div class="version-line"></div>' : "") +
+            '<div class="meta-line"></div>' +
+          "</div>" +
+          '<div class="actions">' +
+            '<button class="open-deck" type="button">Open deck</button>' +
+          "</div>" +
+        "</div>";
+      article.querySelector("h3").textContent = nested
+        ? deck.filename
+        : (deck.title || deck.filename);
+      const versionEl = article.querySelector(".version-line");
+      if (versionEl) {
+        versionEl.textContent = caption;
+        if (nested || !deck.is_latest) versionEl.classList.add("old");
+      }
+      article.querySelector(".meta-line").textContent =
+        folder + (nested ? "" : deck.filename + " · ") +
+        fmtDate(deck.modified || deck.fs_modified) +
+        " · " + plural(deck.slide_count || 0, "slide");
+      article.querySelector(".open-deck").addEventListener("click", () => openDeck(deck.rel_path));
+
+      if (hits.length) {
+        const ul = document.createElement("ul");
+        ul.className = "hits";
+        const shown = hits.slice(0, 8);
+        shown.forEach((hit) => addSlideRow(ul, deck, hit, true));
+        article.appendChild(ul);
+        if (hits.length > shown.length) {
+          const more = document.createElement("button");
+          more.className = "linkish";
+          more.type = "button";
+          more.textContent = "Show " + (hits.length - shown.length) + " more matching slides";
+          more.style.marginTop = "8px";
+          more.addEventListener("click", () => {
+            hits.slice(8).forEach((hit) => addSlideRow(ul, deck, hit, true));
+            more.remove();
+          });
+          article.appendChild(more);
+        }
+      } else if (previewSlides.length && !nested) {
+        const toggle = document.createElement("button");
+        toggle.className = "linkish";
+        toggle.type = "button";
+        toggle.textContent = "Preview " + plural(previewSlides.length, "slide");
+        toggle.style.marginTop = "10px";
+        const ul = document.createElement("ul");
+        ul.className = "hits";
+        ul.hidden = true;
+        previewSlides.forEach((slide) => addSlideRow(ul, deck, slide, false));
+        toggle.addEventListener("click", () => {
+          ul.hidden = !ul.hidden;
+          toggle.textContent = ul.hidden
+            ? "Preview " + plural(previewSlides.length, "slide")
+            : "Hide slides";
+        });
+        article.appendChild(toggle);
+        article.appendChild(ul);
+      } else if (searching && !hits.length) {
+        const p = document.createElement("p");
+        p.className = "snippet";
+        p.style.margin = "10px 0 0";
+        p.textContent = nested
+          ? "Older file in this version group."
+          : "Matched the file name or folder, not a specific slide.";
+        article.appendChild(p);
+      }
+      return article;
+    }
+
     function renderGroups(data) {
       const root = $("results");
       root.innerHTML = "";
@@ -491,8 +607,9 @@
       const q = ($("q").value || "").trim();
       const searching = Boolean(q);
       const latestOnly = $("latestOnly").checked;
-      const hiddenOlder = latestOnly && status && (status.deck_count || 0) > groups.length && !searching
-        ? (status.deck_count - groups.length)
+      const deckCount = data.deck_hit_count || groups.length;
+      const hiddenOlder = latestOnly && status && (status.deck_count || 0) > deckCount
+        ? (status.deck_count - deckCount)
         : 0;
 
       $("empty").hidden = groups.length > 0;
@@ -507,88 +624,32 @@
 
       if (searching) {
         $("resultLine").textContent = plural(data.slide_hit_count || groups.length, "match") +
-          " in " + plural(groups.length, "deck");
+          " in " + plural(deckCount, "deck");
       } else {
-        $("resultLine").textContent = "Browsing " + plural(groups.length, "deck");
+        $("resultLine").textContent = "Browsing " + plural(deckCount, "deck");
       }
       if (hiddenOlder > 0) {
         $("resultLine").textContent += " · " + hiddenOlder + " older version" + (hiddenOlder === 1 ? "" : "s") + " hidden";
       }
 
       groups.forEach((group) => {
-        const deck = group.deck;
-        const article = document.createElement("article");
-        article.className = "deck";
-        let badge = "";
-        if (!deck.is_latest) {
-          badge = '<span class="badge old">Older version</span>';
-        } else if ((deck.family_size || 1) > 1) {
-          badge = '<span class="badge">Latest of ' + deck.family_size + "</span>";
+        const older = group.older || [];
+        if (older.length) {
+          const wrap = document.createElement("div");
+          wrap.className = "family";
+          const label = document.createElement("div");
+          label.className = "family-label";
+          label.textContent = (older.length + 1) + " versions of this deck";
+          wrap.appendChild(label);
+          wrap.appendChild(renderDeckCard(group, searching, false));
+          const nest = document.createElement("div");
+          nest.className = "family-older";
+          older.forEach((item) => nest.appendChild(renderDeckCard(item, searching, true)));
+          wrap.appendChild(nest);
+          root.appendChild(wrap);
+        } else {
+          root.appendChild(renderDeckCard(group, searching, false));
         }
-        const folder = deck.folder ? deck.folder + " · " : "";
-        const hits = group.hits || [];
-        const previewSlides = (!searching && (deck.slides || [])) || [];
-
-        article.innerHTML =
-          '<div class="deck-top">' +
-            "<div>" +
-              "<h3></h3>" +
-              '<div class="meta-line"></div>' +
-            "</div>" +
-            '<div class="actions">' + badge +
-              '<button class="open-deck" type="button">Open deck</button>' +
-            "</div>" +
-          "</div>";
-        article.querySelector("h3").textContent = deck.title || deck.filename;
-        article.querySelector(".meta-line").textContent =
-          folder + deck.filename + " · " + fmtDate(deck.modified || deck.fs_modified) +
-          " · " + plural(deck.slide_count || 0, "slide");
-        article.querySelector(".open-deck").addEventListener("click", () => openDeck(deck.rel_path));
-
-        if (hits.length) {
-          const ul = document.createElement("ul");
-          ul.className = "hits";
-          const shown = hits.slice(0, 8);
-          shown.forEach((hit) => addSlideRow(ul, deck, hit, true));
-          article.appendChild(ul);
-          if (hits.length > shown.length) {
-            const more = document.createElement("button");
-            more.className = "linkish";
-            more.type = "button";
-            more.textContent = "Show " + (hits.length - shown.length) + " more matching slides";
-            more.style.marginTop = "8px";
-            more.addEventListener("click", () => {
-              hits.slice(8).forEach((hit) => addSlideRow(ul, deck, hit, true));
-              more.remove();
-            });
-            article.appendChild(more);
-          }
-        } else if (previewSlides.length) {
-          const toggle = document.createElement("button");
-          toggle.className = "linkish";
-          toggle.type = "button";
-          toggle.textContent = "Preview " + plural(previewSlides.length, "slide");
-          toggle.style.marginTop = "10px";
-          const ul = document.createElement("ul");
-          ul.className = "hits";
-          ul.hidden = true;
-          previewSlides.forEach((slide) => addSlideRow(ul, deck, slide, false));
-          toggle.addEventListener("click", () => {
-            ul.hidden = !ul.hidden;
-            toggle.textContent = ul.hidden
-              ? "Preview " + plural(previewSlides.length, "slide")
-              : "Hide slides";
-          });
-          article.appendChild(toggle);
-          article.appendChild(ul);
-        } else if (searching) {
-          const p = document.createElement("p");
-          p.className = "snippet";
-          p.style.margin = "10px 0 0";
-          p.textContent = "Matched the file name or folder, not a specific slide.";
-          article.appendChild(p);
-        }
-        root.appendChild(article);
       });
     }
 

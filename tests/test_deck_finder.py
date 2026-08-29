@@ -231,7 +231,21 @@ def test_latest_only_hides_older_copy(deck_folder: Path) -> None:
     hidden = index_decks.search_catalog(catalog, "BUIDL", latest_only=True)
     shown = index_decks.search_catalog(catalog, "BUIDL", latest_only=False)
     assert hidden["result_count"] == 1
-    assert shown["result_count"] == 2
+    assert shown["result_count"] == 1
+    assert shown["deck_hit_count"] == 2
+    assert shown["groups"][0]["deck"]["filename"].endswith("v2.pptx")
+    assert shown["groups"][0]["older"][0]["deck"]["filename"].endswith("v1.pptx")
+
+
+def test_browse_nests_older_versions_together(deck_folder: Path) -> None:
+    catalog = index_decks.build_catalog(deck_folder)
+    result = index_decks.search_catalog(catalog, "", latest_only=False)
+    assert result["result_count"] == 2
+    assert result["deck_hit_count"] == 3
+    treasuries = next(g for g in result["groups"] if "Treasuries" in g["deck"]["title"])
+    assert treasuries["deck"]["filename"].endswith("v2.pptx")
+    assert len(treasuries["older"]) == 1
+    assert treasuries["older"][0]["deck"]["filename"].endswith("v1.pptx")
 
 
 def test_and_query_requires_all_tokens(deck_folder: Path) -> None:

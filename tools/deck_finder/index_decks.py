@@ -535,6 +535,38 @@ def deck_public(deck: dict[str, Any], include_slides: bool = False) -> dict[str,
     return row
 
 
+def cluster_version_families(groups: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Nest older copies under the newest file in the same version family."""
+    buckets: dict[str, list[dict[str, Any]]] = {}
+    order: list[str] = []
+    for group in groups:
+        deck = group.get("deck") or {}
+        family = str(deck.get("family_id") or deck.get("id") or "")
+        if family not in buckets:
+            buckets[family] = []
+            order.append(family)
+        buckets[family].append(group)
+
+    clustered: list[dict[str, Any]] = []
+    for family in order:
+        members = buckets[family]
+        members.sort(
+            key=lambda g: (
+                bool((g.get("deck") or {}).get("is_latest")),
+                (g.get("deck") or {}).get("fs_modified") or "",
+            ),
+            reverse=True,
+        )
+        head = dict(members[0])
+        older = [dict(item) for item in members[1:]]
+        for item in older:
+            item.pop("older", None)
+        head["older"] = older
+        head["score"] = max(int(item.get("score") or 0) for item in members)
+        clustered.append(head)
+    return clustered
+
+
 def search_catalog(
     catalog: dict[str, Any],
     query: str,
@@ -616,6 +648,8 @@ def search_catalog(
     else:
         groups.sort(key=lambda g: g["deck"].get("fs_modified") or "", reverse=True)
 
+    groups = cluster_version_families(groups)
+
     folders = sorted(
         {
             (d.get("folder") or "").replace("\\", "/")
@@ -628,7 +662,11 @@ def search_catalog(
         "tokens": tokens,
         "latest_only": latest_only,
         "result_count": len(groups),
-        "slide_hit_count": sum(len(g["hits"]) for g in groups),
+        "deck_hit_count": sum(1 + len(g.get("older") or []) for g in groups),
+        "slide_hit_count": sum(
+            len(g.get("hits") or []) + sum(len(item.get("hits") or []) for item in (g.get("older") or []))
+            for g in groups
+        ),
         "folders": folders,
         "groups": groups,
     }
