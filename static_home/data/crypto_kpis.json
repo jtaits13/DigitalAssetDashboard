@@ -1,36 +1,36 @@
 {
-  "generated_at": "2026-08-28T22:30:43.093961+00:00",
+  "generated_at": "2026-08-29T07:13:33.721309+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
     "value_display": "$2.74T",
     "delta": {
-      "pct": 19.8963,
+      "pct": 19.8061,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$77,573",
+    "value_display": "$77,451",
     "delta": {
-      "pct": 21.9,
+      "pct": 21.1,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,434",
+    "value_display": "$2,435",
     "delta": {
-      "pct": 28.7,
+      "pct": 27.9,
       "window": "1M"
     }
   },
   "btc_dominance": {
     "label": "BTC dominance",
-    "value_display": "56.9%",
+    "value_display": "56.8%",
     "delta": {
-      "pct": 1.6712,
+      "pct": 1.08,
       "window": "1M"
     }
   },
@@ -38,16 +38,16 @@
     "label": "Stablecoin share",
     "value_display": "11.0%",
     "delta": {
-      "pct": -16.5162,
+      "pct": -16.0315,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 56.85,
-    "stablecoin_share_top50_pct": 10.98,
-    "top50_market_cap_usd": 2604597443494.0,
-    "stablecoin_market_cap_usd": 285906466804.0,
-    "btc_market_cap_usd": 1557397636244.0
+    "btc_dominance_pct": 56.76,
+    "stablecoin_share_top50_pct": 11.0,
+    "top50_market_cap_usd": 2602129652948.0,
+    "stablecoin_market_cap_usd": 286299427674.0,
+    "btc_market_cap_usd": 1554900769302.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,7 +65,7 @@
       {
         "symbol": "PUMP",
         "name": "Pump.fun",
-        "pct_30d": 147.8,
+        "pct_30d": 141.0,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/pump-fun",
@@ -79,7 +79,7 @@
       {
         "symbol": "ZEC",
         "name": "Zcash",
-        "pct_30d": 73.6,
+        "pct_30d": 66.7,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/zcash",
@@ -93,7 +93,7 @@
       {
         "symbol": "HYPE",
         "name": "Hyperliquid",
-        "pct_30d": 49.2,
+        "pct_30d": 51.5,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/hyperliquid",
@@ -107,5 +107,5 @@
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 19.9% over 30D:</strong> Total crypto market cap at $2.74T (19.9% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://cointelegraph.com/news/donald-trump-crypto-investors-losses-public-citizen?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Trump cost investors $4.7B through crypto \u2018schemes\u2019: Public Citizen</a> (CoinTelegraph).</li><li><strong>Gains broadened among top-50 alts:</strong> 34 names up more than ~0.5%, 5 down more than ~0.5%, and 3 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/business/2026/08/28/visa-doubles-down-on-south-korea-with-upbit-operator-dunamu-on-stablecoin-payments\" target=\"_blank\" rel=\"noopener noreferrer\">Visa doubles down on South Korea with Upbit operator Dunamu on stablecoin payments</a> (CoinDesk).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.theblock.co/news/markets/2026-08-28-bitwise-fund-is-first-solana-etf-to-hit-1-billion-aum-413035\" target=\"_blank\" rel=\"noopener noreferrer\">Bitwise fund is first Solana ETF to hit $1 billion AUM</a> (The Block).</li><li><strong>ETH outpaced BTC over 1M:</strong> about <strong>6.8pp</strong> on spot from the top-50 table. Related: <a href=\"https://www.coindesk.com/business/2026/08/28/sbi-stakes-usd270-million-in-ajaib-to-expand-yen-stablecoin-in-southeast-asia\" target=\"_blank\" rel=\"noopener noreferrer\">SBI buys 20% stake in Indonesia&#x27;s Ajaib for $270 million to expand yen stablecoin in Southeast Asia</a> (CoinDesk).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 19.8% over 30D:</strong> Total crypto market cap at $2.74T (19.8% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://cointelegraph.com/news/donald-trump-crypto-investors-losses-public-citizen?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Trump cost investors $4.7B through crypto \u2018schemes\u2019: Public Citizen</a> (CoinTelegraph).</li><li><strong>Gains broadened among top-50 alts:</strong> 34 names up more than ~0.5%, 5 down more than ~0.5%, and 3 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/business/2026/08/28/visa-doubles-down-on-south-korea-with-upbit-operator-dunamu-on-stablecoin-payments\" target=\"_blank\" rel=\"noopener noreferrer\">Visa doubles down on South Korea with Upbit operator Dunamu on stablecoin payments</a> (CoinDesk).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://cointelegraph.com/markets/bitcoin-etf-end-9-day-inflow-streak-btc-below-78k?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin ETFs end 9-day inflow streak as BTC dips below $78K</a> (CoinTelegraph).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.theblock.co/news/markets/2026-08-28-bitwise-fund-is-first-solana-etf-to-hit-1-billion-aum-413035\" target=\"_blank\" rel=\"noopener noreferrer\">Bitwise fund is first Solana ETF to hit $1 billion AUM</a> (The Block).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
