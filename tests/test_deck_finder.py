@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
-TOOL_DIR = ROOT / "tools" / "deck_finder"
+TOOL_DIR = ROOT / "Powerpoint Search Project"
 if str(TOOL_DIR) not in sys.path:
     sys.path.insert(0, str(TOOL_DIR))
 
