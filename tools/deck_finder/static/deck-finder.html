@@ -17,7 +17,6 @@
       --card-2: #f7fbff;
       --stroke: rgba(86, 124, 168, 0.24);
       --ok: #1f8659;
-      --warn: #946518;
       --danger: #b44646;
       --ring: rgba(43, 103, 164, 0.2);
       --shadow: 0 12px 26px rgba(24, 49, 81, 0.1);
@@ -34,297 +33,317 @@
         radial-gradient(circle at 100% 12%, rgba(31, 127, 188, 0.09) 0%, transparent 30%),
         linear-gradient(180deg, var(--bg), var(--bg-2));
     }
-    .wrap { max-width: 1040px; margin: 0 auto; padding: 30px 20px 72px; }
-    .hero {
-      display: grid;
-      gap: 10px;
-      margin-bottom: 20px;
-      padding: 22px 24px 20px 28px;
-      border-radius: 16px;
-      background: linear-gradient(138deg, #163b62 0%, #1f4f80 64%, #29679f 100%);
-      border: 1px solid rgba(122, 168, 219, 0.42);
-      box-shadow: 0 14px 28px rgba(24, 55, 90, 0.28);
-      position: relative;
-      overflow: hidden;
+    .wrap { max-width: 920px; margin: 0 auto; padding: 22px 20px 72px; }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 16px;
+      margin-bottom: 16px;
     }
-    .hero::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 7px;
-      background: linear-gradient(180deg, #4f9ce9 0%, #78b8f4 100%);
-    }
-    .kicker {
+    .brand .kicker {
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      font-size: 12px;
-      color: #bddcff;
+      font-size: 11px;
+      color: #4d7399;
       font-weight: 700;
+      margin-bottom: 2px;
     }
-    .hero h1 {
+    .brand h1 {
       margin: 0;
-      font-size: clamp(1.7rem, 3.4vw, 2.5rem);
-      line-height: 1.08;
-      font-weight: 700;
-      color: #f3f8ff;
+      font-size: 1.55rem;
+      color: var(--ink-strong);
+      letter-spacing: -0.02em;
     }
-    .hero .lede {
-      margin: 0;
-      color: #dcecff;
-      max-width: 68ch;
-      line-height: 1.55;
-      font-size: 0.98rem;
+    .lib-tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      font-size: 0.84rem;
     }
-    .card, .search-card, article.deck, .setup {
+    .search-card {
       background: linear-gradient(180deg, var(--card), var(--card-2));
       border: 1px solid var(--stroke);
       border-radius: 18px;
       box-shadow: var(--shadow);
+      padding: 16px 16px 14px;
     }
-    .search-card { padding: 18px; }
     .search-card:focus-within {
       border-color: rgba(77, 128, 184, 0.45);
       box-shadow: 0 0 0 3px rgba(52, 111, 171, 0.12), var(--shadow);
     }
-    #q, .folder-input, select, input[type="date"] {
-      font-family: inherit;
-      font-size: 0.95rem;
-      border: 1px solid rgba(95, 132, 176, 0.38);
-      border-radius: 12px;
-      padding: 10px 12px;
-      background: #fff;
-      color: var(--ink);
-      transition: border-color 140ms ease, box-shadow 140ms ease;
+    .search-wrap { position: relative; }
+    .search-wrap::before {
+      content: "";
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      width: 15px;
+      height: 15px;
+      border: 2px solid #5e84ab;
+      border-radius: 50%;
+      transform: translateY(-60%);
+      pointer-events: none;
+    }
+    .search-wrap::after {
+      content: "";
+      position: absolute;
+      left: 29px;
+      top: calc(50% + 5px);
+      width: 7px;
+      height: 2px;
+      background: #5e84ab;
+      transform: rotate(45deg);
+      pointer-events: none;
     }
     #q {
       width: 100%;
+      font-family: inherit;
       font-size: 1.08rem;
-      padding: 13px 15px;
+      padding: 14px 16px 14px 44px;
+      border: 1px solid rgba(95, 132, 176, 0.38);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--ink);
     }
-    #q::placeholder, .folder-input::placeholder { color: #7890aa; }
+    #q::placeholder { color: #7890aa; }
+    .folder-input, select, input[type="date"] {
+      font-family: inherit;
+      font-size: 0.92rem;
+      border: 1px solid rgba(95, 132, 176, 0.38);
+      border-radius: 12px;
+      padding: 9px 12px;
+      background: #fff;
+      color: var(--ink);
+    }
     #q:focus, .folder-input:focus, select:focus, input[type="date"]:focus {
       outline: none;
       border-color: var(--accent);
       box-shadow: 0 0 0 4px var(--ring);
     }
+    .hint {
+      margin: 8px 2px 0;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
     .filters {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px 14px;
+      gap: 10px 16px;
       align-items: center;
-      margin-top: 13px;
+      margin-top: 12px;
     }
     label.chk, label.field {
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       font-weight: 700;
       color: #24486e;
-      letter-spacing: 0.02em;
     }
-    .folder-input { min-width: min(100%, 420px); }
+    .folder-input { min-width: min(100%, 420px); flex: 1; }
+    .more-filters { display: none; }
+    .more-filters.open { display: flex; }
     button {
       border: 1px solid transparent;
       border-radius: 999px;
-      padding: 10px 16px;
+      padding: 9px 14px;
       font-family: inherit;
-      font-size: 0.87rem;
+      font-size: 0.86rem;
       font-weight: 700;
-      letter-spacing: 0.01em;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
-      box-shadow: 0 4px 9px rgba(34, 68, 106, 0.11);
       transition: transform 140ms ease, filter 140ms ease, box-shadow 140ms ease;
     }
-    button:hover {
-      transform: translateY(-1px);
-      filter: brightness(1.02);
-      box-shadow: 0 7px 14px rgba(34, 68, 106, 0.16);
-    }
-    button:active { transform: translateY(0); }
-    button:focus-visible {
-      outline: none;
-      box-shadow: 0 0 0 4px var(--ring), 0 8px 16px rgba(34, 68, 106, 0.16);
-    }
-    button:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-    .btn-primary, button.primary {
+    button:hover { transform: translateY(-1px); filter: brightness(1.02); }
+    button:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+    button:focus-visible { outline: none; box-shadow: 0 0 0 4px var(--ring); }
+    .btn-primary {
       color: #fff;
       background: linear-gradient(135deg, #1d5a96 0%, #2b7fbd 100%);
       border-color: rgba(12, 58, 100, 0.28);
+      box-shadow: 0 4px 9px rgba(34, 68, 106, 0.11);
     }
-    .btn-secondary, button.ghost {
+    .btn-secondary {
       color: #19456f;
       background: linear-gradient(180deg, #eff6ff 0%, #e1eefb 100%);
       border-color: rgba(80, 122, 172, 0.36);
     }
-    button.linkish {
+    button.linkish, .lib-tools button {
       background: none;
       border: 0;
       color: var(--accent);
       padding: 0;
       box-shadow: none;
-      text-decoration: none;
-      font-size: 0.84rem;
+      font-weight: 700;
     }
-    button.linkish:hover {
+    button.linkish:hover, .lib-tools button:hover {
       text-decoration: underline;
-      box-shadow: none;
+      transform: none;
       filter: none;
-    }
-    .meta {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items: center;
-      margin: 16px 0 10px;
-      padding: 11px 13px;
-      border-radius: 13px;
-      background: #e8f1fc;
-      border: 1px solid #b9d0ea;
-      color: #27547d;
-      font-size: 0.9rem;
     }
     .setup {
       padding: 16px 18px;
       margin-bottom: 16px;
-      border-style: dashed;
-      border-color: rgba(95, 132, 176, 0.4);
+      border: 1px dashed rgba(95, 132, 176, 0.4);
+      border-radius: 16px;
       background: rgba(246, 251, 255, 0.92);
     }
-    .setup h2 {
-      margin: 0 0 6px;
-      font-size: 1.02rem;
+    .setup h2 { margin: 0 0 6px; font-size: 1.02rem; color: #244d76; }
+    .setup p { margin: 0 0 12px; color: var(--muted); font-size: 0.9rem; }
+    .err { color: var(--danger); font-size: 0.9rem; margin-top: 8px; }
+    .results-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: baseline;
+      margin: 18px 2px 10px;
+    }
+    .results-head h2 {
+      margin: 0;
+      font-size: 0.95rem;
       color: #244d76;
     }
-    .setup p {
-      margin: 0 0 12px;
+    .results-head .aside {
       color: var(--muted);
-      font-size: 0.9rem;
+      font-size: 0.84rem;
     }
-    .err { color: var(--danger); font-size: 0.9rem; margin-top: 8px; }
-    .groups { display: grid; gap: 14px; }
+    .groups { display: grid; gap: 12px; }
     article.deck {
-      padding: 16px 18px 12px;
+      background: linear-gradient(180deg, var(--card), var(--card-2));
+      border: 1px solid var(--stroke);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 14px 16px 12px 18px;
       position: relative;
-      overflow: hidden;
     }
     article.deck::before {
       content: "";
       position: absolute;
       left: 0;
-      top: 0;
-      bottom: 0;
-      width: 5px;
+      top: 12px;
+      bottom: 12px;
+      width: 4px;
+      border-radius: 4px;
       background: linear-gradient(180deg, #4f9ce9 0%, #78b8f4 100%);
     }
     .deck-top {
       display: flex;
       justify-content: space-between;
-      gap: 14px;
+      gap: 12px;
       align-items: flex-start;
-      padding-left: 8px;
     }
-    .deck-top h2 {
-      margin: 0 0 4px;
-      font-size: 1.08rem;
-      font-weight: 700;
+    .deck-top h3 {
+      margin: 0 0 3px;
+      font-size: 1.05rem;
       color: #244d76;
-      letter-spacing: 0.01em;
     }
-    .path {
+    .meta-line {
       color: var(--muted);
       font-size: 0.82rem;
-      word-break: break-all;
     }
     .badge {
       display: inline-flex;
-      align-items: center;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.03em;
       text-transform: uppercase;
       background: #ddeeff;
       color: #244e79;
       border: 1px solid #b0caea;
-      padding: 5px 10px;
+      padding: 4px 9px;
       border-radius: 999px;
       white-space: nowrap;
     }
-    .badge.old {
-      background: #f4f8fc;
-      color: #5b7491;
-      border-color: rgba(113, 142, 173, 0.38);
-    }
+    .badge.old { background: #f4f8fc; color: #5b7491; }
     .actions { display: flex; gap: 8px; flex-shrink: 0; align-items: center; }
-    ul.hits { list-style: none; margin: 10px 0 2px; padding: 0 0 0 8px; }
-    ul.hits li {
-      border-top: 1px solid var(--stroke);
-      padding: 11px 4px;
-      border-radius: 10px;
+    ul.hits { list-style: none; margin: 10px 0 0; padding: 0; }
+    ul.hits li { margin: 0 0 8px; }
+    ul.hits li:last-child { margin-bottom: 0; }
+    .slide-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      width: 100%;
+      text-align: left;
+      border: 1px solid var(--stroke);
+      background: #fff;
+      border-radius: 12px;
+      padding: 10px 12px;
+      box-shadow: none;
+      font-weight: 500;
     }
-    ul.hits li:hover { background: rgba(232, 241, 252, 0.7); }
-    .slide-row { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+    .slide-row:hover {
+      border-color: rgba(43, 103, 164, 0.45);
+      background: #f3f8ff;
+      transform: none;
+    }
     .slide-kicker {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 700;
       color: var(--accent);
       letter-spacing: 0.08em;
       text-transform: uppercase;
     }
     .slide-title {
-      margin: 2px 0 5px;
-      font-weight: 650;
+      margin: 2px 0 4px;
+      font-weight: 700;
       color: var(--ink-strong);
     }
-    .snippet { color: #3d5d81; font-size: 0.92rem; line-height: 1.45; }
+    .snippet { color: #3d5d81; font-size: 0.9rem; line-height: 1.4; }
     mark {
       background: #dcecff;
       color: var(--ink-strong);
       padding: 0 3px;
       border-radius: 4px;
-      font-weight: 650;
+      font-weight: 700;
+    }
+    .open-label {
+      flex-shrink: 0;
+      color: #19456f;
+      background: linear-gradient(180deg, #eff6ff 0%, #e1eefb 100%);
+      border: 1px solid rgba(80, 122, 172, 0.36);
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      pointer-events: none;
     }
     .empty {
       text-align: center;
       color: var(--muted);
-      padding: 36px 14px;
-      background: rgba(255, 255, 255, 0.55);
+      padding: 32px 16px;
       border: 1px dashed rgba(95, 132, 176, 0.4);
       border-radius: 16px;
+      background: rgba(255, 255, 255, 0.55);
     }
-    .more { margin: 2px 0 8px 8px; }
+    .empty strong { color: #244d76; }
     @media (max-width: 720px) {
-      .deck-top, .slide-row { flex-direction: column; }
-      .actions { width: 100%; justify-content: flex-start; }
+      .topbar, .deck-top, .slide-row, .results-head { flex-direction: column; }
+      .actions { width: 100%; }
     }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <header class="hero">
-      <div class="kicker">Internal slide library</div>
-      <h1>Deck finder</h1>
-      <p class="lede">
-        Type keywords from an email, a client ask, or a slide you remember.
-        Results are matching slides in the newest version of each deck, unless you turn that off.
-      </p>
-    </header>
+    <div class="topbar">
+      <div class="brand">
+        <div class="kicker">Internal slide library</div>
+        <h1>Deck finder</h1>
+      </div>
+      <div class="lib-tools" id="libTools" hidden>
+        <button class="linkish" id="changeFolder" type="button">Change folder</button>
+        <button class="linkish" id="reindex" type="button">Refresh index</button>
+      </div>
+    </div>
 
     <div id="setup" class="setup" hidden>
-      <h2>Point this tool at your PowerPoint folder</h2>
-      <p>Local only — nothing is uploaded. Paste the full folder path, then index.</p>
+      <h2>Connect your PowerPoint folder</h2>
+      <p>Paste the folder path. Nothing is uploaded — this stays on the machine that is running the tool.</p>
       <div class="filters">
         <input class="folder-input" id="folderPath" type="text" placeholder="C:\Users\you\Decks">
         <button class="btn-primary" id="saveFolder" type="button">Save and index</button>
@@ -333,38 +352,50 @@
     </div>
 
     <div class="search-card">
-      <input id="q" type="search" placeholder="e.g. BlackRock BUIDL AUM Q2" autocomplete="off" autofocus>
+      <div class="search-wrap">
+        <input id="q" type="search" placeholder="Describe the slide: BlackRock BUIDL AUM Q2" autocomplete="off" autofocus>
+      </div>
+      <p class="hint" id="searchHint">Use a few distinctive words from the email or the slide. Leave blank to browse decks.</p>
       <div class="filters">
         <label class="chk">
           <input id="latestOnly" type="checkbox" checked>
-          Latest versions only
+          Current versions only
         </label>
         <label class="field">Folder
           <select id="folderFilter"><option value="">All folders</option></select>
         </label>
+        <button class="linkish" id="toggleMore" type="button">More filters</button>
+      </div>
+      <div class="filters more-filters" id="moreFilters">
         <label class="field">Modified after
           <input id="modifiedAfter" type="date">
         </label>
-        <button class="btn-secondary" id="reindex" type="button">Re-index folder</button>
       </div>
     </div>
 
-    <div class="meta">
-      <span>
-        <span id="statusLine">Not indexed yet.</span>
-        <button class="linkish" id="changeFolder" type="button" hidden>Change folder</button>
-      </span>
-      <span id="resultLine"></span>
+    <div class="results-head">
+      <h2 id="resultLine">Not indexed yet</h2>
+      <div class="aside" id="statusLine"></div>
     </div>
     <div class="err" id="pageErr"></div>
     <div id="results" class="groups"></div>
-    <div id="empty" class="empty" hidden>No matching slides. Try fewer or more distinctive keywords.</div>
+    <div id="empty" class="empty" hidden></div>
   </div>
 
   <script>
     const $ = (id) => document.getElementById(id);
     let debounceTimer = null;
     let status = null;
+
+    function plural(n, word) {
+      return n + " " + word + (n === 1 ? "" : "s");
+    }
+
+    function folderName(path) {
+      if (!path) return "";
+      const parts = String(path).replace(/\\/g, "/").split("/").filter(Boolean);
+      return parts[parts.length - 1] || path;
+    }
 
     async function api(url, opts) {
       const res = await fetch(url, opts);
@@ -399,16 +430,16 @@
       status = await api("/api/status");
       const ready = status.configured;
       $("setup").hidden = ready;
-      $("changeFolder").hidden = !ready;
+      $("libTools").hidden = !ready;
       if (status.deck_folder) $("folderPath").value = status.deck_folder;
       fillFolders(status.folders || []);
       if (!ready) {
-        $("statusLine").textContent = "Set a folder path to begin.";
+        $("statusLine").textContent = "";
+        $("resultLine").textContent = "Connect a folder to begin";
         return;
       }
       const when = status.generated_at ? "Indexed " + fmtDate(status.generated_at) : "Not indexed yet";
-      $("statusLine").textContent = when + " · " + (status.deck_count || 0) + " decks · " +
-        (status.slide_count || 0) + " slides · " + status.deck_folder;
+      $("statusLine").textContent = when + " · " + folderName(status.deck_folder);
     }
 
     async function openDeck(relPath, slide) {
@@ -426,120 +457,126 @@
       }
     }
 
+    function addSlideRow(ul, deck, hit, searching) {
+      const li = document.createElement("li");
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "slide-row";
+      btn.innerHTML =
+        "<div>" +
+          '<div class="slide-kicker"></div>' +
+          '<div class="slide-title"></div>' +
+          (hit.snippet_html ? '<div class="snippet"></div>' : "") +
+        "</div>" +
+        '<span class="open-label"></span>';
+      btn.querySelector(".slide-kicker").textContent = "Slide " + hit.number;
+      btn.querySelector(".slide-title").textContent = hit.title || ("Slide " + hit.number);
+      const snippet = btn.querySelector(".snippet");
+      if (snippet) snippet.innerHTML = hit.snippet_html;
+      btn.querySelector(".open-label").textContent = searching ? "Open this slide" : "Open slide " + hit.number;
+      btn.addEventListener("click", () => openDeck(deck.rel_path, hit.number));
+      li.appendChild(btn);
+      ul.appendChild(li);
+    }
+
     function renderGroups(data) {
       const root = $("results");
       root.innerHTML = "";
       const groups = data.groups || [];
-      $("empty").hidden = groups.length > 0;
       const q = ($("q").value || "").trim();
+      const searching = Boolean(q);
+      const latestOnly = $("latestOnly").checked;
+      const hiddenOlder = latestOnly && status && (status.deck_count || 0) > groups.length && !searching
+        ? (status.deck_count - groups.length)
+        : 0;
+
+      $("empty").hidden = groups.length > 0;
       if (!groups.length) {
-        $("resultLine").textContent = q ? "0 results" : "";
+        $("resultLine").textContent = searching ? "No matching slides" : "No decks to show";
+        $("empty").innerHTML = searching
+          ? 'Nothing matched <strong></strong>. Try 2–4 distinctive words from the slide itself.'
+          : "This folder has no indexed PowerPoint files yet. Refresh the index after adding decks.";
+        if (searching) $("empty").querySelector("strong").textContent = q;
         return;
       }
-      $("resultLine").textContent = groups.length + " decks" +
-        (data.slide_hit_count ? " · " + data.slide_hit_count + " matching slides" : "");
+
+      if (searching) {
+        $("resultLine").textContent = plural(data.slide_hit_count || groups.length, "match") +
+          " in " + plural(groups.length, "deck");
+      } else {
+        $("resultLine").textContent = "Browsing " + plural(groups.length, "deck");
+      }
+      if (hiddenOlder > 0) {
+        $("resultLine").textContent += " · " + hiddenOlder + " older version" + (hiddenOlder === 1 ? "" : "s") + " hidden";
+      }
 
       groups.forEach((group) => {
         const deck = group.deck;
         const article = document.createElement("article");
         article.className = "deck";
         const badge = deck.is_latest
-          ? '<span class="badge">Latest' + (deck.family_size > 1 ? " of " + deck.family_size : "") + "</span>"
+          ? '<span class="badge">' + (deck.family_size > 1 ? "Current of " + deck.family_size : "Current") + "</span>"
           : '<span class="badge old">Older version</span>';
-        const folder = deck.folder ? deck.folder + " / " : "";
+        const folder = deck.folder ? deck.folder + " · " : "";
         const hits = group.hits || [];
-        const previewSlides = (!q && (deck.slides || []).slice(0, 8)) || [];
+        const previewSlides = (!searching && (deck.slides || [])) || [];
 
         article.innerHTML =
           '<div class="deck-top">' +
             "<div>" +
-              "<h2></h2>" +
-              '<div class="path"></div>' +
+              "<h3></h3>" +
+              '<div class="meta-line"></div>' +
             "</div>" +
             '<div class="actions">' + badge +
               '<button class="btn-secondary open-deck" type="button">Open deck</button>' +
             "</div>" +
           "</div>";
-        article.querySelector("h2").textContent = deck.title || deck.filename;
-        article.querySelector(".path").textContent =
+        article.querySelector("h3").textContent = deck.title || deck.filename;
+        article.querySelector(".meta-line").textContent =
           folder + deck.filename + " · " + fmtDate(deck.modified || deck.fs_modified) +
-          " · " + (deck.slide_count || 0) + " slides";
+          " · " + plural(deck.slide_count || 0, "slide");
         article.querySelector(".open-deck").addEventListener("click", () => openDeck(deck.rel_path));
 
         if (hits.length) {
           const ul = document.createElement("ul");
           ul.className = "hits";
           const shown = hits.slice(0, 8);
-          shown.forEach((hit) => {
-            const li = document.createElement("li");
-            li.innerHTML =
-              '<div class="slide-row">' +
-                "<div>" +
-                  '<div class="slide-kicker"></div>' +
-                  '<div class="slide-title"></div>' +
-                  '<div class="snippet"></div>' +
-                "</div>" +
-                '<button class="btn-secondary open-slide" type="button">Open at slide</button>' +
-              "</div>";
-            li.querySelector(".slide-kicker").textContent = "Slide " + hit.number;
-            li.querySelector(".slide-title").textContent = hit.title || ("Slide " + hit.number);
-            li.querySelector(".snippet").innerHTML = hit.snippet_html || "";
-            li.querySelector(".open-slide").addEventListener("click", () => openDeck(deck.rel_path, hit.number));
-            ul.appendChild(li);
-          });
+          shown.forEach((hit) => addSlideRow(ul, deck, hit, true));
           article.appendChild(ul);
           if (hits.length > shown.length) {
-            const more = document.createElement("div");
-            more.className = "more";
-            const btn = document.createElement("button");
-            btn.className = "linkish";
-            btn.type = "button";
-            btn.textContent = "Show " + (hits.length - shown.length) + " more matching slides";
-            btn.addEventListener("click", () => {
-              hits.slice(8).forEach((hit) => {
-                const li = document.createElement("li");
-                li.innerHTML =
-                  '<div class="slide-row">' +
-                    "<div>" +
-                      '<div class="slide-kicker"></div>' +
-                      '<div class="slide-title"></div>' +
-                      '<div class="snippet"></div>' +
-                    "</div>" +
-                    '<button class="btn-secondary open-slide" type="button">Open at slide</button>' +
-                  "</div>";
-                li.querySelector(".slide-kicker").textContent = "Slide " + hit.number;
-                li.querySelector(".slide-title").textContent = hit.title || ("Slide " + hit.number);
-                li.querySelector(".snippet").innerHTML = hit.snippet_html || "";
-                li.querySelector(".open-slide").addEventListener("click", () => openDeck(deck.rel_path, hit.number));
-                ul.appendChild(li);
-              });
+            const more = document.createElement("button");
+            more.className = "linkish";
+            more.type = "button";
+            more.textContent = "Show " + (hits.length - shown.length) + " more matching slides";
+            more.style.marginTop = "8px";
+            more.addEventListener("click", () => {
+              hits.slice(8).forEach((hit) => addSlideRow(ul, deck, hit, true));
               more.remove();
             });
-            more.appendChild(btn);
             article.appendChild(more);
           }
         } else if (previewSlides.length) {
+          const toggle = document.createElement("button");
+          toggle.className = "linkish";
+          toggle.type = "button";
+          toggle.textContent = "Preview " + plural(previewSlides.length, "slide");
+          toggle.style.marginTop = "10px";
           const ul = document.createElement("ul");
           ul.className = "hits";
-          previewSlides.forEach((slide) => {
-            const li = document.createElement("li");
-            li.innerHTML =
-              '<div class="slide-row">' +
-                "<div>" +
-                  '<div class="slide-kicker"></div>' +
-                  '<div class="slide-title"></div>' +
-                "</div>" +
-                '<button class="btn-secondary open-slide" type="button">Open at slide</button>' +
-              "</div>";
-            li.querySelector(".slide-kicker").textContent = "Slide " + slide.number;
-            li.querySelector(".slide-title").textContent = slide.title || ("Slide " + slide.number);
-            li.querySelector(".open-slide").addEventListener("click", () => openDeck(deck.rel_path, slide.number));
-            ul.appendChild(li);
+          ul.hidden = true;
+          previewSlides.forEach((slide) => addSlideRow(ul, deck, slide, false));
+          toggle.addEventListener("click", () => {
+            ul.hidden = !ul.hidden;
+            toggle.textContent = ul.hidden
+              ? "Preview " + plural(previewSlides.length, "slide")
+              : "Hide slides";
           });
+          article.appendChild(toggle);
           article.appendChild(ul);
-        } else if (q) {
+        } else if (searching) {
           const p = document.createElement("p");
           p.className = "snippet";
+          p.style.margin = "10px 0 0";
           p.textContent = "Matched the file name or folder, not a specific slide.";
           article.appendChild(p);
         }
@@ -552,7 +589,6 @@
       if (!status || !status.configured || !status.catalog_exists) {
         $("results").innerHTML = "";
         $("empty").hidden = true;
-        $("resultLine").textContent = "";
         return;
       }
       const params = new URLSearchParams({
@@ -579,11 +615,34 @@
     $("latestOnly").addEventListener("change", runSearch);
     $("folderFilter").addEventListener("change", runSearch);
     $("modifiedAfter").addEventListener("change", runSearch);
+    $("toggleMore").addEventListener("click", () => {
+      const box = $("moreFilters");
+      const open = box.classList.toggle("open");
+      $("toggleMore").textContent = open ? "Fewer filters" : "More filters";
+    });
 
     $("changeFolder").addEventListener("click", () => {
       $("setup").hidden = false;
       $("folderPath").focus();
     });
+
+    async function reindexNow(errEl) {
+      errEl.textContent = "";
+      $("reindex").textContent = "Refreshing…";
+      try {
+        await api("/api/reindex", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({}),
+        });
+        await refreshStatus();
+        await runSearch();
+      } catch (err) {
+        errEl.textContent = err.message;
+      } finally {
+        $("reindex").textContent = "Refresh index";
+      }
+    }
 
     $("saveFolder").addEventListener("click", async () => {
       $("setupErr").textContent = "";
@@ -593,42 +652,14 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ deck_folder: $("folderPath").value.trim() }),
         });
-        $("reindex").disabled = true;
-        $("reindex").textContent = "Indexing…";
-        await api("/api/reindex", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({}),
-        });
-        await refreshStatus();
-        await runSearch();
+        await reindexNow($("setupErr"));
+        $("setup").hidden = true;
       } catch (err) {
         $("setupErr").textContent = err.message;
-      } finally {
-        $("reindex").disabled = false;
-        $("reindex").textContent = "Re-index folder";
       }
     });
 
-    $("reindex").addEventListener("click", async () => {
-      $("pageErr").textContent = "";
-      $("reindex").disabled = true;
-      $("reindex").textContent = "Indexing…";
-      try {
-        await api("/api/reindex", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({}),
-        });
-        await refreshStatus();
-        await runSearch();
-      } catch (err) {
-        $("pageErr").textContent = err.message;
-      } finally {
-        $("reindex").disabled = false;
-        $("reindex").textContent = "Re-index folder";
-      }
-    });
+    $("reindex").addEventListener("click", () => reindexNow($("pageErr")));
 
     refreshStatus().then(runSearch).catch((err) => {
       $("pageErr").textContent = err.message;
