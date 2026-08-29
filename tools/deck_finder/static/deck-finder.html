@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deck finder</title>
+  <style>
+    :root {
+      --bg: #f4f1ea;
+      --paper: #fffdf8;
+      --ink: #1b2430;
+      --muted: #5c6570;
+      --line: #d9d2c5;
+      --accent: #0f3d5c;
+      --gold: #b0892e;
+      --gold-bg: #f3e6c4;
+      --hit: #fff3b0;
+      --danger: #8b2e2e;
+      --shadow: 0 10px 30px rgba(27, 36, 48, 0.08);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", "Calibri", system-ui, sans-serif;
+      background:
+        radial-gradient(1200px 400px at 10% -10%, #e7eef3 0%, transparent 60%),
+        var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 32px 20px 80px; }
+    header h1 {
+      font-size: 1.7rem;
+      font-weight: 650;
+      letter-spacing: -0.02em;
+      margin: 0 0 6px;
+    }
+    header p.lede {
+      margin: 0 0 22px;
+      color: var(--muted);
+      max-width: 46rem;
+      line-height: 1.45;
+    }
+    .search-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+    #q {
+      width: 100%;
+      font-size: 1.12rem;
+      padding: 14px 16px;
+      border: 1px solid #cfc6b6;
+      border-radius: 10px;
+      background: #fff;
+      color: var(--ink);
+    }
+    #q:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 16px;
+      align-items: center;
+      margin-top: 12px;
+    }
+    label.chk, label.field {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+    select, input[type="date"], input[type="text"].path {
+      font: inherit;
+      padding: 7px 9px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+    }
+    input[type="text"].folder-input { min-width: min(100%, 420px); }
+    button {
+      font: inherit;
+      cursor: pointer;
+      border-radius: 8px;
+      border: 1px solid transparent;
+    }
+    button.primary {
+      background: var(--accent);
+      color: #fff;
+      padding: 8px 14px;
+    }
+    button.ghost {
+      background: #fff;
+      border-color: var(--line);
+      color: var(--ink);
+      padding: 8px 12px;
+    }
+    button.linkish {
+      background: none;
+      border: 0;
+      color: var(--accent);
+      padding: 0;
+      text-decoration: underline;
+      font-size: 0.92rem;
+    }
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 16px 2px 8px;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+    .setup {
+      background: var(--paper);
+      border: 1px dashed #c4b89f;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .setup h2 { margin: 0 0 8px; font-size: 1.05rem; }
+    .err { color: var(--danger); font-size: 0.92rem; margin-top: 8px; }
+    .groups { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
+    article.deck {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px 16px 10px;
+    }
+    .deck-top { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+    .deck-top h2 {
+      margin: 0 0 4px;
+      font-size: 1.05rem;
+      font-weight: 650;
+    }
+    .path {
+      color: var(--muted);
+      font-size: 0.82rem;
+      word-break: break-all;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 650;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: var(--gold-bg);
+      color: #6d5110;
+      padding: 3px 8px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .badge.old { background: #ececec; color: #555; }
+    .actions { display: flex; gap: 8px; flex-shrink: 0; }
+    ul.hits { list-style: none; margin: 12px 0 4px; padding: 0; }
+    ul.hits li {
+      border-top: 1px solid var(--line);
+      padding: 10px 0;
+    }
+    .slide-row { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+    .slide-kicker {
+      font-size: 0.78rem;
+      font-weight: 650;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+    .slide-title { margin: 2px 0 6px; font-weight: 600; }
+    .snippet { color: #334; font-size: 0.92rem; line-height: 1.4; }
+    mark {
+      background: var(--hit);
+      color: inherit;
+      padding: 0 2px;
+      border-radius: 2px;
+    }
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 40px 12px;
+    }
+    .more { margin: 4px 0 8px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Deck finder</h1>
+      <p class="lede">
+        Type keywords from an email, a client ask, or a slide you remember.
+        Results are matching slides in the newest version of each deck, unless you turn that off.
+      </p>
+    </header>
+
+    <div id="setup" class="setup" hidden>
+      <h2>Point this tool at your PowerPoint folder</h2>
+      <p class="lede" style="margin-bottom:10px">Local only — nothing is uploaded. Paste the full folder path, then index.</p>
+      <div class="filters">
+        <input class="folder-input" id="folderPath" type="text" placeholder="C:\Users\you\Decks">
+        <button class="primary" id="saveFolder" type="button">Save and index</button>
+      </div>
+      <div class="err" id="setupErr"></div>
+    </div>
+
+    <div class="search-card">
+      <input id="q" type="search" placeholder="e.g. BlackRock BUIDL AUM Q2" autocomplete="off" autofocus>
+      <div class="filters">
+        <label class="chk">
+          <input id="latestOnly" type="checkbox" checked>
+          Latest versions only
+        </label>
+        <label class="field">Folder
+          <select id="folderFilter"><option value="">All folders</option></select>
+        </label>
+        <label class="field">Modified after
+          <input id="modifiedAfter" type="date">
+        </label>
+        <button class="ghost" id="reindex" type="button">Re-index folder</button>
+      </div>
+    </div>
+
+    <div class="meta">
+      <span>
+        <span id="statusLine">Not indexed yet.</span>
+        <button class="linkish" id="changeFolder" type="button" hidden>Change folder</button>
+      </span>
+      <span id="resultLine"></span>
+    </div>
+    <div class="err" id="pageErr"></div>
+    <div id="results" class="groups"></div>
+    <div id="empty" class="empty" hidden>No matching slides. Try fewer or more distinctive keywords.</div>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    let debounceTimer = null;
+    let status = null;
+
+    async function api(url, opts) {
+      const res = await fetch(url, opts);
+      const data = await res.json();
+      if (!res.ok || data.ok === false) {
+        throw new Error(data.error || res.statusText);
+      }
+      return data;
+    }
+
+    function fmtDate(iso) {
+      if (!iso) return "";
+      const d = new Date(iso);
+      if (Number.isNaN(d.getTime())) return iso.slice(0, 10);
+      return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+    }
+
+    function fillFolders(folders) {
+      const sel = $("folderFilter");
+      const current = sel.value;
+      sel.innerHTML = '<option value="">All folders</option>';
+      (folders || []).forEach((folder) => {
+        const opt = document.createElement("option");
+        opt.value = folder;
+        opt.textContent = folder;
+        sel.appendChild(opt);
+      });
+      if (current && (folders || []).includes(current)) sel.value = current;
+    }
+
+    async function refreshStatus() {
+      status = await api("/api/status");
+      const ready = status.configured;
+      $("setup").hidden = ready;
+      $("changeFolder").hidden = !ready;
+      if (status.deck_folder) $("folderPath").value = status.deck_folder;
+      fillFolders(status.folders || []);
+      if (!ready) {
+        $("statusLine").textContent = "Set a folder path to begin.";
+        return;
+      }
+      const when = status.generated_at ? "Indexed " + fmtDate(status.generated_at) : "Not indexed yet";
+      $("statusLine").textContent = when + " · " + (status.deck_count || 0) + " decks · " +
+        (status.slide_count || 0) + " slides · " + status.deck_folder;
+    }
+
+    async function openDeck(relPath, slide) {
+      $("pageErr").textContent = "";
+      try {
+        const body = { path: relPath };
+        if (slide) body.slide = slide;
+        await api("/api/open", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+      } catch (err) {
+        $("pageErr").textContent = err.message;
+      }
+    }
+
+    function renderGroups(data) {
+      const root = $("results");
+      root.innerHTML = "";
+      const groups = data.groups || [];
+      $("empty").hidden = groups.length > 0;
+      const q = ($("q").value || "").trim();
+      if (!groups.length) {
+        $("resultLine").textContent = q ? "0 results" : "";
+        return;
+      }
+      $("resultLine").textContent = groups.length + " decks" +
+        (data.slide_hit_count ? " · " + data.slide_hit_count + " matching slides" : "");
+
+      groups.forEach((group) => {
+        const deck = group.deck;
+        const article = document.createElement("article");
+        article.className = "deck";
+        const badge = deck.is_latest
+          ? '<span class="badge">Latest' + (deck.family_size > 1 ? " of " + deck.family_size : "") + "</span>"
+          : '<span class="badge old">Older version</span>';
+        const folder = deck.folder ? deck.folder + " / " : "";
+        const hits = group.hits || [];
+        const previewSlides = (!q && (deck.slides || []).slice(0, 8)) || [];
+
+        article.innerHTML =
+          '<div class="deck-top">' +
+            "<div>" +
+              "<h2></h2>" +
+              '<div class="path"></div>' +
+            "</div>" +
+            '<div class="actions">' + badge +
+              '<button class="ghost open-deck" type="button">Open deck</button>' +
+            "</div>" +
+          "</div>";
+        article.querySelector("h2").textContent = deck.title || deck.filename;
+        article.querySelector(".path").textContent =
+          folder + deck.filename + " · " + fmtDate(deck.modified || deck.fs_modified) +
+          " · " + (deck.slide_count || 0) + " slides";
+        article.querySelector(".open-deck").addEventListener("click", () => openDeck(deck.rel_path));
+
+        if (hits.length) {
+          const ul = document.createElement("ul");
+          ul.className = "hits";
+          const shown = hits.slice(0, 8);
+          shown.forEach((hit) => {
+            const li = document.createElement("li");
+            li.innerHTML =
+              '<div class="slide-row">' +
+                "<div>" +
+                  '<div class="slide-kicker"></div>' +
+                  '<div class="slide-title"></div>' +
+                  '<div class="snippet"></div>' +
+                "</div>" +
+                '<button class="ghost open-slide" type="button">Open at slide</button>' +
+              "</div>";
+            li.querySelector(".slide-kicker").textContent = "Slide " + hit.number;
+            li.querySelector(".slide-title").textContent = hit.title || ("Slide " + hit.number);
+            li.querySelector(".snippet").innerHTML = hit.snippet_html || "";
+            li.querySelector(".open-slide").addEventListener("click", () => openDeck(deck.rel_path, hit.number));
+            ul.appendChild(li);
+          });
+          article.appendChild(ul);
+          if (hits.length > shown.length) {
+            const more = document.createElement("div");
+            more.className = "more";
+            const btn = document.createElement("button");
+            btn.className = "linkish";
+            btn.type = "button";
+            btn.textContent = "Show " + (hits.length - shown.length) + " more matching slides";
+            btn.addEventListener("click", () => {
+              hits.slice(8).forEach((hit) => {
+                const li = document.createElement("li");
+                li.innerHTML =
+                  '<div class="slide-row">' +
+                    "<div>" +
+                      '<div class="slide-kicker"></div>' +
+                      '<div class="slide-title"></div>' +
+                      '<div class="snippet"></div>' +
+                    "</div>" +
+                    '<button class="ghost open-slide" type="button">Open at slide</button>' +
+                  "</div>";
+                li.querySelector(".slide-kicker").textContent = "Slide " + hit.number;
+                li.querySelector(".slide-title").textContent = hit.title || ("Slide " + hit.number);
+                li.querySelector(".snippet").innerHTML = hit.snippet_html || "";
+                li.querySelector(".open-slide").addEventListener("click", () => openDeck(deck.rel_path, hit.number));
+                ul.appendChild(li);
+              });
+              more.remove();
+            });
+            more.appendChild(btn);
+            article.appendChild(more);
+          }
+        } else if (previewSlides.length) {
+          const ul = document.createElement("ul");
+          ul.className = "hits";
+          previewSlides.forEach((slide) => {
+            const li = document.createElement("li");
+            li.innerHTML =
+              '<div class="slide-row">' +
+                "<div>" +
+                  '<div class="slide-kicker"></div>' +
+                  '<div class="slide-title"></div>' +
+                "</div>" +
+                '<button class="ghost open-slide" type="button">Open at slide</button>' +
+              "</div>";
+            li.querySelector(".slide-kicker").textContent = "Slide " + slide.number;
+            li.querySelector(".slide-title").textContent = slide.title || ("Slide " + slide.number);
+            li.querySelector(".open-slide").addEventListener("click", () => openDeck(deck.rel_path, slide.number));
+            ul.appendChild(li);
+          });
+          article.appendChild(ul);
+        } else if (q) {
+          const p = document.createElement("p");
+          p.className = "snippet";
+          p.textContent = "Matched the file name or folder, not a specific slide.";
+          article.appendChild(p);
+        }
+        root.appendChild(article);
+      });
+    }
+
+    async function runSearch() {
+      $("pageErr").textContent = "";
+      if (!status || !status.configured || !status.catalog_exists) {
+        $("results").innerHTML = "";
+        $("empty").hidden = true;
+        $("resultLine").textContent = "";
+        return;
+      }
+      const params = new URLSearchParams({
+        q: $("q").value.trim(),
+        latest_only: $("latestOnly").checked ? "1" : "0",
+        folder: $("folderFilter").value,
+        modified_after: $("modifiedAfter").value,
+      });
+      try {
+        const data = await api("/api/search?" + params.toString());
+        fillFolders(data.folders || status.folders);
+        renderGroups(data);
+      } catch (err) {
+        $("pageErr").textContent = err.message;
+      }
+    }
+
+    function scheduleSearch() {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(runSearch, 140);
+    }
+
+    $("q").addEventListener("input", scheduleSearch);
+    $("latestOnly").addEventListener("change", runSearch);
+    $("folderFilter").addEventListener("change", runSearch);
+    $("modifiedAfter").addEventListener("change", runSearch);
+
+    $("changeFolder").addEventListener("click", () => {
+      $("setup").hidden = false;
+      $("folderPath").focus();
+    });
+
+    $("saveFolder").addEventListener("click", async () => {
+      $("setupErr").textContent = "";
+      try {
+        await api("/api/config", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ deck_folder: $("folderPath").value.trim() }),
+        });
+        $("reindex").disabled = true;
+        $("reindex").textContent = "Indexing…";
+        await api("/api/reindex", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({}),
+        });
+        await refreshStatus();
+        await runSearch();
+      } catch (err) {
+        $("setupErr").textContent = err.message;
+      } finally {
+        $("reindex").disabled = false;
+        $("reindex").textContent = "Re-index folder";
+      }
+    });
+
+    $("reindex").addEventListener("click", async () => {
+      $("pageErr").textContent = "";
+      $("reindex").disabled = true;
+      $("reindex").textContent = "Indexing…";
+      try {
+        await api("/api/reindex", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({}),
+        });
+        await refreshStatus();
+        await runSearch();
+      } catch (err) {
+        $("pageErr").textContent = err.message;
+      } finally {
+        $("reindex").disabled = false;
+        $("reindex").textContent = "Re-index folder";
+      }
+    });
+
+    refreshStatus().then(runSearch).catch((err) => {
+      $("pageErr").textContent = err.message;
+    });
+  </script>
+</body>
+</html>
