@@ -6,136 +6,242 @@
   <title>Deck finder</title>
   <style>
     :root {
-      --bg: #f4f1ea;
-      --paper: #fffdf8;
-      --ink: #1b2430;
-      --muted: #5c6570;
-      --line: #d9d2c5;
-      --accent: #0f3d5c;
-      --gold: #b0892e;
-      --gold-bg: #f3e6c4;
-      --hit: #fff3b0;
-      --danger: #8b2e2e;
-      --shadow: 0 10px 30px rgba(27, 36, 48, 0.08);
+      --bg: #f3f7fc;
+      --bg-2: #eaf2fb;
+      --ink: #20324a;
+      --ink-strong: #13263f;
+      --muted: #58718e;
+      --accent: #2b67a4;
+      --accent-2: #1f7fbc;
+      --card: #ffffff;
+      --card-2: #f7fbff;
+      --stroke: rgba(86, 124, 168, 0.24);
+      --ok: #1f8659;
+      --warn: #946518;
+      --danger: #b44646;
+      --ring: rgba(43, 103, 164, 0.2);
+      --shadow: 0 12px 26px rgba(24, 49, 81, 0.1);
     }
     * { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; }
     body {
-      font-family: "Segoe UI", "Calibri", system-ui, sans-serif;
-      background:
-        radial-gradient(1200px 400px at 10% -10%, #e7eef3 0%, transparent 60%),
-        var(--bg);
+      font-family: "Outfit", "Segoe UI", Calibri, system-ui, sans-serif;
       color: var(--ink);
-      min-height: 100vh;
-    }
-    .wrap { max-width: 980px; margin: 0 auto; padding: 32px 20px 80px; }
-    header h1 {
-      font-size: 1.7rem;
-      font-weight: 650;
-      letter-spacing: -0.02em;
-      margin: 0 0 6px;
-    }
-    header p.lede {
-      margin: 0 0 22px;
-      color: var(--muted);
-      max-width: 46rem;
       line-height: 1.45;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(43, 103, 164, 0.16) 0%, transparent 28%),
+        radial-gradient(circle at 100% 12%, rgba(31, 127, 188, 0.09) 0%, transparent 30%),
+        linear-gradient(180deg, var(--bg), var(--bg-2));
     }
-    .search-card {
-      background: var(--paper);
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 16px;
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 30px 20px 72px; }
+    .hero {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding: 22px 24px 20px 28px;
+      border-radius: 16px;
+      background: linear-gradient(138deg, #163b62 0%, #1f4f80 64%, #29679f 100%);
+      border: 1px solid rgba(122, 168, 219, 0.42);
+      box-shadow: 0 14px 28px rgba(24, 55, 90, 0.28);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 7px;
+      background: linear-gradient(180deg, #4f9ce9 0%, #78b8f4 100%);
+    }
+    .kicker {
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-size: 12px;
+      color: #bddcff;
+      font-weight: 700;
+    }
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(1.7rem, 3.4vw, 2.5rem);
+      line-height: 1.08;
+      font-weight: 700;
+      color: #f3f8ff;
+    }
+    .hero .lede {
+      margin: 0;
+      color: #dcecff;
+      max-width: 68ch;
+      line-height: 1.55;
+      font-size: 0.98rem;
+    }
+    .card, .search-card, article.deck, .setup {
+      background: linear-gradient(180deg, var(--card), var(--card-2));
+      border: 1px solid var(--stroke);
+      border-radius: 18px;
       box-shadow: var(--shadow);
+    }
+    .search-card { padding: 18px; }
+    .search-card:focus-within {
+      border-color: rgba(77, 128, 184, 0.45);
+      box-shadow: 0 0 0 3px rgba(52, 111, 171, 0.12), var(--shadow);
+    }
+    #q, .folder-input, select, input[type="date"] {
+      font-family: inherit;
+      font-size: 0.95rem;
+      border: 1px solid rgba(95, 132, 176, 0.38);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: #fff;
+      color: var(--ink);
+      transition: border-color 140ms ease, box-shadow 140ms ease;
     }
     #q {
       width: 100%;
-      font-size: 1.12rem;
-      padding: 14px 16px;
-      border: 1px solid #cfc6b6;
-      border-radius: 10px;
-      background: #fff;
-      color: var(--ink);
+      font-size: 1.08rem;
+      padding: 13px 15px;
     }
-    #q:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
+    #q::placeholder, .folder-input::placeholder { color: #7890aa; }
+    #q:focus, .folder-input:focus, select:focus, input[type="date"]:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px var(--ring);
+    }
     .filters {
       display: flex;
       flex-wrap: wrap;
-      gap: 12px 16px;
+      gap: 10px 14px;
       align-items: center;
-      margin-top: 12px;
+      margin-top: 13px;
     }
     label.chk, label.field {
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 0.92rem;
-      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #24486e;
+      letter-spacing: 0.02em;
     }
-    select, input[type="date"], input[type="text"].path {
-      font: inherit;
-      padding: 7px 9px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #fff;
-      color: var(--ink);
-    }
-    input[type="text"].folder-input { min-width: min(100%, 420px); }
+    .folder-input { min-width: min(100%, 420px); }
     button {
-      font: inherit;
-      cursor: pointer;
-      border-radius: 8px;
       border: 1px solid transparent;
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-family: inherit;
+      font-size: 0.87rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      box-shadow: 0 4px 9px rgba(34, 68, 106, 0.11);
+      transition: transform 140ms ease, filter 140ms ease, box-shadow 140ms ease;
     }
-    button.primary {
-      background: var(--accent);
+    button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.02);
+      box-shadow: 0 7px 14px rgba(34, 68, 106, 0.16);
+    }
+    button:active { transform: translateY(0); }
+    button:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 4px var(--ring), 0 8px 16px rgba(34, 68, 106, 0.16);
+    }
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    .btn-primary, button.primary {
       color: #fff;
-      padding: 8px 14px;
+      background: linear-gradient(135deg, #1d5a96 0%, #2b7fbd 100%);
+      border-color: rgba(12, 58, 100, 0.28);
     }
-    button.ghost {
-      background: #fff;
-      border-color: var(--line);
-      color: var(--ink);
-      padding: 8px 12px;
+    .btn-secondary, button.ghost {
+      color: #19456f;
+      background: linear-gradient(180deg, #eff6ff 0%, #e1eefb 100%);
+      border-color: rgba(80, 122, 172, 0.36);
     }
     button.linkish {
       background: none;
       border: 0;
       color: var(--accent);
       padding: 0;
+      box-shadow: none;
+      text-decoration: none;
+      font-size: 0.84rem;
+    }
+    button.linkish:hover {
       text-decoration: underline;
-      font-size: 0.92rem;
+      box-shadow: none;
+      filter: none;
     }
     .meta {
       display: flex;
       justify-content: space-between;
       gap: 12px;
       flex-wrap: wrap;
-      margin: 16px 2px 8px;
-      color: var(--muted);
-      font-size: 0.88rem;
+      align-items: center;
+      margin: 16px 0 10px;
+      padding: 11px 13px;
+      border-radius: 13px;
+      background: #e8f1fc;
+      border: 1px solid #b9d0ea;
+      color: #27547d;
+      font-size: 0.9rem;
     }
     .setup {
-      background: var(--paper);
-      border: 1px dashed #c4b89f;
-      border-radius: 12px;
-      padding: 16px;
+      padding: 16px 18px;
       margin-bottom: 16px;
+      border-style: dashed;
+      border-color: rgba(95, 132, 176, 0.4);
+      background: rgba(246, 251, 255, 0.92);
     }
-    .setup h2 { margin: 0 0 8px; font-size: 1.05rem; }
-    .err { color: var(--danger); font-size: 0.92rem; margin-top: 8px; }
-    .groups { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
+    .setup h2 {
+      margin: 0 0 6px;
+      font-size: 1.02rem;
+      color: #244d76;
+    }
+    .setup p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .err { color: var(--danger); font-size: 0.9rem; margin-top: 8px; }
+    .groups { display: grid; gap: 14px; }
     article.deck {
-      background: var(--paper);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 14px 16px 10px;
+      padding: 16px 18px 12px;
+      position: relative;
+      overflow: hidden;
     }
-    .deck-top { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+    article.deck::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 5px;
+      background: linear-gradient(180deg, #4f9ce9 0%, #78b8f4 100%);
+    }
+    .deck-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: flex-start;
+      padding-left: 8px;
+    }
     .deck-top h2 {
       margin: 0 0 4px;
-      font-size: 1.05rem;
-      font-weight: 650;
+      font-size: 1.08rem;
+      font-weight: 700;
+      color: #244d76;
+      letter-spacing: 0.01em;
     }
     .path {
       color: var(--muted);
@@ -143,51 +249,72 @@
       word-break: break-all;
     }
     .badge {
-      display: inline-block;
-      font-size: 0.72rem;
-      font-weight: 650;
-      letter-spacing: 0.04em;
+      display: inline-flex;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
       text-transform: uppercase;
-      background: var(--gold-bg);
-      color: #6d5110;
-      padding: 3px 8px;
+      background: #ddeeff;
+      color: #244e79;
+      border: 1px solid #b0caea;
+      padding: 5px 10px;
       border-radius: 999px;
       white-space: nowrap;
     }
-    .badge.old { background: #ececec; color: #555; }
-    .actions { display: flex; gap: 8px; flex-shrink: 0; }
-    ul.hits { list-style: none; margin: 12px 0 4px; padding: 0; }
-    ul.hits li {
-      border-top: 1px solid var(--line);
-      padding: 10px 0;
+    .badge.old {
+      background: #f4f8fc;
+      color: #5b7491;
+      border-color: rgba(113, 142, 173, 0.38);
     }
+    .actions { display: flex; gap: 8px; flex-shrink: 0; align-items: center; }
+    ul.hits { list-style: none; margin: 10px 0 2px; padding: 0 0 0 8px; }
+    ul.hits li {
+      border-top: 1px solid var(--stroke);
+      padding: 11px 4px;
+      border-radius: 10px;
+    }
+    ul.hits li:hover { background: rgba(232, 241, 252, 0.7); }
     .slide-row { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
     .slide-kicker {
-      font-size: 0.78rem;
-      font-weight: 650;
+      font-size: 0.75rem;
+      font-weight: 700;
       color: var(--accent);
-      letter-spacing: 0.02em;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
     }
-    .slide-title { margin: 2px 0 6px; font-weight: 600; }
-    .snippet { color: #334; font-size: 0.92rem; line-height: 1.4; }
+    .slide-title {
+      margin: 2px 0 5px;
+      font-weight: 650;
+      color: var(--ink-strong);
+    }
+    .snippet { color: #3d5d81; font-size: 0.92rem; line-height: 1.45; }
     mark {
-      background: var(--hit);
-      color: inherit;
-      padding: 0 2px;
-      border-radius: 2px;
+      background: #dcecff;
+      color: var(--ink-strong);
+      padding: 0 3px;
+      border-radius: 4px;
+      font-weight: 650;
     }
     .empty {
       text-align: center;
       color: var(--muted);
-      padding: 40px 12px;
+      padding: 36px 14px;
+      background: rgba(255, 255, 255, 0.55);
+      border: 1px dashed rgba(95, 132, 176, 0.4);
+      border-radius: 16px;
     }
-    .more { margin: 4px 0 8px; }
+    .more { margin: 2px 0 8px 8px; }
+    @media (max-width: 720px) {
+      .deck-top, .slide-row { flex-direction: column; }
+      .actions { width: 100%; justify-content: flex-start; }
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <header>
+    <header class="hero">
+      <div class="kicker">Internal slide library</div>
       <h1>Deck finder</h1>
       <p class="lede">
         Type keywords from an email, a client ask, or a slide you remember.
@@ -197,10 +324,10 @@
 
     <div id="setup" class="setup" hidden>
       <h2>Point this tool at your PowerPoint folder</h2>
-      <p class="lede" style="margin-bottom:10px">Local only — nothing is uploaded. Paste the full folder path, then index.</p>
+      <p>Local only — nothing is uploaded. Paste the full folder path, then index.</p>
       <div class="filters">
         <input class="folder-input" id="folderPath" type="text" placeholder="C:\Users\you\Decks">
-        <button class="primary" id="saveFolder" type="button">Save and index</button>
+        <button class="btn-primary" id="saveFolder" type="button">Save and index</button>
       </div>
       <div class="err" id="setupErr"></div>
     </div>
@@ -218,7 +345,7 @@
         <label class="field">Modified after
           <input id="modifiedAfter" type="date">
         </label>
-        <button class="ghost" id="reindex" type="button">Re-index folder</button>
+        <button class="btn-secondary" id="reindex" type="button">Re-index folder</button>
       </div>
     </div>
 
@@ -330,7 +457,7 @@
               '<div class="path"></div>' +
             "</div>" +
             '<div class="actions">' + badge +
-              '<button class="ghost open-deck" type="button">Open deck</button>' +
+              '<button class="btn-secondary open-deck" type="button">Open deck</button>' +
             "</div>" +
           "</div>";
         article.querySelector("h2").textContent = deck.title || deck.filename;
@@ -352,7 +479,7 @@
                   '<div class="slide-title"></div>' +
                   '<div class="snippet"></div>' +
                 "</div>" +
-                '<button class="ghost open-slide" type="button">Open at slide</button>' +
+                '<button class="btn-secondary open-slide" type="button">Open at slide</button>' +
               "</div>";
             li.querySelector(".slide-kicker").textContent = "Slide " + hit.number;
             li.querySelector(".slide-title").textContent = hit.title || ("Slide " + hit.number);
@@ -378,7 +505,7 @@
                       '<div class="slide-title"></div>' +
                       '<div class="snippet"></div>' +
                     "</div>" +
-                    '<button class="ghost open-slide" type="button">Open at slide</button>' +
+                    '<button class="btn-secondary open-slide" type="button">Open at slide</button>' +
                   "</div>";
                 li.querySelector(".slide-kicker").textContent = "Slide " + hit.number;
                 li.querySelector(".slide-title").textContent = hit.title || ("Slide " + hit.number);
@@ -402,7 +529,7 @@
                   '<div class="slide-kicker"></div>' +
                   '<div class="slide-title"></div>' +
                 "</div>" +
-                '<button class="ghost open-slide" type="button">Open at slide</button>' +
+                '<button class="btn-secondary open-slide" type="button">Open at slide</button>' +
               "</div>";
             li.querySelector(".slide-kicker").textContent = "Slide " + slide.number;
             li.querySelector(".slide-title").textContent = slide.title || ("Slide " + slide.number);
