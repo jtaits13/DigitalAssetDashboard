@@ -1,28 +1,28 @@
 {
-  "generated_at": "2026-08-30T05:35:37.916223+00:00",
+  "generated_at": "2026-08-30T12:04:10.570471+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
     "value_display": "$2.76T",
     "delta": {
-      "pct": 20.208,
+      "pct": 21.4066,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$78,133",
+    "value_display": "$78,193",
     "delta": {
-      "pct": 21.4,
+      "pct": 22.4,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,455",
+    "value_display": "$2,461",
     "delta": {
-      "pct": 28.6,
+      "pct": 30.4,
       "window": "1M"
     }
   },
@@ -30,7 +30,7 @@
     "label": "BTC dominance",
     "value_display": "56.9%",
     "delta": {
-      "pct": 0.9916,
+      "pct": 0.9229,
       "window": "1M"
     }
   },
@@ -38,16 +38,16 @@
     "label": "Stablecoin share",
     "value_display": "10.9%",
     "delta": {
-      "pct": -16.204,
+      "pct": -16.823,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 56.85,
-    "stablecoin_share_top50_pct": 10.91,
-    "top50_market_cap_usd": 2622635255794.0,
-    "stablecoin_market_cap_usd": 286216360713.0,
-    "btc_market_cap_usd": 1568687158081.0
+    "btc_dominance_pct": 56.88,
+    "stablecoin_share_top50_pct": 10.9,
+    "top50_market_cap_usd": 2625115349166.0,
+    "stablecoin_market_cap_usd": 286158988737.0,
+    "btc_market_cap_usd": 1570104328045.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,7 +65,7 @@
       {
         "symbol": "PUMP",
         "name": "Pump.fun",
-        "pct_30d": 144.6,
+        "pct_30d": 138.0,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/pump-fun",
@@ -79,7 +79,7 @@
       {
         "symbol": "ZEC",
         "name": "Zcash",
-        "pct_30d": 80.5,
+        "pct_30d": 83.0,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/zcash",
@@ -93,7 +93,7 @@
       {
         "symbol": "HYPE",
         "name": "Hyperliquid",
-        "pct_30d": 50.2,
+        "pct_30d": 52.6,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/hyperliquid",
@@ -107,5 +107,5 @@
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 20.2% over 30D:</strong> Total crypto market cap at $2.76T (20.2% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://cointelegraph.com/news/donald-trump-crypto-investors-losses-public-citizen?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Trump cost investors $4.7B through crypto \u2018schemes\u2019: Public Citizen</a> (CoinTelegraph).</li><li><strong>Gains broadened among top-50 alts:</strong> 34 names up more than ~0.5%, 4 down more than ~0.5%, and 4 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/business/2026/08/28/visa-doubles-down-on-south-korea-with-upbit-operator-dunamu-on-stablecoin-payments\" target=\"_blank\" rel=\"noopener noreferrer\">Visa doubles down on South Korea with Upbit operator Dunamu on stablecoin payments</a> (CoinDesk).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://cointelegraph.com/news/capital-b-raises-245m-for-its-bitcoin-treasury-amid-market-uncertainty-with-blockstreams-adam-back-chipping-in?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Capital B raises $24.5M for its Bitcoin treasury amid market uncertainty with BlockStream\u2019s Adam Back chipping in</a> (CoinTelegraph).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.theblock.co/news/markets/2026-08-28-bitwise-fund-is-first-solana-etf-to-hit-1-billion-aum-413035\" target=\"_blank\" rel=\"noopener noreferrer\">Bitwise fund is first Solana ETF to hit $1 billion AUM</a> (The Block).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 21.4% over 30D:</strong> Total crypto market cap at $2.76T (21.4% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://www.coindesk.com/markets/2026/08/28/crypto-market-makers-are-cashing-in-on-bitcoin-s-rally-without-betting-on-direction\" target=\"_blank\" rel=\"noopener noreferrer\">Crypto market makers are cashing in on bitcoin&#x27;s rally - without betting on direction</a> (CoinDesk).</li><li><strong>Gains broadened among top-50 alts:</strong> 34 names up more than ~0.5%, 3 down more than ~0.5%, and 5 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/business/2026/08/28/visa-doubles-down-on-south-korea-with-upbit-operator-dunamu-on-stablecoin-payments\" target=\"_blank\" rel=\"noopener noreferrer\">Visa doubles down on South Korea with Upbit operator Dunamu on stablecoin payments</a> (CoinDesk).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://cointelegraph.com/news/capital-b-raises-245m-for-its-bitcoin-treasury-amid-market-uncertainty-with-blockstreams-adam-back-chipping-in?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Capital B raises $24.5M for its Bitcoin treasury amid market uncertainty with BlockStream\u2019s Adam Back chipping in</a> (CoinTelegraph).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.theblock.co/news/markets/2026-08-28-bitwise-fund-is-first-solana-etf-to-hit-1-billion-aum-413035\" target=\"_blank\" rel=\"noopener noreferrer\">Bitwise fund is first Solana ETF to hit $1 billion AUM</a> (The Block).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
