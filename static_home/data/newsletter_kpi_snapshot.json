@@ -1,12 +1,12 @@
 {
-  "updated_at": "2026-08-31T13:45:51+00:00",
+  "updated_at": "2026-08-31T14:02:57+00:00",
   "week_end": "2026-08-31",
   "latest": {
     "tmmf_kpis": [
       {
         "label": "Distributed value",
-        "value_display": "$13.24B",
-        "delta_30d_pct": 0.00475768510666863
+        "value_display": "$14.02B",
+        "delta_30d_pct": 0.059
       },
       {
         "label": "Top network share",
@@ -15,8 +15,8 @@
       },
       {
         "label": "Tokenized funds",
-        "value_display": "15",
-        "delta_30d_pct": null
+        "value_display": "19",
+        "delta_30d_pct": 0.2666
       },
       {
         "label": "Active networks",
@@ -74,53 +74,53 @@
       }
     ],
     "crypto": {
-      "generated_at": "2026-08-31T13:44:35.602426+00:00",
+      "generated_at": "2026-08-31T14:01:46.766798+00:00",
       "source": "CoinPaprika + CoinGecko",
       "primary": {
         "label": "Total market cap",
         "value_display": "$2.75T",
         "delta": {
-          "pct": 21.4327,
+          "pct": 21.4698,
           "window": "1M"
         }
       },
       "btc_dominance": {
         "label": "BTC dominance",
-        "value_display": "57.1%",
+        "value_display": "56.9%",
         "delta": {
-          "pct": 1.7848,
+          "pct": 1.5894,
           "window": "1M"
         }
       },
       "stablecoin_share": {
         "label": "Stablecoin share",
-        "value_display": "10.9%",
+        "value_display": "11.0%",
         "delta": {
-          "pct": -17.2774,
+          "pct": -17.1487,
           "window": "1M"
         }
       },
       "btc": {
         "label": "BTC price",
-        "value_display": "$78,176",
+        "value_display": "$77,816",
         "delta": {
-          "pct": 23.6,
+          "pct": 23.5,
           "window": "1M"
         }
       },
       "eth": {
         "label": "ETH price",
-        "value_display": "$2,453",
+        "value_display": "$2,439",
         "delta": {
-          "pct": 31.4,
+          "pct": 30.7,
           "window": "1M"
         }
       }
     },
     "etp": {
-      "generated_at": "2026-08-31T13:45:37.632252+00:00",
+      "generated_at": "2026-08-31T14:02:45.437838+00:00",
       "total_aum_display": "$127.01B",
-      "aggregate_pct": 24.3887,
+      "aggregate_pct": 24.6418,
       "aggregate_window": "1M",
       "net_flow_1m_usd": 6138400000.0,
       "net_flow_1m_display": "+$6.14B",
@@ -129,14 +129,14 @@
       "ibit": {
         "aum_display": "$60.34B",
         "delta": {
-          "pct": 23.7935,
+          "pct": 23.6392,
           "window": "1M"
         }
       },
       "etha": {
         "aum_display": "$8.38B",
         "delta": {
-          "pct": 31.1386,
+          "pct": 30.8102,
           "window": "1M"
         }
       }
@@ -144,215 +144,215 @@
     "etp_aum_series": [
       {
         "date": "2025-09-01T00:00:00",
-        "aum_billions": 194.27611605123417
+        "aum_billions": 194.65773566476275
       },
       {
         "date": "2025-09-08T00:00:00",
-        "aum_billions": 205.51217614716586
+        "aum_billions": 205.92568738969786
       },
       {
         "date": "2025-09-15T00:00:00",
-        "aum_billions": 200.83542573421562
+        "aum_billions": 201.2305681144536
       },
       {
         "date": "2025-09-22T00:00:00",
-        "aum_billions": 186.75717288386744
+        "aum_billions": 187.12155508583393
       },
       {
         "date": "2025-09-29T00:00:00",
-        "aum_billions": 212.28631680911533
+        "aum_billions": 212.70227104380353
       },
       {
         "date": "2025-10-06T00:00:00",
-        "aum_billions": 196.4282361939371
+        "aum_billions": 196.80779819930046
       },
       {
         "date": "2025-10-13T00:00:00",
-        "aum_billions": 179.66712586299153
+        "aum_billions": 180.01310378866717
       },
       {
         "date": "2025-10-20T00:00:00",
-        "aum_billions": 186.61241980488344
+        "aum_billions": 186.97425214710373
       },
       {
         "date": "2025-10-27T00:00:00",
-        "aum_billions": 186.11314777185655
+        "aum_billions": 186.47747036576502
       },
       {
         "date": "2025-11-03T00:00:00",
-        "aum_billions": 172.55509006188487
+        "aum_billions": 172.8877035709311
       },
       {
         "date": "2025-11-10T00:00:00",
-        "aum_billions": 155.71408296566318
+        "aum_billions": 156.01519117065712
       },
       {
         "date": "2025-11-17T00:00:00",
-        "aum_billions": 139.0468945694066
+        "aum_billions": 139.31289042860269
       },
       {
         "date": "2025-11-24T00:00:00",
-        "aum_billions": 151.3443996714548
+        "aum_billions": 151.63874788414054
       },
       {
         "date": "2025-12-01T00:00:00",
-        "aum_billions": 148.79030559157997
+        "aum_billions": 149.07814408474016
       },
       {
         "date": "2025-12-08T00:00:00",
-        "aum_billions": 150.4512969520995
+        "aum_billions": 150.74275822051817
       },
       {
         "date": "2025-12-15T00:00:00",
-        "aum_billions": 146.1336985626233
+        "aum_billions": 146.4161849507937
       },
       {
         "date": "2025-12-22T00:00:00",
-        "aum_billions": 144.59946029074433
+        "aum_billions": 144.878079627287
       },
       {
         "date": "2025-12-29T00:00:00",
-        "aum_billions": 149.64143914244377
+        "aum_billions": 149.9332471128881
       },
       {
         "date": "2026-01-05T00:00:00",
-        "aum_billions": 150.08722895513978
+        "aum_billions": 150.3791570558784
       },
       {
         "date": "2026-01-12T00:00:00",
-        "aum_billions": 159.5819474815456
+        "aum_billions": 159.89290750882657
       },
       {
         "date": "2026-01-19T00:00:00",
-        "aum_billions": 147.61948021541625
+        "aum_billions": 147.90377587437166
       },
       {
         "date": "2026-01-26T00:00:00",
-        "aum_billions": 137.0357237304664
+        "aum_billions": 137.29656756730475
       },
       {
         "date": "2026-02-02T00:00:00",
-        "aum_billions": 112.51289757023075
+        "aum_billions": 112.72037323086833
       },
       {
         "date": "2026-02-09T00:00:00",
-        "aum_billions": 110.65955703629236
+        "aum_billions": 110.86392333611407
       },
       {
         "date": "2026-02-16T00:00:00",
-        "aum_billions": 108.76300706231427
+        "aum_billions": 108.96323713933332
       },
       {
         "date": "2026-02-23T00:00:00",
-        "aum_billions": 105.3586966461879
+        "aum_billions": 105.55238342909182
       },
       {
         "date": "2026-03-02T00:00:00",
-        "aum_billions": 108.9628272259466
+        "aum_billions": 109.16346973898933
       },
       {
         "date": "2026-03-09T00:00:00",
-        "aum_billions": 114.92510306172701
+        "aum_billions": 115.13959151436521
       },
       {
         "date": "2026-03-16T00:00:00",
-        "aum_billions": 113.67880078016566
+        "aum_billions": 113.89186754552118
       },
       {
         "date": "2026-03-23T00:00:00",
-        "aum_billions": 106.56933041537133
+        "aum_billions": 106.76774497474462
       },
       {
         "date": "2026-03-30T00:00:00",
-        "aum_billions": 108.39438874057598
+        "aum_billions": 108.59751192322715
       },
       {
         "date": "2026-04-06T00:00:00",
-        "aum_billions": 119.17010350417382
+        "aum_billions": 119.39358458589535
       },
       {
         "date": "2026-04-13T00:00:00",
-        "aum_billions": 126.86727215113409
+        "aum_billions": 127.10554524973787
       },
       {
         "date": "2026-04-20T00:00:00",
-        "aum_billions": 126.07301750633094
+        "aum_billions": 126.30750281332975
       },
       {
         "date": "2026-04-27T00:00:00",
-        "aum_billions": 126.9053591908632
+        "aum_billions": 127.14038853901326
       },
       {
         "date": "2026-05-04T00:00:00",
-        "aum_billions": 129.8029862138748
+        "aum_billions": 130.0426864400627
       },
       {
         "date": "2026-05-11T00:00:00",
-        "aum_billions": 127.5074773783236
+        "aum_billions": 127.74296575246167
       },
       {
         "date": "2026-05-18T00:00:00",
-        "aum_billions": 121.59495512275392
+        "aum_billions": 121.81849499452811
       },
       {
         "date": "2026-05-25T00:00:00",
-        "aum_billions": 118.14671376270341
+        "aum_billions": 118.3637383737362
       },
       {
         "date": "2026-06-01T00:00:00",
-        "aum_billions": 96.35212844236632
+        "aum_billions": 96.52647069241843
       },
       {
         "date": "2026-06-08T00:00:00",
-        "aum_billions": 101.62564637743164
+        "aum_billions": 101.81035975661229
       },
       {
         "date": "2026-06-15T00:00:00",
-        "aum_billions": 101.13910232772676
+        "aum_billions": 101.3241266183054
       },
       {
         "date": "2026-06-22T00:00:00",
-        "aum_billions": 95.60974438195737
+        "aum_billions": 95.78398441601192
       },
       {
         "date": "2026-06-29T00:00:00",
-        "aum_billions": 98.89150553246313
+        "aum_billions": 99.07292594885982
       },
       {
         "date": "2026-07-06T00:00:00",
-        "aum_billions": 102.73309185615791
+        "aum_billions": 102.92260706700505
       },
       {
         "date": "2026-07-13T00:00:00",
-        "aum_billions": 103.13125525900541
+        "aum_billions": 103.3219857693952
       },
       {
         "date": "2026-07-20T00:00:00",
-        "aum_billions": 103.31193464585765
+        "aum_billions": 103.50335137819252
       },
       {
         "date": "2026-07-27T00:00:00",
-        "aum_billions": 101.58750009352177
+        "aum_billions": 101.77575822482595
       },
       {
         "date": "2026-08-03T00:00:00",
-        "aum_billions": 104.66767375760652
+        "aum_billions": 104.86176199573896
       },
       {
         "date": "2026-08-10T00:00:00",
-        "aum_billions": 101.61576629926792
+        "aum_billions": 101.80425086038845
       },
       {
         "date": "2026-08-17T00:00:00",
-        "aum_billions": 125.48111997708034
+        "aum_billions": 125.71903437019772
       },
       {
         "date": "2026-08-24T00:00:00",
-        "aum_billions": 126.37170880826062
+        "aum_billions": 126.6112214091145
       },
       {
         "date": "2026-08-31T00:00:00",
-        "aum_billions": 126.36342145
+        "aum_billions": 126.85517236
       }
     ],
     "sources": {
@@ -363,14 +363,14 @@
       "etp": "live"
     },
     "fingerprints": {
-      "tmmf": "$13.24B|0.00475768510666863",
+      "tmmf": "$14.02B|0.059",
       "stable": "$303.24B|0.0259",
       "rwa": "$38.36B|0.0234",
-      "crypto": "$2.75T|21.4327",
-      "etp": "$127.01B|24.3887"
+      "crypto": "$2.75T|21.4698",
+      "etp": "$127.01B|24.6418"
     },
-    "fetched_at": "2026-08-31T13:44:34+00:00",
-    "tmmf_distributed_usd": 13240000000.0
+    "fetched_at": "2026-08-31T14:01:45+00:00",
+    "tmmf_distributed_usd": 14020000000.0
   },
   "history": [
     {
@@ -415,7 +415,7 @@
     },
     {
       "week_end": "2026-08-31",
-      "fetched_at": "2026-08-31T13:44:34+00:00",
+      "fetched_at": "2026-08-31T14:01:45+00:00",
       "sources": {
         "tmmf": "live",
         "stable": "live",
@@ -424,13 +424,13 @@
         "etp": "live"
       },
       "fingerprints": {
-        "tmmf": "$13.24B|0.00475768510666863",
+        "tmmf": "$14.02B|0.059",
         "stable": "$303.24B|0.0259",
         "rwa": "$38.36B|0.0234",
-        "crypto": "$2.75T|21.4327",
-        "etp": "$127.01B|24.3887"
+        "crypto": "$2.75T|21.4698",
+        "etp": "$127.01B|24.6418"
       },
-      "tmmf_distributed_usd": 13240000000.0,
+      "tmmf_distributed_usd": 14020000000.0,
       "issues": []
     }
   ]

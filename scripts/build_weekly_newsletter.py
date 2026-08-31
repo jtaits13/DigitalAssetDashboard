@@ -1453,10 +1453,12 @@ def _explore_kpi_cells(explore: dict[str, dict[str, Any]], section_id: str, *, o
         return _kpi_row("—", "—", "—", is_last=True, outlook=outlook)
     cells = ""
     for i, k in enumerate(kpis):
+        label = str(k.get("label") or "—")
+        pct_decimals = 2 if "fund" in label.lower() else 1
         cells += _kpi_row(
-            str(k.get("label") or "—"),
+            label,
             str(k.get("value_display") or "—"),
-            _fmt_pct(k.get("delta_30d_pct"), unit="fraction"),
+            _fmt_pct(k.get("delta_30d_pct"), decimals=pct_decimals, unit="fraction"),
             is_last=(i == len(kpis) - 1),
             outlook=outlook,
         )
