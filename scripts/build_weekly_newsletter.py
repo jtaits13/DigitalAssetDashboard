@@ -76,6 +76,8 @@ def _fmt_pct(raw: object, *, decimals: int = 1, unit: str = "auto") -> str:
         pass
     elif abs(n) < 1.0 and n != 0:
         n *= 100.0
+    if n == 0:
+        return "flat"
     sign = "+" if n >= 0 else ""
     return f"{sign}{n:.{decimals}f}%"
 
