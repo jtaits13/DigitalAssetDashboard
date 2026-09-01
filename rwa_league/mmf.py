@@ -8,9 +8,11 @@ curated allowlist (``MMF_FUND_SLUGS``). Networks and platforms are aggregated fr
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 from rwa_league.client import (
+    APP_HOME,
     RwaGlobalKpi,
     RwaTreasuryDistributedNetworkRow,
     RwaTreasuryPlatformRow,
@@ -18,8 +20,11 @@ from rwa_league.client import (
     _extract_next_data,
     _fetch_government_bonds_props_payload,
     _fetch_treasuries_props_payload,
+    _http_get_text,
     format_usd_compact,
 )
+
+logger = logging.getLogger(__name__)
 
 # Copy shared with static_home/rwa-tokenized-mmf.html (deep page subtitle + KPI legend).
 TMMF_INNER_PAGE_SUBTITLE_HTML = (
@@ -71,7 +76,7 @@ def tmmf_methodology_panel_html() -> str:
     )
 
 
-# Curated TMMF universe on RWA.xyz (17 funds; population table sorted by total value).
+# Curated TMMF universe on RWA.xyz (19 funds; population table sorted by total value).
 MMF_FUND_SLUGS: tuple[str, ...] = (
     "blackrock-usd-institutional-digital-liquidity-fund",  # BlackRock USD Institutional Digital Liquidity Fund
     "benji",  # BENJI
@@ -80,16 +85,18 @@ MMF_FUND_SLUGS: tuple[str, ...] = (
     "ondo-short-term-us-government-bond-fund",  # Ondo Short-Term US Government Bond Fund
     "ondo-u-s-dollar-yield",  # Ondo US Dollar Yield
     "wisdomtree-treasury-money-market-digital-fund",  # WisdomTree Treasury Money Market Digital Fund
-    "janus-henderson-anemoy-treasury-fund",  # Janus Henderson Anemoy Treasury Fund
+    "janus-henderson-treasury-fund",  # Janus Henderson Anemoy / Treasury Fund (JTRSY)
     "circle-usyc",  # Circle USYC
     "spiko-us-t-bills-money-market-fund",  # Spiko US T-Bills Money Market Fund
     "chinaamc-usd-digital-money-market-fund-class-i-usd",  # ChinaAMC USD Digital MMF Class I
-    "chinaamc-usd-digital-money-market-fund-class-b-usd",  # ChinaAMC USD Digital MMF Class B
-    "chinaamc-usd-digital-money-market-fund-class-f-usd",  # ChinaAMC USD Digital MMF Class F
     "cms-asseto-secure-hodl-cms-usd-money-market-fund",  # CMS USD Money Market Fund
+    "jpmorgan-onchain-liquidity-token-money-market-fund",  # JPMorgan OnChain Liquidity-Token Money Market Fund
     "my-onchain-net-yield-fund",  # My OnChain Net Yield Fund (JPMorganChase)
-    "fidelity-international-usd-digital-liquidity-fund-sp",  # Fidelity International USD Digital Liquidity Fund
+    "fidelity-international-usd-digital-liquidity-fund-sp-acc-class",  # Fidelity International USD Digital Liquidity Fund
     "cmbi-usd-money-market-fund-token",  # CMBI USD Money Market Fund Token
+    "state-street-stablecoin-reserves-money-market-fund",  # State Street Stablecoin Reserves Money Market Fund
+    "state-street-galaxy-onchain-liquidity-sweep-fund",  # State Street Galaxy Onchain Liquidity Sweep Fund
+    "blackrock-daily-reinvestment-stablecoin-reserve-vehicle",  # BlackRock Daily Reinvestment Stablecoin Reserve Vehicle
 )
 
 MMF_FUND_SLUG_SET: frozenset[str] = frozenset(MMF_FUND_SLUGS)
@@ -158,6 +165,32 @@ def _list_query_assets(props: dict[str, Any]) -> list[dict[str, Any]]:
     return [r for r in results if isinstance(r, dict)]
 
 
+def _fetch_rwa_asset_by_slug(slug: str) -> dict[str, Any] | None:
+    """Load one RWA.xyz asset page when the fund is missing from listing-page results."""
+    wanted = str(slug or "").strip().lower()
+    if not wanted:
+        return None
+    url = f"{APP_HOME.rstrip('/')}/assets/{wanted}"
+    try:
+        r = _http_get_text(url)
+    except Exception as exc:
+        logger.debug("RWA asset fetch %s: %s", wanted, exc)
+        return None
+    payload = _extract_next_data(r.text)
+    if not payload or payload.get("page") != "/assets/[assetSlug]":
+        return None
+    props = payload.get("props")
+    if not isinstance(props, dict):
+        return None
+    asset = _page_props(props).get("asset")
+    if not isinstance(asset, dict):
+        return None
+    got = str(asset.get("slug") or "").strip().lower()
+    if got != wanted:
+        return None
+    return asset
+
+
 def collect_tokenized_mmf_assets() -> tuple[list[dict[str, Any]], str | None]:
     """Merge unique MMF assets from Treasuries and Government Bonds RWA.xyz pages."""
     props_tr, err_tr = _fetch_treasuries_props_payload()
@@ -183,6 +216,13 @@ def collect_tokenized_mmf_assets() -> tuple[list[dict[str, Any]], str | None]:
             continue
         if slug in MMF_FUND_SLUG_SET and slug not in by_slug:
             by_slug[slug] = a
+
+    for slug in MMF_FUND_SLUGS:
+        if slug in by_slug:
+            continue
+        asset = _fetch_rwa_asset_by_slug(slug)
+        if asset is not None:
+            by_slug[slug] = asset
 
     mmfs = [by_slug[s] for s in MMF_FUND_SLUGS if s in by_slug]
     if not mmfs:
