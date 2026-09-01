@@ -578,7 +578,7 @@ def _patch_kpi_rows(rows: list[dict[str, Any]], patches: dict[str, Any]) -> list
 
 
 def _apply_manual_overrides(out: dict[str, Any]) -> None:
-    """Apply a same-week browser/manual headline paste when live rwa.xyz fetch is blocked."""
+    """Paste same-week browser headlines only for sections whose live rwa.xyz fetch failed."""
     payload = _read_json(MANUAL_OVERRIDE_PATH)
     if not payload:
         return
@@ -591,6 +591,8 @@ def _apply_manual_overrides(out: dict[str, Any]) -> None:
     for section, (kpi_key, source_key) in _MANUAL_SECTION_KEYS.items():
         patches = payload.get(section)
         if not isinstance(patches, dict) or not patches:
+            continue
+        if str(out.get("fetched_sources", {}).get(source_key) or "") == "live" and out.get(kpi_key):
             continue
         base = list(out.get(kpi_key) or latest.get(kpi_key) or [])
         out[kpi_key] = _patch_kpi_rows(base, patches)
