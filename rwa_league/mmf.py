@@ -76,7 +76,7 @@ def tmmf_methodology_panel_html() -> str:
     )
 
 
-# Curated TMMF universe on RWA.xyz (19 funds; population table sorted by total value).
+# Curated TMMF universe on RWA.xyz (18 funds; population table sorted by total value).
 MMF_FUND_SLUGS: tuple[str, ...] = (
     "blackrock-usd-institutional-digital-liquidity-fund",  # BlackRock USD Institutional Digital Liquidity Fund
     "benji",  # BENJI
@@ -94,7 +94,6 @@ MMF_FUND_SLUGS: tuple[str, ...] = (
     "my-onchain-net-yield-fund",  # My OnChain Net Yield Fund (JPMorganChase)
     "fidelity-international-usd-digital-liquidity-fund-sp-acc-class",  # Fidelity International USD Digital Liquidity Fund
     "cmbi-usd-money-market-fund-token",  # CMBI USD Money Market Fund Token
-    "state-street-stablecoin-reserves-money-market-fund",  # State Street Stablecoin Reserves Money Market Fund
     "state-street-galaxy-onchain-liquidity-sweep-fund",  # State Street Galaxy Onchain Liquidity Sweep Fund
     "blackrock-daily-reinvestment-stablecoin-reserve-vehicle",  # BlackRock Daily Reinvestment Stablecoin Reserve Vehicle
 )
