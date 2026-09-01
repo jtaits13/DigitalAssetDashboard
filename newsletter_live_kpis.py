@@ -27,7 +27,6 @@ if str(ROOT) not in sys.path:
 
 DATA = ROOT / "static_home" / "data"
 SNAPSHOT_PATH = DATA / "newsletter_kpi_snapshot.json"
-MANUAL_OVERRIDE_PATH = ROOT / "logs" / "newsletter_kpi_manual_override.json"
 _CACHE_DIR = Path(tempfile.gettempdir()) / "jpm-digital-newsletter-kpis"
 
 REQUIRED_SECTIONS: tuple[tuple[str, str], ...] = (
@@ -89,7 +88,6 @@ def fetch_live_newsletter_kpis(*, force: bool = False) -> dict[str, Any]:
         _merge_named(out, "rwa", fut_rwa.result())
         _merge_named(out, "crypto", fut_crypto.result())
         _merge_named(out, "etp", fut_etp.result())
-    _apply_manual_overrides(out)
     out["sources"] = dict(out["fetched_sources"])
     _LIVE = out
     return out
@@ -530,85 +528,6 @@ def _merge_named(out: dict[str, Any], name: str, result: dict[str, Any]) -> None
         if result.get("aum_series"):
             out["etp_aum_series"] = result["aum_series"]
     out["fetched_sources"][name] = "live" if ok else "failed"
-
-
-_MANUAL_SECTION_KEYS: dict[str, tuple[str, str]] = {
-    "tmmf": ("tmmf_kpis", "tmmf"),
-    "stable": ("stable_kpis", "stable"),
-    "rwa": ("rwa_kpis", "rwa"),
-}
-
-
-def _manual_override_in_week(week_txt: str) -> bool:
-    try:
-        end = date.fromisoformat(week_txt)
-    except ValueError:
-        return False
-    today = date.today()
-    return end <= today <= end + timedelta(days=6)
-
-
-def _patch_kpi_rows(rows: list[dict[str, Any]], patches: dict[str, Any]) -> list[dict[str, Any]]:
-    out = [dict(row) for row in rows if isinstance(row, dict)]
-    for label, patch in (patches or {}).items():
-        if not isinstance(patch, dict):
-            continue
-        needle = str(label).strip().lower()
-        if not needle:
-            continue
-        found = False
-        for row in out:
-            if needle in str(row.get("label") or "").lower():
-                if patch.get("value_display") is not None:
-                    row["value_display"] = str(patch["value_display"]).strip()
-                if "delta_30d_pct" in patch:
-                    row["delta_30d_pct"] = patch["delta_30d_pct"]
-                found = True
-                break
-        if not found:
-            out.insert(
-                0,
-                {
-                    "label": str(label),
-                    "value_display": str(patch.get("value_display") or "").strip(),
-                    "delta_30d_pct": patch.get("delta_30d_pct"),
-                },
-            )
-    return out
-
-
-def _apply_manual_overrides(out: dict[str, Any]) -> None:
-    """Paste same-week browser headlines only for sections whose live rwa.xyz fetch failed."""
-    payload = _read_json(MANUAL_OVERRIDE_PATH)
-    if not payload:
-        return
-    week_txt = str(payload.get("week_end") or "").strip()
-    if not week_txt or not _manual_override_in_week(week_txt):
-        return
-    snap = _read_snapshot()
-    latest = (snap.get("latest") or {}) if snap else {}
-    applied: list[str] = []
-    for section, (kpi_key, source_key) in _MANUAL_SECTION_KEYS.items():
-        patches = payload.get(section)
-        if not isinstance(patches, dict) or not patches:
-            continue
-        if str(out.get("fetched_sources", {}).get(source_key) or "") == "live" and out.get(kpi_key):
-            continue
-        base = list(out.get(kpi_key) or latest.get(kpi_key) or [])
-        out[kpi_key] = _patch_kpi_rows(base, patches)
-        out["fetched_sources"][source_key] = "live"
-        applied.append(source_key)
-        out["errors"] = [
-            item
-            for item in (out.get("errors") or [])
-            if not str(item).startswith(f"{source_key}:")
-        ]
-    if applied:
-        out["errors"].append(
-            "manual override: "
-            + ", ".join(applied)
-            + " headlines pasted from the live rwa.xyz page after Cloudflare blocked the scraper."
-        )
 
 
 def _kpis_to_dicts(kpis: list[Any]) -> list[dict[str, Any]]:

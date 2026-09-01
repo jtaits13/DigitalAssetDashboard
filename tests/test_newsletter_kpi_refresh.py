@@ -11,8 +11,6 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from newsletter_live_kpis import (
-    _manual_override_in_week,
-    _patch_kpi_rows,
     _refresh_issues,
     _snapshot_source,
     kpi_stale_banner_html,
@@ -75,45 +73,9 @@ def test_lagging_etp_series_is_an_error() -> None:
     assert "AUM series last point is 2026-07-20" in issues[0]
 
 
-def test_manual_kpi_patch_updates_matching_label() -> None:
-    from datetime import timedelta
-
-    rows = _patch_kpi_rows(
-        [{"label": "Market Cap", "value_display": "$302.27B", "delta_30d_pct": 0.01}],
-        {"Market Cap": {"value_display": "$303.24B", "delta_30d_pct": 0.0259}},
-    )
-    assert rows[0]["value_display"] == "$303.24B"
-    assert rows[0]["delta_30d_pct"] == 0.0259
-    today = date.today()
-    monday = today - timedelta(days=today.weekday())
-    assert _manual_override_in_week(monday.isoformat()) is True
-    assert _manual_override_in_week((monday - timedelta(days=14)).isoformat()) is False
-
-
-def test_manual_override_skips_live_sections() -> None:
-    from newsletter_live_kpis import _apply_manual_overrides
-
-    out = {
-        "rwa_kpis": [
-            {
-                "label": "Distributed Asset Value",
-                "value_display": "$39.00B",
-                "delta_30d_pct": 0.01,
-            }
-        ],
-        "stable_kpis": [],
-        "fetched_sources": {"rwa": "live", "stable": "failed"},
-        "errors": ["stable: blocked"],
-    }
-    _apply_manual_overrides(out)
-    assert out["rwa_kpis"][0]["value_display"] == "$39.00B"
-
-
 if __name__ == "__main__":
     test_live_sources_are_fresh()
     test_prior_week_snapshot_is_an_error()
     test_same_week_live_snapshot_is_ok()
     test_lagging_etp_series_is_an_error()
-    test_manual_kpi_patch_updates_matching_label()
-    test_manual_override_skips_live_sections()
     print("test_newsletter_kpi_refresh: ok")
