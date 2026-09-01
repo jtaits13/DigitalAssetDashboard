@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-01T05:23:14.933648+00:00",
+  "generated_at": "2026-09-01T11:51:00.592461+00:00",
   "rows": [
     {
       "symbol": "IBIT",
@@ -470,6 +470,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=STCE%20S-1"
     },
     {
+      "symbol": "BHYP",
+      "name": "Bitwise Hyperliquid ETF Common Shares of Beneficial Interest",
+      "price": "47.08",
+      "pct_52w": null,
+      "assets_usd": 195320000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Bitwise",
+      "custodian": "",
+      "inception": "May 14, 2026",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BHYP%20S-1"
+    },
+    {
       "symbol": "FSOL",
       "name": "Fidelity Solana Fund",
       "price": "12.29",
@@ -494,19 +507,6 @@
       "custodian": "",
       "inception": "Jun 3, 2026",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=HYPG%20S-1"
-    },
-    {
-      "symbol": "BHYP",
-      "name": "Bitwise Hyperliquid ETF Common Shares of Beneficial Interest",
-      "price": "47.08",
-      "pct_52w": null,
-      "assets_usd": 172690000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Bitwise",
-      "custodian": "",
-      "inception": "May 14, 2026",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BHYP%20S-1"
     },
     {
       "symbol": "BTCW",
@@ -1081,19 +1081,6 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=DFII%20S-1"
     },
     {
-      "symbol": "BAVA",
-      "name": "Bitwise Avalanche ETF",
-      "price": "19.57",
-      "pct_52w": null,
-      "assets_usd": 19720000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Bitwise",
-      "custodian": "",
-      "inception": "Apr 14, 2026",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BAVA%20S-1"
-    },
-    {
       "symbol": "DECO",
       "name": "State Street Galaxy Digital Asset Ecosystem ETF",
       "price": "70.45",
@@ -1118,6 +1105,19 @@
       "custodian": "",
       "inception": "Aug 20, 2024",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=SMST%20S-1"
+    },
+    {
+      "symbol": "BAVA",
+      "name": "Bitwise Avalanche ETF",
+      "price": "19.57",
+      "pct_52w": null,
+      "assets_usd": 18980000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Bitwise",
+      "custodian": "",
+      "inception": "Apr 14, 2026",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BAVA%20S-1"
     },
     {
       "symbol": "CBXJ",
@@ -1225,7 +1225,7 @@
     },
     {
       "symbol": "TSUI",
-      "name": "21Shares Sui ETF",
+      "name": "21Shares Sui Staking ETF Common Shares of Beneficial Interest Shares",
       "price": "14.54",
       "pct_52w": null,
       "assets_usd": 14600000.0,
