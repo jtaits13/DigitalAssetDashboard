@@ -20,7 +20,12 @@ from crypto_etps.widgets import (
     resolve_etp_user_agent,
 )
 from crypto_prices.widgets import clear_crypto_snapshot_cache
-from news_feeds import DEFAULT_FEEDS, load_all_feeds, prepare_home_hub_market_news_lane
+from news_feeds import (
+    DEFAULT_FEEDS,
+    load_all_feeds,
+    prepare_home_hub_market_news_lane,
+    select_home_news_preview,
+)
 from price_ticker import fetch_top_crypto_tickers
 from regulatory_news.client import load_regulatory_articles
 from regulatory_news.widgets import clear_regulatory_cache
@@ -190,7 +195,7 @@ def main() -> None:
                 st.warning(err)
 
     home_news, _ = prepare_home_hub_market_news_lane(articles)
-    news_rail = build_static_news_rail_html(home_news)
+    news_rail = build_static_news_rail_html(select_home_news_preview(home_news))
 
     render_home_hero_content_gap()
 

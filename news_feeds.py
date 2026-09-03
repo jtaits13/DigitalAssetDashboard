@@ -499,30 +499,93 @@ def filter_all_articles_allowed_sources(articles: list[dict[str, Any]]) -> list[
     return out
 
 
+def _struct_time_to_utc(t: Any) -> Optional[datetime]:
+    if not t:
+        return None
+    try:
+        return datetime(*t[:6], tzinfo=timezone.utc)
+    except (TypeError, ValueError):
+        return None
+
+
 def parse_entry_date(entry: Any) -> Optional[datetime]:
     """Parse published/updated date from a feedparser entry (UTC)."""
-    if getattr(entry, "published_parsed", None):
-        t = entry.published_parsed
-        try:
-            return datetime(*t[:6], tzinfo=timezone.utc)
-        except (TypeError, ValueError):
-            pass
-    if getattr(entry, "updated_parsed", None):
-        t = entry.updated_parsed
-        try:
-            return datetime(*t[:6], tzinfo=timezone.utc)
-        except (TypeError, ValueError):
-            pass
+    dt = _struct_time_to_utc(getattr(entry, "published_parsed", None))
+    if dt:
+        return dt
+    dt = _struct_time_to_utc(getattr(entry, "updated_parsed", None))
+    if dt:
+        return dt
     raw = getattr(entry, "published", None) or getattr(entry, "updated", None)
     if raw:
         try:
-            dt = parsedate_to_datetime(raw)
-            if dt.tzinfo is None:
-                dt = dt.replace(tzinfo=timezone.utc)
-            return dt.astimezone(timezone.utc)
+            parsed = parsedate_to_datetime(raw)
+            if parsed.tzinfo is None:
+                parsed = parsed.replace(tzinfo=timezone.utc)
+            return parsed.astimezone(timezone.utc)
         except (TypeError, ValueError):
             pass
     return None
+
+
+def parse_feed_build_datetime(parsed: Any) -> Optional[datetime]:
+    """Channel ``lastBuildDate`` / updated time from a feedparser result."""
+    feed = getattr(parsed, "feed", None)
+    if feed is None:
+        return None
+    for key in ("updated_parsed", "published_parsed"):
+        raw_t = feed.get(key) if hasattr(feed, "get") else getattr(feed, key, None)
+        dt = _struct_time_to_utc(raw_t)
+        if dt:
+            return dt
+    raw = None
+    if hasattr(feed, "get"):
+        raw = feed.get("updated") or feed.get("published")
+    else:
+        raw = getattr(feed, "updated", None) or getattr(feed, "published", None)
+    if raw:
+        try:
+            dt = parsedate_to_datetime(str(raw))
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+            return dt.astimezone(timezone.utc)
+        except (TypeError, ValueError, OverflowError):
+            pass
+    return None
+
+
+def demote_feed_rebuild_timestamps(
+    items: list[dict[str, Any]],
+    feed_built: Optional[datetime],
+    *,
+    window_seconds: int = 120,
+) -> None:
+    """Clear item dates that are clearly the RSS channel rebuild time.
+
+    Some outlets (notably The Defiant) stamp featured/pinned items with
+    ``lastBuildDate`` so they always sort as “just now” even when the article
+    is days old. If two or more items share that rebuild timestamp, drop those
+    dates so recency sorting uses real ``pubDate`` values. Leave the feed
+    alone when every dated item would be cleared.
+    """
+    if not feed_built or len(items) < 2:
+        return
+    built = feed_built.astimezone(timezone.utc)
+    matching: list[dict[str, Any]] = []
+    dated_other = 0
+    for item in items:
+        pub = item.get("published")
+        if not isinstance(pub, datetime):
+            continue
+        pub_utc = pub.astimezone(timezone.utc)
+        if abs((pub_utc - built).total_seconds()) <= window_seconds:
+            matching.append(item)
+        else:
+            dated_other += 1
+    if len(matching) < 2 or dated_other == 0:
+        return
+    for item in matching:
+        item["published"] = None
 
 
 def _html_to_text(raw: str) -> str:
@@ -630,6 +693,7 @@ def fetch_feed(source_name: str, url: str) -> list[dict[str, Any]]:
                 "summary": summary,
             }
         )
+    demote_feed_rebuild_timestamps(out, parse_feed_build_datetime(parsed))
     return out
 
 def _load_one_rss(name: str, url: str) -> tuple[list[dict[str, Any]], str | None]:
@@ -1083,6 +1147,72 @@ def prepare_home_hub_market_news_lane(
     capped = cap_market_news_per_day(base, max_per_day=ALL_ARTICLES_FEED_DAY_CAP)
     lane = filter_market_news_calendar_lookback(capped)
     return lane, capped
+
+
+HOME_NEWS_PREVIEW_COUNT = 4
+HOME_NEWS_PREVIEW_MAX_PER_SOURCE = 1
+
+
+def select_home_news_preview(
+    articles: list[dict[str, Any]],
+    *,
+    n: int = HOME_NEWS_PREVIEW_COUNT,
+    max_per_source: int = HOME_NEWS_PREVIEW_MAX_PER_SOURCE,
+) -> list[dict[str, Any]]:
+    """Newest dated headlines for the home rail, with source diversity.
+
+    Items without ``published`` (including feed ``lastBuildDate`` restamps) are
+    skipped unless there are not enough dated stories to fill ``n``.
+    """
+    if n <= 0:
+        return []
+    dated: list[dict[str, Any]] = []
+    undated: list[dict[str, Any]] = []
+    for item in articles:
+        if isinstance(item.get("published"), datetime):
+            dated.append(item)
+        else:
+            undated.append(item)
+    dated.sort(
+        key=lambda x: x["published"].astimezone(timezone.utc)
+        if isinstance(x.get("published"), datetime)
+        else datetime.min.replace(tzinfo=timezone.utc),
+        reverse=True,
+    )
+
+    picked: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    counts: dict[str, int] = {}
+
+    def _key(item: dict[str, Any]) -> str:
+        return str(item.get("link") or item.get("title") or "")
+
+    def _src(item: dict[str, Any]) -> str:
+        return str(item.get("source") or "").strip().lower()
+
+    def _take(pool: list[dict[str, Any]], *, enforce_cap: bool) -> None:
+        for item in pool:
+            if len(picked) >= n:
+                return
+            key = _key(item)
+            if not key or key in seen:
+                continue
+            src = _src(item)
+            if enforce_cap and max_per_source > 0 and src and counts.get(src, 0) >= max_per_source:
+                continue
+            picked.append(item)
+            seen.add(key)
+            if src:
+                counts[src] = counts.get(src, 0) + 1
+
+    _take(dated, enforce_cap=True)
+    if len(picked) < n:
+        _take(dated, enforce_cap=False)
+    if len(picked) < n:
+        _take(undated, enforce_cap=True)
+    if len(picked) < n:
+        _take(undated, enforce_cap=False)
+    return picked
 
 
 def filter_headlines_by_keyword(articles: list[dict[str, Any]], query: str) -> list[dict[str, Any]]:

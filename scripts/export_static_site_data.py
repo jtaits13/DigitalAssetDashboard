@@ -3,6 +3,7 @@ Build JSON payloads under static_home/data/ for the GitHub Pages mirror.
 
 Run locally:  python scripts/export_static_site_data.py
   Crypto only (rewrites ``crypto_*.json`` with ``about_blurb`` on each row, ~1–3 min):  python scripts/export_static_site_data.py --crypto-only
+  News only (home rail + hub JSON; RSS only):  python scripts/export_static_site_data.py --news-only
   ETP only (``etps.json``, ``etp_kpis.json``, ``aum_series.json``; ~2–4 min):  python scripts/export_etp_static_data.py
 Run in CI:    every 6 hours via ``.github/workflows/refresh-static-home-data.yml`` (full export + deploy).
   Ad-hoc git pushes only deploy committed ``static_home/`` (see ``deploy-static-home.yml``)—run export locally before committing JSON if you need fresh data on push.
@@ -60,6 +61,7 @@ from news_feeds import (
     dedupe_articles,
     load_all_etf_etp_news_cached,
     load_all_feeds,
+    select_home_news_preview,
 )
 from custodian_news.client import CUSTODIAN_LOOKBACK_DAYS, detect_article_access, load_custodian_articles
 from regulatory_news.client import load_regulatory_articles
@@ -1928,6 +1930,12 @@ def export_crypto_json_bundle(
 
 
 _ETP_MANIFEST_ERROR_PREFIXES = ("ETP scrape:", "ETP flows:", "AUM chart:")
+_NEWS_MANIFEST_ERROR_PREFIXES = (
+    "news RSS (",
+    "reg RSS:",
+    "custodian RSS:",
+    "ETF news RSS:",
+)
 
 
 def build_etp_page_payloads(
@@ -2158,27 +2166,18 @@ def merge_etp_refresh_into_manifest(summary: dict[str, Any], manifest_path: Path
     path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
 
 
-def main() -> None:
-    OUT.mkdir(parents=True, exist_ok=True)
-    manifest: dict = {"generated_at": datetime.now(timezone.utc).isoformat(), "errors": []}
-    stale_sections: list[str] = []
+def export_news_json_bundle(
+    manifest: dict[str, Any],
+    stale_sections: list[str],
+) -> dict[str, Any]:
+    """Refresh RSS-backed news JSON (home rail, hub lanes, ETF pulse)."""
+    from news_feeds import prepare_all_digital_asset_articles
 
-    etp_summary = export_etp_json_bundle(errors_out=manifest["errors"])
-    manifest["etp_refreshed_at"] = etp_summary["etp_refreshed_at"]
-    if etp_summary.get("stale"):
-        stale_sections.append("etp")
-
-    # --- Home RSS lane (also used for crypto Top Movers headline context).
     articles_home, feed_errs_home = load_all_feeds(list(DEFAULT_FEEDS) + [STATIC_THE_DEFIANT_FEED])
     for e in feed_errs_home:
         manifest["errors"].append(f"news RSS (home): {e}")
     home_unique = dedupe_articles(articles_home, max_items=None)
-    home_news_items = home_unique[:HOME_NEWS_N]
-
-    export_crypto_json_bundle(manifest, news_articles=home_unique)
-
-    # --- All digital asset headlines: CoinDesk + The Block; topic-dedupe; ≤8/UTC day; rolling week.
-    from news_feeds import prepare_all_digital_asset_articles
+    home_news_items = select_home_news_preview(home_unique, n=HOME_NEWS_N)
 
     articles_all, feed_errs_all = load_all_feeds(all_articles_feed_list())
     for e in feed_errs_all:
@@ -2212,7 +2211,6 @@ def main() -> None:
         section="regulatory",
         stale_sections=stale_sections,
     )
-    # Full list for static GitHub Pages (search + pagination).
     write_json_keep_prior_if_empty(
         OUT / "all_articles.json",
         {"generated_at": news_ts, "items": [_article_json(a) for a in articles_for_all_json]},
@@ -2247,7 +2245,6 @@ def main() -> None:
         stale_sections=stale_sections,
     )
 
-    # --- ETF / ETP headline pool (same filter + ranked daily cap as Streamlit / FastAPI) ---
     etf_all, etf_feed_errs = load_all_etf_etp_news_cached(extra_feeds=[STATIC_THE_DEFIANT_FEED])
     for e in etf_feed_errs:
         manifest["errors"].append(f"ETF news RSS: {e}")
@@ -2266,6 +2263,74 @@ def main() -> None:
         json.dumps({"generated_at": news_ts, "items": pulse}, indent=2),
         encoding="utf-8",
     )
+    return {
+        "news_ts": news_ts,
+        "home_unique": home_unique,
+        "all_prepared": all_prepared,
+        "reg_top": reg_top,
+        "etf_items": etf_items,
+        "etf_count": len(etf_items),
+        "home_count": len(home_news_items),
+    }
+
+
+def merge_news_refresh_into_manifest(summary: dict[str, Any], manifest_path: Path | None = None) -> None:
+    """Patch ``manifest.json``: news/regulatory timestamps + replace news-scoped errors only."""
+    path = manifest_path or (OUT / "manifest.json")
+    if path.exists():
+        try:
+            manifest = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            manifest = {}
+    else:
+        manifest = {}
+    if not isinstance(manifest.get("errors"), list):
+        manifest["errors"] = []
+    kept = [
+        e
+        for e in manifest["errors"]
+        if not any(str(e).startswith(p) for p in _NEWS_MANIFEST_ERROR_PREFIXES)
+    ]
+    manifest["errors"] = kept + list(summary.get("errors") or [])
+    news_ts = summary.get("news_ts")
+    if news_ts:
+        sections = manifest.get("sections") if isinstance(manifest.get("sections"), dict) else {}
+        sections["news"] = news_ts
+        sections["regulatory"] = news_ts
+        manifest["sections"] = sections
+    stale_sections = list(manifest.get("stale_sections") or [])
+    flagged = {str(s) for s in (summary.get("stale_sections") or [])}
+    for key in ("news", "regulatory"):
+        if key in flagged:
+            if key not in stale_sections:
+                stale_sections.append(key)
+        elif key in stale_sections:
+            stale_sections = [s for s in stale_sections if s != key]
+    manifest["stale_sections"] = stale_sections
+    if not manifest.get("generated_at"):
+        manifest["generated_at"] = news_ts
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+
+
+def main() -> None:
+    OUT.mkdir(parents=True, exist_ok=True)
+    manifest: dict = {"generated_at": datetime.now(timezone.utc).isoformat(), "errors": []}
+    stale_sections: list[str] = []
+
+    etp_summary = export_etp_json_bundle(errors_out=manifest["errors"])
+    manifest["etp_refreshed_at"] = etp_summary["etp_refreshed_at"]
+    if etp_summary.get("stale"):
+        stale_sections.append("etp")
+
+    news_summary = export_news_json_bundle(manifest, stale_sections)
+    news_ts = news_summary["news_ts"]
+    home_unique = news_summary["home_unique"]
+    all_prepared = news_summary["all_prepared"]
+    reg_top = news_summary["reg_top"]
+    etf_items = news_summary["etf_items"]
+
+    export_crypto_json_bundle(manifest, news_articles=home_unique)
 
     # --- On-chain hub (Streamlit home): RWA Global Market KPIs + Networks preview + explore hrefs ---
     import pandas as pd
@@ -2545,6 +2610,28 @@ if __name__ == "__main__":
         except (OSError, ValueError, TypeError):
             pass
         print(f"Wrote crypto JSON under {sample_path.parent}. First row keys: {sample_keys}")
+        if manifest_only["errors"]:
+            print("Warnings:", manifest_only["errors"])
+        raise SystemExit(0)
+    if any(a in ("--news-only", "--news") for a in sys.argv[1:]):
+        OUT.mkdir(parents=True, exist_ok=True)
+        manifest_only: dict[str, Any] = {
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "errors": [],
+        }
+        stale: list[str] = []
+        summary = export_news_json_bundle(manifest_only, stale)
+        merge_news_refresh_into_manifest(
+            {
+                "news_ts": summary["news_ts"],
+                "errors": manifest_only["errors"],
+                "stale_sections": stale,
+            }
+        )
+        print(
+            f"Wrote news JSON to {OUT} ({summary['home_count']} home headlines, "
+            f"{summary['etf_count']} ETF headlines). Other static_home/data/*.json unchanged."
+        )
         if manifest_only["errors"]:
             print("Warnings:", manifest_only["errors"])
         raise SystemExit(0)
