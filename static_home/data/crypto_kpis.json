@@ -1,28 +1,28 @@
 {
-  "generated_at": "2026-09-03T21:12:23.471380+00:00",
+  "generated_at": "2026-09-04T04:51:08.885061+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
-    "value_display": "$2.86T",
+    "value_display": "$2.85T",
     "delta": {
-      "pct": 24.8949,
+      "pct": 24.4458,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$81,461",
+    "value_display": "$81,068",
     "delta": {
-      "pct": 26.8,
+      "pct": 25.8,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,506",
+    "value_display": "$2,511",
     "delta": {
-      "pct": 33.6,
+      "pct": 33.8,
       "window": "1M"
     }
   },
@@ -30,7 +30,7 @@
     "label": "BTC dominance",
     "value_display": "57.1%",
     "delta": {
-      "pct": 1.3725,
+      "pct": 1.0882,
       "window": "1M"
     }
   },
@@ -38,16 +38,16 @@
     "label": "Stablecoin share",
     "value_display": "10.6%",
     "delta": {
-      "pct": -19.1392,
+      "pct": -18.6298,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 57.07,
-    "stablecoin_share_top50_pct": 10.55,
-    "top50_market_cap_usd": 2714693307697.0,
-    "stablecoin_market_cap_usd": 286301100157.0,
-    "btc_market_cap_usd": 1634718745710.0
+    "btc_dominance_pct": 57.08,
+    "stablecoin_share_top50_pct": 10.6,
+    "top50_market_cap_usd": 2706035560897.0,
+    "stablecoin_market_cap_usd": 286870646158.0,
+    "btc_market_cap_usd": 1627832416583.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,35 +65,35 @@
       {
         "symbol": "ZEC",
         "name": "Zcash",
-        "pct_30d": 88.4,
+        "pct_30d": 84.0,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/zcash",
         "direction": "up",
         "context": {
-          "title": "Bitcoin back above $77,500, XRP leads majors as Fed hike odds slide to 62%",
+          "title": "Bitcoin back above $81,000 as hike odds fade, Zcash leads with 15% jump",
           "source": "CoinDesk",
-          "link": "https://www.coindesk.com/markets/2026/09/03/bitcoin-back-above-usd77-500-xrp-leads-majors-as-fed-hike-odds-near-66"
+          "link": "https://www.coindesk.com/markets/2026/09/04/bitcoin-back-above-usd81-000-as-hike-odds-fade-zcash-leads-with-15-jump"
         }
       },
       {
         "symbol": "UNI",
         "name": "Uniswap",
-        "pct_30d": 63.2,
+        "pct_30d": 63.5,
         "category": "defi",
         "category_label": "DeFi",
         "detail_url": "https://www.coingecko.com/en/coins/uniswap",
         "direction": "up",
         "context": {
-          "title": "Hayden Adams Says AMMs Will Win The Biggest Markets. A Former XTX Trader Says They're Going To Zero",
+          "title": "Uniswap Labs Bought Pons Token for 'Long-Term Alignment'",
           "source": "The Defiant",
-          "link": "https://thedefiant.io/news/defi/hayden-adams-correlated-pairs-amms-market-makers"
+          "link": "https://thedefiant.io/news/defi/uniswap-labs-bought-pons-token-for-long-term-alignment"
         }
       },
       {
         "symbol": "HYPE",
         "name": "Hyperliquid",
-        "pct_30d": 53.6,
+        "pct_30d": 54.8,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/hyperliquid",
@@ -107,5 +107,5 @@
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 24.9% over 30D:</strong> Total crypto market cap at $2.86T (24.9% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://www.coindesk.com/business/2026/09/03/standard-chartered-first-top-global-bank-to-offer-bitcoin-and-ether-trading-in-uae\" target=\"_blank\" rel=\"noopener noreferrer\">Standard Chartered brings spot crypto trading to Dubai FX platform</a> (CoinDesk).</li><li><strong>Gains broadened among top-50 alts:</strong> 34 names up more than ~0.5%, 4 down more than ~0.5%, and 4 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/business/2026/09/03/bitget-in-talks-with-wall-street-giants-including-blackrock-for-asian-distribution\" target=\"_blank\" rel=\"noopener noreferrer\">Bitget in talks with Wall Street giants including BlackRock to fuel Asian distribution</a> (CoinDesk).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.coindesk.com/business/2026/09/03/australia-is-cracking-down-on-crypto-businesses-as-its-strict-new-regulatory-deadline-nears\" target=\"_blank\" rel=\"noopener noreferrer\">Australia is cracking down on crypto businesses as its strict new regulatory deadline nears</a> (CoinDesk).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://cointelegraph.com/markets/eth-xrp-etf-inflow-streaks-end-bitcoin-funds-rebound?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Ether, XRP ETF inflow streaks end as Bitcoin funds rebound</a> (CoinTelegraph).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 24.4% over 30D:</strong> Total crypto market cap at $2.85T (24.4% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://cointelegraph.com/news/us-uk-joint-alliance-crypto-scam-centers?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">US, UK launch joint alliance targeting crypto scam centers</a> (CoinTelegraph).</li><li><strong>Gains broadened among top-50 alts:</strong> 34 names up more than ~0.5%, 4 down more than ~0.5%, and 4 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/business/2026/09/03/bitget-in-talks-with-wall-street-giants-including-blackrock-for-asian-distribution\" target=\"_blank\" rel=\"noopener noreferrer\">Bitget in talks with Wall Street giants including BlackRock to fuel Asian distribution</a> (CoinDesk).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://thedefiant.io/news/markets/bitcoin-retakes-80000-after-waller-signals-a-hold\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin Retakes $80,000 After Waller Signals A Hold</a> (The Defiant).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.coindesk.com/business/2026/09/03/australia-is-cracking-down-on-crypto-businesses-as-its-strict-new-regulatory-deadline-nears\" target=\"_blank\" rel=\"noopener noreferrer\">Australia is cracking down on crypto businesses as its strict new regulatory deadline nears</a> (CoinDesk).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
