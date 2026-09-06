@@ -1,23 +1,15 @@
 {
-  "generated_at": "2026-09-06T11:16:40.429392+00:00",
+  "generated_at": "2026-09-06T15:43:01.007614+00:00",
   "errors": [
     "ETF news RSS: ETFdb: HTTP Error 403: Forbidden",
     "ETF news RSS: ETF Trends (VettaFi): HTTP Error 403: Forbidden",
-    "ETF news RSS: Google News (spot Bitcoin ETF): HTTP Error 503: Service Unavailable",
-    "ETF news RSS: Google News (crypto ETF): HTTP Error 503: Service Unavailable",
-    "ETF news RSS: Google News (crypto ETP / ETF): HTTP Error 503: Service Unavailable",
-    "news RSS (all articles): The Block: HTTP Error 503: Service Unavailable",
-    "news RSS (all articles): CoinDesk: HTTP Error 503: Service Unavailable",
     "ETF news RSS: ETFdb: HTTP Error 403: Forbidden",
-    "ETF news RSS: ETF Trends (VettaFi): HTTP Error 403: Forbidden",
-    "ETF news RSS: Google News (spot Bitcoin ETF): HTTP Error 503: Service Unavailable",
-    "ETF news RSS: Google News (crypto ETF): HTTP Error 503: Service Unavailable",
-    "ETF news RSS: Google News (crypto ETP / ETF): HTTP Error 503: Service Unavailable"
+    "ETF news RSS: ETF Trends (VettaFi): HTTP Error 403: Forbidden"
   ],
-  "etp_refreshed_at": "2026-09-06T11:09:51.829531+00:00",
-  "crypto_refreshed_at": "2026-09-06T11:12:30.325226+00:00",
+  "etp_refreshed_at": "2026-09-06T15:36:38.726868+00:00",
+  "crypto_refreshed_at": "2026-09-06T15:39:20.455429+00:00",
   "stale_sections": [],
-  "export_completed_at": "2026-09-06T11:16:40.429392+00:00",
+  "export_completed_at": "2026-09-06T15:43:01.007614+00:00",
   "refresh_interval_hours": 6,
   "stale_threshold_hours": {
     "etp": 9,
@@ -27,10 +19,10 @@
     "regulatory": 24
   },
   "sections": {
-    "news": "2026-09-06T11:10:56.064626+00:00",
-    "regulatory": "2026-09-06T11:10:56.064626+00:00",
-    "etp": "2026-09-06T11:09:51.829531+00:00",
-    "rwa": "2026-09-06T11:16:06.802358+00:00",
-    "crypto": "2026-09-06T11:12:30.325226+00:00"
+    "news": "2026-09-06T15:36:43.259359+00:00",
+    "regulatory": "2026-09-06T15:36:43.259359+00:00",
+    "etp": "2026-09-06T15:36:38.726868+00:00",
+    "rwa": "2026-09-06T15:42:55.200778+00:00",
+    "crypto": "2026-09-06T15:39:20.455429+00:00"
   }
 }
