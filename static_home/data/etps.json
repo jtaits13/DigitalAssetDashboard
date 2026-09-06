@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-06T15:36:38.726868+00:00",
+  "generated_at": "2026-09-06T20:34:21.055269+00:00",
   "rows": [
     {
       "symbol": "IBIT",
@@ -71,7 +71,7 @@
       "name": "Bitwise Bitcoin ETF Trust",
       "price": "43.31",
       "pct_52w": -29.06,
-      "assets_usd": 2910000000.0,
+      "assets_usd": 3040000000.0,
       "flow_1y_usd": 1932000000.0,
       "flow_1y_window": "1Y",
       "issuer": "Bitwise",
@@ -145,6 +145,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=FETH%20S-1"
     },
     {
+      "symbol": "BITX",
+      "name": "Volatility Shares 2x Bitcoin ETF",
+      "price": "18.25",
+      "pct_52w": -64.07,
+      "assets_usd": 1220000000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "",
+      "custodian": "",
+      "inception": "Jun 27, 2023",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BITX%20S-1"
+    },
+    {
       "symbol": "HODL",
       "name": "VanEck Bitcoin ETF",
       "price": "22.58",
@@ -156,19 +169,6 @@
       "custodian": "Gemini, State Street (Cash, TA)",
       "inception": "Jan 4, 2024",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=HODL%20S-1"
-    },
-    {
-      "symbol": "BITX",
-      "name": "Volatility Shares 2x Bitcoin ETF",
-      "price": "18.25",
-      "pct_52w": -64.07,
-      "assets_usd": 1160000000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "",
-      "custodian": "",
-      "inception": "Jun 27, 2023",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BITX%20S-1"
     },
     {
       "symbol": "ETHU",
@@ -1211,19 +1211,6 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=CBOJ%20S-1"
     },
     {
-      "symbol": "ETU",
-      "name": "T-Rex 2X Long Ether Daily Target ETF",
-      "price": "6.87",
-      "pct_52w": -83.18,
-      "assets_usd": 15080000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Tuttle Capital Management",
-      "custodian": "",
-      "inception": "Oct 23, 2024",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=ETU%20S-1"
-    },
-    {
       "symbol": "TSUI",
       "name": "21Shares Sui Staking ETF Common Shares of Beneficial Interest Shares",
       "price": "15.21",
@@ -1235,6 +1222,19 @@
       "custodian": "",
       "inception": "Feb 24, 2026",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=TSUI%20S-1"
+    },
+    {
+      "symbol": "ETU",
+      "name": "T-Rex 2X Long Ether Daily Target ETF",
+      "price": "6.87",
+      "pct_52w": -83.18,
+      "assets_usd": 14740000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Tuttle Capital Management",
+      "custodian": "",
+      "inception": "Oct 23, 2024",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=ETU%20S-1"
     },
     {
       "symbol": "QBF",
