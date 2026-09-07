@@ -504,23 +504,9 @@ def render_series_png(series: dict[str, Any], dest: Path) -> bool:
 
 
 def _tmmf_caption(series: dict[str, Any]) -> str:
-    sources = {str(p.get("source") or "") for p in (series.get("points") or [])}
-    if sources & {"rwa_xyz_val_7d", "rwa_xyz_val_30d", "git_snapshot", "wayback_rwa_xyz"}:
-        return (
-            "Curated TMMF distributed value from RWA.xyz. "
-            "Latest / 7D / 30D are live token totals; 13 Jul and 20 Jul are dashboard snapshots; "
-            "27 Jul, 31 Jul, and 5 Aug are Wayback captures of the RWA.xyz Treasuries page "
-            "(same fund list). Later Mondays are that week's printed newsletter figure. "
-            "Public pages do not publish a daily series."
-        )
-    if "rwa_30d_implied" in sources:
-        return (
-            "Weekly snapshots of curated TMMF distributed value (RWA.xyz). "
-            "The first point is the RWA.xyz 30-day-ago level; later Mondays fill in from dashboard snapshots."
-        )
     return (
-        "Weekly snapshots of curated TMMF distributed value (RWA.xyz). "
-        "Each Monday is the figure printed in that week's newsletter."
+        "Curated TMMF distributed value from RWA.xyz. "
+        "Latest / 7D / 30D are live token totals."
     )
 
 
