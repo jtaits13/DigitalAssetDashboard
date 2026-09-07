@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-06T20:34:21.055269+00:00",
+  "generated_at": "2026-09-07T04:58:30.891577+00:00",
   "rows": [
     {
       "symbol": "IBIT",
@@ -730,6 +730,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=SSK%20S-1"
     },
     {
+      "symbol": "HECO",
+      "name": "State Street Galaxy Hedged Digital Asset Ecosystem ETF",
+      "price": "65.23",
+      "pct_52w": 88.86,
+      "assets_usd": 83510000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "State Street",
+      "custodian": "",
+      "inception": "Sep 9, 2024",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=HECO%20S-1"
+    },
+    {
       "symbol": "BITA",
       "name": "iShares Bitcoin Premium Income ETF",
       "price": "60.40",
@@ -741,19 +754,6 @@
       "custodian": "",
       "inception": "Jun 9, 2026",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BITA%20S-1"
-    },
-    {
-      "symbol": "HECO",
-      "name": "State Street Galaxy Hedged Digital Asset Ecosystem ETF",
-      "price": "65.23",
-      "pct_52w": 88.86,
-      "assets_usd": 75990000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "State Street",
-      "custodian": "",
-      "inception": "Sep 9, 2024",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=HECO%20S-1"
     },
     {
       "symbol": "EETH",
@@ -1159,6 +1159,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=EZPZ%20S-1"
     },
     {
+      "symbol": "BITC",
+      "name": "Bitwise Trendwise Bitcoin and Treasuries Rotation Strategy ETF",
+      "price": "41.23",
+      "pct_52w": -9.6,
+      "assets_usd": 16510000.000000002,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Bitwise",
+      "custodian": "",
+      "inception": "Mar 20, 2023",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BITC%20S-1"
+    },
+    {
       "symbol": "BTCC",
       "name": "Grayscale Bitcoin Covered Call ETF",
       "price": "13.72",
@@ -1170,19 +1183,6 @@
       "custodian": "",
       "inception": "Apr 2, 2025",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BTCC%20S-1"
-    },
-    {
-      "symbol": "BITC",
-      "name": "Bitwise Trendwise Bitcoin and Treasuries Rotation Strategy ETF",
-      "price": "41.23",
-      "pct_52w": -9.6,
-      "assets_usd": 16000000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Bitwise",
-      "custodian": "",
-      "inception": "Mar 20, 2023",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BITC%20S-1"
     },
     {
       "symbol": "BTF",
@@ -1306,26 +1306,13 @@
       "name": "ProShares Short Ether ETF",
       "price": "33.23",
       "pct_52w": 27.42,
-      "assets_usd": 11950000.0,
+      "assets_usd": 12060000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "ProShares",
       "custodian": "",
       "inception": "Nov 2, 2023",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=SETH%20S-1"
-    },
-    {
-      "symbol": "BETH",
-      "name": "ProShares Bitcoin & Ether Market Cap Weight ETF",
-      "price": "44.21",
-      "pct_52w": -34.92,
-      "assets_usd": 11600000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "ProShares",
-      "custodian": "",
-      "inception": "Oct 2, 2023",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BETH%20S-1"
     },
     {
       "symbol": "DOJE",
@@ -1339,6 +1326,19 @@
       "custodian": "",
       "inception": "Sep 18, 2025",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=DOJE%20S-1"
+    },
+    {
+      "symbol": "BETH",
+      "name": "ProShares Bitcoin & Ether Market Cap Weight ETF",
+      "price": "44.21",
+      "pct_52w": -34.92,
+      "assets_usd": 11500000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "ProShares",
+      "custodian": "",
+      "inception": "Oct 2, 2023",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BETH%20S-1"
     },
     {
       "symbol": "BESO",
@@ -2047,7 +2047,7 @@
       "name": "Volatility Shares Cardano ETF",
       "price": "16.35",
       "pct_52w": null,
-      "assets_usd": 905150.0,
+      "assets_usd": 898220.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "",
@@ -2073,7 +2073,7 @@
       "name": "Volatility Shares 2x Cardano ETF",
       "price": "10.86",
       "pct_52w": null,
-      "assets_usd": 846550.0,
+      "assets_usd": 833890.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "",
