@@ -74,6 +74,46 @@ def _parse_assets_usd(raw: str) -> float | None:
         return None
 
 
+_LIST_COL_ALIASES: dict[str, tuple[str, ...]] = {
+    "symbol": ("symbol", "ticker"),
+    "name": ("fund name", "name", "etf name"),
+    "price": ("stock price", "price"),
+    "pct": ("% change", "change %", "% chg"),
+    "assets": ("assets", "aum"),
+}
+
+
+def _list_row_cells(tr) -> list[str]:
+    return [c.get_text(strip=True) for c in tr.find_all(["td", "th"])]
+
+
+def _list_column_index_map(headers: list[str]) -> dict[str, int] | None:
+    """Map list-table headers to fields. StockAnalysis added a leading No. column."""
+    lower = [h.strip().lower() for h in headers]
+    out: dict[str, int] = {}
+    for key, aliases in _LIST_COL_ALIASES.items():
+        idx = next((i for i, h in enumerate(lower) if h in aliases), None)
+        if idx is None:
+            idx = next((i for i, h in enumerate(lower) if any(a in h for a in aliases)), None)
+        if idx is not None:
+            out[key] = idx
+    if "symbol" in out and "assets" in out:
+        return out
+    return None
+
+
+def _fallback_list_column_map(n_cells: int) -> dict[str, int]:
+    """Assume Symbol/Name/Price/% Change/Assets, optionally prefixed by a No. column."""
+    offset = 1 if n_cells >= 6 else 0
+    return {
+        "symbol": offset,
+        "name": offset + 1,
+        "price": offset + 2,
+        "pct": offset + 3,
+        "assets": offset + 4,
+    }
+
+
 def _parse_past_year_return(html: str) -> float | None:
     m = _PAST_YEAR_RETURN_RE.search(html)
     if not m:
@@ -162,26 +202,34 @@ def fetch_crypto_etps_list(
         out.error = "ETF table not found on the page (layout may have changed)."
         return out
 
+    col_map: dict[str, int] | None = None
     rows: list[CryptoEtpRow] = []
     for tr in table.find_all("tr"):
-        cells = tr.find_all(["td", "th"])
+        cells = _list_row_cells(tr)
         if len(cells) < 5:
             continue
-        sym_cell = cells[0]
-        sym_text = sym_cell.get_text(strip=True)
-        if not sym_text or sym_text.lower() == "symbol":
+        header_map = _list_column_index_map(cells)
+        if header_map:
+            col_map = header_map
             continue
-        name = cells[1].get_text(strip=True)
-        price = cells[2].get_text(strip=True)
-        pct = cells[3].get_text(strip=True)
-        assets_disp = cells[4].get_text(strip=True)
+        if col_map is None:
+            col_map = _fallback_list_column_map(len(cells))
+        need = max(col_map.values(), default=4)
+        if len(cells) <= need:
+            continue
+        sym_text = cells[col_map["symbol"]]
+        if not sym_text or sym_text.lower() in {"symbol", "ticker", "no."}:
+            continue
+        if sym_text.isdigit():
+            continue
+        assets_disp = cells[col_map["assets"]]
         assets_usd = _parse_assets_usd(assets_disp)
         rows.append(
             CryptoEtpRow(
                 symbol=sym_text,
-                name=name,
-                price=price,
-                pct_change=pct,
+                name=cells[col_map["name"]] if "name" in col_map else "",
+                price=cells[col_map["price"]] if "price" in col_map else "",
+                pct_change=cells[col_map["pct"]] if "pct" in col_map else "",
                 assets_display=assets_disp,
                 assets_usd=assets_usd,
                 issuer="",
