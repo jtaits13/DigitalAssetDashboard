@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import Any
+
+_DOLLAR_AUM_RE = re.compile(r"\$[\d.,]+[KMBT]?")
 
 DEFAULT_ETP_LIVE_CACHE_NAME = "etp_live_cache.json"
 
@@ -69,6 +72,11 @@ def save_etp_live_cache(cache_path: Path, snapshot: dict[str, Any]) -> None:
     cache_path.write_text(json.dumps(snapshot, indent=2, default=str), encoding="utf-8")
 
 
+def aum_display_is_dollar(raw: Any) -> bool:
+    """True when a KPI AUM string would pass static JSON validation."""
+    return bool(_DOLLAR_AUM_RE.search(str(raw or "")))
+
+
 def apply_etp_live_cache_fallback(
     payloads: dict[str, Any],
     *,
@@ -85,7 +93,13 @@ def apply_etp_live_cache_fallback(
 
     live_etps = out.get("etps.json") if isinstance(out.get("etps.json"), dict) else {}
     cached_etps = cached_payloads.get("etps.json") if isinstance(cached_payloads.get("etps.json"), dict) else {}
-    if not (live_etps.get("rows") or []) and cached_etps.get("rows"):
+    live_kpis = out.get("etp_kpis.json") if isinstance(out.get("etp_kpis.json"), dict) else {}
+    cached_kpis = cached_payloads.get("etp_kpis.json") if isinstance(cached_payloads.get("etp_kpis.json"), dict) else {}
+    live_aum_ok = aum_display_is_dollar(live_kpis.get("total_aum_display"))
+    # Shifted list-page columns still yield rows, but AUM parses as blank ("—") and
+    # would fail GitHub Pages JSON validation. Treat that as a failed live scrape.
+    shifted_table = bool(live_etps.get("rows")) and not live_aum_ok
+    if (not (live_etps.get("rows") or []) or shifted_table) and cached_etps.get("rows"):
         merged = dict(cached_etps)
         if live_etps.get("error"):
             merged["error"] = live_etps["error"]
@@ -93,15 +107,13 @@ def apply_etp_live_cache_fallback(
         out["etps.json"] = merged
         notes.append("Fund table restored from the last saved snapshot.")
 
-    live_kpis = out.get("etp_kpis.json") if isinstance(out.get("etp_kpis.json"), dict) else {}
-    cached_kpis = cached_payloads.get("etp_kpis.json") if isinstance(cached_payloads.get("etp_kpis.json"), dict) else {}
-    if not live_kpis.get("total_aum_display") and cached_kpis.get("total_aum_display"):
+    if (not live_aum_ok) and aum_display_is_dollar(cached_kpis.get("total_aum_display")):
         out["etp_kpis.json"] = dict(cached_kpis)
         notes.append("KPI strip restored from the last saved snapshot.")
 
     live_aum = out.get("aum_series.json") if isinstance(out.get("aum_series.json"), dict) else {}
     cached_aum = cached_payloads.get("aum_series.json") if isinstance(cached_payloads.get("aum_series.json"), dict) else {}
-    if not (live_aum.get("series") or []) and cached_aum.get("series"):
+    if len(live_aum.get("series") or []) < 10 and len(cached_aum.get("series") or []) >= 10:
         out["aum_series.json"] = dict(cached_aum)
         notes.append("AUM chart restored from the last saved snapshot.")
 
