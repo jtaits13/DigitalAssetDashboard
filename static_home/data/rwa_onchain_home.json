@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-10T16:40:31.828780+00:00",
+  "generated_at": "2026-09-10T21:06:27.029304+00:00",
   "heading": "RWA Global Market Overview",
   "error": null,
   "kpis": [
@@ -115,7 +115,7 @@
       "#": 8,
       "Network": "Arbitrum",
       "Link": "https://app.rwa.xyz/networks/arbitrum",
-      "RWA Count": 4692,
+      "RWA Count": 5176,
       "Total Value": 951802068.7451247,
       "7D \u0394 value": 0.31968040057676483,
       "Market Share": 2.4326544112134654,
@@ -413,6 +413,16 @@
     },
     {
       "#": 38,
+      "Network": "Injective",
+      "Link": "https://app.rwa.xyz/networks/injective",
+      "RWA Count": 1,
+      "Total Value": 0.0,
+      "7D \u0394 value": null,
+      "Market Share": 0.0,
+      "30D \u0394 share": 0.0
+    },
+    {
+      "#": 39,
       "Network": "Intain",
       "Link": "https://app.rwa.xyz/networks/intain",
       "RWA Count": 2,
@@ -422,7 +432,7 @@
       "30D \u0394 share": 0.0
     },
     {
-      "#": 39,
+      "#": 40,
       "Network": "Rootstock",
       "Link": "https://app.rwa.xyz/networks/rootstock",
       "RWA Count": 157,
@@ -433,7 +443,7 @@
     }
   ],
   "preview_count": 8,
-  "total_networks": 39,
+  "total_networks": 40,
   "caption": "Source: RWA.xyz homepage (https://app.rwa.xyz/)\u2014Global Market Overview headline figures and the Networks league (Distributed / parent networks).",
   "links": {
     "open_full_overview": "rwa-global.html",
