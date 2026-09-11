@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-11T04:54:34.709444+00:00",
+  "generated_at": "2026-09-11T11:35:41.765082+00:00",
   "rows": [
     {
       "symbol": "IBIT",
@@ -123,7 +123,7 @@
       "name": "ProShares Bitcoin ETF",
       "price": "10.37",
       "pct_52w": -33.2,
-      "assets_usd": 1710000000.0,
+      "assets_usd": 1650000000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "ProShares",
@@ -240,7 +240,7 @@
       "name": "Morgan Stanley Bitcoin Trust ETF",
       "price": "22.11",
       "pct_52w": null,
-      "assets_usd": 609980000.0,
+      "assets_usd": 607300000.0,
       "flow_1y_usd": 263200000.0,
       "flow_1y_window": "1Y*",
       "issuer": "Morgan Stanley",
@@ -392,6 +392,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BLOX%20S-1"
     },
     {
+      "symbol": "WGMI",
+      "name": "CoinShares Bitcoin Mining and Digital Power ETF",
+      "price": "45.58",
+      "pct_52w": 37.58,
+      "assets_usd": 296580000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "",
+      "custodian": "",
+      "inception": "Feb 7, 2022",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=WGMI%20S-1"
+    },
+    {
       "symbol": "ETHW",
       "name": "Bitwise Ethereum ETF",
       "price": "17.62",
@@ -416,19 +429,6 @@
       "custodian": "",
       "inception": "Apr 19, 2022",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=FDIG%20S-1"
-    },
-    {
-      "symbol": "WGMI",
-      "name": "CoinShares Bitcoin Mining and Digital Power ETF",
-      "price": "45.58",
-      "pct_52w": 37.58,
-      "assets_usd": 266620000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "",
-      "custodian": "",
-      "inception": "Feb 7, 2022",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=WGMI%20S-1"
     },
     {
       "symbol": "ETHT",
@@ -461,7 +461,7 @@
       "name": "Schwab Crypto Thematic Natural Language Processing ETF",
       "price": "66.37",
       "pct_52w": 6.09,
-      "assets_usd": 236050000.0,
+      "assets_usd": 235400000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "Charles Schwab",
@@ -643,7 +643,7 @@
       "name": "First Trust SkyBridge Crypto Industry & Digital Economy ETF",
       "price": "14.52",
       "pct_52w": -29.71,
-      "assets_usd": 117120000.0,
+      "assets_usd": 111010000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "First Trust",
@@ -864,7 +864,7 @@
       "name": "Morgan Stanley Solana Trust ETF",
       "price": "27.09",
       "pct_52w": null,
-      "assets_usd": 43900000.0,
+      "assets_usd": 44520000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "Morgan Stanley",
@@ -1163,7 +1163,7 @@
       "name": "CoinShares Bitcoin and Ether ETF",
       "price": "21.37",
       "pct_52w": -39.98,
-      "assets_usd": 16440000.000000002,
+      "assets_usd": 16280000.000000002,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "",
@@ -1578,7 +1578,7 @@
       "symbol": "AETH",
       "name": "Bitwise Trendwise Ether and Treasuries Rotation Strategy ETF",
       "price": "38.18",
-      "pct_52w": -25.68,
+      "pct_52w": -24.89,
       "assets_usd": 5770000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1653,19 +1653,6 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=TXXD%20S-1"
     },
     {
-      "symbol": "BTCU",
-      "name": "Direxion Daily Bitcoin Bull 2X ETF",
-      "price": "23.60",
-      "pct_52w": null,
-      "assets_usd": 4450000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Direxion",
-      "custodian": "",
-      "inception": "May 27, 2026",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BTCU%20S-1"
-    },
-    {
       "symbol": "EHY",
       "name": "Amplify Ethereum Max Income Covered Call ETF",
       "price": "8.22",
@@ -1677,6 +1664,19 @@
       "custodian": "",
       "inception": "Oct 8, 2025",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=EHY%20S-1"
+    },
+    {
+      "symbol": "BTCU",
+      "name": "Direxion Daily Bitcoin Bull 2X ETF",
+      "price": "23.60",
+      "pct_52w": null,
+      "assets_usd": 4280000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Direxion",
+      "custodian": "",
+      "inception": "May 27, 2026",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BTCU%20S-1"
     },
     {
       "symbol": "ORO",
@@ -1839,7 +1839,7 @@
       "name": "Direxion Daily Ether Bull 2X ETF",
       "price": "30.76",
       "pct_52w": null,
-      "assets_usd": 2300000.0,
+      "assets_usd": 2350000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "Direxion",
@@ -2004,6 +2004,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=DIME%20S-1"
     },
     {
+      "symbol": "CRDX",
+      "name": "Volatility Shares 2x Cardano ETF",
+      "price": "10.36",
+      "pct_52w": null,
+      "assets_usd": 1040000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "",
+      "custodian": "",
+      "inception": "Apr 1, 2026",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=CRDX%20S-1"
+    },
+    {
       "symbol": "TKNQ",
       "name": "Amplify Tokenization Technology Leaders ETF",
       "price": "24.96",
@@ -2041,19 +2054,6 @@
       "custodian": "",
       "inception": "Apr 1, 2026",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=CRDD%20S-1"
-    },
-    {
-      "symbol": "CRDX",
-      "name": "Volatility Shares 2x Cardano ETF",
-      "price": "10.36",
-      "pct_52w": null,
-      "assets_usd": 970260.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "",
-      "custodian": "",
-      "inception": "Apr 1, 2026",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=CRDX%20S-1"
     },
     {
       "symbol": "TTOP",
