@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-12T10:59:59.954650+00:00",
+  "generated_at": "2026-09-12T15:41:02.196146+00:00",
   "rows": [
     {
       "symbol": "IBIT",
@@ -265,7 +265,7 @@
       "symbol": "BITU",
       "name": "ProShares Ultra Bitcoin ETF",
       "price": "13.20",
-      "pct_52w": -66.53,
+      "pct_52w": -67.58,
       "assets_usd": 499700000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -357,7 +357,7 @@
       "name": "Franklin XRP ETF",
       "price": "14.78",
       "pct_52w": null,
-      "assets_usd": 383530000.0,
+      "assets_usd": 377380000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "Franklin Templeton",
@@ -370,7 +370,7 @@
       "name": "Canary XRP ETF",
       "price": "14.46",
       "pct_52w": null,
-      "assets_usd": 348060000.0,
+      "assets_usd": 336510000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "",
@@ -509,19 +509,6 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=HYPG%20S-1"
     },
     {
-      "symbol": "XBCI",
-      "name": "NEOS Boosted Bitcoin High Income ETF",
-      "price": "36.86",
-      "pct_52w": null,
-      "assets_usd": 168010000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Neos",
-      "custodian": "",
-      "inception": "Feb 3, 2026",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=XBCI%20S-1"
-    },
-    {
       "symbol": "BTCW",
       "name": "WisdomTree Bitcoin Fund",
       "price": "81.60",
@@ -548,17 +535,17 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=GSOL%20S-1"
     },
     {
-      "symbol": "TOXR",
-      "name": "21Shares XRP ETF Beneficial INT SH",
-      "price": "13.64",
+      "symbol": "XBCI",
+      "name": "NEOS Boosted Bitcoin High Income ETF",
+      "price": "36.86",
       "pct_52w": null,
-      "assets_usd": 154560000.0,
+      "assets_usd": 161750000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
-      "issuer": "",
+      "issuer": "Neos",
       "custodian": "",
-      "inception": "Dec 11, 2025",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=TOXR%20S-1"
+      "inception": "Feb 3, 2026",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=XBCI%20S-1"
     },
     {
       "symbol": "SBIT",
@@ -587,6 +574,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=XXRP%20S-1"
     },
     {
+      "symbol": "TOXR",
+      "name": "21Shares XRP ETF Beneficial INT SH",
+      "price": "13.64",
+      "pct_52w": null,
+      "assets_usd": 149410000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "",
+      "custodian": "",
+      "inception": "Dec 11, 2025",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=TOXR%20S-1"
+    },
+    {
       "symbol": "YBTC",
       "name": "Roundhill Bitcoin Covered Call Strategy ETF",
       "price": "17.85",
@@ -604,7 +604,7 @@
       "name": "Grayscale Chainlink Trust ETF",
       "price": "10.27",
       "pct_52w": null,
-      "assets_usd": 134620000.0,
+      "assets_usd": 135880000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "Grayscale",
@@ -747,7 +747,7 @@
       "name": "iShares Bitcoin Premium Income ETF",
       "price": "58.92",
       "pct_52w": null,
-      "assets_usd": 78450000.0,
+      "assets_usd": 83620000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "BlackRock",
@@ -769,19 +769,6 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=EETH%20S-1"
     },
     {
-      "symbol": "ETHD",
-      "name": "ProShares UltraShort Ether ETF",
-      "price": "28.47",
-      "pct_52w": -12.19,
-      "assets_usd": 57610000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "ProShares",
-      "custodian": "",
-      "inception": "Jun 7, 2024",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=ETHD%20S-1"
-    },
-    {
       "symbol": "HBR",
       "name": "Canary HBAR ETF",
       "price": "10.14",
@@ -793,6 +780,19 @@
       "custodian": "",
       "inception": "Oct 28, 2025",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=HBR%20S-1"
+    },
+    {
+      "symbol": "ETHD",
+      "name": "ProShares UltraShort Ether ETF",
+      "price": "28.47",
+      "pct_52w": -12.19,
+      "assets_usd": 55380000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "ProShares",
+      "custodian": "",
+      "inception": "Jun 7, 2024",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=ETHD%20S-1"
     },
     {
       "symbol": "BTGD",
@@ -938,19 +938,6 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=QETH%20S-1"
     },
     {
-      "symbol": "GSUI",
-      "name": "Grayscale Sui Staking ETF",
-      "price": "10.52",
-      "pct_52w": null,
-      "assets_usd": 26280000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Grayscale",
-      "custodian": "",
-      "inception": "Feb 18, 2026",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=GSUI%20S-1"
-    },
-    {
       "symbol": "BTCZ",
       "name": "T-Rex 2X Inverse Bitcoin Daily Target ETF",
       "price": "3.545",
@@ -1001,6 +988,19 @@
       "custodian": "",
       "inception": "Nov 15, 2021",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BITS%20S-1"
+    },
+    {
+      "symbol": "GSUI",
+      "name": "Grayscale Sui Staking ETF",
+      "price": "10.52",
+      "pct_52w": null,
+      "assets_usd": 25170000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Grayscale",
+      "custodian": "",
+      "inception": "Feb 18, 2026",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=GSUI%20S-1"
     },
     {
       "symbol": "CBTJ",
@@ -1094,19 +1094,6 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=TKNZ%20S-1"
     },
     {
-      "symbol": "DFII",
-      "name": "FT Vest Bitcoin Strategy & Target Income ETF",
-      "price": "13.36",
-      "pct_52w": -33.3,
-      "assets_usd": 20580000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "First Trust",
-      "custodian": "",
-      "inception": "Apr 2, 2025",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=DFII%20S-1"
-    },
-    {
       "symbol": "BAVA",
       "name": "Bitwise Avalanche ETF",
       "price": "20.28",
@@ -1118,6 +1105,19 @@
       "custodian": "",
       "inception": "Apr 14, 2026",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BAVA%20S-1"
+    },
+    {
+      "symbol": "DFII",
+      "name": "FT Vest Bitcoin Strategy & Target Income ETF",
+      "price": "13.36",
+      "pct_52w": -33.3,
+      "assets_usd": 19940000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "First Trust",
+      "custodian": "",
+      "inception": "Apr 2, 2025",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=DFII%20S-1"
     },
     {
       "symbol": "CBXJ",
@@ -1228,7 +1228,7 @@
       "name": "21Shares Sui Staking ETF Common Shares of Beneficial Interest Shares",
       "price": "14.59",
       "pct_52w": null,
-      "assets_usd": 15010000.0,
+      "assets_usd": 14360000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "",
@@ -1254,7 +1254,7 @@
       "name": "Franklin Solana ETF",
       "price": "17.69",
       "pct_52w": null,
-      "assets_usd": 14090000.0,
+      "assets_usd": 14060000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "Franklin Templeton",
@@ -1276,19 +1276,6 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BITY%20S-1"
     },
     {
-      "symbol": "XRPM",
-      "name": "Amplify XRP 3% Monthly Premium Income ETF",
-      "price": "10.13",
-      "pct_52w": null,
-      "assets_usd": 12790000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Amplify Investments",
-      "custodian": "",
-      "inception": "Nov 18, 2025",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=XRPM%20S-1"
-    },
-    {
       "symbol": "CONI",
       "name": "GraniteShares 2x Short COIN Daily ETF",
       "price": "31.16",
@@ -1300,6 +1287,19 @@
       "custodian": "",
       "inception": "Sep 3, 2024",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=CONI%20S-1"
+    },
+    {
+      "symbol": "XRPM",
+      "name": "Amplify XRP 3% Monthly Premium Income ETF",
+      "price": "10.13",
+      "pct_52w": null,
+      "assets_usd": 12530000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Amplify Investments",
+      "custodian": "",
+      "inception": "Nov 18, 2025",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=XRPM%20S-1"
     },
     {
       "symbol": "SETH",
@@ -1345,7 +1345,7 @@
       "name": "GSR Crypto Core3 ETF",
       "price": "33.46",
       "pct_52w": null,
-      "assets_usd": 10990000.0,
+      "assets_usd": 10810000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "",
@@ -1432,19 +1432,6 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=SATO%20S-1"
     },
     {
-      "symbol": "ISBG",
-      "name": "IncomeSTKd 1x Bitcoin & 1x Gold Premium ETF",
-      "price": "15.62",
-      "pct_52w": null,
-      "assets_usd": 8020000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "",
-      "custodian": "",
-      "inception": "Jan 20, 2026",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=ISBG%20S-1"
-    },
-    {
       "symbol": "BBB",
       "name": "CYBER HORNET S&P 500 and Bitcoin 75/25 Strategy ETF",
       "price": "31.45",
@@ -1469,6 +1456,19 @@
       "custodian": "",
       "inception": "Nov 18, 2025",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=TSOL%20S-1"
+    },
+    {
+      "symbol": "ISBG",
+      "name": "IncomeSTKd 1x Bitcoin & 1x Gold Premium ETF",
+      "price": "15.62",
+      "pct_52w": null,
+      "assets_usd": 7800000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "",
+      "custodian": "",
+      "inception": "Jan 20, 2026",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=ISBG%20S-1"
     },
     {
       "symbol": "TCAN",
@@ -1523,19 +1523,6 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=CBOO%20S-1"
     },
     {
-      "symbol": "CBTA",
-      "name": "Calamos Bitcoin 80 Series Structured Alt Protection ETF - April",
-      "price": "23.35",
-      "pct_52w": -27.45,
-      "assets_usd": 5900000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Calamos",
-      "custodian": "",
-      "inception": "Apr 7, 2025",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=CBTA%20S-1"
-    },
-    {
       "symbol": "QSOL",
       "name": "Invesco Galaxy Solana ETF",
       "price": "10.31",
@@ -1560,6 +1547,19 @@
       "custodian": "",
       "inception": "Jul 8, 2025",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=CBXY%20S-1"
+    },
+    {
+      "symbol": "CBTA",
+      "name": "Calamos Bitcoin 80 Series Structured Alt Protection ETF - April",
+      "price": "23.35",
+      "pct_52w": -27.45,
+      "assets_usd": 5810000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Calamos",
+      "custodian": "",
+      "inception": "Apr 7, 2025",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=CBTA%20S-1"
     },
     {
       "symbol": "AETH",
@@ -1982,7 +1982,7 @@
       "name": "ProShares CoinDesk 20 Crypto ETF",
       "price": "22.07",
       "pct_52w": null,
-      "assets_usd": 1330000.0,
+      "assets_usd": 1320000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "ProShares",
@@ -2034,7 +2034,7 @@
       "name": "Volatility Shares Cardano ETF",
       "price": "15.78",
       "pct_52w": null,
-      "assets_usd": 1010000.0,
+      "assets_usd": 983740.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "",
@@ -2164,7 +2164,7 @@
       "name": "CYBER HORNET S&P 500 and Solana 75/25 Strategy ETF",
       "price": "22.56",
       "pct_52w": null,
-      "assets_usd": 563710.0,
+      "assets_usd": 561000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "",
@@ -2190,7 +2190,7 @@
       "name": "CYBER HORNET S&P 500 and XRP 75/25 Strategy ETF",
       "price": "21.66",
       "pct_52w": null,
-      "assets_usd": 545590.0,
+      "assets_usd": 538500.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "",
@@ -2229,7 +2229,7 @@
       "name": "VolatilityShares Chainlink ETF",
       "price": "26.98",
       "pct_52w": null,
-      "assets_usd": 271890.0,
+      "assets_usd": 269460.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "",
