@@ -1,15 +1,17 @@
 {
-  "generated_at": "2026-09-12T15:49:00.889698+00:00",
+  "generated_at": "2026-09-12T20:48:57.285147+00:00",
   "errors": [
-    "ETF news RSS: ETF Trends (VettaFi): HTTP Error 403: Forbidden",
     "ETF news RSS: ETFdb: HTTP Error 403: Forbidden",
     "ETF news RSS: ETF Trends (VettaFi): HTTP Error 403: Forbidden",
-    "ETF news RSS: ETFdb: HTTP Error 403: Forbidden"
+    "ETF news RSS: Benzinga ETFs: HTTP Error 404: Not Found",
+    "ETF news RSS: ETFdb: HTTP Error 403: Forbidden",
+    "ETF news RSS: ETF Trends (VettaFi): HTTP Error 403: Forbidden",
+    "ETF news RSS: Benzinga ETFs: HTTP Error 404: Not Found"
   ],
-  "etp_refreshed_at": "2026-09-12T15:41:02.196146+00:00",
-  "crypto_refreshed_at": "2026-09-12T15:45:15.751263+00:00",
+  "etp_refreshed_at": "2026-09-12T20:42:56.777940+00:00",
+  "crypto_refreshed_at": "2026-09-12T20:45:15.220095+00:00",
   "stale_sections": [],
-  "export_completed_at": "2026-09-12T15:49:00.889698+00:00",
+  "export_completed_at": "2026-09-12T20:48:57.285147+00:00",
   "refresh_interval_hours": 6,
   "stale_threshold_hours": {
     "etp": 9,
@@ -19,10 +21,10 @@
     "regulatory": 24
   },
   "sections": {
-    "news": "2026-09-12T15:41:07.636886+00:00",
-    "regulatory": "2026-09-12T15:41:07.636886+00:00",
-    "etp": "2026-09-12T15:41:02.196146+00:00",
-    "rwa": "2026-09-12T15:48:54.670699+00:00",
-    "crypto": "2026-09-12T15:45:15.751263+00:00"
+    "news": "2026-09-12T20:43:01.164916+00:00",
+    "regulatory": "2026-09-12T20:43:01.164916+00:00",
+    "etp": "2026-09-12T20:42:56.777940+00:00",
+    "rwa": "2026-09-12T20:48:51.666619+00:00",
+    "crypto": "2026-09-12T20:45:15.220095+00:00"
   }
 }
