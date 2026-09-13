@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-13T16:30:28.184117+00:00",
+  "generated_at": "2026-09-13T20:59:21.926304+00:00",
   "rows": [
     {
       "symbol": "IBIT",
@@ -71,7 +71,7 @@
       "name": "Bitwise Bitcoin ETF Trust",
       "price": "41.94",
       "pct_52w": -32.15,
-      "assets_usd": 2990000000.0,
+      "assets_usd": 2950000000.0,
       "flow_1y_usd": 1932000000.0,
       "flow_1y_window": "1Y",
       "issuer": "Bitwise",
@@ -84,7 +84,7 @@
       "name": "ARK 21Shares Bitcoin ETF",
       "price": "25.62",
       "pct_52w": -32.11,
-      "assets_usd": 2800000000.0,
+      "assets_usd": 2520000000.0,
       "flow_1y_usd": 3957000000.0,
       "flow_1y_window": "1Y",
       "issuer": "",
@@ -162,7 +162,7 @@
       "name": "Volatility Shares 2x Bitcoin ETF",
       "price": "17.03",
       "pct_52w": -67.11,
-      "assets_usd": 1200000000.0,
+      "assets_usd": 1160000000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "",
@@ -175,7 +175,7 @@
       "name": "VanEck Bitcoin ETF",
       "price": "21.86",
       "pct_52w": -32.01,
-      "assets_usd": 1170000000.0,
+      "assets_usd": 1140000000.0,
       "flow_1y_usd": 746600000.0,
       "flow_1y_window": "1Y",
       "issuer": "VanEck",
@@ -344,7 +344,7 @@
       "name": "Invesco Galaxy Bitcoin ETF",
       "price": "76.86",
       "pct_52w": -32.17,
-      "assets_usd": 404860000.0,
+      "assets_usd": 394160000.0,
       "flow_1y_usd": 250800000.0,
       "flow_1y_window": "1Y",
       "issuer": "Invesco",
@@ -942,7 +942,7 @@
       "name": "Invesco Galaxy Ethereum ETF",
       "price": "25.27",
       "pct_52w": -41.42,
-      "assets_usd": 27850000.0,
+      "assets_usd": 27620000.0,
       "flow_1y_usd": 45100000.0,
       "flow_1y_window": "1Y",
       "issuer": "Invesco",
@@ -1215,7 +1215,7 @@
       "name": "T-Rex 2X Long Ether Daily Target ETF",
       "price": "7.32",
       "pct_52w": -80.62,
-      "assets_usd": 15050000.0,
+      "assets_usd": 15440000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "Tuttle Capital Management",
@@ -1306,7 +1306,7 @@
       "name": "ProShares Short Ether ETF",
       "price": "32.15",
       "pct_52w": 18.93,
-      "assets_usd": 11940000.0,
+      "assets_usd": 11650000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "ProShares",
@@ -1497,6 +1497,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=LTCC%20S-1"
     },
     {
+      "symbol": "AETH",
+      "name": "Bitwise Trendwise Ether and Treasuries Rotation Strategy ETF",
+      "price": "38.90",
+      "pct_52w": -23.49,
+      "assets_usd": 6890000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Bitwise",
+      "custodian": "",
+      "inception": "Sep 29, 2023",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=AETH%20S-1"
+    },
+    {
       "symbol": "STLU",
       "name": "Volatility Shares 2x Stellar ETF",
       "price": "16.28",
@@ -1573,19 +1586,6 @@
       "custodian": "",
       "inception": "Apr 7, 2025",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=CBTA%20S-1"
-    },
-    {
-      "symbol": "AETH",
-      "name": "Bitwise Trendwise Ether and Treasuries Rotation Strategy ETF",
-      "price": "38.90",
-      "pct_52w": -23.49,
-      "assets_usd": 5770000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Bitwise",
-      "custodian": "",
-      "inception": "Sep 29, 2023",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=AETH%20S-1"
     },
     {
       "symbol": "CBOA",
@@ -2043,19 +2043,6 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=CRDD%20S-1"
     },
     {
-      "symbol": "BFJA",
-      "name": "FT Vest Bitcoin Strategy Floor15 ETF - January",
-      "price": "18.44",
-      "pct_52w": null,
-      "assets_usd": 927590.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "First Trust",
-      "custodian": "",
-      "inception": "Jan 9, 2026",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BFJA%20S-1"
-    },
-    {
       "symbol": "TTOP",
       "name": "21Shares FTSE Crypto 10 Index ETF",
       "price": "18.52",
@@ -2067,6 +2054,19 @@
       "custodian": "",
       "inception": "Nov 13, 2025",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=TTOP%20S-1"
+    },
+    {
+      "symbol": "BFJA",
+      "name": "FT Vest Bitcoin Strategy Floor15 ETF - January",
+      "price": "18.44",
+      "pct_52w": null,
+      "assets_usd": 919890.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "First Trust",
+      "custodian": "",
+      "inception": "Jan 9, 2026",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BFJA%20S-1"
     },
     {
       "symbol": "HBTC",
