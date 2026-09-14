@@ -190,6 +190,36 @@
     el.setAttribute("role", "alert");
   }
 
+  /**
+   * Drop optional RSS warnings that should not alarm readers on GitHub Pages.
+   * ETF Trends / ETFdb often 403 from Actions IPs; publisher topic feeds 404.
+   */
+  function isIgnorableManifestError(msg) {
+    var s = String(msg || "");
+    if (!s) return true;
+    if (s.indexOf("Crypto global snapshot:") === 0) return true;
+    if (/HTTP Error 403|HTTP 403/i.test(s)) return true;
+    if (
+      /ETF news RSS:|news RSS \(/i.test(s) &&
+      /HTTP Error 404|HTTP 404/i.test(s)
+    ) {
+      return true;
+    }
+    return false;
+  }
+
+  function userFacingManifestErrors(errors) {
+    var seen = {};
+    var out = [];
+    (errors || []).forEach(function (msg) {
+      var s = String(msg || "").trim();
+      if (!s || isIgnorableManifestError(s) || seen[s]) return;
+      seen[s] = true;
+      out.push(s);
+    });
+    return out;
+  }
+
   function showPageStaleWarning(bannerEl, manifest, overrides, opts) {
     var issues = collectStaleIssues(manifest, overrides);
     if (issues.length) showStaleBanner(bannerEl, issues, opts);
@@ -260,6 +290,8 @@
     formatAge: formatAge,
     isStale: isStale,
     collectStaleIssues: collectStaleIssues,
+    isIgnorableManifestError: isIgnorableManifestError,
+    userFacingManifestErrors: userFacingManifestErrors,
     showStaleBanner: showStaleBanner,
     showPageStaleWarning: showPageStaleWarning,
     mergeStaleIntoBanner: mergeStaleIntoBanner,

@@ -401,8 +401,10 @@ DEFAULT_FEEDS: list[tuple[str, str]] = [
 # holes—but this is still not a full archive (subject to Google’s terms for the feed URL).
 ETP_SUPPLEMENT_FEEDS: list[tuple[str, str]] = [
     ("ETF Trends (VettaFi)", "https://www.etftrends.com/feed/"),
-    ("Benzinga ETFs", "https://www.benzinga.com/topic/etfs/feed"),
-    ("ETFdb", "https://www.etfdb.com/feed/"),
+    # Topic URL ``/topic/etfs/feed`` 404s; the site-wide feed is filtered by
+    # :func:`is_etf_market_feed_item`. ETF Trends / ETFdb often 403 from GitHub Actions.
+    ("Benzinga", "https://www.benzinga.com/feed"),
+    ("ETFdb", "https://etfdb.com/feed/"),
     (
         "GlobeNewswire (ETF)",
         "https://www.globenewswire.com/RssFeed/subjectcode/23-Exchange%20Traded%20Funds-25/feedTitle/"
@@ -1956,7 +1958,7 @@ def pick_etf_market_feed(
 
 @st.cache_data(ttl=1800, show_spinner=False)
 def load_all_etf_etp_news_cached(
-    _filter_rev: int = 14,
+    _filter_rev: int = 15,
     *,
     extra_feeds: list[tuple[str, str]] | None = None,
 ) -> tuple[list[dict[str, Any]], list[str]]:
@@ -1980,7 +1982,7 @@ def load_all_etf_etp_news_cached(
     return out, errors
 
 
-def load_etp_market_news_cached(_filter_rev: int = 14) -> list[dict[str, Any]]:
+def load_etp_market_news_cached(_filter_rev: int = 15) -> list[dict[str, Any]]:
     """First :data:`ETP_PULSE_PREVIEW_COUNT` items for the U.S. ETPs Market pulse (shared cache with :func:`load_all_etf_etp_news_cached`)."""
     articles, _ = load_all_etf_etp_news_cached(_filter_rev=_filter_rev)
     return articles[:ETP_PULSE_PREVIEW_COUNT]

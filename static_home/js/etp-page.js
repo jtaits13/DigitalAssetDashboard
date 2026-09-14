@@ -467,10 +467,13 @@
             "KPI snapshot unavailable; showing fund table from the latest committed export.";
         }
       }
-      if (manifest.errors && manifest.errors.length && els.banner && !els.banner.classList.contains("data-banner--stale")) {
+      var visibleManifestErrors = freshApi.userFacingManifestErrors
+        ? freshApi.userFacingManifestErrors(manifest.errors)
+        : (manifest.errors || []);
+      if (visibleManifestErrors.length && els.banner && !els.banner.classList.contains("data-banner--stale")) {
         els.banner.hidden = false;
         els.banner.textContent =
-          "Partial feed warnings: " + manifest.errors.slice(0, 4).join("; ");
+          "Partial feed warnings: " + visibleManifestErrors.slice(0, 4).join("; ");
       }
       var etpAt =
         (kpis && kpis.generated_at) ||

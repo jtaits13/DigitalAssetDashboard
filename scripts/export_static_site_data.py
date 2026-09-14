@@ -1938,6 +1938,18 @@ _NEWS_MANIFEST_ERROR_PREFIXES = (
 )
 
 
+def _dedupe_errors(errors: list[Any] | None) -> list[str]:
+    seen: set[str] = set()
+    out: list[str] = []
+    for raw in errors or []:
+        msg = str(raw or "").strip()
+        if not msg or msg in seen:
+            continue
+        seen.add(msg)
+        out.append(msg)
+    return out
+
+
 def build_etp_page_payloads(
     *,
     user_agent: str | None = None,
@@ -2145,7 +2157,7 @@ def merge_etp_refresh_into_manifest(summary: dict[str, Any], manifest_path: Path
         for e in manifest["errors"]
         if not any(str(e).startswith(p) for p in _ETP_MANIFEST_ERROR_PREFIXES)
     ]
-    manifest["errors"] = kept + list(summary.get("errors") or [])
+    manifest["errors"] = _dedupe_errors(kept + list(summary.get("errors") or []))
     etp_at = summary.get("etp_refreshed_at")
     manifest["etp_refreshed_at"] = etp_at
     if etp_at:
@@ -2291,7 +2303,7 @@ def merge_news_refresh_into_manifest(summary: dict[str, Any], manifest_path: Pat
         for e in manifest["errors"]
         if not any(str(e).startswith(p) for p in _NEWS_MANIFEST_ERROR_PREFIXES)
     ]
-    manifest["errors"] = kept + list(summary.get("errors") or [])
+    manifest["errors"] = _dedupe_errors(kept + list(summary.get("errors") or []))
     news_ts = summary.get("news_ts")
     if news_ts:
         sections = manifest.get("sections") if isinstance(manifest.get("sections"), dict) else {}
@@ -2575,6 +2587,7 @@ def main() -> None:
         "rwa": rwa_ts,
         "crypto": manifest.get("crypto_refreshed_at") or export_completed_at,
     }
+    manifest["errors"] = _dedupe_errors(manifest.get("errors"))
     (OUT / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     print(
         f"Wrote static data to {OUT} ({etp_summary.get('etp_count', 0)} ETPs, {len(etf_items)} ETF headlines, "
