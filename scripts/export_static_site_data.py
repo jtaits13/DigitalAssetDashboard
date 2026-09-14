@@ -6,6 +6,8 @@ Run locally:  python scripts/export_static_site_data.py
   News only (home rail + hub JSON; RSS only):  python scripts/export_static_site_data.py --news-only
   ETP only (``etps.json``, ``etp_kpis.json``, ``aum_series.json``; ~2–4 min):  python scripts/export_etp_static_data.py
 Run in CI:    every 6 hours via ``.github/workflows/refresh-static-home-data.yml`` (full export + deploy).
+  If an RSS URL 404s, the exporter tries same-host fallbacks (``/topic/.../feed`` → ``/feed``, www/apex, slash) and
+  saves the working URL in ``static_home/data/rss_feed_overrides.json`` so the next refresh does not need a code change.
   Ad-hoc git pushes only deploy committed ``static_home/`` (see ``deploy-static-home.yml``)—run export locally before committing JSON if you need fresh data on push.
 
 Uses the same RSS / StockAnalysis / yfinance / RWA.xyz logic as the Streamlit app (no Streamlit UI), plus ``price_ticker.fetch_top_crypto_tickers`` for ``crypto_ticker.json`` (GitHub Pages marquee).

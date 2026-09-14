@@ -3,12 +3,18 @@
 from __future__ import annotations
 
 import html as html_module
+import json
+import os
 import re
+import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date, datetime, timedelta, timezone
 from html import escape
 from email.utils import parsedate_to_datetime
+from pathlib import Path
 from typing import Any, Optional
+from urllib.error import HTTPError, URLError
+from urllib.parse import urlsplit, urlunsplit
 from urllib.request import Request, urlopen
 
 import feedparser
@@ -660,6 +666,173 @@ def _sanitize_rss_xml(raw: str) -> str:
     return cleaned
 
 
+_REPO_ROOT = Path(__file__).resolve().parent
+_RSS_OVERRIDE_LOCK = threading.Lock()
+_RSS_GONE_STATUSES = {404, 410}
+_RSS_BLOCKED_STATUSES = {403}
+_TOPIC_FEED_PATH_RE = re.compile(
+    r"^(.*?)/(?:topics?|categor(?:y|ies)|tags?|sections?|channels?)/[^/]+/(feed|rss)/?$",
+    re.I,
+)
+
+
+def rss_override_path() -> Path:
+    raw = (os.environ.get("RSS_FEED_OVERRIDE_PATH") or "").strip()
+    if raw:
+        return Path(raw)
+    return _REPO_ROOT / "static_home" / "data" / "rss_feed_overrides.json"
+
+
+def _http_status(exc: BaseException) -> int | None:
+    if isinstance(exc, HTTPError):
+        try:
+            return int(exc.code)
+        except (TypeError, ValueError):
+            return None
+    return None
+
+
+def _is_retryable_rss_error(exc: BaseException) -> bool:
+    if isinstance(exc, URLError) and not isinstance(exc, HTTPError):
+        return False
+    status = _http_status(exc)
+    return status in _RSS_GONE_STATUSES or status in _RSS_BLOCKED_STATUSES
+
+
+def rss_url_candidates(url: str, *, mode: str = "gone") -> list[str]:
+    """Same-host RSS URL fallbacks when a configured feed path 404s or is blocked.
+
+    ``mode="gone"`` (404/410): also collapse ``/topic/<slug>/feed`` to ``/feed`` and
+    try common ``/rss`` / ``/rss.xml`` paths. ``mode="blocked"`` (403): host and
+    trailing-slash variants only, so we do not spray extra paths at a blocking CDN.
+    """
+    url = (url or "").strip()
+    if not url:
+        return []
+    parts = urlsplit(url)
+    if parts.scheme not in {"http", "https"} or not parts.netloc:
+        return [url]
+
+    ordered: list[str] = []
+
+    def add(path: str | None = None, netloc: str | None = None) -> None:
+        nxt = urlunsplit(
+            (
+                parts.scheme,
+                netloc if netloc is not None else parts.netloc,
+                path if path is not None else parts.path,
+                parts.query,
+                "",
+            )
+        )
+        if nxt not in ordered:
+            ordered.append(nxt)
+
+    add()
+    path = parts.path or "/"
+    if path.endswith("/") and path != "/":
+        add(path=path.rstrip("/"))
+    else:
+        add(path=path if path.endswith("/") else path + "/")
+
+    host = parts.netloc
+    if host.lower().startswith("www."):
+        add(netloc=host[4:])
+    else:
+        add(netloc="www." + host)
+
+    if mode != "gone":
+        return ordered
+
+    topic = _TOPIC_FEED_PATH_RE.match(path)
+    if topic:
+        root = topic.group(1) or ""
+        for suffix in ("/feed", "/feed/", "/rss", "/rss.xml"):
+            add(path=f"{root}{suffix}" if root else suffix)
+
+    stripped = path.rstrip("/")
+    if stripped.endswith("/feed") or stripped.endswith("/rss"):
+        root = re.sub(r"/(?:feed|rss)$", "", stripped, flags=re.I)
+        for suffix in ("/feed", "/feed/", "/rss", "/rss.xml", "/feed.xml"):
+            add(path=f"{root}{suffix}" if root else suffix)
+    return ordered
+
+
+def _load_rss_overrides() -> dict[str, Any]:
+    path = rss_override_path()
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    return payload if isinstance(payload, dict) else {}
+
+
+def _saved_override_url(configured_url: str) -> str | None:
+    payload = _load_rss_overrides()
+    rows = payload.get("by_source_url")
+    if not isinstance(rows, dict):
+        return None
+    row = rows.get(configured_url)
+    if isinstance(row, dict):
+        resolved = str(row.get("resolved_url") or "").strip()
+        if resolved:
+            return resolved
+    if isinstance(row, str) and row.strip():
+        return row.strip()
+    return None
+
+
+def _save_rss_override(*, source: str, configured_url: str, resolved_url: str) -> None:
+    if not configured_url or configured_url == resolved_url:
+        return
+    path = rss_override_path()
+    with _RSS_OVERRIDE_LOCK:
+        payload = _load_rss_overrides()
+        rows = payload.get("by_source_url")
+        if not isinstance(rows, dict):
+            rows = {}
+        existing = rows.get(configured_url)
+        if isinstance(existing, dict) and existing.get("resolved_url") == resolved_url:
+            return
+        rows[configured_url] = {
+            "source": source,
+            "resolved_url": resolved_url,
+            "updated_at": datetime.now(timezone.utc).isoformat(),
+        }
+        payload["by_source_url"] = rows
+        payload["generated_at"] = datetime.now(timezone.utc).isoformat()
+        path.parent.mkdir(parents=True, exist_ok=True)
+        tmp = path.with_suffix(".json.tmp")
+        tmp.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+        tmp.replace(path)
+
+
+def _clear_rss_override(configured_url: str) -> None:
+    path = rss_override_path()
+    with _RSS_OVERRIDE_LOCK:
+        payload = _load_rss_overrides()
+        rows = payload.get("by_source_url")
+        if not isinstance(rows, dict) or configured_url not in rows:
+            return
+        rows.pop(configured_url, None)
+        payload["by_source_url"] = rows
+        payload["generated_at"] = datetime.now(timezone.utc).isoformat()
+        path.parent.mkdir(parents=True, exist_ok=True)
+        tmp = path.with_suffix(".json.tmp")
+        tmp.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+        tmp.replace(path)
+
+
+def _urls_to_try(configured_url: str, *, status: int | None = None) -> list[str]:
+    saved = _saved_override_url(configured_url)
+    mode = "blocked" if status in _RSS_BLOCKED_STATUSES else "gone"
+    ordered: list[str] = []
+    for item in (saved, configured_url, *rss_url_candidates(configured_url, mode=mode)):
+        if item and item not in ordered:
+            ordered.append(item)
+    return ordered
+
+
 def _download_rss(url: str, *, timeout: float = 25.0) -> bytes:
     req = Request(
         url,
@@ -699,10 +872,38 @@ def fetch_feed(source_name: str, url: str) -> list[dict[str, Any]]:
     return out
 
 def _load_one_rss(name: str, url: str) -> tuple[list[dict[str, Any]], str | None]:
-    try:
-        return fetch_feed(name, url), None
-    except Exception as e:  # noqa: BLE001
-        return [], f"{name}: {e!s}"
+    """Fetch one RSS URL, remapping same-host fallbacks when the path 404s."""
+    tried: set[str] = set()
+    queue: list[str] = []
+    saved = _saved_override_url(url)
+    for item in (saved, url):
+        if item and item not in queue:
+            queue.append(item)
+    last_err: BaseException | None = None
+    idx = 0
+    while idx < len(queue):
+        candidate = queue[idx]
+        idx += 1
+        if candidate in tried:
+            continue
+        tried.add(candidate)
+        try:
+            rows = fetch_feed(name, candidate)
+            if candidate != url:
+                _save_rss_override(source=name, configured_url=url, resolved_url=candidate)
+            elif saved:
+                _clear_rss_override(url)
+            return rows, None
+        except Exception as exc:  # noqa: BLE001
+            last_err = exc
+            if not _is_retryable_rss_error(exc):
+                return [], f"{name}: {exc!s}"
+            for extra in _urls_to_try(url, status=_http_status(exc)):
+                if extra not in tried and extra not in queue:
+                    queue.append(extra)
+    if last_err is None:
+        return [], f"{name}: feed unavailable"
+    return [], f"{name}: {last_err!s}"
 
 
 def load_all_feeds(feeds: list[tuple[str, str]]) -> tuple[list[dict[str, Any]], list[str]]:

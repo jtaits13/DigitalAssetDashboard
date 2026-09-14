@@ -79,6 +79,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           # Add the directory so gitignore skips cache files. A shell glob of
           # `*.json` includes ignored paths and makes `git add` exit 1.
+          # rss_feed_overrides.json is tracked so 404 remaps survive the next refresh.
           git add -- "static_home/data/"
           git restore --staged -- \
             static_home/data/crypto_about_blurbs_cache.json \
