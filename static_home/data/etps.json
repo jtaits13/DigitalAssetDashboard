@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-15T05:05:21.376384+00:00",
+  "generated_at": "2026-09-15T11:57:07.098877+00:00",
   "rows": [
     {
       "symbol": "IBIT",
@@ -292,7 +292,7 @@
       "name": "Bitwise Crypto Industry Innovators ETF",
       "price": "26.07",
       "pct_52w": 15.87,
-      "assets_usd": 451720000.0,
+      "assets_usd": 447340000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "Bitwise",
@@ -331,7 +331,7 @@
       "name": "Grayscale CoinDesk Crypto 5 ETF",
       "price": "36.32",
       "pct_52w": -33.1,
-      "assets_usd": 409050000.0,
+      "assets_usd": 414320000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "Grayscale",
@@ -500,7 +500,7 @@
       "name": "Grayscale Hyperliquid Staking ETF",
       "price": "28.76",
       "pct_52w": null,
-      "assets_usd": 172680000.0,
+      "assets_usd": 175000000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "Grayscale",
@@ -665,19 +665,6 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=XRPI%20S-1"
     },
     {
-      "symbol": "BPRO",
-      "name": "Bitwise Proficio Currency Debasement ETF",
-      "price": "20.98",
-      "pct_52w": null,
-      "assets_usd": 104800000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Bitwise",
-      "custodian": "",
-      "inception": "Jan 21, 2026",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BPRO%20S-1"
-    },
-    {
       "symbol": "NEHI",
       "name": "NEOS Ethereum High Income ETF",
       "price": "32.93",
@@ -689,6 +676,19 @@
       "custodian": "",
       "inception": "Dec 3, 2025",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=NEHI%20S-1"
+    },
+    {
+      "symbol": "BPRO",
+      "name": "Bitwise Proficio Currency Debasement ETF",
+      "price": "20.98",
+      "pct_52w": null,
+      "assets_usd": 103000000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Bitwise",
+      "custodian": "",
+      "inception": "Jan 21, 2026",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BPRO%20S-1"
     },
     {
       "symbol": "RSSX",
@@ -967,7 +967,7 @@
       "symbol": "BITS",
       "name": "Global X Blockchain & Bitcoin Strategy ETF",
       "price": "65.92",
-      "pct_52w": -10.26,
+      "pct_52w": -9.94,
       "assets_usd": 25830000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1070,8 +1070,8 @@
     {
       "symbol": "DECO",
       "name": "State Street Galaxy Digital Asset Ecosystem ETF",
-      "price": "72.03",
-      "pct_52w": 64.3,
+      "price": "72.16",
+      "pct_52w": 64.6,
       "assets_usd": 21470000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1343,7 +1343,7 @@
     {
       "symbol": "BESO",
       "name": "GSR Crypto Core3 ETF",
-      "price": "33.85",
+      "price": "33.82",
       "pct_52w": null,
       "assets_usd": 10810000.0,
       "flow_1y_usd": null,
@@ -1370,7 +1370,7 @@
       "symbol": "XBTY",
       "name": "GraniteShares YieldBOOST Bitcoin ETF",
       "price": "5.63",
-      "pct_52w": -43.11,
+      "pct_52w": -43.06,
       "assets_usd": 10290000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1447,7 +1447,7 @@
     {
       "symbol": "BBB",
       "name": "CYBER HORNET S&P 500 and Bitcoin 75/25 Strategy ETF",
-      "price": "31.57",
+      "price": "31.52",
       "pct_52w": 3.08,
       "assets_usd": 7870000.0,
       "flow_1y_usd": null,
@@ -1473,7 +1473,7 @@
     {
       "symbol": "TCAN",
       "name": "21Shares Canton Network ETF",
-      "price": "16.61",
+      "price": "16.54",
       "pct_52w": null,
       "assets_usd": 7170000.0,
       "flow_1y_usd": null,
@@ -1616,7 +1616,7 @@
     {
       "symbol": "GAVA",
       "name": "Grayscale Avalanche Staking ETF",
-      "price": "18.59",
+      "price": "18.51",
       "pct_52w": null,
       "assets_usd": 4690000.0,
       "flow_1y_usd": null,
@@ -1876,7 +1876,7 @@
     {
       "symbol": "SOLC",
       "name": "Canary Marinade Solana ETF",
-      "price": "20.80",
+      "price": "20.81",
       "pct_52w": null,
       "assets_usd": 2049999.9999999998,
       "flow_1y_usd": null,
@@ -1939,6 +1939,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=CBXL%20S-1"
     },
     {
+      "symbol": "EHCC",
+      "name": "Global X Ethereum Covered Call ETF",
+      "price": "23.17",
+      "pct_52w": null,
+      "assets_usd": 1390000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Global X",
+      "custodian": "",
+      "inception": "Apr 1, 2026",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=EHCC%20S-1"
+    },
+    {
       "symbol": "BTCK",
       "name": "7RCC Spot Bitcoin and Carbon Credit Futures ETF",
       "price": "29.06",
@@ -1950,19 +1963,6 @@
       "custodian": "",
       "inception": "Jun 3, 2026",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BTCK%20S-1"
-    },
-    {
-      "symbol": "EHCC",
-      "name": "Global X Ethereum Covered Call ETF",
-      "price": "23.17",
-      "pct_52w": null,
-      "assets_usd": 1370000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Global X",
-      "custodian": "",
-      "inception": "Apr 1, 2026",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=EHCC%20S-1"
     },
     {
       "symbol": "DIME",
@@ -2149,7 +2149,7 @@
     {
       "symbol": "SSS",
       "name": "CYBER HORNET S&P 500 and Solana 75/25 Strategy ETF",
-      "price": "22.35",
+      "price": "22.46",
       "pct_52w": null,
       "assets_usd": 561000.0,
       "flow_1y_usd": null,
