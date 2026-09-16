@@ -1,28 +1,28 @@
 {
-  "generated_at": "2026-09-16T11:53:52.330297+00:00",
+  "generated_at": "2026-09-16T17:12:38.006424+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
-    "value_display": "$2.72T",
+    "value_display": "$2.70T",
     "delta": {
-      "pct": 19.1807,
+      "pct": 17.5978,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$76,217",
+    "value_display": "$75,642",
     "delta": {
-      "pct": 19.9,
+      "pct": 18.1,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,421",
+    "value_display": "$2,386",
     "delta": {
-      "pct": 27.0,
+      "pct": 25.1,
       "window": "1M"
     }
   },
@@ -30,24 +30,24 @@
     "label": "BTC dominance",
     "value_display": "56.3%",
     "delta": {
-      "pct": 0.6035,
+      "pct": 0.4668,
       "window": "1M"
     }
   },
   "stablecoin_share": {
     "label": "Stablecoin share",
-    "value_display": "11.1%",
+    "value_display": "11.2%",
     "delta": {
-      "pct": -15.3079,
+      "pct": -14.3003,
       "window": "1M"
     }
   },
   "market_structure": {
     "btc_dominance_pct": 56.31,
-    "stablecoin_share_top50_pct": 11.1,
-    "top50_market_cap_usd": 2579996212742.0,
-    "stablecoin_market_cap_usd": 286332432493.0,
-    "btc_market_cap_usd": 1530799926985.0
+    "stablecoin_share_top50_pct": 11.19,
+    "top50_market_cap_usd": 2559105857619.0,
+    "stablecoin_market_cap_usd": 286278438952.0,
+    "btc_market_cap_usd": 1519244556660.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,13 +65,13 @@
       {
         "symbol": "ZEC",
         "name": "Zcash",
-        "pct_30d": 138.8,
+        "pct_30d": 146.6,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/zcash",
         "direction": "up",
         "context": {
-          "title": "Live updates: Bitcoin holds near $76,000 as spot ETFs outflows surged alongside Clarity Act failure",
+          "title": "Live updates: Bitcoin holds near $76,000 as traders brace for first Fed rate hike in three years",
           "source": "CoinDesk",
           "link": "https://www.coindesk.com/business/2026/09/16/live-updates-zcash-climbs-6-as-majors-slide-ahead-of-fed-rate-decision"
         }
@@ -79,7 +79,7 @@
       {
         "symbol": "BTW",
         "name": "Bitway",
-        "pct_30d": 128.2,
+        "pct_30d": 120.9,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/bitway",
@@ -93,7 +93,7 @@
       {
         "symbol": "UNI",
         "name": "Uniswap",
-        "pct_30d": 92.0,
+        "pct_30d": 86.9,
         "category": "defi",
         "category_label": "DeFi",
         "detail_url": "https://www.coingecko.com/en/coins/uniswap",
@@ -107,5 +107,5 @@
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 19.2% over 30D:</strong> Total crypto market cap at $2.72T (19.2% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://www.theblock.co/news/business/2026-09-15-coinex-shut-down-414788\" target=\"_blank\" rel=\"noopener noreferrer\">Crypto exchange CoinEx to shut down after 9 years, citing market slump</a> (The Block).</li><li><strong>Gains broadened among top-50 alts:</strong> 30 names up more than ~0.5%, 7 down more than ~0.5%, and 5 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/business/2026/09/15/circle-debuts-arc-blockchain-which-jeremy-allaire-calls-more-consequential-than-usdc\" target=\"_blank\" rel=\"noopener noreferrer\">Circle debuts Arc blockchain which Jeremy Allaire calls \u2018more consequential\u2019 than USDC</a> (CoinDesk).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://cointelegraph.com/markets/bitcoin-short-term-holders-hit-30-day-profit-streak-as-bull-market-odds-improve-cryptoquant?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin short-term holders hit 30-day profit streak as bull-market odds improve: CryptoQuant</a> (CoinTelegraph).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://cointelegraph.com/news/bitcoin-etfs-shed-450m-in-biggest-outflow-since-june?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin ETFs shed $450M in biggest outflow since June</a> (CoinTelegraph).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 17.6% over 30D:</strong> Total crypto market cap at $2.70T (17.6% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://www.theblock.co/news/business/2026-09-15-coinex-shut-down-414788\" target=\"_blank\" rel=\"noopener noreferrer\">Crypto exchange CoinEx to shut down after 9 years, citing market slump</a> (The Block).</li><li><strong>Gains broadened among top-50 alts:</strong> 29 names up more than ~0.5%, 7 down more than ~0.5%, and 6 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/business/2026/09/15/circle-debuts-arc-blockchain-which-jeremy-allaire-calls-more-consequential-than-usdc\" target=\"_blank\" rel=\"noopener noreferrer\">Circle debuts Arc blockchain which Jeremy Allaire calls \u2018more consequential\u2019 than USDC</a> (CoinDesk).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://cointelegraph.com/news/bitcoin-etfs-shed-450m-in-biggest-outflow-since-june?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin ETFs shed $450M in biggest outflow since June</a> (CoinTelegraph).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.theblock.co/news/regulation/2026-09-15-this-one-stings-clarity-act-fails-senate-is-cryptos-biggest-regulatory-push-dead-415135\" target=\"_blank\" rel=\"noopener noreferrer\">\u2018This one stings\u2019: Clarity Act fails procedural Senate vote \u2014 is crypto\u2019s biggest regulatory push dead?</a> (The Block).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
