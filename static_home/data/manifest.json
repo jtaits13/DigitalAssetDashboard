@@ -1,13 +1,14 @@
 {
-  "generated_at": "2026-09-17T12:01:40.368708+00:00",
+  "generated_at": "2026-09-17T17:17:50.598497+00:00",
   "errors": [
     "ETF news RSS: ETFdb: HTTP Error 403: Forbidden",
-    "ETF news RSS: ETF Trends (VettaFi): HTTP Error 403: Forbidden"
+    "ETF news RSS: ETF Trends (VettaFi): HTTP Error 403: Forbidden",
+    "custodian RSS: GC search page https://www.globalcustodian.com/page/4/?s=digital+asset+custody: The read operation timed out"
   ],
-  "etp_refreshed_at": "2026-09-17T11:55:17.400277+00:00",
-  "crypto_refreshed_at": "2026-09-17T11:57:59.577738+00:00",
+  "etp_refreshed_at": "2026-09-17T17:11:09.468214+00:00",
+  "crypto_refreshed_at": "2026-09-17T17:14:08.576687+00:00",
   "stale_sections": [],
-  "export_completed_at": "2026-09-17T12:01:40.368708+00:00",
+  "export_completed_at": "2026-09-17T17:17:50.598497+00:00",
   "refresh_interval_hours": 6,
   "stale_threshold_hours": {
     "etp": 9,
@@ -17,10 +18,10 @@
     "regulatory": 24
   },
   "sections": {
-    "news": "2026-09-17T11:55:22.489106+00:00",
-    "regulatory": "2026-09-17T11:55:22.489106+00:00",
-    "etp": "2026-09-17T11:55:17.400277+00:00",
-    "rwa": "2026-09-17T12:01:34.391764+00:00",
-    "crypto": "2026-09-17T11:57:59.577738+00:00"
+    "news": "2026-09-17T17:11:14.370070+00:00",
+    "regulatory": "2026-09-17T17:11:14.370070+00:00",
+    "etp": "2026-09-17T17:11:09.468214+00:00",
+    "rwa": "2026-09-17T17:17:45.036327+00:00",
+    "crypto": "2026-09-17T17:14:08.576687+00:00"
   }
 }
