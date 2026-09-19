@@ -1,28 +1,28 @@
 {
-  "generated_at": "2026-09-18T21:05:18.418961+00:00",
+  "generated_at": "2026-09-19T04:49:29.282650+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
-    "value_display": "$2.90T",
+    "value_display": "$2.89T",
     "delta": {
-      "pct": 17.1128,
+      "pct": 16.7569,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$81,123",
+    "value_display": "$80,926",
     "delta": {
-      "pct": 18.5,
+      "pct": 17.1,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,632",
+    "value_display": "$2,613",
     "delta": {
-      "pct": 25.1,
+      "pct": 16.4,
       "window": "1M"
     }
   },
@@ -30,24 +30,24 @@
     "label": "BTC dominance",
     "value_display": "56.2%",
     "delta": {
-      "pct": 1.2254,
+      "pct": 0.3386,
       "window": "1M"
     }
   },
   "stablecoin_share": {
     "label": "Stablecoin share",
-    "value_display": "10.4%",
+    "value_display": "10.5%",
     "delta": {
-      "pct": -15.5304,
+      "pct": -13.9937,
       "window": "1M"
     }
   },
   "market_structure": {
     "btc_dominance_pct": 56.16,
-    "stablecoin_share_top50_pct": 10.43,
-    "top50_market_cap_usd": 2748291782646.0,
-    "stablecoin_market_cap_usd": 286657066391.0,
-    "btc_market_cap_usd": 1628704425354.0
+    "stablecoin_share_top50_pct": 10.46,
+    "top50_market_cap_usd": 2742778400162.0,
+    "stablecoin_market_cap_usd": 287024922457.0,
+    "btc_market_cap_usd": 1625696421137.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,7 +65,7 @@
       {
         "symbol": "ZEC",
         "name": "Zcash",
-        "pct_30d": 172.5,
+        "pct_30d": 175.0,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/zcash",
@@ -79,7 +79,7 @@
       {
         "symbol": "UNI",
         "name": "Uniswap",
-        "pct_30d": 155.9,
+        "pct_30d": 145.7,
         "category": "defi",
         "category_label": "DeFi",
         "detail_url": "https://www.coingecko.com/en/coins/uniswap",
@@ -93,7 +93,7 @@
       {
         "symbol": "NEAR",
         "name": "NEAR Protocol",
-        "pct_30d": 115.2,
+        "pct_30d": 116.3,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/near",
@@ -107,5 +107,5 @@
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 17.1% over 30D:</strong> Total crypto market cap at $2.90T (17.1% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://cointelegraph.com/news/cftc-submits-crypto-market-regulation-plan-for-white-house-review?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">CFTC submits crypto market regulation plan for White House review</a> (CoinTelegraph).</li><li><strong>Gains broadened among top-50 alts:</strong> 35 names up more than ~0.5%, 3 down more than ~0.5%, and 4 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/policy/2026/09/18/cftc-sends-crypto-rules-to-white-house-to-review-as-congress-stalls-on-clarity-act\" target=\"_blank\" rel=\"noopener noreferrer\">CFTC sends crypto rules to White House to review as Congress stalls on Clarity Act</a> (CoinDesk).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://cointelegraph.com/news/wisdomtree-moonpay-team-up-to-expand-us-access-to-tokenized-money-market-fund?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">WisdomTree, MoonPay team up to expand US access to tokenized money market fund</a> (CoinTelegraph).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://www.theblock.co/news/markets/2026-09-18-grayscales-zcash-etf-plans-3-for-1-split-233-million-inflow-surge-415520\" target=\"_blank\" rel=\"noopener noreferrer\">Grayscale\u2019s Zcash ETF plans 3-for-1 split after $233 million inflow surge</a> (The Block).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 16.8% over 30D:</strong> Total crypto market cap at $2.89T (16.8% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://cointelegraph.com/news/cftc-submits-crypto-market-regulation-plan-for-white-house-review?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">CFTC submits crypto market regulation plan for White House review</a> (CoinTelegraph).</li><li><strong>Gains broadened among top-50 alts:</strong> 34 names up more than ~0.5%, 4 down more than ~0.5%, and 4 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/policy/2026/09/18/cftc-sends-crypto-rules-to-white-house-to-review-as-congress-stalls-on-clarity-act\" target=\"_blank\" rel=\"noopener noreferrer\">CFTC sends crypto rules to White House to review as Congress stalls on Clarity Act</a> (CoinDesk).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://cointelegraph.com/news/wisdomtree-moonpay-team-up-to-expand-us-access-to-tokenized-money-market-fund?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">WisdomTree, MoonPay team up to expand US access to tokenized money market fund</a> (CoinTelegraph).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://www.theblock.co/news/markets/2026-09-18-grayscales-zcash-etf-plans-3-for-1-split-233-million-inflow-surge-415520\" target=\"_blank\" rel=\"noopener noreferrer\">Grayscale\u2019s Zcash ETF plans 3-for-1 split after $233 million inflow surge</a> (The Block).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
