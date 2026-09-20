@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-20T11:39:23.904381+00:00",
+  "generated_at": "2026-09-20T16:19:48.530906+00:00",
   "rows": [
     {
       "symbol": "IBIT",
@@ -158,30 +158,30 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=ETHU%20S-1"
     },
     {
-      "symbol": "HODL",
-      "name": "VanEck Bitcoin ETF",
-      "price": "22.96",
-      "pct_52w": -29.85,
-      "assets_usd": 1120000000.0,
-      "flow_1y_usd": 746600000.0,
-      "flow_1y_window": "1Y",
-      "issuer": "VanEck",
-      "custodian": "Gemini, State Street (Cash, TA)",
-      "inception": "Jan 4, 2024",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=HODL%20S-1"
-    },
-    {
       "symbol": "BITX",
       "name": "Volatility Shares 2x Bitcoin ETF",
       "price": "18.70",
       "pct_52w": -65.0,
-      "assets_usd": 1110000000.0,
+      "assets_usd": 1240000000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "",
       "custodian": "",
       "inception": "Jun 27, 2023",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BITX%20S-1"
+    },
+    {
+      "symbol": "HODL",
+      "name": "VanEck Bitcoin ETF",
+      "price": "22.96",
+      "pct_52w": -29.85,
+      "assets_usd": 1190000000.0,
+      "flow_1y_usd": 746600000.0,
+      "flow_1y_window": "1Y",
+      "issuer": "VanEck",
+      "custodian": "Gemini, State Street (Cash, TA)",
+      "inception": "Jan 4, 2024",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=HODL%20S-1"
     },
     {
       "symbol": "ETHB",
@@ -288,6 +288,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=NCIQ%20S-1"
     },
     {
+      "symbol": "BRRR",
+      "name": "Coinshares Bitcoin ETF",
+      "price": "22.89",
+      "pct_52w": -29.94,
+      "assets_usd": 463040000.0,
+      "flow_1y_usd": 57000000.0,
+      "flow_1y_window": "1Y",
+      "issuer": "",
+      "custodian": "Coinbase, US Bank (Cash, TA)",
+      "inception": "Jan 10, 2024",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BRRR%20S-1"
+    },
+    {
       "symbol": "EZBC",
       "name": "Franklin Bitcoin ETF",
       "price": "46.92",
@@ -312,19 +325,6 @@
       "custodian": "",
       "inception": "May 11, 2021",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BITQ%20S-1"
-    },
-    {
-      "symbol": "BRRR",
-      "name": "Coinshares Bitcoin ETF",
-      "price": "22.89",
-      "pct_52w": -29.94,
-      "assets_usd": 433340000.0,
-      "flow_1y_usd": 57000000.0,
-      "flow_1y_window": "1Y",
-      "issuer": "",
-      "custodian": "Coinbase, US Bank (Cash, TA)",
-      "inception": "Jan 10, 2024",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BRRR%20S-1"
     },
     {
       "symbol": "BTCO",
@@ -903,7 +903,7 @@
       "name": "Morgan Stanley Solana Trust ETF",
       "price": "30.92",
       "pct_52w": null,
-      "assets_usd": 42820000.0,
+      "assets_usd": 44050000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "Morgan Stanley",
@@ -1354,6 +1354,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=XRPM%20S-1"
     },
     {
+      "symbol": "BETH",
+      "name": "ProShares Bitcoin & Ether Market Cap Weight ETF",
+      "price": "45.36",
+      "pct_52w": -34.81,
+      "assets_usd": 11790000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "ProShares",
+      "custodian": "",
+      "inception": "Oct 2, 2023",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BETH%20S-1"
+    },
+    {
       "symbol": "SETH",
       "name": "ProShares Short Ether ETF",
       "price": "30.70",
@@ -1365,19 +1378,6 @@
       "custodian": "",
       "inception": "Nov 2, 2023",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=SETH%20S-1"
-    },
-    {
-      "symbol": "BETH",
-      "name": "ProShares Bitcoin & Ether Market Cap Weight ETF",
-      "price": "45.36",
-      "pct_52w": -34.81,
-      "assets_usd": 11000000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "ProShares",
-      "custodian": "",
-      "inception": "Oct 2, 2023",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BETH%20S-1"
     },
     {
       "symbol": "BAGY",
@@ -1445,6 +1445,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=GDOG%20S-1"
     },
     {
+      "symbol": "BETE",
+      "name": "ProShares Bitcoin & Ether Equal Weight ETF",
+      "price": "40.36",
+      "pct_52w": -38.26,
+      "assets_usd": 9280000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "ProShares",
+      "custodian": "",
+      "inception": "Oct 2, 2023",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BETE%20S-1"
+    },
+    {
       "symbol": "BCCC",
       "name": "Global X Bitcoin Covered Call ETF",
       "price": "13.19",
@@ -1456,19 +1469,6 @@
       "custodian": "",
       "inception": "Jun 3, 2025",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BCCC%20S-1"
-    },
-    {
-      "symbol": "BETE",
-      "name": "ProShares Bitcoin & Ether Equal Weight ETF",
-      "price": "40.36",
-      "pct_52w": -38.26,
-      "assets_usd": 8590000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "ProShares",
-      "custodian": "",
-      "inception": "Oct 2, 2023",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BETE%20S-1"
     },
     {
       "symbol": "SATO",
@@ -1943,7 +1943,7 @@
       "name": "7RCC Spot Bitcoin and Carbon Credit Futures ETF",
       "price": "27.60",
       "pct_52w": null,
-      "assets_usd": 1890000.0,
+      "assets_usd": 1910000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "Teucrium",
@@ -2112,7 +2112,7 @@
       "name": "Fortuna Hedged Bitcoin ETF",
       "price": "21.48",
       "pct_52w": -20.59,
-      "assets_usd": 816770.0,
+      "assets_usd": 819320.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "",
@@ -2242,7 +2242,7 @@
       "name": "Teucrium xETFs 2x Long Daily BNB ETF",
       "price": "32.20",
       "pct_52w": null,
-      "assets_usd": 283630.0,
+      "assets_usd": 293440.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "Teucrium",
