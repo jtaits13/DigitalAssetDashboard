@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-09-23T11:54:27.165862+00:00",
+  "generated_at": "2026-09-23T17:18:21.183425+00:00",
   "rows": [
     {
       "symbol": "IBIT",
       "name": "iShares Bitcoin Trust ETF",
-      "price": "48.83",
-      "pct_52w": -25.3,
+      "price": "47.48",
+      "pct_52w": -24.96,
       "assets_usd": 67910000000.0,
       "flow_1y_usd": 30748400000.0,
       "flow_1y_window": "1Y",
@@ -17,8 +17,8 @@
     {
       "symbol": "FBTC",
       "name": "Fidelity Wise Origin Bitcoin Fund",
-      "price": "75.01",
-      "pct_52w": -25.31,
+      "price": "72.97",
+      "pct_52w": -25.64,
       "assets_usd": 15270000000.0,
       "flow_1y_usd": 8838400000.0,
       "flow_1y_window": "1Y",
@@ -30,8 +30,8 @@
     {
       "symbol": "GBTC",
       "name": "Grayscale Bitcoin Trust ETF",
-      "price": "66.63",
-      "pct_52w": -26.25,
+      "price": "64.75",
+      "pct_52w": -25.69,
       "assets_usd": 11010000000.0,
       "flow_1y_usd": 535300000.0,
       "flow_1y_window": "1Y",
@@ -43,8 +43,8 @@
     {
       "symbol": "ETHA",
       "name": "iShares Ethereum Trust ETF",
-      "price": "20.76",
-      "pct_52w": -38.16,
+      "price": "20.02",
+      "pct_52w": -35.73,
       "assets_usd": 9820000000.0,
       "flow_1y_usd": 13904800000.0,
       "flow_1y_window": "1Y",
@@ -56,8 +56,8 @@
     {
       "symbol": "BTC",
       "name": "Grayscale Bitcoin Mini Trust ETF",
-      "price": "38.11",
-      "pct_52w": -25.25,
+      "price": "37.03",
+      "pct_52w": -25.2,
       "assets_usd": 5420000000.0,
       "flow_1y_usd": 1668700000.0,
       "flow_1y_window": "1Y",
@@ -69,8 +69,8 @@
     {
       "symbol": "BITB",
       "name": "Bitwise Bitcoin ETF Trust",
-      "price": "46.80",
-      "pct_52w": -25.25,
+      "price": "45.45",
+      "pct_52w": -25.07,
       "assets_usd": 3320000000.0,
       "flow_1y_usd": 1932000000.0,
       "flow_1y_window": "1Y",
@@ -80,9 +80,22 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BITB%20S-1"
     },
     {
+      "symbol": "ETH",
+      "name": "Grayscale Ethereum Staking Mini ETF",
+      "price": "25.30",
+      "pct_52w": -34.81,
+      "assets_usd": 2530000000.0,
+      "flow_1y_usd": 2208700000.0,
+      "flow_1y_window": "1Y",
+      "issuer": "Grayscale",
+      "custodian": "Coinbase, BNY (Cash, TA)",
+      "inception": "Apr 23, 2024",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=ETH%20S-1"
+    },
+    {
       "symbol": "ARKB",
       "name": "ARK 21Shares Bitcoin ETF",
-      "price": "28.59",
+      "price": "27.80",
       "pct_52w": -25.25,
       "assets_usd": 2490000000.0,
       "flow_1y_usd": 3957000000.0,
@@ -93,23 +106,10 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=ARKB%20S-1"
     },
     {
-      "symbol": "ETH",
-      "name": "Grayscale Ethereum Staking Mini ETF",
-      "price": "26.27",
-      "pct_52w": -37.06,
-      "assets_usd": 2370000000.0,
-      "flow_1y_usd": 2208700000.0,
-      "flow_1y_window": "1Y",
-      "issuer": "Grayscale",
-      "custodian": "Coinbase, BNY (Cash, TA)",
-      "inception": "Apr 23, 2024",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=ETH%20S-1"
-    },
-    {
       "symbol": "ETHE",
       "name": "Grayscale Ethereum Staking ETF",
-      "price": "22.11",
-      "pct_52w": -38.7,
+      "price": "21.31",
+      "pct_52w": -35.85,
       "assets_usd": 1910000000.0,
       "flow_1y_usd": 843600000.0,
       "flow_1y_window": "1Y",
@@ -121,8 +121,8 @@
     {
       "symbol": "BITO",
       "name": "ProShares Bitcoin ETF",
-      "price": "11.58",
-      "pct_52w": -27.81,
+      "price": "11.26",
+      "pct_52w": -27.75,
       "assets_usd": 1680000000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -132,9 +132,22 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BITO%20S-1"
     },
     {
+      "symbol": "ETHU",
+      "name": "2x Ether ETF",
+      "price": "29.75",
+      "pct_52w": -76.37,
+      "assets_usd": 1450000000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "",
+      "custodian": "",
+      "inception": "Jun 4, 2024",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=ETHU%20S-1"
+    },
+    {
       "symbol": "FETH",
       "name": "Fidelity Ethereum Fund ETF",
-      "price": "27.40",
+      "price": "26.40",
       "pct_52w": -38.2,
       "assets_usd": 1380000000.0,
       "flow_1y_usd": 4337100000.0,
@@ -145,23 +158,10 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=FETH%20S-1"
     },
     {
-      "symbol": "ETHU",
-      "name": "2x Ether ETF",
-      "price": "32.10",
-      "pct_52w": -78.42,
-      "assets_usd": 1340000000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "",
-      "custodian": "",
-      "inception": "Jun 4, 2024",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=ETHU%20S-1"
-    },
-    {
       "symbol": "BITX",
       "name": "Volatility Shares 2x Bitcoin ETF",
-      "price": "21.01",
-      "pct_52w": -60.3,
+      "price": "19.80",
+      "pct_52w": -59.67,
       "assets_usd": 1240000000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -173,8 +173,8 @@
     {
       "symbol": "HODL",
       "name": "VanEck Bitcoin ETF",
-      "price": "24.39",
-      "pct_52w": -25.09,
+      "price": "23.73",
+      "pct_52w": -25.41,
       "assets_usd": 1190000000.0,
       "flow_1y_usd": 746600000.0,
       "flow_1y_window": "1Y",
@@ -186,7 +186,7 @@
     {
       "symbol": "ETHB",
       "name": "iShares Staked Ethereum Trust ETF",
-      "price": "35.41",
+      "price": "34.11",
       "pct_52w": null,
       "assets_usd": 1110000000.0,
       "flow_1y_usd": 521000000.0,
@@ -199,7 +199,7 @@
     {
       "symbol": "BSOL",
       "name": "Bitwise Solana Staking ETF",
-      "price": "16.30",
+      "price": "15.67",
       "pct_52w": null,
       "assets_usd": 1100000000.0,
       "flow_1y_usd": null,
@@ -212,7 +212,7 @@
     {
       "symbol": "ZCSH",
       "name": "Grayscale Zcash Trust",
-      "price": "121.86",
+      "price": "120.74",
       "pct_52w": null,
       "assets_usd": 914520000.0,
       "flow_1y_usd": null,
@@ -225,8 +225,8 @@
     {
       "symbol": "BITW",
       "name": "Bitwise 10 Crypto Index ETF",
-      "price": "56.69",
-      "pct_52w": -31.21,
+      "price": "55.01",
+      "pct_52w": -29.85,
       "assets_usd": 730190000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -238,7 +238,7 @@
     {
       "symbol": "MSBT",
       "name": "Morgan Stanley Bitcoin Trust ETF",
-      "price": "24.73",
+      "price": "24.09",
       "pct_52w": null,
       "assets_usd": 655170000.0,
       "flow_1y_usd": 263200000.0,
@@ -251,8 +251,8 @@
     {
       "symbol": "BITU",
       "name": "ProShares Ultra Bitcoin ETF",
-      "price": "16.24",
-      "pct_52w": -60.97,
+      "price": "15.30",
+      "pct_52w": -59.6,
       "assets_usd": 569670000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -264,7 +264,7 @@
     {
       "symbol": "XRP",
       "name": "Bitwise XRP ETF",
-      "price": "17.75",
+      "price": "16.69",
       "pct_52w": null,
       "assets_usd": 526760000.0,
       "flow_1y_usd": null,
@@ -277,7 +277,7 @@
     {
       "symbol": "NCIQ",
       "name": "Hashdex Nasdaq CME Crypto Index ETF",
-      "price": "21.91",
+      "price": "21.39",
       "pct_52w": -30.51,
       "assets_usd": 487740000.0,
       "flow_1y_usd": null,
@@ -290,8 +290,8 @@
     {
       "symbol": "BITQ",
       "name": "Bitwise Crypto Industry Innovators ETF",
-      "price": "28.46",
-      "pct_52w": 15.74,
+      "price": "28.00",
+      "pct_52w": 13.59,
       "assets_usd": 473260000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -303,8 +303,8 @@
     {
       "symbol": "BRRR",
       "name": "Coinshares Bitcoin ETF",
-      "price": "24.30",
-      "pct_52w": -25.32,
+      "price": "23.69",
+      "pct_52w": -24.69,
       "assets_usd": 463040000.0,
       "flow_1y_usd": 57000000.0,
       "flow_1y_window": "1Y",
@@ -316,8 +316,8 @@
     {
       "symbol": "EZBC",
       "name": "Franklin Bitcoin ETF",
-      "price": "49.82",
-      "pct_52w": -25.23,
+      "price": "48.54",
+      "pct_52w": -24.76,
       "assets_usd": 450090000.0,
       "flow_1y_usd": 210400000.0,
       "flow_1y_window": "1Y",
@@ -329,8 +329,8 @@
     {
       "symbol": "GDLC",
       "name": "Grayscale CoinDesk Crypto 5 ETF",
-      "price": "39.64",
-      "pct_52w": -30.83,
+      "price": "38.59",
+      "pct_52w": -29.79,
       "assets_usd": 426790000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -342,7 +342,7 @@
     {
       "symbol": "BTCO",
       "name": "Invesco Galaxy Bitcoin ETF",
-      "price": "85.71",
+      "price": "83.44",
       "pct_52w": -25.39,
       "assets_usd": 414230000.0,
       "flow_1y_usd": 250800000.0,
@@ -355,7 +355,7 @@
     {
       "symbol": "XRPZ",
       "name": "Franklin XRP ETF",
-      "price": "17.23",
+      "price": "16.17",
       "pct_52w": null,
       "assets_usd": 393640000.0,
       "flow_1y_usd": null,
@@ -368,8 +368,8 @@
     {
       "symbol": "MSTX",
       "name": "Defiance Daily Target 2x Long MSTR ETF",
-      "price": "22.00",
-      "pct_52w": -91.21,
+      "price": "20.72",
+      "pct_52w": -90.78,
       "assets_usd": 348540000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -381,7 +381,7 @@
     {
       "symbol": "XRPC",
       "name": "Canary XRP ETF",
-      "price": "16.87",
+      "price": "15.90",
       "pct_52w": null,
       "assets_usd": 345950000.0,
       "flow_1y_usd": null,
@@ -394,8 +394,8 @@
     {
       "symbol": "WGMI",
       "name": "CoinShares Bitcoin Mining and Digital Power ETF",
-      "price": "51.75",
-      "pct_52w": 24.52,
+      "price": "50.23",
+      "pct_52w": 15.51,
       "assets_usd": 314250000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -407,8 +407,8 @@
     {
       "symbol": "BLOX",
       "name": "Nicholas Crypto Income ETF",
-      "price": "15.17",
-      "pct_52w": -9.63,
+      "price": "14.68",
+      "pct_52w": -11.02,
       "assets_usd": 313740000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -420,8 +420,8 @@
     {
       "symbol": "FDIG",
       "name": "Fidelity Crypto Industry and Digital Payments ETF",
-      "price": "47.02",
-      "pct_52w": -0.34,
+      "price": "46.31",
+      "pct_52w": -3.33,
       "assets_usd": 295490000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -433,8 +433,8 @@
     {
       "symbol": "ETHT",
       "name": "ProShares Ultra Ether ETF",
-      "price": "20.61",
-      "pct_52w": -80.02,
+      "price": "19.25",
+      "pct_52w": -77.52,
       "assets_usd": 289390000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -446,8 +446,8 @@
     {
       "symbol": "ETHW",
       "name": "Bitwise Ethereum ETF",
-      "price": "19.69",
-      "pct_52w": -38.14,
+      "price": "18.95",
+      "pct_52w": -35.32,
       "assets_usd": 287300000.0,
       "flow_1y_usd": 574900000.0,
       "flow_1y_window": "1Y",
@@ -459,8 +459,8 @@
     {
       "symbol": "STCE",
       "name": "Schwab Crypto Thematic Natural Language Processing ETF",
-      "price": "74.88",
-      "pct_52w": -1.23,
+      "price": "73.23",
+      "pct_52w": -5.7,
       "assets_usd": 246540000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -472,7 +472,7 @@
     {
       "symbol": "FSOL",
       "name": "Fidelity Solana Fund",
-      "price": "13.91",
+      "price": "13.40",
       "pct_52w": null,
       "assets_usd": 213770000.0,
       "flow_1y_usd": null,
@@ -485,7 +485,7 @@
     {
       "symbol": "BHYP",
       "name": "Bitwise Hyperliquid ETF Common Shares of Beneficial Interest",
-      "price": "54.27",
+      "price": "52.15",
       "pct_52w": null,
       "assets_usd": 204790000.0,
       "flow_1y_usd": null,
@@ -498,7 +498,7 @@
     {
       "symbol": "HYPG",
       "name": "Grayscale Hyperliquid Staking ETF",
-      "price": "34.13",
+      "price": "33.17",
       "pct_52w": null,
       "assets_usd": 202820000.0,
       "flow_1y_usd": null,
@@ -511,7 +511,7 @@
     {
       "symbol": "GSOL",
       "name": "Grayscale Solana Staking ETF",
-      "price": "8.96",
+      "price": "8.62",
       "pct_52w": -49.75,
       "assets_usd": 181180000.0,
       "flow_1y_usd": null,
@@ -524,7 +524,7 @@
     {
       "symbol": "XBCI",
       "name": "NEOS Boosted Bitcoin High Income ETF",
-      "price": "42.35",
+      "price": "40.98",
       "pct_52w": null,
       "assets_usd": 179470000.0,
       "flow_1y_usd": null,
@@ -537,8 +537,8 @@
     {
       "symbol": "BTCW",
       "name": "WisdomTree Bitcoin Fund",
-      "price": "91.11",
-      "pct_52w": -25.3,
+      "price": "88.78",
+      "pct_52w": -24.96,
       "assets_usd": 170610000.0,
       "flow_1y_usd": 60200000.0,
       "flow_1y_window": "1Y",
@@ -550,8 +550,8 @@
     {
       "symbol": "XXRP",
       "name": "Teucrium 2x Long Daily XRP ETF",
-      "price": "40.65",
-      "pct_52w": -88.05,
+      "price": "35.58",
+      "pct_52w": -87.88,
       "assets_usd": 152260000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -563,7 +563,7 @@
     {
       "symbol": "TOXR",
       "name": "21Shares XRP ETF Beneficial INT SH",
-      "price": "15.49",
+      "price": "14.65",
       "pct_52w": null,
       "assets_usd": 150160000.0,
       "flow_1y_usd": null,
@@ -576,7 +576,7 @@
     {
       "symbol": "GLNK",
       "name": "Grayscale Chainlink Trust ETF",
-      "price": "11.52",
+      "price": "10.85",
       "pct_52w": null,
       "assets_usd": 144800000.0,
       "flow_1y_usd": null,
@@ -589,7 +589,7 @@
     {
       "symbol": "YBTC",
       "name": "Roundhill Bitcoin Covered Call Strategy ETF",
-      "price": "19.36",
+      "price": "19.06",
       "pct_52w": -35.12,
       "assets_usd": 141610000.0,
       "flow_1y_usd": null,
@@ -602,8 +602,8 @@
     {
       "symbol": "SBIT",
       "name": "ProShares UltraShort Bitcoin ETF",
-      "price": "28.58",
-      "pct_52w": 4.03,
+      "price": "30.20",
+      "pct_52w": 2.21,
       "assets_usd": 132590000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -615,7 +615,7 @@
     {
       "symbol": "ETHV",
       "name": "VanEck Ethereum ETF",
-      "price": "40.22",
+      "price": "38.89",
       "pct_52w": -38.15,
       "assets_usd": 124940000.0,
       "flow_1y_usd": 179500000.0,
@@ -628,7 +628,7 @@
     {
       "symbol": "CRPT",
       "name": "First Trust SkyBridge Crypto Industry & Digital Economy ETF",
-      "price": "16.74",
+      "price": "16.53",
       "pct_52w": -24.61,
       "assets_usd": 118240000.0,
       "flow_1y_usd": null,
@@ -641,7 +641,7 @@
     {
       "symbol": "NEHI",
       "name": "NEOS Ethereum High Income ETF",
-      "price": "34.32",
+      "price": "33.42",
       "pct_52w": null,
       "assets_usd": 110310000.0,
       "flow_1y_usd": null,
@@ -654,8 +654,8 @@
     {
       "symbol": "BITI",
       "name": "ProShares Short Bitcoin ETF",
-      "price": "17.06",
-      "pct_52w": 15.84,
+      "price": "17.54",
+      "pct_52w": 14.92,
       "assets_usd": 107610000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -667,8 +667,8 @@
     {
       "symbol": "XRPI",
       "name": "Volatility Shares Trust XRP ETF",
-      "price": "8.62",
-      "pct_52w": -51.61,
+      "price": "8.12",
+      "pct_52w": -50.87,
       "assets_usd": 107220000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -680,7 +680,7 @@
     {
       "symbol": "BPRO",
       "name": "Bitwise Proficio Currency Debasement ETF",
-      "price": "21.49",
+      "price": "21.11",
       "pct_52w": null,
       "assets_usd": 105060000.0,
       "flow_1y_usd": null,
@@ -693,8 +693,8 @@
     {
       "symbol": "RSSX",
       "name": "Return Stacked U.S. Stocks & Gold/Bitcoin ETF",
-      "price": "28.53",
-      "pct_52w": 18.14,
+      "price": "27.70",
+      "pct_52w": 13.8,
       "assets_usd": 103510000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -706,8 +706,8 @@
     {
       "symbol": "SSK",
       "name": "REX-Osprey SOL + Staking ETF",
-      "price": "15.96",
-      "pct_52w": -47.37,
+      "price": "15.52",
+      "pct_52w": -44.25,
       "assets_usd": 99020000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -719,7 +719,7 @@
     {
       "symbol": "BITA",
       "name": "iShares Bitcoin Premium Income ETF",
-      "price": "64.46",
+      "price": "63.24",
       "pct_52w": null,
       "assets_usd": 94130000.0,
       "flow_1y_usd": null,
@@ -732,8 +732,8 @@
     {
       "symbol": "XRPT",
       "name": "Volatility Shares Trust XRP 2X ETF",
-      "price": "43.54",
-      "pct_52w": -87.28,
+      "price": "38.00",
+      "pct_52w": -87.32,
       "assets_usd": 93730000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -745,7 +745,7 @@
     {
       "symbol": "GXRP",
       "name": "Grayscale XRP Trust ETF",
-      "price": "30.79",
+      "price": "28.99",
       "pct_52w": null,
       "assets_usd": 92400000.0,
       "flow_1y_usd": null,
@@ -758,8 +758,8 @@
     {
       "symbol": "HECO",
       "name": "State Street Galaxy Hedged Digital Asset Ecosystem ETF",
-      "price": "70.03",
-      "pct_52w": 70.15,
+      "price": "69.76",
+      "pct_52w": 69.16,
       "assets_usd": 87260000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -771,7 +771,7 @@
     {
       "symbol": "GLDB",
       "name": "IDX Alternative FIAT ETF",
-      "price": "23.78",
+      "price": "23.05",
       "pct_52w": null,
       "assets_usd": 82270000.0,
       "flow_1y_usd": null,
@@ -784,7 +784,7 @@
     {
       "symbol": "EETH",
       "name": "ProShares Ether ETF",
-      "price": "33.27",
+      "price": "32.17",
       "pct_52w": -40.57,
       "assets_usd": 72210000.0,
       "flow_1y_usd": null,
@@ -797,7 +797,7 @@
     {
       "symbol": "HBR",
       "name": "Canary HBAR ETF",
-      "price": "13.44",
+      "price": "12.24",
       "pct_52w": null,
       "assets_usd": 59760000.0,
       "flow_1y_usd": null,
@@ -810,8 +810,8 @@
     {
       "symbol": "EZET",
       "name": "Franklin Ethereum ETF",
-      "price": "20.86",
-      "pct_52w": -38.16,
+      "price": "20.14",
+      "pct_52w": -33.57,
       "assets_usd": 55810000.0,
       "flow_1y_usd": 70300000.0,
       "flow_1y_window": "1Y",
@@ -823,8 +823,8 @@
     {
       "symbol": "BTGD",
       "name": "STKd 100% Bitcoin & 100% Gold ETF",
-      "price": "29.45",
-      "pct_52w": -26.61,
+      "price": "28.00",
+      "pct_52w": -28.89,
       "assets_usd": 54350000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -836,7 +836,7 @@
     {
       "symbol": "MSSE",
       "name": "Morgan Stanley Ethereum Trust ETF",
-      "price": "29.57",
+      "price": "28.55",
       "pct_52w": null,
       "assets_usd": 49840000.0,
       "flow_1y_usd": null,
@@ -849,7 +849,7 @@
     {
       "symbol": "MSOL",
       "name": "Morgan Stanley Solana Trust ETF",
-      "price": "32.07",
+      "price": "30.97",
       "pct_52w": null,
       "assets_usd": 49620000.0,
       "flow_1y_usd": null,
@@ -862,7 +862,7 @@
     {
       "symbol": "CLNK",
       "name": "Bitwise Chainlink ETF Beneficial Interest",
-      "price": "23.65",
+      "price": "22.26",
       "pct_52w": null,
       "assets_usd": 49240000.0,
       "flow_1y_usd": null,
@@ -875,7 +875,7 @@
     {
       "symbol": "XRPR",
       "name": "REX-Osprey XRP ETF",
-      "price": "12.99",
+      "price": "12.26",
       "pct_52w": -47.37,
       "assets_usd": 48760000.0,
       "flow_1y_usd": null,
@@ -888,8 +888,8 @@
     {
       "symbol": "UXRP",
       "name": "ProShares Ultra XRP ETF",
-      "price": "19.81",
-      "pct_52w": -87.73,
+      "price": "17.46",
+      "pct_52w": -87.68,
       "assets_usd": 48560000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -901,8 +901,8 @@
     {
       "symbol": "ETHD",
       "name": "ProShares UltraShort Ether ETF",
-      "price": "23.46",
-      "pct_52w": -22.21,
+      "price": "25.03",
+      "pct_52w": -28.46,
       "assets_usd": 46520000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -914,8 +914,8 @@
     {
       "symbol": "MAXI",
       "name": "Simplify Bitcoin Strategy ETF",
-      "price": "16.60",
-      "pct_52w": -30.72,
+      "price": "15.52",
+      "pct_52w": -32.04,
       "assets_usd": 37810000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -927,8 +927,8 @@
     {
       "symbol": "BTCL",
       "name": "T-Rex 2X Long Bitcoin Daily Target ETF",
-      "price": "21.40",
-      "pct_52w": -62.04,
+      "price": "20.26",
+      "pct_52w": -61.8,
       "assets_usd": 35480000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -940,8 +940,8 @@
     {
       "symbol": "SLON",
       "name": "ProShares Ultra Solana ETF",
-      "price": "42.08",
-      "pct_52w": -87.47,
+      "price": "39.27",
+      "pct_52w": -85.99,
       "assets_usd": 31670000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -953,7 +953,7 @@
     {
       "symbol": "GSUI",
       "name": "Grayscale Sui Staking ETF",
-      "price": "14.59",
+      "price": "13.97",
       "pct_52w": null,
       "assets_usd": 29340000.0,
       "flow_1y_usd": null,
@@ -966,8 +966,8 @@
     {
       "symbol": "FIAT",
       "name": "YieldMax Short COIN Option Income Strategy ETF",
-      "price": "14.66",
-      "pct_52w": 14.5,
+      "price": "14.77",
+      "pct_52w": 12.26,
       "assets_usd": 29320000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -979,7 +979,7 @@
     {
       "symbol": "BAVA",
       "name": "Bitwise Avalanche ETF",
-      "price": "29.86",
+      "price": "28.19",
       "pct_52w": null,
       "assets_usd": 29230000.0,
       "flow_1y_usd": null,
@@ -992,7 +992,7 @@
     {
       "symbol": "TETH",
       "name": "21Shares Ethereum Staking ETF",
-      "price": "13.77",
+      "price": "13.25",
       "pct_52w": -37.72,
       "assets_usd": 27440000.0,
       "flow_1y_usd": 95600000.0,
@@ -1005,8 +1005,8 @@
     {
       "symbol": "BITS",
       "name": "Global X Blockchain & Bitcoin Strategy ETF",
-      "price": "72.29",
-      "pct_52w": -6.17,
+      "price": "70.56",
+      "pct_52w": -7.43,
       "assets_usd": 27220000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1018,7 +1018,7 @@
     {
       "symbol": "VSOL",
       "name": "VanEck Solana ETF",
-      "price": "15.90",
+      "price": "15.40",
       "pct_52w": null,
       "assets_usd": 26330000.0,
       "flow_1y_usd": null,
@@ -1031,8 +1031,8 @@
     {
       "symbol": "CBTJ",
       "name": "Calamos Bitcoin 80 Series Structured Alt Protection ETF - January",
-      "price": "21.19",
-      "pct_52w": -25.29,
+      "price": "20.75",
+      "pct_52w": -23.56,
       "assets_usd": 25410000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1044,7 +1044,7 @@
     {
       "symbol": "TKNZ",
       "name": "T. Rowe Price Active Crypto ETF",
-      "price": "34.50",
+      "price": "33.49",
       "pct_52w": null,
       "assets_usd": 25350000.0,
       "flow_1y_usd": null,
@@ -1070,7 +1070,7 @@
     {
       "symbol": "NGHT",
       "name": "Nicholas Bitcoin and Treasuries AfterDark ETF",
-      "price": "22.30",
+      "price": "22.48",
       "pct_52w": null,
       "assets_usd": 24120000.0,
       "flow_1y_usd": null,
@@ -1083,8 +1083,8 @@
     {
       "symbol": "DECO",
       "name": "State Street Galaxy Digital Asset Ecosystem ETF",
-      "price": "80.65",
-      "pct_52w": 69.6,
+      "price": "80.37",
+      "pct_52w": 68.18,
       "assets_usd": 22730000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1096,8 +1096,8 @@
     {
       "symbol": "QETH",
       "name": "Invesco Galaxy Ethereum ETF",
-      "price": "27.38",
-      "pct_52w": -38.18,
+      "price": "26.49",
+      "pct_52w": -33.61,
       "assets_usd": 22220000.0,
       "flow_1y_usd": 45100000.0,
       "flow_1y_window": "1Y",
@@ -1109,8 +1109,8 @@
     {
       "symbol": "DFII",
       "name": "FT Vest Bitcoin Strategy & Target Income ETF",
-      "price": "14.65",
-      "pct_52w": -27.85,
+      "price": "14.41",
+      "pct_52w": -26.14,
       "assets_usd": 20880000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1122,7 +1122,7 @@
     {
       "symbol": "TSUI",
       "name": "21Shares Sui Staking ETF Common Shares of Beneficial Interest Shares",
-      "price": "20.13",
+      "price": "19.27",
       "pct_52w": null,
       "assets_usd": 18910000.0,
       "flow_1y_usd": null,
@@ -1135,7 +1135,7 @@
     {
       "symbol": "OWNB",
       "name": "Bitwise Bitcoin Standard Corporations ETF",
-      "price": "24.28",
+      "price": "23.95",
       "pct_52w": -29.83,
       "assets_usd": 18660000.0,
       "flow_1y_usd": null,
@@ -1148,8 +1148,8 @@
     {
       "symbol": "CBXJ",
       "name": "Calamos Bitcoin 90 Series Structured Alt Protection ETF - January",
-      "price": "22.38",
-      "pct_52w": -18.05,
+      "price": "22.14",
+      "pct_52w": -16.84,
       "assets_usd": 18540000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1161,8 +1161,8 @@
     {
       "symbol": "SMST",
       "name": "Defiance Daily Target 2x Short MSTR ETF",
-      "price": "11.37",
-      "pct_52w": -57.01,
+      "price": "11.92",
+      "pct_52w": -58.32,
       "assets_usd": 17620000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1174,8 +1174,8 @@
     {
       "symbol": "BTCZ",
       "name": "T-Rex 2X Inverse Bitcoin Daily Target ETF",
-      "price": "2.770",
-      "pct_52w": -1.76,
+      "price": "2.920",
+      "pct_52w": -1.83,
       "assets_usd": 17470000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1187,7 +1187,7 @@
     {
       "symbol": "ETU",
       "name": "T-Rex 2X Long Ether Daily Target ETF",
-      "price": "8.52",
+      "price": "7.91",
       "pct_52w": -78.4,
       "assets_usd": 17210000.0,
       "flow_1y_usd": null,
@@ -1200,8 +1200,8 @@
     {
       "symbol": "BTF",
       "name": "CoinShares Bitcoin and Ether ETF",
-      "price": "24.08",
-      "pct_52w": -34.39,
+      "price": "23.29",
+      "pct_52w": -33.43,
       "assets_usd": 17110000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1213,7 +1213,7 @@
     {
       "symbol": "BTCC",
       "name": "Grayscale Bitcoin Covered Call ETF",
-      "price": "13.73",
+      "price": "13.75",
       "pct_52w": -30.79,
       "assets_usd": 16830000.0,
       "flow_1y_usd": null,
@@ -1226,7 +1226,7 @@
     {
       "symbol": "EZPZ",
       "name": "Franklin Crypto Index ETF",
-      "price": "21.90",
+      "price": "21.31",
       "pct_52w": -29.31,
       "assets_usd": 16460000.0,
       "flow_1y_usd": null,
@@ -1239,8 +1239,8 @@
     {
       "symbol": "BITC",
       "name": "Bitwise Trendwise Bitcoin and Treasuries Rotation Strategy ETF",
-      "price": "39.72",
-      "pct_52w": -14.09,
+      "price": "38.95",
+      "pct_52w": -13.56,
       "assets_usd": 15950000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1253,7 +1253,7 @@
       "symbol": "CBOJ",
       "name": "Calamos Bitcoin Structured Alt Protection ETF - January",
       "price": "24.50",
-      "pct_52w": -3.32,
+      "pct_52w": -2.91,
       "assets_usd": 15820000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1265,7 +1265,7 @@
     {
       "symbol": "SOEZ",
       "name": "Franklin Solana ETF",
-      "price": "20.40",
+      "price": "19.85",
       "pct_52w": null,
       "assets_usd": 15730000.0,
       "flow_1y_usd": null,
@@ -1278,8 +1278,8 @@
     {
       "symbol": "QBF",
       "name": "Innovator Uncapped Bitcoin 20 Floor ETF - Quarterly",
-      "price": "19.19",
-      "pct_52w": -28.85,
+      "price": "18.92",
+      "pct_52w": -27.4,
       "assets_usd": 14700000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1291,7 +1291,7 @@
     {
       "symbol": "STLU",
       "name": "Volatility Shares 2x Stellar ETF",
-      "price": "22.50",
+      "price": "20.08",
       "pct_52w": null,
       "assets_usd": 14100000.0,
       "flow_1y_usd": null,
@@ -1304,8 +1304,8 @@
     {
       "symbol": "BITY",
       "name": "Amplify Bitcoin 2% Monthly Option Income ETF",
-      "price": "29.14",
-      "pct_52w": -35.37,
+      "price": "28.42",
+      "pct_52w": -33.65,
       "assets_usd": 13690000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1317,8 +1317,8 @@
     {
       "symbol": "CONI",
       "name": "GraniteShares 2x Short COIN Daily ETF",
-      "price": "20.94",
-      "pct_52w": -48.92,
+      "price": "21.38",
+      "pct_52w": -51.32,
       "assets_usd": 13520000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1343,8 +1343,8 @@
     {
       "symbol": "DOJE",
       "name": "REX-Osprey DOGE ETF",
-      "price": "9.25",
-      "pct_52w": -62.7,
+      "price": "8.56",
+      "pct_52w": -61.31,
       "assets_usd": 11950000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1356,7 +1356,7 @@
     {
       "symbol": "XRPM",
       "name": "Amplify XRP 3% Monthly Premium Income ETF",
-      "price": "10.53",
+      "price": "9.71",
       "pct_52w": null,
       "assets_usd": 11940000.0,
       "flow_1y_usd": null,
@@ -1369,8 +1369,8 @@
     {
       "symbol": "BETH",
       "name": "ProShares Bitcoin & Ether Market Cap Weight ETF",
-      "price": "47.95",
-      "pct_52w": -30.61,
+      "price": "46.62",
+      "pct_52w": -28.18,
       "assets_usd": 11790000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1382,8 +1382,8 @@
     {
       "symbol": "BAGY",
       "name": "Amplify Bitcoin Max Income Covered Call ETF",
-      "price": "24.61",
-      "pct_52w": -38.73,
+      "price": "24.02",
+      "pct_52w": -38.19,
       "assets_usd": 10990000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1395,7 +1395,7 @@
     {
       "symbol": "SETH",
       "name": "ProShares Short Ether ETF",
-      "price": "29.43",
+      "price": "30.37",
       "pct_52w": 12.42,
       "assets_usd": 10210000.0,
       "flow_1y_usd": null,
@@ -1408,8 +1408,8 @@
     {
       "symbol": "XBTY",
       "name": "GraniteShares YieldBOOST Bitcoin ETF",
-      "price": "5.63",
-      "pct_52w": -42.12,
+      "price": "5.62",
+      "pct_52w": -40.65,
       "assets_usd": 10210000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1421,7 +1421,7 @@
     {
       "symbol": "TSOL",
       "name": "21Shares Solana Staking ETF",
-      "price": "11.52",
+      "price": "11.18",
       "pct_52w": null,
       "assets_usd": 9400000.0,
       "flow_1y_usd": null,
@@ -1434,7 +1434,7 @@
     {
       "symbol": "GDOG",
       "name": "Grayscale Dogecoin Trust ETF Accred Inv",
-      "price": "11.76",
+      "price": "10.83",
       "pct_52w": null,
       "assets_usd": 9340000.0,
       "flow_1y_usd": null,
@@ -1447,8 +1447,8 @@
     {
       "symbol": "BETE",
       "name": "ProShares Bitcoin & Ether Equal Weight ETF",
-      "price": "42.41",
-      "pct_52w": -34.41,
+      "price": "41.37",
+      "pct_52w": -31.13,
       "assets_usd": 9280000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1460,8 +1460,8 @@
     {
       "symbol": "BCCC",
       "name": "Global X Bitcoin Covered Call ETF",
-      "price": "13.65",
-      "pct_52w": -22.71,
+      "price": "13.44",
+      "pct_52w": -21.42,
       "assets_usd": 9230000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1473,8 +1473,8 @@
     {
       "symbol": "SATO",
       "name": "Invesco Alerian Galaxy Crypto Economy ETF",
-      "price": "20.64",
-      "pct_52w": -11.4,
+      "price": "20.19",
+      "pct_52w": -13.21,
       "assets_usd": 8890000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1486,7 +1486,7 @@
     {
       "symbol": "TCAN",
       "name": "21Shares Canton Network ETF",
-      "price": "19.22",
+      "price": "18.36",
       "pct_52w": null,
       "assets_usd": 8369999.999999999,
       "flow_1y_usd": null,
@@ -1499,7 +1499,7 @@
     {
       "symbol": "ISBG",
       "name": "IncomeSTKd 1x Bitcoin & 1x Gold Premium ETF",
-      "price": "17.28",
+      "price": "16.14",
       "pct_52w": null,
       "assets_usd": 8060000.000000001,
       "flow_1y_usd": null,
@@ -1513,7 +1513,7 @@
       "symbol": "BBB",
       "name": "CYBER HORNET S&P 500 and Bitcoin 75/25 Strategy ETF",
       "price": "32.69",
-      "pct_52w": 6.21,
+      "pct_52w": 6.46,
       "assets_usd": 7960000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1525,7 +1525,7 @@
     {
       "symbol": "LTCC",
       "name": "Canary Litecoin ETF",
-      "price": "15.28",
+      "price": "14.63",
       "pct_52w": null,
       "assets_usd": 7770000.0,
       "flow_1y_usd": null,
@@ -1538,7 +1538,7 @@
     {
       "symbol": "CBXO",
       "name": "Calamos Bitcoin 90 Series Structured Alt Protection ETF - October",
-      "price": "22.22",
+      "price": "22.21",
       "pct_52w": null,
       "assets_usd": 6670000.0,
       "flow_1y_usd": null,
@@ -1551,7 +1551,7 @@
     {
       "symbol": "QSOL",
       "name": "Invesco Galaxy Solana ETF",
-      "price": "11.83",
+      "price": "11.51",
       "pct_52w": null,
       "assets_usd": 6630000.0,
       "flow_1y_usd": null,
@@ -1564,7 +1564,7 @@
     {
       "symbol": "AETH",
       "name": "Bitwise Trendwise Ether and Treasuries Rotation Strategy ETF",
-      "price": "38.73",
+      "price": "38.64",
       "pct_52w": -23.03,
       "assets_usd": 6530000.0,
       "flow_1y_usd": null,
@@ -1591,7 +1591,7 @@
       "symbol": "CBTA",
       "name": "Calamos Bitcoin 80 Series Structured Alt Protection ETF - April",
       "price": "24.83",
-      "pct_52w": -23.5,
+      "pct_52w": -22.17,
       "assets_usd": 6010000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1603,7 +1603,7 @@
     {
       "symbol": "GAVA",
       "name": "Grayscale Avalanche Staking ETF",
-      "price": "26.79",
+      "price": "25.00",
       "pct_52w": null,
       "assets_usd": 6010000.0,
       "flow_1y_usd": null,
@@ -1617,7 +1617,7 @@
       "symbol": "CBXY",
       "name": "Calamos Bitcoin 90 Series Structured Alt Protection ETF - July",
       "price": "24.12",
-      "pct_52w": -5.07,
+      "pct_52w": -4.26,
       "assets_usd": 5940000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1629,7 +1629,7 @@
     {
       "symbol": "TXXH",
       "name": "21Shares 2x Long HYPE ETF",
-      "price": "85.37",
+      "price": "78.85",
       "pct_52w": null,
       "assets_usd": 5610000.0,
       "flow_1y_usd": null,
@@ -1643,7 +1643,7 @@
       "symbol": "CBOA",
       "name": "Calamos Bitcoin Structured Alt Protection ETF - April",
       "price": "25.12",
-      "pct_52w": -3.87,
+      "pct_52w": -3.58,
       "assets_usd": 5000000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1655,7 +1655,7 @@
     {
       "symbol": "EHY",
       "name": "Amplify Ethereum Max Income Covered Call ETF",
-      "price": "8.78",
+      "price": "8.47",
       "pct_52w": null,
       "assets_usd": 4740000.0,
       "flow_1y_usd": null,
@@ -1668,8 +1668,8 @@
     {
       "symbol": "CBXA",
       "name": "Calamos Bitcoin 90 Series Structured Alt Protection ETF - April",
-      "price": "23.87",
-      "pct_52w": -18.41,
+      "price": "23.70",
+      "pct_52w": -17.61,
       "assets_usd": 4680000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1681,7 +1681,7 @@
     {
       "symbol": "TXXD",
       "name": "21Shares 2x Long Dogecoin ETF",
-      "price": "54.24",
+      "price": "46.65",
       "pct_52w": null,
       "assets_usd": 4420000.0,
       "flow_1y_usd": null,
@@ -1694,8 +1694,8 @@
     {
       "symbol": "ETCO",
       "name": "Grayscale Ethereum Covered Call ETF",
-      "price": "9.16",
-      "pct_52w": -45.79,
+      "price": "9.15",
+      "pct_52w": -42.12,
       "assets_usd": 4210000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1720,7 +1720,7 @@
     {
       "symbol": "BTCU",
       "name": "Direxion Daily Bitcoin Bull 2X ETF",
-      "price": "29.15",
+      "price": "27.55",
       "pct_52w": null,
       "assets_usd": 4059999.9999999995,
       "flow_1y_usd": null,
@@ -1733,7 +1733,7 @@
     {
       "symbol": "TXXS",
       "name": "21Shares 2x Long Sui ETF",
-      "price": "36.53",
+      "price": "32.14",
       "pct_52w": null,
       "assets_usd": 3940000.0,
       "flow_1y_usd": null,
@@ -1746,7 +1746,7 @@
     {
       "symbol": "HBIT",
       "name": "Hedgeye Hedged Bitcoin ETF",
-      "price": "25.76",
+      "price": "25.78",
       "pct_52w": null,
       "assets_usd": 3870000.0,
       "flow_1y_usd": null,
@@ -1759,7 +1759,7 @@
     {
       "symbol": "ETTY",
       "name": "Amplify Ethereum 3% Monthly Option Income ETF",
-      "price": "10.32",
+      "price": "9.97",
       "pct_52w": null,
       "assets_usd": 3330000.0,
       "flow_1y_usd": null,
@@ -1772,7 +1772,7 @@
     {
       "symbol": "BNAV",
       "name": "Amplify Fairlead Tactical Bitcoin ETF",
-      "price": "33.25",
+      "price": "32.73",
       "pct_52w": null,
       "assets_usd": 3050000.0,
       "flow_1y_usd": null,
@@ -1785,7 +1785,7 @@
     {
       "symbol": "CHNU",
       "name": "Volatility Shares 2x Chainlink ETF",
-      "price": "35.39",
+      "price": "31.01",
       "pct_52w": null,
       "assets_usd": 2920000.0,
       "flow_1y_usd": null,
@@ -1798,7 +1798,7 @@
     {
       "symbol": "VBNB",
       "name": "Vaneck BNB ETF Common Shares Of Beneficial Interest",
-      "price": "30.54",
+      "price": "29.52",
       "pct_52w": null,
       "assets_usd": 2800000.0,
       "flow_1y_usd": null,
@@ -1811,7 +1811,7 @@
     {
       "symbol": "TDOG",
       "name": "21Shares Dogecoin ETF",
-      "price": "20.10",
+      "price": "19.16",
       "pct_52w": null,
       "assets_usd": 2650000.0,
       "flow_1y_usd": null,
@@ -1824,7 +1824,7 @@
     {
       "symbol": "EVMU",
       "name": "Direxion Daily Ether Bull 2X ETF",
-      "price": "37.55",
+      "price": "35.08",
       "pct_52w": null,
       "assets_usd": 2620000.0,
       "flow_1y_usd": null,
@@ -1837,7 +1837,7 @@
     {
       "symbol": "BFOC",
       "name": "FT Vest Bitcoin Strategy Floor15 ETF - October",
-      "price": "17.04",
+      "price": "17.00",
       "pct_52w": null,
       "assets_usd": 2560000.0,
       "flow_1y_usd": null,
@@ -1850,8 +1850,8 @@
     {
       "symbol": "BPI",
       "name": "Grayscale Bitcoin Premium Income ETF",
-      "price": "26.09",
-      "pct_52w": -24.18,
+      "price": "25.93",
+      "pct_52w": -22.28,
       "assets_usd": 2500000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1876,7 +1876,7 @@
     {
       "symbol": "CBOL",
       "name": "Calamos Laddered Bitcoin Structured Alt Protection ETF",
-      "price": "24.09",
+      "price": "24.04",
       "pct_52w": null,
       "assets_usd": 2400000.0,
       "flow_1y_usd": null,
@@ -1889,7 +1889,7 @@
     {
       "symbol": "SOLC",
       "name": "Canary Marinade Solana ETF",
-      "price": "23.86",
+      "price": "23.00",
       "pct_52w": null,
       "assets_usd": 2290000.0,
       "flow_1y_usd": null,
@@ -1902,7 +1902,7 @@
     {
       "symbol": "ISSB",
       "name": "IncomeSTKd 1x US Stocks & 1x Bitcoin Premium ETF",
-      "price": "24.60",
+      "price": "23.58",
       "pct_52w": null,
       "assets_usd": 2230000.0,
       "flow_1y_usd": null,
@@ -1915,7 +1915,7 @@
     {
       "symbol": "STBQ",
       "name": "Amplify Stablecoin Technology Leaders ETF",
-      "price": "24.57",
+      "price": "23.81",
       "pct_52w": null,
       "assets_usd": 2100000.0,
       "flow_1y_usd": null,
@@ -1928,7 +1928,7 @@
     {
       "symbol": "SUIL",
       "name": "Volatility Shares 2x Sui ETF",
-      "price": "10.43",
+      "price": "9.50",
       "pct_52w": null,
       "assets_usd": 2009999.9999999998,
       "flow_1y_usd": null,
@@ -1941,7 +1941,7 @@
     {
       "symbol": "SOLM",
       "name": "Amplify Solana 3% Monthly Option Income ETF",
-      "price": "10.72",
+      "price": "10.30",
       "pct_52w": null,
       "assets_usd": 2000000.0,
       "flow_1y_usd": null,
@@ -1993,7 +1993,7 @@
     {
       "symbol": "DIME",
       "name": "CoinShares Altcoins ETF",
-      "price": "11.37",
+      "price": "10.93",
       "pct_52w": null,
       "assets_usd": 1440000.0,
       "flow_1y_usd": null,
@@ -2006,7 +2006,7 @@
     {
       "symbol": "KRYP",
       "name": "ProShares CoinDesk 20 Crypto ETF",
-      "price": "25.13",
+      "price": "24.08",
       "pct_52w": null,
       "assets_usd": 1400000.0,
       "flow_1y_usd": null,
@@ -2019,7 +2019,7 @@
     {
       "symbol": "TKNQ",
       "name": "Amplify Tokenization Technology Leaders ETF",
-      "price": "26.83",
+      "price": "26.09",
       "pct_52w": null,
       "assets_usd": 1270000.0,
       "flow_1y_usd": null,
@@ -2032,7 +2032,7 @@
     {
       "symbol": "TXBC",
       "name": "21Shares FTSE Crypto 10 ex-BTC Index ETF",
-      "price": "19.15",
+      "price": "18.48",
       "pct_52w": null,
       "assets_usd": 1270000.0,
       "flow_1y_usd": null,
@@ -2045,7 +2045,7 @@
     {
       "symbol": "WTIB",
       "name": "USCF Oil Plus Bitcoin Strategy Fund",
-      "price": "37.66",
+      "price": "37.86",
       "pct_52w": null,
       "assets_usd": 1140000.0,
       "flow_1y_usd": null,
@@ -2058,7 +2058,7 @@
     {
       "symbol": "CRDX",
       "name": "Volatility Shares 2x Cardano ETF",
-      "price": "14.63",
+      "price": "12.83",
       "pct_52w": null,
       "assets_usd": 1050000.0,
       "flow_1y_usd": null,
@@ -2067,6 +2067,19 @@
       "custodian": "",
       "inception": "Apr 1, 2026",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=CRDX%20S-1"
+    },
+    {
+      "symbol": "CRDD",
+      "name": "Volatility Shares Cardano ETF",
+      "price": "17.95",
+      "pct_52w": null,
+      "assets_usd": 1020000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "",
+      "custodian": "",
+      "inception": "Apr 1, 2026",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=CRDD%20S-1"
     },
     {
       "symbol": "TTOP",
@@ -2080,19 +2093,6 @@
       "custodian": "",
       "inception": "Nov 13, 2025",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=TTOP%20S-1"
-    },
-    {
-      "symbol": "CRDD",
-      "name": "Volatility Shares Cardano ETF",
-      "price": "19.16",
-      "pct_52w": null,
-      "assets_usd": 925270.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "",
-      "custodian": "",
-      "inception": "Apr 1, 2026",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=CRDD%20S-1"
     },
     {
       "symbol": "BFJA",
@@ -2111,7 +2111,7 @@
       "symbol": "HBTC",
       "name": "Fortuna Hedged Bitcoin ETF",
       "price": "22.45",
-      "pct_52w": -16.61,
+      "pct_52w": -15.01,
       "assets_usd": 819320.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -2123,7 +2123,7 @@
     {
       "symbol": "COIA",
       "name": "ProShares Ultra COIN",
-      "price": "10.20",
+      "price": "9.93",
       "pct_52w": -83.4,
       "assets_usd": 811490.0,
       "flow_1y_usd": null,
@@ -2137,7 +2137,7 @@
       "symbol": "BFAP",
       "name": "FT Vest Bitcoin Strategy Floor15 ETF April",
       "price": "16.26",
-      "pct_52w": -20.89,
+      "pct_52w": -19.83,
       "assets_usd": 796360.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -2149,7 +2149,7 @@
     {
       "symbol": "BWOW",
       "name": "Bitwise Dogecoin ETF",
-      "price": "16.38",
+      "price": "15.05",
       "pct_52w": null,
       "assets_usd": 719490.0,
       "flow_1y_usd": null,
@@ -2158,6 +2158,19 @@
       "custodian": "",
       "inception": "Nov 25, 2025",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BWOW%20S-1"
+    },
+    {
+      "symbol": "AVAZ",
+      "name": "2x Avalanche ETF",
+      "price": "16.00",
+      "pct_52w": null,
+      "assets_usd": 677420.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "",
+      "custodian": "",
+      "inception": "May 15, 2026",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=AVAZ%20S-1"
     },
     {
       "symbol": "COIX",
@@ -2177,7 +2190,7 @@
       "name": "GraniteShares YieldBOOST Ether ETF",
       "price": "20.41",
       "pct_52w": null,
-      "assets_usd": 609140.0,
+      "assets_usd": 610540.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "GraniteShares",
@@ -2201,7 +2214,7 @@
     {
       "symbol": "EEE",
       "name": "CYBER HORNET S&P 500 and Ethereum 75/25 Strategy ETF",
-      "price": "23.48",
+      "price": "23.14",
       "pct_52w": null,
       "assets_usd": 573500.0,
       "flow_1y_usd": null,
@@ -2223,19 +2236,6 @@
       "custodian": "",
       "inception": "Jan 29, 2026",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=XXX%20S-1"
-    },
-    {
-      "symbol": "AVAZ",
-      "name": "2x Avalanche ETF",
-      "price": "18.60",
-      "pct_52w": null,
-      "assets_usd": 478830.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "",
-      "custodian": "",
-      "inception": "May 15, 2026",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=AVAZ%20S-1"
     },
     {
       "symbol": "CHNL",
@@ -2278,8 +2278,8 @@
     },
     {
       "symbol": "GCPU",
-      "name": "Grayscale Funds Trust - Bitcoin Miners ETF",
-      "price": "39.23",
+      "name": "Grayscale AI Compute ETF",
+      "price": "38.72",
       "pct_52w": 1.94,
       "assets_usd": null,
       "flow_1y_usd": null,
