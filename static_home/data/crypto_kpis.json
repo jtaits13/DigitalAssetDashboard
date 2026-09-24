@@ -1,36 +1,36 @@
 {
-  "generated_at": "2026-09-23T21:40:35.728468+00:00",
+  "generated_at": "2026-09-24T05:07:57.303063+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
     "value_display": "$3.00T",
     "delta": {
-      "pct": 7.8349,
+      "pct": 5.8658,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$84,470",
+    "value_display": "$84,252",
     "delta": {
-      "pct": 6.961,
+      "pct": 4.4072,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,677",
+    "value_display": "$2,693",
     "delta": {
-      "pct": 8.0704,
+      "pct": 7.3446,
       "window": "1M"
     }
   },
   "btc_dominance": {
     "label": "BTC dominance",
-    "value_display": "56.5%",
+    "value_display": "56.4%",
     "delta": {
-      "pct": -0.8322,
+      "pct": -1.3777,
       "window": "1M"
     }
   },
@@ -38,16 +38,16 @@
     "label": "Stablecoin share",
     "value_display": "10.2%",
     "delta": {
-      "pct": -6.48,
+      "pct": -4.922,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 56.55,
+    "btc_dominance_pct": 56.44,
     "stablecoin_share_top50_pct": 10.15,
-    "top50_market_cap_usd": 2838414391765.0,
-    "stablecoin_market_cap_usd": 288088194377.0,
-    "btc_market_cap_usd": 1696876712877.0
+    "top50_market_cap_usd": 2841168280872.0,
+    "stablecoin_market_cap_usd": 288370334383.0,
+    "btc_market_cap_usd": 1692040666342.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,7 +65,7 @@
       {
         "symbol": "BTW",
         "name": "Bitway",
-        "pct_30d": 130.1197,
+        "pct_30d": 135.8862,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/bitway",
@@ -79,7 +79,7 @@
       {
         "symbol": "NEAR",
         "name": "NEAR Protocol",
-        "pct_30d": 127.0001,
+        "pct_30d": 127.977,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/near",
@@ -93,7 +93,7 @@
       {
         "symbol": "UNI",
         "name": "Uniswap",
-        "pct_30d": 114.1623,
+        "pct_30d": 113.8517,
         "category": "defi",
         "category_label": "DeFi",
         "detail_url": "https://www.coingecko.com/en/coins/uniswap",
@@ -107,5 +107,5 @@
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 7.8% over 30D:</strong> Total crypto market cap at $3.00T (7.8% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://www.coindesk.com/markets/2026/09/23/ai-agents-will-soon-buy-their-own-computing-power-and-data-using-stablecoins-according-to-blackrock\" target=\"_blank\" rel=\"noopener noreferrer\">BlackRock says AI agents could drive stablecoin and crypto adoption</a> (CoinDesk).</li><li><strong>Gains broadened among top-50 alts:</strong> 29 names up more than ~0.5%, 8 down more than ~0.5%, and 5 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/coindesk-indices/2026/09/23/crypto-long-and-short-inside-the-chain-settling-usd150-billion-of-stablecoins-a-week\" target=\"_blank\" rel=\"noopener noreferrer\">Crypto Long &amp; Short: Inside the chain settling $150 billion of stablecoins a week</a> (CoinDesk).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://www.theblock.co/news/markets/2026-09-22-spot-bitcoin-etfs-1-billion-daily-inflow-416005\" target=\"_blank\" rel=\"noopener noreferrer\">Spot bitcoin ETFs attract nearly $1 billion in largest daily inflow in 11 months</a> (The Block).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.theblock.co/news/web3/2026-09-23-blockchain-com-nyse-tokenized-us-stocks-etfs-416176\" target=\"_blank\" rel=\"noopener noreferrer\">Blockchain.com, NYSE plan access to tokenized US stocks and ETFs</a> (The Block).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 5.9% over 30D:</strong> Total crypto market cap at $3.00T (5.9% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://www.coindesk.com/markets/2026/09/23/ai-agents-will-soon-buy-their-own-computing-power-and-data-using-stablecoins-according-to-blackrock\" target=\"_blank\" rel=\"noopener noreferrer\">BlackRock says AI agents could drive stablecoin and crypto adoption</a> (CoinDesk).</li><li><strong>Gains broadened among top-50 alts:</strong> 30 names up more than ~0.5%, 6 down more than ~0.5%, and 6 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/coindesk-indices/2026/09/23/crypto-long-and-short-inside-the-chain-settling-usd150-billion-of-stablecoins-a-week\" target=\"_blank\" rel=\"noopener noreferrer\">Crypto Long &amp; Short: Inside the chain settling $150 billion of stablecoins a week</a> (CoinDesk).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://cointelegraph.com/markets/bitcoin-bull-market-confirmed-but-90k-presents-profit-taking-risk-analysis?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin bull market \u2018confirmed\u2019 but $90K presents profit-taking risk: Analysis</a> (CoinTelegraph).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://www.theblock.co/news/markets/2026-09-22-spot-bitcoin-etfs-1-billion-daily-inflow-416005\" target=\"_blank\" rel=\"noopener noreferrer\">Spot bitcoin ETFs attract nearly $1 billion in largest daily inflow in 11 months</a> (The Block).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
