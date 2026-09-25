@@ -1,53 +1,53 @@
 {
-  "generated_at": "2026-09-24T21:40:41.344461+00:00",
+  "generated_at": "2026-09-25T05:10:35.224497+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
-    "value_display": "$3.01T",
+    "value_display": "$3.00T",
     "delta": {
-      "pct": 9.1864,
+      "pct": 8.3367,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$84,417",
+    "value_display": "$84,156",
     "delta": {
-      "pct": 6.8422,
+      "pct": 6.4391,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,689",
+    "value_display": "$2,677",
     "delta": {
-      "pct": 9.0735,
+      "pct": 8.6711,
       "window": "1M"
     }
   },
   "btc_dominance": {
     "label": "BTC dominance",
-    "value_display": "56.2%",
+    "value_display": "56.3%",
     "delta": {
-      "pct": -2.1235,
+      "pct": -1.7516,
       "window": "1M"
     }
   },
   "stablecoin_share": {
     "label": "Stablecoin share",
-    "value_display": "10.1%",
+    "value_display": "10.2%",
     "delta": {
-      "pct": -6.9429,
+      "pct": -6.8106,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 56.25,
-    "stablecoin_share_top50_pct": 10.11,
-    "top50_market_cap_usd": 2850632918050.0,
-    "stablecoin_market_cap_usd": 288099802633.0,
-    "btc_market_cap_usd": 1695838303060.0
+    "btc_dominance_pct": 56.27,
+    "stablecoin_share_top50_pct": 10.16,
+    "top50_market_cap_usd": 2841092021307.0,
+    "stablecoin_market_cap_usd": 288700241310.0,
+    "btc_market_cap_usd": 1690599316605.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,7 +65,7 @@
       {
         "symbol": "NEAR",
         "name": "NEAR Protocol",
-        "pct_30d": 150.3654,
+        "pct_30d": 139.7475,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/near",
@@ -79,7 +79,7 @@
       {
         "symbol": "BTW",
         "name": "Bitway",
-        "pct_30d": 146.3538,
+        "pct_30d": 131.2047,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/bitway",
@@ -93,7 +93,7 @@
       {
         "symbol": "UNI",
         "name": "Uniswap",
-        "pct_30d": 114.1179,
+        "pct_30d": 112.6797,
         "category": "defi",
         "category_label": "DeFi",
         "detail_url": "https://www.coingecko.com/en/coins/uniswap",
@@ -107,5 +107,5 @@
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 9.2% over 30D:</strong> Total crypto market cap at $3.01T (9.2% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://cointelegraph.com/news/sec-mark-uyeda-agency-dropped-crypto-cases?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Ex-SEC acting chair: Agency dropped crypto cases to avoid issues with credibility</a> (CoinTelegraph).</li><li><strong>Gains broadened among top-50 alts:</strong> 32 names up more than ~0.5%, 5 down more than ~0.5%, and 5 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/opinion/2026/09/24/the-stock-token-debate-and-the-gap-nobody-can-close-alone\" target=\"_blank\" rel=\"noopener noreferrer\">The stock token debate, and the gap nobody can close alone</a> (CoinDesk).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.theblock.co/news/web3/2026-09-23-blockchain-com-nyse-tokenized-us-stocks-etfs-416176\" target=\"_blank\" rel=\"noopener noreferrer\">Blockchain.com, NYSE plan access to tokenized US stocks and ETFs</a> (The Block).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm.</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 8.3% over 30D:</strong> Total crypto market cap at $3.00T (8.3% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://cointelegraph.com/news/sec-mark-uyeda-agency-dropped-crypto-cases?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Ex-SEC acting chair: Agency dropped crypto cases to avoid issues with credibility</a> (CoinTelegraph).</li><li><strong>Gains broadened among top-50 alts:</strong> 33 names up more than ~0.5%, 5 down more than ~0.5%, and 4 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/opinion/2026/09/24/the-stock-token-debate-and-the-gap-nobody-can-close-alone\" target=\"_blank\" rel=\"noopener noreferrer\">The stock token debate, and the gap nobody can close alone</a> (CoinDesk).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.theblock.co/news/web3/2026-09-23-blockchain-com-nyse-tokenized-us-stocks-etfs-416176\" target=\"_blank\" rel=\"noopener noreferrer\">Blockchain.com, NYSE plan access to tokenized US stocks and ETFs</a> (The Block).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm.</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
