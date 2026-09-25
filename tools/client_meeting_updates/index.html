@@ -23,10 +23,9 @@
     <section class="hero">
       <div class="hero-inner">
         <h1>Weekly client meetings</h1>
-        <p class="hero-lead">
-          Add each meeting as a row. At the end of the week, copy the table or
-          download an Outlook draft. This page stores data in your browser and
-          starts a fresh table when a new week begins.
+        <p class="hero-lead" id="hero-lead">
+          Add each meeting as a row. At the end of the week, download the
+          combined table or an Outlook draft.
         </p>
       </div>
     </section>
@@ -98,9 +97,9 @@
             <tbody id="meetings-body"></tbody>
           </table>
         </div>
-        <p class="hint">
-          Each browser keeps its own table. Teammates can send you a CSV; use
-          Import to merge their rows, then copy or download the combined draft.
+        <p class="hint" id="mode-hint">
+          Open this page through the Python server so everyone submits to one
+          shared table.
         </p>
       </section>
     </main>

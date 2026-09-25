@@ -1,39 +1,35 @@
 # Client meeting weekly intake
 
-Standalone static page for collecting weekly client-meeting rows. Copy this folder onto an internal file server and open `index.html`. Do **not** deploy it on the public Digital Assets GitHub Pages site.
+Standalone site for collecting weekly client-meeting rows. Do **not** deploy it on the public Digital Assets GitHub Pages site.
 
-## What it does
+## Shared table (what you want)
 
-People open the page and fill in five fields: Date, Client, Meeting Purpose, Owner(s), and Client Attendee(s). Rows stay in that browser (`localStorage`) for the current Monday–Sunday week.
+Everyone opens the **same URL**, clicks **Add meeting**, and rows are saved in one file on the machine running the server. At the end of the week you **Download CSV** or **Download email draft** — that file already has everyone’s updates.
 
-A static file server cannot keep one shared table for everyone. Each person has their own copy. Typical flow:
+This is not Streamlit. It is the same HTML page, plus a small Python process that writes `data/week.json`.
 
-1. Teammates add their meetings on the page.
-2. They **Copy table** or **Download CSV** and send that to you.
-3. You **Import CSV or JSON** to merge their rows, skipping exact duplicates.
-4. You **Copy table** into Outlook, or **Download email draft** and open the `.eml` file.
+On a computer teammates can reach (your work PC on the internal network, or an internal server that can run Python):
+
+```bash
+py -3 tools/client_meeting_updates/server.py
+```
+
+Share `http://<that-machine-name-or-IP>:8765/`. Leave the window running. If you only copy `index.html` onto a file share, there is no shared table — each browser keeps its own rows.
+
+Windows may prompt to allow Python through the firewall; allow it on the private/domain network.
+
+Anyone with the URL can view, edit, delete, and reset the week. There is no login.
 
 ## End of week
 
-When the ISO week changes, the next visit downloads a CSV backup of last week’s rows and starts a fresh table. **Start new week** does the same on demand (backup, then clear).
+**Download CSV** or **Download email draft** from the live shared table. When the ISO week rolls (Monday), the server archives last week under `data/backups/` and starts empty. **Start new week** does that on demand (and also downloads a CSV in your browser).
 
 ## Email draft
 
-**Download email draft** saves a `.eml` file with `X-Unsent: 1`. Double-click it on Windows; Outlook should open an unsent message with the HTML table. Optional default To: address:
+**Download email draft** saves a `.eml` file with `X-Unsent: 1`. Double-click it; Outlook should open an unsent message. Optional default To: copy `js/config.example.js` to `js/config.js` and set `defaultTo`.
 
-1. Copy `js/config.example.js` to `js/config.js` (not committed).
-2. Set `defaultTo` to your mailbox.
-
-## Local development
+## Tests
 
 ```bash
-node --test tools/client_meeting_updates/test/lib.test.mjs
+py -3 -m pytest tests/test_client_meeting_store.py -q
 ```
-
-To click through the page:
-
-```bash
-python -m http.server 8765 --directory tools/client_meeting_updates
-```
-
-Then open `http://127.0.0.1:8765/`.

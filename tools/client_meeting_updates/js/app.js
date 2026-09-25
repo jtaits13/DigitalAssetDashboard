@@ -17,6 +17,8 @@
   const tableWrap = document.getElementById("table-wrap");
   const tbody = document.getElementById("meetings-body");
   const importFile = document.getElementById("import-file");
+  const heroLead = document.getElementById("hero-lead");
+  const modeHint = document.getElementById("mode-hint");
 
   const fields = {
     date: document.getElementById("date"),
@@ -30,6 +32,9 @@
   let persistWarning = false;
   let editingId = null;
   let statusTimer = null;
+  let sharedMode = false;
+  let storeCache = null;
+  let busy = false;
 
   function todayIso() {
     const d = new Date();
@@ -67,6 +72,7 @@
 
   function writeStorage(store) {
     memoryStore = store;
+    storeCache = store;
     try {
       window.localStorage.setItem(api.STORAGE_KEY, JSON.stringify(store));
     } catch (err) {
@@ -74,7 +80,40 @@
     }
   }
 
-  function loadStore() {
+  function currentStore() {
+    if (storeCache) return storeCache;
+    return api.parseStore(readStorage()) || api.emptyStore(api.isoWeekId(new Date()));
+  }
+
+  function applyStore(store) {
+    storeCache = store;
+    if (!sharedMode) writeStorage(store);
+    render();
+  }
+
+  async function apiJson(method, path, body) {
+    const options = { method, headers: {} };
+    if (body !== undefined) {
+      options.headers["Content-Type"] = "application/json";
+      options.body = JSON.stringify(body);
+    }
+    const res = await fetch(path, options);
+    const text = await res.text();
+    let payload = {};
+    if (text) {
+      try {
+        payload = JSON.parse(text);
+      } catch (err) {
+        throw new Error(text || res.statusText);
+      }
+    }
+    if (!res.ok) {
+      throw new Error(payload.error || text || res.statusText);
+    }
+    return payload;
+  }
+
+  function loadLocalStore() {
     const currentWeekId = api.isoWeekId(new Date());
     const rolled = api.rolloverIfNeeded(readStorage(), currentWeekId);
     if (rolled.previousStore) {
@@ -96,14 +135,32 @@
     return rolled.store;
   }
 
-  function currentStore() {
-    return api.parseStore(readStorage()) || api.emptyStore(api.isoWeekId(new Date()));
+  async function initShared() {
+    const payload = await apiJson("GET", "/api/week");
+    sharedMode = true;
+    storeCache = payload.store;
+    if (payload.rolledOver) {
+      showStatus(
+        "New week started. Last week's " +
+          payload.previousRowCount +
+          " row(s) were saved on the server.",
+        "info"
+      );
+    }
   }
 
-  function saveRows(rows) {
-    const store = currentStore();
-    writeStorage({ weekId: store.weekId, rows: rows });
-    render();
+  function updateModeCopy() {
+    if (sharedMode) {
+      heroLead.textContent =
+        "Everyone who opens this site adds to the same table. At the end of the week, download the combined CSV or Outlook draft.";
+      modeHint.textContent =
+        "Shared table: teammates' submissions appear here. Download CSV or an email draft when the week is complete.";
+    } else {
+      heroLead.textContent =
+        "This copy is stored only in this browser. To collect one combined table, run server.py on a machine teammates can reach and open that URL.";
+      modeHint.textContent =
+        "This-browser-only mode. Run the Python server for a shared table, or import CSVs from teammates here.";
+    }
   }
 
   function downloadText(filename, content, mime) {
@@ -192,10 +249,18 @@
     fields.attendees.value = row.attendees;
   }
 
+  function setBusy(next) {
+    busy = next;
+    submitBtn.disabled = next;
+  }
+
   function render() {
     const store = currentStore();
     const now = new Date();
-    weekChip.textContent = api.weekOfLabel(now) + " · " + store.rows.length + " row(s)";
+    const modeLabel = sharedMode ? "shared" : "this browser";
+    weekChip.textContent =
+      api.weekOfLabel(now) + " · " + store.rows.length + " row(s) · " + modeLabel;
+    updateModeCopy();
     const rows = api.sortRows(store.rows);
     tbody.replaceChildren();
     if (!rows.length) {
@@ -231,12 +296,7 @@
         delBtn.className = "btn-linkish";
         delBtn.textContent = "Delete";
         delBtn.addEventListener("click", function () {
-          if (!window.confirm("Delete this meeting row?")) return;
-          saveRows(currentStore().rows.filter(function (item) {
-            return item.id !== row.id;
-          }));
-          if (editingId === row.id) resetForm();
-          showStatus("Row deleted.", "ok");
+          deleteRow(row.id);
         });
         actions.appendChild(editBtn);
         actions.appendChild(delBtn);
@@ -244,7 +304,7 @@
         tbody.appendChild(tr);
       }
     }
-    if (persistWarning) {
+    if (!sharedMode && persistWarning) {
       showStatus(
         "This browser blocked local storage, so rows will not persist after you close the tab.",
         "warn"
@@ -252,7 +312,43 @@
     }
   }
 
-  form.addEventListener("submit", function (event) {
+  async function deleteRow(rowId) {
+    if (!window.confirm("Delete this meeting row?")) return;
+    try {
+      setBusy(true);
+      if (sharedMode) {
+        const payload = await apiJson("DELETE", "/api/meetings?id=" + encodeURIComponent(rowId));
+        applyStore(payload.store);
+      } else {
+        applyStore({
+          weekId: currentStore().weekId,
+          rows: currentStore().rows.filter(function (item) {
+            return item.id !== rowId;
+          }),
+        });
+      }
+      if (editingId === rowId) resetForm();
+      showStatus("Row deleted.", "ok");
+    } catch (err) {
+      showStatus(err.message || "Could not delete that row.", "error");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function refreshShared() {
+    if (!sharedMode || editingId || busy || document.hidden) return;
+    try {
+      const payload = await apiJson("GET", "/api/week");
+      const before = JSON.stringify(currentStore());
+      const after = JSON.stringify(payload.store);
+      if (before !== after) applyStore(payload.store);
+    } catch (err) {
+      // Keep the last good table if a refresh fails.
+    }
+  }
+
+  form.addEventListener("submit", async function (event) {
     event.preventDefault();
     const normalized = api.normalizeRow({
       id: editingId || "",
@@ -266,20 +362,31 @@
       showStatus("Please fill in: " + normalized.errors.join(", ") + ".", "error");
       return;
     }
-    const store = currentStore();
-    let rows = store.rows.slice();
-    if (editingId) {
-      rows = rows.map(function (row) {
-        return row.id === editingId ? normalized.row : row;
-      });
-      showStatus("Row updated.", "ok");
-    } else {
-      rows.push(normalized.row);
-      showStatus("Meeting added.", "ok");
+    try {
+      setBusy(true);
+      if (sharedMode) {
+        const method = editingId ? "PUT" : "POST";
+        const payload = await apiJson(method, "/api/meetings", normalized.row);
+        applyStore(payload.store);
+      } else {
+        const store = currentStore();
+        let rows = store.rows.slice();
+        if (editingId) {
+          rows = rows.map(function (row) {
+            return row.id === editingId ? normalized.row : row;
+          });
+        } else {
+          rows.push(normalized.row);
+        }
+        applyStore({ weekId: store.weekId, rows: rows });
+      }
+      showStatus(editingId ? "Row updated." : "Meeting added.", "ok");
+      resetForm();
+    } catch (err) {
+      showStatus(err.message || "Could not save that meeting.", "error");
+    } finally {
+      setBusy(false);
     }
-    writeStorage({ weekId: store.weekId, rows: rows });
-    resetForm();
-    render();
   });
 
   cancelEdit.addEventListener("click", function () {
@@ -321,39 +428,72 @@
     reader.onerror = function () {
       showStatus("Could not read that file.", "error");
     };
-    reader.onload = function () {
+    reader.onload = async function () {
       try {
         const incoming = api.parseImport(String(reader.result || ""), file.name);
-        const merged = api.mergeRows(currentStore().rows, incoming);
-        saveRows(merged.rows);
-        showStatus(
-          "Imported " + merged.addedCount + " new row(s). Duplicates were skipped.",
-          "ok"
-        );
+        if (sharedMode) {
+          const payload = await apiJson("POST", "/api/import", { rows: incoming });
+          applyStore(payload.store);
+          showStatus(
+            "Imported " + payload.addedCount + " new row(s). Duplicates were skipped.",
+            "ok"
+          );
+        } else {
+          const merged = api.mergeRows(currentStore().rows, incoming);
+          applyStore({ weekId: currentStore().weekId, rows: merged.rows });
+          showStatus(
+            "Imported " + merged.addedCount + " new row(s). Duplicates were skipped.",
+            "ok"
+          );
+        }
       } catch (err) {
         showStatus(err.message || "Import failed.", "error");
       }
     };
     reader.readAsText(file);
   });
-  document.getElementById("new-week").addEventListener("click", function () {
+  document.getElementById("new-week").addEventListener("click", async function () {
     const store = currentStore();
     if (!store.rows.length) {
       showStatus("This week is already empty.", "info");
       return;
     }
     const ok = window.confirm(
-      "Download a CSV backup and clear this week's table? This cannot be undone except from the backup file."
+      "Download a CSV backup and clear this week's table for everyone? This cannot be undone except from the backup."
     );
     if (!ok) return;
     downloadText(api.csvFilename(store.weekId), api.rowsToCsv(store.rows), "text/csv;charset=utf-8");
-    writeStorage(api.emptyStore(store.weekId));
-    resetForm();
-    render();
-    showStatus("This week was cleared after a CSV backup download.", "ok");
+    try {
+      setBusy(true);
+      if (sharedMode) {
+        const payload = await apiJson("POST", "/api/week/reset");
+        applyStore(payload.store);
+      } else {
+        applyStore(api.emptyStore(store.weekId));
+      }
+      resetForm();
+      showStatus("This week was cleared after a CSV backup download.", "ok");
+    } catch (err) {
+      showStatus(err.message || "Could not start a new week.", "error");
+    } finally {
+      setBusy(false);
+    }
   });
 
   resetForm();
-  loadStore();
-  render();
+  initShared()
+    .catch(function () {
+      sharedMode = false;
+      loadLocalStore();
+      showStatus(
+        "Shared table is not running. Open this page via server.py so teammates submit to one table.",
+        "warn"
+      );
+    })
+    .then(function () {
+      render();
+      if (sharedMode) {
+        window.setInterval(refreshShared, 15000);
+      }
+    });
 })();
