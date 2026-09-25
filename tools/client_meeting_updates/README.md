@@ -16,6 +16,8 @@ py -3 tools/client_meeting_updates/server.py
 
 Share `http://<that-machine-name-or-IP>:8765/`. Leave the window running. If you only copy `index.html` onto a file share, there is no shared table — each browser keeps its own rows.
 
+Do not double-click `index.html`. If the address bar starts with `file://`, the shared table is off even while `server.py` is running. Use the `http://` link instead. The week chip should say **shared**.
+
 Windows may prompt to allow Python through the firewall; allow it on the private/domain network.
 
 Anyone with the URL can view, edit, delete, and reset the week. There is no login.

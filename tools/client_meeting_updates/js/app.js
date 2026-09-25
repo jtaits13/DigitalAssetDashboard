@@ -485,8 +485,11 @@
     .catch(function () {
       sharedMode = false;
       loadLocalStore();
+      var viaFile = window.location.protocol === "file:";
       showStatus(
-        "Shared table is not running. Open this page via server.py so teammates submit to one table.",
+        viaFile
+          ? "You opened the HTML file directly, so this browser cannot see the server. Leave server.py running and go to http://127.0.0.1:8765/ in the address bar."
+          : "This page could not reach /api/week. Start server.py, then open http://127.0.0.1:8765/ — not the .html file on disk.",
         "warn"
       );
     })
