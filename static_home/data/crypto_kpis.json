@@ -1,28 +1,28 @@
 {
-  "generated_at": "2026-09-25T12:04:21.510150+00:00",
+  "generated_at": "2026-09-25T17:26:15.759113+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
-    "value_display": "$3.04T",
+    "value_display": "$3.01T",
     "delta": {
-      "pct": 10.0304,
+      "pct": 9.0506,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$84,647",
+    "value_display": "$83,891",
     "delta": {
-      "pct": 7.4872,
+      "pct": 7.3711,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,720",
+    "value_display": "$2,689",
     "delta": {
-      "pct": 10.0448,
+      "pct": 9.5309,
       "window": "1M"
     }
   },
@@ -30,7 +30,7 @@
     "label": "BTC dominance",
     "value_display": "56.0%",
     "delta": {
-      "pct": -2.3113,
+      "pct": -1.646,
       "window": "1M"
     }
   },
@@ -38,16 +38,16 @@
     "label": "Stablecoin share",
     "value_display": "10.1%",
     "delta": {
-      "pct": -7.8766,
+      "pct": -7.9384,
       "window": "1M"
     }
   },
   "market_structure": {
     "btc_dominance_pct": 55.96,
-    "stablecoin_share_top50_pct": 10.05,
-    "top50_market_cap_usd": 2871600930501.0,
-    "stablecoin_market_cap_usd": 288709776852.0,
-    "btc_market_cap_usd": 1700347912811.0
+    "stablecoin_share_top50_pct": 10.14,
+    "top50_market_cap_usd": 2846254887831.0,
+    "stablecoin_market_cap_usd": 288598291461.0,
+    "btc_market_cap_usd": 1685307522334.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,7 +65,7 @@
       {
         "symbol": "BTW",
         "name": "Bitway",
-        "pct_30d": 190.4219,
+        "pct_30d": 201.8418,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/bitway",
@@ -79,7 +79,7 @@
       {
         "symbol": "NEAR",
         "name": "NEAR Protocol",
-        "pct_30d": 168.51,
+        "pct_30d": 176.1637,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/near",
@@ -93,7 +93,7 @@
       {
         "symbol": "UNI",
         "name": "Uniswap",
-        "pct_30d": 126.6525,
+        "pct_30d": 125.1681,
         "category": "defi",
         "category_label": "DeFi",
         "detail_url": "https://www.coingecko.com/en/coins/uniswap",
@@ -107,5 +107,5 @@
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 10.0% over 30D:</strong> Total crypto market cap at $3.04T (10.0% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://thedefiant.io/news/regulation/cftc-files-crypto-market-rulemaking-with-white-house-at-prerule-stage\" target=\"_blank\" rel=\"noopener noreferrer\">CFTC Files Crypto Market Rulemaking With White House at Prerule Stage</a> (The Defiant).</li><li><strong>Gains broadened among top-50 alts:</strong> 34 names up more than ~0.5%, 3 down more than ~0.5%, and 5 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/opinion/2026/09/24/the-stock-token-debate-and-the-gap-nobody-can-close-alone\" target=\"_blank\" rel=\"noopener noreferrer\">The stock token debate, and the gap nobody can close alone</a> (CoinDesk).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://www.coindesk.com/daybook-us/2026/09/25/bitcoin-holders-are-cashing-out-just-not-the-way-they-did-at-prior-market-tops\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin holders are cashing out, just not the way they did at prior market tops</a> (CoinDesk).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://cointelegraph.com/markets/bitcoin-etf-six-day-streak-2-8-billion?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin ETF inflows slow to $191M as six-day streak reaches $2.8B</a> (CoinTelegraph).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 9.1% over 30D:</strong> Total crypto market cap at $3.01T (9.1% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://www.coindesk.com/markets/2026/09/25/circle-and-tether-step-in-to-freeze-hacker-wallet-after-massive-bitget-crypto-heist\" target=\"_blank\" rel=\"noopener noreferrer\">Circle and Tether step in to freeze hacker wallet after massive Bitget crypto heist</a> (CoinDesk).</li><li><strong>Gains broadened among top-50 alts:</strong> 34 names up more than ~0.5%, 3 down more than ~0.5%, and 5 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://cointelegraph.com/magazine/exchanges-reporting-crypto-gains-to-irs-becomes-tax-nightmare?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Exchanges reporting crypto gains to IRS becomes tax nightmare</a> (CoinTelegraph).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.coindesk.com/opinion/2026/09/24/the-stock-token-debate-and-the-gap-nobody-can-close-alone\" target=\"_blank\" rel=\"noopener noreferrer\">The stock token debate, and the gap nobody can close alone</a> (CoinDesk).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://www.coindesk.com/markets/2026/09/25/bitcoin-etfs-have-erased-a-usd5-8-billion-hole\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin ETF flows turn positive for 2026 after erasing $5.8 billion deficit</a> (CoinDesk).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
