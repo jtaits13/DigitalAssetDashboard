@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-26T05:12:35.282040+00:00",
+  "generated_at": "2026-09-26T11:37:05.900900+00:00",
   "rows": [
     {
       "symbol": "IBIT",
@@ -214,7 +214,7 @@
       "name": "Grayscale Zcash Trust",
       "price": "123.47",
       "pct_52w": null,
-      "assets_usd": 979450000.0,
+      "assets_usd": 977430000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "Grayscale",
@@ -759,7 +759,7 @@
       "symbol": "HECO",
       "name": "State Street Galaxy Hedged Digital Asset Ecosystem ETF",
       "price": "67.05",
-      "pct_52w": 62.12,
+      "pct_52w": 63.02,
       "assets_usd": 86960000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -838,7 +838,7 @@
       "name": "Franklin Ethereum ETF",
       "price": "20.42",
       "pct_52w": -35.35,
-      "assets_usd": 55810000.0,
+      "assets_usd": 60180000.0,
       "flow_1y_usd": 70300000.0,
       "flow_1y_window": "1Y",
       "issuer": "Franklin Templeton",
@@ -925,6 +925,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=ETHD%20S-1"
     },
     {
+      "symbol": "GSUI",
+      "name": "Grayscale Sui Staking ETF",
+      "price": "16.62",
+      "pct_52w": null,
+      "assets_usd": 41610000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Grayscale",
+      "custodian": "",
+      "inception": "Feb 18, 2026",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=GSUI%20S-1"
+    },
+    {
       "symbol": "MAXI",
       "name": "Simplify Bitcoin Strategy ETF",
       "price": "15.37",
@@ -962,19 +975,6 @@
       "custodian": "",
       "inception": "Jul 14, 2025",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=SLON%20S-1"
-    },
-    {
-      "symbol": "GSUI",
-      "name": "Grayscale Sui Staking ETF",
-      "price": "16.62",
-      "pct_52w": null,
-      "assets_usd": 29340000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Grayscale",
-      "custodian": "",
-      "inception": "Feb 18, 2026",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=GSUI%20S-1"
     },
     {
       "symbol": "FIAT",
@@ -1185,19 +1185,6 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=CBXJ%20S-1"
     },
     {
-      "symbol": "STLU",
-      "name": "Volatility Shares 2x Stellar ETF",
-      "price": "23.60",
-      "pct_52w": null,
-      "assets_usd": 18120000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "",
-      "custodian": "",
-      "inception": "Apr 1, 2026",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=STLU%20S-1"
-    },
-    {
       "symbol": "SMST",
       "name": "Defiance Daily Target 2x Short MSTR ETF",
       "price": "12.58",
@@ -1315,6 +1302,19 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=SOEZ%20S-1"
     },
     {
+      "symbol": "STLU",
+      "name": "Volatility Shares 2x Stellar ETF",
+      "price": "23.60",
+      "pct_52w": null,
+      "assets_usd": 15720000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "",
+      "custodian": "",
+      "inception": "Apr 1, 2026",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=STLU%20S-1"
+    },
+    {
       "symbol": "QBF",
       "name": "Innovator Uncapped Bitcoin 20 Floor ETF - Quarterly",
       "price": "18.80",
@@ -1358,7 +1358,7 @@
       "name": "Grayscale Bitcoin Miners ETF",
       "price": "36.95",
       "pct_52w": -8.63,
-      "assets_usd": 12940000.0,
+      "assets_usd": 12530000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "Grayscale",
@@ -1839,7 +1839,7 @@
       "name": "Amplify Fairlead Tactical Bitcoin ETF",
       "price": "32.42",
       "pct_52w": null,
-      "assets_usd": 3320000.0,
+      "assets_usd": 3270000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "Amplify Investments",
@@ -1861,19 +1861,6 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=CHNU%20S-1"
     },
     {
-      "symbol": "EVMU",
-      "name": "Direxion Daily Ether Bull 2X ETF",
-      "price": "35.98",
-      "pct_52w": null,
-      "assets_usd": 2820000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Direxion",
-      "custodian": "",
-      "inception": "May 27, 2026",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=EVMU%20S-1"
-    },
-    {
       "symbol": "VBNB",
       "name": "Vaneck BNB ETF Common Shares Of Beneficial Interest",
       "price": "30.10",
@@ -1885,6 +1872,19 @@
       "custodian": "",
       "inception": "May 7, 2026",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=VBNB%20S-1"
+    },
+    {
+      "symbol": "EVMU",
+      "name": "Direxion Daily Ether Bull 2X ETF",
+      "price": "35.98",
+      "pct_52w": null,
+      "assets_usd": 2670000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Direxion",
+      "custodian": "",
+      "inception": "May 27, 2026",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=EVMU%20S-1"
     },
     {
       "symbol": "TDOG",
