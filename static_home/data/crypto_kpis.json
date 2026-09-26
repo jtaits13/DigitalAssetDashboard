@@ -1,36 +1,36 @@
 {
-  "generated_at": "2026-09-26T11:39:27.851175+00:00",
+  "generated_at": "2026-09-26T16:36:23.356740+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
     "value_display": "$3.02T",
     "delta": {
-      "pct": 8.0839,
+      "pct": 6.419,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$84,163",
+    "value_display": "$84,137",
     "delta": {
-      "pct": 5.2286,
+      "pct": 4.9158,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,689",
+    "value_display": "$2,693",
     "delta": {
-      "pct": 5.9968,
+      "pct": 6.9758,
       "window": "1M"
     }
   },
   "btc_dominance": {
     "label": "BTC dominance",
-    "value_display": "56.0%",
+    "value_display": "55.9%",
     "delta": {
-      "pct": -2.5992,
+      "pct": -1.4125,
       "window": "1M"
     }
   },
@@ -38,16 +38,16 @@
     "label": "Stablecoin share",
     "value_display": "10.1%",
     "delta": {
-      "pct": -5.9337,
+      "pct": -5.8569,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 55.99,
-    "stablecoin_share_top50_pct": 10.12,
-    "top50_market_cap_usd": 2853701756362.0,
-    "stablecoin_market_cap_usd": 288911117231.0,
-    "btc_market_cap_usd": 1690779480877.0
+    "btc_dominance_pct": 55.92,
+    "stablecoin_share_top50_pct": 10.11,
+    "top50_market_cap_usd": 2855455620466.0,
+    "stablecoin_market_cap_usd": 288818701031.0,
+    "btc_market_cap_usd": 1690284196166.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -63,23 +63,9 @@
     "footnote": "Largest 1-month % moves in the top-50 table (stablecoins excluded). Context lines match recent headlines from dashboard news feeds, with Google News as fallback.",
     "movers": [
       {
-        "symbol": "NEAR",
-        "name": "NEAR Protocol",
-        "pct_30d": 154.9386,
-        "category": "l1",
-        "category_label": "Layer 1",
-        "detail_url": "https://www.coingecko.com/en/coins/near",
-        "direction": "up",
-        "context": {
-          "title": "Bond volatility surges while bitcoin and Wall Street stay calm",
-          "source": "CoinDesk",
-          "link": "https://www.coindesk.com/markets/2026/09/25/bond-volatility-surges-while-bitcoin-and-wall-street-stay-calm"
-        }
-      },
-      {
         "symbol": "BTW",
         "name": "Bitway",
-        "pct_30d": 123.7474,
+        "pct_30d": 165.0988,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/bitway",
@@ -91,9 +77,23 @@
         }
       },
       {
+        "symbol": "NEAR",
+        "name": "NEAR Protocol",
+        "pct_30d": 152.3433,
+        "category": "l1",
+        "category_label": "Layer 1",
+        "detail_url": "https://www.coingecko.com/en/coins/near",
+        "direction": "up",
+        "context": {
+          "title": "Bond volatility surges while bitcoin and Wall Street stay calm",
+          "source": "CoinDesk",
+          "link": "https://www.coindesk.com/markets/2026/09/25/bond-volatility-surges-while-bitcoin-and-wall-street-stay-calm"
+        }
+      },
+      {
         "symbol": "UNI",
         "name": "Uniswap",
-        "pct_30d": 117.1315,
+        "pct_30d": 115.4307,
         "category": "defi",
         "category_label": "DeFi",
         "detail_url": "https://www.coingecko.com/en/coins/uniswap",
@@ -107,5 +107,5 @@
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 8.1% over 30D:</strong> Total crypto market cap at $3.02T (8.1% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://www.coindesk.com/policy/2026/09/25/u-s-sec-s-steadiest-crypto-advocate-hester-peirce-to-depart-next-week\" target=\"_blank\" rel=\"noopener noreferrer\">U.S. SEC&#x27;s steadiest crypto advocate, Hester Peirce, to depart next week</a> (CoinDesk).</li><li><strong>Gains broadened among top-50 alts:</strong> 35 names up more than ~0.5%, 3 down more than ~0.5%, and 4 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://cointelegraph.com/magazine/exchanges-reporting-crypto-gains-to-irs-becomes-tax-nightmare?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Exchanges reporting crypto gains to IRS becomes tax nightmare</a> (CoinTelegraph).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://www.coindesk.com/daybook-us/2026/09/25/bitcoin-holders-are-cashing-out-just-not-the-way-they-did-at-prior-market-tops\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin holders are cashing out, just not the way they did at prior market tops</a> (CoinDesk).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://cointelegraph.com/news/sec-commissioner-hester-peirce-to-leave-post-on-oct-2?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">SEC Commissioner Hester Peirce to leave post on Oct. 2</a> (CoinTelegraph).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 6.4% over 30D:</strong> Total crypto market cap at $3.02T (6.4% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://www.coindesk.com/policy/2026/09/25/u-s-sec-s-steadiest-crypto-advocate-hester-peirce-to-depart-next-week\" target=\"_blank\" rel=\"noopener noreferrer\">U.S. SEC&#x27;s steadiest crypto advocate, Hester Peirce, to depart next week</a> (CoinDesk).</li><li><strong>Gains broadened among top-50 alts:</strong> 35 names up more than ~0.5%, 3 down more than ~0.5%, and 4 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://cointelegraph.com/magazine/exchanges-reporting-crypto-gains-to-irs-becomes-tax-nightmare?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Exchanges reporting crypto gains to IRS becomes tax nightmare</a> (CoinTelegraph).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.coindesk.com/business/2026/09/26/binance-deal-gives-circle-a-boost-in-stablecoin-race-with-tether-analysts-say\" target=\"_blank\" rel=\"noopener noreferrer\">Binance deal gives Circle a boost in stablecoin race with Tether, analysts say</a> (CoinDesk).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://www.coindesk.com/markets/2026/09/25/bitcoin-etfs-have-erased-a-usd5-8-billion-hole\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin ETF flows turn positive for 2026 after erasing $5.8 billion deficit</a> (CoinDesk).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
