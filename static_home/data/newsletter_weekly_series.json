@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-20T15:13:36+00:00",
+  "updated_at": "2026-09-29T03:55:49+00:00",
   "tmmf": {
     "title": "Tokenized MMF distributed value",
     "unit": "usd",
@@ -71,6 +71,11 @@
         "source": "rwa_xyz_val_30d"
       },
       {
+        "week_end": "2026-08-22",
+        "value": 14659932435.17028,
+        "source": "rwa_xyz_val_30d"
+      },
+      {
         "week_end": "2026-08-24",
         "value": 12749343996.776325,
         "source": "newsletter"
@@ -79,6 +84,16 @@
         "week_end": "2026-08-25",
         "value": 14874475554.405779,
         "source": "rwa_xyz_val_7d"
+      },
+      {
+        "week_end": "2026-08-29",
+        "value": 14962702248.355068,
+        "source": "rwa_xyz_val_30d"
+      },
+      {
+        "week_end": "2026-08-30",
+        "value": 14994689827.684572,
+        "source": "rwa_xyz_val_30d"
       },
       {
         "week_end": "2026-08-31",
@@ -112,7 +127,22 @@
       },
       {
         "week_end": "2026-09-21",
-        "value": 13880000000.0,
+        "value": 13877408617.545465,
+        "source": "newsletter"
+      },
+      {
+        "week_end": "2026-09-22",
+        "value": 13836813295.298147,
+        "source": "rwa_xyz_val_7d"
+      },
+      {
+        "week_end": "2026-09-28",
+        "value": 13510000000.0,
+        "source": "newsletter"
+      },
+      {
+        "week_end": "2026-09-29",
+        "value": 13509699535.592918,
         "source": "newsletter"
       }
     ]
@@ -123,33 +153,33 @@
     "source": "DefiLlama stablecoin charts (weekly)",
     "points": [
       {
-        "week_end": "2026-08-10",
-        "value": 307713497480.0,
-        "source": "defillama"
-      },
-      {
-        "week_end": "2026-08-17",
-        "value": 309869086751.0,
-        "source": "defillama"
-      },
-      {
         "week_end": "2026-08-24",
-        "value": 310287881616.0,
+        "value": 308784256770.0,
         "source": "defillama"
       },
       {
         "week_end": "2026-08-31",
-        "value": 311999800350.0,
+        "value": 310495478656.0,
         "source": "defillama"
       },
       {
         "week_end": "2026-09-07",
-        "value": 311816138451.0,
+        "value": 310312999724.0,
         "source": "defillama"
       },
       {
         "week_end": "2026-09-14",
-        "value": 311581243922.46,
+        "value": 310108364375.0,
+        "source": "defillama"
+      },
+      {
+        "week_end": "2026-09-21",
+        "value": 311685137884.0,
+        "source": "defillama"
+      },
+      {
+        "week_end": "2026-09-28",
+        "value": 313065583132.0,
         "source": "defillama"
       }
     ]
@@ -160,13 +190,8 @@
     "source": "CoinPaprika total market cap (30D)",
     "points": [
       {
-        "week_end": "2026-08-21",
-        "value": 2765729942008.0,
-        "source": "coinpaprika"
-      },
-      {
-        "week_end": "2026-08-24",
-        "value": 2780953491778.0,
+        "week_end": "2026-08-30",
+        "value": 2729042949578.0,
         "source": "coinpaprika"
       },
       {
@@ -185,8 +210,13 @@
         "source": "coinpaprika"
       },
       {
-        "week_end": "2026-09-20",
-        "value": 2886102197325.0,
+        "week_end": "2026-09-21",
+        "value": 3068344784912.0,
+        "source": "coinpaprika"
+      },
+      {
+        "week_end": "2026-09-28",
+        "value": 2996249937120.0,
         "source": "coinpaprika"
       }
     ]
@@ -197,33 +227,33 @@
     "source": "DefiLlama RWA protocol TVL (weekly)",
     "points": [
       {
-        "week_end": "2026-08-10",
-        "value": 5289929081.0,
-        "source": "defillama"
-      },
-      {
-        "week_end": "2026-08-17",
-        "value": 5123983683.0,
-        "source": "defillama"
-      },
-      {
         "week_end": "2026-08-24",
-        "value": 5393668097.0,
+        "value": 4373075094.0,
         "source": "defillama"
       },
       {
         "week_end": "2026-08-31",
-        "value": 5436540247.0,
+        "value": 4392854655.0,
         "source": "defillama"
       },
       {
         "week_end": "2026-09-07",
-        "value": 5580116722.0,
+        "value": 4530838844.0,
         "source": "defillama"
       },
       {
         "week_end": "2026-09-14",
-        "value": 5287990821.0,
+        "value": 4228450843.0,
+        "source": "defillama"
+      },
+      {
+        "week_end": "2026-09-21",
+        "value": 4171598740.0,
+        "source": "defillama"
+      },
+      {
+        "week_end": "2026-09-28",
+        "value": 4177454827.0,
         "source": "defillama"
       }
     ]
@@ -234,33 +264,33 @@
     "source": "Yahoo-scaled listed AUM (weekly)",
     "points": [
       {
-        "week_end": "2026-08-10",
-        "value": 101929308852.27719,
-        "source": "yahoo_scaled"
-      },
-      {
-        "week_end": "2026-08-17",
-        "value": 125956901426.26186,
-        "source": "yahoo_scaled"
-      },
-      {
         "week_end": "2026-08-24",
-        "value": 126917070313.26175,
+        "value": 132364205039.22287,
         "source": "yahoo_scaled"
       },
       {
         "week_end": "2026-08-31",
-        "value": 130490219830.6991,
+        "value": 136107767538.86862,
         "source": "yahoo_scaled"
       },
       {
         "week_end": "2026-09-07",
-        "value": 127603803025.4743,
+        "value": 133115258227.14111,
         "source": "yahoo_scaled"
       },
       {
         "week_end": "2026-09-14",
-        "value": 134300848030.0,
+        "value": 140135452903.38342,
+        "source": "yahoo_scaled"
+      },
+      {
+        "week_end": "2026-09-21",
+        "value": 144873085606.1553,
+        "source": "yahoo_scaled"
+      },
+      {
+        "week_end": "2026-09-28",
+        "value": 143448834220.0,
         "source": "yahoo_scaled"
       }
     ]
