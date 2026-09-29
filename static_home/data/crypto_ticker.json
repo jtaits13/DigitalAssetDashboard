@@ -3,5 +3,5 @@
   "chips_inner_html": "<span class=\"ticker-chip ticker-chip--error\">CoinGecko (HTTPError: 403 Client Error: Forbidden for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&amp;order=market_cap_desc&amp;per_page=50&amp;page=1&amp;sparkline=false&amp;price_change_percentage=30d) \u00b7 CoinCap (ConnectionError: HTTPSConnectionPool(host=&#x27;api.coincap.io&#x27;, port=443): Max retries exceeded with url: /v2/assets?limit=50 (Caused by NameResolutionError(&quot;HTTPSConnection(host=&#x27;api.coincap.io&#x27;, port=443): Failed to resolve &#x27;api.coincap.io&#x27; ([Errno -2] Name or service not known)&quot;)))</span>",
   "source": "",
   "error": "CoinGecko (HTTPError: 403 Client Error: Forbidden for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false&price_change_percentage=30d) \u00b7 CoinCap (ConnectionError: HTTPSConnectionPool(host='api.coincap.io', port=443): Max retries exceeded with url: /v2/assets?limit=50 (Caused by NameResolutionError(\"HTTPSConnection(host='api.coincap.io', port=443): Failed to resolve 'api.coincap.io' ([Errno -2] Name or service not known)\")))",
-  "generated_at": "2026-09-29T13:13:44.972722+00:00"
+  "generated_at": "2026-09-29T22:30:26.821165+00:00"
 }
