@@ -1,7 +1,7 @@
 {
   "generated_at": "2026-09-28T23:27:48.549685+00:00",
   "source": "CoinGecko",
-  "error": "",
+  "error": "CoinGecko (HTTPError: 403 Client Error: Forbidden for url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false&price_change_percentage=30d) \u00b7 CoinCap (ConnectionError: HTTPSConnectionPool(host='api.coincap.io', port=443): Max retries exceeded with url: /v2/assets?limit=50 (Caused by NameResolutionError(\"HTTPSConnection(host='api.coincap.io', port=443): Failed to resolve 'api.coincap.io' ([Errno -2] Name or service not known)\")))",
   "rows": [
     {
       "rank": 1,
@@ -603,5 +603,6 @@
       "detail_url": "https://www.coingecko.com/en/coins/blackrock-usd-institutional-digital-liquidity-fund",
       "about_blurb": ""
     }
-  ]
+  ],
+  "stale": true
 }
