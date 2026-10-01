@@ -6,39 +6,39 @@
   "kpis": [
     {
       "label": "Distributed AUM",
-      "value_display": "$25.98B",
-      "delta_30d_pct": -0.047220802974895656
+      "value_display": "$26.01B",
+      "delta_30d_pct": -0.04635420139953857
     },
     {
       "label": "Represented AUM",
-      "value_display": "$14.35B",
-      "delta_30d_pct": -0.0017066836264349931
+      "value_display": "$14.37B",
+      "delta_30d_pct": -0.002075982434807705
     },
     {
       "label": "RWA Holders",
-      "value_display": "487,256",
-      "delta_30d_pct": 0.5147321234277756
+      "value_display": "489,088",
+      "delta_30d_pct": 0.4918906387742465
     },
     {
       "label": "RWA Count",
-      "value_display": "289",
+      "value_display": "290",
       "delta_30d_pct": null
     },
     {
       "label": "RWA Managers Count",
-      "value_display": "101",
+      "value_display": "102",
       "delta_30d_pct": null
     }
   ],
   "chart_max_bars": 12,
   "back_href": "rwa-explore-market-participant.html",
-  "footer_note": "2026-10-01 06:19:31 UTC \u00b7 Source: RWA.xyz",
+  "footer_note": "2026-10-01 13:43:58 UTC \u00b7 Source: RWA.xyz",
   "bottom_cta": {
     "href": "https://app.rwa.xyz/asset-managers",
     "label": "See RWA Asset Managers on RWA.xyz"
   },
   "error_mode": "",
-  "key_observations_html": "<div style=\"border:1px solid #C7D8E8;border-radius:10px;padding:0.75rem 0.95rem;margin:0.1rem 0 0.55rem;background:#ffffff;box-shadow:0 1px 3px rgba(15,23,42,0.06);\"><ul style=\"margin:0.1rem 0 0 1.05rem;padding:0;color:#1F4C67;font-size:0.9rem;line-height:1.45;\"><li><strong>Asset-manager participation remains top-heavy:</strong> a smaller set of large managers still accounts for most distributed value and often anchors category momentum. Related: <a href=\"https://www.theblock.co/news/ecosystems/2026-09-30-base-launches-cobalt-upgrade-with-conditional-transactions-and-new-b20-asset-functions-417308\" target=\"_blank\" rel=\"noopener noreferrer\">Base launches Cobalt upgrade with conditional transactions and new B20 asset functions</a> (The Block).</li><li><strong>Share shifts are usually distribution-sensitive:</strong> advisor access, custody confidence, and repeat issuance cadence are key drivers of manager-level position changes. Related: <a href=\"https://www.coindesk.com/opinion/2026/09/30/the-sec-is-finally-modernizing-transfer-agent-rules-wall-street-must-not-repeat-the-paperwork-crisis\" target=\"_blank\" rel=\"noopener noreferrer\">The SEC Is finally modernizing transfer-agent rules. Wall Street must not repeat the \u2018paperwork crisis\u2019</a> (CoinDesk).</li><li><strong>Custody and issuance integrations are moving rankings first:</strong> Large-manager launches and migrations move slowly but often re-anchor category momentum in this table before the broader market reprices. Related: <a href=\"https://cointelegraph.com/news/bitwise-launches-first-us-spot-near-etf-after-tokens-recent-surge?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Bitwise launches first US spot NEAR ETF after token\u2019s recent surge</a> (CoinTelegraph).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Bullets combine on-page data with recent industry headlines.</p></div><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p>",
+  "key_observations_html": "<div style=\"border:1px solid #C7D8E8;border-radius:10px;padding:0.75rem 0.95rem;margin:0.1rem 0 0.55rem;background:#ffffff;box-shadow:0 1px 3px rgba(15,23,42,0.06);\"><ul style=\"margin:0.1rem 0 0 1.05rem;padding:0;color:#1F4C67;font-size:0.9rem;line-height:1.45;\"><li><strong>Asset-manager participation remains top-heavy:</strong> a smaller set of large managers still accounts for most distributed value and often anchors category momentum. Related: <a href=\"https://www.theblock.co/news/ecosystems/2026-09-30-base-launches-cobalt-upgrade-with-conditional-transactions-and-new-b20-asset-functions-417308\" target=\"_blank\" rel=\"noopener noreferrer\">Base launches Cobalt upgrade with conditional transactions and new B20 asset functions</a> (The Block).</li><li><strong>Share shifts are usually distribution-sensitive:</strong> advisor access, custody confidence, and repeat issuance cadence are key drivers of manager-level position changes. Related: <a href=\"https://www.coindesk.com/opinion/2026/09/30/the-sec-is-finally-modernizing-transfer-agent-rules-wall-street-must-not-repeat-the-paperwork-crisis\" target=\"_blank\" rel=\"noopener noreferrer\">The SEC Is finally modernizing transfer-agent rules. Wall Street must not repeat the \u2018paperwork crisis\u2019</a> (CoinDesk).</li><li><strong>Custody and issuance integrations are moving rankings first:</strong> Large-manager launches and migrations move slowly but often re-anchor category momentum in this table before the broader market reprices. Related: <a href=\"https://decrypt.co/379612/bitwise-launches-first-spot-near-etf\" target=\"_blank\" rel=\"noopener noreferrer\">Bitwise Launches First US Spot Near ETF After Token Nearly Triples Since August</a> (Decrypt).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Bullets combine on-page data with recent industry headlines.</p></div><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p>",
   "networks": {
     "block_heading": "By asset manager (Distributed \u00b7 Asset Managers)",
     "table_heading": "Asset Managers table",
@@ -66,312 +66,312 @@
         "Asset manager": "Tether",
         "Link": "https://app.rwa.xyz/asset-managers/tether",
         "RWA Count": 1,
-        "RWA value (distributed)": 2949643049.069852,
+        "RWA value (distributed)": 2949701629.6433187,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 2949643049.069852,
-        "7D \u0394 value": 12.122243965751188,
-        "Market Share": 11.343999801021333,
-        "30D \u0394 share": 1.6975723222990817
+        "RWA total (excl. stablecoins)": 2949701629.6433187,
+        "7D \u0394 value": 12.124470738699857,
+        "Market Share": 11.333923424452923,
+        "30D \u0394 share": 1.6874959457306715
       },
       {
         "#": 2,
         "Asset manager": "Franklin Templeton",
         "Link": "https://app.rwa.xyz/asset-managers/franklin-templeton",
         "RWA Count": 16,
-        "RWA value (distributed)": 2519008698.5757675,
+        "RWA value (distributed)": 2519948795.3739815,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 2519008698.5757675,
-        "7D \u0394 value": 0.880556823556645,
-        "Market Share": 9.687827882911334,
-        "30D \u0394 share": 0.5317175355085968
+        "RWA total (excl. stablecoins)": 2519948795.3739815,
+        "7D \u0394 value": 0.9182055575707384,
+        "Market Share": 9.682642608081249,
+        "30D \u0394 share": 0.5265322606785126
       },
       {
         "#": 3,
         "Asset manager": "Circle",
         "Link": "https://app.rwa.xyz/asset-managers/circle",
         "RWA Count": 1,
-        "RWA value (distributed)": 2404145354.0818934,
+        "RWA value (distributed)": 2403631557.0322375,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 2404145354.0818934,
-        "7D \u0394 value": -11.168367490850413,
-        "Market Share": 9.24607620807934,
-        "30D \u0394 share": -0.6778128285411744
+        "RWA total (excl. stablecoins)": 2403631557.0322375,
+        "7D \u0394 value": -11.187351963075367,
+        "Market Share": 9.235705650437644,
+        "30D \u0394 share": -0.688183386182871
       },
       {
         "#": 4,
         "Asset manager": "BlackRock",
         "Link": "https://app.rwa.xyz/asset-managers/blackrock",
         "RWA Count": 2,
-        "RWA value (distributed)": 2298109466.427648,
+        "RWA value (distributed)": 2298342480.487648,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 2298109466.427648,
-        "7D \u0394 value": -18.06785003942623,
-        "Market Share": 8.838273952538557,
-        "30D \u0394 share": -1.4467470305268002
+        "RWA total (excl. stablecoins)": 2298342480.487648,
+        "7D \u0394 value": -18.05954262710069,
+        "Market Share": 8.831143263857536,
+        "30D \u0394 share": -1.4538777192078216
       },
       {
         "#": 5,
         "Asset manager": "Paxos",
         "Link": "https://app.rwa.xyz/asset-managers/paxos",
         "RWA Count": 1,
-        "RWA value (distributed)": 1811694607.015449,
+        "RWA value (distributed)": 1810731267.9188478,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 1811694607.015449,
-        "7D \u0394 value": -2.3702439169345593,
-        "Market Share": 6.967576387921093,
-        "30D \u0394 share": 0.16314861006774817
+        "RWA total (excl. stablecoins)": 1810731267.9188478,
+        "7D \u0394 value": -2.4221569494414,
+        "Market Share": 6.957547613158555,
+        "30D \u0394 share": 0.1531198353052099
       },
       {
         "#": 6,
         "Asset manager": "Maple Protocol Pool Operations",
         "Link": "https://app.rwa.xyz/asset-managers/maple-protocol-pool-operations",
         "RWA Count": 2,
-        "RWA value (distributed)": 1251233509.438888,
+        "RWA value (distributed)": 1251429119.4561317,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 1251233509.438888,
-        "7D \u0394 value": -7.485036978722502,
-        "Market Share": 4.812105209334377,
-        "30D \u0394 share": -0.14713573275203576
+        "RWA total (excl. stablecoins)": 1251429119.4561317,
+        "7D \u0394 value": -7.470573768318234,
+        "Market Share": 4.808486956276131,
+        "30D \u0394 share": -0.15075398581028202
       },
       {
         "#": 7,
         "Asset manager": "WisdomTree Digital Management",
         "Link": "https://app.rwa.xyz/asset-managers/wisdomtree-digital-management",
         "RWA Count": 5,
-        "RWA value (distributed)": 1250005821.411618,
+        "RWA value (distributed)": 1249140203.8986297,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 1250005821.411618,
-        "7D \u0394 value": 0.3913096950129501,
-        "Market Share": 4.807383657436272,
-        "30D \u0394 share": 0.24171135512228298
+        "RWA total (excl. stablecoins)": 1249140203.8986297,
+        "7D \u0394 value": 0.32178963811777295,
+        "Market Share": 4.79969203498882,
+        "30D \u0394 share": 0.23401973267483042
       },
       {
         "#": 8,
         "Asset manager": "Anemoy",
         "Link": "https://app.rwa.xyz/asset-managers/anemoy",
         "RWA Count": 9,
-        "RWA value (distributed)": 1009372921.2762487,
+        "RWA value (distributed)": 1010060046.9247841,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 1009372921.2762487,
-        "7D \u0394 value": -38.32003620282741,
-        "Market Share": 3.8819362301227818,
-        "30D \u0394 share": -2.1186870292459115
+        "RWA total (excl. stablecoins)": 1010060046.9247841,
+        "7D \u0394 value": -38.2780478710301,
+        "Market Share": 3.881051259862214,
+        "30D \u0394 share": -2.119571999506479
       },
       {
         "#": 9,
         "Asset manager": "SICOS Securities",
         "Link": "https://app.rwa.xyz/asset-managers/sicos-securities",
         "RWA Count": 7,
-        "RWA value (distributed)": 1001643055.668697,
+        "RWA value (distributed)": 998799472.448521,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 1001643055.668697,
-        "7D \u0394 value": 7.471587325366971,
-        "Market Share": 3.852208024894139,
-        "30D \u0394 share": 0.4347110195664312
+        "RWA total (excl. stablecoins)": 998799472.448521,
+        "7D \u0394 value": 7.16648422438249,
+        "Market Share": 3.837783667117674,
+        "30D \u0394 share": 0.42028666178996615
       },
       {
         "#": 10,
         "Asset manager": "Blockchain Capital",
         "Link": "https://app.rwa.xyz/asset-managers/blockchain-capital",
         "RWA Count": 1,
-        "RWA value (distributed)": 973258069.7466002,
+        "RWA value (distributed)": 971527730.6466001,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 973258069.7466002,
-        "7D \u0394 value": 1.3890656257987108,
-        "Market Share": 3.7430425193412544,
-        "30D \u0394 share": 0.22317989231443874
+        "RWA total (excl. stablecoins)": 971527730.6466001,
+        "7D \u0394 value": 1.2088077168039617,
+        "Market Share": 3.732994819958309,
+        "30D \u0394 share": 0.2131321929314929
       },
       {
         "#": 11,
         "Asset manager": "Twenty First Capital",
         "Link": "https://app.rwa.xyz/asset-managers/twenty-first-capital",
         "RWA Count": 5,
-        "RWA value (distributed)": 894153796.4304818,
+        "RWA value (distributed)": 886701999.109995,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 894153796.4304818,
-        "7D \u0394 value": -17.30393334364346,
-        "Market Share": 3.438816263543639,
-        "30D \u0394 share": -0.5259372539338552
+        "RWA total (excl. stablecoins)": 886701999.109995,
+        "7D \u0394 value": -17.993114925586816,
+        "Market Share": 3.4070607200489094,
+        "30D \u0394 share": -0.5576927974285835
       },
       {
         "#": 12,
-        "Asset manager": "China Asset Management",
-        "Link": "https://app.rwa.xyz/asset-managers/china-asset-management",
-        "RWA Count": 12,
-        "RWA value (distributed)": 698629373.8820192,
-        "RWA value (represented)": 0.0,
-        "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 698629373.8820192,
-        "7D \u0394 value": -2.074826254496245,
-        "Market Share": 2.68685103467162,
-        "30D \u0394 share": 0.07082951388651011
-      },
-      {
-        "#": 13,
         "Asset manager": "J.P. Morgan Asset Management",
         "Link": "https://app.rwa.xyz/asset-managers/j-p-morgan-asset-management",
         "RWA Count": 2,
-        "RWA value (distributed)": 698197871.5599995,
+        "RWA value (distributed)": 728272504.3099995,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 698197871.5599995,
-        "7D \u0394 value": -20.374577918140204,
-        "Market Share": 2.6851915246313545,
-        "30D \u0394 share": -0.5300647515326149
+        "RWA total (excl. stablecoins)": 728272504.3099995,
+        "7D \u0394 value": -16.944740297287638,
+        "Market Share": 2.798311772632475,
+        "30D \u0394 share": -0.41694450353149426
+      },
+      {
+        "#": 13,
+        "Asset manager": "China Asset Management",
+        "Link": "https://app.rwa.xyz/asset-managers/china-asset-management",
+        "RWA Count": 12,
+        "RWA value (distributed)": 702923416.2146406,
+        "RWA value (represented)": 0.0,
+        "% distributed": 100.0,
+        "RWA total (excl. stablecoins)": 702923416.2146406,
+        "7D \u0394 value": -1.47294082394818,
+        "Market Share": 2.7009105234806245,
+        "30D \u0394 share": 0.08488900269551444
       },
       {
         "#": 14,
         "Asset manager": "Invesco Capital Management",
         "Link": "https://app.rwa.xyz/asset-managers/invesco-capital-management",
         "RWA Count": 3,
-        "RWA value (distributed)": 615276465.0117168,
+        "RWA value (distributed)": 613010943.4477757,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 615276465.0117168,
-        "7D \u0394 value": -9.588650859206657,
-        "Market Share": 2.3662849980668073,
-        "30D \u0394 share": -0.12909204187655024
+        "RWA total (excl. stablecoins)": 613010943.4477757,
+        "7D \u0394 value": -9.921556264745883,
+        "Market Share": 2.355431146515273,
+        "30D \u0394 share": -0.13994589342808395
       },
       {
         "#": 15,
         "Asset manager": "Securitize Capital",
         "Link": "https://app.rwa.xyz/asset-managers/securitize-capital",
         "RWA Count": 6,
-        "RWA value (distributed)": 418816142.120891,
+        "RWA value (distributed)": 418782595.0945563,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 418816142.120891,
-        "7D \u0394 value": -15.180550746357389,
-        "Market Share": 1.6107204003488214,
-        "30D \u0394 share": -0.19985570848134077
+        "RWA total (excl. stablecoins)": 418782595.0945563,
+        "7D \u0394 value": -15.18734475454293,
+        "Market Share": 1.6091288069937166,
+        "30D \u0394 share": -0.2014473018364455
       },
       {
         "#": 16,
         "Asset manager": "Huma",
         "Link": "https://app.rwa.xyz/asset-managers/huma",
         "RWA Count": 1,
-        "RWA value (distributed)": 381044278.3510319,
+        "RWA value (distributed)": 381525093.2602694,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 381044278.3510319,
-        "7D \u0394 value": 55.16095065044292,
-        "Market Share": 1.4654540043947055,
-        "30D \u0394 share": 0.5649579079285406
+        "RWA total (excl. stablecoins)": 381525093.2602694,
+        "7D \u0394 value": 55.35673812880907,
+        "Market Share": 1.4659707097365091,
+        "30D \u0394 share": 0.5654746132703442
       },
       {
         "#": 17,
         "Asset manager": "DOM X",
         "Link": "https://app.rwa.xyz/asset-managers/dom-x",
         "RWA Count": 1,
-        "RWA value (distributed)": 334265167.4308816,
-        "RWA value (represented)": 10725734482.569122,
-        "% distributed": 3.0222891320876446,
+        "RWA value (distributed)": 334415172.1731203,
+        "RWA value (represented)": 10725584477.826883,
+        "% distributed": 3.02364541370596,
         "RWA total (excl. stablecoins)": 11059999650.000004,
-        "7D \u0394 value": 0.16481642746457775,
-        "Market Share": 1.2855467355685741,
-        "30D \u0394 share": 0.06187551833241444
+        "7D \u0394 value": 0.20976636222765901,
+        "Market Share": 1.2849557105352738,
+        "30D \u0394 share": 0.06128449329911405
       },
       {
         "#": 18,
         "Asset manager": "Ondo",
         "Link": "https://app.rwa.xyz/asset-managers/ondo",
         "RWA Count": 1,
-        "RWA value (distributed)": 312941559.9423201,
+        "RWA value (distributed)": 319694928.97680897,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 312941559.9423201,
-        "7D \u0394 value": -6.872789564458745,
-        "Market Share": 1.2035385077650171,
-        "30D \u0394 share": -0.028645223769465517
+        "RWA total (excl. stablecoins)": 319694928.97680897,
+        "7D \u0394 value": -4.863077529599483,
+        "Market Share": 1.228394698567263,
+        "30D \u0394 share": -0.003789032967219802
       },
       {
         "#": 19,
         "Asset manager": "The Bank of New York Mellon",
         "Link": "https://app.rwa.xyz/asset-managers/the-bank-of-new-york-mellon",
         "RWA Count": 1,
-        "RWA value (distributed)": 294025514.2223259,
+        "RWA value (distributed)": 293495248.6578339,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 294025514.2223259,
-        "7D \u0394 value": 19.15981735315727,
-        "Market Share": 1.1307894953204802,
-        "30D \u0394 share": 0.22600737265575463
+        "RWA total (excl. stablecoins)": 293495248.6578339,
+        "7D \u0394 value": 18.944916452530787,
+        "Market Share": 1.1277251367728665,
+        "30D \u0394 share": 0.22294301410814096
       },
       {
         "#": 20,
         "Asset manager": "OnRe",
         "Link": "https://app.rwa.xyz/asset-managers/onre",
         "RWA Count": 1,
-        "RWA value (distributed)": 291855345.61063397,
+        "RWA value (distributed)": 290735005.29329956,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 291855345.61063397,
-        "7D \u0394 value": 1.3955972118371551,
-        "Market Share": 1.122443267695758,
-        "30D \u0394 share": 0.06699396745300598
+        "RWA total (excl. stablecoins)": 290735005.29329956,
+        "7D \u0394 value": 1.0063715996800515,
+        "Market Share": 1.1171191871364385,
+        "30D \u0394 share": 0.0616698868936864
       },
       {
         "#": 21,
         "Asset manager": "Five Sigma",
         "Link": "https://app.rwa.xyz/asset-managers/five-sigma",
         "RWA Count": 31,
-        "RWA value (distributed)": 288830309.8351597,
+        "RWA value (distributed)": 287290996.35159564,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 288830309.8351597,
-        "7D \u0394 value": -1.8311803694416293,
-        "Market Share": 1.1108093158364363,
-        "30D \u0394 share": 0.031966885809921186
+        "RWA total (excl. stablecoins)": 287290996.35159564,
+        "7D \u0394 value": -2.354368492631093,
+        "Market Share": 1.1038859389915665,
+        "30D \u0394 share": 0.02504350896505147
       },
       {
         "#": 22,
         "Asset manager": "State Street Investment Management",
         "Link": "https://app.rwa.xyz/asset-managers/state-street-investment-management",
         "RWA Count": 7,
-        "RWA value (distributed)": 244799879.38370606,
+        "RWA value (distributed)": 244545027.24840686,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 244799879.38370606,
-        "7D \u0394 value": 6.141760369234431,
-        "Market Share": 0.9414731670310132,
-        "30D \u0394 share": 0.09577822158223104
+        "RWA total (excl. stablecoins)": 244545027.24840686,
+        "7D \u0394 value": 6.0312600930798155,
+        "Market Share": 0.9396389739254232,
+        "30D \u0394 share": 0.09394402847664099
       },
       {
         "#": 23,
         "Asset manager": "Fasanara",
         "Link": "https://app.rwa.xyz/asset-managers/fasanara",
         "RWA Count": 4,
-        "RWA value (distributed)": 228612383.59574157,
+        "RWA value (distributed)": 228626204.59127077,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 228612383.59574157,
-        "7D \u0394 value": 12.783821052826774,
-        "Market Share": 0.8792178547973484,
-        "30D \u0394 share": 0.1359561293602999
+        "RWA total (excl. stablecoins)": 228626204.59127077,
+        "7D \u0394 value": 12.790639514110543,
+        "Market Share": 0.8784725443481906,
+        "30D \u0394 share": 0.13521081891114212
       },
       {
         "#": 24,
         "Asset manager": "Amundi",
         "Link": "https://app.rwa.xyz/asset-managers/amundi",
         "RWA Count": 1,
-        "RWA value (distributed)": 210756569.26148918,
+        "RWA value (distributed)": 208817112.30522078,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 210756569.26148918,
-        "7D \u0394 value": 31.042199465238042,
-        "Market Share": 0.8105463745927496,
-        "30D \u0394 share": 0.22080884235083834
+        "RWA total (excl. stablecoins)": 208817112.30522078,
+        "7D \u0394 value": 29.836302509294338,
+        "Market Share": 0.802358156092196,
+        "30D \u0394 share": 0.2126206238502848
       },
       {
         "#": 25,
@@ -383,21 +383,21 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 206746981.70455083,
         "7D \u0394 value": 0.035114479996543116,
-        "Market Share": 0.7951259458522517,
-        "30D \u0394 share": 0.037289432663338215
+        "Market Share": 0.7944038933725978,
+        "30D \u0394 share": 0.03656738018368421
       },
       {
         "#": 26,
         "Asset manager": "Hyperithm",
         "Link": "https://app.rwa.xyz/asset-managers/hyperithm",
         "RWA Count": 4,
-        "RWA value (distributed)": 192892399.6660982,
+        "RWA value (distributed)": 192730194.09016964,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 192892399.6660982,
-        "7D \u0394 value": 12.450604452695682,
-        "Market Share": 0.7418427609811191,
-        "30D \u0394 share": 0.1128550747603982
+        "RWA total (excl. stablecoins)": 192730194.09016964,
+        "7D \u0394 value": 12.356043365320858,
+        "Market Share": 0.7405458367197875,
+        "30D \u0394 share": 0.11155815049906656
       },
       {
         "#": 27,
@@ -409,21 +409,21 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 165147177.96119535,
         "7D \u0394 value": 8.618613658178482,
-        "Market Share": 0.6351377176034256,
-        "30D \u0394 share": 0.07762378772232592
+        "Market Share": 0.6345609501538038,
+        "30D \u0394 share": 0.07704702027270405
       },
       {
         "#": 28,
         "Asset manager": "M11 Credit",
         "Link": "https://app.rwa.xyz/asset-managers/m11-credit",
         "RWA Count": 1,
-        "RWA value (distributed)": 158954752.47342354,
+        "RWA value (distributed)": 159093263.45192713,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 158954752.47342354,
-        "7D \u0394 value": 15.459850054672131,
-        "Market Share": 0.61132233644289,
-        "30D \u0394 share": 0.10650838428762459
+        "RWA total (excl. stablecoins)": 159093263.45192713,
+        "7D \u0394 value": 15.560460175225927,
+        "Market Share": 0.6112994098079323,
+        "30D \u0394 share": 0.1064854576526669
       },
       {
         "#": 29,
@@ -435,21 +435,21 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 137684981.3489759,
         "7D \u0394 value": 75.75265271514336,
-        "Market Share": 0.5295211573206939,
-        "30D \u0394 share": 0.24226225082963812
+        "Market Share": 0.5290403000845956,
+        "30D \u0394 share": 0.2417813935935397
       },
       {
         "#": 30,
         "Asset manager": "Bitwise",
         "Link": "https://app.rwa.xyz/asset-managers/bitwise",
         "RWA Count": 1,
-        "RWA value (distributed)": 128159606.39563961,
+        "RWA value (distributed)": 128219263.81239367,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 128159606.39563961,
-        "7D \u0394 value": 43.14656416604928,
-        "Market Share": 0.4928876224225052,
-        "30D \u0394 share": 0.16459656102848497
+        "RWA total (excl. stablecoins)": 128219263.81239367,
+        "7D \u0394 value": 43.21319790873574,
+        "Market Share": 0.4926692594888397,
+        "30D \u0394 share": 0.16437819809481946
       },
       {
         "#": 31,
@@ -457,38 +457,38 @@
         "Link": "https://app.rwa.xyz/asset-managers/vert-capital",
         "RWA Count": 9,
         "RWA value (distributed)": 116108712.83361286,
-        "RWA value (represented)": 261618782.36788553,
+        "RWA value (represented)": 261618782.3678855,
         "% distributed": 30.73875063600408,
         "RWA total (excl. stablecoins)": 377727495.2014984,
         "7D \u0394 value": 0.0,
-        "Market Share": 0.4465412232496054,
-        "30D \u0394 share": 0.02079222759668797
+        "Market Share": 0.4461357199463902,
+        "30D \u0394 share": 0.020386724293472783
       },
       {
         "#": 32,
         "Asset manager": "Valos",
         "Link": "https://app.rwa.xyz/asset-managers/valos",
         "RWA Count": 1,
-        "RWA value (distributed)": 107281362.28074065,
+        "RWA value (distributed)": 107300309.5169493,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 107281362.28074065,
-        "7D \u0394 value": -1.3773199526892999,
-        "Market Share": 0.4125922127254657,
-        "30D \u0394 share": 0.013717686814983948
+        "RWA total (excl. stablecoins)": 107300309.5169493,
+        "7D \u0394 value": -1.3599019485303268,
+        "Market Share": 0.41229034125470404,
+        "30D \u0394 share": 0.013415815344222301
       },
       {
         "#": 33,
         "Asset manager": "Bosera Asset Management (International)",
         "Link": "https://app.rwa.xyz/asset-managers/bosera-asset-management-international",
         "RWA Count": 1,
-        "RWA value (distributed)": 103604074.45000008,
+        "RWA value (distributed)": 103615603.42000008,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 103604074.45000008,
-        "7D \u0394 value": 0.30746688272075473,
-        "Market Share": 0.3984497718516882,
-        "30D \u0394 share": 0.019717429559567342
+        "RWA total (excl. stablecoins)": 103615603.42000008,
+        "7D \u0394 value": 0.31862900913910197,
+        "Market Share": 0.3981322391860934,
+        "30D \u0394 share": 0.01939989689397261
       },
       {
         "#": 34,
@@ -500,21 +500,21 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 101714981.93490444,
         "7D \u0394 value": 0.0,
-        "Market Share": 0.39118453169928613,
-        "30D \u0394 share": 0.01821466281702925
+        "Market Share": 0.39082929771077246,
+        "30D \u0394 share": 0.01785942882851555
       },
       {
         "#": 35,
         "Asset manager": "3jane",
         "Link": "https://app.rwa.xyz/asset-managers/3jane",
         "RWA Count": 1,
-        "RWA value (distributed)": 100167998.11218263,
+        "RWA value (distributed)": 100519266.91990282,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 100167998.11218263,
-        "7D \u0394 value": 25.15986026993958,
-        "Market Share": 0.3852350036088708,
-        "30D \u0394 share": 0.09177241350603196
+        "RWA total (excl. stablecoins)": 100519266.91990282,
+        "7D \u0394 value": 25.598770458023886,
+        "Market Share": 0.3862348864383565,
+        "30D \u0394 share": 0.0927722963355177
       },
       {
         "#": 36,
@@ -526,8 +526,8 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 92194363.5275349,
         "7D \u0394 value": -0.10961560121028756,
-        "Market Share": 0.3545692899489809,
-        "30D \u0394 share": 0.016138780530931776
+        "Market Share": 0.35424730619741,
+        "30D \u0394 share": 0.0158167967793609
       },
       {
         "#": 37,
@@ -539,60 +539,60 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 74495840.68883914,
         "7D \u0394 value": -2.000267539242647e-14,
-        "Market Share": 0.28650273537931925,
-        "30D \u0394 share": 0.013340381068805817
+        "Market Share": 0.2862425627468106,
+        "30D \u0394 share": 0.013080208436297164
       },
       {
         "#": 38,
         "Asset manager": "Midas",
         "Link": "https://app.rwa.xyz/asset-managers/midas",
         "RWA Count": 1,
-        "RWA value (distributed)": 72411134.42528722,
+        "RWA value (distributed)": 72085089.31237613,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 72411134.42528722,
-        "7D \u0394 value": 1.7679132305136638,
-        "Market Share": 0.2784851864605175,
-        "30D \u0394 share": 0.01757964481011918
+        "RWA total (excl. stablecoins)": 72085089.31237613,
+        "7D \u0394 value": 1.3096835532227429,
+        "Market Share": 0.2769794999266127,
+        "30D \u0394 share": 0.016073958276214325
       },
       {
         "#": 39,
         "Asset manager": "VanEck Absolute Return Advisers Corporation",
         "Link": "https://app.rwa.xyz/asset-managers/vaneck-absolute-return-advisers-corporation",
         "RWA Count": 1,
-        "RWA value (distributed)": 55763784.71965505,
+        "RWA value (distributed)": 55769588.68965505,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 55763784.71965505,
-        "7D \u0394 value": -1.4188246314430375,
-        "Market Share": 0.21446132709632246,
-        "30D \u0394 share": 0.007043026552813487
+        "RWA total (excl. stablecoins)": 55769588.68965505,
+        "7D \u0394 value": -1.4085641696167788,
+        "Market Share": 0.21428887629499632,
+        "30D \u0394 share": 0.006870575751487338
       },
       {
         "#": 40,
         "Asset manager": "Reental America",
         "Link": "https://app.rwa.xyz/asset-managers/reental-america",
         "RWA Count": 55,
-        "RWA value (distributed)": 55056012.12042863,
+        "RWA value (distributed)": 55054507.508871235,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 55056012.12042863,
-        "7D \u0394 value": -0.02845700267688233,
-        "Market Share": 0.21173931223173575,
-        "30D \u0394 share": 0.009801718361537783
+        "RWA total (excl. stablecoins)": 55054507.508871235,
+        "7D \u0394 value": -0.03118909919479372,
+        "Market Share": 0.21154125081863545,
+        "30D \u0394 share": 0.009603656948437489
       },
       {
         "#": 41,
         "Asset manager": "Opal Capital",
         "Link": "https://app.rwa.xyz/asset-managers/opal-capital",
         "RWA Count": 1,
-        "RWA value (distributed)": 53407997.66240514,
-        "RWA value (represented)": 38451590.387679726,
-        "% distributed": 58.14090700394318,
-        "RWA total (excl. stablecoins)": 91859588.05008486,
-        "7D \u0394 value": 23.188686388180436,
-        "Market Share": 0.2054012315308204,
-        "30D \u0394 share": 0.04642789350512381
+        "RWA value (distributed)": 53424612.51048297,
+        "RWA value (represented)": 38908139.49272261,
+        "% distributed": 57.86095545882591,
+        "RWA total (excl. stablecoins)": 92332752.00320557,
+        "7D \u0394 value": 23.22700951203511,
+        "Market Share": 0.20527854786726432,
+        "30D \u0394 share": 0.04630520984156773
       },
       {
         "#": 42,
@@ -604,8 +604,8 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 47428452.68999999,
         "7D \u0394 value": 0.0,
-        "Market Share": 0.18240456520587223,
-        "30D \u0394 share": 0.008493274611547866
+        "Market Share": 0.1822389239394865,
+        "30D \u0394 share": 0.008327633345162132
       },
       {
         "#": 43,
@@ -617,8 +617,8 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 43914009.437492,
         "7D \u0394 value": 0.0,
-        "Market Share": 0.1688884065066956,
-        "30D \u0394 share": 0.007863923874652637
+        "Market Share": 0.16873503924036612,
+        "30D \u0394 share": 0.007710556608323178
       },
       {
         "#": 44,
@@ -630,8 +630,8 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 40356901.0,
         "7D \u0394 value": 0.0,
-        "Market Share": 0.15520816224125975,
-        "30D \u0394 share": 0.007226932847765439
+        "Market Share": 0.15506721798080209,
+        "30D \u0394 share": 0.007085988587307774
       },
       {
         "#": 45,
@@ -643,8 +643,8 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 36668694.34140096,
         "7D \u0394 value": -2.693691730959673,
-        "Market Share": 0.14102372876736305,
-        "30D \u0394 share": 0.002844338530665004
+        "Market Share": 0.14089566536611484,
+        "30D \u0394 share": 0.0027162751294168
       },
       {
         "#": 46,
@@ -656,34 +656,34 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 36388000.0,
         "7D \u0394 value": 63.27739387956564,
-        "Market Share": 0.1399442094831553,
-        "30D \u0394 share": 0.058225603828488855
+        "Market Share": 0.1398171263914795,
+        "30D \u0394 share": 0.05809852073681306
       },
       {
         "#": 47,
         "Asset manager": "FIL Investment Management (Luxembourg) S.a.r.l",
         "Link": "https://app.rwa.xyz/asset-managers/fil-investment-management-luxembourg-s-a-r-l",
         "RWA Count": 3,
-        "RWA value (distributed)": 36379547.53153,
+        "RWA value (distributed)": 36383612.51168,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 36379547.53153,
-        "7D \u0394 value": -35.55978119988315,
-        "Market Share": 0.13991170222751567,
-        "30D \u0394 share": -0.06709724107843898
+        "RWA total (excl. stablecoins)": 36383612.51168,
+        "7D \u0394 value": -35.55258077469762,
+        "Market Share": 0.13980026792140754,
+        "30D \u0394 share": -0.0672086753845471
       },
       {
         "#": 48,
         "Asset manager": "Wellington Management",
         "Link": "https://app.rwa.xyz/asset-managers/wellington-management",
         "RWA Count": 1,
-        "RWA value (distributed)": 30307386.902654033,
+        "RWA value (distributed)": 30304494.053420145,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 30307386.902654033,
-        "7D \u0394 value": 9.367430918673943,
-        "Market Share": 0.11655884636671576,
-        "30D \u0394 share": 0.014945839183252096
+        "RWA total (excl. stablecoins)": 30304494.053420145,
+        "7D \u0394 value": 9.356991764359465,
+        "Market Share": 0.11644188400837868,
+        "30D \u0394 share": 0.014828876824915016
       },
       {
         "#": 49,
@@ -695,8 +695,8 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 28067813.32044615,
         "7D \u0394 value": -2.2941210882292973,
-        "Market Share": 0.1079456949282899,
-        "30D \u0394 share": 0.0026097234010778736
+        "Market Share": 0.10784766963167175,
+        "30D \u0394 share": 0.002511698104459728
       },
       {
         "#": 50,
@@ -708,8 +708,8 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 25069422.704322077,
         "7D \u0394 value": 0.2238841453602087,
-        "Market Share": 0.09641421739461961,
-        "30D \u0394 share": 0.004694665327602949
+        "Market Share": 0.0963266638125653,
+        "30D \u0394 share": 0.004607111745548637
       },
       {
         "#": 51,
@@ -721,8 +721,8 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 24706317.452602938,
         "7D \u0394 value": 0.0,
-        "Market Share": 0.09501775489569092,
-        "30D \u0394 share": 0.004424296532222255
+        "Market Share": 0.09493146943878754,
+        "30D \u0394 share": 0.004338011075318872
       },
       {
         "#": 52,
@@ -734,8 +734,8 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 21843738.25,
         "7D \u0394 value": 0.0,
-        "Market Share": 0.0840085929854131,
-        "30D \u0394 share": 0.003911678686054597
+        "Market Share": 0.0839323049291702,
+        "30D \u0394 share": 0.0038353906298116934
       },
       {
         "#": 53,
@@ -747,8 +747,8 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 20538234.546329755,
         "7D \u0394 value": -56.240551681859394,
-        "Market Share": 0.07898777063223449,
-        "30D \u0394 share": -0.09311192118127394
+        "Market Share": 0.07891604197598215,
+        "30D \u0394 share": -0.09318364983752628
       },
       {
         "#": 54,
@@ -760,8 +760,8 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 20000000.0,
         "7D \u0394 value": 0.0,
-        "Market Share": 0.07691778030293245,
-        "30D \u0394 share": 0.0035815103086163326
+        "Market Share": 0.07684793140127487,
+        "30D \u0394 share": 0.003511661406958757
       },
       {
         "#": 55,
@@ -773,8 +773,8 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 17943722.23,
         "7D \u0394 value": 0.0,
-        "Market Share": 0.06900956421519926,
-        "30D \u0394 share": 0.0032132813070846473
+        "Market Share": 0.06894689675072854,
+        "30D \u0394 share": 0.0031506138426139413
       },
       {
         "#": 56,
@@ -786,37 +786,24 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 17573181.150000002,
         "7D \u0394 value": 0.0,
-        "Market Share": 0.0675845043459667,
-        "30D \u0394 share": 0.0031469264721953566
+        "Market Share": 0.06752313097586884,
+        "30D \u0394 share": 0.003085553102097501
       },
       {
         "#": 57,
-        "Asset manager": "Good AI Management Limited",
-        "Link": "https://app.rwa.xyz/asset-managers/good-ai-management-limited",
-        "RWA Count": 1,
-        "RWA value (distributed)": 16806294.47193907,
-        "RWA value (represented)": 0.0,
-        "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 16806294.47193907,
-        "7D \u0394 value": 0.7150248806131951,
-        "Market Share": 0.06463514329494988,
-        "30D \u0394 share": 0.0034471055389589077
-      },
-      {
-        "#": 58,
         "Asset manager": "Matrixdock",
         "Link": "https://app.rwa.xyz/asset-managers/matrixdock",
         "RWA Count": 1,
-        "RWA value (distributed)": 16450903.38304031,
+        "RWA value (distributed)": 16516527.56304031,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 16450903.38304031,
-        "7D \u0394 value": -5.042132360768406,
-        "Market Share": 0.06326834861007313,
-        "30D \u0394 share": -0.00025708230696505456
+        "RWA total (excl. stablecoins)": 16516527.56304031,
+        "7D \u0394 value": -4.663336616043692,
+        "Market Share": 0.06346304885758938,
+        "30D \u0394 share": -6.238205944881364e-05
       },
       {
-        "#": 59,
+        "#": 58,
         "Asset manager": "Revitalization Unlimited",
         "Link": "https://app.rwa.xyz/asset-managers/revitalization-unlimited",
         "RWA Count": 1,
@@ -825,8 +812,21 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 16285739.999999996,
         "7D \u0394 value": 0.0,
-        "Market Share": 0.06263314856953395,
-        "30D \u0394 share": 0.0029163772846722727
+        "Market Share": 0.0625762715169499,
+        "30D \u0394 share": 0.0028595002320882276
+      },
+      {
+        "#": 59,
+        "Asset manager": "Good AI Management Limited",
+        "Link": "https://app.rwa.xyz/asset-managers/good-ai-management-limited",
+        "RWA Count": 1,
+        "RWA value (distributed)": 16258911.187336914,
+        "RWA value (represented)": 0.0,
+        "% distributed": 100.0,
+        "RWA total (excl. stablecoins)": 16258911.187336914,
+        "7D \u0394 value": -2.5652771050497387,
+        "Market Share": 0.06247318457919439,
+        "30D \u0394 share": 0.001285146823203423
       },
       {
         "#": 60,
@@ -838,8 +838,8 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 15574233.649020454,
         "7D \u0394 value": 0.0,
-        "Market Share": 0.05989677411009466,
-        "30D \u0394 share": 0.0027889639181383078
+        "Market Share": 0.059842381954367536,
+        "30D \u0394 share": 0.0027345717624111844
       },
       {
         "#": 61,
@@ -851,8 +851,8 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 15532537.889998823,
         "7D \u0394 value": 0.0,
-        "Market Share": 0.05973641684849518,
-        "30D \u0394 share": 0.002781497228600239
+        "Market Share": 0.05968217031291662,
+        "30D \u0394 share": 0.002727250693021683
       },
       {
         "#": 62,
@@ -864,8 +864,8 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 15419939.70086295,
         "7D \u0394 value": 0.8107853304421557,
-        "Market Share": 0.059303376709772114,
-        "30D \u0394 share": 0.0032160812139658845
+        "Market Share": 0.05924952341718555,
+        "30D \u0394 share": 0.0031622279213793176
       },
       {
         "#": 63,
@@ -877,11 +877,24 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 14322097.07489738,
         "7D \u0394 value": 0.6802087215803211,
-        "Market Share": 0.055081195814211406,
-        "30D \u0394 share": 0.0029195450138020914
+        "Market Share": 0.05503117667670567,
+        "30D \u0394 share": 0.0028695258762963553
       },
       {
         "#": 64,
+        "Asset manager": "Axil",
+        "Link": "https://app.rwa.xyz/asset-managers/axil",
+        "RWA Count": 1,
+        "RWA value (distributed)": 14318154.386308745,
+        "RWA value (represented)": 0.0,
+        "% distributed": 100.0,
+        "RWA total (excl. stablecoins)": 14318154.386308745,
+        "7D \u0394 value": 43.094531918462934,
+        "Market Share": 0.05501602730359587,
+        "30D \u0394 share": 0.01832559539761061
+      },
+      {
+        "#": 65,
         "Asset manager": "Republic",
         "Link": "https://app.rwa.xyz/asset-managers/republic",
         "RWA Count": 1,
@@ -890,21 +903,8 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 13214677.776500715,
         "7D \u0394 value": -2.224557764565097,
-        "Market Share": 0.05082218409934629,
-        "30D \u0394 share": 0.0012639742284157695
-      },
-      {
-        "#": 65,
-        "Asset manager": "Axil",
-        "Link": "https://app.rwa.xyz/asset-managers/axil",
-        "RWA Count": 1,
-        "RWA value (distributed)": 13121822.54294083,
-        "RWA value (represented)": 0.0,
-        "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 13121822.54294083,
-        "7D \u0394 value": 31.13848363687876,
-        "Market Share": 0.05046507317659946,
-        "30D \u0394 share": 0.013774641270614205
+        "Market Share": 0.05077603256292393,
+        "30D \u0394 share": 0.0012178226919934074
       },
       {
         "#": 66,
@@ -916,21 +916,21 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 12373619.874246135,
         "7D \u0394 value": 0.000671153711098497,
-        "Market Share": 0.04758756875196315,
-        "30D \u0394 share": 0.00221611686890872
+        "Market Share": 0.04754435456407592,
+        "30D \u0394 share": 0.002172902681021497
       },
       {
         "#": 67,
         "Asset manager": "UBS Asset Management (Singapore) Ltd.",
         "Link": "https://app.rwa.xyz/asset-managers/ubs-asset-management-singapore-ltd",
         "RWA Count": 1,
-        "RWA value (distributed)": 11354956.904097002,
+        "RWA value (distributed)": 12356068.842460003,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 11354956.904097002,
-        "7D \u0394 value": 15.481929423049777,
-        "Market Share": 0.043669904024929956,
-        "30D \u0394 share": 0.007615337329819322
+        "RWA total (excl. stablecoins)": 12356068.842460003,
+        "7D \u0394 value": 25.66341572784544,
+        "Market Share": 0.04747691653973981,
+        "30D \u0394 share": 0.011422349844629172
       },
       {
         "#": 68,
@@ -942,47 +942,47 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 8883540.75,
         "7D \u0394 value": 0.0,
-        "Market Share": 0.03416511178603239,
-        "30D \u0394 share": 0.0015908246386569158
+        "Market Share": 0.0341340865078215,
+        "30D \u0394 share": 0.0015597993604460271
       },
       {
         "#": 69,
         "Asset manager": "Vault Street",
         "Link": "https://app.rwa.xyz/asset-managers/vault-street",
         "RWA Count": 2,
-        "RWA value (distributed)": 7956400.942823865,
+        "RWA value (distributed)": 7977855.528064958,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 7956400.942823865,
-        "7D \u0394 value": 21.53760796139259,
-        "Market Share": 0.030599434986108533,
-        "30D \u0394 share": 0.006594817094035426
+        "RWA total (excl. stablecoins)": 7977855.528064958,
+        "7D \u0394 value": 21.86533641408677,
+        "Market Share": 0.03065408471750087,
+        "30D \u0394 share": 0.006649466825427763
       },
       {
         "#": 70,
         "Asset manager": "Apollo Crypto",
         "Link": "https://app.rwa.xyz/asset-managers/apollo-crypto",
         "RWA Count": 1,
-        "RWA value (distributed)": 7380446.401072735,
+        "RWA value (distributed)": 7383049.810228604,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 7380446.401072735,
-        "7D \u0394 value": -3.6718972103807292,
-        "Market Share": 0.028384377740764053,
-        "30D \u0394 share": 0.00029006287972348915
+        "RWA total (excl. stablecoins)": 7383049.810228604,
+        "7D \u0394 value": -3.637918037422637,
+        "Market Share": 0.02836860526743216,
+        "30D \u0394 share": 0.0002742904063915983
       },
       {
         "#": 71,
         "Asset manager": "Arca Capital Management",
         "Link": "https://app.rwa.xyz/asset-managers/arca-capital-management",
         "RWA Count": 2,
-        "RWA value (distributed)": 6767546.357115979,
+        "RWA value (distributed)": 6768002.00711598,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 6767546.357115979,
-        "7D \u0394 value": -12.783562578149269,
-        "Market Share": 0.026027232194327888,
-        "30D \u0394 share": -0.0024253520613187396
+        "RWA total (excl. stablecoins)": 6768002.00711598,
+        "7D \u0394 value": -12.77769041006733,
+        "Market Share": 0.02600534769832697,
+        "30D \u0394 share": -0.002447236557319654
       },
       {
         "#": 72,
@@ -994,21 +994,21 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 6688716.3,
         "7D \u0394 value": 0.0,
-        "Market Share": 0.025724060543602163,
-        "30D \u0394 share": 0.0011977853189930093
+        "Market Share": 0.025700700569249457,
+        "30D \u0394 share": 0.0011744253446403026
       },
       {
         "#": 73,
         "Asset manager": "RockawayX",
         "Link": "https://app.rwa.xyz/asset-managers/rockawayx",
         "RWA Count": 2,
-        "RWA value (distributed)": 5761138.030469129,
+        "RWA value (distributed)": 5767186.043043636,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 5761138.030469129,
-        "7D \u0394 value": -37.51644667006663,
-        "Market Share": 0.02215669746612467,
-        "30D \u0394 share": -0.011652229168222446
+        "RWA total (excl. stablecoins)": 5767186.043043636,
+        "7D \u0394 value": -37.45085176256039,
+        "Market Share": 0.02215981587071036,
+        "30D \u0394 share": -0.011649110763636757
       },
       {
         "#": 74,
@@ -1020,47 +1020,47 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 5315133.739999998,
         "7D \u0394 value": 0.29394954639706206,
-        "Market Share": 0.02044141446470118,
-        "30D \u0394 share": 0.0010089320081090665
+        "Market Share": 0.020422851652006073,
+        "30D \u0394 share": 0.000990369195413962
       },
       {
         "#": 75,
         "Asset manager": "Morini Capital",
         "Link": "https://app.rwa.xyz/asset-managers/morini-capital",
         "RWA Count": 1,
-        "RWA value (distributed)": 5183982.2770751985,
+        "RWA value (distributed)": 5214901.513252203,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 5183982.2770751985,
-        "7D \u0394 value": -12.264116820100133,
-        "Market Share": 0.01993702049411828,
-        "30D \u0394 share": -0.0017287968509810381
+        "RWA total (excl. stablecoins)": 5214901.513252203,
+        "7D \u0394 value": -11.740826741499024,
+        "Market Share": 0.020037719687740492,
+        "30D \u0394 share": -0.0016280976573588245
       },
       {
         "#": 76,
         "Asset manager": "Insight Investments",
         "Link": "https://app.rwa.xyz/asset-managers/insight-investments",
         "RWA Count": 1,
-        "RWA value (distributed)": 4419151.4772641035,
+        "RWA value (distributed)": 4411375.988200985,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 4419151.4772641035,
-        "7D \u0394 value": -1.314605081212956,
-        "Market Share": 0.016995566122678985,
-        "30D \u0394 share": 0.0005755028423361566
+        "RWA total (excl. stablecoins)": 4411375.988200985,
+        "7D \u0394 value": -1.4882418557902373,
+        "Market Share": 0.016950255966325024,
+        "30D \u0394 share": 0.0005301926859821947
       },
       {
         "#": 77,
         "Asset manager": "CMB International Asset Management",
         "Link": "https://app.rwa.xyz/asset-managers/cmb-international-asset-management",
         "RWA Count": 1,
-        "RWA value (distributed)": 4206548.568206407,
+        "RWA value (distributed)": 4206963.340833246,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 4206548.568206407,
-        "7D \u0394 value": 1971.392677567209,
-        "Market Share": 0.016177918930145776,
-        "30D \u0394 share": 0.015433268761003283
+        "RWA total (excl. stablecoins)": 4206963.340833246,
+        "7D \u0394 value": 1971.5969203016402,
+        "Market Share": 0.016164821511201573,
+        "30D \u0394 share": 0.01542017134205908
       },
       {
         "#": 78,
@@ -1072,8 +1072,8 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 4170246.832286179,
         "7D \u0394 value": -0.038524200268589985,
-        "Market Share": 0.016038306482739417,
-        "30D \u0394 share": 0.0007408958958749872
+        "Market Share": 0.01602374212469561,
+        "30D \u0394 share": 0.0007263315378311792
       },
       {
         "#": 79,
@@ -1085,8 +1085,8 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 3350000.085351562,
         "7D \u0394 value": 0.0,
-        "Market Share": 0.012883728528993822,
-        "30D \u0394 share": 0.0005999029919776124
+        "Market Share": 0.01287202883766809,
+        "30D \u0394 share": 0.0005882033006518819
       },
       {
         "#": 80,
@@ -1098,21 +1098,21 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 3288744.9824342546,
         "7D \u0394 value": 0.0,
-        "Market Share": 0.012648148201562471,
-        "30D \u0394 share": 0.0005889337028499263
+        "Market Share": 0.012636662440319727,
+        "30D \u0394 share": 0.0005774479416071813
       },
       {
         "#": 81,
         "Asset manager": "Vanguard Group",
         "Link": "https://app.rwa.xyz/asset-managers/vanguard-group",
         "RWA Count": 2,
-        "RWA value (distributed)": 2850958.609647244,
+        "RWA value (distributed)": 2852575.6289847726,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 2850958.609647244,
-        "7D \u0394 value": 2.7395183967512335,
-        "Market Share": 0.010964470399480024,
-        "30D \u0394 share": 0.0007892878795315094
+        "RWA total (excl. stablecoins)": 2852575.6289847726,
+        "7D \u0394 value": 2.797790652059916,
+        "Market Share": 0.010960726812658517,
+        "30D \u0394 share": 0.0007855442927100012
       },
       {
         "#": 82,
@@ -1124,34 +1124,34 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 2636192.8754714094,
         "7D \u0394 value": 0.0,
-        "Market Share": 0.010138505221583282,
-        "30D \u0394 share": 0.00047207759795009065
+        "Market Share": 0.01012929846273782,
+        "30D \u0394 share": 0.00046287083910462995
       },
       {
         "#": 83,
         "Asset manager": "Yuzu Fintech",
         "Link": "https://app.rwa.xyz/asset-managers/yuzu-fintech",
         "RWA Count": 1,
-        "RWA value (distributed)": 2339081.5291117947,
+        "RWA value (distributed)": 2339438.5709202667,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 2339081.5291117947,
-        "7D \u0394 value": 55.77488714142492,
-        "Market Share": 0.008995847958343416,
-        "30D \u0394 share": 0.0034898412551601535
+        "RWA total (excl. stablecoins)": 2339438.5709202667,
+        "7D \u0394 value": 55.79866491348088,
+        "Market Share": 0.008989050740778859,
+        "30D \u0394 share": 0.0034830440375955966
       },
       {
         "#": 84,
         "Asset manager": "Simplify Asset Management",
         "Link": "https://app.rwa.xyz/asset-managers/simplify-asset-management",
         "RWA Count": 1,
-        "RWA value (distributed)": 2325422.0437800894,
+        "RWA value (distributed)": 2259282.236599248,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 2325422.0437800894,
-        "7D \u0394 value": -1.3539812552247252,
-        "Market Share": 0.008943315093753654,
-        "30D \u0394 share": 0.0002993890122247208
+        "RWA total (excl. stablecoins)": 2259282.236599248,
+        "7D \u0394 value": -4.159677828192325,
+        "Market Share": 0.008681058316714894,
+        "30D \u0394 share": 3.713223518596017e-05
       },
       {
         "#": 85,
@@ -1163,8 +1163,8 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 2056168.2370056547,
         "7D \u0394 value": -1.1232795375157665,
-        "Market Share": 0.007907794835993446,
-        "30D \u0394 share": 0.0002825566465858081
+        "Market Share": 0.007900613781344542,
+        "30D \u0394 share": 0.0002753755919369057
       },
       {
         "#": 86,
@@ -1176,47 +1176,47 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 2047418.1181911423,
         "7D \u0394 value": 0.0,
-        "Market Share": 0.007874142850163484,
-        "30D \u0394 share": 0.00036664245481747207
+        "Market Share": 0.00786699235482401,
+        "30D \u0394 share": 0.00035949195947799833
       },
       {
         "#": 87,
         "Asset manager": "Lend.xyz",
         "Link": "https://app.rwa.xyz/asset-managers/lend-xyz",
         "RWA Count": 3,
-        "RWA value (distributed)": 1709640.3357316605,
+        "RWA value (distributed)": 1709650.8597182564,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 1709640.3357316605,
-        "7D \u0394 value": -2.007603236640487,
-        "Market Share": 0.006575086987041977,
-        "30D \u0394 share": 0.00017772099765988865
+        "RWA total (excl. stablecoins)": 1709650.8597182564,
+        "7D \u0394 value": -2.0070000275043394,
+        "Market Share": 0.006569156599387959,
+        "30D \u0394 share": 0.00017179061000587102
       },
       {
         "#": 88,
         "Asset manager": "Ouroboros Capital",
         "Link": "https://app.rwa.xyz/asset-managers/ouroboros-capital",
         "RWA Count": 1,
-        "RWA value (distributed)": 1048671.624465,
+        "RWA value (distributed)": 1048945.2015049993,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 1048671.624465,
-        "7D \u0394 value": 0.7358376121627221,
-        "Market Share": 0.004033074681025907,
-        "30D \u0394 share": 0.00021587976757150132
+        "RWA total (excl. stablecoins)": 1048945.2015049993,
+        "7D \u0394 value": 0.762117537768469,
+        "Market Share": 0.004030463444447632,
+        "30D \u0394 share": 0.00021326853099322621
       },
       {
         "#": 89,
         "Asset manager": "China Merchants Securities (HK)",
         "Link": "https://app.rwa.xyz/asset-managers/china-merchants-securities-hk",
         "RWA Count": 1,
-        "RWA value (distributed)": 563977.3910759992,
+        "RWA value (distributed)": 564049.2981419993,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 563977.3910759992,
-        "7D \u0394 value": -62.49488977220682,
-        "Market Share": 0.002168994453130236,
-        "30D \u0394 share": -0.0033449205802389558
+        "RWA total (excl. stablecoins)": 564049.2981419993,
+        "7D \u0394 value": -62.49010787406842,
+        "Market Share": 0.00216730108852768,
+        "30D \u0394 share": -0.0033466139448415115
       },
       {
         "#": 90,
@@ -1228,8 +1228,8 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 351833.7740075664,
         "7D \u0394 value": 0.0,
-        "Market Share": 0.0013531136466132787,
-        "30D \u0394 share": 6.30048144263745e-05
+        "Market Share": 0.0013518848864792555,
+        "30D \u0394 share": 6.177605429235112e-05
       },
       {
         "#": 91,
@@ -1241,8 +1241,8 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 293589.4189621976,
         "7D \u0394 value": 0.0,
-        "Market Share": 0.0011291123213499953,
-        "30D \u0394 share": 5.2574676525689495e-05
+        "Market Share": 0.0011280869764273556,
+        "30D \u0394 share": 5.154933160304977e-05
       },
       {
         "#": 92,
@@ -1254,8 +1254,8 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 254310.2757450564,
         "7D \u0394 value": 0.48407384372879747,
-        "Market Share": 0.0009780490959268209,
-        "30D \u0394 share": 5.0033026764812494e-05
+        "Market Share": 0.0009771609312547696,
+        "30D \u0394 share": 4.914486209276119e-05
       },
       {
         "#": 93,
@@ -1267,21 +1267,21 @@
         "% distributed": 100.0,
         "RWA total (excl. stablecoins)": 105392.06568122291,
         "7D \u0394 value": 0.7361112003197939,
-        "Market Share": 0.0004053261876870265,
-        "30D \u0394 share": 2.169707534779992e-05
+        "Market Share": 0.00040495811168546374,
+        "30D \u0394 share": 2.132899934623713e-05
       },
       {
         "#": 94,
         "Asset manager": "Hashfire",
         "Link": "https://app.rwa.xyz/asset-managers/hashfire",
         "RWA Count": 1,
-        "RWA value (distributed)": 82511.36357599997,
+        "RWA value (distributed)": 67067.6762053782,
         "RWA value (represented)": 0.0,
         "% distributed": 100.0,
-        "RWA total (excl. stablecoins)": 82511.36357599997,
-        "7D \u0394 value": -88.54788219461756,
-        "Market Share": 0.0003173295468017074,
-        "30D \u0394 share": -0.0023245729116085335
+        "RWA total (excl. stablecoins)": 67067.6762053782,
+        "7D \u0394 value": -90.69138000452773,
+        "Market Share": 0.00025770060901369096,
+        "30D \u0394 share": -0.0023842018493965503
       }
     ],
     "caption_html": "Source: <a href=\"https://app.rwa.xyz/asset-managers\" target=\"_blank\" rel=\"noopener noreferrer\">RWA.xyz Asset Managers</a>. This page mirrors the live <strong>Distributed</strong> manager view. Top-line <strong>% changes</strong> are <strong>30-day (30D)</strong>; table values are current levels.",

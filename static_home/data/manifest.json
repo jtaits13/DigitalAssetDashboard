@@ -1,13 +1,15 @@
 {
-  "generated_at": "2026-10-01T06:19:33.986533+00:00",
+  "generated_at": "2026-10-01T13:44:00.778379+00:00",
   "errors": [
+    "ETF news RSS: ETF Trends (VettaFi): HTTP Error 403: Forbidden",
     "ETF news RSS: ETFdb: HTTP Error 403: Forbidden",
-    "ETF news RSS: ETF Trends (VettaFi): HTTP Error 403: Forbidden"
+    "custodian RSS: Global Custodian RSS parse https://www.globalcustodian.com/category/digital-asset-servicing/feed/: <unknown>:26:113: not well-formed (invalid token)",
+    "custodian RSS: Global Custodian RSS parse https://www.globalcustodian.com/digital-asset-servicing/feed/: <unknown>:26:113: not well-formed (invalid token)"
   ],
-  "etp_refreshed_at": "2026-10-01T06:12:30.098898+00:00",
-  "crypto_refreshed_at": "2026-10-01T06:15:51.786543+00:00",
+  "etp_refreshed_at": "2026-10-01T13:36:10.768266+00:00",
+  "crypto_refreshed_at": "2026-10-01T13:40:18.205298+00:00",
   "stale_sections": [],
-  "export_completed_at": "2026-10-01T06:19:33.986533+00:00",
+  "export_completed_at": "2026-10-01T13:44:00.778379+00:00",
   "refresh_interval_hours": 6,
   "stale_threshold_hours": {
     "etp": 9,
@@ -17,10 +19,10 @@
     "regulatory": 24
   },
   "sections": {
-    "news": "2026-10-01T06:12:35.580353+00:00",
-    "regulatory": "2026-10-01T06:12:35.580353+00:00",
-    "etp": "2026-10-01T06:12:30.098898+00:00",
-    "rwa": "2026-10-01T06:19:28.271751+00:00",
-    "crypto": "2026-10-01T06:15:51.786543+00:00"
+    "news": "2026-10-01T13:36:15.959291+00:00",
+    "regulatory": "2026-10-01T13:36:15.959291+00:00",
+    "etp": "2026-10-01T13:36:10.768266+00:00",
+    "rwa": "2026-10-01T13:43:54.756387+00:00",
+    "crypto": "2026-10-01T13:40:18.205298+00:00"
   }
 }
