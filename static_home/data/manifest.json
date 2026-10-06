@@ -1,19 +1,14 @@
 {
-  "generated_at": "2026-10-06T06:43:22.737353+00:00",
+  "generated_at": "2026-10-06T18:38:20.523546+00:00",
   "errors": [
     "ETF news RSS: ETFdb: HTTP Error 403: Forbidden",
     "ETF news RSS: ETF Trends (VettaFi): HTTP Error 403: Forbidden",
-    "ETF news RSS: Yahoo Finance (headlines): HTTP Error 404: Not Found",
-    "custodian RSS: GC search page https://www.globalcustodian.com/page/4/?s=digital+asset: The read operation timed out",
-    "custodian RSS: GC search page https://www.globalcustodian.com/?s=digital+asset+custody: The read operation timed out",
-    "custodian RSS: GC search page https://www.globalcustodian.com/page/2/?s=digital+asset+custody: The read operation timed out",
-    "custodian RSS: GC search page https://www.globalcustodian.com/page/3/?s=digital+asset+custody: The read operation timed out",
-    "custodian RSS: GC search page https://www.globalcustodian.com/page/4/?s=digital+asset+custody: The read operation timed out"
+    "ETF news RSS: Yahoo Finance (headlines): HTTP Error 404: Not Found"
   ],
-  "etp_refreshed_at": "2026-10-06T06:35:53.499944+00:00",
-  "crypto_refreshed_at": "2026-10-06T06:39:40.614266+00:00",
+  "etp_refreshed_at": "2026-10-06T18:31:43.228620+00:00",
+  "crypto_refreshed_at": "2026-10-06T18:34:38.689379+00:00",
   "stale_sections": [],
-  "export_completed_at": "2026-10-06T06:43:22.737353+00:00",
+  "export_completed_at": "2026-10-06T18:38:20.523546+00:00",
   "refresh_interval_hours": 6,
   "stale_threshold_hours": {
     "etp": 9,
@@ -23,10 +18,10 @@
     "regulatory": 24
   },
   "sections": {
-    "news": "2026-10-06T06:35:57.857770+00:00",
-    "regulatory": "2026-10-06T06:35:57.857770+00:00",
-    "etp": "2026-10-06T06:35:53.499944+00:00",
-    "rwa": "2026-10-06T06:43:16.527172+00:00",
-    "crypto": "2026-10-06T06:39:40.614266+00:00"
+    "news": "2026-10-06T18:31:48.503678+00:00",
+    "regulatory": "2026-10-06T18:31:48.503678+00:00",
+    "etp": "2026-10-06T18:31:43.228620+00:00",
+    "rwa": "2026-10-06T18:38:13.772871+00:00",
+    "crypto": "2026-10-06T18:34:38.689379+00:00"
   }
 }
