@@ -1,28 +1,28 @@
 {
-  "generated_at": "2026-10-07T06:16:12.764227+00:00",
+  "generated_at": "2026-10-07T13:44:20.334564+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
-    "value_display": "$3.00T",
+    "value_display": "$2.96T",
     "delta": {
-      "pct": 5.6704,
+      "pct": 4.5532,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$84,283",
+    "value_display": "$83,130",
     "delta": {
-      "pct": 5.7453,
+      "pct": 5.0694,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,619",
+    "value_display": "$2,558",
     "delta": {
-      "pct": 4.9354,
+      "pct": 3.2706,
       "window": "1M"
     }
   },
@@ -30,24 +30,24 @@
     "label": "BTC dominance",
     "value_display": "56.5%",
     "delta": {
-      "pct": 0.0708,
+      "pct": 0.4937,
       "window": "1M"
     }
   },
   "stablecoin_share": {
     "label": "Stablecoin share",
-    "value_display": "10.2%",
+    "value_display": "10.3%",
     "delta": {
-      "pct": -5.1242,
+      "pct": -4.3922,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 56.47,
-    "stablecoin_share_top50_pct": 10.17,
-    "top50_market_cap_usd": 2835922541848.0,
-    "stablecoin_market_cap_usd": 288535180811.0,
-    "btc_market_cap_usd": 1693639703325.0
+    "btc_dominance_pct": 56.52,
+    "stablecoin_share_top50_pct": 10.31,
+    "top50_market_cap_usd": 2796175030900.0,
+    "stablecoin_market_cap_usd": 288366134125.0,
+    "btc_market_cap_usd": 1670477345975.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,21 +65,21 @@
       {
         "symbol": "QNT",
         "name": "Quant",
-        "pct_30d": 278.3088,
+        "pct_30d": 271.4397,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/quant-network",
         "direction": "up",
         "context": {
-          "title": "Circle, Ripple and Standard Chartered Back OKX at Flat $25B Valuation",
+          "title": "Europol Warns Crypto Wallets Are 'Primary Risk' for Quantum Attacks",
           "source": "Decrypt",
-          "link": "https://decrypt.co/380157/circle-ripple-and-standard-chartered-back-okx-at-flat-25b-valuation"
+          "link": "https://decrypt.co/380268/europol-warns-crypto-wallets-are-primary-risk-for-quantum-attacks"
         }
       },
       {
         "symbol": "BTW",
         "name": "Bitway",
-        "pct_30d": 184.9679,
+        "pct_30d": 168.5827,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/bitway",
@@ -93,19 +93,19 @@
       {
         "symbol": "NEAR",
         "name": "NEAR Protocol",
-        "pct_30d": 108.2795,
+        "pct_30d": 117.3938,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/near",
         "direction": "up",
         "context": {
-          "title": "Bitcoin keeps getting rejected at $87,000 as stocks hover near records",
-          "source": "CoinDesk",
-          "link": "https://www.coindesk.com/markets/2026/10/06/bitcoin-keeps-getting-rejected-at-usd87-000-as-stocks-hover-near-records"
+          "title": "NEAR\u2019s Polosukhin sees shrinking need for centralized exchanges as onchain tools expand",
+          "source": "The Block",
+          "link": "https://www.theblock.co/news/ecosystems/2026-10-07-nears-polosukhin-sees-shrinking-need-for-centralized-exchanges-as-onchain-tools-expand-417912"
         }
       }
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 5.7% over 30D:</strong> Total crypto market cap at $3.00T (5.7% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://www.coindesk.com/policy/2026/10/05/u-s-cftc-joins-sec-in-proposing-crypto-regulations-though-spot-market-gap-lingers\" target=\"_blank\" rel=\"noopener noreferrer\">U.S. CFTC joins SEC in proposing crypto regulations, though spot-market gap lingers</a> (CoinDesk).</li><li><strong>Gains broadened among top-50 alts:</strong> 33 names up more than ~0.5%, 5 down more than ~0.5%, and 4 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://cointelegraph.com/news/winklevoss-backed-zcash-etf-files-with-sec-for-nasdaq-listing?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Winklevoss-backed Zcash ETF files with SEC for Nasdaq listing</a> (CoinTelegraph).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://www.theblock.co/news/regulation/2026-10-06-rep-don-davis-introduces-bill-to-stop-federal-candidates-trading-prediction-market-contracts-tied-to-their-own-elections-417781\" target=\"_blank\" rel=\"noopener noreferrer\">Rep. Don Davis introduces bill to stop federal candidates trading prediction market contracts tied to their own elections</a> (The Block).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://cointelegraph.com/markets/bitcoin-etf-90-million-outflow-btc-32-below-record-oct-6?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin ETFs shed $90M as BTC sits 32% below year-old ATH</a> (CoinTelegraph).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 4.6% over 30D:</strong> Total crypto market cap at $2.96T (4.6% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://www.coindesk.com/business/2026/10/07/crypto-trading-giant-gsr-s-new-vault-business-is-a-usd100m-bet-on-onchain-credit\" target=\"_blank\" rel=\"noopener noreferrer\">Crypto trading giant GSR&#x27;s new vault business is a $100M bet on onchain credit</a> (CoinDesk).</li><li><strong>Gains broadened among top-50 alts:</strong> 31 names up more than ~0.5%, 6 down more than ~0.5%, and 5 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://cointelegraph.com/news/winklevoss-backed-zcash-etf-files-with-sec-for-nasdaq-listing?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Winklevoss-backed Zcash ETF files with SEC for Nasdaq listing</a> (CoinTelegraph).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://www.theblock.co/news/regulation/2026-10-06-rep-don-davis-introduces-bill-to-stop-federal-candidates-trading-prediction-market-contracts-tied-to-their-own-elections-417781\" target=\"_blank\" rel=\"noopener noreferrer\">Rep. Don Davis introduces bill to stop federal candidates trading prediction market contracts tied to their own elections</a> (The Block).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://cointelegraph.com/news/crypto-card-access-doesnt-match-global-demand-tangem-says?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Crypto card access doesn\u2019t match global demand, Tangem says</a> (CoinTelegraph).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
