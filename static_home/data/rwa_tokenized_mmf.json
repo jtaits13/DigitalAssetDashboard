@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-06T18:38:20.153951+00:00",
+  "generated_at": "2026-10-07T06:19:52.501395+00:00",
   "page_title": "Tokenized Money Market Funds \u2014 Digital Assets Dashboard",
   "band_label": "Tokenized Money Market Funds",
   "page_subtitle_html": "Tokenized money market fund (MMF) exposure aggregated from <strong>RWA.xyz</strong> US Treasuries and Non-U.S. Government Debt. Networks and platforms are built from each fund's on-chain token deployments; <strong>Distributed Value</strong> columns are current levels.",
@@ -8,12 +8,12 @@
     {
       "label": "Distributed value",
       "value_display": "$13.63B",
-      "delta_30d_pct": -0.08363025969787341
+      "delta_30d_pct": -0.08363025889128409
     },
     {
       "label": "Top network share",
       "value_display": "41.5% \u00b7 Ethereum",
-      "delta_30d_pct": -0.038654946927776324
+      "delta_30d_pct": -0.03865494729328406
     },
     {
       "label": "Tokenized funds",
@@ -28,13 +28,13 @@
   ],
   "chart_max_bars": 12,
   "back_href": "index.html",
-  "footer_note": "2026-10-06 18:38:20 UTC \u00b7 Source: RWA.xyz",
+  "footer_note": "2026-10-07 06:19:52 UTC \u00b7 Source: RWA.xyz",
   "bottom_cta": {
     "href": "https://app.rwa.xyz/treasuries",
     "label": "See US Treasuries on RWA.xyz"
   },
   "error_mode": "",
-  "key_observations_html": "<aside class=\"crypto-story-callout\" aria-labelledby=\"key-obs-callout-title\"><p class=\"crypto-story-callout__title\" role=\"heading\" aria-level=\"3\" id=\"key-obs-callout-title\">Key observations</p><ul class=\"crypto-story-callout__list\"><li><strong>TMMF distributed value fell 8.4% over 30D:</strong> With distributed value at $13.63B (8.4% lower over 30D), tokenized-cash balances look lighter\u2014suggesting some institutions pulled liquidity or rotated away from TMMF wrappers even if headline product news stayed busy. Related: <a href=\"https://thedefiant.io/news/defi/centrifuge-confirms-three-tokenized-funds-are-live-on-arc\" target=\"_blank\" rel=\"noopener noreferrer\">Centrifuge Confirms Three Tokenized Funds Are Live on Arc</a> (The Defiant).</li><li><strong>Early &quot;flight to efficiency&quot; shows up in TMMF 30D network share:</strong> Among tokenized money market funds, gainers include BNB Chain (+1.83% 30D TMMF network share), Stellar (+1.20% 30D TMMF network share); losers include Ethereum (-3.87% 30D TMMF network share), Avalanche C-Chain (-0.23% 30D TMMF network share). That pattern is consistent with TMMF issuers routing more distributed value toward higher-throughput, lower-fee chains\u2014though Ethereum still dominates TMMF share levels in most snapshots.</li><li><strong>Institutional settlement use is still the clearest TMMF read:</strong> Funds that combine large AUM with small holder bases usually look more like on-chain operating cash than retail savings products.</li><li><strong>Regulatory framing still decides product access:</strong> Similar funds can sit under different investor-eligibility and jurisdiction labels, so compliance framing still decides who can hold and distribute them. Related: <a href=\"https://cointelegraph.com/news/solana-foundation-settlement-seconds-dvp?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Solana Foundation targets settlement in seconds with DvP launch</a> (CoinTelegraph).</li><li><strong>Multi-chain footprints often track compliance, not liquidity:</strong> several funds list multiple networks while holder counts stay tiny\u2014e.g. BRSRV (3 chains, 1 holders, $50M), CMBMINT (4 chains, 10 holders, $4M)\u2014which is more consistent with distribution or jurisdictional requirements than deep secondary-market liquidity on every chain. Related: <a href=\"https://www.theblock.co/news/business/2026-10-06-ripple-prime-brevan-howard-prime-brokerage-clearing-financing-417801\" target=\"_blank\" rel=\"noopener noreferrer\">Brevan Howard to use Ripple Prime for multi-asset brokerage, clearing and financing</a> (The Block).</li></ul><p class=\"crypto-story-callout__note\">Context only\u2014not investment advice. Observations rank fund-level and network aggregates on this page against recent tokenization and money-market headlines. Bullets combine on-page data with recent industry headlines.</p></aside><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p>",
+  "key_observations_html": "<aside class=\"crypto-story-callout\" aria-labelledby=\"key-obs-callout-title\"><p class=\"crypto-story-callout__title\" role=\"heading\" aria-level=\"3\" id=\"key-obs-callout-title\">Key observations</p><ul class=\"crypto-story-callout__list\"><li><strong>TMMF distributed value fell 8.4% over 30D:</strong> With distributed value at $13.63B (8.4% lower over 30D), tokenized-cash balances look lighter\u2014suggesting some institutions pulled liquidity or rotated away from TMMF wrappers even if headline product news stayed busy. Related: <a href=\"https://thedefiant.io/news/defi/centrifuge-confirms-three-tokenized-funds-are-live-on-arc\" target=\"_blank\" rel=\"noopener noreferrer\">Centrifuge Confirms Three Tokenized Funds Are Live on Arc</a> (The Defiant).</li><li><strong>Early &quot;flight to efficiency&quot; shows up in TMMF 30D network share:</strong> Among tokenized money market funds, gainers include BNB Chain (+1.83% 30D TMMF network share), Stellar (+1.20% 30D TMMF network share); losers include Ethereum (-3.87% 30D TMMF network share), Avalanche C-Chain (-0.23% 30D TMMF network share). That pattern is consistent with TMMF issuers routing more distributed value toward higher-throughput, lower-fee chains\u2014though Ethereum still dominates TMMF share levels in most snapshots.</li><li><strong>Settlement economics are reshaping network share:</strong> Fee and throughput advantages can pull 30D network-share toward the chains that keep settlement cheaper and more operationally reliable. Related: <a href=\"https://cointelegraph.com/news/solana-foundation-settlement-seconds-dvp?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Solana Foundation targets settlement in seconds with DvP launch</a> (CoinTelegraph).</li><li><strong>Regulatory framing still decides product access:</strong> Similar funds can sit under different investor-eligibility and jurisdiction labels, so compliance framing still decides who can hold and distribute them. Related: <a href=\"https://cointelegraph.com/news/better-markets-criticize-cftc-regulate-retail-crypto?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Better Markets says CFTC is \u2018wrong agency\u2019 to regulate retail crypto</a> (CoinTelegraph).</li><li><strong>Issuer strategies are splitting into two models:</strong> <em>Institutional cash rail</em> programs (low holder counts, large AUM per holder\u2014e.g. USYC, BUIDL, iBENJI, JLTXX) vs <em>global yield / distribution</em> products (broader holder bases, retail- or UCITS-friendly framing\u2014e.g. USDY, WTGXX, BENJI, USTBL). These behave like different businesses under the same \"tokenized MMF\" label. Related: <a href=\"https://www.theblock.co/news/markets/2026-10-05-cftc-rulemaking-leveraged-retail-crypto-trading-regulation-ctx-cam-417701\" target=\"_blank\" rel=\"noopener noreferrer\">CFTC proposes new federal framework for leveraged retail crypto trading</a> (The Block).</li></ul><p class=\"crypto-story-callout__note\">Context only\u2014not investment advice. Observations rank fund-level and network aggregates on this page against recent tokenization and money-market headlines. Bullets combine on-page data with recent industry headlines.</p></aside><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p>",
   "between_ko_and_leagues_html": "<section class=\"hub-section tmmf-funds-list\" id=\"tmmf-funds-wrap\" aria-labelledby=\"tmmf-funds-h\"><h2 class=\"subsection-head\" id=\"tmmf-funds-h\">Tokenized Money Market Fund Population</h2><p class=\"rwa-deep-section-intro\">Curated fund population (fixed list aligned to RWA.xyz). Population may not include all TMMFs in the market.</p></section>",
   "funds_table": {
     "columns": [
@@ -62,7 +62,7 @@
         "Platform Link": "https://app.rwa.xyz/platforms/circle",
         "Networks": "<div class=\"tmmf-net-stack\" aria-label=\"BNB Chain, Ethereum, Solana\"><img class=\"tmmf-net-avatar\" src=\"https://rwa-partners-infra-prod-rwapartnersuploads740d2985-1c2klgo7i3ef.s3.us-east-1.amazonaws.com/uploads/images/BNB_Glyth_Yellow.svg\" alt=\"BNB Chain\" title=\"BNB Chain\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum\" title=\"Ethereum\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/sol.png\" alt=\"Solana\" title=\"Solana\" loading=\"lazy\" /></div>",
         "Total Value": 2405290164.90371,
-        "7D \u0394 value": 0.04761820327844334,
+        "7D \u0394 value": 0.04761820327846318,
         "Eligible Investors": "Non-U.S. Investor",
         "Holders": 36,
         "Domicile": "United States of America",
@@ -80,7 +80,7 @@
         "Platform Link": "https://app.rwa.xyz/platforms/ondo",
         "Networks": "<div class=\"tmmf-net-stack\" aria-label=\"Ethereum, Stellar, SEI, Solana, BNB Chain, Sui, Arbitrum, Tempo, MANTRA, Mantle, Noble, Aptos, Plume\"><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum\" title=\"Ethereum\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/xlm.png\" alt=\"Stellar\" title=\"Stellar\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://s3.coinmarketcap.com/static-gravity/image/992744cfbd5e40f5920018ee7a830b98.png\" alt=\"SEI\" title=\"SEI\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/sol.png\" alt=\"Solana\" title=\"Solana\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://rwa-partners-infra-prod-rwapartnersuploads740d2985-1c2klgo7i3ef.s3.us-east-1.amazonaws.com/uploads/images/BNB_Glyth_Yellow.svg\" alt=\"BNB Chain\" title=\"BNB Chain\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://rwa-app-public.s3.amazonaws.com/sui.webp\" alt=\"Sui\" title=\"Sui\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/arbitrum.png\" alt=\"Arbitrum\" title=\"Arbitrum\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://rwa-partners-infra-prod-rwapartnersuploads740d2985-1c2klgo7i3ef.s3.us-east-1.amazonaws.com/uploads/images/Tempo%20Logo.jpg\" alt=\"Tempo\" title=\"Tempo\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://rwa-partners-infra-prod-rwapartnersuploads740d2985-1c2klgo7i3ef.s3.us-east-1.amazonaws.com/uploads/images/om%20token%20logo%20256.svg\" alt=\"MANTRA\" title=\"MANTRA\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/entity-icons/128/color/mantle.png\" alt=\"Mantle\" title=\"Mantle\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/nobel.png\" alt=\"Noble\" title=\"Noble\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://rwa-partners-infra-prod-rwapartnersuploads740d2985-1c2klgo7i3ef.s3.us-east-1.amazonaws.com/uploads/images/aptos_pfp-mint_512.png\" alt=\"Aptos\" title=\"Aptos\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/entity-icons/128/color/plume.png\" alt=\"Plume\" title=\"Plume\" loading=\"lazy\" /></div>",
         "Total Value": 2302361922.0365596,
-        "7D \u0394 value": 1.120577231657869,
+        "7D \u0394 value": 1.1205772316578477,
         "Eligible Investors": "Non-U.S. Investor",
         "Holders": 18513,
         "Domicile": "United States of America",
@@ -98,8 +98,8 @@
         "Platform Link": "https://app.rwa.xyz/platforms/securitize",
         "Networks": "<div class=\"tmmf-net-stack\" aria-label=\"Solana, Avalanche C-Chain, Ethereum, Aptos, BNB Chain, Optimism, Tempo, Arbitrum, Polygon\"><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/sol.png\" alt=\"Solana\" title=\"Solana\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/avalanche.png\" alt=\"Avalanche C-Chain\" title=\"Avalanche C-Chain\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum\" title=\"Ethereum\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://rwa-partners-infra-prod-rwapartnersuploads740d2985-1c2klgo7i3ef.s3.us-east-1.amazonaws.com/uploads/images/aptos_pfp-mint_512.png\" alt=\"Aptos\" title=\"Aptos\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://rwa-partners-infra-prod-rwapartnersuploads740d2985-1c2klgo7i3ef.s3.us-east-1.amazonaws.com/uploads/images/BNB_Glyth_Yellow.svg\" alt=\"BNB Chain\" title=\"BNB Chain\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/optimism.png\" alt=\"Optimism\" title=\"Optimism\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://rwa-partners-infra-prod-rwapartnersuploads740d2985-1c2klgo7i3ef.s3.us-east-1.amazonaws.com/uploads/images/Tempo%20Logo.jpg\" alt=\"Tempo\" title=\"Tempo\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/arbitrum.png\" alt=\"Arbitrum\" title=\"Arbitrum\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://rwa-partners-infra-prod-rwapartnersuploads740d2985-1c2klgo7i3ef.s3.us-east-1.amazonaws.com/uploads/images/Polygon%20Icon.png\" alt=\"Polygon\" title=\"Polygon\" loading=\"lazy\" /></div>",
         "Total Value": 2248809773.307648,
-        "7D \u0394 value": 0.043538487357101086,
-        "Eligible Investors": "\u2014",
+        "7D \u0394 value": 0.04353848735712231,
+        "Eligible Investors": "U.S. Qualified Purchaser",
         "Holders": 106,
         "Domicile": "United States of America",
         "Regulatory Framework": "U.S. Securities Act Reg. D Exemption",
@@ -152,7 +152,7 @@
         "Platform Link": "https://app.rwa.xyz/platforms/franklin-templeton-benji-investments",
         "Networks": "<div class=\"tmmf-net-stack\" aria-label=\"Stellar, Base, Ethereum, Arbitrum, Avalanche C-Chain, Polygon, Aptos, Solana\"><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/xlm.png\" alt=\"Stellar\" title=\"Stellar\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://www.base.org/document/favicon-32x32.png\" alt=\"Base\" title=\"Base\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum\" title=\"Ethereum\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/arbitrum.png\" alt=\"Arbitrum\" title=\"Arbitrum\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/avalanche.png\" alt=\"Avalanche C-Chain\" title=\"Avalanche C-Chain\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://rwa-partners-infra-prod-rwapartnersuploads740d2985-1c2klgo7i3ef.s3.us-east-1.amazonaws.com/uploads/images/Polygon%20Icon.png\" alt=\"Polygon\" title=\"Polygon\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://rwa-partners-infra-prod-rwapartnersuploads740d2985-1c2klgo7i3ef.s3.us-east-1.amazonaws.com/uploads/images/aptos_pfp-mint_512.png\" alt=\"Aptos\" title=\"Aptos\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/sol.png\" alt=\"Solana\" title=\"Solana\" loading=\"lazy\" /></div>",
         "Total Value": 760489882.1279004,
-        "7D \u0394 value": 14.593436454200676,
+        "7D \u0394 value": 14.593436454200695,
         "Eligible Investors": "U.S. Investor",
         "Holders": 1127,
         "Domicile": "United States of America",
@@ -168,9 +168,9 @@
         "Ticker": "JLTXX",
         "Platform": "Kinexys Digital Assets",
         "Platform Link": "https://app.rwa.xyz/platforms/kinexys-digital-assets",
-        "Networks": "<div class=\"tmmf-net-stack\" aria-label=\"Ethereum\"><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum\" title=\"Ethereum\" loading=\"lazy\" /></div>",
-        "Total Value": 677685086.4699994,
-        "7D \u0394 value": 13.823061322186774,
+        "Networks": "<div class=\"tmmf-net-stack\" aria-label=\"Ethereum, Solana\"><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum\" title=\"Ethereum\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/sol.png\" alt=\"Solana\" title=\"Solana\" loading=\"lazy\" /></div>",
+        "Total Value": 677685092.4699994,
+        "7D \u0394 value": 13.823061182884627,
         "Eligible Investors": "Non-U.S. Institutional Investor, U.S. Qualified Institutional Buyer (QIB)",
         "Holders": 4,
         "Domicile": "United States of America",
@@ -189,7 +189,7 @@
         "Networks": "<div class=\"tmmf-net-stack\" aria-label=\"Ethereum, Plume, Solana\"><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum\" title=\"Ethereum\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/entity-icons/128/color/plume.png\" alt=\"Plume\" title=\"Plume\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/sol.png\" alt=\"Solana\" title=\"Solana\" loading=\"lazy\" /></div>",
         "Total Value": 576862283.0045851,
         "7D \u0394 value": -2.0208408825710222,
-        "Eligible Investors": "U.S. Qualified Purchaser",
+        "Eligible Investors": "U.S. Accredited Investor",
         "Holders": 104,
         "Domicile": "United States of America",
         "Regulatory Framework": "U.S. Securities Act Reg. D Exemption Rule 506(c)",
@@ -224,7 +224,7 @@
         "Platform Link": "https://app.rwa.xyz/platforms/centrifuge",
         "Networks": "<div class=\"tmmf-net-stack\" aria-label=\"Ethereum, Base, Stellar, Monad, BNB Chain, Plume, Arbitrum, Avalanche C-Chain, Celo\"><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum\" title=\"Ethereum\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://www.base.org/document/favicon-32x32.png\" alt=\"Base\" title=\"Base\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/xlm.png\" alt=\"Stellar\" title=\"Stellar\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://rwa-partners-infra-prod-rwapartnersuploads740d2985-1c2klgo7i3ef.s3.us-east-1.amazonaws.com/uploads/images/Avatar1000x1000.png\" alt=\"Monad\" title=\"Monad\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://rwa-partners-infra-prod-rwapartnersuploads740d2985-1c2klgo7i3ef.s3.us-east-1.amazonaws.com/uploads/images/BNB_Glyth_Yellow.svg\" alt=\"BNB Chain\" title=\"BNB Chain\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/entity-icons/128/color/plume.png\" alt=\"Plume\" title=\"Plume\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/arbitrum.png\" alt=\"Arbitrum\" title=\"Arbitrum\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/avalanche.png\" alt=\"Avalanche C-Chain\" title=\"Avalanche C-Chain\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/entity-icons/128/color/celo.png\" alt=\"Celo\" title=\"Celo\" loading=\"lazy\" /></div>",
         "Total Value": 344679201.28620845,
-        "7D \u0394 value": 0.07642414011091442,
+        "7D \u0394 value": 0.07642414011093172,
         "Eligible Investors": "Non-U.S. Professional Investor",
         "Holders": 30,
         "Domicile": "British Virgin Islands",
@@ -294,9 +294,9 @@
         "Ticker": "MONY",
         "Platform": "Kinexys Digital Assets",
         "Platform Link": "https://app.rwa.xyz/platforms/kinexys-digital-assets",
-        "Networks": "<div class=\"tmmf-net-stack\" aria-label=\"Ethereum\"><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum\" title=\"Ethereum\" loading=\"lazy\" /></div>",
-        "Total Value": 102876151.69,
-        "7D \u0394 value": 0.06125198354414992,
+        "Networks": "<div class=\"tmmf-net-stack\" aria-label=\"Ethereum, Solana\"><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum\" title=\"Ethereum\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/sol.png\" alt=\"Solana\" title=\"Solana\" loading=\"lazy\" /></div>",
+        "Total Value": 102876157.69,
+        "7D \u0394 value": 0.06125197996958981,
         "Eligible Investors": "Non-U.S. Professional Investor, U.S. Accredited Investor, U.S. Qualified Purchaser",
         "Holders": 4,
         "Domicile": "United States of America",
@@ -315,7 +315,7 @@
         "Networks": "<div class=\"tmmf-net-stack\" aria-label=\"Ethereum, Solana, Tempo\"><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/eth.png\" alt=\"Ethereum\" title=\"Ethereum\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://img.rwa.xyz/content/network-icons/128/color/sol.png\" alt=\"Solana\" title=\"Solana\" loading=\"lazy\" /><img class=\"tmmf-net-avatar\" src=\"https://rwa-partners-infra-prod-rwapartnersuploads740d2985-1c2klgo7i3ef.s3.us-east-1.amazonaws.com/uploads/images/Tempo%20Logo.jpg\" alt=\"Tempo\" title=\"Tempo\" loading=\"lazy\" /></div>",
         "Total Value": 50309095.31,
         "7D \u0394 value": 0.061120782536334205,
-        "Eligible Investors": "Non-U.S. Institutional Investor, U.S. Investor",
+        "Eligible Investors": "Non-U.S. Institutional Investor, U.S. Qualified Institutional Buyer (QIB)",
         "Holders": 1,
         "Domicile": "United States of America",
         "Regulatory Framework": "Investment Company Act of 1940",
@@ -410,8 +410,8 @@
         "RWA Count": 17,
         "Distributed Value": 5661276356.1160965,
         "7D \u0394 value": 1.4943832755117823,
-        "Market Share": 41.52549691285282,
-        "30D \u0394 share": -3.8654946927776326
+        "Market Share": 41.52549687630205,
+        "30D \u0394 share": -3.8654947293284057
       },
       {
         "#": 2,
@@ -420,18 +420,18 @@
         "RWA Count": 6,
         "Distributed Value": 4134880214.9675756,
         "7D \u0394 value": 0.4407826412672153,
-        "Market Share": 30.329371823750474,
-        "30D \u0394 share": 1.8296237314952668
+        "Market Share": 30.329371797054534,
+        "30D \u0394 share": 1.829623704799327
       },
       {
         "#": 3,
         "Network": "Solana",
         "Link": "https://app.rwa.xyz/networks/solana",
-        "RWA Count": 8,
-        "Distributed Value": 1294716046.135759,
-        "7D \u0394 value": 0.305048030569253,
-        "Market Share": 9.496750166373426,
-        "30D \u0394 share": 0.7301491326918166
+        "RWA Count": 10,
+        "Distributed Value": 1294716058.135759,
+        "7D \u0394 value": 0.3050480277333085,
+        "Market Share": 9.496750246034452,
+        "30D \u0394 share": 0.730149212352843
       },
       {
         "#": 4,
@@ -440,8 +440,8 @@
         "RWA Count": 5,
         "Distributed Value": 1100504939.51576,
         "7D \u0394 value": 9.613059292386843,
-        "Market Share": 8.072210504097818,
-        "30D \u0394 share": 1.1981460938749897
+        "Market Share": 8.072210496992652,
+        "30D \u0394 share": 1.1981460867698233
       },
       {
         "#": 5,
@@ -450,8 +450,8 @@
         "RWA Count": 4,
         "Distributed Value": 518790605.9790336,
         "7D \u0394 value": -0.6004358321994837,
-        "Market Share": 3.8053322876078335,
-        "30D \u0394 share": -0.22541473794463612
+        "Market Share": 3.8053322842583768,
+        "30D \u0394 share": -0.22541474129409295
       },
       {
         "#": 6,
@@ -460,8 +460,8 @@
         "RWA Count": 1,
         "Distributed Value": 259389014.3488393,
         "7D \u0394 value": 0.05667555248489583,
-        "Market Share": 1.9026200165858456,
-        "30D \u0394 share": 0.16364731805682575
+        "Market Share": 1.902620014911158,
+        "30D \u0394 share": 0.1636473163821383
       },
       {
         "#": 7,
@@ -470,8 +470,8 @@
         "RWA Count": 1,
         "Distributed Value": 187537590.51831004,
         "7D \u0394 value": 0.060039845177479664,
-        "Market Share": 1.3755893805994301,
-        "30D \u0394 share": 0.0784811282118221
+        "Market Share": 1.3755893793886353,
+        "30D \u0394 share": 0.07848112700102727
       },
       {
         "#": 8,
@@ -480,8 +480,8 @@
         "RWA Count": 3,
         "Distributed Value": 176508278.61540398,
         "7D \u0394 value": -1.1271532124635104,
-        "Market Share": 1.2946893099148002,
-        "30D \u0394 share": 0.06408676866414606
+        "Market Share": 1.2946893087752138,
+        "30D \u0394 share": 0.06408676752455972
       },
       {
         "#": 9,
@@ -490,8 +490,8 @@
         "RWA Count": 6,
         "Distributed Value": 108040893.68121009,
         "7D \u0394 value": 9.893716508068426,
-        "Market Share": 0.7924806200591253,
-        "30D \u0394 share": 0.12871572190385458
+        "Market Share": 0.7924806193615833,
+        "30D \u0394 share": 0.12871572120631256
       },
       {
         "#": 10,
@@ -500,8 +500,8 @@
         "RWA Count": 4,
         "Distributed Value": 68989684.59103912,
         "7D \u0394 value": 0.03647838304819939,
-        "Market Share": 0.5060397610529818,
-        "30D \u0394 share": 0.08799870739145121
+        "Market Share": 0.5060397606075653,
+        "30D \u0394 share": 0.08799870694603468
       },
       {
         "#": 11,
@@ -510,8 +510,8 @@
         "RWA Count": 4,
         "Distributed Value": 54049127.63125925,
         "7D \u0394 value": 1.0018111696029393,
-        "Market Share": 0.3964506838055192,
-        "30D \u0394 share": 0.04701578783996713
+        "Market Share": 0.396450683456563,
+        "30D \u0394 share": 0.04701578749101093
       },
       {
         "#": 12,
@@ -520,8 +520,8 @@
         "RWA Count": 1,
         "Distributed Value": 26484914.89000001,
         "7D \u0394 value": 0.05602346860276411,
-        "Market Share": 0.19426701371214805,
-        "30D \u0394 share": 0.01674665392364294
+        "Market Share": 0.19426701354115408,
+        "30D \u0394 share": 0.01674665375264897
       },
       {
         "#": 13,
@@ -530,8 +530,8 @@
         "RWA Count": 2,
         "Distributed Value": 17912470.025944844,
         "7D \u0394 value": 0.060934094151488274,
-        "Market Share": 0.13138807787759013,
-        "30D \u0394 share": 0.016727511207894438
+        "Market Share": 0.13138807776194222,
+        "30D \u0394 share": 0.016727511092246537
       },
       {
         "#": 14,
@@ -540,8 +540,8 @@
         "RWA Count": 1,
         "Distributed Value": 14349896.83,
         "7D \u0394 value": 0.06053747878329111,
-        "Market Share": 0.10525658156047481,
-        "30D \u0394 share": 0.005214254191376476
+        "Market Share": 0.10525658146782789,
+        "30D \u0394 share": 0.005214254098729557
       },
       {
         "#": 15,
@@ -550,8 +550,8 @@
         "RWA Count": 1,
         "Distributed Value": 4562194.936739819,
         "7D \u0394 value": 0.07642414011092327,
-        "Market Share": 0.03346372793773877,
-        "30D \u0394 share": 0.002885817781129573
+        "Market Share": 0.03346372790828397,
+        "30D \u0394 share": 0.002885817751674776
       },
       {
         "#": 16,
@@ -560,8 +560,8 @@
         "RWA Count": 3,
         "Distributed Value": 4450338.776344903,
         "7D \u0394 value": 1.7410415736372813,
-        "Market Share": 0.032643262312854616,
-        "30D \u0394 share": 0.005607563190568137
+        "Market Share": 0.03264326228412199,
+        "30D \u0394 share": 0.005607563161835511
       },
       {
         "#": 17,
@@ -570,8 +570,8 @@
         "RWA Count": 1,
         "Distributed Value": 371854.9267531067,
         "7D \u0394 value": 0.06053744339961528,
-        "Market Share": 0.0027275581762111357,
-        "30D \u0394 share": 0.00023517927288245206
+        "Market Share": 0.002727558173810337,
+        "30D \u0394 share": 0.00023517927048165337
       },
       {
         "#": 18,
@@ -580,8 +580,8 @@
         "RWA Count": 1,
         "Distributed Value": 367478.51310429367,
         "7D \u0394 value": 0.060537443399617946,
-        "Market Share": 0.002695457155163679,
-        "30D \u0394 share": -0.18984333283873825
+        "Market Share": 0.0026954571527911357,
+        "30D \u0394 share": -0.1898433328411108
       },
       {
         "#": 19,
@@ -590,8 +590,8 @@
         "RWA Count": 1,
         "Distributed Value": 71827.42,
         "7D \u0394 value": 0.06054277306516922,
-        "Market Share": 0.0005268545677417584,
-        "30D \u0394 share": -0.09452860613662292
+        "Market Share": 0.0005268545672780207,
+        "30D \u0394 share": -0.09452860613708665
       },
       {
         "#": 20,
@@ -600,8 +600,8 @@
         "RWA Count": 1,
         "Distributed Value": 1.1182514184064171e-06,
         "7D \u0394 value": 0.07642414011091642,
-        "Market Share": 8.202381035976527e-15,
-        "30D \u0394 share": 7.073502714718886e-16
+        "Market Share": 8.202381028756785e-15,
+        "30D \u0394 share": 7.073502642521462e-16
       }
     ],
     "caption_html": "Networks table sums <strong>distributed value</strong> across the <strong>curated TMMF population</strong> token deployments on each chain. <strong>7D \u0394 value</strong> and <strong>market share</strong> use the same fund universe as the headline KPIs and fund population table.",
@@ -639,8 +639,8 @@
         "RWA Count": 2,
         "Total Value": 2471658922.3518195,
         "7D \u0394 value": 3.673147331472739,
-        "Market Share": 18.129633406583842,
-        "30D \u0394 share": 1.9956851424436872
+        "Market Share": 18.129633390626125,
+        "30D \u0394 share": 1.9956851264859714
       },
       {
         "#": 2,
@@ -649,8 +649,8 @@
         "RWA Count": 1,
         "Total Value": 2405290164.90371,
         "7D \u0394 value": 0.04761820327846318,
-        "Market Share": 17.642818162254013,
-        "30D \u0394 share": 0.019169595586901456
+        "Market Share": 17.64281814672479,
+        "30D \u0394 share": 0.019169580057679103
       },
       {
         "#": 3,
@@ -659,8 +659,8 @@
         "RWA Count": 1,
         "Total Value": 2302361922.0365596,
         "7D \u0394 value": 1.1205772316578055,
-        "Market Share": 16.887838867380392,
-        "30D \u0394 share": 2.0800200968519142
+        "Market Share": 16.887838852515706,
+        "30D \u0394 share": 2.080020081987227
       },
       {
         "#": 4,
@@ -669,8 +669,8 @@
         "RWA Count": 2,
         "Total Value": 2299118868.617648,
         "7D \u0394 value": 0.0439231553042226,
-        "Market Share": 16.864051050594213,
-        "30D \u0394 share": -2.415705619880362
+        "Market Share": 16.864051035750464,
+        "30D \u0394 share": -2.4157056347241133
       },
       {
         "#": 5,
@@ -679,18 +679,18 @@
         "RWA Count": 1,
         "Total Value": 1236556627.9594588,
         "7D \u0394 value": 0.8942342443614184,
-        "Market Share": 9.070150476124399,
-        "30D \u0394 share": 0.8661750604408671
+        "Market Share": 9.070150468140845,
+        "30D \u0394 share": 0.8661750524573131
       },
       {
         "#": 6,
         "Platform": "J.P. Morgan Asset Management",
         "Link": "https://app.rwa.xyz/asset-managers/j-p-morgan-asset-management",
         "RWA Count": 2,
-        "Total Value": 780561238.1599994,
-        "7D \u0394 value": 11.796565122144179,
-        "Market Share": 5.725421485649328,
-        "30D \u0394 share": -0.34728079990348354
+        "Total Value": 780561250.1599994,
+        "7D \u0394 value": 11.79656491939538,
+        "Market Share": 5.725421568629882,
+        "30D \u0394 share": -0.34728071692292983
       },
       {
         "#": 7,
@@ -699,8 +699,8 @@
         "RWA Count": 1,
         "Total Value": 576862283.0045851,
         "7D \u0394 value": -2.0208408825710222,
-        "Market Share": 4.231288395976142,
-        "30D \u0394 share": 0.20897927308434552
+        "Market Share": 4.231288392251758,
+        "30D \u0394 share": 0.20897926935996222
       },
       {
         "#": 8,
@@ -709,8 +709,8 @@
         "RWA Count": 1,
         "Total Value": 553601848.8843188,
         "7D \u0394 value": 0.043905294653326835,
-        "Market Share": 4.0606729685541545,
-        "30D \u0394 share": 0.3456401007595575
+        "Market Share": 4.060672964979948,
+        "30D \u0394 share": 0.3456400971853506
       },
       {
         "#": 9,
@@ -719,8 +719,8 @@
         "RWA Count": 1,
         "Total Value": 344679201.28620845,
         "7D \u0394 value": 0.07642414011093172,
-        "Market Share": 2.5282240626660393,
-        "30D \u0394 share": -2.918561228332678
+        "Market Share": 2.5282240604406945,
+        "30D \u0394 share": -2.918561230558023
       },
       {
         "#": 10,
@@ -729,8 +729,8 @@
         "RWA Count": 1,
         "Total Value": 321327778.9812348,
         "7D \u0394 value": 2.6798035519668235,
-        "Market Share": 2.356941236349263,
-        "30D \u0394 share": 0.0933046719295446
+        "Market Share": 2.356941234274681,
+        "30D \u0394 share": 0.09330466985496312
       },
       {
         "#": 11,
@@ -739,8 +739,8 @@
         "RWA Count": 1,
         "Total Value": 158466865.8843619,
         "7D \u0394 value": 0.04879911762383081,
-        "Market Share": 1.1623554365017803,
-        "30D \u0394 share": 0.1000552092607878
+        "Market Share": 1.162355435478674,
+        "30D \u0394 share": 0.10005520823768171
       },
       {
         "#": 12,
@@ -749,8 +749,8 @@
         "RWA Count": 1,
         "Total Value": 152384959.23722535,
         "7D \u0394 value": 1.2067450540157154,
-        "Market Share": 1.117744613815641,
-        "30D \u0394 share": 0.07108922151515262
+        "Market Share": 1.1177446128318014,
+        "30D \u0394 share": 0.07108922053131288
       },
       {
         "#": 13,
@@ -759,8 +759,8 @@
         "RWA Count": 1,
         "Total Value": 25609669.59852,
         "7D \u0394 value": 0.060354195339966527,
-        "Market Share": 0.18784708411268994,
-        "30D \u0394 share": -0.11875024650148762
+        "Market Share": 0.18784708394734678,
+        "30D \u0394 share": -0.11875024666683077
       },
       {
         "#": 14,
@@ -769,8 +769,8 @@
         "RWA Count": 1,
         "Total Value": 4208999.497365006,
         "7D \u0394 value": 0.05826461097165332,
-        "Market Share": 0.030873037216282016,
-        "30D \u0394 share": 0.02950765049531234
+        "Market Share": 0.030873037189107545,
+        "30D \u0394 share": 0.02950765046813787
       },
       {
         "#": 15,
@@ -779,8 +779,8 @@
         "RWA Count": 1,
         "Total Value": 564378.0161579993,
         "7D \u0394 value": 0.0710356635459622,
-        "Market Share": 0.0041397162218255075,
-        "30D \u0394 share": -0.009328127750048489
+        "Market Share": 0.004139716218181726,
+        "30D \u0394 share": -0.00932812775369227
       }
     ],
     "caption_html": "Platforms table groups the <strong>same curated TMMF population</strong> by <strong>asset manager</strong> (issuer). <strong>RWA Count</strong> is the number of distinct funds in that population with exposure for the manager.",
