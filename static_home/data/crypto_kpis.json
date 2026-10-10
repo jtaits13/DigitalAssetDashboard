@@ -1,20 +1,20 @@
 {
-  "generated_at": "2026-10-10T06:08:17.102389+00:00",
+  "generated_at": "2026-10-10T12:49:22.140682+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
     "value_display": "$2.93T",
     "delta": {
-      "pct": 4.9783,
+      "pct": 6.7064,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$82,729",
+    "value_display": "$82,772",
     "delta": {
-      "pct": 5.5838,
+      "pct": 6.3968,
       "window": "1M"
     }
   },
@@ -22,7 +22,7 @@
     "label": "ETH price",
     "value_display": "$2,495",
     "delta": {
-      "pct": 0.695,
+      "pct": 1.3064,
       "window": "1M"
     }
   },
@@ -30,7 +30,7 @@
     "label": "BTC dominance",
     "value_display": "56.8%",
     "delta": {
-      "pct": 0.5318,
+      "pct": -0.2902,
       "window": "1M"
     }
   },
@@ -38,16 +38,16 @@
     "label": "Stablecoin share",
     "value_display": "10.4%",
     "delta": {
-      "pct": -4.2024,
+      "pct": -4.8531,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 56.78,
-    "stablecoin_share_top50_pct": 10.37,
-    "top50_market_cap_usd": 2765968674451.0,
-    "stablecoin_market_cap_usd": 286765111959.0,
-    "btc_market_cap_usd": 1662222063072.0
+    "btc_dominance_pct": 56.84,
+    "stablecoin_share_top50_pct": 10.36,
+    "top50_market_cap_usd": 2768663613157.0,
+    "stablecoin_market_cap_usd": 286824570390.0,
+    "btc_market_cap_usd": 1663468104377.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,7 +65,7 @@
       {
         "symbol": "QNT",
         "name": "Quant",
-        "pct_30d": 266.5956,
+        "pct_30d": 275.3143,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/quant-network",
@@ -79,7 +79,7 @@
       {
         "symbol": "BTW",
         "name": "Bitway",
-        "pct_30d": 260.0634,
+        "pct_30d": 236.3884,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/bitway",
@@ -93,7 +93,7 @@
       {
         "symbol": "NEAR",
         "name": "NEAR Protocol",
-        "pct_30d": 105.3464,
+        "pct_30d": 120.6534,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/near",
@@ -107,5 +107,5 @@
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 5.0% over 30D:</strong> Total crypto market cap at $2.93T (5.0% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://www.theblock.co/research/institutional/block-gcci-2026-country-profile-korea-crypto-market-418081\" target=\"_blank\" rel=\"noopener noreferrer\">The Block GCCI 2026 Country Profile: Inside Korea\u2019s Crypto Market</a> (The Block).</li><li><strong>Gains broadened among top-50 alts:</strong> 30 names up more than ~0.5%, 7 down more than ~0.5%, and 5 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.theblock.co/news/regulation/2026-10-09-thailand-sec-issues-bitcoin-and-ether-etf-rules-set-to-take-effect-oct-16-418132\" target=\"_blank\" rel=\"noopener noreferrer\">Thailand SEC issues bitcoin and ether ETF rules set to take effect Oct. 16</a> (The Block).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://www.coindesk.com/policy/2026/10/09/dark-web-drug-market-operator-forfeits-1-230-bitcoin-and-faces-40-years-in-prison\" target=\"_blank\" rel=\"noopener noreferrer\">Dark web drug market operator sentenced to 40 years, forfeits $101 million in bitcoin</a> (CoinDesk).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://thedefiant.io/converge/tradfi-and-fintech/coinbase-and-gennius-plan-oned-stablecoin-access-through-latin-american-banks\" target=\"_blank\" rel=\"noopener noreferrer\">Coinbase and Gennius Plan ONED Stablecoin Access Through Latin American Banks</a> (The Defiant).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 6.7% over 30D:</strong> Total crypto market cap at $2.93T (6.7% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://www.theblock.co/research/institutional/block-gcci-2026-country-profile-korea-crypto-market-418081\" target=\"_blank\" rel=\"noopener noreferrer\">The Block GCCI 2026 Country Profile: Inside Korea\u2019s Crypto Market</a> (The Block).</li><li><strong>Gains broadened among top-50 alts:</strong> 32 names up more than ~0.5%, 6 down more than ~0.5%, and 4 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.theblock.co/news/regulation/2026-10-09-thailand-sec-issues-bitcoin-and-ether-etf-rules-set-to-take-effect-oct-16-418132\" target=\"_blank\" rel=\"noopener noreferrer\">Thailand SEC issues bitcoin and ether ETF rules set to take effect Oct. 16</a> (The Block).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://www.coindesk.com/policy/2026/10/09/dark-web-drug-market-operator-forfeits-1-230-bitcoin-and-faces-40-years-in-prison\" target=\"_blank\" rel=\"noopener noreferrer\">Dark web drug market operator sentenced to 40 years, forfeits $101 million in bitcoin</a> (CoinDesk).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://thedefiant.io/converge/tradfi-and-fintech/coinbase-and-gennius-plan-oned-stablecoin-access-through-latin-american-banks\" target=\"_blank\" rel=\"noopener noreferrer\">Coinbase and Gennius Plan ONED Stablecoin Access Through Latin American Banks</a> (The Defiant).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
