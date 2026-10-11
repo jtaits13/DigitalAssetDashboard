@@ -1,36 +1,36 @@
 {
-  "generated_at": "2026-10-11T13:12:37.263772+00:00",
+  "generated_at": "2026-10-11T22:13:02.687992+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
-    "value_display": "$2.93T",
+    "value_display": "$2.95T",
     "delta": {
-      "pct": 5.7494,
+      "pct": 6.7434,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$83,012",
+    "value_display": "$83,528",
     "delta": {
-      "pct": 7.8415,
+      "pct": 7.9261,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,502",
+    "value_display": "$2,531",
     "delta": {
-      "pct": 1.8501,
+      "pct": -0.1155,
       "window": "1M"
     }
   },
   "btc_dominance": {
     "label": "BTC dominance",
-    "value_display": "56.9%",
+    "value_display": "56.8%",
     "delta": {
-      "pct": 1.9783,
+      "pct": 1.108,
       "window": "1M"
     }
   },
@@ -38,16 +38,16 @@
     "label": "Stablecoin share",
     "value_display": "10.3%",
     "delta": {
-      "pct": -6.0693,
+      "pct": -5.7659,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 56.89,
-    "stablecoin_share_top50_pct": 10.34,
-    "top50_market_cap_usd": 2773604626438.0,
-    "stablecoin_market_cap_usd": 286810987766.0,
-    "btc_market_cap_usd": 1668291590057.0
+    "btc_dominance_pct": 56.81,
+    "stablecoin_share_top50_pct": 10.27,
+    "top50_market_cap_usd": 2792257322012.0,
+    "stablecoin_market_cap_usd": 286877142567.0,
+    "btc_market_cap_usd": 1678265894554.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,7 +65,7 @@
       {
         "symbol": "QNT",
         "name": "Quant",
-        "pct_30d": 278.2884,
+        "pct_30d": 273.7033,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/quant-network",
@@ -79,7 +79,7 @@
       {
         "symbol": "BTW",
         "name": "Bitway",
-        "pct_30d": 236.9542,
+        "pct_30d": 223.6753,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/bitway",
@@ -93,7 +93,7 @@
       {
         "symbol": "NEAR",
         "name": "NEAR Protocol",
-        "pct_30d": 118.2461,
+        "pct_30d": 132.4687,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/near",
@@ -107,5 +107,5 @@
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 5.7% over 30D:</strong> Total crypto market cap at $2.93T (5.7% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://www.coindesk.com/business/2026/10/11/imf-finds-demand-for-tokenized-stocks-says-the-market-is-still-volatile-illiquid\" target=\"_blank\" rel=\"noopener noreferrer\">IMF finds demand for tokenized stocks, says the market is still volatile, illiquid</a> (CoinDesk).</li><li><strong>Gains broadened among top-50 alts:</strong> 33 names up more than ~0.5%, 5 down more than ~0.5%, and 4 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.theblock.co/news/regulation/2026-10-09-thailand-sec-issues-bitcoin-and-ether-etf-rules-set-to-take-effect-oct-16-418132\" target=\"_blank\" rel=\"noopener noreferrer\">Thailand SEC issues bitcoin and ether ETF rules set to take effect Oct. 16</a> (The Block).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://cointelegraph.com/markets/bitcoin-ether-etfs-october-outflows-billion?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin, Ether ETFs\u2019 October outflows swell toward $1B</a> (CoinTelegraph).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://thedefiant.io/converge/tradfi-and-fintech/coinbase-and-gennius-plan-oned-stablecoin-access-through-latin-american-banks\" target=\"_blank\" rel=\"noopener noreferrer\">Coinbase and Gennius Plan ONED Stablecoin Access Through Latin American Banks</a> (The Defiant).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 6.7% over 30D:</strong> Total crypto market cap at $2.95T (6.7% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://www.coindesk.com/business/2026/10/11/imf-finds-demand-for-tokenized-stocks-says-the-market-is-still-volatile-illiquid\" target=\"_blank\" rel=\"noopener noreferrer\">IMF finds demand for tokenized stocks, says the market is still volatile, illiquid</a> (CoinDesk).</li><li><strong>Gains broadened among top-50 alts:</strong> 33 names up more than ~0.5%, 4 down more than ~0.5%, and 5 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.theblock.co/news/regulation/2026-10-09-thailand-sec-issues-bitcoin-and-ether-etf-rules-set-to-take-effect-oct-16-418132\" target=\"_blank\" rel=\"noopener noreferrer\">Thailand SEC issues bitcoin and ether ETF rules set to take effect Oct. 16</a> (The Block).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://cointelegraph.com/markets/bitcoin-ether-etfs-october-outflows-billion?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin, Ether ETFs\u2019 October outflows swell toward $1B</a> (CoinTelegraph).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://thedefiant.io/converge/tradfi-and-fintech/coinbase-and-gennius-plan-oned-stablecoin-access-through-latin-american-banks\" target=\"_blank\" rel=\"noopener noreferrer\">Coinbase and Gennius Plan ONED Stablecoin Access Through Latin American Banks</a> (The Defiant).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
