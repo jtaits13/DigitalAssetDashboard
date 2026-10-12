@@ -1,28 +1,28 @@
 {
-  "generated_at": "2026-10-12T06:20:25.204047+00:00",
+  "generated_at": "2026-10-12T15:53:02.740856+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
-    "value_display": "$2.96T",
+    "value_display": "$2.93T",
     "delta": {
-      "pct": 7.0327,
+      "pct": 5.4158,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$83,709",
+    "value_display": "$82,649",
     "delta": {
-      "pct": 8.7151,
+      "pct": 6.6984,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,553",
+    "value_display": "$2,528",
     "delta": {
-      "pct": 2.0013,
+      "pct": -0.8475,
       "window": "1M"
     }
   },
@@ -30,24 +30,24 @@
     "label": "BTC dominance",
     "value_display": "56.8%",
     "delta": {
-      "pct": 1.5719,
+      "pct": 1.2407,
       "window": "1M"
     }
   },
   "stablecoin_share": {
     "label": "Stablecoin share",
-    "value_display": "10.2%",
+    "value_display": "10.4%",
     "delta": {
-      "pct": -6.6031,
+      "pct": -4.6754,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 56.76,
-    "stablecoin_share_top50_pct": 10.23,
-    "top50_market_cap_usd": 2802470764996.0,
-    "stablecoin_market_cap_usd": 286808351525.0,
-    "btc_market_cap_usd": 1682186336437.0
+    "btc_dominance_pct": 56.78,
+    "stablecoin_share_top50_pct": 10.36,
+    "top50_market_cap_usd": 2768054619499.0,
+    "stablecoin_market_cap_usd": 286721451340.0,
+    "btc_market_cap_usd": 1661121290272.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,21 +65,21 @@
       {
         "symbol": "QNT",
         "name": "Quant",
-        "pct_30d": 269.0153,
+        "pct_30d": 254.8216,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/quant-network",
         "direction": "up",
         "context": {
-          "title": "Zcash developers set January target for quantum-resistant payments after \u2018bunker mode\u2019 scare",
-          "source": "CoinDesk",
-          "link": "https://www.coindesk.com/tech/2026/10/09/zcash-developers-set-january-target-for-quantum-resistant-payments-after-bunker-mode-scare"
+          "title": "How Zcash Plans to Hide Your Keys From AI and Quantum Attacks",
+          "source": "Decrypt",
+          "link": "https://decrypt.co/380637/zcash-plans-hide-keys-ai-quantum-attacks"
         }
       },
       {
         "symbol": "BTW",
         "name": "Bitway",
-        "pct_30d": 238.1494,
+        "pct_30d": 222.5011,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/bitway",
@@ -93,19 +93,19 @@
       {
         "symbol": "NEAR",
         "name": "NEAR Protocol",
-        "pct_30d": 151.4101,
+        "pct_30d": 137.0388,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/near",
         "direction": "up",
         "context": {
-          "title": "Bitcoin steadies near $82,500 after Trump rules out Iran strike before midterms",
-          "source": "CoinDesk",
-          "link": "https://www.coindesk.com/markets/2026/10/09/bitcoin-steadies-near-usd82-500-after-trump-rules-out-iran-strike-before-midterms"
+          "title": "Bitcoin Ranges Near $83K as Traders Look to US Inflation Data",
+          "source": "Decrypt",
+          "link": "https://decrypt.co/380669/bitcoin-ranges-near-83k-as-traders-look-to-us-inflation-data"
         }
       }
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 7.0% over 30D:</strong> Total crypto market cap at $2.96T (7.0% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://www.coindesk.com/business/2026/10/11/imf-finds-demand-for-tokenized-stocks-says-the-market-is-still-volatile-illiquid\" target=\"_blank\" rel=\"noopener noreferrer\">IMF finds demand for tokenized stocks, says the market is still volatile, illiquid</a> (CoinDesk).</li><li><strong>Gains broadened among top-50 alts:</strong> 34 names up more than ~0.5%, 4 down more than ~0.5%, and 4 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.theblock.co/news/regulation/2026-10-09-thailand-sec-issues-bitcoin-and-ether-etf-rules-set-to-take-effect-oct-16-418132\" target=\"_blank\" rel=\"noopener noreferrer\">Thailand SEC issues bitcoin and ether ETF rules set to take effect Oct. 16</a> (The Block).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://www.coindesk.com/policy/2026/10/09/dark-web-drug-market-operator-forfeits-1-230-bitcoin-and-faces-40-years-in-prison\" target=\"_blank\" rel=\"noopener noreferrer\">Dark web drug market operator sentenced to 40 years, forfeits $101 million in bitcoin</a> (CoinDesk).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://cointelegraph.com/markets/bitcoin-ether-etfs-october-outflows-billion?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin, Ether ETFs\u2019 October outflows swell toward $1B</a> (CoinTelegraph).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 5.4% over 30D:</strong> Total crypto market cap at $2.93T (5.4% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://www.coindesk.com/business/2026/10/11/imf-finds-demand-for-tokenized-stocks-says-the-market-is-still-volatile-illiquid\" target=\"_blank\" rel=\"noopener noreferrer\">IMF finds demand for tokenized stocks, says the market is still volatile, illiquid</a> (CoinDesk).</li><li><strong>Gains broadened among top-50 alts:</strong> 29 names up more than ~0.5%, 7 down more than ~0.5%, and 6 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/policy/2026/10/12/global-financial-watchdog-calls-for-cross-border-information-sharing-planning-for-stablecoin-crisis\" target=\"_blank\" rel=\"noopener noreferrer\">Global financial watchdog calls for cross-border information sharing, planning for stablecoin crisis</a> (CoinDesk).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://decrypt.co/380490/bitcoin-etfs-worst-outflow-since-june-uptober-red\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin ETFs Suffer Worst Loss Since June as Uptober Turns Red</a> (Decrypt).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://thedefiant.io/converge/tradfi-and-fintech/coinbase-and-gennius-plan-oned-stablecoin-access-through-latin-american-banks\" target=\"_blank\" rel=\"noopener noreferrer\">Coinbase and Gennius Plan ONED Stablecoin Access Through Latin American Banks</a> (The Defiant).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
