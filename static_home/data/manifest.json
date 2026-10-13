@@ -1,15 +1,23 @@
 {
-  "generated_at": "2026-10-13T14:35:43.329478+00:00",
+  "generated_at": "2026-10-13T23:03:09.668651+00:00",
   "errors": [
+    "ETF news RSS: ETF Trends (VettaFi): HTTP Error 403: Forbidden",
+    "ETF news RSS: ETFdb: HTTP Error 403: Forbidden",
     "ETF news RSS: GlobeNewswire (ETF): HTTP Error 403: Forbidden",
     "ETF news RSS: Yahoo Finance (headlines): HTTP Error 404: Not Found",
-    "ETF news RSS: ETFdb: HTTP Error 403: Forbidden",
-    "ETF news RSS: ETF Trends (VettaFi): HTTP Error 403: Forbidden"
+    "custodian RSS: GC search page https://www.globalcustodian.com/?s=digital+asset: HTTP Error 403: Forbidden",
+    "custodian RSS: GC search page https://www.globalcustodian.com/page/2/?s=digital+asset: HTTP Error 403: Forbidden",
+    "custodian RSS: GC search page https://www.globalcustodian.com/page/3/?s=digital+asset: HTTP Error 403: Forbidden",
+    "custodian RSS: GC search page https://www.globalcustodian.com/page/4/?s=digital+asset: HTTP Error 403: Forbidden",
+    "custodian RSS: GC search page https://www.globalcustodian.com/?s=digital+asset+custody: HTTP Error 403: Forbidden",
+    "custodian RSS: GC search page https://www.globalcustodian.com/page/2/?s=digital+asset+custody: HTTP Error 403: Forbidden",
+    "custodian RSS: GC search page https://www.globalcustodian.com/page/3/?s=digital+asset+custody: HTTP Error 403: Forbidden",
+    "custodian RSS: GC search page https://www.globalcustodian.com/page/4/?s=digital+asset+custody: HTTP Error 403: Forbidden"
   ],
-  "etp_refreshed_at": "2026-10-13T14:27:59.688686+00:00",
-  "crypto_refreshed_at": "2026-10-13T14:31:42.996334+00:00",
+  "etp_refreshed_at": "2026-10-13T22:59:16.252622+00:00",
+  "crypto_refreshed_at": "2026-10-13T22:59:24.659462+00:00",
   "stale_sections": [],
-  "export_completed_at": "2026-10-13T14:35:43.329478+00:00",
+  "export_completed_at": "2026-10-13T23:03:09.668651+00:00",
   "refresh_interval_hours": 6,
   "stale_threshold_hours": {
     "etp": 9,
@@ -19,10 +27,10 @@
     "regulatory": 24
   },
   "sections": {
-    "news": "2026-10-13T14:28:07.013961+00:00",
-    "regulatory": "2026-10-13T14:28:07.013961+00:00",
-    "etp": "2026-10-13T14:27:59.688686+00:00",
-    "rwa": "2026-10-13T14:35:30.848317+00:00",
-    "crypto": "2026-10-13T14:31:42.996334+00:00"
+    "news": "2026-10-13T22:59:21.113703+00:00",
+    "regulatory": "2026-10-13T22:59:21.113703+00:00",
+    "etp": "2026-10-13T22:59:16.252622+00:00",
+    "rwa": "2026-10-13T23:03:04.465150+00:00",
+    "crypto": "2026-10-13T22:59:24.659462+00:00"
   }
 }
