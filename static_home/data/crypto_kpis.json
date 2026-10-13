@@ -1,53 +1,53 @@
 {
-  "generated_at": "2026-10-12T15:53:02.740856+00:00",
+  "generated_at": "2026-10-13T00:56:48.032853+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
-    "value_display": "$2.93T",
+    "value_display": "$2.85T",
     "delta": {
-      "pct": 5.4158,
+      "pct": 2.7745,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$82,649",
+    "value_display": "$81,272",
     "delta": {
-      "pct": 6.6984,
+      "pct": 5.9233,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,528",
+    "value_display": "$2,419",
     "delta": {
-      "pct": -0.8475,
+      "pct": -3.0692,
       "window": "1M"
     }
   },
   "btc_dominance": {
     "label": "BTC dominance",
-    "value_display": "56.8%",
+    "value_display": "57.4%",
     "delta": {
-      "pct": 1.2407,
+      "pct": 3.0638,
       "window": "1M"
     }
   },
   "stablecoin_share": {
     "label": "Stablecoin share",
-    "value_display": "10.4%",
+    "value_display": "10.6%",
     "delta": {
-      "pct": -4.6754,
+      "pct": -3.6974,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 56.78,
-    "stablecoin_share_top50_pct": 10.36,
-    "top50_market_cap_usd": 2768054619499.0,
-    "stablecoin_market_cap_usd": 286721451340.0,
-    "btc_market_cap_usd": 1661121290272.0
+    "btc_dominance_pct": 57.35,
+    "stablecoin_share_top50_pct": 10.6,
+    "top50_market_cap_usd": 2705755844155.0,
+    "stablecoin_market_cap_usd": 286700116941.0,
+    "btc_market_cap_usd": 1633271183413.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,7 +65,7 @@
       {
         "symbol": "QNT",
         "name": "Quant",
-        "pct_30d": 254.8216,
+        "pct_30d": 254.5691,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/quant-network",
@@ -79,7 +79,7 @@
       {
         "symbol": "BTW",
         "name": "Bitway",
-        "pct_30d": 222.5011,
+        "pct_30d": 218.0185,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/bitway",
@@ -93,19 +93,19 @@
       {
         "symbol": "NEAR",
         "name": "NEAR Protocol",
-        "pct_30d": 137.0388,
+        "pct_30d": 116.0876,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/near",
         "direction": "up",
         "context": {
-          "title": "Bitcoin Ranges Near $83K as Traders Look to US Inflation Data",
+          "title": "AI Will Hit 40% of Jobs, IMF Warns. Young People Are First in Line",
           "source": "Decrypt",
-          "link": "https://decrypt.co/380669/bitcoin-ranges-near-83k-as-traders-look-to-us-inflation-data"
+          "link": "https://decrypt.co/380789/ai-hit-40-percent-jobs-imf-warns-young-people-first"
         }
       }
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 5.4% over 30D:</strong> Total crypto market cap at $2.93T (5.4% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://www.coindesk.com/business/2026/10/11/imf-finds-demand-for-tokenized-stocks-says-the-market-is-still-volatile-illiquid\" target=\"_blank\" rel=\"noopener noreferrer\">IMF finds demand for tokenized stocks, says the market is still volatile, illiquid</a> (CoinDesk).</li><li><strong>Gains broadened among top-50 alts:</strong> 29 names up more than ~0.5%, 7 down more than ~0.5%, and 6 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/policy/2026/10/12/global-financial-watchdog-calls-for-cross-border-information-sharing-planning-for-stablecoin-crisis\" target=\"_blank\" rel=\"noopener noreferrer\">Global financial watchdog calls for cross-border information sharing, planning for stablecoin crisis</a> (CoinDesk).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://decrypt.co/380490/bitcoin-etfs-worst-outflow-since-june-uptober-red\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin ETFs Suffer Worst Loss Since June as Uptober Turns Red</a> (Decrypt).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://thedefiant.io/converge/tradfi-and-fintech/coinbase-and-gennius-plan-oned-stablecoin-access-through-latin-american-banks\" target=\"_blank\" rel=\"noopener noreferrer\">Coinbase and Gennius Plan ONED Stablecoin Access Through Latin American Banks</a> (The Defiant).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 2.8% over 30D:</strong> Total crypto market cap at $2.85T (2.8% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://www.coindesk.com/business/2026/10/11/imf-finds-demand-for-tokenized-stocks-says-the-market-is-still-volatile-illiquid\" target=\"_blank\" rel=\"noopener noreferrer\">IMF finds demand for tokenized stocks, says the market is still volatile, illiquid</a> (CoinDesk).</li><li><strong>Gains broadened among top-50 alts:</strong> 25 names up more than ~0.5%, 12 down more than ~0.5%, and 5 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/policy/2026/10/12/global-financial-watchdog-calls-for-cross-border-information-sharing-planning-for-stablecoin-crisis\" target=\"_blank\" rel=\"noopener noreferrer\">Global financial watchdog calls for cross-border information sharing, planning for stablecoin crisis</a> (CoinDesk).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://thedefiant.io/converge/tradfi-and-fintech/coinbase-and-gennius-plan-oned-stablecoin-access-through-latin-american-banks\" target=\"_blank\" rel=\"noopener noreferrer\">Coinbase and Gennius Plan ONED Stablecoin Access Through Latin American Banks</a> (The Defiant).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://decrypt.co/380708/bitcoin-spooked-crypto-fear-greed-drops\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin Spooked? Crypto Fear and Greed Index Drops to Pre-Rally August Lows</a> (Decrypt).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
