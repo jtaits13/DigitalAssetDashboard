@@ -1,28 +1,28 @@
 {
-  "generated_at": "2026-10-13T22:59:24.659462+00:00",
+  "generated_at": "2026-10-14T05:09:50.722724+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
-    "value_display": "$2.93T",
+    "value_display": "$2.94T",
     "delta": {
-      "pct": 6.8244,
+      "pct": 5.8505,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$83,474",
+    "value_display": "$83,650",
     "delta": {
-      "pct": 7.9196,
+      "pct": 7.9516,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,510",
+    "value_display": "$2,511",
     "delta": {
-      "pct": -0.0971,
+      "pct": 0.0946,
       "window": "1M"
     }
   },
@@ -30,7 +30,7 @@
     "label": "BTC dominance",
     "value_display": "57.2%",
     "delta": {
-      "pct": 1.0253,
+      "pct": 1.9452,
       "window": "1M"
     }
   },
@@ -38,16 +38,16 @@
     "label": "Stablecoin share",
     "value_display": "10.3%",
     "delta": {
-      "pct": -5.4132,
+      "pct": -5.6165,
       "window": "1M"
     }
   },
   "market_structure": {
     "btc_dominance_pct": 57.23,
-    "stablecoin_share_top50_pct": 10.33,
-    "top50_market_cap_usd": 2775873549145.0,
-    "stablecoin_market_cap_usd": 286795293410.0,
-    "btc_market_cap_usd": 1677645907823.0
+    "stablecoin_share_top50_pct": 10.31,
+    "top50_market_cap_usd": 2783298236723.0,
+    "stablecoin_market_cap_usd": 286887121659.0,
+    "btc_market_cap_usd": 1681219762910.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -63,23 +63,9 @@
     "footnote": "Largest 1-month % moves in the top-50 table (stablecoins excluded). Context lines match recent headlines from dashboard news feeds, with Google News as fallback.",
     "movers": [
       {
-        "symbol": "QNT",
-        "name": "Quant",
-        "pct_30d": 234.9201,
-        "category": "other",
-        "category_label": "Other",
-        "detail_url": "https://www.coingecko.com/en/coins/quant-network",
-        "direction": "up",
-        "context": {
-          "title": "How Zcash Plans to Hide Your Keys From AI and Quantum Attacks",
-          "source": "Decrypt",
-          "link": "https://decrypt.co/380637/zcash-plans-hide-keys-ai-quantum-attacks"
-        }
-      },
-      {
         "symbol": "BTW",
         "name": "Bitway",
-        "pct_30d": 179.0848,
+        "pct_30d": 254.9904,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/bitway",
@@ -91,9 +77,23 @@
         }
       },
       {
+        "symbol": "QNT",
+        "name": "Quant",
+        "pct_30d": 236.9187,
+        "category": "other",
+        "category_label": "Other",
+        "detail_url": "https://www.coingecko.com/en/coins/quant-network",
+        "direction": "up",
+        "context": {
+          "title": "How Zcash Plans to Hide Your Keys From AI and Quantum Attacks",
+          "source": "Decrypt",
+          "link": "https://decrypt.co/380637/zcash-plans-hide-keys-ai-quantum-attacks"
+        }
+      },
+      {
         "symbol": "NEAR",
         "name": "NEAR Protocol",
-        "pct_30d": 115.4546,
+        "pct_30d": 114.0503,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/near",
@@ -107,5 +107,5 @@
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 6.8% over 30D:</strong> Total crypto market cap at $2.93T (6.8% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://cointelegraph.com/news/sec-leadership-facilitate-crypto-rulemaking?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">How the SEC\u2019s lack of leadership could facilitate crypto rulemaking</a> (CoinTelegraph).</li><li><strong>Gains broadened among top-50 alts:</strong> 31 names up more than ~0.5%, 5 down more than ~0.5%, and 6 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/policy/2026/10/12/global-financial-watchdog-calls-for-cross-border-information-sharing-planning-for-stablecoin-crisis\" target=\"_blank\" rel=\"noopener noreferrer\">Global financial watchdog calls for cross-border information sharing, planning for stablecoin crisis</a> (CoinDesk).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://thedefiant.io/converge/tradfi-and-fintech/coinbase-and-gennius-plan-oned-stablecoin-access-through-latin-american-banks\" target=\"_blank\" rel=\"noopener noreferrer\">Coinbase and Gennius Plan ONED Stablecoin Access Through Latin American Banks</a> (The Defiant).</li><li><strong>BTC outpaced ETH over 1M:</strong> about <strong>8.0pp</strong> on spot from the top-50 table. Related: <a href=\"https://cointelegraph.com/news/fasb-stablecoin-accounting-rules-corporate-adoption?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">US accounting overhaul could make stablecoins more attractive to corporations: Tempo</a> (CoinTelegraph).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 5.9% over 30D:</strong> Total crypto market cap at $2.94T (5.9% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://cointelegraph.com/news/sec-leadership-facilitate-crypto-rulemaking?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">How the SEC\u2019s lack of leadership could facilitate crypto rulemaking</a> (CoinTelegraph).</li><li><strong>Gains broadened among top-50 alts:</strong> 31 names up more than ~0.5%, 3 down more than ~0.5%, and 8 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/policy/2026/10/13/largest-philippines-crypto-exchange-coins-ph-said-to-face-central-bank-regulatory-action\" target=\"_blank\" rel=\"noopener noreferrer\">Largest Philippines crypto exchange, Coins.ph, said to face central bank regulatory action</a> (CoinDesk).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://www.coindesk.com/markets/2026/10/13/bitcoin-ether-slip-and-rebound-as-south-korean-stocks-slide-on-ai-related-concerns\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin, ether slip and rebound as South Korean stocks slide on AI-related concerns</a> (CoinDesk).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://thedefiant.io/converge/tradfi-and-fintech/coinbase-and-gennius-plan-oned-stablecoin-access-through-latin-american-banks\" target=\"_blank\" rel=\"noopener noreferrer\">Coinbase and Gennius Plan ONED Stablecoin Access Through Latin American Banks</a> (The Defiant).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
