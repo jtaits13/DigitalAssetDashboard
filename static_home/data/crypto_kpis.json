@@ -1,36 +1,36 @@
 {
-  "generated_at": "2026-10-14T17:27:59.523699+00:00",
+  "generated_at": "2026-10-14T21:53:14.942304+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
     "value_display": "$2.87T",
     "delta": {
-      "pct": 2.3623,
+      "pct": 1.9284,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$81,793",
+    "value_display": "$81,771",
     "delta": {
-      "pct": 4.2605,
+      "pct": 3.4057,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,437",
+    "value_display": "$2,419",
     "delta": {
-      "pct": -2.5209,
+      "pct": -4.9721,
       "window": "1M"
     }
   },
   "btc_dominance": {
     "label": "BTC dominance",
-    "value_display": "57.2%",
+    "value_display": "57.3%",
     "delta": {
-      "pct": 1.9277,
+      "pct": 1.4494,
       "window": "1M"
     }
   },
@@ -38,16 +38,16 @@
     "label": "Stablecoin share",
     "value_display": "10.5%",
     "delta": {
-      "pct": -2.67,
+      "pct": -1.5282,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 57.2,
+    "btc_dominance_pct": 57.29,
     "stablecoin_share_top50_pct": 10.53,
-    "top50_market_cap_usd": 2721027715153.0,
-    "stablecoin_market_cap_usd": 286529308263.0,
-    "btc_market_cap_usd": 1644012187554.0
+    "top50_market_cap_usd": 2717643742075.0,
+    "stablecoin_market_cap_usd": 286285663483.0,
+    "btc_market_cap_usd": 1643754706274.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -63,23 +63,9 @@
     "footnote": "Largest 1-month % moves in the top-50 table (stablecoins excluded). Context lines match recent headlines from dashboard news feeds, with Google News as fallback.",
     "movers": [
       {
-        "symbol": "QNT",
-        "name": "Quant",
-        "pct_30d": 220.5561,
-        "category": "other",
-        "category_label": "Other",
-        "detail_url": "https://www.coingecko.com/en/coins/quant-network",
-        "direction": "up",
-        "context": {
-          "title": "Coinbase, which holds 5% of all bitcoin, wants the quantum fix started now",
-          "source": "CoinDesk",
-          "link": "https://www.coindesk.com/tech/2026/10/14/coinbase-which-holds-5-of-all-bitcoin-wants-the-quantum-fix-started-now"
-        }
-      },
-      {
         "symbol": "BTW",
         "name": "Bitway",
-        "pct_30d": 212.2613,
+        "pct_30d": 247.3929,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/bitway",
@@ -91,9 +77,23 @@
         }
       },
       {
+        "symbol": "QNT",
+        "name": "Quant",
+        "pct_30d": 224.5806,
+        "category": "other",
+        "category_label": "Other",
+        "detail_url": "https://www.coingecko.com/en/coins/quant-network",
+        "direction": "up",
+        "context": {
+          "title": "Coinbase, which holds 5% of all bitcoin, wants the quantum fix started now",
+          "source": "CoinDesk",
+          "link": "https://www.coindesk.com/tech/2026/10/14/coinbase-which-holds-5-of-all-bitcoin-wants-the-quantum-fix-started-now"
+        }
+      },
+      {
         "symbol": "NEAR",
         "name": "NEAR Protocol",
-        "pct_30d": 103.9793,
+        "pct_30d": 89.3012,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/near",
@@ -107,5 +107,5 @@
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap rose 2.4% over 30D:</strong> Total crypto market cap at $2.87T (2.4% higher over 30D) reflects a broader risk-on tape\u2014liquidity and alt performance usually improve when the headline book expands. Related: <a href=\"https://www.coindesk.com/business/2026/10/14/kraken-parent-payward-to-become-first-crypto-firm-to-buy-a-eu-bank-as-it-expands-into-deposits-lending\" target=\"_blank\" rel=\"noopener noreferrer\">Kraken parent Payward to become first crypto firm to buy a EU bank as it expands into deposits, lending</a> (CoinDesk).</li><li><strong>Gains broadened among top-50 alts:</strong> 26 names up more than ~0.5%, 11 down more than ~0.5%, and 5 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/business/2026/10/14/former-ftx-europe-chief-targets-u-s-stock-tokenization-with-new-sec-exemption\" target=\"_blank\" rel=\"noopener noreferrer\">Former FTX Europe chief targets U.S. tokenized stock trading with new SEC exemption</a> (CoinDesk).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.coindesk.com/policy/2026/10/13/largest-philippines-crypto-exchange-coins-ph-said-to-face-central-bank-regulatory-action\" target=\"_blank\" rel=\"noopener noreferrer\">Largest Philippines crypto exchange, Coins.ph, said to face central bank regulatory action</a> (CoinDesk).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://thedefiant.io/news/defi/eqx-plans-11-tokenized-stock-and-etf-markets-on-hyperliquid\" target=\"_blank\" rel=\"noopener noreferrer\">EQX Plans 11 Tokenized Stock and ETF Markets on Hyperliquid</a> (The Defiant).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto printed metrics were roughly flat this week:</strong> Total market cap near $2.87T (+1.9% 30D) frames a consolidating market\u2014directional conviction is low, so structural headlines (custody, rails, regulation) carry more weight than beta alone. Related: <a href=\"https://decrypt.co/380989/ai-agents-138-million-crypto-payments-one-year\" target=\"_blank\" rel=\"noopener noreferrer\">AI Agents Made 138 Million Crypto Payments in a Year. Most Were Tiny</a> (Decrypt).</li><li><strong>Gains broadened among top-50 alts:</strong> 22 names up more than ~0.5%, 11 down more than ~0.5%, and 9 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/business/2026/10/14/former-ftx-europe-chief-targets-u-s-stock-tokenization-with-new-sec-exemption\" target=\"_blank\" rel=\"noopener noreferrer\">Former FTX Europe chief targets U.S. tokenized stock trading with new SEC exemption</a> (CoinDesk).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://thedefiant.io/news/defi/eqx-plans-11-tokenized-stock-and-etf-markets-on-hyperliquid\" target=\"_blank\" rel=\"noopener noreferrer\">EQX Plans 11 Tokenized Stock and ETF Markets on Hyperliquid</a> (The Defiant).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.coindesk.com/policy/2026/10/13/largest-philippines-crypto-exchange-coins-ph-said-to-face-central-bank-regulatory-action\" target=\"_blank\" rel=\"noopener noreferrer\">Largest Philippines crypto exchange, Coins.ph, said to face central bank regulatory action</a> (CoinDesk).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }

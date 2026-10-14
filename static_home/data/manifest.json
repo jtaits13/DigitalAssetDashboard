@@ -1,22 +1,15 @@
 {
-  "generated_at": "2026-10-14T17:31:44.983430+00:00",
+  "generated_at": "2026-10-14T21:57:00.580224+00:00",
   "errors": [
-    "ETF news RSS: GlobeNewswire (ETF): HTTP Error 403: Forbidden",
-    "ETF news RSS: Yahoo Finance (headlines): HTTP Error 404: Not Found",
     "ETF news RSS: ETFdb: HTTP Error 403: Forbidden",
     "ETF news RSS: ETF Trends (VettaFi): HTTP Error 403: Forbidden",
-    "custodian RSS: GC search page https://www.globalcustodian.com/page/2/?s=digital+asset: The read operation timed out",
-    "custodian RSS: GC search page https://www.globalcustodian.com/page/3/?s=digital+asset: The read operation timed out",
-    "custodian RSS: GC search page https://www.globalcustodian.com/page/4/?s=digital+asset: The read operation timed out",
-    "custodian RSS: GC search page https://www.globalcustodian.com/?s=digital+asset+custody: The read operation timed out",
-    "custodian RSS: GC search page https://www.globalcustodian.com/page/2/?s=digital+asset+custody: The read operation timed out",
-    "custodian RSS: GC search page https://www.globalcustodian.com/page/3/?s=digital+asset+custody: The read operation timed out",
-    "custodian RSS: GC search page https://www.globalcustodian.com/page/4/?s=digital+asset+custody: The read operation timed out"
+    "ETF news RSS: GlobeNewswire (ETF): HTTP Error 403: Forbidden",
+    "ETF news RSS: Yahoo Finance (headlines): HTTP Error 404: Not Found"
   ],
-  "etp_refreshed_at": "2026-10-14T17:25:17.932470+00:00",
-  "crypto_refreshed_at": "2026-10-14T17:27:59.523699+00:00",
+  "etp_refreshed_at": "2026-10-14T21:52:05.493146+00:00",
+  "crypto_refreshed_at": "2026-10-14T21:53:14.942304+00:00",
   "stale_sections": [],
-  "export_completed_at": "2026-10-14T17:31:44.983430+00:00",
+  "export_completed_at": "2026-10-14T21:57:00.580224+00:00",
   "refresh_interval_hours": 6,
   "stale_threshold_hours": {
     "etp": 9,
@@ -26,10 +19,10 @@
     "regulatory": 24
   },
   "sections": {
-    "news": "2026-10-14T17:25:24.241401+00:00",
-    "regulatory": "2026-10-14T17:25:24.241401+00:00",
-    "etp": "2026-10-14T17:25:17.932470+00:00",
-    "rwa": "2026-10-14T17:31:37.159965+00:00",
-    "crypto": "2026-10-14T17:27:59.523699+00:00"
+    "news": "2026-10-14T21:52:10.210943+00:00",
+    "regulatory": "2026-10-14T21:52:10.210943+00:00",
+    "etp": "2026-10-14T21:52:05.493146+00:00",
+    "rwa": "2026-10-14T21:56:51.570494+00:00",
+    "crypto": "2026-10-14T21:53:14.942304+00:00"
   }
 }
