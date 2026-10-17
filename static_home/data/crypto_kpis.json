@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-17T15:48:55.715681+00:00",
+  "generated_at": "2026-10-17T20:48:53.317328+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
@@ -12,38 +12,38 @@
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$81,352",
+    "value_display": "$81,545",
     "delta": {
-      "pct": 6.3329,
+      "pct": 6.5675,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,410",
+    "value_display": "$2,418",
     "delta": {
-      "pct": -1.4391,
+      "pct": -1.3754,
       "window": "1M"
     }
   },
   "btc_dominance": {
     "label": "BTC dominance",
-    "value_display": "56.5%"
+    "value_display": "56.7%"
   },
   "stablecoin_share": {
     "label": "Stablecoin share",
-    "value_display": "10.6%",
+    "value_display": "10.5%",
     "delta": {
-      "pct": -3.8229,
+      "pct": -3.8722,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 56.54,
-    "stablecoin_share_top50_pct": 10.57,
-    "top50_market_cap_usd": 2699320626927.0,
-    "stablecoin_market_cap_usd": 285405142940.0,
-    "btc_market_cap_usd": 1635055126320.0
+    "btc_dominance_pct": 56.68,
+    "stablecoin_share_top50_pct": 10.54,
+    "top50_market_cap_usd": 2706837751701.0,
+    "stablecoin_market_cap_usd": 285402154736.0,
+    "btc_market_cap_usd": 1638987756911.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -59,23 +59,9 @@
     "footnote": "Largest 1-month % moves in the top-50 table (stablecoins excluded). Context lines match recent headlines from dashboard news feeds, with Google News as fallback.",
     "movers": [
       {
-        "symbol": "QNT",
-        "name": "Quant",
-        "pct_30d": 231.2663,
-        "category": "other",
-        "category_label": "Other",
-        "detail_url": "https://www.coingecko.com/en/coins/quant-network",
-        "direction": "up",
-        "context": {
-          "title": "Satoshi-era bitcoin faces a bigger quantum threat after Google\u2019s new Willow breakthrough",
-          "source": "CoinDesk",
-          "link": "https://www.coindesk.com/tech/2026/10/16/satoshi-era-bitcoin-faces-a-bigger-quantum-threat-after-google-s-new-willow-breakthrough"
-        }
-      },
-      {
         "symbol": "BTW",
         "name": "Bitway",
-        "pct_30d": 230.3988,
+        "pct_30d": 268.918,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/bitway",
@@ -87,9 +73,23 @@
         }
       },
       {
+        "symbol": "QNT",
+        "name": "Quant",
+        "pct_30d": 224.9978,
+        "category": "other",
+        "category_label": "Other",
+        "detail_url": "https://www.coingecko.com/en/coins/quant-network",
+        "direction": "up",
+        "context": {
+          "title": "Satoshi-era bitcoin faces a bigger quantum threat after Google\u2019s new Willow breakthrough",
+          "source": "CoinDesk",
+          "link": "https://www.coindesk.com/tech/2026/10/16/satoshi-era-bitcoin-faces-a-bigger-quantum-threat-after-google-s-new-willow-breakthrough"
+        }
+      },
+      {
         "symbol": "NEAR",
         "name": "NEAR Protocol",
-        "pct_30d": 74.8,
+        "pct_30d": 66.8277,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/near",

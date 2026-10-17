@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-17T15:47:44.970622+00:00",
+  "generated_at": "2026-10-17T20:47:40.774454+00:00",
   "rows": [
     {
       "symbol": "IBIT",
@@ -1709,7 +1709,7 @@
       "name": "Global X Bitcoin Covered Call ETF",
       "price": "13.12",
       "pct_52w": -19.2,
-      "assets_usd": 9550000.0,
+      "assets_usd": 9560000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "Global X",
@@ -1783,30 +1783,30 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=TSOL%20S-1"
     },
     {
-      "symbol": "SETH",
-      "name": "ProShares Short Ether ETF",
-      "price": "33.51",
-      "pct_52w": 18.43,
-      "assets_usd": 8470000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "ProShares",
-      "custodian": "",
-      "inception": "Nov 2, 2023",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=SETH%20S-1"
-    },
-    {
       "symbol": "BBB",
       "name": "CYBER HORNET S&P 500 and Bitcoin 75/25 Strategy ETF",
       "price": "31.90",
       "pct_52w": 4.55,
-      "assets_usd": 8140000.000000001,
+      "assets_usd": 8029999.999999999,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "",
       "custodian": "",
       "inception": "Dec 28, 2023",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BBB%20S-1"
+    },
+    {
+      "symbol": "SETH",
+      "name": "ProShares Short Ether ETF",
+      "price": "33.51",
+      "pct_52w": 18.43,
+      "assets_usd": 7740000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "ProShares",
+      "custodian": "",
+      "inception": "Nov 2, 2023",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=SETH%20S-1"
     },
     {
       "symbol": "ISBG",
@@ -1891,7 +1891,7 @@
       "name": "21Shares 2x Long HYPE ETF",
       "price": "54.13",
       "pct_52w": null,
-      "assets_usd": 6390000.0,
+      "assets_usd": 6290000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "",
@@ -1969,7 +1969,7 @@
       "name": "Hedgeye Hedged Bitcoin ETF",
       "price": "25.45",
       "pct_52w": null,
-      "assets_usd": 5180000.0,
+      "assets_usd": 5100000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "",
@@ -2121,19 +2121,6 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=SOLC%20S-1"
     },
     {
-      "symbol": "CHNU",
-      "name": "Volatility Shares 2x Chainlink ETF",
-      "price": "29.80",
-      "pct_52w": null,
-      "assets_usd": 2990000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "",
-      "custodian": "",
-      "inception": "Apr 1, 2026",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=CHNU%20S-1"
-    },
-    {
       "symbol": "DIME",
       "name": "CoinShares Altcoins ETF",
       "price": "11.71",
@@ -2171,6 +2158,19 @@
       "custodian": "",
       "inception": "Apr 1, 2026",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=STLU%20S-1"
+    },
+    {
+      "symbol": "CHNU",
+      "name": "Volatility Shares 2x Chainlink ETF",
+      "price": "29.80",
+      "pct_52w": null,
+      "assets_usd": 2750000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "",
+      "custodian": "",
+      "inception": "Apr 1, 2026",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=CHNU%20S-1"
     },
     {
       "symbol": "BFOC",
@@ -2238,19 +2238,6 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=CBOL%20S-1"
     },
     {
-      "symbol": "EVMU",
-      "name": "Direxion Daily Ether Bull 2X ETF",
-      "price": "28.35",
-      "pct_52w": null,
-      "assets_usd": 2310000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "Direxion",
-      "custodian": "",
-      "inception": "May 27, 2026",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=EVMU%20S-1"
-    },
-    {
       "symbol": "ISSB",
       "name": "IncomeSTKd 1x US Stocks & 1x Bitcoin Premium ETF",
       "price": "21.98",
@@ -2268,13 +2255,26 @@
       "name": "Amplify Stablecoin Technology Leaders ETF",
       "price": "21.78",
       "pct_52w": null,
-      "assets_usd": 2270000.0,
+      "assets_usd": 2190000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
       "issuer": "Amplify Investments",
       "custodian": "",
       "inception": "Dec 22, 2025",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=STBQ%20S-1"
+    },
+    {
+      "symbol": "EVMU",
+      "name": "Direxion Daily Ether Bull 2X ETF",
+      "price": "28.35",
+      "pct_52w": null,
+      "assets_usd": 2160000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "Direxion",
+      "custodian": "",
+      "inception": "May 27, 2026",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=EVMU%20S-1"
     },
     {
       "symbol": "BTCK",
@@ -2524,19 +2524,6 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=BWOW%20S-1"
     },
     {
-      "symbol": "EEE",
-      "name": "CYBER HORNET S&P 500 and Ethereum 75/25 Strategy ETF",
-      "price": "22.52",
-      "pct_52w": null,
-      "assets_usd": 575130.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "",
-      "custodian": "",
-      "inception": "Jan 29, 2026",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=EEE%20S-1"
-    },
-    {
       "symbol": "SSS",
       "name": "CYBER HORNET S&P 500 and Solana 75/25 Strategy ETF",
       "price": "22.59",
@@ -2574,6 +2561,19 @@
       "custodian": "",
       "inception": "Apr 28, 2026",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=XEY%20S-1"
+    },
+    {
+      "symbol": "EEE",
+      "name": "CYBER HORNET S&P 500 and Ethereum 75/25 Strategy ETF",
+      "price": "22.52",
+      "pct_52w": null,
+      "assets_usd": 566120.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "",
+      "custodian": "",
+      "inception": "Jan 29, 2026",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=EEE%20S-1"
     },
     {
       "symbol": "XXX",
