@@ -1,53 +1,53 @@
 {
-  "generated_at": "2026-10-18T20:58:52.982258+00:00",
+  "generated_at": "2026-10-19T05:00:37.698081+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
     "value_display": "$2.89T",
     "delta": {
-      "pct": -0.5445,
+      "pct": -0.4262,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$80,864",
+    "value_display": "$82,726",
     "delta": {
-      "pct": -0.1261,
+      "pct": 1.4178,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,346",
+    "value_display": "$2,428",
     "delta": {
-      "pct": -10.6236,
+      "pct": -7.648,
       "window": "1M"
     }
   },
   "btc_dominance": {
     "label": "BTC dominance",
-    "value_display": "56.2%",
+    "value_display": "57.5%",
     "delta": {
-      "pct": 0.3315,
+      "pct": 1.7614,
       "window": "1M"
     }
   },
   "stablecoin_share": {
     "label": "Stablecoin share",
-    "value_display": "10.8%",
+    "value_display": "10.4%",
     "delta": {
-      "pct": 2.6007,
+      "pct": 0.9289,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 56.19,
-    "stablecoin_share_top50_pct": 10.75,
-    "top50_market_cap_usd": 2672011091127.0,
-    "stablecoin_market_cap_usd": 287253589037.0,
-    "btc_market_cap_usd": 1624914614244.0
+    "btc_dominance_pct": 57.5,
+    "stablecoin_share_top50_pct": 10.43,
+    "top50_market_cap_usd": 2736835917588.0,
+    "stablecoin_market_cap_usd": 285409437245.0,
+    "btc_market_cap_usd": 1662714096447.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,7 +65,7 @@
       {
         "symbol": "BTW",
         "name": "Bitway",
-        "pct_30d": 269.0006,
+        "pct_30d": 261.9251,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/bitway",
@@ -79,7 +79,7 @@
       {
         "symbol": "QNT",
         "name": "Quant",
-        "pct_30d": 187.2755,
+        "pct_30d": 202.9243,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/quant-network",
@@ -91,21 +91,21 @@
         }
       },
       {
-        "symbol": "RAIN",
-        "name": "Rain",
-        "pct_30d": -32.0486,
-        "category": "meme",
-        "category_label": "Meme",
-        "detail_url": "https://www.coingecko.com/en/coins/rain",
-        "direction": "down",
+        "symbol": "NEAR",
+        "name": "NEAR Protocol",
+        "pct_30d": 31.3248,
+        "category": "l1",
+        "category_label": "Layer 1",
+        "detail_url": "https://www.coingecko.com/en/coins/near",
+        "direction": "up",
         "context": {
-          "title": "Bitcoin ETFs Shed Nearly $1 Billion in Two Weeks as Uptober Stays Red",
-          "source": "Decrypt",
-          "link": "https://decrypt.co/381246/bitcoin-etfs-shed-nearly-1-billion-two-weeks-uptober-red"
+          "title": "Altcoins outpace bitcoin as celestia jumps 16%, Warsh silent on interest-rate plans",
+          "source": "CoinDesk",
+          "link": "https://www.coindesk.com/markets/2026/10/16/altcoins-outpace-bitcoin-as-celestia-jumps-16-warsh-silent-on-interest-rate-plans"
         }
       }
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto printed metrics were roughly flat this week:</strong> Total market cap near $2.89T (-0.5% 30D) frames a consolidating market\u2014directional conviction is low, so structural headlines (custody, rails, regulation) carry more weight than beta alone. Related: <a href=\"https://www.coindesk.com/policy/2026/10/18/latvia-eyes-crypto-tax-payments-in-2027-as-parliament-overhauls-crypto-taxation\" target=\"_blank\" rel=\"noopener noreferrer\">Latvia eyes crypto tax payments in 2027 as parliament overhauls crypto taxation</a> (CoinDesk).</li><li><strong>Losses broadened among top-50 alts:</strong> 15 names up more than ~0.5%, 21 down more than ~0.5%, and 5 roughly flat out of <strong>41</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/tech/2026/10/18/crypto-audits-give-investors-false-sense-of-security-as-q3-hacks-cost-usd1-18-billion-hacken-says\" target=\"_blank\" rel=\"noopener noreferrer\">Crypto audits give investors false sense of security as Q3 hacks cost $1.18 billion, Hacken says</a> (CoinDesk).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://www.coindesk.com/markets/2026/10/18/wall-street-freaked-out-friday-vix-and-bitcoin-say-it-may-not-last\" target=\"_blank\" rel=\"noopener noreferrer\">Wall Street freaked out Friday. VIX and bitcoin say the fear may fade Monday.</a> (CoinDesk).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.coindesk.com/business/2026/10/17/circle-defends-usdc-economics-as-stablecoin-rivals-court-its-partners-with-bigger-cut\" target=\"_blank\" rel=\"noopener noreferrer\">Circle defends USDC economics as stablecoin rivals court its partners with bigger cut</a> (CoinDesk).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto printed metrics were roughly flat this week:</strong> Total market cap near $2.89T (-0.4% 30D) frames a consolidating market\u2014directional conviction is low, so structural headlines (custody, rails, regulation) carry more weight than beta alone. Related: <a href=\"https://www.coindesk.com/business/2026/10/18/deutsche-bank-targets-asia-crypto-custody-expansion-in-2027-as-german-launch-nears\" target=\"_blank\" rel=\"noopener noreferrer\">Deutsche Bank targets Asia crypto custody expansion in 2027 as German launch nears</a> (CoinDesk).</li><li><strong>Top-50 alts showed mixed 1M moves:</strong> 17 names up more than ~0.5%, 21 down more than ~0.5%, and 4 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.theblock.co/news/defi/2026-10-18-cysic-suspends-bridge-after-attacker-mints-tokens-and-moves-727000-to-ethereum-418863\" target=\"_blank\" rel=\"noopener noreferrer\">Cysic suspends bridge after attacker mints tokens and moves $727,000 to Ethereum</a> (The Block).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://www.coindesk.com/markets/2026/10/19/bitcoin-korea-s-kospi-and-nasdaq-futures-rally-as-china-gdp-beats-estimates\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin, Korea\u2019s Kospi and Nasdaq futures rally as China GDP beats estimates</a> (CoinDesk).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.coindesk.com/business/2026/10/18/sec-tokenized-stock-framework-faces-issuer-pushback-as-broadcom-verizon-object-to-okx-ice-listing\" target=\"_blank\" rel=\"noopener noreferrer\">SEC tokenized stock framework faces issuer pushback as Broadcom, Verizon object to OKX-ICE listing</a> (CoinDesk).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
