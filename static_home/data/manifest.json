@@ -1,15 +1,29 @@
 {
-  "generated_at": "2026-10-20T05:09:44.165833+00:00",
+  "generated_at": "2026-10-20T12:02:02.517563+00:00",
   "errors": [
     "ETF news RSS: ETFdb: HTTP Error 403: Forbidden",
     "ETF news RSS: ETF Trends (VettaFi): HTTP Error 403: Forbidden",
     "ETF news RSS: GlobeNewswire (ETF): HTTP Error 403: Forbidden",
-    "ETF news RSS: Yahoo Finance (headlines): HTTP Error 404: Not Found"
+    "ETF news RSS: Yahoo Finance (headlines): HTTP Error 404: Not Found",
+    "custodian RSS: Global Custodian RSS parse https://www.globalcustodian.com/category/digital-asset-servicing/feed/: <unknown>:26:113: not well-formed (invalid token)",
+    "custodian RSS: Global Custodian RSS parse https://www.globalcustodian.com/digital-asset-servicing/feed/: <unknown>:26:113: not well-formed (invalid token)",
+    "custodian RSS: Global Custodian RSS parse https://www.globalcustodian.com/tag/digital-asset/feed/: <unknown>:26:113: not well-formed (invalid token)",
+    "custodian RSS: Global Custodian RSS parse https://www.globalcustodian.com/feed/: <unknown>:26:113: not well-formed (invalid token)",
+    "custodian RSS: GC search page https://www.globalcustodian.com/?s=digital+asset: The read operation timed out",
+    "custodian RSS: GC search page https://www.globalcustodian.com/page/2/?s=digital+asset: The read operation timed out",
+    "custodian RSS: GC search page https://www.globalcustodian.com/page/3/?s=digital+asset: The read operation timed out",
+    "custodian RSS: GC search page https://www.globalcustodian.com/page/4/?s=digital+asset: The read operation timed out",
+    "custodian RSS: GC search page https://www.globalcustodian.com/?s=digital+asset+custody: The read operation timed out",
+    "custodian RSS: GC search page https://www.globalcustodian.com/page/2/?s=digital+asset+custody: The read operation timed out",
+    "custodian RSS: GC search page https://www.globalcustodian.com/page/3/?s=digital+asset+custody: The read operation timed out",
+    "custodian RSS: GC search page https://www.globalcustodian.com/page/4/?s=digital+asset+custody: The read operation timed out"
   ],
-  "etp_refreshed_at": "2026-10-20T05:04:33.129142+00:00",
-  "crypto_refreshed_at": "2026-10-20T05:05:57.261660+00:00",
-  "stale_sections": [],
-  "export_completed_at": "2026-10-20T05:09:44.165833+00:00",
+  "etp_refreshed_at": "2026-10-20T11:54:55.587882+00:00",
+  "crypto_refreshed_at": "2026-10-20T11:58:16.804941+00:00",
+  "stale_sections": [
+    "news"
+  ],
+  "export_completed_at": "2026-10-20T12:02:02.517563+00:00",
   "refresh_interval_hours": 6,
   "stale_threshold_hours": {
     "etp": 9,
@@ -19,10 +33,10 @@
     "regulatory": 24
   },
   "sections": {
-    "news": "2026-10-20T05:04:38.194522+00:00",
-    "regulatory": "2026-10-20T05:04:38.194522+00:00",
-    "etp": "2026-10-20T05:04:33.129142+00:00",
-    "rwa": "2026-10-20T05:09:36.868048+00:00",
-    "crypto": "2026-10-20T05:05:57.261660+00:00"
+    "news": "2026-10-20T11:55:00.691082+00:00",
+    "regulatory": "2026-10-20T11:55:00.691082+00:00",
+    "etp": "2026-10-20T11:54:55.587882+00:00",
+    "rwa": "2026-10-20T12:01:56.448058+00:00",
+    "crypto": "2026-10-20T11:58:16.804941+00:00"
   }
 }

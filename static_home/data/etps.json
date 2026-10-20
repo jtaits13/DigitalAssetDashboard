@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-20T05:04:33.129142+00:00",
+  "generated_at": "2026-10-20T11:54:55.587882+00:00",
   "rows": [
     {
       "symbol": "IBIT",
@@ -498,8 +498,8 @@
     {
       "symbol": "FDIG",
       "name": "Fidelity Crypto Industry and Digital Payments ETF",
-      "price": "36.09",
-      "pct_52w": -32.34,
+      "price": "36.06",
+      "pct_52w": -32.4,
       "assets_usd": 223340000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1135,7 +1135,7 @@
     {
       "symbol": "SPBC",
       "name": "Simplify US Equity PLUS Bitcoin Strategy ETF",
-      "price": "50.34",
+      "price": "50.18",
       "pct_52w": 14.55,
       "assets_usd": 43010000.0,
       "flow_1y_usd": null,
@@ -1161,7 +1161,7 @@
     {
       "symbol": "GLDB",
       "name": "IDX Alternative FIAT ETF",
-      "price": "21.64",
+      "price": "21.62",
       "pct_52w": null,
       "assets_usd": 39770000.0,
       "flow_1y_usd": null,
@@ -1200,7 +1200,7 @@
     {
       "symbol": "SUIS",
       "name": "Canary Staked SUIS ETF",
-      "price": "25.69",
+      "price": "25.49",
       "pct_52w": null,
       "assets_usd": 30620000.0,
       "flow_1y_usd": null,
@@ -1266,7 +1266,7 @@
       "symbol": "SLON",
       "name": "ProShares Ultra Solana ETF",
       "price": "31.75",
-      "pct_52w": -82.85,
+      "pct_52w": -82.84,
       "assets_usd": 26020000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -1357,7 +1357,7 @@
       "symbol": "QETH",
       "name": "Invesco Galaxy Ethereum ETF",
       "price": "23.77",
-      "pct_52w": -37.51,
+      "pct_52w": -37.69,
       "assets_usd": 21150000.0,
       "flow_1y_usd": 45100000.0,
       "flow_1y_window": "1Y",
@@ -1365,6 +1365,19 @@
       "custodian": "Coinbase, Unknown (Cash, TA)",
       "inception": "Jul 23, 2024",
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=QETH%20S-1"
+    },
+    {
+      "symbol": "VAVX",
+      "name": "VanEck Avalanche ETF",
+      "price": "19.68",
+      "pct_52w": null,
+      "assets_usd": 20820000.0,
+      "flow_1y_usd": null,
+      "flow_1y_window": "",
+      "issuer": "VanEck",
+      "custodian": "",
+      "inception": "Dec 22, 2025",
+      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=VAVX%20S-1"
     },
     {
       "symbol": "DFII",
@@ -1380,22 +1393,9 @@
       "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=DFII%20S-1"
     },
     {
-      "symbol": "VAVX",
-      "name": "VanEck Avalanche ETF",
-      "price": "19.68",
-      "pct_52w": null,
-      "assets_usd": 20420000.0,
-      "flow_1y_usd": null,
-      "flow_1y_window": "",
-      "issuer": "VanEck",
-      "custodian": "",
-      "inception": "Dec 22, 2025",
-      "fund_filing_url": "https://www.sec.gov/edgar/search/#/q=VAVX%20S-1"
-    },
-    {
       "symbol": "DECO",
       "name": "State Street Galaxy Digital Asset Ecosystem ETF",
-      "price": "59.20",
+      "price": "59.01",
       "pct_52w": 12.51,
       "assets_usd": 18060000.0,
       "flow_1y_usd": null,
@@ -1746,7 +1746,7 @@
     {
       "symbol": "GAVA",
       "name": "Grayscale Avalanche Staking ETF",
-      "price": "23.12",
+      "price": "23.16",
       "pct_52w": null,
       "assets_usd": 9000000.0,
       "flow_1y_usd": null,
@@ -1785,8 +1785,8 @@
     {
       "symbol": "BBB",
       "name": "CYBER HORNET S&P 500 and Bitcoin 75/25 Strategy ETF",
-      "price": "32.09",
-      "pct_52w": 6.25,
+      "price": "32.03",
+      "pct_52w": 6.04,
       "assets_usd": 8070000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -2110,7 +2110,7 @@
     {
       "symbol": "SOLC",
       "name": "Canary Marinade Solana ETF",
-      "price": "21.05",
+      "price": "21.04",
       "pct_52w": null,
       "assets_usd": 3650000.0,
       "flow_1y_usd": null,
@@ -2149,8 +2149,8 @@
     {
       "symbol": "DIME",
       "name": "CoinShares Altcoins ETF",
-      "price": "11.63",
-      "pct_52w": -37.08,
+      "price": "11.68",
+      "pct_52w": -26.52,
       "assets_usd": 2860000.0,
       "flow_1y_usd": null,
       "flow_1y_window": "",
@@ -2578,7 +2578,7 @@
     {
       "symbol": "XXX",
       "name": "CYBER HORNET S&P 500 and XRP 75/25 Strategy ETF",
-      "price": "21.47",
+      "price": "21.49",
       "pct_52w": null,
       "assets_usd": 544270.0,
       "flow_1y_usd": null,
