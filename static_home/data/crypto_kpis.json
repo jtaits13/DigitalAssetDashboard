@@ -1,36 +1,36 @@
 {
-  "generated_at": "2026-10-21T17:28:16.228506+00:00",
+  "generated_at": "2026-10-21T21:54:59.305107+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
-    "value_display": "$2.95T",
+    "value_display": "$2.96T",
     "delta": {
-      "pct": -3.1995,
+      "pct": -3.7686,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$84,486",
+    "value_display": "$84,783",
     "delta": {
-      "pct": -1.6441,
+      "pct": -2.2155,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,511",
+    "value_display": "$2,497",
     "delta": {
-      "pct": -8.9194,
+      "pct": -9.8424,
       "window": "1M"
     }
   },
   "btc_dominance": {
     "label": "BTC dominance",
-    "value_display": "57.5%",
+    "value_display": "57.6%",
     "delta": {
-      "pct": 1.638,
+      "pct": 1.4475,
       "window": "1M"
     }
   },
@@ -38,16 +38,16 @@
     "label": "Stablecoin share",
     "value_display": "10.2%",
     "delta": {
-      "pct": 3.1712,
+      "pct": 3.6299,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 57.49,
-    "stablecoin_share_top50_pct": 10.17,
-    "top50_market_cap_usd": 2795250641536.0,
-    "stablecoin_market_cap_usd": 284223865509.0,
-    "btc_market_cap_usd": 1698004149432.0
+    "btc_dominance_pct": 57.56,
+    "stablecoin_share_top50_pct": 10.16,
+    "top50_market_cap_usd": 2801165671750.0,
+    "stablecoin_market_cap_usd": 284618036850.0,
+    "btc_market_cap_usd": 1703944748085.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,7 +65,7 @@
       {
         "symbol": "QNT",
         "name": "Quant",
-        "pct_30d": 192.9546,
+        "pct_30d": 213.8148,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/quant-network",
@@ -79,7 +79,7 @@
       {
         "symbol": "BTW",
         "name": "Bitway",
-        "pct_30d": 79.3987,
+        "pct_30d": 70.2786,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/bitway",
@@ -93,7 +93,7 @@
       {
         "symbol": "RAIN",
         "name": "Rain",
-        "pct_30d": -34.3813,
+        "pct_30d": -34.578,
         "category": "meme",
         "category_label": "Meme",
         "detail_url": "https://www.coingecko.com/en/coins/rain",
@@ -107,5 +107,5 @@
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap fell 3.2% over 30D:</strong> Total crypto market cap at $2.95T (3.2% lower over 30D) points to a risk-off or digestive market\u2014capital is more selective, and plumbing stories matter more than beta chase. Related: <a href=\"https://www.coindesk.com/policy/2026/10/21/why-centralized-exchanges-refuse-to-list-legacy-crypto-tokens-without-explicit-sec-immunity\" target=\"_blank\" rel=\"noopener noreferrer\">Why centralized exchanges refuse to list legacy crypto tokens without explicit SEC immunity</a> (CoinDesk).</li><li><strong>Losses broadened among top-50 alts:</strong> 12 names up more than ~0.5%, 26 down more than ~0.5%, and 4 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://thedefiant.io/converge/tradfi-and-fintech/finma-approves-first-swiss-retail-bitcoin-etf\" target=\"_blank\" rel=\"noopener noreferrer\">FINMA Approves First Swiss Retail Bitcoin ETF</a> (The Defiant).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.theblock.co/news/business/2026-10-20-mastercard-opens-early-access-to-ai-agent-payments-following-pilots-with-coinbase-base-and-cloudflare-421406\" target=\"_blank\" rel=\"noopener noreferrer\">Mastercard opens early access to AI agent payments following pilots with Coinbase, Base and Cloudflare</a> (The Block).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://decrypt.co/381385/blackrock-files-for-buffer-bitcoin-etf-as-ibit-draws-665m-in-a-day\" target=\"_blank\" rel=\"noopener noreferrer\">BlackRock Files for &#x27;Buffer&#x27; Bitcoin ETF as IBIT Draws $665M in a Day</a> (Decrypt).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap fell 3.8% over 30D:</strong> Total crypto market cap at $2.96T (3.8% lower over 30D) points to a risk-off or digestive market\u2014capital is more selective, and plumbing stories matter more than beta chase. Related: <a href=\"https://www.coindesk.com/policy/2026/10/21/why-centralized-exchanges-refuse-to-list-legacy-crypto-tokens-without-explicit-sec-immunity\" target=\"_blank\" rel=\"noopener noreferrer\">Why centralized exchanges refuse to list legacy crypto tokens without explicit SEC immunity</a> (CoinDesk).</li><li><strong>Losses broadened among top-50 alts:</strong> 13 names up more than ~0.5%, 25 down more than ~0.5%, and 4 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://thedefiant.io/converge/tradfi-and-fintech/finma-approves-first-swiss-retail-bitcoin-etf\" target=\"_blank\" rel=\"noopener noreferrer\">FINMA Approves First Swiss Retail Bitcoin ETF</a> (The Defiant).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.theblock.co/news/business/2026-10-20-mastercard-opens-early-access-to-ai-agent-payments-following-pilots-with-coinbase-base-and-cloudflare-421406\" target=\"_blank\" rel=\"noopener noreferrer\">Mastercard opens early access to AI agent payments following pilots with Coinbase, Base and Cloudflare</a> (The Block).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://decrypt.co/381385/blackrock-files-for-buffer-bitcoin-etf-as-ibit-draws-665m-in-a-day\" target=\"_blank\" rel=\"noopener noreferrer\">BlackRock Files for &#x27;Buffer&#x27; Bitcoin ETF as IBIT Draws $665M in a Day</a> (Decrypt).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
