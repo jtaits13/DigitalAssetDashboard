@@ -1,53 +1,53 @@
 {
-  "generated_at": "2026-10-24T11:22:34.794450+00:00",
+  "generated_at": "2026-10-24T16:11:40.362666+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
-    "value_display": "$2.82T",
+    "value_display": "$2.78T",
     "delta": {
-      "pct": -5.0245,
+      "pct": -7.5281,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$80,571",
+    "value_display": "$79,688",
     "delta": {
-      "pct": -3.1941,
+      "pct": -4.6224,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,366",
+    "value_display": "$2,301",
     "delta": {
-      "pct": -10.4024,
+      "pct": -13.2433,
       "window": "1M"
     }
   },
   "btc_dominance": {
     "label": "BTC dominance",
-    "value_display": "57.4%",
+    "value_display": "57.6%",
     "delta": {
-      "pct": 1.8404,
+      "pct": 3.1942,
       "window": "1M"
     }
   },
   "stablecoin_share": {
     "label": "Stablecoin share",
-    "value_display": "10.6%",
+    "value_display": "10.7%",
     "delta": {
-      "pct": 4.8256,
+      "pct": 6.7525,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 57.4,
-    "stablecoin_share_top50_pct": 10.61,
-    "top50_market_cap_usd": 2671170290702.0,
-    "stablecoin_market_cap_usd": 283420158184.0,
-    "btc_market_cap_usd": 1619679344401.0
+    "btc_dominance_pct": 57.56,
+    "stablecoin_share_top50_pct": 10.74,
+    "top50_market_cap_usd": 2639430791401.0,
+    "stablecoin_market_cap_usd": 283401532736.0,
+    "btc_market_cap_usd": 1602124536558.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,7 +65,7 @@
       {
         "symbol": "QNT",
         "name": "Quant",
-        "pct_30d": 152.6204,
+        "pct_30d": 119.6804,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/quant-network",
@@ -79,7 +79,7 @@
       {
         "symbol": "BTW",
         "name": "Bitway",
-        "pct_30d": 71.7091,
+        "pct_30d": 69.577,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/bitway",
@@ -93,7 +93,7 @@
       {
         "symbol": "RAIN",
         "name": "Rain",
-        "pct_30d": -32.5665,
+        "pct_30d": -35.1222,
         "category": "meme",
         "category_label": "Meme",
         "detail_url": "https://www.coingecko.com/en/coins/rain",
@@ -107,5 +107,5 @@
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap fell 5.0% over 30D:</strong> Total crypto market cap at $2.82T (5.0% lower over 30D) points to a risk-off or digestive market\u2014capital is more selective, and plumbing stories matter more than beta chase. Related: <a href=\"https://cointelegraph.com/news/sec-adds-tokenized-securities-to-2027-examination-priorities?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">SEC flags tokenization as high-risk area in 2027 market examinations</a> (CoinTelegraph).</li><li><strong>Losses broadened among top-50 alts:</strong> 8 names up more than ~0.5%, 30 down more than ~0.5%, and 4 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://decrypt.co/381611/bitcoin-etfs-erase-october-losses-1-billion-three-days\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin ETFs Erase October Losses With $1 Billion in Three Days</a> (Decrypt).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.theblock.co/news/regulation/2026-10-22-jpmorgan-crypto-regulatory-moves-clarity-act-failure-risks-423473\" target=\"_blank\" rel=\"noopener noreferrer\">JPMorgan says crypto regulatory moves partly offset Clarity Act failure, but risks remain</a> (The Block).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://cointelegraph.com/news/switzerland-approves-first-spot-bitcoin-etf-for-retail-investors?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Switzerland\u2019s first retail spot Bitcoin ETF targets November launch</a> (CoinTelegraph).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap fell 7.5% over 30D:</strong> Total crypto market cap at $2.78T (7.5% lower over 30D) points to a risk-off or digestive market\u2014capital is more selective, and plumbing stories matter more than beta chase. Related: <a href=\"https://cointelegraph.com/news/sec-adds-tokenized-securities-to-2027-examination-priorities?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">SEC flags tokenization as high-risk area in 2027 market examinations</a> (CoinTelegraph).</li><li><strong>Losses broadened among top-50 alts:</strong> 5 names up more than ~0.5%, 33 down more than ~0.5%, and 4 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://decrypt.co/381611/bitcoin-etfs-erase-october-losses-1-billion-three-days\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin ETFs Erase October Losses With $1 Billion in Three Days</a> (Decrypt).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://www.coindesk.com/\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin\u2019s wealthy holders turning to loans and yield as investment habits mature: Xapo CEO</a> (CoinDesk).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.theblock.co/news/regulation/2026-10-22-jpmorgan-crypto-regulatory-moves-clarity-act-failure-risks-423473\" target=\"_blank\" rel=\"noopener noreferrer\">JPMorgan says crypto regulatory moves partly offset Clarity Act failure, but risks remain</a> (The Block).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
