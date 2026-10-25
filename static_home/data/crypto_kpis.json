@@ -1,36 +1,36 @@
 {
-  "generated_at": "2026-10-25T16:43:20.942715+00:00",
+  "generated_at": "2026-10-25T21:04:03.163323+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
     "value_display": "$2.82T",
     "delta": {
-      "pct": -6.5034,
+      "pct": -6.5442,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$80,475",
+    "value_display": "$80,389",
     "delta": {
-      "pct": -4.0707,
+      "pct": -4.3121,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,340",
+    "value_display": "$2,344",
     "delta": {
-      "pct": -13.079,
+      "pct": -12.9628,
       "window": "1M"
     }
   },
   "btc_dominance": {
     "label": "BTC dominance",
-    "value_display": "57.5%",
+    "value_display": "57.4%",
     "delta": {
-      "pct": 2.654,
+      "pct": 2.4449,
       "window": "1M"
     }
   },
@@ -38,16 +38,16 @@
     "label": "Stablecoin share",
     "value_display": "10.6%",
     "delta": {
-      "pct": 6.5504,
+      "pct": 6.6977,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 57.46,
+    "btc_dominance_pct": 57.39,
     "stablecoin_share_top50_pct": 10.61,
-    "top50_market_cap_usd": 2669780185891.0,
-    "stablecoin_market_cap_usd": 283234683061.0,
-    "btc_market_cap_usd": 1617820317115.0
+    "top50_market_cap_usd": 2669411084007.0,
+    "stablecoin_market_cap_usd": 283182270467.0,
+    "btc_market_cap_usd": 1616089485160.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,7 +65,7 @@
       {
         "symbol": "QNT",
         "name": "Quant",
-        "pct_30d": 96.9805,
+        "pct_30d": 99.3465,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/quant-network",
@@ -79,7 +79,7 @@
       {
         "symbol": "BTW",
         "name": "Bitway",
-        "pct_30d": 37.1421,
+        "pct_30d": 30.7461,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/bitway",
@@ -91,17 +91,17 @@
         }
       },
       {
-        "symbol": "UNI",
-        "name": "Uniswap",
-        "pct_30d": -29.4523,
-        "category": "defi",
-        "category_label": "DeFi",
-        "detail_url": "https://www.coingecko.com/en/coins/uniswap",
+        "symbol": "RAIN",
+        "name": "Rain",
+        "pct_30d": -28.9266,
+        "category": "meme",
+        "category_label": "Meme",
+        "detail_url": "https://www.coingecko.com/en/coins/rain",
         "direction": "down",
         "context": {
-          "title": "Uniswap\u2019s aggregator hooks go live on Ethereum, Base and Robinhood Chain",
-          "source": "The Block",
-          "link": "https://www.theblock.co/news/defi/2026-10-22-uniswaps-aggregator-hooks-go-live-ethereum-base-robinhood-chain-421932"
+          "title": "Netanyahu Considering Crypto Plan to Dodge Banking Sanctions on Israel",
+          "source": "Decrypt",
+          "link": "https://decrypt.co/381758/netanyahu-crypto-plan-banking-sanctions-israel"
         }
       }
     ]
