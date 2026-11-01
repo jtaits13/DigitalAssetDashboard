@@ -3,11 +3,11 @@
 Each section has a repeatable weekly refresh. If that refresh fails, the last
 committed series is reused and a do-not-send issue is raised.
 
-- TMMF: freeze this week's printed RWA.xyz figure (no public daily series).
-- Stablecoins: refetch DefiLlama circulating USD (Mondays).
-- RWA chart: refetch DefiLlama RWA protocol TVL. Headline KPI is RWA.xyz.
-- Crypto: refetch CoinPaprika 30D total market cap (same series as the KPI).
-- U.S. crypto ETPs: refetch the dashboard aggregate AUM weekly series.
+- TMMF: freeze printed RWA.xyz figures. The chart shows the last 30 days, one dot per saved week.
+- Stablecoins: DefiLlama circulating USD on each Monday, plus the latest day.
+- RWA chart: DefiLlama RWA protocol TVL on each Monday, plus the latest day. Headline KPI is RWA.xyz.
+- Crypto: CoinPaprika total market cap on each Monday, plus the latest day.
+- U.S. crypto ETPs: Yahoo-scaled AUM on each weekly bar, plus the latest reported level.
 
 Charts are PNG files Outlook can display.
 """
@@ -254,7 +254,7 @@ def _defillama_stable_points(week_end: date) -> list[dict[str, Any]]:
     rows = resp.json()
     if not isinstance(rows, list):
         return []
-    by_monday: dict[date, float] = {}
+    by_day: dict[date, float] = {}
     for row in rows:
         if not isinstance(row, dict):
             continue
@@ -278,12 +278,8 @@ def _defillama_stable_points(week_end: date) -> list[dict[str, Any]]:
                 continue
         if total <= 0:
             continue
-        by_monday[_monday_of(day)] = total
-    mondays = _dates_in_30d_kpi_window(by_monday, week_end)
-    return [
-        {"week_end": d.isoformat(), "value": by_monday[d], "source": "defillama"}
-        for d in mondays
-    ]
+        by_day[day] = total
+    return _weekly_points_from_daily(by_day, week_end, "defillama")
 
 
 def _stablecoin_live_series(week_end: date) -> dict[str, Any]:
@@ -456,8 +452,40 @@ def _parsed_points(series: dict[str, Any]) -> list[tuple[date, float]]:
     return out
 
 
+def chart_plot_points(series: dict[str, Any]) -> list[tuple[date, float]]:
+    """Points actually drawn: last 30 days, without 7D/30D fills or next-day duplicates."""
+    parsed: list[tuple[date, float]] = []
+    for row in series.get("points") or []:
+        if not isinstance(row, dict):
+            continue
+        if str(row.get("source") or "") in _TMMF_FILL_SOURCES:
+            continue
+        try:
+            day = date.fromisoformat(str(row.get("week_end") or ""))
+            value = float(row.get("value"))
+        except (TypeError, ValueError):
+            continue
+        if value <= 0:
+            continue
+        parsed.append((day, value))
+    parsed.sort(key=lambda item: item[0])
+    deduped: list[tuple[date, float]] = []
+    for day, value in parsed:
+        if deduped:
+            prev_day, prev_value = deduped[-1]
+            same_reading = prev_value > 0 and abs(value - prev_value) / prev_value <= 0.005
+            if (day - prev_day).days <= 1 and same_reading:
+                continue
+        deduped.append((day, value))
+    if not deduped:
+        return []
+    by_date = {day: value for day, value in deduped}
+    chosen = _dates_in_30d_kpi_window(by_date, max(by_date))
+    return [(day, by_date[day]) for day in chosen]
+
+
 def render_series_png(series: dict[str, Any], dest: Path) -> bool:
-    points = _parsed_points(series)
+    points = chart_plot_points(series)
     if len(points) < 2:
         return False
     try:
@@ -482,7 +510,7 @@ def render_series_png(series: dict[str, Any], dest: Path) -> bool:
     ax.scatter(xs, ys, color=_COLOR_LINE, s=22, zorder=4)
     ax.yaxis.set_major_formatter(FuncFormatter(_usd_axis_label))
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%d %b"))
-    if len(xs) <= 6:
+    if len(xs) <= 8:
         ax.set_xticks(xs)
     else:
         ax.xaxis.set_major_locator(mdates.AutoDateLocator(minticks=4, maxticks=7))
@@ -505,8 +533,8 @@ def render_series_png(series: dict[str, Any], dest: Path) -> bool:
 
 def _tmmf_caption(series: dict[str, Any]) -> str:
     return (
-        "Curated TMMF distributed value from RWA.xyz. "
-        "Latest / 7D / 30D are live token totals."
+        "Curated TMMF distributed value from RWA.xyz over the last 30 days. "
+        "One point per saved week; weeks without a reading are skipped."
     )
 
 
@@ -538,7 +566,7 @@ def _etp_weekly_series(week_end: date) -> dict[str, Any]:
             payload = {"series": live_series}
     except Exception:
         payload = {}
-    by_monday: dict[date, float] = {}
+    by_day: dict[date, float] = {}
     for row in payload.get("series") or []:
         if not isinstance(row, dict):
             continue
@@ -549,16 +577,17 @@ def _etp_weekly_series(week_end: date) -> dict[str, Any]:
             continue
         if day > week_end or aum_b <= 0:
             continue
-        by_monday[_monday_of(day)] = aum_b * 1e9
-    mondays = _dates_in_30d_kpi_window(by_monday, week_end)
+        by_day[day] = aum_b * 1e9
+    # Yahoo's weekly bars stop on the week-start Monday. The last bar is the
+    # current reported AUM, so place that same reading on the chart's as-of day.
+    as_of = min(week_end, date.today())
+    if by_day and as_of not in by_day and max(by_day) < as_of:
+        by_day[as_of] = by_day[max(by_day)]
     return {
         "title": "U.S. crypto ETP aggregate AUM",
         "unit": "usd",
         "source": "Yahoo-scaled listed AUM (weekly)",
-        "points": [
-            {"week_end": d.isoformat(), "value": by_monday[d], "source": "yahoo_scaled"}
-            for d in mondays
-        ],
+        "points": _weekly_points_from_daily(by_day, week_end, "yahoo_scaled"),
     }
 
 
@@ -602,6 +631,19 @@ def _weekly_chart_dates(by_day: dict[date, float], week_end: date) -> list[date]
     start, end = window[0], window[-1]
     mondays = [d for d in window if d.weekday() == 0]
     return sorted(set(mondays + [start, end]))
+
+
+def _weekly_points_from_daily(
+    by_day: dict[date, float],
+    week_end: date,
+    source: str,
+) -> list[dict[str, Any]]:
+    """Monday readings use that calendar day's value, and the series ends on the latest day."""
+    return [
+        {"week_end": day.isoformat(), "value": by_day[day], "source": source}
+        for day in _weekly_chart_dates(by_day, week_end)
+        if day in by_day
+    ]
 
 
 def _crypto_weekly_series(week_end: date) -> dict[str, Any]:
@@ -702,18 +744,11 @@ def _defillama_rwa_weekly_series(week_end: date) -> dict[str, Any]:
                 if day > week_end:
                     continue
                 by_day[day] = by_day.get(day, 0.0) + value
-    by_monday: dict[date, float] = {}
-    for day, value in sorted(by_day.items()):
-        by_monday[_monday_of(day)] = value
-    mondays = _dates_in_30d_kpi_window(by_monday, week_end)
     return {
         "title": "RWA distributed value",
         "unit": "usd",
         "source": "DefiLlama RWA protocol TVL (weekly)",
-        "points": [
-            {"week_end": d.isoformat(), "value": by_monday[d], "source": "defillama"}
-            for d in mondays
-        ],
+        "points": _weekly_points_from_daily(by_day, week_end, "defillama"),
     }
 
 
