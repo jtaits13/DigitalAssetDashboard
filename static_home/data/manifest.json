@@ -1,15 +1,20 @@
 {
-  "generated_at": "2026-11-01T06:34:34.830252+00:00",
+  "generated_at": "2026-11-01T18:10:12.466056+00:00",
   "errors": [
+    "ETF news RSS: GlobeNewswire (ETF): HTTP Error 403: Forbidden",
     "ETF news RSS: ETF Trends (VettaFi): HTTP Error 403: Forbidden",
     "ETF news RSS: ETFdb: HTTP Error 403: Forbidden",
-    "ETF news RSS: GlobeNewswire (ETF): HTTP Error 403: Forbidden",
-    "ETF news RSS: Yahoo Finance (headlines): HTTP Error 404: Not Found"
+    "ETF news RSS: Yahoo Finance (headlines): HTTP Error 404: Not Found",
+    "ETF news RSS: Google News (crypto ETF): HTTP Error 503: Service Unavailable",
+    "ETF news RSS: Google News (spot Bitcoin ETF): HTTP Error 503: Service Unavailable",
+    "ETF news RSS: Google News (crypto ETP / ETF): HTTP Error 503: Service Unavailable",
+    "news RSS (all articles): The Block: HTTP Error 503: Service Unavailable",
+    "news RSS (all articles): CoinDesk: HTTP Error 503: Service Unavailable"
   ],
-  "etp_refreshed_at": "2026-11-01T06:29:11.602833+00:00",
-  "crypto_refreshed_at": "2026-11-01T06:30:50.026883+00:00",
+  "etp_refreshed_at": "2026-11-01T18:01:32.865609+00:00",
+  "crypto_refreshed_at": "2026-11-01T18:03:45.355214+00:00",
   "stale_sections": [],
-  "export_completed_at": "2026-11-01T06:34:34.830252+00:00",
+  "export_completed_at": "2026-11-01T18:10:12.466056+00:00",
   "refresh_interval_hours": 6,
   "stale_threshold_hours": {
     "etp": 9,
@@ -19,10 +24,10 @@
     "regulatory": 24
   },
   "sections": {
-    "news": "2026-11-01T06:29:17.893361+00:00",
-    "regulatory": "2026-11-01T06:29:17.893361+00:00",
-    "etp": "2026-11-01T06:29:11.602833+00:00",
-    "rwa": "2026-11-01T06:34:27.365907+00:00",
-    "crypto": "2026-11-01T06:30:50.026883+00:00"
+    "news": "2026-11-01T18:02:46.520533+00:00",
+    "regulatory": "2026-11-01T18:02:46.520533+00:00",
+    "etp": "2026-11-01T18:01:32.865609+00:00",
+    "rwa": "2026-11-01T18:08:55.124344+00:00",
+    "crypto": "2026-11-01T18:03:45.355214+00:00"
   }
 }
