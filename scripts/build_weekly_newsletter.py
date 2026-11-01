@@ -60,7 +60,8 @@ def _fmt_pct(raw: object, *, decimals: int = 1, unit: str = "auto") -> str:
 
     ``unit``:
       - ``"fraction"`` — value is a share (0.027 → +2.7%); used for RWA explore deltas
-      - ``"percent"`` — value is already percentage points (-1.4 → -1.4%); crypto/ETP KPIs
+      - ``"percent"`` — value is already a percent (-1.4 → -1.4%); crypto/ETP KPIs
+      - ``"pp"`` — value is a share-point difference (-0.088 → -8.8 pp); network share
       - ``"auto"`` — scale only when ``abs(n) < 1`` (legacy heuristic; prefer an explicit unit)
     """
     if raw is None:
@@ -70,8 +71,12 @@ def _fmt_pct(raw: object, *, decimals: int = 1, unit: str = "auto") -> str:
     except (TypeError, ValueError):
         return "—"
     mode = (unit or "auto").strip().lower()
+    suffix = "%"
     if mode == "fraction":
         n *= 100.0
+    elif mode == "pp":
+        n *= 100.0
+        suffix = " pp"
     elif mode == "percent":
         pass
     elif abs(n) < 1.0 and n != 0:
@@ -79,7 +84,7 @@ def _fmt_pct(raw: object, *, decimals: int = 1, unit: str = "auto") -> str:
     if n == 0:
         return "flat"
     sign = "+" if n >= 0 else ""
-    return f"{sign}{n:.{decimals}f}%"
+    return f"{sign}{n:.{decimals}f}{suffix}"
 
 
 def _parse_iso_dt(raw: object) -> datetime | None:
@@ -772,7 +777,6 @@ def _polish_newsletter_rest(lead: str, rest: str, *, lead_overflow: str = "") ->
         rest,
         flags=re.IGNORECASE,
     )
-    rest = re.sub(r"([+\-]?\d+(?:\.\d+)?)\s+pp\b", r"\1%", rest)
     rest = re.sub(r"30D share\)", "30D TMMF network share)", rest, flags=re.IGNORECASE)
     rest = re.sub(r"\s{2,}", " ", rest).strip()
     rest = re.sub(r"\.{2,}", ".", rest)
@@ -1455,10 +1459,15 @@ def _explore_kpi_cells(explore: dict[str, dict[str, Any]], section_id: str, *, o
     for i, k in enumerate(kpis):
         label = str(k.get("label") or "—")
         pct_decimals = 2 if "fund" in label.lower() else 1
+        share_points = "network share" in label.lower()
         cells += _kpi_row(
             label,
             str(k.get("value_display") or "—"),
-            _fmt_pct(k.get("delta_30d_pct"), decimals=pct_decimals, unit="fraction"),
+            _fmt_pct(
+                k.get("delta_30d_pct"),
+                decimals=pct_decimals,
+                unit="pp" if share_points else "fraction",
+            ),
             is_last=(i == len(kpis) - 1),
             outlook=outlook,
         )
@@ -1945,10 +1954,12 @@ def _week_in_brief_watch_etp(
     except (TypeError, ValueError):
         flow_usd_n = None
     if aum_n is not None and aum_n < -10 and flow_usd_n is not None and flow_usd_n > 0:
-        flow_ref = flow_disp or flow_pct
+        detail = flow_disp or flow_pct
+        if flow_n is not None and flow_n < 0 and flow_disp and flow_pct not in {"", "—", "flat"}:
+            detail = f"{flow_disp}, {flow_pct} vs the prior 30 days"
         return (
-            f"crypto spot weakness hit AUM marks while 30-day net flows turned positive "
-            f"({flow_ref})—watch whether allocators keep adding on the dip"
+            f"crypto spot weakness hit AUM marks while 30-day net flows stayed positive "
+            f"({detail})—watch whether allocators keep adding on the dip"
         )
     if aum_n is not None and aum_n < -5:
         return (
@@ -1956,6 +1967,12 @@ def _week_in_brief_watch_etp(
             "monitor flow and filing data to see if exposure is stabilizing"
         )
     if flow_n is not None and flow_n < 0:
+        if flow_usd_n is not None and flow_usd_n > 0 and flow_disp:
+            return (
+                f"30-day net flows stayed a net inflow at {flow_disp} "
+                f"({flow_pct} vs the prior 30 days)—"
+                "smaller than the prior window"
+            )
         return (
             f"30-day net flows stayed negative ({flow_disp or flow_pct})—"
             "track whether outflows broaden beyond bitcoin-only products"
@@ -2305,7 +2322,22 @@ def build_newsletter_html(
     try:
         from newsletter_weekly_charts import prepare_newsletter_charts
 
-        section_charts, chart_align = prepare_newsletter_charts(week_end=week_end.date(), outlook=ol)
+        section_charts, chart_align = prepare_newsletter_charts(
+            week_end=week_end.date(),
+            outlook=ol,
+            headlines={
+                "stablecoins": str(
+                    _explore_kpi(explore, "stablecoins", label_match="market cap").get("value_display")
+                    or ""
+                ),
+                "rwa": str(
+                    _explore_kpi(explore, "rwa_global", label_match="distributed asset").get(
+                        "value_display"
+                    )
+                    or ""
+                ),
+            },
+        )
         crypto_primary = chart_align.get("crypto_primary") or {}
         if crypto_primary.get("value_display") and crypto_primary.get("delta_pct") is not None:
             primary = dict(crypto.get("primary") or {})

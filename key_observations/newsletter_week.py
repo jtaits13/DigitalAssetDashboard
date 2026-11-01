@@ -102,6 +102,16 @@ def _move_verb(delta: float) -> str:
     return "held roughly steady"
 
 
+def _signed_level(display: str) -> int:
+    """+1 for a printed inflow, -1 for a printed outflow, 0 when the sign is unknown."""
+    raw = (display or "").replace("\u2212", "-").replace("–", "-").strip()
+    if raw.startswith("+"):
+        return 1
+    if raw.startswith("-"):
+        return -1
+    return 0
+
+
 def load_cooldown() -> dict[str, Any]:
     if not COOLDOWN_PATH.is_file():
         return {"leads_by_section": {}, "history": []}
@@ -243,6 +253,17 @@ def _wow_market_read(section_id: str, move: SectionKpiMove) -> str:
         )
     if section_id == "etp":
         if "flow" in metric:
+            level_sign = _signed_level(level)
+            if level_sign > 0 and not up:
+                return (
+                    f"Listed-product flows at {level} ({mag} vs prior 30D) are still a net inflow, "
+                    "smaller than the prior 30 days—demand through U.S. crypto ETPs cooled."
+                )
+            if level_sign < 0 and up:
+                return (
+                    f"Listed-product flows at {level} ({mag} vs prior 30D) are still a net outflow, "
+                    "narrower than the prior 30 days."
+                )
             if up:
                 return (
                     f"Listed-product flows printing {level} ({mag} vs prior 30D) indicate investors are still "
@@ -327,6 +348,13 @@ def _wow_takeaway(move: SectionKpiMove, *, lane: str, section_id: str) -> Weekly
     if abs(move.delta_pct) < _WOW_THRESHOLD:
         return None
     verb = _move_verb(move.delta_pct)
+    if (
+        section_id == "etp"
+        and "flow" in (move.label or "").lower()
+        and _signed_level(move.value_display) > 0
+        and move.delta_pct < 0
+    ):
+        verb = "slowed"
     mag = f"{abs(move.delta_pct):.1f}%"
     window = (
         "vs prior 30D"
@@ -415,7 +443,7 @@ def _article_theme_flags(text: str) -> set[str]:
         flags.add("tokenization")
     if re.search(r"\b(aum|assets under management|raised \$|funding|series [a-c])\b", t):
         flags.add("capital")
-    if re.search(r"\b(hack|exploit|outage|lawsuit|probe|investigation|downgrade)\b", t):
+    if re.search(r"\b(hack|exploit|breach|outage|lawsuit|probe|investigation|downgrade)\b", t):
         flags.add("risk")
     return flags
 
@@ -438,7 +466,10 @@ def _interpret_news_for_market(section_id: str, title: str, blurb: str) -> str:
                 "Stress around listed crypto products usually weighs on risk appetite and can "
                 "slow creations until spot-liquidity confidence returns."
             )
-        if "flow_out" in flags and "flow_in" not in flags:
+        etf_story = bool(
+            re.search(r"\b(etf|etps?|spot bitcoin|spot ether)\b", f"{title} {blurb}", re.I)
+        )
+        if "flow_out" in flags and "flow_in" not in flags and etf_story:
             return (
                 "Risk is leaving the regulated channel through listed outflows, which can "
                 "soften spot liquidity even while longer-term AUM stays large."

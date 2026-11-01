@@ -5,7 +5,7 @@ committed series is reused and a do-not-send issue is raised.
 
 - TMMF: freeze printed RWA.xyz figures. The chart shows the last 30 days, one dot per saved week.
 - Stablecoins: DefiLlama circulating USD on each Monday, plus the latest day.
-- RWA chart: DefiLlama RWA protocol TVL on each Monday, plus the latest day. Headline KPI is RWA.xyz.
+- RWA chart: DefiLlama largest-protocol TVL on each Monday, plus the latest day. Headline KPI is RWA.xyz distributed asset value.
 - Crypto: CoinPaprika total market cap on each Monday, plus the latest day.
 - U.S. crypto ETPs: Yahoo-scaled AUM on each weekly bar, plus the latest reported level.
 
@@ -17,6 +17,7 @@ from __future__ import annotations
 import json
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date, datetime, timedelta, timezone
+from html import escape
 from pathlib import Path
 from typing import Any
 
@@ -538,13 +539,30 @@ def _tmmf_caption(series: dict[str, Any]) -> str:
     )
 
 
-def _stable_caption(series: dict[str, Any]) -> str:
+def _series_latest_display(series: dict[str, Any]) -> str:
+    points = _parsed_points(series)
+    if not points:
+        return ""
+    from crypto_etps.client import format_usd_compact
+
+    return format_usd_compact(points[-1][1])
+
+
+def _stable_caption(series: dict[str, Any], headline: str = "") -> str:
     sources = {str(p.get("source") or "") for p in (series.get("points") or [])}
     if sources == {"rwa_xyz"}:
         return "Weekly stablecoin market cap snapshots (RWA.xyz)."
+    latest = _series_latest_display(series)
+    chart_bit = f", latest {latest}" if latest else ""
+    head = (headline or "").strip()
+    if head:
+        return (
+            f"DefiLlama circulating stablecoin supply{chart_bit}. "
+            f"The market-cap tile above is RWA.xyz at {head}. These are different measures."
+        )
     return (
-        "Weekly circulating stablecoin USD (DefiLlama). "
-        "Headline KPI above is RWA.xyz and can differ slightly from this series."
+        f"DefiLlama circulating stablecoin supply{chart_bit}. "
+        "The market-cap tile above is RWA.xyz market cap, a different measure."
     )
 
 
@@ -724,7 +742,7 @@ def _defillama_rwa_weekly_series(week_end: date) -> dict[str, Any]:
     resp.raise_for_status()
     protocols = resp.json()
     if not isinstance(protocols, list):
-        return {"title": "RWA distributed value", "points": []}
+        return {"title": "Largest RWA protocol TVL", "points": []}
     rwa = [
         p
         for p in protocols
@@ -745,17 +763,25 @@ def _defillama_rwa_weekly_series(week_end: date) -> dict[str, Any]:
                     continue
                 by_day[day] = by_day.get(day, 0.0) + value
     return {
-        "title": "RWA distributed value",
+        "title": "Largest RWA protocol TVL",
         "unit": "usd",
         "source": "DefiLlama RWA protocol TVL (weekly)",
         "points": _weekly_points_from_daily(by_day, week_end, "defillama"),
     }
 
 
-def _rwa_caption() -> str:
+def _rwa_caption(series: dict[str, Any], headline: str = "") -> str:
+    latest = _series_latest_display(series)
+    chart_bit = f", latest {latest}" if latest else ""
+    head = (headline or "").strip()
+    if head:
+        return (
+            f"DefiLlama TVL for the largest RWA protocols{chart_bit}. "
+            f"The tile above is RWA.xyz distributed asset value at {head}."
+        )
     return (
-        "Weekly RWA protocol TVL (DefiLlama, largest protocols). "
-        "Headline KPI above is RWA.xyz distributed asset value and can differ."
+        f"DefiLlama TVL for the largest RWA protocols{chart_bit}. "
+        "The tile above is RWA.xyz distributed asset value, a different measure."
     )
 
 
@@ -769,32 +795,40 @@ def _chart_block_html(
     png = NEWSLETTER_CHART_FILES.get(cid)
     if png is None or not png.is_file():
         return ""
-    img = _chart_img_html(cid, outlook=outlook, alt=title)
+    img = _chart_img_html(cid, outlook=outlook, alt=escape(title))
+    title_html = escape(title)
+    caption_html = escape(caption)
     if outlook:
         return (
             f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" '
             f'style="margin:0 0 16px;border-collapse:collapse;border:1px solid #e2e8f0;">'
             f'<tr><td style="padding:10px 10px 4px;font-size:12px;line-height:1.4;'
             f'mso-line-height-rule:exactly;font-weight:700;color:{_COLOR_INK};'
-            f"font-family:Calibri,Arial,sans-serif;\">{title}</td></tr>"
+            f"font-family:Calibri,Arial,sans-serif;\">{title_html}</td></tr>"
             f'<tr><td style="padding:0 8px;">{img}</td></tr>'
             f'<tr><td style="padding:4px 10px 10px;font-size:11px;line-height:1.45;'
             f'mso-line-height-rule:exactly;color:{_COLOR_MUTED};'
-            f"font-family:Calibri,Arial,sans-serif;\">{caption}</td></tr></table>"
+            f"font-family:Calibri,Arial,sans-serif;\">{caption_html}</td></tr></table>"
         )
     return (
         f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" '
         f'style="margin:0 0 1rem;border-collapse:collapse;border:1px solid #e2e8f0;border-radius:8px;">'
         f'<tr><td style="padding:0.55rem 0.7rem 0.2rem;font-size:12px;font-weight:700;'
-        f'color:{_COLOR_INK};">{title}</td></tr>'
+        f'color:{_COLOR_INK};">{title_html}</td></tr>'
         f'<tr><td style="padding:0 0.45rem;">{img}</td></tr>'
         f'<tr><td style="padding:0.2rem 0.7rem 0.65rem;font-size:11px;line-height:1.45;'
-        f'color:{_COLOR_MUTED};">{caption}</td></tr></table>'
+        f'color:{_COLOR_MUTED};">{caption_html}</td></tr></table>'
     )
 
 
-def prepare_newsletter_charts(*, week_end: date, outlook: bool = False) -> tuple[dict[str, str], dict[str, Any]]:
+def prepare_newsletter_charts(
+    *,
+    week_end: date,
+    outlook: bool = False,
+    headlines: dict[str, str] | None = None,
+) -> tuple[dict[str, str], dict[str, Any]]:
     """Update series, render PNGs, return HTML snippets and same-source KPI overlays."""
+    heads = headlines or {}
     payload = update_weekly_series(week_end)
     issues = chart_refresh_issues()
     tmmf = payload.get(TMMF_SERIES) or {}
@@ -819,7 +853,7 @@ def prepare_newsletter_charts(*, week_end: date, outlook: bool = False) -> tuple
         stable_html = _chart_block_html(
             cid="stablecoins-weekly",
             title=str(stable.get("title") or "Stablecoin circulating USD"),
-            caption=_stable_caption(stable),
+            caption=_stable_caption(stable, str(heads.get("stablecoins") or "")),
             outlook=outlook,
         )
     elif len(_parsed_points(stable)) >= 2:
@@ -851,8 +885,8 @@ def prepare_newsletter_charts(*, week_end: date, outlook: bool = False) -> tuple
     if render_series_png(rwa_series, NEWSLETTER_CHART_FILES["rwa-weekly"]):
         rwa_html = _chart_block_html(
             cid="rwa-weekly",
-            title=str(rwa_series.get("title") or "RWA distributed value"),
-            caption=_rwa_caption(),
+            title="Largest RWA protocol TVL",
+            caption=_rwa_caption(rwa_series, str(heads.get("rwa") or "")),
             outlook=outlook,
         )
     elif len(_parsed_points(rwa_series)) >= 2:
