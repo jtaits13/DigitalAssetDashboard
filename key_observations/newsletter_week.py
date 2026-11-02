@@ -15,7 +15,7 @@ import json
 import os
 import re
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -112,6 +112,371 @@ def _signed_level(display: str) -> int:
     return 0
 
 
+_SNAPSHOT_PATH = ROOT / "static_home" / "data" / "newsletter_kpi_snapshot.json"
+_PRIOR_KEY = {
+    "tmmf": "tmmf",
+    "stablecoins": "stable",
+    "rwa": "rwa",
+    "crypto": "crypto",
+    "etp": "etp",
+}
+_LEVEL_NAME = {
+    "tmmf": "Distributed value",
+    "stablecoins": "Stablecoin market cap",
+    "rwa": "Distributed asset value",
+    "crypto": "Total market cap",
+    "etp": "Aggregate AUM",
+}
+_FAMILY_SECTION = {
+    "stablecoins": "stablecoins",
+    "tokenization": "rwa",
+    "tmmf": "tmmf",
+    "etp": "etp",
+    "etp_flows": "etp",
+    "infrastructure": "crypto",
+    "macro": "crypto",
+    "general": "crypto",
+}
+_MONEY_RE = re.compile(r"\$\s*([0-9][0-9,]*(?:\.[0-9]+)?)\s*([KMBT])?", re.I)
+
+
+@dataclass
+class WeekContext:
+    """This week's printed levels plus the previous newsletter reading."""
+
+    current_week: date | None
+    prior: dict[str, tuple[date, str]]
+    explore: dict[str, dict[str, Any]]
+    etp: dict[str, Any] | None
+    crypto: dict[str, Any] | None
+    levels: dict[str, str]
+
+
+def _parse_compact_usd(text: str) -> float | None:
+    match = _MONEY_RE.search(text or "")
+    if not match:
+        return None
+    try:
+        number = float(match.group(1).replace(",", ""))
+    except ValueError:
+        return None
+    unit = (match.group(2) or "").upper()
+    scale = {"": 1.0, "K": 1e3, "M": 1e6, "B": 1e9, "T": 1e12}
+    return number * scale[unit]
+
+
+def _signed_pct(pct: float) -> str:
+    if abs(pct) < 0.05:
+        return "flat"
+    return f"{pct:+.1f}%"
+
+
+def _read_snapshot_payload() -> dict[str, Any] | None:
+    if not _SNAPSHOT_PATH.is_file():
+        return None
+    try:
+        payload = json.loads(_SNAPSHOT_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    return payload if isinstance(payload, dict) else None
+
+
+def _prior_display(row: dict[str, Any], key: str) -> str:
+    levels = row.get("levels") if isinstance(row.get("levels"), dict) else {}
+    display = str(levels.get(key) or "").strip()
+    if display:
+        return display
+    fingerprint = str((row.get("fingerprints") or {}).get(key) or "")
+    return fingerprint.split("|", 1)[0].strip()
+
+
+def prior_prints_from_snapshot(payload: dict[str, Any] | None) -> tuple[date | None, dict[str, tuple[date, str]]]:
+    """Latest saved reading before the snapshot's current week, keyed by section id."""
+    if not isinstance(payload, dict):
+        return None, {}
+    try:
+        current = date.fromisoformat(str(payload.get("week_end") or ""))
+    except ValueError:
+        current = None
+    chosen: dict[str, tuple[date, str]] = {}
+    best: date | None = None
+    best_row: dict[str, Any] | None = None
+    for row in payload.get("history") or []:
+        if not isinstance(row, dict):
+            continue
+        try:
+            day = date.fromisoformat(str(row.get("week_end") or ""))
+        except ValueError:
+            continue
+        if current is not None and day >= current:
+            continue
+        if best is None or day > best:
+            best = day
+            best_row = row
+    if best is None or best_row is None:
+        return current, {}
+    for section_id, key in _PRIOR_KEY.items():
+        display = _prior_display(best_row, key)
+        if _parse_compact_usd(display) is not None:
+            chosen[section_id] = (best, display)
+    return current, chosen
+
+
+def make_week_context(
+    explore: dict[str, dict[str, Any]] | None,
+    etp: dict[str, Any] | None,
+    crypto: dict[str, Any] | None,
+    *,
+    snapshot: dict[str, Any] | None = None,
+) -> WeekContext:
+    payload = snapshot if snapshot is not None else _read_snapshot_payload()
+    current_week, prior = prior_prints_from_snapshot(payload)
+    explore = explore or {}
+    levels = {
+        "tmmf": str(_kpi_display(explore, "tokenized_mmf", "distributed") or ""),
+        "stablecoins": str(_kpi_display(explore, "stablecoins", "market cap") or ""),
+        "rwa": str(_kpi_display(explore, "rwa_global", "distributed asset") or ""),
+        "crypto": str(((crypto or {}).get("primary") or {}).get("value_display") or ""),
+        "etp": str((etp or {}).get("total_aum_display") or ""),
+    }
+    return WeekContext(
+        current_week=current_week,
+        prior=prior,
+        explore=explore,
+        etp=etp,
+        crypto=crypto,
+        levels=levels,
+    )
+
+
+def load_week_context_from_snapshot() -> WeekContext:
+    payload = _read_snapshot_payload() or {}
+    latest = payload.get("latest") if isinstance(payload.get("latest"), dict) else {}
+    explore = {
+        "tokenized_mmf": {"kpis": list(latest.get("tmmf_kpis") or [])},
+        "stablecoins": {"kpis": list(latest.get("stable_kpis") or [])},
+        "rwa_global": {"kpis": list(latest.get("rwa_kpis") or [])},
+    }
+    crypto = latest.get("crypto") if isinstance(latest.get("crypto"), dict) else {}
+    etp = latest.get("etp") if isinstance(latest.get("etp"), dict) else {}
+    return make_week_context(explore, etp, crypto, snapshot=payload)
+
+
+def _kpi_display(explore: dict[str, dict[str, Any]], section_id: str, label_match: str) -> str:
+    move = explore_kpi_move(explore, section_id, label_match=label_match)
+    return move.value_display if move else ""
+
+
+def _when_phrase(prior_day: date, current_week: date | None) -> str:
+    label = f"{prior_day.day} {prior_day.strftime('%b')}"
+    if current_week is None:
+        return f"since the {label} reading"
+    gap = (current_week - prior_day).days
+    if gap <= 10:
+        return f"since last week's {label} reading"
+    return f"since the {label} reading"
+
+
+def _since_clause(section_id: str, ctx: WeekContext, move: SectionKpiMove | None) -> str:
+    key = section_id
+    metric = _LEVEL_NAME.get(section_id, "The level")
+    current = ctx.levels.get(section_id) or ""
+    if section_id == "etp" and move is not None and "flow" in (move.label or "").lower():
+        metric = "Aggregate AUM"
+        current = ctx.levels.get("etp") or current
+    elif move is not None and _parse_compact_usd(move.value_display) is not None and "flow" not in (move.label or "").lower():
+        current = move.value_display
+        metric = str(move.label or metric)
+    prior = ctx.prior.get(key)
+    current_value = _parse_compact_usd(current)
+    if prior is None or current_value is None:
+        return ""
+    prior_day, prior_display = prior
+    prior_value = _parse_compact_usd(prior_display)
+    if prior_value is None or prior_value <= 0:
+        return ""
+    change = _signed_pct((current_value - prior_value) / prior_value * 100.0)
+    when = _when_phrase(prior_day, ctx.current_week)
+    same_level = (
+        move is not None
+        and _parse_compact_usd(move.value_display) is not None
+        and abs((_parse_compact_usd(move.value_display) or 0) - current_value) < 1.0
+    )
+    reading = f"the {prior_day.day} {prior_day.strftime('%b')} reading of {prior_display}"
+    if same_level:
+        if change == "flat":
+            return f"That is unchanged from {reading}"
+        return f"That is {change} from {reading}"
+    if change == "flat":
+        return f"{metric} is unchanged from {prior_display} {when}"
+    return f"{metric} went from {prior_display} to {current} ({change}) {when}"
+
+
+def _percent_points(raw: object, *, fraction: bool) -> float | None:
+    if raw is None:
+        return None
+    try:
+        number = float(raw)
+    except (TypeError, ValueError):
+        return None
+    if fraction:
+        number *= 100.0
+    return number
+
+
+def _delta_text(points: float, *, share: bool) -> str:
+    if share:
+        return f"{points:+.1f} pp over 30D"
+    return f"{points:+.1f}% over 30D"
+
+
+def _companion_clause(section_id: str, ctx: WeekContext) -> str:
+    if section_id == "crypto":
+        return _crypto_companion(ctx.crypto)
+    if section_id == "etp":
+        return _etp_companion(ctx.etp)
+    if section_id == "tmmf":
+        return _share_companion(ctx.explore, "tokenized_mmf", "network share")
+    if section_id == "stablecoins":
+        return _largest_kpi_companion(
+            ctx.explore,
+            "stablecoins",
+            skip=("market cap",),
+        )
+    if section_id == "rwa":
+        return _largest_kpi_companion(
+            ctx.explore,
+            "rwa_global",
+            skip=("distributed asset", "stablecoin"),
+        )
+    return ""
+
+
+def _share_companion(explore: dict[str, dict[str, Any]], section_id: str, label_match: str) -> str:
+    sec = explore.get(section_id) or {}
+    needle = label_match.lower()
+    for kpi in sec.get("kpis") or []:
+        if needle not in str(kpi.get("label") or "").lower():
+            continue
+        points = _percent_points(kpi.get("delta_30d_pct"), fraction=True)
+        display = str(kpi.get("value_display") or "").strip()
+        if points is None or not display:
+            return ""
+        return f"{kpi.get('label')} is {display}, {_delta_text(points, share=True)}"
+    return ""
+
+
+def _largest_kpi_companion(
+    explore: dict[str, dict[str, Any]],
+    section_id: str,
+    *,
+    skip: tuple[str, ...],
+) -> str:
+    sec = explore.get(section_id) or {}
+    best: tuple[float, str] | None = None
+    for kpi in sec.get("kpis") or []:
+        label = str(kpi.get("label") or "")
+        lowered = label.lower()
+        if any(part in lowered for part in skip):
+            continue
+        share = "share" in lowered
+        points = _percent_points(kpi.get("delta_30d_pct"), fraction=True)
+        display = str(kpi.get("value_display") or "").strip()
+        if points is None or not display:
+            continue
+        if best is None or abs(points) > best[0]:
+            verb = "are" if label.lower().endswith("s") else "is"
+            best = (abs(points), f"{label} {verb} {display}, {_delta_text(points, share=share)}")
+    return best[1] if best else ""
+
+
+def _crypto_companion(crypto: dict[str, Any] | None) -> str:
+    crypto = crypto or {}
+    btc = crypto.get("btc") if isinstance(crypto.get("btc"), dict) else {}
+    eth = crypto.get("eth") if isinstance(crypto.get("eth"), dict) else {}
+    btc_pct = _percent_points((btc.get("delta") or {}).get("pct"), fraction=False)
+    eth_pct = _percent_points((eth.get("delta") or {}).get("pct"), fraction=False)
+    btc_display = str(btc.get("value_display") or "").strip()
+    eth_display = str(eth.get("value_display") or "").strip()
+    if btc_display and eth_display and btc_pct is not None and eth_pct is not None:
+        return (
+            f"BTC is {btc_display} ({btc_pct:+.1f}% over 30D) and "
+            f"ETH is {eth_display} ({eth_pct:+.1f}% over 30D)"
+        )
+    return ""
+
+
+def _etp_companion(etp: dict[str, Any] | None) -> str:
+    etp = etp or {}
+    parts: list[str] = []
+    for key, name in (("ibit", "IBIT"), ("etha", "ETHA")):
+        row = etp.get(key) if isinstance(etp.get(key), dict) else {}
+        display = str(row.get("aum_display") or "").strip()
+        points = _percent_points((row.get("delta") or {}).get("pct"), fraction=False)
+        if display and points is not None:
+            parts.append(f"{name} is {display} ({points:+.1f}% over 30D)")
+    if len(parts) == 2:
+        return f"{parts[0]} and {parts[1]}"
+    return parts[0] if parts else ""
+
+
+def _dynamic_tail(section_id: str, ctx: WeekContext | None, move: SectionKpiMove | None = None) -> str:
+    if ctx is None:
+        return ""
+    parts = [
+        part.strip().rstrip(".")
+        for part in (_since_clause(section_id, ctx, move), _companion_clause(section_id, ctx))
+        if part and part.strip()
+    ]
+    if not parts:
+        return ""
+    return ". ".join(parts) + "."
+
+
+def _join_read(opening: str, tail: str) -> str:
+    opening = opening.strip().rstrip(".")
+    tail = tail.strip()
+    if not tail:
+        return opening + "."
+    return f"{opening}. {tail if tail.endswith('.') else tail + '.'}"
+
+
+def _largest_prior_section(ctx: WeekContext) -> str | None:
+    best_section = None
+    best_abs = -1.0
+    for section_id in _PRIOR_KEY:
+        prior = ctx.prior.get(section_id)
+        current = _parse_compact_usd(ctx.levels.get(section_id) or "")
+        if prior is None or current is None:
+            continue
+        prior_value = _parse_compact_usd(prior[1])
+        if prior_value is None or prior_value <= 0:
+            continue
+        change = abs((current - prior_value) / prior_value * 100.0)
+        if change > best_abs:
+            best_abs = change
+            best_section = section_id
+    return best_section
+
+
+def headline_so_what(pick: Any, *, context: WeekContext | None = None) -> str:
+    """Story pointer plus the week-to-week move for that story's market."""
+    ctx = context if context is not None else load_week_context_from_snapshot()
+    family = str(getattr(pick, "theme_family", "") or "")
+    section_id = _FAMILY_SECTION.get(family) or _largest_prior_section(ctx)
+    title = _headline_hook(str(getattr(pick, "title", "") or ""), max_len=72)
+    words = title.split()
+    pointer = " ".join(words[:8])
+    if len(words) > 8:
+        pointer += "…"
+    tail = _dynamic_tail(section_id, ctx) if section_id else ""
+    if not pointer:
+        return tail
+    if not tail:
+        return pointer
+    return f"{pointer}: {tail}"
+
+
 def load_cooldown() -> dict[str, Any]:
     if not COOLDOWN_PATH.is_file():
         return {"leads_by_section": {}, "history": []}
@@ -199,150 +564,78 @@ def explore_kpi_move(
     )
 
 
-def _wow_market_read(section_id: str, move: SectionKpiMove) -> str:
-    """User-facing interpretation of a directional KPI move (not editor notes)."""
+def _wow_opening(section_id: str, move: SectionKpiMove) -> str:
+    """Level and direction only. The week-to-week comparison is appended separately."""
     up = (move.delta_pct or 0) >= 0
     level = move.value_display
     metric = (move.label or "metric").lower()
     mag = f"{abs(move.delta_pct or 0):.1f}%"
+    higher = "higher" if up else "lower"
 
     if section_id == "tmmf":
-        if up:
-            return (
-                f"With distributed value at {level} ({mag} higher over 30D), more institutional cash appears "
-                "to be parking in tokenized MMFs—supporting the view that TMMFs are being used as "
-                "operational liquidity, not just a niche yield experiment."
-            )
-        return (
-            f"With distributed value at {level} ({mag} lower over 30D), tokenized-cash balances look lighter—"
-            "suggesting some institutions pulled liquidity or rotated away from TMMF wrappers even if "
-            "headline product news stayed busy."
-        )
+        return f"With distributed value at {level} ({mag} {higher} over 30D)"
     if section_id == "stablecoins":
         if "market cap" in metric or "cap" in metric:
-            if up:
-                return (
-                    f"Stablecoin market cap at {level} ({mag} higher over 30D) implies fresh dry powder "
-                    "entering crypto rails—usually a constructive backdrop for settlement, trading, and "
-                    "on-chain cash demand."
-                )
-            return (
-                f"Stablecoin market cap at {level} ({mag} lower over 30D) points to contracting crypto "
-                "dollar liquidity—often a tighter tape for market-making, DeFi collateral, and risk appetite."
-            )
-        if up:
-            return (
-                f"{move.label} moving up to {level} ({mag} over 30D) supports broader stablecoin utility "
-                "gains across payments and treasury use cases."
-            )
-        return (
-            f"{move.label} softening to {level} ({mag} over 30D) suggests some stablecoin activity cooled—"
-            "watch issuer concentration and bank-rail headlines for confirmation."
-        )
+            return f"Stablecoin market cap at {level} ({mag} {higher} over 30D)"
+        verb = "moving up to" if up else "softening to"
+        return f"{move.label} {verb} {level} ({mag} over 30D)"
     if section_id == "rwa":
-        if up:
-            return (
-                f"On-chain RWA distributed value at {level} ({mag} higher over 30D) shows tokenization "
-                "still adding balance sheet—consistent with Institutions building exposure through "
-                "treasury, credit, or fund wrappers rather than pausing after prior growth."
-            )
-        return (
-            f"On-chain RWA distributed value at {level} ({mag} lower over 30D) hints that tokenized "
-            "asset growth paused or reversed—more consistent with risk-off allocation or redemptions "
-            "than a pure news cycle."
-        )
+        return f"On-chain RWA distributed value at {level} ({mag} {higher} over 30D)"
     if section_id == "etp":
         if "flow" in metric:
             level_sign = _signed_level(level)
             if level_sign > 0 and not up:
                 return (
                     f"Listed-product flows at {level} ({mag} vs prior 30D) are still a net inflow, "
-                    "smaller than the prior 30 days—demand through U.S. crypto ETPs cooled."
+                    "smaller than the prior 30 days"
                 )
             if level_sign < 0 and up:
                 return (
                     f"Listed-product flows at {level} ({mag} vs prior 30D) are still a net outflow, "
-                    "narrower than the prior 30 days."
+                    "narrower than the prior 30 days"
                 )
-            if up:
+            if level_sign > 0:
                 return (
-                    f"Listed-product flows printing {level} ({mag} vs prior 30D) indicate investors are still "
-                    "using ETPs as the primary regulated gateway into crypto beta—supporting demand even "
-                    "when spot prices are choppy."
+                    f"Listed-product flows at {level} ({mag} vs prior 30D) are a larger net inflow "
+                    "than the prior 30 days"
                 )
-            return (
-                f"Listed-product flows at {level} ({mag} vs prior 30D) show net risk coming out of U.S. crypto "
-                "ETPs—often an early read on institutional de-risking that can precede softer spot "
-                "liquidity."
-            )
-        if up:
-            return (
-                f"Aggregate ETP AUM at {level} ({mag} higher over 30D) means more capital is parked in "
-                "listed crypto wrappers—keeping traditional-channel access relevant beside OTC and spot."
-            )
-        return (
-            f"Aggregate ETP AUM at {level} ({mag} lower over 30D) signals shrinkage in listed crypto "
-            "exposure—typically a softer institutional footprint until inflows resume."
-        )
+            return f"Listed-product flows at {level} ({mag} vs prior 30D) are a net outflow"
+        return f"Aggregate ETP AUM at {level} ({mag} {higher} over 30D)"
     if section_id == "crypto":
-        if up:
-            return (
-                f"Total crypto market cap at {level} ({mag} higher over 30D) reflects a broader risk-on "
-                "tape—liquidity and alt performance usually improve when the headline book expands."
-            )
-        return (
-            f"Total crypto market cap at {level} ({mag} lower over 30D) points to a risk-off or "
-            "digestive market—capital is more selective, and plumbing stories matter more than beta "
-            "chase."
-        )
-    direction = "higher" if up else "lower"
-    return (
-        f"{move.label} at {level} is {direction} by {mag} over 30D, marking a real change in this "
-        "lane's printed stance rather than a noise-level print."
-    )
+        return f"Total crypto market cap at {level} ({mag} {higher} over 30D)"
+    return f"{move.label} at {level} is {higher} by {mag} over 30D"
 
 
-def _flat_market_read(section_id: str, move: SectionKpiMove | None) -> str:
+def _wow_market_read(
+    section_id: str,
+    move: SectionKpiMove,
+    context: WeekContext | None = None,
+) -> str:
+    return _join_read(_wow_opening(section_id, move), _dynamic_tail(section_id, context, move))
+
+
+def _flat_market_read(
+    section_id: str,
+    move: SectionKpiMove | None,
+    context: WeekContext | None = None,
+) -> str:
     if move and move.delta_pct is not None:
         level = move.value_display
         delta = move.delta_display
         metric = move.label
     else:
         level, delta, metric = "—", "—", "KPIs"
-
-    if section_id == "tmmf":
-        return (
-            f"{metric} near {level} ({delta} 30D) leaves tokenized-cash balances largely range-bound—"
-            "the market story this week is more about issuer and distribution news than a shift in AUM."
-        )
-    if section_id == "stablecoins":
-        return (
-            f"{metric} near {level} ({delta} 30D) means crypto dollar liquidity did not re-price hard—"
-            "incremental demand is coming from product and banking-rail headlines rather than a market-cap "
-            "surge."
-        )
-    if section_id == "rwa":
-        return (
-            f"{metric} near {level} ({delta} 30D) keeps on-chain RWA exposure in a holding pattern—"
-            "tokenization momentum is still news- and pipeline-driven until distributed value breaks range."
-        )
-    if section_id == "etp":
-        return (
-            f"{metric} near {level} ({delta} 30D) suggests listed crypto access is waiting for a clearer "
-            "flow regime—filings and product news can still move attention without a large AUM remake."
-        )
-    if section_id == "crypto":
-        return (
-            f"{metric} near {level} ({delta} 30D) frames a consolidating market—directional conviction is "
-            "low, so structural headlines (custody, rails, regulation) carry more weight than beta alone."
-        )
-    return (
-        f"{metric} near {level} ({delta} 30D) did not post a material 30D shift—interpretation should "
-        "come from section news until the KPI strip moves again."
-    )
+    opening = f"{metric} near {level} ({delta} 30D)"
+    return _join_read(opening, _dynamic_tail(section_id, context, move))
 
 
-def _wow_takeaway(move: SectionKpiMove, *, lane: str, section_id: str) -> WeeklyTakeaway | None:
+def _wow_takeaway(
+    move: SectionKpiMove,
+    *,
+    lane: str,
+    section_id: str,
+    context: WeekContext | None = None,
+) -> WeeklyTakeaway | None:
     if move.delta_pct is None:
         return None
     if abs(move.delta_pct) < _WOW_THRESHOLD:
@@ -362,7 +655,7 @@ def _wow_takeaway(move: SectionKpiMove, *, lane: str, section_id: str) -> Weekly
         else "over 30D"
     )
     lead = f"{lane} {move.label.lower()} {verb} {mag} {window}"
-    body = _wow_market_read(section_id, move)
+    body = _wow_market_read(section_id, move, context)
     return WeeklyTakeaway(
         lead=lead.rstrip(".!?…:"),
         body=body,
@@ -371,11 +664,17 @@ def _wow_takeaway(move: SectionKpiMove, *, lane: str, section_id: str) -> Weekly
     )
 
 
-def _flat_takeaway(move: SectionKpiMove | None, *, lane: str, section_id: str) -> WeeklyTakeaway:
+def _flat_takeaway(
+    move: SectionKpiMove | None,
+    *,
+    lane: str,
+    section_id: str,
+    context: WeekContext | None = None,
+) -> WeeklyTakeaway:
     lead = f"{lane} printed metrics were roughly flat this week"
     if move is None or move.delta_pct is None:
         lead = f"{lane} printed metrics did not show a clear weekly move"
-    body = _flat_market_read(section_id, move)
+    body = _flat_market_read(section_id, move, context)
     return WeeklyTakeaway(
         lead=lead.rstrip(".!?…:"),
         body=body,
@@ -551,15 +850,29 @@ def _interpret_news_for_market(section_id: str, title: str, blurb: str) -> str:
     return _news_so_what(section_id)
 
 
-def _compose_news_body(section_id: str, article: dict[str, Any]) -> str:
-    """Interpret what the article means for the market (not a title paraphrase)."""
+def _first_sentence(text: str, *, limit: int = 220) -> str:
+    cleaned = _strip_html_text(text)
+    if len(cleaned) < 40:
+        return ""
+    sentence = _SENTENCE_SPLIT_RE.split(cleaned, maxsplit=1)[0].strip()
+    if len(sentence) > limit:
+        sentence = sentence[: limit - 1].rsplit(" ", 1)[0].rstrip(".,;:") + "…"
+    return sentence
+
+
+def _compose_news_body(
+    section_id: str,
+    article: dict[str, Any],
+    context: WeekContext | None = None,
+) -> str:
+    """Article's own first sentence, then this week's change versus the prior reading."""
+    summary = _first_sentence(str(article.get("summary") or ""))
+    tail = _dynamic_tail(section_id, context)
+    parts = [part for part in (summary, tail) if part]
+    if parts:
+        return " ".join(parts)
     title = str(article.get("title") or "").strip()
-    summary = _strip_html_text(str(article.get("summary") or ""))
-    link = str(article.get("link") or "").strip()
-    blurb = _fetch_article_blurb(link) if link else ""
-    if not blurb:
-        blurb = summary
-    return _interpret_news_for_market(section_id, title, blurb)
+    return title
 
 
 _META_DESC_RE = re.compile(
@@ -629,15 +942,16 @@ def _fetch_article_blurb(url: str, *, timeout: float = 6.0) -> str:
     return " ".join(paras)[:800]
 
 
-def _tmmf_no_launch_takeaway() -> WeeklyTakeaway:
+def _tmmf_no_launch_takeaway(context: WeekContext | None = None) -> WeeklyTakeaway:
     # Renderer appends the terminal period; keep leads unpunctuated like WoW/flat.
     lead = "No TMMF fund launches this week"
+    tail = _dynamic_tail("tmmf", context)
+    body = "No new fund launch was in this week's coverage."
+    if tail:
+        body = f"{body} {tail}"
     return WeeklyTakeaway(
         lead=lead,
-        body=(
-            "New product debuts were quiet; existing issuer AUM and distribution rails "
-            "carried the TMMF story instead."
-        ),
+        body=body,
         kind="launch_none",
         article=None,
         lead_key=normalize_lead(lead),
@@ -649,6 +963,7 @@ def _tmmf_fund_launch_takeaway(
     *,
     cooled: set[str],
     used_links: set[str],
+    context: WeekContext | None = None,
 ) -> WeeklyTakeaway:
     """Second TMMF bullet: fund launch this week (notable preferred), or an explicit none."""
     try:
@@ -657,7 +972,7 @@ def _tmmf_fund_launch_takeaway(
             tmmf_launch_takeaway_copy,
         )
     except Exception:
-        return _tmmf_no_launch_takeaway()
+        return _tmmf_no_launch_takeaway(context)
 
     pool = [
         art
@@ -667,13 +982,16 @@ def _tmmf_fund_launch_takeaway(
     # Broader than headline gates: any TMMF launch qualifies; major issuers rank first.
     launch = pick_tmmf_fund_launch(pool, max_age_days=7.0)
     if not launch:
-        return _tmmf_no_launch_takeaway()
+        return _tmmf_no_launch_takeaway(context)
 
     lead, body = tmmf_launch_takeaway_copy(launch)
     lead = lead.strip().rstrip(".!?…:")
+    tail = _dynamic_tail("tmmf", context)
+    if tail and tail not in body:
+        body = f"{body.rstrip()} {tail}"
     key = normalize_lead(lead)
     if key in cooled:
-        return _tmmf_no_launch_takeaway()
+        return _tmmf_no_launch_takeaway(context)
 
     return WeeklyTakeaway(
         lead=lead,
@@ -694,6 +1012,7 @@ def _news_takeaway(
     article: dict[str, Any],
     *,
     cooled: set[str],
+    context: WeekContext | None = None,
 ) -> WeeklyTakeaway | None:
     title = str(article.get("title") or "").strip()
     if not title:
@@ -715,7 +1034,7 @@ def _news_takeaway(
     key = normalize_lead(lead)
     if key in cooled:
         return None
-    body = _compose_news_body(section_id, article)
+    body = _compose_news_body(section_id, article, context)
     return WeeklyTakeaway(
         lead=lead,
         body=body,
@@ -829,11 +1148,18 @@ def select_weekly_section_takeaways(
     cooled = recent_cooled_leads(section_id)
     headlines = list(week_headlines or [])
     out: list[WeeklyTakeaway] = []
+    context = make_week_context(explore, etp, crypto)
 
     move = _section_kpi_move(section_id, explore, etp=etp, crypto=crypto)
-    wow = _wow_takeaway(move, lane=_lane_label(section_id), section_id=section_id) if move else None
+    wow = (
+        _wow_takeaway(move, lane=_lane_label(section_id), section_id=section_id, context=context)
+        if move
+        else None
+    )
     # Keep current KPI moves even if a similar lead shipped last week; cooldown is for news.
-    data_tw = wow or _flat_takeaway(move, lane=_lane_label(section_id), section_id=section_id)
+    data_tw = wow or _flat_takeaway(
+        move, lane=_lane_label(section_id), section_id=section_id, context=context
+    )
 
     def _pick_news(*, extra_cooled: set[str]) -> WeeklyTakeaway | None:
         for _ in range(4):
@@ -846,7 +1172,7 @@ def select_weekly_section_takeaways(
             )
             if not art:
                 break
-            cand = _news_takeaway(section_id, art, cooled=extra_cooled)
+            cand = _news_takeaway(section_id, art, cooled=extra_cooled, context=context)
             link = str(art.get("link") or "").strip()
             if link:
                 links.add(link)
@@ -862,7 +1188,7 @@ def select_weekly_section_takeaways(
         )
         if not art:
             return None
-        cand = _news_takeaway(section_id, art, cooled=extra_cooled)
+        cand = _news_takeaway(section_id, art, cooled=extra_cooled, context=context)
         link = str(art.get("link") or "").strip()
         if link:
             links.add(link)
@@ -872,7 +1198,10 @@ def select_weekly_section_takeaways(
         out.append(data_tw)
         if slots >= 2:
             launch_tw = _tmmf_fund_launch_takeaway(
-                articles, cooled=cooled | {data_tw.lead_key}, used_links=links
+                articles,
+                cooled=cooled | {data_tw.lead_key},
+                used_links=links,
+                context=context,
             )
             link = str((launch_tw.article or {}).get("link") or "").strip()
             if link:

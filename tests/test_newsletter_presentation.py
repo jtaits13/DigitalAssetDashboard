@@ -9,11 +9,17 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from datetime import date  # noqa: E402
+
 from key_observations.newsletter_week import (  # noqa: E402
     SectionKpiMove,
+    WeekContext,
+    _compose_news_body,
     _interpret_news_for_market,
+    _tmmf_no_launch_takeaway,
     _wow_market_read,
     _wow_takeaway,
+    headline_so_what,
 )
 from newsletter_weekly_charts import _rwa_caption, _stable_caption  # noqa: E402
 from scripts.build_weekly_newsletter import (  # noqa: E402
@@ -64,7 +70,7 @@ def test_smaller_inflow_is_not_described_as_risk_leaving() -> None:
     assert "fell 56.0%" not in takeaway.lead
 
 
-def test_actual_outflow_still_reads_as_risk_leaving() -> None:
+def test_actual_outflow_states_the_outflow() -> None:
     move = SectionKpiMove(
         label="30D net flow",
         value_display="−$1.20B",
@@ -72,7 +78,8 @@ def test_actual_outflow_still_reads_as_risk_leaving() -> None:
         delta_display="-20.0%",
     )
     body = _wow_market_read("etp", move)
-    assert "net risk coming out" in body
+    assert "net outflow" in body
+    assert "net risk coming out" not in body
 
 
 def test_week_in_brief_keeps_a_positive_flow_positive() -> None:
@@ -103,12 +110,102 @@ def test_non_etf_outflow_headline_is_not_called_listed_outflows() -> None:
     assert "listed outflows" in etf
 
 
+def _week_context() -> WeekContext:
+    explore = {
+        "tokenized_mmf": {
+            "kpis": [
+                {"label": "Distributed value", "value_display": "$12.77B", "delta_30d_pct": -0.0553},
+                {
+                    "label": "Top network share",
+                    "value_display": "32.5% · Ethereum",
+                    "delta_30d_pct": -0.08835,
+                },
+            ]
+        },
+        "stablecoins": {
+            "kpis": [
+                {"label": "Market Cap", "value_display": "$286.24B", "delta_30d_pct": -0.029},
+                {
+                    "label": "Monthly Transfer Volume",
+                    "value_display": "$9.92T",
+                    "delta_30d_pct": 0.3709,
+                },
+            ]
+        },
+    }
+    return WeekContext(
+        current_week=date(2026, 11, 2),
+        prior={
+            "tmmf": (date(2026, 10, 12), "$13.60B"),
+            "stablecoins": (date(2026, 10, 12), "$293.16B"),
+        },
+        explore=explore,
+        etp=None,
+        crypto=None,
+        levels={"tmmf": "$12.77B", "stablecoins": "$286.24B"},
+    )
+
+
+def test_directional_sentence_then_uses_the_prior_reading() -> None:
+    ctx = _week_context()
+    move = SectionKpiMove(
+        label="Distributed value",
+        value_display="$12.77B",
+        delta_pct=-5.5,
+        delta_display="-5.5%",
+    )
+    body = _wow_market_read("tmmf", move, ctx)
+    assert body.startswith("With distributed value at $12.77B (5.5% lower over 30D).")
+    assert "That is -6.1% from the 12 Oct reading of $13.60B" in body
+    assert "-8.8 pp over 30D" in body
+    assert "operational liquidity" not in body
+    assert "pulled liquidity" not in body
+
+
+def test_no_launch_line_cites_the_week_change() -> None:
+    body = _tmmf_no_launch_takeaway(_week_context()).body
+    assert "No new fund launch" in body
+    assert "went from $13.60B to $12.77B (-6.1%) since the 12 Oct reading" in body
+    assert "carried the TMMF story" not in body
+
+
+def test_news_line_uses_the_article_and_the_week_change() -> None:
+    summary = (
+        "Polygon extended its bank payment stack to Solana this week. "
+        "The rollout adds another settlement rail."
+    )
+    body = _compose_news_body(
+        "stablecoins",
+        {"title": "Polygon extends bank payments", "summary": summary},
+        _week_context(),
+    )
+    assert body.startswith("Polygon extended its bank payment stack to Solana this week.")
+    assert "went from $293.16B to $286.24B (-2.4%) since the 12 Oct reading" in body
+    assert "+37.1% over 30D" in body
+    assert "dry powder" not in body
+
+
+def test_headline_so_what_follows_that_story_market() -> None:
+    class Pick:
+        title = "Experts divided over Binance hack asset freezes, warn recovery is another matter"
+        theme_family = "stablecoins"
+
+    line = headline_so_what(Pick(), context=_week_context())
+    assert line.startswith("Experts divided over Binance hack")
+    assert "$293.16B" in line
+    assert "payments and reserve rails remain" not in line
+
+
 if __name__ == "__main__":
     test_stable_caption_names_both_levels()
     test_rwa_caption_names_protocol_tvl_and_distributed_value()
     test_network_share_delta_is_percentage_points()
     test_smaller_inflow_is_not_described_as_risk_leaving()
-    test_actual_outflow_still_reads_as_risk_leaving()
+    test_actual_outflow_states_the_outflow()
     test_week_in_brief_keeps_a_positive_flow_positive()
     test_non_etf_outflow_headline_is_not_called_listed_outflows()
+    test_directional_sentence_then_uses_the_prior_reading()
+    test_no_launch_line_cites_the_week_change()
+    test_news_line_uses_the_article_and_the_week_change()
+    test_headline_so_what_follows_that_story_market()
     print("test_newsletter_presentation: ok")

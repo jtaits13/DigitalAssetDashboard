@@ -399,6 +399,30 @@ def _fp_value_delta(value: object, delta: object) -> str:
     return f"{str(value or '').strip()}|{delta}"
 
 
+def _history_levels(latest: dict[str, Any]) -> dict[str, str]:
+    """Displays saved so the next newsletter can compare this print with the prior one."""
+
+    def _display(rows: object, needle: str) -> str:
+        if not isinstance(rows, list):
+            return ""
+        for row in rows:
+            if isinstance(row, dict) and needle in str(row.get("label") or "").lower():
+                return str(row.get("value_display") or "").strip()
+        return ""
+
+    crypto = latest.get("crypto") if isinstance(latest.get("crypto"), dict) else {}
+    etp = latest.get("etp") if isinstance(latest.get("etp"), dict) else {}
+    primary = crypto.get("primary") if isinstance(crypto.get("primary"), dict) else {}
+    return {
+        "tmmf": _display(latest.get("tmmf_kpis"), "distributed"),
+        "stable": _display(latest.get("stable_kpis"), "market cap"),
+        "rwa": _display(latest.get("rwa_kpis"), "distributed asset"),
+        "crypto": str(primary.get("value_display") or "").strip(),
+        "etp": str(etp.get("total_aum_display") or "").strip(),
+        "etp_flow": str(etp.get("net_flow_1m_display") or "").strip(),
+    }
+
+
 def _compact_crypto(crypto: dict[str, Any]) -> dict[str, Any]:
     keep = ("generated_at", "source", "primary", "btc_dominance", "stablecoin_share", "btc", "eth")
     return {key: crypto[key] for key in keep if key in crypto}
@@ -473,6 +497,7 @@ def _write_snapshot(
             "fetched_at": live.get("fetched_at"),
             "sources": dict(sources),
             "fingerprints": dict(live.get("fingerprints") or {}),
+            "levels": _history_levels(latest),
             "tmmf_distributed_usd": tmmf_usd,
             "issues": list(live.get("issues") or []),
         }

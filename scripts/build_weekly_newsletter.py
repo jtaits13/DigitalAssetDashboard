@@ -1130,96 +1130,11 @@ def _kpi_row(
     )
 
 
-_HEADLINE_SO_WHAT_RULES: tuple[tuple[re.Pattern[str], str, str], ...] = (
-    (
-        re.compile(r"state street|stablecoin reserves? money market|genius act.*money market", re.I),
-        "A major custodian launched a dedicated stablecoin reserve fund",
-        "reserve infrastructure is being productized—not just banked—ahead of scaled issuance",
-    ),
-    (
-        re.compile(r"bita|covered-call bitcoin|premium income etf|debuts.*bitcoin etf", re.I),
-        "BlackRock broadened listed Bitcoin access with an income-oriented ETF",
-        "product innovation is expanding beyond spot beta into yield and options overlays",
-    ),
-    (
-        re.compile(r"stablecoin|bitlicense", re.I),
-        "Bank-led stablecoin plans are shifting from pilot to scaled issuance",
-        "regulated issuers are treating stablecoins as payments infrastructure, not trading collateral",
-    ),
-    (
-        re.compile(r"prediction market|kalshi|insider|market manipulation", re.I),
-        "Prediction-market venues face tighter conduct and disclosure rules",
-        "oversight is scaling with new trading venues—a governance story more than a token bet",
-    ),
-    (
-        re.compile(r"shut down|shutdown|didn.t care|post-mortem", re.I),
-        "An on-chain product cycle ended without durable user demand",
-        "distribution and use-case fit still matter more than token design alone",
-    ),
-    (
-        re.compile(r"tokeniz|\brwa\b|private credit|securitize|treasur", re.I),
-        "Tokenization coverage points to TradFi assets moving on-chain",
-        "distribution and collateral plumbing are still the bottleneck, not issuer intent",
-    ),
-    (
-        re.compile(r"money market|mmf|settlement|buidl|benji", re.I),
-        "Tokenized cash and settlement rails keep attracting institutional attention",
-        "on-chain money-market funds are being framed as workflow infrastructure, not yield products",
-    ),
-    (
-        re.compile(r"\betf\b|\betp\b|inflow|outflow|ibit", re.I),
-        "Listed crypto ETF access remains a primary institutional on-ramp",
-        "flows and product filings still front-run how allocators gain exposure",
-    ),
-    (
-        re.compile(r"sec\b|cftc|regulat|legislation|genius act", re.I),
-        "Regulatory headlines are shaping what institutions can launch and hold",
-        "policy clarity matters more than weekly price moves for durable adoption",
-    ),
-)
-
-_FAMILY_SO_WHAT: dict[str, tuple[str, str]] = {
-    "stablecoins": (
-        "Stablecoin infrastructure stayed in the news",
-        "payments and reserve rails remain the institutional entry point",
-    ),
-    "tokenization": (
-        "Tokenization remained a lead institutional theme",
-        "TradFi distribution is still catching up to on-chain issuance",
-    ),
-    "tmmf": (
-        "Tokenized cash rails drew fresh coverage",
-        "settlement and treasury workflow adoption matter more than headline yield",
-    ),
-    "etp": (
-        "U.S. crypto ETF access stayed in focus",
-        "listed products still mediate how traditional capital enters the asset class",
-    ),
-    "etp_flows": (
-        "ETF flow dynamics stayed in focus",
-        "allocators are adjusting listed exposure faster than on-chain rails are repricing",
-    ),
-    "regulation": (
-        "Policy and oversight headlines continued to build",
-        "compliance capacity is becoming part of market structure, not a side story",
-    ),
-}
-
-
 def _headline_so_what_line(pick: Any) -> str:
-    """Per-headline takeaway: story read, then market meaning."""
-    title = str(pick.title or "")
-    for pattern, interpretation, meaning in _HEADLINE_SO_WHAT_RULES:
-        if pattern.search(title):
-            return f"{interpretation}—{meaning}."
-    family = str(getattr(pick, "theme_family", "") or "")
-    if family in _FAMILY_SO_WHAT:
-        interpretation, meaning = _FAMILY_SO_WHAT[family]
-        return f"{interpretation}—{meaning}."
-    return (
-        "This headline adds to the week's infrastructure narrative—"
-        "structural buildout is still running ahead of short-term spot noise."
-    )
+    """Per-headline note: the story, then how that market moved since the prior reading."""
+    from key_observations.newsletter_week import headline_so_what
+
+    return headline_so_what(pick)
 
 
 def _so_what_inset_html(line: str, *, outlook: bool = False, margin_top: str | None = None) -> str:
