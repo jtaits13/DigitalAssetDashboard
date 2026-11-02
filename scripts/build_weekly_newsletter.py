@@ -1130,11 +1130,18 @@ def _kpi_row(
     )
 
 
-def _headline_so_what_line(pick: Any) -> str:
-    """Per-headline note: the story, then how that market moved since the prior reading."""
+def _headline_so_what_line(pick: Any, articles: list[dict[str, Any]] | None = None) -> str:
+    """The headline's own summary. No market-cap or week-to-week figures."""
     from key_observations.newsletter_week import headline_so_what
 
-    return headline_so_what(pick)
+    summary = str(getattr(pick, "summary", "") or "")
+    link = str(getattr(pick, "link", "") or "").strip()
+    if not summary and link:
+        for article in articles or []:
+            if str(article.get("link") or "").strip() == link:
+                summary = str(article.get("summary") or "")
+                break
+    return headline_so_what(pick, summary=summary)
 
 
 def _so_what_inset_html(line: str, *, outlook: bool = False, margin_top: str | None = None) -> str:
@@ -1166,11 +1173,27 @@ def _ol_headline_separator_html() -> str:
     )
 
 
-def _headline_so_what_html(pick: Any, *, outlook: bool = False, margin_top: str | None = None) -> str:
-    return _so_what_inset_html(_headline_so_what_line(pick), outlook=outlook, margin_top=margin_top)
+def _headline_so_what_html(
+    pick: Any,
+    *,
+    outlook: bool = False,
+    margin_top: str | None = None,
+    articles: list[dict[str, Any]] | None = None,
+) -> str:
+    line = _headline_so_what_line(pick, articles)
+    if not line:
+        return ""
+    return _so_what_inset_html(line, outlook=outlook, margin_top=margin_top)
 
 
-def _headline_item_html(pick: Any, index: int, *, is_last: bool = False, outlook: bool = False) -> str:
+def _headline_item_html(
+    pick: Any,
+    index: int,
+    *,
+    is_last: bool = False,
+    outlook: bool = False,
+    articles: list[dict[str, Any]] | None = None,
+) -> str:
     title = escape(str(pick.title))
     link = str(pick.link or "").strip()
     if link:
@@ -1202,7 +1225,7 @@ def _headline_item_html(pick: Any, index: int, *, is_last: bool = False, outlook
             f"</td></tr>"
             f"<tr><td></td>"
             f'<td style="padding-top:{gap};">'
-            f"{_headline_so_what_html(pick, outlook=True, margin_top='0')}"
+            f"{_headline_so_what_html(pick, outlook=True, margin_top='0', articles=articles)}"
             f"</td></tr>"
             f"</table>{separator}</div>"
         )
@@ -1218,16 +1241,23 @@ def _headline_item_html(pick: Any, index: int, *, is_last: bool = False, outlook
         f'<td style="vertical-align:top;">'
         f'<div style="font-size:14px;line-height:1.55;color:{_COLOR_INK};">{title}</div>'
         f'<div style="font-size:12px;color:{_COLOR_MUTED};margin:0.3rem 0 0;">{meta}</div>'
-        f"{_headline_so_what_html(pick)}"
+        f"{_headline_so_what_html(pick, articles=articles)}"
         f"</td></tr></table></li>"
     )
 
 
-def _week_headlines_html(picks: list[Any], *, outlook: bool = False) -> str:
+def _week_headlines_html(
+    picks: list[Any],
+    *,
+    outlook: bool = False,
+    articles: list[dict[str, Any]] | None = None,
+) -> str:
     if not picks:
         return ""
     items = [
-        _headline_item_html(pick, i, is_last=(i == len(picks)), outlook=outlook)
+        _headline_item_html(
+            pick, i, is_last=(i == len(picks)), outlook=outlook, articles=articles
+        )
         for i, pick in enumerate(picks, start=1)
     ]
     if outlook:
@@ -2286,7 +2316,7 @@ def build_newsletter_html(
         "shipped_leads": shipped_leads,
         "force_legacy_takeaways": force_legacy_takeaways,
     }
-    headlines_block = _week_headlines_html(week_headlines, outlook=ol)
+    headlines_block = _week_headlines_html(week_headlines, outlook=ol, articles=articles)
 
     # --- 1. TMMFs (matches home page order) ---
     tmmf_section = _section_block(

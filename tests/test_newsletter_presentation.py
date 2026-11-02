@@ -187,15 +187,21 @@ def test_second_bullet_stays_on_the_headline() -> None:
     assert "IBIT" not in body
 
 
-def test_headline_so_what_follows_that_story_market() -> None:
+def test_headline_so_what_stays_on_the_story() -> None:
     class Pick:
         title = "Experts divided over Binance hack asset freezes, warn recovery is another matter"
         theme_family = "stablecoins"
 
-    line = headline_so_what(Pick(), context=_week_context())
-    assert line.startswith("Experts divided over Binance hack")
-    assert "$293.16B" in line
-    assert "payments and reserve rails remain" not in line
+    summary = (
+        "Experts disagree on whether exchanges can freeze the stolen bitcoin. "
+        "Recovery would depend on cooperation from the venues holding the coins."
+    )
+    line = headline_so_what(Pick(), summary=summary, context=_week_context())
+    assert "freeze the stolen bitcoin" in line
+    assert "cooperation from the venues" in line
+    assert "$293.16B" not in line
+    assert "12 Oct" not in line
+    assert headline_so_what(Pick(), context=_week_context()) == ""
 
 
 if __name__ == "__main__":
@@ -209,5 +215,5 @@ if __name__ == "__main__":
     test_directional_sentence_then_uses_the_prior_reading()
     test_no_launch_line_stays_on_the_launch_headline()
     test_second_bullet_stays_on_the_headline()
-    test_headline_so_what_follows_that_story_market()
+    test_headline_so_what_stays_on_the_story()
     print("test_newsletter_presentation: ok")

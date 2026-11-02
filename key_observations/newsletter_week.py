@@ -459,22 +459,12 @@ def _largest_prior_section(ctx: WeekContext) -> str | None:
     return best_section
 
 
-def headline_so_what(pick: Any, *, context: WeekContext | None = None) -> str:
-    """Story pointer plus the week-to-week move for that story's market."""
-    ctx = context if context is not None else load_week_context_from_snapshot()
-    family = str(getattr(pick, "theme_family", "") or "")
-    section_id = _FAMILY_SECTION.get(family) or _largest_prior_section(ctx)
-    title = _headline_hook(str(getattr(pick, "title", "") or ""), max_len=72)
-    words = title.split()
-    pointer = " ".join(words[:8])
-    if len(words) > 8:
-        pointer += "…"
-    tail = _dynamic_tail(section_id, ctx) if section_id else ""
-    if not pointer:
-        return tail
-    if not tail:
-        return pointer
-    return f"{pointer}: {tail}"
+def headline_so_what(pick: Any, *, summary: str = "", context: WeekContext | None = None) -> str:
+    """What this headline says. Market levels and week-to-week changes stay in the section tiles."""
+    del context
+    text = summary or str(getattr(pick, "summary", "") or "")
+    sentences = _story_sentences(text)
+    return " ".join(sentences)
 
 
 def load_cooldown() -> dict[str, Any]:
