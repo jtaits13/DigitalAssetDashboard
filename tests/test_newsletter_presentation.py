@@ -162,27 +162,29 @@ def test_directional_sentence_then_uses_the_prior_reading() -> None:
     assert "pulled liquidity" not in body
 
 
-def test_no_launch_line_cites_the_week_change() -> None:
+def test_no_launch_line_stays_on_the_launch_headline() -> None:
     body = _tmmf_no_launch_takeaway(_week_context()).body
     assert "No new fund launch" in body
-    assert "went from $13.60B to $12.77B (-6.1%) since the 12 Oct reading" in body
+    assert "12 Oct" not in body
+    assert "$13.60B" not in body
     assert "carried the TMMF story" not in body
 
 
-def test_news_line_uses_the_article_and_the_week_change() -> None:
+def test_second_bullet_stays_on_the_headline() -> None:
     summary = (
-        "Polygon extended its bank payment stack to Solana this week. "
-        "The rollout adds another settlement rail."
+        "The 18,270 BTC haul is worth about $1.4 billion and comes within 442 coins of SpaceX's disclosed holdings. "
+        "The coins moved out of Binance wallets over the weekend."
     )
     body = _compose_news_body(
-        "stablecoins",
-        {"title": "Polygon extends bank payments", "summary": summary},
+        "etp",
+        {"title": "Bitcoin stolen from Binance tops Tesla's holdings", "summary": summary},
         _week_context(),
     )
-    assert body.startswith("Polygon extended its bank payment stack to Solana this week.")
-    assert "went from $293.16B to $286.24B (-2.4%) since the 12 Oct reading" in body
-    assert "+37.1% over 30D" in body
-    assert "dry powder" not in body
+    assert body.startswith("The 18,270 BTC haul is worth about $1.4 billion")
+    assert "moved out of Binance wallets" in body
+    assert "Aggregate AUM" not in body
+    assert "12 Oct" not in body
+    assert "IBIT" not in body
 
 
 def test_headline_so_what_follows_that_story_market() -> None:
@@ -205,7 +207,7 @@ if __name__ == "__main__":
     test_week_in_brief_keeps_a_positive_flow_positive()
     test_non_etf_outflow_headline_is_not_called_listed_outflows()
     test_directional_sentence_then_uses_the_prior_reading()
-    test_no_launch_line_cites_the_week_change()
-    test_news_line_uses_the_article_and_the_week_change()
+    test_no_launch_line_stays_on_the_launch_headline()
+    test_second_bullet_stays_on_the_headline()
     test_headline_so_what_follows_that_story_market()
     print("test_newsletter_presentation: ok")

@@ -850,14 +850,24 @@ def _interpret_news_for_market(section_id: str, title: str, blurb: str) -> str:
     return _news_so_what(section_id)
 
 
-def _first_sentence(text: str, *, limit: int = 220) -> str:
+def _story_sentences(text: str, *, limit: int = 2, sentence_limit: int = 220) -> list[str]:
+    """Sentences from this item only. Section KPI comparisons stay on the first bullet."""
     cleaned = _strip_html_text(text)
     if len(cleaned) < 40:
-        return ""
-    sentence = _SENTENCE_SPLIT_RE.split(cleaned, maxsplit=1)[0].strip()
-    if len(sentence) > limit:
-        sentence = sentence[: limit - 1].rsplit(" ", 1)[0].rstrip(".,;:") + "…"
-    return sentence
+        return []
+    sentences: list[str] = []
+    for part in _SENTENCE_SPLIT_RE.split(cleaned):
+        sentence = part.strip()
+        if len(sentence) < 40:
+            continue
+        if re.search(r"cookie|subscribe|sign up|newsletter", sentence, re.I):
+            continue
+        if len(sentence) > sentence_limit:
+            sentence = sentence[: sentence_limit - 1].rsplit(" ", 1)[0].rstrip(".,;:") + "…"
+        sentences.append(sentence)
+        if len(sentences) >= limit:
+            break
+    return sentences
 
 
 def _compose_news_body(
@@ -865,12 +875,11 @@ def _compose_news_body(
     article: dict[str, Any],
     context: WeekContext | None = None,
 ) -> str:
-    """Article's own first sentence, then this week's change versus the prior reading."""
-    summary = _first_sentence(str(article.get("summary") or ""))
-    tail = _dynamic_tail(section_id, context)
-    parts = [part for part in (summary, tail) if part]
-    if parts:
-        return " ".join(parts)
+    """Stay on the headline. Do not append the section's week-to-week KPI comparison."""
+    del section_id, context
+    sentences = _story_sentences(str(article.get("summary") or ""))
+    if sentences:
+        return " ".join(sentences)
     title = str(article.get("title") or "").strip()
     return title
 
@@ -944,11 +953,9 @@ def _fetch_article_blurb(url: str, *, timeout: float = 6.0) -> str:
 
 def _tmmf_no_launch_takeaway(context: WeekContext | None = None) -> WeeklyTakeaway:
     # Renderer appends the terminal period; keep leads unpunctuated like WoW/flat.
+    del context
     lead = "No TMMF fund launches this week"
-    tail = _dynamic_tail("tmmf", context)
     body = "No new fund launch was in this week's coverage."
-    if tail:
-        body = f"{body} {tail}"
     return WeeklyTakeaway(
         lead=lead,
         body=body,
@@ -986,9 +993,6 @@ def _tmmf_fund_launch_takeaway(
 
     lead, body = tmmf_launch_takeaway_copy(launch)
     lead = lead.strip().rstrip(".!?…:")
-    tail = _dynamic_tail("tmmf", context)
-    if tail and tail not in body:
-        body = f"{body.rstrip()} {tail}"
     key = normalize_lead(lead)
     if key in cooled:
         return _tmmf_no_launch_takeaway(context)
