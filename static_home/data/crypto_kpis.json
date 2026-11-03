@@ -1,28 +1,28 @@
 {
-  "generated_at": "2026-11-02T21:52:54.427538+00:00",
+  "generated_at": "2026-11-03T07:04:36.390401+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
-    "value_display": "$2.70T",
+    "value_display": "$2.69T",
     "delta": {
-      "pct": -10.5658,
+      "pct": -11.0663,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$76,700",
+    "value_display": "$76,499",
     "delta": {
-      "pct": -9.6166,
+      "pct": -9.9256,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,252",
+    "value_display": "$2,244",
     "delta": {
-      "pct": -16.3446,
+      "pct": -16.761,
       "window": "1M"
     }
   },
@@ -30,7 +30,7 @@
     "label": "BTC dominance",
     "value_display": "57.1%",
     "delta": {
-      "pct": 1.0998,
+      "pct": 1.5033,
       "window": "1M"
     }
   },
@@ -38,16 +38,16 @@
     "label": "Stablecoin share",
     "value_display": "10.9%",
     "delta": {
-      "pct": 11.5275,
+      "pct": 12.0151,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 57.08,
+    "btc_dominance_pct": 57.15,
     "stablecoin_share_top50_pct": 10.9,
-    "top50_market_cap_usd": 2559378625090.0,
-    "stablecoin_market_cap_usd": 278958368806.0,
-    "btc_market_cap_usd": 1542090175374.0
+    "top50_market_cap_usd": 2550061929152.0,
+    "stablecoin_market_cap_usd": 278003751236.0,
+    "btc_market_cap_usd": 1537982681685.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,7 +65,7 @@
       {
         "symbol": "RAIN",
         "name": "Rain",
-        "pct_30d": -43.8527,
+        "pct_30d": -49.961,
         "category": "meme",
         "category_label": "Meme",
         "detail_url": "https://www.coingecko.com/en/coins/rain",
@@ -79,7 +79,7 @@
       {
         "symbol": "HBAR",
         "name": "Hedera",
-        "pct_30d": -32.2065,
+        "pct_30d": -32.0739,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/hedera-hashgraph",
@@ -93,7 +93,7 @@
       {
         "symbol": "AAVE",
         "name": "Aave",
-        "pct_30d": -29.327,
+        "pct_30d": -30.8172,
         "category": "defi",
         "category_label": "DeFi",
         "detail_url": "https://www.coingecko.com/en/coins/aave",
@@ -107,5 +107,5 @@
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap fell 10.6% over 30D:</strong> Total crypto market cap at $2.70T (10.6% lower over 30D). Related: <a href=\"https://www.coindesk.com/policy/2026/11/01/the-crypto-reader-s-guide-to-the-2026-midterm-election-state-of-crypto\" target=\"_blank\" rel=\"noopener noreferrer\">The crypto reader&#x27;s guide to the 2026 midterm election: State of Crypto</a> (CoinDesk).</li><li><strong>Losses broadened among top-50 alts:</strong> 4 names up more than ~0.5%, 33 down more than ~0.5%, and 5 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://decrypt.co/382237/binance-sets-aside-6-34b-to-cover-hack-losses-ceo-says-your-assets-are-safe\" target=\"_blank\" rel=\"noopener noreferrer\">Binance Sets Aside $6.34B to Cover Hack Losses, CEO Says &#x27;Your Assets Are Safe&#x27;</a> (Decrypt).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://cointelegraph.com/news/binance-safu-btc-balance-halves-recovery-unclear?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Binance taps half its SAFU Bitcoin holdings, releases reserve proof</a> (CoinTelegraph).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.coindesk.com/tech/2026/11/02/xrp-ledger-set-to-fix-flaw-that-could-let-stablecoin-partners-print-new-tokens\" target=\"_blank\" rel=\"noopener noreferrer\">XRP Ledger set to fix flaw that could have let stablecoin partners print new tokens</a> (CoinDesk).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap fell 11.1% over 30D:</strong> Total crypto market cap at $2.69T (11.1% lower over 30D). Related: <a href=\"https://www.coindesk.com/business/2026/11/02/why-crypto-exchange-hacks-can-be-harder-to-contain-versus-global-banks\" target=\"_blank\" rel=\"noopener noreferrer\">Why stealing billions from a crypto exchange can be harder to stop than a bank theft</a> (CoinDesk).</li><li><strong>Losses broadened among top-50 alts:</strong> 3 names up more than ~0.5%, 34 down more than ~0.5%, and 5 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://decrypt.co/382237/binance-sets-aside-6-34b-to-cover-hack-losses-ceo-says-your-assets-are-safe\" target=\"_blank\" rel=\"noopener noreferrer\">Binance Sets Aside $6.34B to Cover Hack Losses, CEO Says &#x27;Your Assets Are Safe&#x27;</a> (Decrypt).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://cointelegraph.com/news/binance-safu-btc-balance-halves-recovery-unclear?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Binance taps half its SAFU Bitcoin holdings, releases reserve proof</a> (CoinTelegraph).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://cointelegraph.com/news/crypto-com-hong-kong-app-shutdown-license-pending?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Crypto.com to withdraw Hong Kong consumer app citing regulatory changes</a> (CoinTelegraph).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
