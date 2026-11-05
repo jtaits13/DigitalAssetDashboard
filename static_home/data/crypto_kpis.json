@@ -1,28 +1,28 @@
 {
-  "generated_at": "2026-11-04T19:59:00.755601+00:00",
+  "generated_at": "2026-11-05T07:06:32.958071+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
-    "value_display": "$2.81T",
+    "value_display": "$2.82T",
     "delta": {
-      "pct": -7.865,
+      "pct": -7.3783,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$80,022",
+    "value_display": "$80,608",
     "delta": {
-      "pct": -5.989,
+      "pct": -5.7559,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,408",
+    "value_display": "$2,428",
     "delta": {
-      "pct": -10.4779,
+      "pct": -10.0353,
       "window": "1M"
     }
   },
@@ -30,7 +30,7 @@
     "label": "BTC dominance",
     "value_display": "57.4%",
     "delta": {
-      "pct": 2.5594,
+      "pct": 1.6599,
       "window": "1M"
     }
   },
@@ -38,16 +38,16 @@
     "label": "Stablecoin share",
     "value_display": "10.4%",
     "delta": {
-      "pct": 7.6978,
+      "pct": 7.3947,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 57.35,
-    "stablecoin_share_top50_pct": 10.44,
-    "top50_market_cap_usd": 2655147146345.0,
-    "stablecoin_market_cap_usd": 277081130139.0,
-    "btc_market_cap_usd": 1608864589433.0
+    "btc_dominance_pct": 57.42,
+    "stablecoin_share_top50_pct": 10.36,
+    "top50_market_cap_usd": 2673021979824.0,
+    "stablecoin_market_cap_usd": 276914714360.0,
+    "btc_market_cap_usd": 1620648998836.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,7 +65,7 @@
       {
         "symbol": "RAIN",
         "name": "Rain",
-        "pct_30d": -45.6269,
+        "pct_30d": -48.723,
         "category": "meme",
         "category_label": "Meme",
         "detail_url": "https://www.coingecko.com/en/coins/rain",
@@ -79,7 +79,7 @@
       {
         "symbol": "PUMP",
         "name": "Pump.fun",
-        "pct_30d": -33.8781,
+        "pct_30d": -31.0022,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/pump-fun",
@@ -93,7 +93,7 @@
       {
         "symbol": "HBAR",
         "name": "Hedera",
-        "pct_30d": -28.6698,
+        "pct_30d": -27.6726,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/hedera-hashgraph",
@@ -107,5 +107,5 @@
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap fell 7.9% over 30D:</strong> Total crypto market cap at $2.81T (7.9% lower over 30D). Related: <a href=\"https://www.theblock.co/news/regulation/2026-11-04-french-hill-too-close-to-call-house-flips-changing-crypto-legislation-432572\" target=\"_blank\" rel=\"noopener noreferrer\">French Hill\u2019s race still too close to call as House flips, changing the direction of crypto legislation</a> (The Block).</li><li><strong>Losses broadened among top-50 alts:</strong> 3 names up more than ~0.5%, 35 down more than ~0.5%, and 4 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://cointelegraph.com/news/trump-linked-tokens-lead-crypto-losses-after-democrats-sweep-in-the-us-midterms?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Trump-linked tokens lead crypto losses after Democrats sweep in the US midterms</a> (CoinTelegraph).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://cointelegraph.com/news/circles-arc-token-sale-earnings-yields-usdc-income?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Circle\u2019s ARC token sale lifts earnings as lower yields weigh on USDC income</a> (CoinTelegraph).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://thedefiant.io/news/hacks/binance-details-months-long-campaign-behind-6-34-billion-hack\" target=\"_blank\" rel=\"noopener noreferrer\">Binance Details Months-Long Campaign Behind $6.34 Billion Hack</a> (The Defiant).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap fell 7.4% over 30D:</strong> Total crypto market cap at $2.82T (7.4% lower over 30D). Related: <a href=\"https://www.coindesk.com/policy/2026/11/04/tokenization-and-stablecoins-may-weather-democrats-sweep-as-broader-crypto-rules-face-uncertainty\" target=\"_blank\" rel=\"noopener noreferrer\">Tokenization and stablecoins may weather Democrats&#x27; sweep as broader crypto rules face uncertainty</a> (CoinDesk).</li><li><strong>Losses broadened among top-50 alts:</strong> 4 names up more than ~0.5%, 33 down more than ~0.5%, and 5 roughly flat out of <strong>42</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://cointelegraph.com/news/trump-linked-tokens-lead-crypto-losses-after-democrats-sweep-in-the-us-midterms?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Trump-linked tokens lead crypto losses after Democrats sweep in the US midterms</a> (CoinTelegraph).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://www.coindesk.com/markets/2026/11/04/u-s-sanctioned-moscow-exchange-to-list-bitcoin-and-tether-s-usdt-in-december\" target=\"_blank\" rel=\"noopener noreferrer\">U.S.-sanctioned Moscow Exchange to list bitcoin and Tether\u2019s USDT in December</a> (CoinDesk).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.theblock.co/news/regulation/2026-11-04-french-hill-too-close-to-call-house-flips-changing-crypto-legislation-432572\" target=\"_blank\" rel=\"noopener noreferrer\">French Hill\u2019s race still too close to call as House flips, changing the direction of crypto legislation</a> (The Block).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
