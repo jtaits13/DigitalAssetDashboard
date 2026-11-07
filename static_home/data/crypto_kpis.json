@@ -1,53 +1,53 @@
 {
-  "generated_at": "2026-11-06T19:38:24.330972+00:00",
+  "generated_at": "2026-11-07T06:19:39.142771+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
-    "value_display": "$2.66T",
+    "value_display": "$2.67T",
     "delta": {
-      "pct": -7.7227,
+      "pct": -7.71,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$75,644",
+    "value_display": "$75,975",
     "delta": {
-      "pct": -8.8887,
+      "pct": -8.0495,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,228",
+    "value_display": "$2,245",
     "delta": {
-      "pct": -12.5927,
+      "pct": -12.2575,
       "window": "1M"
     }
   },
   "btc_dominance": {
     "label": "BTC dominance",
-    "value_display": "57.1%",
+    "value_display": "57.2%",
     "delta": {
-      "pct": -1.1364,
+      "pct": -0.4567,
       "window": "1M"
     }
   },
   "stablecoin_share": {
     "label": "Stablecoin share",
-    "value_display": "11.0%",
+    "value_display": "10.9%",
     "delta": {
-      "pct": 10.0934,
+      "pct": 9.4062,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 57.07,
-    "stablecoin_share_top50_pct": 10.96,
-    "top50_market_cap_usd": 2523924993024.0,
-    "stablecoin_market_cap_usd": 276620600683.0,
-    "btc_market_cap_usd": 1520612815410.0
+    "btc_dominance_pct": 57.2,
+    "stablecoin_share_top50_pct": 10.9,
+    "top50_market_cap_usd": 2531006274806.0,
+    "stablecoin_market_cap_usd": 275989159293.0,
+    "btc_market_cap_usd": 1527689614352.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,7 +65,7 @@
       {
         "symbol": "RAIN",
         "name": "Rain",
-        "pct_30d": -46.5342,
+        "pct_30d": -46.8769,
         "category": "meme",
         "category_label": "Meme",
         "detail_url": "https://www.coingecko.com/en/coins/rain",
@@ -79,7 +79,7 @@
       {
         "symbol": "NEAR",
         "name": "NEAR Protocol",
-        "pct_30d": -27.1277,
+        "pct_30d": -30.1324,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/near",
@@ -93,7 +93,7 @@
       {
         "symbol": "ADA",
         "name": "Cardano",
-        "pct_30d": -26.4178,
+        "pct_30d": -26.8089,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/cardano",
@@ -107,5 +107,5 @@
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap fell 7.7% over 30D:</strong> Total crypto market cap at $2.66T (7.7% lower over 30D). Related: <a href=\"https://www.coindesk.com/business/2026/11/05/thailand-moves-to-block-bitget-as-crypto-exchange-s-local-acquisition-faces-uncertainty\" target=\"_blank\" rel=\"noopener noreferrer\">Thailand moves to block Bitget as crypto exchange&#x27;s local acquisition faces uncertainty</a> (CoinDesk).</li><li><strong>Losses broadened among top-50 alts:</strong> 5 names up more than ~0.5%, 31 down more than ~0.5%, and 5 roughly flat out of <strong>41</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://cointelegraph.com/news/binance-deribit-revoke-signalplus-api-fake-teams-attack?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Binance, Deribit revoke SignalPlus API keys after fake Teams invite attack</a> (CoinTelegraph).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://www.coindesk.com/daybook-us/2026/11/06/over-usd1-billion-in-bullish-bets-liquidated-while-etf-flows-suggest-no-help-in-spot-market\" target=\"_blank\" rel=\"noopener noreferrer\">Over $1 billion in bullish bets liquidated while ETF flows suggest no help in spot market</a> (CoinDesk).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.coindesk.com/policy/2026/11/05/hyperliquid-treasury-firm-seeking-u-s-regulatory-nod-as-a-domestic-futures-platform\" target=\"_blank\" rel=\"noopener noreferrer\">Hyperliquid treasury firm seeking U.S. regulatory nod as a domestic futures platform</a> (CoinDesk).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap fell 7.7% over 30D:</strong> Total crypto market cap at $2.67T (7.7% lower over 30D). Related: <a href=\"https://www.coindesk.com/business/2026/11/05/thailand-moves-to-block-bitget-as-crypto-exchange-s-local-acquisition-faces-uncertainty\" target=\"_blank\" rel=\"noopener noreferrer\">Thailand moves to block Bitget as crypto exchange&#x27;s local acquisition faces uncertainty</a> (CoinDesk).</li><li><strong>Losses broadened among top-50 alts:</strong> 4 names up more than ~0.5%, 32 down more than ~0.5%, and 5 roughly flat out of <strong>41</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://cointelegraph.com/news/binance-deribit-revoke-signalplus-api-fake-teams-attack?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Binance, Deribit revoke SignalPlus API keys after fake Teams invite attack</a> (CoinTelegraph).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://www.coindesk.com/daybook-us/2026/11/06/over-usd1-billion-in-bullish-bets-liquidated-while-etf-flows-suggest-no-help-in-spot-market\" target=\"_blank\" rel=\"noopener noreferrer\">Over $1 billion in bullish bets liquidated while ETF flows suggest no help in spot market</a> (CoinDesk).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.coindesk.com/policy/2026/11/05/hyperliquid-treasury-firm-seeking-u-s-regulatory-nod-as-a-domestic-futures-platform\" target=\"_blank\" rel=\"noopener noreferrer\">Hyperliquid treasury firm seeking U.S. regulatory nod as a domestic futures platform</a> (CoinDesk).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
