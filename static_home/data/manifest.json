@@ -1,21 +1,15 @@
 {
-  "generated_at": "2026-11-08T13:52:00.897852+00:00",
+  "generated_at": "2026-11-08T22:23:53.862752+00:00",
   "errors": [
     "ETF news RSS: ETFdb: HTTP Error 403: Forbidden",
     "ETF news RSS: ETF Trends (VettaFi): HTTP Error 403: Forbidden",
     "ETF news RSS: GlobeNewswire (ETF): HTTP Error 403: Forbidden",
-    "ETF news RSS: Yahoo Finance (headlines): HTTP Error 404: Not Found",
-    "ETF news RSS: Google News (spot Bitcoin ETF): HTTP Error 503: Service Unavailable",
-    "ETF news RSS: Google News (crypto ETP / ETF): HTTP Error 503: Service Unavailable",
-    "ETF news RSS: Google News (crypto ETF): HTTP Error 503: Service Unavailable",
-    "news RSS (all articles): CoinDesk: HTTP Error 503: Service Unavailable",
-    "news RSS (all articles): The Block: HTTP Error 503: Service Unavailable",
-    "custodian RSS: GC search page https://www.globalcustodian.com/page/2/?s=digital+asset+custody: The read operation timed out"
+    "ETF news RSS: Yahoo Finance (headlines): HTTP Error 404: Not Found"
   ],
-  "etp_refreshed_at": "2026-11-08T13:43:30.390415+00:00",
-  "crypto_refreshed_at": "2026-11-08T13:46:38.162955+00:00",
+  "etp_refreshed_at": "2026-11-08T22:19:09.953340+00:00",
+  "crypto_refreshed_at": "2026-11-08T22:20:13.767162+00:00",
   "stale_sections": [],
-  "export_completed_at": "2026-11-08T13:52:00.897852+00:00",
+  "export_completed_at": "2026-11-08T22:23:53.862752+00:00",
   "refresh_interval_hours": 6,
   "stale_threshold_hours": {
     "etp": 9,
@@ -25,10 +19,10 @@
     "regulatory": 24
   },
   "sections": {
-    "news": "2026-11-08T13:44:45.089985+00:00",
-    "regulatory": "2026-11-08T13:44:45.089985+00:00",
-    "etp": "2026-11-08T13:43:30.390415+00:00",
-    "rwa": "2026-11-08T13:51:40.679773+00:00",
-    "crypto": "2026-11-08T13:46:38.162955+00:00"
+    "news": "2026-11-08T22:19:14.405956+00:00",
+    "regulatory": "2026-11-08T22:19:14.405956+00:00",
+    "etp": "2026-11-08T22:19:09.953340+00:00",
+    "rwa": "2026-11-08T22:23:47.662391+00:00",
+    "crypto": "2026-11-08T22:20:13.767162+00:00"
   }
 }
