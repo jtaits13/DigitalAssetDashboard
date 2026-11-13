@@ -1,53 +1,53 @@
 {
-  "generated_at": "2026-11-12T20:13:06.917671+00:00",
+  "generated_at": "2026-11-13T07:01:58.555975+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
-    "value_display": "$2.50T",
+    "value_display": "$2.43T",
     "delta": {
-      "pct": -14.4723,
+      "pct": -17.4587,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$71,576",
+    "value_display": "$69,029",
     "delta": {
-      "pct": -13.78,
+      "pct": -17.1924,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$2,018",
+    "value_display": "$1,938",
     "delta": {
-      "pct": -19.6019,
+      "pct": -22.469,
       "window": "1M"
     }
   },
   "btc_dominance": {
     "label": "BTC dominance",
-    "value_display": "57.5%",
+    "value_display": "57.1%",
     "delta": {
-      "pct": 0.8095,
+      "pct": -0.161,
       "window": "1M"
     }
   },
   "stablecoin_share": {
     "label": "Stablecoin share",
-    "value_display": "11.5%",
+    "value_display": "11.8%",
     "delta": {
-      "pct": 15.8656,
+      "pct": 19.47,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 57.51,
-    "stablecoin_share_top50_pct": 11.51,
-    "top50_market_cap_usd": 2375307335035.0,
-    "stablecoin_market_cap_usd": 273440523657.0,
-    "btc_market_cap_usd": 1439463983300.0
+    "btc_dominance_pct": 57.12,
+    "stablecoin_share_top50_pct": 11.83,
+    "top50_market_cap_usd": 2307651416130.0,
+    "stablecoin_market_cap_usd": 273021167538.0,
+    "btc_market_cap_usd": 1388393670834.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,7 +65,7 @@
       {
         "symbol": "RAIN",
         "name": "Rain",
-        "pct_30d": -62.1946,
+        "pct_30d": -61.836,
         "category": "meme",
         "category_label": "Meme",
         "detail_url": "https://www.coingecko.com/en/coins/rain",
@@ -79,7 +79,7 @@
       {
         "symbol": "ENA",
         "name": "Ethena",
-        "pct_30d": -33.6476,
+        "pct_30d": -34.041,
         "category": "other",
         "category_label": "Other",
         "detail_url": "https://www.coingecko.com/en/coins/ethena",
@@ -91,21 +91,21 @@
         }
       },
       {
-        "symbol": "NEAR",
-        "name": "NEAR Protocol",
-        "pct_30d": -31.8015,
-        "category": "l1",
-        "category_label": "Layer 1",
-        "detail_url": "https://www.coingecko.com/en/coins/near",
+        "symbol": "AAVE",
+        "name": "Aave",
+        "pct_30d": -30.308,
+        "category": "defi",
+        "category_label": "DeFi",
+        "detail_url": "https://www.coingecko.com/en/coins/aave",
         "direction": "down",
         "context": {
-          "title": "Tron, Tether and Chainalysis Form a New Crypto-Crime Task Force\u2014Replacing One That Just Collapsed",
-          "source": "Decrypt",
-          "link": "https://decrypt.co/383139/tron-tether-chainalysis-new-crypto-crime-task-force-replacing-trm"
+          "title": "LlamaRisk Proposes Borrowing Speed Limits for Aave V3",
+          "source": "The Defiant",
+          "link": "https://thedefiant.io/news/defi/llamarisk-proposes-borrowing-speed-limits-for-aave-v3"
         }
       }
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap fell 14.5% over 30D:</strong> Total crypto market cap at $2.50T (14.5% lower over 30D). Related: <a href=\"https://cointelegraph.com/news/fsb-turkey-crypto-oversight-stablecoin-regulation?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">FSB urges Turkey to tighten crypto oversight, set stablecoin rules</a> (CoinTelegraph).</li><li><strong>Losses broadened among top-50 alts:</strong> 3 names up more than ~0.5%, 35 down more than ~0.5%, and 3 roughly flat out of <strong>41</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/business/2026/11/12/nomura-weighs-laser-digital-sale-as-european-losses-hit-four-straight-quarters-bloomberg\" target=\"_blank\" rel=\"noopener noreferrer\">Nomura weighs Laser Digital sale as European losses hit four straight quarters</a> (CoinDesk).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://cointelegraph.com/markets/blackrock-bitcoin-etf-ibit-outflows-nine-day-streak?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">BlackRock Bitcoin ETF outflows hit $2B over nine sessions</a> (CoinTelegraph).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://cointelegraph.com/news/dtcc-plans-solana-expansion-wallet-rules-limit-access?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">DTCC Plans Solana Expansion as Wallet Rules Limit Access</a> (CoinTelegraph).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap fell 17.5% over 30D:</strong> Total crypto market cap at $2.43T (17.5% lower over 30D). Related: <a href=\"https://www.theblock.co/news/regulation/2026-11-12-white-house-crypto-picks-sec-cftc-439175\" target=\"_blank\" rel=\"noopener noreferrer\">White House sends crypto-relevant picks to fill SEC and CFTC seats</a> (The Block).</li><li><strong>Losses broadened among top-50 alts:</strong> 2 names up more than ~0.5%, 36 down more than ~0.5%, and 3 roughly flat out of <strong>41</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.coindesk.com/business/2026/11/12/nomura-weighs-laser-digital-sale-as-european-losses-hit-four-straight-quarters-bloomberg\" target=\"_blank\" rel=\"noopener noreferrer\">Nomura weighs Laser Digital sale as European losses hit four straight quarters</a> (CoinDesk).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://www.coindesk.com/markets/2026/11/13/bitcoin-firm-nakamoto-owes-kraken-usd165-million-more-than-its-entire-market-value\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin firm Nakamoto owes Kraken $165 million, more than its entire market value</a> (CoinDesk).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://cointelegraph.com/markets/blackrock-bitcoin-etf-ibit-outflows-nine-day-streak?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">BlackRock Bitcoin ETF outflows hit $2B over nine sessions</a> (CoinTelegraph).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
