@@ -1,36 +1,36 @@
 {
-  "generated_at": "2026-11-15T19:01:29.128782+00:00",
+  "generated_at": "2026-11-16T06:53:31.953114+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
     "value_display": "$2.29T",
     "delta": {
-      "pct": -19.6448,
+      "pct": -19.9863,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$64,697",
+    "value_display": "$64,627",
     "delta": {
-      "pct": -20.2932,
+      "pct": -20.9506,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$1,815",
+    "value_display": "$1,814",
     "delta": {
-      "pct": -24.711,
+      "pct": -25.3528,
       "window": "1M"
     }
   },
   "btc_dominance": {
     "label": "BTC dominance",
-    "value_display": "56.8%",
+    "value_display": "56.7%",
     "delta": {
-      "pct": -0.7825,
+      "pct": -1.1401,
       "window": "1M"
     }
   },
@@ -38,16 +38,16 @@
     "label": "Stablecoin share",
     "value_display": "12.5%",
     "delta": {
-      "pct": 23.1775,
+      "pct": 24.1554,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 56.78,
+    "btc_dominance_pct": 56.71,
     "stablecoin_share_top50_pct": 12.49,
-    "top50_market_cap_usd": 2180247397113.0,
-    "stablecoin_market_cap_usd": 272340357799.0,
-    "btc_market_cap_usd": 1301217513056.0
+    "top50_market_cap_usd": 2179271591678.0,
+    "stablecoin_market_cap_usd": 272191655053.0,
+    "btc_market_cap_usd": 1299833043839.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,7 +65,7 @@
       {
         "symbol": "RAIN",
         "name": "Rain",
-        "pct_30d": -58.3593,
+        "pct_30d": -59.192,
         "category": "meme",
         "category_label": "Meme",
         "detail_url": "https://www.coingecko.com/en/coins/rain",
@@ -79,7 +79,7 @@
       {
         "symbol": "NEAR",
         "name": "NEAR Protocol",
-        "pct_30d": -37.7437,
+        "pct_30d": -37.6816,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/near",
@@ -91,21 +91,21 @@
         }
       },
       {
-        "symbol": "SOL",
-        "name": "Solana",
-        "pct_30d": -31.4648,
+        "symbol": "ADA",
+        "name": "Cardano",
+        "pct_30d": -32.0575,
         "category": "l1",
         "category_label": "Layer 1",
-        "detail_url": "https://www.coingecko.com/en/coins/solana",
+        "detail_url": "https://www.coingecko.com/en/coins/cardano",
         "direction": "down",
         "context": {
-          "title": "DTCC to Bring Tokenized Stocks and Treasuries to Solana in 2027",
-          "source": "Decrypt",
-          "link": "https://decrypt.co/383132/dtcc-to-bring-tokenized-stocks-and-treasuries-to-solana-in-2027"
+          "title": "Cardano holders vote down $5 million bid to buy warehouse copper",
+          "source": "CoinDesk",
+          "link": "https://www.coindesk.com/markets/2026/11/16/cardano-holders-vote-down-usd5-million-bid-to-buy-warehouse-copper"
         }
       }
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap fell 19.6% over 30D:</strong> Total crypto market cap at $2.29T (19.6% lower over 30D). Related: <a href=\"https://www.coindesk.com/markets/2026/11/15/xrp-crashes-to-its-lowest-since-november-2024-as-money-leaves-crypto\" target=\"_blank\" rel=\"noopener noreferrer\">XRP crashes to its lowest since November 2024 as money leaves crypto</a> (CoinDesk).</li><li><strong>Losses broadened among top-50 alts:</strong> 3 names up more than ~0.5%, 34 down more than ~0.5%, and 4 roughly flat out of <strong>41</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://thedefiant.io/news/markets/bitcoin-sinks-to-70-600-as-four-week-losses-deepen\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin Sinks to $70,600 as Four-Week Losses Deepen</a> (The Defiant).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://www.coindesk.com/tech/2026/11/13/live-news-bitcoin-drops-below-200-week-moving-average-as-dollar-strength-pressures-risk-assets\" target=\"_blank\" rel=\"noopener noreferrer\">Live updates: Bitcoin eyes bear market lows as late summer rally mostly wiped out</a> (CoinDesk).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://cointelegraph.com/markets/bitcoin-etf-outflows-2-35-billion-blackrock-11-session-streak?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin ETFs shed $2.35B in 2 weeks, BlackRock\u2019s losing streak hits 11</a> (CoinTelegraph).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap fell 20.0% over 30D:</strong> Total crypto market cap at $2.29T (20.0% lower over 30D). Related: <a href=\"https://www.coindesk.com/markets/2026/11/15/xrp-crashes-to-its-lowest-since-november-2024-as-money-leaves-crypto\" target=\"_blank\" rel=\"noopener noreferrer\">XRP crashes to its lowest since November 2024 as money leaves crypto</a> (CoinDesk).</li><li><strong>Losses broadened among top-50 alts:</strong> 3 names up more than ~0.5%, 33 down more than ~0.5%, and 5 roughly flat out of <strong>41</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://thedefiant.io/news/markets/bitcoin-sinks-to-70-600-as-four-week-losses-deepen\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin Sinks to $70,600 as Four-Week Losses Deepen</a> (The Defiant).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://www.coindesk.com/tech/2026/11/13/live-news-bitcoin-drops-below-200-week-moving-average-as-dollar-strength-pressures-risk-assets\" target=\"_blank\" rel=\"noopener noreferrer\">Live updates: Bitcoin eyes bear market lows as late summer rally mostly wiped out</a> (CoinDesk).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://cointelegraph.com/markets/bitcoin-etf-outflows-2-35-billion-blackrock-11-session-streak?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin ETFs shed $2.35B in 2 weeks, BlackRock\u2019s losing streak hits 11</a> (CoinTelegraph).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
