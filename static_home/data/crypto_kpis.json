@@ -1,53 +1,53 @@
 {
-  "generated_at": "2026-11-17T08:14:10.452850+00:00",
+  "generated_at": "2026-11-17T21:10:04.384652+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
-    "value_display": "$2.30T",
+    "value_display": "$2.28T",
     "delta": {
-      "pct": -19.7767,
+      "pct": -20.0057,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$64,560",
+    "value_display": "$63,985",
     "delta": {
-      "pct": -20.8041,
+      "pct": -20.969,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$1,830",
+    "value_display": "$1,800",
     "delta": {
-      "pct": -24.0391,
+      "pct": -23.1861,
       "window": "1M"
     }
   },
   "btc_dominance": {
     "label": "BTC dominance",
-    "value_display": "56.5%",
+    "value_display": "56.4%",
     "delta": {
-      "pct": -1.2688,
+      "pct": -1.4939,
       "window": "1M"
     }
   },
   "stablecoin_share": {
     "label": "Stablecoin share",
-    "value_display": "12.4%",
+    "value_display": "12.5%",
     "delta": {
-      "pct": 23.2599,
+      "pct": 22.7814,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 56.47,
-    "stablecoin_share_top50_pct": 12.45,
-    "top50_market_cap_usd": 2183217646414.0,
-    "stablecoin_market_cap_usd": 271842221016.0,
-    "btc_market_cap_usd": 1298504616548.0
+    "btc_dominance_pct": 56.36,
+    "stablecoin_share_top50_pct": 12.53,
+    "top50_market_cap_usd": 2166610362045.0,
+    "stablecoin_market_cap_usd": 271537562045.0,
+    "btc_market_cap_usd": 1286921712698.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,21 +65,21 @@
       {
         "symbol": "RAIN",
         "name": "Rain",
-        "pct_30d": -40.2133,
+        "pct_30d": -49.2046,
         "category": "meme",
         "category_label": "Meme",
         "detail_url": "https://www.coingecko.com/en/coins/rain",
         "direction": "down",
         "context": {
-          "title": "Live updates: Bitcoin trades near $65,000 as Nasdaq closes with 2.5% loss",
-          "source": "CoinDesk",
-          "link": "https://www.coindesk.com/tech/2026/11/16/live-news-bitcoin-posts-sixth-weekly-loss-as-tech-stocks-and-metals-slide"
+          "title": "Eastern Europe crypto flows fall 7.9% as Ukraine draws $12B in stablecoins",
+          "source": "CoinTelegraph",
+          "link": "https://cointelegraph.com/news/eastern-europe-crypto-activity-decline-chainalysis?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound"
         }
       },
       {
         "symbol": "HBAR",
         "name": "Hedera",
-        "pct_30d": -35.2364,
+        "pct_30d": -30.6838,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/hedera-hashgraph",
@@ -93,19 +93,19 @@
       {
         "symbol": "NEAR",
         "name": "NEAR Protocol",
-        "pct_30d": -34.7844,
+        "pct_30d": -30.2443,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/near",
         "direction": "down",
         "context": {
-          "title": "Live updates: Bitcoin trades near $65,000 as Nasdaq closes with 2.5% loss",
+          "title": "Bitcoin remains penned in near $64,000 even as ETF outflow streak ends",
           "source": "CoinDesk",
-          "link": "https://www.coindesk.com/tech/2026/11/16/live-news-bitcoin-posts-sixth-weekly-loss-as-tech-stocks-and-metals-slide"
+          "link": "https://www.coindesk.com/markets/2026/11/17/bitcoin-remains-penned-in-near-usd64-000-even-as-etf-outflow-streak-ends"
         }
       }
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap fell 19.8% over 30D:</strong> Total crypto market cap at $2.30T (19.8% lower over 30D). Related: <a href=\"https://thedefiant.io/converge/regulation/hong-kong-targets-year-end-bill-to-widen-crypto-licensing\" target=\"_blank\" rel=\"noopener noreferrer\">Hong Kong Targets Year-End Bill to Widen Crypto Licensing</a> (The Defiant).</li><li><strong>Losses broadened among top-50 alts:</strong> 2 names up more than ~0.5%, 34 down more than ~0.5%, and 5 roughly flat out of <strong>41</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://thedefiant.io/news/markets/bitcoin-holds-near-64-800-after-20-5-four-week-drop\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin Holds Near $64,800 After 20.5% Four-Week Drop</a> (The Defiant).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.coindesk.com/markets/2026/11/17/wells-fargo-s-reported-blackrock-bitcoin-etf-holdings-double-to-usd2-35-billion\" target=\"_blank\" rel=\"noopener noreferrer\">Wells Fargo&#x27;s reported BlackRock bitcoin ETF holdings double to $2.35 billion</a> (CoinDesk).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://decrypt.co/383282/bitcoin-etfs-lose-2-1-billion-november-outflow-streak-seven-days\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin ETFs Lose $2.1 Billion in November as Outflow Streak Hits Seven Days</a> (Decrypt).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap fell 20.0% over 30D:</strong> Total crypto market cap at $2.28T (20.0% lower over 30D). Related: <a href=\"https://www.theblock.co/news/markets/2026-11-17-bitwise-zday-ai-cyber-defense-etf-442062\" target=\"_blank\" rel=\"noopener noreferrer\">Bitwise launches ZDAY, its first non-crypto ETF, to bet on AI cyber defense</a> (The Block).</li><li><strong>Losses broadened among top-50 alts:</strong> 2 names up more than ~0.5%, 34 down more than ~0.5%, and 5 roughly flat out of <strong>41</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://cointelegraph.com/markets/bitcoin-realized-loss-metric-beats-june-high-open-interest-eyes-2-year-low?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin realized loss metric beats June high as open interest eyes 2-year low</a> (CoinTelegraph).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.theblock.co/news/business/2026-11-17-tether-nomad-brazil-investment-442097\" target=\"_blank\" rel=\"noopener noreferrer\">Tether Capital invests $15 million in Nomad, eyes wider access to USDT and XAUT in Brazil</a> (The Block).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://thedefiant.io/news/markets/bitcoin-ether-lose-over-13-in-week-as-rebound-fades\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin, Ether Lose Over 13% in Week as Rebound Fades</a> (The Defiant).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
