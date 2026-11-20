@@ -1,23 +1,15 @@
 {
-  "generated_at": "2026-11-19T20:58:01.978889+00:00",
+  "generated_at": "2026-11-20T07:39:14.955765+00:00",
   "errors": [
+    "ETF news RSS: ETF Trends (VettaFi): HTTP Error 403: Forbidden",
     "ETF news RSS: ETFdb: HTTP Error 403: Forbidden",
     "ETF news RSS: GlobeNewswire (ETF): HTTP Error 403: Forbidden",
-    "ETF news RSS: ETF Trends (VettaFi): HTTP Error 403: Forbidden",
-    "ETF news RSS: Yahoo Finance (headlines): HTTP Error 404: Not Found",
-    "custodian RSS: GC search page https://www.globalcustodian.com/?s=digital+asset: The read operation timed out",
-    "custodian RSS: GC search page https://www.globalcustodian.com/page/2/?s=digital+asset: The read operation timed out",
-    "custodian RSS: GC search page https://www.globalcustodian.com/page/3/?s=digital+asset: The read operation timed out",
-    "custodian RSS: GC search page https://www.globalcustodian.com/page/4/?s=digital+asset: The read operation timed out",
-    "custodian RSS: GC search page https://www.globalcustodian.com/?s=digital+asset+custody: The read operation timed out",
-    "custodian RSS: GC search page https://www.globalcustodian.com/page/2/?s=digital+asset+custody: The read operation timed out",
-    "custodian RSS: GC search page https://www.globalcustodian.com/page/3/?s=digital+asset+custody: The read operation timed out",
-    "custodian RSS: GC search page https://www.globalcustodian.com/page/4/?s=digital+asset+custody: The read operation timed out"
+    "ETF news RSS: Yahoo Finance (headlines): HTTP Error 404: Not Found"
   ],
-  "etp_refreshed_at": "2026-11-19T20:51:57.504738+00:00",
-  "crypto_refreshed_at": "2026-11-19T20:54:22.973753+00:00",
+  "etp_refreshed_at": "2026-11-20T07:33:52.012436+00:00",
+  "crypto_refreshed_at": "2026-11-20T07:35:30.745816+00:00",
   "stale_sections": [],
-  "export_completed_at": "2026-11-19T20:58:01.978889+00:00",
+  "export_completed_at": "2026-11-20T07:39:14.955765+00:00",
   "refresh_interval_hours": 6,
   "stale_threshold_hours": {
     "etp": 9,
@@ -27,10 +19,10 @@
     "regulatory": 24
   },
   "sections": {
-    "news": "2026-11-19T20:52:01.480349+00:00",
-    "regulatory": "2026-11-19T20:52:01.480349+00:00",
-    "etp": "2026-11-19T20:51:57.504738+00:00",
-    "rwa": "2026-11-19T20:57:57.215843+00:00",
-    "crypto": "2026-11-19T20:54:22.973753+00:00"
+    "news": "2026-11-20T07:33:58.340830+00:00",
+    "regulatory": "2026-11-20T07:33:58.340830+00:00",
+    "etp": "2026-11-20T07:33:52.012436+00:00",
+    "rwa": "2026-11-20T07:39:08.813148+00:00",
+    "crypto": "2026-11-20T07:35:30.745816+00:00"
   }
 }
