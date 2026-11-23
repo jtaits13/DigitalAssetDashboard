@@ -1,0 +1,21 @@
+# Daily 18:47 UTC trigger for the full static-site refresh.
+# Split out of the old every-6-hours cron so a delayed start is not dropped when the next slot arrives.
+name: Refresh static home data (18:47 UTC)
+
+on:
+  schedule:
+    - cron: "47 18 * * *"
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  refresh-and-deploy:
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/refresh-static-home-data.yml
+    secrets: inherit

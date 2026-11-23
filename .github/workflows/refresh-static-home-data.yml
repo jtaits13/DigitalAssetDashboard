@@ -1,10 +1,13 @@
 # Full data refresh for the static site: runs export pipelines, writes `static_home/data/*.json`, deploys.
-# Cadence: every 6 hours (UTC). Use "Run workflow" here for a manual refresh without waiting for the schedule.
+# Schedule: four daily workflows (refresh-static-home-slot-*.yml) at 00:47, 06:47, 12:47, and 18:47 UTC.
+# A single `*/6` cron was only finishing about twice a day. GitHub drops a delayed scheduled run once the
+# next slot is due, which left snapshots 12–15 hours old and turned on the "may be outdated" banners.
+# Each slot is its own workflow so a late start still runs (the next occurrence is 24 hours away).
+# Use "Run workflow" here for a manual refresh.
 name: Refresh static home data and deploy
 
 on:
-  schedule:
-    - cron: "25 */6 * * *"
+  workflow_call:
   workflow_dispatch:
 
 permissions:
@@ -20,8 +23,9 @@ jobs:
   refresh-and-deploy:
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url || steps.deployment_retry.outputs.page_url }}
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -64,15 +68,6 @@ jobs:
       - name: Validate static JSON bundle
         run: python scripts/validate_static_json.py
 
-      - name: Upload static_home as site root
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: static_home
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v5
-
       - name: Commit refreshed JSON snapshots
         run: |
           git config user.name "github-actions[bot]"
@@ -94,3 +89,21 @@ jobs:
             git pull --rebase origin main
             git push origin main
           fi
+
+      - name: Upload static_home as site root
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: static_home
+
+      - name: Wait for Pages artifact to register
+        run: sleep 15
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        continue-on-error: true
+        uses: actions/deploy-pages@v5
+
+      - name: Retry deploy to GitHub Pages
+        id: deployment_retry
+        if: steps.deployment.outcome == 'failure'
+        uses: actions/deploy-pages@v5
