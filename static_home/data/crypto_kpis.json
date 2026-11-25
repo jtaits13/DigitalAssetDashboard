@@ -1,53 +1,53 @@
 {
-  "generated_at": "2026-11-24T22:52:24.903865+00:00",
+  "generated_at": "2026-11-25T02:53:53.395333+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
-    "value_display": "$2.15T",
+    "value_display": "$2.12T",
     "delta": {
-      "pct": -23.761,
+      "pct": -23.5952,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$59,948",
+    "value_display": "$59,232",
     "delta": {
-      "pct": -25.593,
+      "pct": -25.9682,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$1,684",
+    "value_display": "$1,657",
     "delta": {
-      "pct": -28.4133,
+      "pct": -28.7011,
       "window": "1M"
     }
   },
   "btc_dominance": {
     "label": "BTC dominance",
-    "value_display": "56.2%",
+    "value_display": "56.1%",
     "delta": {
-      "pct": -2.7213,
+      "pct": -2.9062,
       "window": "1M"
     }
   },
   "stablecoin_share": {
     "label": "Stablecoin share",
-    "value_display": "13.2%",
+    "value_display": "13.3%",
     "delta": {
-      "pct": 29.982,
+      "pct": 30.4825,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 56.17,
-    "stablecoin_share_top50_pct": 13.2,
-    "top50_market_cap_usd": 2047770086174.0,
-    "stablecoin_market_cap_usd": 270212198436.0,
-    "btc_market_cap_usd": 1205974113519.0
+    "btc_dominance_pct": 56.1,
+    "stablecoin_share_top50_pct": 13.34,
+    "top50_market_cap_usd": 2025870268467.0,
+    "stablecoin_market_cap_usd": 270329716620.0,
+    "btc_market_cap_usd": 1191569547472.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,7 +65,7 @@
       {
         "symbol": "RAIN",
         "name": "Rain",
-        "pct_30d": -66.6125,
+        "pct_30d": -67.3026,
         "category": "meme",
         "category_label": "Meme",
         "detail_url": "https://www.coingecko.com/en/coins/rain",
@@ -79,7 +79,7 @@
       {
         "symbol": "ZEC",
         "name": "Zcash",
-        "pct_30d": -39.8738,
+        "pct_30d": -39.6616,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/zcash",
@@ -93,7 +93,7 @@
       {
         "symbol": "NEAR",
         "name": "NEAR Protocol",
-        "pct_30d": -37.3529,
+        "pct_30d": -37.7792,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/near",
@@ -107,5 +107,5 @@
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap fell 23.8% over 30D:</strong> Total crypto market cap at $2.15T (23.8% lower over 30D). Related: <a href=\"https://www.theblock.co/learn/campus/crypto-market-structure-basics-442986\" target=\"_blank\" rel=\"noopener noreferrer\">Crypto Market Structure Basics</a> (The Block).</li><li><strong>Losses broadened among top-50 alts:</strong> 1 names up more than ~0.5%, 34 down more than ~0.5%, and 5 roughly flat out of <strong>40</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://decrypt.co/383909/bitcoin-losses-worst-since-ftx-is-bottom-near\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin Losses Are the Worst Since FTX. Is the Bottom Near?</a> (Decrypt).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.coindesk.com/policy/2026/11/24/south-korea-regulator-backs-bank-controlled-stablecoins-after-months-of-dispute\" target=\"_blank\" rel=\"noopener noreferrer\">South Korea regulator backs bank-controlled stablecoins after months of dispute</a> (CoinDesk).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://cointelegraph.com/markets/bitcoin-etfs-bleed-ibit-shares-gain?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin ETFs keep bleeding as BlackRock\u2019s IBIT shares gain nearly 5%</a> (CoinTelegraph).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap fell 23.6% over 30D:</strong> Total crypto market cap at $2.12T (23.6% lower over 30D). Related: <a href=\"https://www.theblock.co/learn/campus/crypto-market-structure-basics-442986\" target=\"_blank\" rel=\"noopener noreferrer\">Crypto Market Structure Basics</a> (The Block).</li><li><strong>Losses broadened among top-50 alts:</strong> 1 names up more than ~0.5%, 34 down more than ~0.5%, and 5 roughly flat out of <strong>40</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://decrypt.co/383909/bitcoin-losses-worst-since-ftx-is-bottom-near\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin Losses Are the Worst Since FTX. Is the Bottom Near?</a> (Decrypt).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://www.coindesk.com/policy/2026/11/24/south-korea-regulator-backs-bank-controlled-stablecoins-after-months-of-dispute\" target=\"_blank\" rel=\"noopener noreferrer\">South Korea regulator backs bank-controlled stablecoins after months of dispute</a> (CoinDesk).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://cointelegraph.com/markets/bitcoin-etfs-bleed-ibit-shares-gain?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin ETFs keep bleeding as BlackRock\u2019s IBIT shares gain nearly 5%</a> (CoinTelegraph).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
