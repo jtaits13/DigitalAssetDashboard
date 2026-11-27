@@ -1,15 +1,16 @@
 {
-  "generated_at": "2026-11-27T02:04:51.955562+00:00",
+  "generated_at": "2026-11-27T09:14:02.575123+00:00",
   "errors": [
     "ETF news RSS: ETF Trends (VettaFi): HTTP Error 403: Forbidden",
     "ETF news RSS: ETFdb: HTTP Error 403: Forbidden",
     "ETF news RSS: GlobeNewswire (ETF): HTTP Error 403: Forbidden",
-    "ETF news RSS: Yahoo Finance (headlines): HTTP Error 404: Not Found"
+    "ETF news RSS: Yahoo Finance (headlines): HTTP Error 404: Not Found",
+    "news RSS (all articles): The Block: HTTP Error 429: Too Many Requests"
   ],
-  "etp_refreshed_at": "2026-11-27T02:00:08.664182+00:00",
-  "crypto_refreshed_at": "2026-11-27T02:01:10.844997+00:00",
+  "etp_refreshed_at": "2026-11-27T09:09:03.839534+00:00",
+  "crypto_refreshed_at": "2026-11-27T09:10:22.990628+00:00",
   "stale_sections": [],
-  "export_completed_at": "2026-11-27T02:04:51.955562+00:00",
+  "export_completed_at": "2026-11-27T09:14:02.575123+00:00",
   "refresh_interval_hours": 6,
   "stale_threshold_hours": {
     "etp": 9,
@@ -19,10 +20,10 @@
     "regulatory": 24
   },
   "sections": {
-    "news": "2026-11-27T02:00:12.570397+00:00",
-    "regulatory": "2026-11-27T02:00:12.570397+00:00",
-    "etp": "2026-11-27T02:00:08.664182+00:00",
-    "rwa": "2026-11-27T02:04:45.650182+00:00",
-    "crypto": "2026-11-27T02:01:10.844997+00:00"
+    "news": "2026-11-27T09:09:07.719133+00:00",
+    "regulatory": "2026-11-27T09:09:07.719133+00:00",
+    "etp": "2026-11-27T09:09:03.839534+00:00",
+    "rwa": "2026-11-27T09:13:55.955360+00:00",
+    "crypto": "2026-11-27T09:10:22.990628+00:00"
   }
 }
