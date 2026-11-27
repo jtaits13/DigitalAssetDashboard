@@ -1,53 +1,53 @@
 {
-  "generated_at": "2026-11-27T09:10:22.990628+00:00",
+  "generated_at": "2026-11-27T17:04:25.638105+00:00",
   "source": "CoinPaprika + CoinGecko",
   "error": "",
   "primary": {
     "label": "Total market cap",
-    "value_display": "$2.20T",
+    "value_display": "$2.15T",
     "delta": {
-      "pct": -22.5629,
+      "pct": -24.1332,
       "window": "1M"
     }
   },
   "btc": {
     "label": "BTC price",
-    "value_display": "$61,724",
+    "value_display": "$59,898",
     "delta": {
-      "pct": -23.867,
+      "pct": -25.3925,
       "window": "1M"
     }
   },
   "eth": {
     "label": "ETH price",
-    "value_display": "$1,731",
+    "value_display": "$1,668",
     "delta": {
-      "pct": -26.6517,
+      "pct": -28.2654,
       "window": "1M"
     }
   },
   "btc_dominance": {
     "label": "BTC dominance",
-    "value_display": "56.4%",
+    "value_display": "56.1%",
     "delta": {
-      "pct": -1.615,
+      "pct": -1.4581,
       "window": "1M"
     }
   },
   "stablecoin_share": {
     "label": "Stablecoin share",
-    "value_display": "12.8%",
+    "value_display": "13.1%",
     "delta": {
-      "pct": 27.5013,
+      "pct": 29.5882,
       "window": "1M"
     }
   },
   "market_structure": {
-    "btc_dominance_pct": 56.36,
-    "stablecoin_share_top50_pct": 12.76,
-    "top50_market_cap_usd": 2100967397124.0,
-    "stablecoin_market_cap_usd": 268062641990.0,
-    "btc_market_cap_usd": 1241751394301.0
+    "btc_dominance_pct": 56.11,
+    "stablecoin_share_top50_pct": 13.08,
+    "top50_market_cap_usd": 2049948932063.0,
+    "stablecoin_market_cap_usd": 268078575097.0,
+    "btc_market_cap_usd": 1205704593501.0
   },
   "kpi_window_note": "All % changes in this row are approximately one-month (~30 calendar days). Total market cap from CoinPaprika; BTC dominance and stablecoin share from the top-50 list (CoinGecko, CoinCap fallback).",
   "story_callout": {
@@ -65,21 +65,21 @@
       {
         "symbol": "RAIN",
         "name": "Rain",
-        "pct_30d": -65.3558,
+        "pct_30d": -65.8863,
         "category": "meme",
         "category_label": "Meme",
         "detail_url": "https://www.coingecko.com/en/coins/rain",
         "direction": "down",
         "context": {
-          "title": "Ukrainian lawmakers pass crypto tax and regulation bill expected to bring in $330 million",
-          "source": "CoinDesk",
-          "link": "https://www.coindesk.com/business/2026/11/25/ukrainian-lawmakers-pass-crypto-tax-and-regulation-bill-expected-to-bring-in-usd330-million"
+          "title": "Elon Musk\u2019s SpaceX Gets FCC Approval to Launch AI Data Centers in Space",
+          "source": "Decrypt",
+          "link": "https://decrypt.co/383991/elon-musk-spacex-fcc-approval-ai-data-centers-space"
         }
       },
       {
         "symbol": "ZEC",
         "name": "Zcash",
-        "pct_30d": -42.7665,
+        "pct_30d": -41.0874,
         "category": "l1",
         "category_label": "Layer 1",
         "detail_url": "https://www.coingecko.com/en/coins/zcash",
@@ -91,21 +91,21 @@
         }
       },
       {
-        "symbol": "NEAR",
-        "name": "NEAR Protocol",
-        "pct_30d": -34.194,
-        "category": "l1",
-        "category_label": "Layer 1",
-        "detail_url": "https://www.coingecko.com/en/coins/near",
+        "symbol": "BTW",
+        "name": "Bitway",
+        "pct_30d": -37.9925,
+        "category": "other",
+        "category_label": "Other",
+        "detail_url": "https://www.coingecko.com/en/coins/bitway",
         "direction": "down",
         "context": {
-          "title": "Bitcoin little changed, DeFi tokens lead the bounce as U.S. marks Thanksgiving",
-          "source": "CoinDesk",
-          "link": "https://www.coindesk.com/markets/2026/11/26/bitcoin-little-changed-defi-tokens-lead-the-bounce-as-u-s-marks-thanksgiving"
+          "title": "Bitway's BTW Rallies Nearly 84% as Bitcoin Drops 7%",
+          "source": "The Defiant",
+          "link": "https://thedefiant.io/news/tokens/bitway-s-btw-rallies-nearly-84-as-bitcoin-drops-7"
         }
       }
     ]
   },
   "source_note": "Total market cap and its 1M change come from CoinPaprika global market data and 30-day market-overview history. BTC dominance uses Bitcoin\u2019s market cap vs that CoinPaprika total; its 1M % approximates how that ratio moved using the same total-cap window and BTC\u2019s 30d change from this list. Stablecoin share is stablecoin market cap vs the sum of this top-50 list; its 1M % uses row-level 30d cap changes (approximate). Coin price changes use CoinGecko spot data with CoinCap fallback for rows that do not include a 30-day change.",
-  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap fell 22.6% over 30D:</strong> Total crypto market cap at $2.20T (22.6% lower over 30D). Related: <a href=\"https://decrypt.co/383962/ukraine-passes-law-to-legalize-and-tax-its-crypto-market-from-july-2027\" target=\"_blank\" rel=\"noopener noreferrer\">Ukraine Passes Law to Legalize and Tax Its Crypto Market From July 2027</a> (Decrypt).</li><li><strong>Losses broadened among top-50 alts:</strong> 1 names up more than ~0.5%, 35 down more than ~0.5%, and 5 roughly flat out of <strong>41</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.theblock.co/news/markets/2026-11-26-galaxy-walks-back-bitcoin-bottom-call-446786\" target=\"_blank\" rel=\"noopener noreferrer\">Galaxy walks back bitcoin\u2019s June-bottom call, warns of deeper losses below $58,525</a> (The Block).</li><li><strong>Market-structure signals still separate Bitcoin-led from alt-led tapes:</strong> Bitcoin-led tapes usually concentrate gains in majors, while alt-led breadth shows up as wider category participation across the top-50. Related: <a href=\"https://www.coindesk.com/markets/2026/11/26/bitcoin-s-dormant-supply-rises-a-behavior-seen-during-previous-bear-market-bottoming-phases\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin\u2019s dormant supply rises, a behavior seen during previous bear-market bottoming phases</a> (CoinDesk).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://cointelegraph.com/news/how-eu-brokers-could-lose-access-to-kyrgyz-crypto-exchanges?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">How EU brokers could lose access to Kyrgyz crypto exchanges</a> (CoinTelegraph).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
+  "key_observations_html": "<div class=\"takeaways\"><ul class=\"crypto-story-callout__list\"><li><strong>Crypto total market cap fell 24.1% over 30D:</strong> Total crypto market cap at $2.15T (24.1% lower over 30D). Related: <a href=\"https://decrypt.co/383962/ukraine-passes-law-to-legalize-and-tax-its-crypto-market-from-july-2027\" target=\"_blank\" rel=\"noopener noreferrer\">Ukraine Passes Law to Legalize and Tax Its Crypto Market From July 2027</a> (Decrypt).</li><li><strong>Losses broadened among top-50 alts:</strong> 1 names up more than ~0.5%, 35 down more than ~0.5%, and 5 roughly flat out of <strong>41</strong> non-stable coins with a valid 1M % (top-50 table). Related: <a href=\"https://www.theblock.co/news/markets/2026-11-26-galaxy-walks-back-bitcoin-bottom-call-446786\" target=\"_blank\" rel=\"noopener noreferrer\">Galaxy walks back bitcoin\u2019s June-bottom call, warns of deeper losses below $58,525</a> (The Block).</li><li><strong>Regulatory framing still decides product access:</strong> Enforcement and legislation shocks tend to pull risk into majors first, while higher-beta categories retrace until policy clarity returns. Related: <a href=\"https://cointelegraph.com/news/binance-ipo-program-regulatory-approval-yi-he?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Binance to launch tokenized IPO program after regulatory approval: Yi He</a> (CoinTelegraph).</li><li><strong>Listed ETF flows remain the cleanest demand gauge:</strong> Listed-product demand usually hits Bitcoin first, then filters into broader market beta if primary-market creations stay firm. Related: <a href=\"https://cointelegraph.com/markets/morgan-stanley-bitcoin-etf-trend-outflows-november?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound\" target=\"_blank\" rel=\"noopener noreferrer\">Bitcoin ETF November outflows top $5B, Morgan Stanley bucks trend</a> (CoinTelegraph).</li></ul><p class=\"takeaways__note\">Context only\u2014not investment advice. Observations rank the top-50 table and KPI math on this page against recent crypto and ETF headlines. Bullets combine on-page data with recent industry headlines.</p><p class=\"review-note ko-disclaimer\">Key observations are AI generated and should be reviewed for accuracy.</p></div>"
 }
